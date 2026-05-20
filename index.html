@@ -6,7 +6,7 @@
   <title>SET IS THE WORLD</title>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; }
+html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: hidden; }
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
   background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
@@ -27,18 +27,25 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5);
 }
 .app-container {
-  display: flex; width: 100%; margin-top: 32px; gap: 20px;
-  padding: 12px 20px; min-height: calc(100vh - 32px);
+  display: flex; width: 1150px; margin: 32px auto 0; gap: 20px;
+  padding: 0px; min-height: calc(100vh - 32px);
+  overflow-y: auto; max-height: calc(100vh - 32px);
+  contain: layout style paint;
+  scrollbar-width: none;
+}
+.app-container::-webkit-scrollbar {
+  display: none;
 }
 .site-body-left-column {
-  width: 180px; flex-shrink: 0; border-right: 2px solid #39dc00;
-  padding: 20px 12px; position: sticky; top: 32px;
-  max-height: calc(100vh - 32px); overflow-y: auto;
+  width: 220px; flex-shrink: 0; border-right: 2px solid #39dc00;
+  padding: 20px 12px 12px 12px; position: sticky; top: 0;
+  will-change: transform; transform: translateZ(0);
+  min-height: 100vh;
 }
-.nav-links { padding: 6px 8px; }
+.nav-links { padding: 12px 8px; }
 .nav-file-title {
-  display: block; font-size: 15px; color: #39dc00; padding: 6px 10px;
-  text-decoration: none; cursor: pointer;
+  display: block; font-size: 15px; color: #39dc00; padding: 8px 12px;
+  text-decoration: none; cursor: pointer; margin-bottom: 4px;
 }
 .nav-file-title.is-active { background: #39dc00; color: #000; }
 .nav-terminal-log {
@@ -47,26 +54,28 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   line-height: 1.4; word-break: break-all;
 }
 .site-body-center {
-  flex: 1; padding: 16px; overflow-y: auto;
-  max-height: calc(100vh - 32px);
+  flex: 1; padding: 20px 24px 12px 24px;
+  will-change: scroll-position; backface-visibility: hidden;
 }
 .site-body-right-column {
-  width: 250px; flex-shrink: 0; padding: 12px 8px; position: sticky; top: 32px;
-  max-height: calc(100vh - 32px); overflow-y: auto;
+  width: 250px; flex-shrink: 0; padding: 20px 20px 12px 20px; position: sticky; top: 0;
+  border-left: 2px solid #39dc00;
+  will-change: transform; transform: translateZ(0);
+  min-height: 100vh;
 }
 .markdown-rendered h1 {
   font-size: 20px; margin-bottom: 20px;
 }
 .markdown-rendered h1::before {
-  content: "root@system:~# "; opacity: 0.6;
+  content: ""; opacity: 0.6;
 }
 .sys-alert {
   border: 2px dashed #ff3333; background: rgba(255,51,51,0.05);
-  margin: 30px 0 25px; padding: 12px 15px;
+  margin: 10px 0 15px; padding: 12px 15px;
 }
 .m-monitor {
   border: 2px solid #39dc00; background: #000; padding: 12px;
-  margin-top: 10px; color: #39dc00; width: 100%;
+  margin-top: 5px; color: #39dc00; width: 100%;
 }
 .m-loading-wrap {
   display: flex; align-items: center; width: 100%; margin-top: 20px;
@@ -142,10 +151,8 @@ root@system:~# check_status --final
 root@system:~# █</div>
     </div>
 
-    <div class="site-body-center">
+    <div class="site-body-center" style="flex:0 0 600px; padding:16px 0px;">
       <div class="markdown-rendered">
-        <h1>SET IS THE WORLD</h1>
-
         <div class="sys-alert">
           <div style="background: #ff3333; color: #000; padding: 6px 20px; font-weight: bold;">
             [!] SYSTEM_CRITICAL_WARNING
@@ -156,79 +163,22 @@ root@system:~# █</div>
           </div>
         </div>
 
-        <div class="m-monitor">
-          <div style="background:#000;color:#39dc00;padding:4px 8px;display:flex;justify-content:space-between;margin-bottom:15px;font-weight:bold;font-size:11px;">
-            <span>SYS.KERNEL V.1.4.0</span>
-            <span>ARCHIVE_BBS_OVERRIDE</span>
-            <span><a href="https://hits.sh/publish.obsidian.md/note/" style="color:#39dc00;">📊</a></span>
+        <div class="m-monitor" style="padding:0;border:2px solid #39dc00;min-height:450px;display:flex;flex-direction:column;">
+          <!-- 헤더 -->
+          <div style="background:#39dc00;color:#000;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;font-weight:bold;font-size:12px;">
+            <span>TERMINAL CHAT SYSTEM V.2.1</span>
+            <span style="color:#000;opacity:0.7;font-size:10px;">━━━━━━━</span>
           </div>
 
-          <div style="text-align:center;border:1px double #39dc00;padding:8px;margin-bottom:15px;">
-            <div style="opacity:0.6;font-size:11px;">+ + CURRENT DIRECTORY + +</div>
-            <div style="font-size:16px;font-weight:bold;margin-top:4px;">SET IS THE WORLD</div>
+          <!-- 컨텐츠 영역 (나중에 채울 예정) -->
+          <div style="flex:1;padding:15px;overflow-y:auto;background:#000;color:#39dc00;">
+            <!-- 여기에 콘텐츠가 들어갑니다 -->
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
-            <div style="border:1px dashed #39dc00;padding:10px;font-size:11px;line-height:1.5;">
-              <div style="background:#1e7400;color:#000;padding:2px 5px;margin-bottom:8px;display:inline-block;">&gt;&gt; CORE_INSTRUCTIONS</div>
-              <div style="display:flex;margin-bottom:5px;"><div style="width:75px;opacity:0.6;">BODY:</div><div style="color:#ffb000;">COERCED_STATE</div></div>
-              <div style="display:flex;margin-bottom:5px;"><div style="width:75px;opacity:0.6;">GAZE:</div><div style="color:#ffb000;">SUSPENDED</div></div>
-              <div style="display:flex;margin-bottom:5px;"><div style="width:75px;opacity:0.6;">PROCESS:</div><div style="color:#ffb000;">ARCHIVING_STRUCTURE</div></div>
-              <div style="display:flex;margin-bottom:5px;"><div style="width:75px;opacity:0.6;">TARGET:</div><div style="color:#ffb000;">WORLD_ARCHIVE</div></div>
-              <div style="display:flex;margin-bottom:5px;"><div style="width:75px;opacity:0.6;">METHOD:</div><div style="background:#000;color:#000;padding:0 4px;">HALT_REPRODUCTION</div></div>
-            </div>
-
-            <div style="border:1px dashed #39dc00;padding:10px;font-size:11px;line-height:1.5;">
-              <div style="background:#1e7400;color:#000;padding:2px 5px;margin-bottom:8px;display:inline-block;">&gt;&gt; PERIMETER_LOG</div>
-              <div style="font-style:italic;border-left:1px solid #39dc00;padding-left:8px;">
-                "Measuring the perimeter of the set..."<br>
-                "Analyzing spatial coordinates..."<br>
-                "Boundary collision detected at sector 4."<br>
-                <span style="color:#ffb000;font-weight:bold;">[WARN] SCALE_CONTAMINATED</span><br>
-                <span style="opacity:0.6;">OOB_INTERFERENCE: 94.2%</span>
-              </div>
-            </div>
-          </div>
-
-          <div style="border:1px dashed #39dc00;padding:10px;margin-bottom:15px;font-size:11px;line-height:1.5;">
-            <div style="background:#1e7400;color:#000;padding:2px 5px;margin-bottom:8px;display:inline-block;">&gt;&gt; MEMORY_DUMP_ANALYSIS</div>
-            <div style="padding-left:8px;border-left:1px solid #39dc00;opacity:0.9;">
-              0x7F8A: Memory fragment retrieved.<br>
-              0x7F8B: Re-routing sensory feedback loops... <span style="color:#ffb000;">SUCCESS</span><br>
-              0x7F8C: Conceptual framework exceeding boundaries.<br>
-              <span style="color:#ffb000;margin-top:4px;display:block;">[SYS_NOTE] The conceptual text defines the world through language.</span>
-            </div>
-          </div>
-
-          <div style="border:1px solid #39dc00;padding:10px;font-size:11px;line-height:1.5;">
-            <div style="display:flex;justify-content:space-between;border-bottom:1px dotted #39dc00;padding-bottom:4px;margin-bottom:8px;">
-              <span>[ VOICE_ANALYSIS_THREAD ]</span>
-              <span>NOISE: ACTIVE</span>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:0;">
-              <div style="border-right:1px dotted #39dc00;">
-                <span style="opacity:0.6;">PORT_01_AI</span><br>
-                <span style="color:#ffb000;">SYSTEMATIC / INDIFFERENT</span>
-              </div>
-              <div>
-                <span style="opacity:0.6;">PORT_02_HUMAN</span><br>
-                <strong style="color:#ffb000;">WANDERING / AFFECTIVE</strong>
-              </div>
-            </div>
-            <div style="background:rgba(57,220,0,0.1);padding:5px;margin-top:10px;border-left:2px solid #39dc00;">
-              Overlap produces interference. Words disappear, merge, transform.<br>
-              What cannot be fully read becomes the essence of the work itself.
-            </div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;border-top:1px solid #39dc00;padding-top:10px;margin-top:15px;font-size:11px;">
-            <div style="max-width:50%;">
-              <span style="color:#ffb000;">FINAL_RENDER:</span> Textual superimposition = image of words. Vision + Language = Incomplete.
-            </div>
-            <div style="max-width:48%;font-size:10px;opacity:0.85;text-align:right;">
-              FAILURE_TO_CLOSE 〈Set〉 measures the world through vision;<br>
-              its overlapping texts measure the world through language.
-            </div>
+          <!-- 하단 상태바 -->
+          <div style="background:#000;border-top:1px solid #39dc00;padding:6px 12px;display:flex;justify-content:space-between;font-size:10px;color:#39dc00;">
+            <span style="opacity:0.6;">STATUS: ONLINE</span>
+            <span style="opacity:0.6;">█ ████░ 50%</span>
           </div>
         </div>
 
