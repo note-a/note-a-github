@@ -4,21 +4,102 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET IS THE WORLD</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; }
+.top-banner {
+  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
+  background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
+  padding: 6px 0; z-index: 999; overflow: hidden;
+  animation: marquee 12s linear infinite;
+}
+@keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
+.app-container {
+  display: flex; width: 100%; margin-top: 32px; gap: 12px;
+  padding: 12px; min-height: calc(100vh - 32px);
+}
+.site-body-left-column {
+  width: 180px; flex-shrink: 0; border-right: 2px solid #39dc00;
+  padding: 20px 12px; position: sticky; top: 32px;
+  max-height: calc(100vh - 32px); overflow-y: auto;
+}
+.nav-links { padding: 6px 8px; }
+.nav-file-title {
+  display: block; font-size: 15px; color: #39dc00; padding: 6px 10px;
+  text-decoration: none; cursor: pointer;
+}
+.nav-file-title.is-active { background: #39dc00; color: #000; }
+.nav-terminal-log {
+  font-size: 11px; color: #39dc00; opacity: 0.7; padding: 12px 10px;
+  white-space: pre-wrap; margin-top: 14px; border-top: 1px dashed #39dc00;
+  line-height: 1.4; word-break: break-all;
+}
+.site-body-center {
+  flex: 1; padding: 24px; overflow-y: auto;
+  max-height: calc(100vh - 32px); min-width: 300px;
+}
+.site-body-right-column {
+  width: 180px; flex-shrink: 0; padding: 12px 8px; position: sticky; top: 32px;
+  max-height: calc(100vh - 32px); overflow-y: auto;
+}
+.markdown-rendered h1 {
+  font-size: 20px; margin-bottom: 20px;
+}
+.markdown-rendered h1::before {
+  content: "root@system:~# "; opacity: 0.6;
+}
+.sys-alert {
+  border: 2px dashed #ff3333; background: rgba(255,51,51,0.05);
+  margin: 30px 0 25px; padding: 12px 15px;
+}
+.m-monitor {
+  border: 2px solid #39dc00; background: #000; padding: 15px;
+  margin-top: 15px; color: #39dc00; width: 100%;
+}
+.m-loading-wrap {
+  display: flex; align-items: center; width: 100%; margin-top: 20px;
+  padding: 10px 15px; border: 1px dashed #39dc00; background: #000;
+}
+.load-txt {
+  color: #39dc00; font-size: 13px; margin-right: 15px;
+  animation: blink 1.2s infinite;
+}
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+.m-loading-bar {
+  flex-grow: 1; height: 14px; border: 1px solid #39dc00; background: #000;
+  position: relative; overflow: hidden;
+}
+.m-loading-bar::before {
+  content: ""; position: absolute; top: 0; left: 0; height: 100%;
+  width: 30%; background: #39dc00;
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+@keyframes pulse { 0% { width: 5%; } 100% { width: 70%; } }
+.sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { margin-bottom: 20px; }
+.sys-m-title { font-size: 13px; color: #ffb000; margin-bottom: 10px; font-weight: bold; }
+.sys-w-row { display: flex; align-items: center; margin-bottom: 10px; }
+.sys-w-label { font-size: 12px; width: 40px; flex-shrink: 0; }
+.sys-w-bar { flex-grow: 1; height: 12px; border: 1px solid #1e7400; background: #000; }
+.sys-w-fill { height: 100%; background: #39dc00; }
+.sys-eq-bars { display: flex; align-items: flex-end; height: 80px; gap: 6px; }
+.eq-bar { width: 16px; background: #39dc00; animation: bounce 1s infinite ease-in-out alternate; }
+.eq-1 { animation-delay: 0.1s; } .eq-2 { animation-delay: 0.4s; } .eq-3 { animation-delay: 0.2s; }
+.eq-4 { animation-delay: 0.6s; } .eq-5 { animation-delay: 0.3s; }
+@keyframes bounce { 0% { height: 15px; } 100% { height: 80px; } }
+.sys-c-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
+.sys-c-label { width: 42px; opacity: 0.8; }
+@media (max-width: 768px) {
+  .app-container { flex-direction: column; gap: 0; padding: 0; }
+  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; position: static; }
+  .site-body-center { width: 100%; padding: 20px 16px; max-height: none; min-width: unset; }
+  .site-body-right-column { width: 100%; position: static; padding: 16px; border-top: 1px dashed #39dc00; }
+}
+  </style>
 </head>
 <body>
-
-
-  <!-- 상단 스크롤 경고 배너 (데스크탑 전용) -->
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
-  <!-- 전체 레이아웃 래퍼 -->
   <div class="app-container">
-
-    <!-- ── 왼쪽 사이드바 ── -->
     <div class="site-body-left-column">
       <nav class="nav-links">
         <a href="index.html" class="nav-file-title is-active">Project SET</a>
@@ -31,25 +112,16 @@
       </nav>
       <div class="nav-terminal-log">----------------------------------------
 Linux kernel 6.8.0-v2-generic (x86_64)
-[  0.000000] init_archiver:
-structure_of_photography
-[  0.015241] sensors: body(coerced),
-gaze(suspended)
-[  0.110293] exec: ./measure_set --
-target=WORLD
-[  WARN ] scale_contaminated:
-already_part_of_world
+[  0.000000] init_archiver: structure_of_photography
+[  0.015241] sensors: body(coerced), gaze(suspended)
+[  0.110293] exec: ./measure_set --target=WORLD
+[  WARN ] scale_contaminated: already_part_of_world
 ----------------------------------------
-root@system:~# ./merge_voices
---apply_noise
-[ INFO ] port_1(AI): precise,
-indifferent
-[ INFO ] port_2(HUMAN): wandering,
-affective
-[ LOG  ] interference detected:
-words_transform_to_noise
-[ LOG  ] superimposition:
-vision_meets_language
+root@system:~# ./merge_voices --apply_noise
+[ INFO ] port_1(AI): precise, indifferent
+[ INFO ] port_2(HUMAN): wandering, affective
+[ LOG  ] interference detected: words_transform_to_noise
+[ LOG  ] superimposition: vision_meets_language
 ----------------------------------------
 root@system:~# check_status --final
 [ FAIL ] system_status: INCOMPLETE
@@ -58,36 +130,30 @@ root@system:~# check_status --final
 root@system:~# █</div>
     </div>
 
-    <!-- ── 메인 콘텐츠 ── -->
     <div class="site-body-center">
       <div class="markdown-rendered">
-
         <h1>SET IS THE WORLD</h1>
 
-        <!-- 시스템 경고 박스 -->
         <div class="sys-alert">
-          <div class="sys-alert-header">
-            <span class="blink-warn">[!]</span>&nbsp;SYSTEM_CRITICAL_WARNING
+          <div style="background: #ff3333; color: #000; padding: 6px 20px; font-weight: bold;">
+            [!] SYSTEM_CRITICAL_WARNING
           </div>
-          <div class="sys-alert-body">
+          <div style="padding: 12px 15px; color: #ffb000; font-size: 11px;">
             오류 코드 404: 아카이브 접근이 거부되었습니다.<br>
             강제 열람을 시도할 경우 데이터가 손상될 수 있습니다.
           </div>
         </div>
 
-        <!-- 메인 터미널 모니터 -->
         <div class="m-monitor">
           <div style="background:#000;color:#39dc00;padding:4px 8px;display:flex;justify-content:space-between;margin-bottom:15px;font-weight:bold;font-size:11px;">
             <span>SYS.KERNEL V.1.4.0</span>
             <span>ARCHIVE_BBS_OVERRIDE</span>
-            <span><a href="https://hits.sh/publish.obsidian.md/note/" style="color:#39dc00;text-decoration:none;">
-              <img alt="Hits" src="https://hits.sh/publish.obsidian.md/note.svg?view=today-total&style=flat-square&color=266c0b&labelColor=763f16"/>
-            </a></span>
+            <span><a href="https://hits.sh/publish.obsidian.md/note/" style="color:#39dc00;">📊</a></span>
           </div>
 
           <div style="text-align:center;border:1px double #39dc00;padding:8px;margin-bottom:15px;">
             <div style="opacity:0.6;font-size:11px;">+ + CURRENT DIRECTORY + +</div>
-            <div style="font-size:16px;font-weight:bold;letter-spacing:1px;margin-top:4px;">SET IS THE WORLD</div>
+            <div style="font-size:16px;font-weight:bold;margin-top:4px;">SET IS THE WORLD</div>
           </div>
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px;">
@@ -107,8 +173,7 @@ root@system:~# █</div>
                 "Analyzing spatial coordinates..."<br>
                 "Boundary collision detected at sector 4."<br>
                 <span style="color:#ffb000;font-weight:bold;">[WARN] SCALE_CONTAMINATED</span><br>
-                <span style="opacity:0.6;">OOB_INTERFERENCE: 94.2%</span><br>
-                <span style="opacity:0.6;">FRAME_RATE_DROP: 12.4%</span>
+                <span style="opacity:0.6;">OOB_INTERFERENCE: 94.2%</span>
               </div>
             </div>
           </div>
@@ -116,10 +181,10 @@ root@system:~# █</div>
           <div style="border:1px dashed #39dc00;padding:10px;margin-bottom:15px;font-size:11px;line-height:1.5;">
             <div style="background:#1e7400;color:#000;padding:2px 5px;margin-bottom:8px;display:inline-block;">&gt;&gt; MEMORY_DUMP_ANALYSIS</div>
             <div style="padding-left:8px;border-left:1px solid #39dc00;opacity:0.9;">
-              0x7F8A: Memory fragment retrieved. Subject expresses detachment from visual stimuli.<br>
+              0x7F8A: Memory fragment retrieved.<br>
               0x7F8B: Re-routing sensory feedback loops... <span style="color:#ffb000;">SUCCESS</span><br>
-              0x7F8C: Conceptual framework exceeding allocated physical boundaries.<br>
-              <span style="color:#ffb000;margin-top:4px;display:block;">[SYS_NOTE] The conceptual text defines the world through language. The working note experiences it through the body.</span>
+              0x7F8C: Conceptual framework exceeding boundaries.<br>
+              <span style="color:#ffb000;margin-top:4px;display:block;">[SYS_NOTE] The conceptual text defines the world through language.</span>
             </div>
           </div>
 
@@ -135,7 +200,7 @@ root@system:~# █</div>
               </div>
               <div>
                 <span style="opacity:0.6;">PORT_02_HUMAN</span><br>
-                <strong style="color:#ffb000;">★★WANDERING / AFFECTIVE★★</strong>
+                <strong style="color:#ffb000;">WANDERING / AFFECTIVE</strong>
               </div>
             </div>
             <div style="background:rgba(57,220,0,0.1);padding:5px;margin-top:10px;border-left:2px solid #39dc00;">
@@ -150,51 +215,18 @@ root@system:~# █</div>
             </div>
             <div style="max-width:48%;font-size:10px;opacity:0.85;text-align:right;">
               FAILURE_TO_CLOSE 〈Set〉 measures the world through vision;<br>
-              its overlapping texts measure the world through language.<br>
-              Both remain incomplete — and that incompleteness,<br>
-              that failure to close, is precisely the world as I understand it.
+              its overlapping texts measure the world through language.
             </div>
           </div>
         </div>
 
-        <!-- 로딩 바 -->
         <div class="m-loading-wrap">
           <div class="load-txt">LOADING...</div>
           <div class="m-loading-bar"></div>
         </div>
-
-        <!-- 하단 푸터 패널 -->
-        <div class="sys-footer-panel">
-          <div class="sys-mini-res">
-            <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
-            <div class="sys-w-row"><span class="sys-w-label">CPU</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:78%;"></div></div></div>
-            <div class="sys-w-row"><span class="sys-w-label">MEM</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:42%;"></div></div></div>
-            <div class="sys-w-row"><span class="sys-w-label">NET</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:95%;background:#ffb000;"></div></div></div>
-          </div>
-
-          <div class="sys-eq-wrap">
-            <div class="sys-m-title">&gt;&gt; AUDIO_SYNC</div>
-            <div class="sys-eq-bars">
-              <div class="eq-bar eq-1"></div>
-              <div class="eq-bar eq-2"></div>
-              <div class="eq-bar eq-3"></div>
-              <div class="eq-bar eq-4"></div>
-              <div class="eq-bar eq-5"></div>
-            </div>
-          </div>
-
-          <div class="sys-contact-wrap">
-            <div class="sys-m-title">&gt;&gt; CONNECTION</div>
-            <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" class="sys-c-link">noteofficial@naver.com</a></div>
-            <div class="sys-c-row"><span class="sys-c-label">insta</span> <span class="sys-c-link">saintnoted</span></div>
-            <div class="sys-c-row"><span class="sys-c-label">tell</span> <span class="sys-c-link">010 9793 5522</span></div>
-          </div>
-        </div>
-
       </div>
     </div>
 
-    <!-- ── 오른쪽 패널 (시스템 정보) ── -->
     <div class="site-body-right-column">
       <div class="sys-mini-res">
         <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
@@ -216,58 +248,11 @@ root@system:~# █</div>
 
       <div class="sys-contact-wrap">
         <div class="sys-m-title">&gt;&gt; CONNECTION</div>
-        <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" class="sys-c-link">noteofficial@naver.com</a></div>
-        <div class="sys-c-row"><span class="sys-c-label">insta</span> <span class="sys-c-link">saintnoted</span></div>
-        <div class="sys-c-row"><span class="sys-c-label">tell</span> <span class="sys-c-link">010 9793 5522</span></div>
+        <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" style="color:#39dc00;">noteofficial@naver.com</a></div>
+        <div class="sys-c-row"><span class="sys-c-label">insta</span> <span style="color:#39dc00;">saintnoted</span></div>
+        <div class="sys-c-row"><span class="sys-c-label">tell</span> <span style="color:#39dc00;">010-9793-5522</span></div>
       </div>
     </div>
-
-  </div><!-- /.app-container -->
-
-  <script>
-    // 스플래시 제거
-    setTimeout(() => {
-      const s = document.getElementById('splash');
-      if (s) { s.style.transition = 'opacity 0.8s'; s.style.opacity = '0'; setTimeout(() => s.remove(), 800); }
-    }, 2700);
-
-    // 그래프 노드 드로잉
-    const canvas = document.getElementById('graphCanvas');
-    if (canvas && canvas.getContext) {
-      const ctx = canvas.getContext('2d');
-      const nodes = [
-        { x: 88, y: 80, r: 5, label: 'SET' },
-        { x: 35, y: 35, r: 3, label: 'body' },
-        { x: 145, y: 35, r: 3, label: 'world' },
-        { x: 30, y: 130, r: 3, label: 'lang' },
-        { x: 150, y: 130, r: 3, label: 'arch' },
-        { x: 88, y: 145, r: 3, label: 'ref' },
-        { x: 55,  y: 90,  r: 2, label: '' },
-        { x: 125, y: 65,  r: 2, label: '' },
-      ];
-      const edges = [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[1,6],[2,7]];
-
-      ctx.strokeStyle = 'rgba(57,220,0,0.5)';
-      ctx.lineWidth = 0.7;
-      edges.forEach(([a,b]) => {
-        ctx.beginPath();
-        ctx.moveTo(nodes[a].x, nodes[a].y);
-        ctx.lineTo(nodes[b].x, nodes[b].y);
-        ctx.stroke();
-      });
-      nodes.forEach(n => {
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = '#39dc00';
-        ctx.fill();
-        if (n.label) {
-          ctx.fillStyle = '#39dc00';
-          ctx.font = '9px monospace';
-          ctx.fillText(n.label, n.x + n.r + 3, n.y + 3);
-        }
-      });
-    }
-  </script>
-
+  </div>
 </body>
 </html>

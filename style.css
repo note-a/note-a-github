@@ -1,15 +1,10 @@
-/* ========================================================
-   GitHub Pages 전용 CSS — SET IS THE WORLD
-   ======================================================== */
+/* GitHub Pages 전용 CSS */
 
-/* === 폰트 === */
-/* Win95Font.ttf 파일을 fonts/ 폴더에 넣으면 자동 적용 */
 @font-face {
   font-family: "Win95Font";
   src: url("fonts/Win95Font.ttf") format("truetype");
 }
 
-/* === 전역 리셋 === */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -25,17 +20,13 @@
   --font:       "Win95Font", "VT323", monospace;
 }
 
-/* === 기본 body === */
 html, body {
   background-color: var(--bg);
   color: var(--green);
   font-family: var(--font);
-  -webkit-font-smoothing: none;
-  text-rendering: optimizeSpeed;
-  letter-spacing: -0.5px;
-  min-height: 100vh;
-  scrollbar-width: thin;
-  scrollbar-color: var(--green) var(--bg);
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -45,47 +36,16 @@ body {
   background-size: 30px 30px;
 }
 
-/* 스크롤바 (Chrome/Safari) */
 ::-webkit-scrollbar { width: 10px; height: 10px; background: var(--bg); }
 ::-webkit-scrollbar-track { background: var(--bg); border-left: 1px solid var(--green-dark); }
 ::-webkit-scrollbar-thumb { background: var(--green); border: 2px solid var(--bg); border-radius: 0; }
 ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
-::-webkit-scrollbar-corner { background: var(--bg); }
 
-/* 커서 */
 html, body { cursor: crosshair; }
-a:hover, button:hover {
-  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><circle cx="5" cy="5" r="2" fill="%2339dc00"/></svg>'), pointer;
-}
-
-/* 선택 영역 */
-::selection { background: var(--green); color: var(--bg); }
-
-/* 링크 */
 a { color: var(--green); text-decoration: none; }
 a:visited { color: var(--green); }
 
-/* ========================================================
-   부팅 스플래시
-   ======================================================== */
-.sys-splash-blanket {
-  display: none;
-}
-
-.sys-splash-text {
-  color: var(--green);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 2;
-  text-align: left;
-  padding: 30px;
-  text-shadow: 0 0 10px var(--green);
-}
-
-/* ========================================================
-   상단 스크롤 배너 (데스크탑)
-   ======================================================== */
+/* 상단 배너 */
 .top-banner {
   position: fixed;
   top: 0;
@@ -110,31 +70,21 @@ a:visited { color: var(--green); }
   100% { text-indent: -150vw; }
 }
 
-@media (max-width: 768px) {
-  .top-banner { display: none; }
-}
-
-/* ========================================================
-   전체 레이아웃 — 3단 컬럼 (중앙 정렬 + 여백 최소화)
-   ======================================================== */
+/* 레이아웃 */
 .app-container {
   display: flex;
-  align-items: flex-start;
   width: 100%;
-  max-width: 850px;    /* 더 줄임 */
-  margin: 0 auto;      /* 화면 가운데 정렬 */
-  padding-top: 32px;   /* 상단 배너 높이 확보 */
-  min-height: 100vh;
-  gap: 6px;            /* 섹션 간 공백 더 최소화 */
+  margin-top: 32px;
+  gap: 12px;
+  padding: 12px;
+  min-height: calc(100vh - 32px);
 }
 
-/* ── 왼쪽 사이드바 ── */
 .site-body-left-column {
-  width: 200px;        /* 조금 줄임 */
-  min-width: 200px;
+  width: 180px;
   flex-shrink: 0;
   border-right: 2px solid var(--green);
-  padding: 16px 8px;   /* padding 줄임 */
+  padding: 20px 12px;
   position: sticky;
   top: 32px;
   max-height: calc(100vh - 32px);
@@ -147,13 +97,14 @@ a:visited { color: var(--green); }
 
 .nav-file-title {
   display: block;
-  font-size: 13px;     /* 조금 작게 */
+  font-size: 15px;
   color: var(--green);
-  padding: 5px 8px;
+  padding: 6px 10px;
   text-decoration: none;
   font-family: var(--font);
   cursor: pointer;
 }
+
 .nav-file-title:hover,
 .nav-file-title.is-active {
   background: var(--green);
@@ -161,104 +112,53 @@ a:visited { color: var(--green); }
 }
 
 .nav-terminal-log {
-  font-size: 9px;      /* 조금 작게 */
+  font-size: 11px;
   color: var(--green);
   opacity: 0.7;
-  padding: 10px 8px;
+  padding: 12px 10px;
   white-space: pre-wrap;
-  margin-top: 12px;
+  margin-top: 14px;
   border-top: 1px dashed var(--green);
   line-height: 1.4;
   word-break: break-all;
 }
 
-/* ── 메인 콘텐츠 ── */
 .site-body-center {
-  flex: 0 0 460px;     /* 더 좁게 */
-  padding: 16px 18px;  /* padding 줄임 */
+  flex: 1;
+  min-width: 400px;
+  padding: 24px;
   overflow-x: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - 32px);
 }
 
-/* ── 오른쪽 패널 (푸터 내용) ── */
+.site-body-center::-webkit-scrollbar {
+  width: 8px;
+}
+
+.site-body-center::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.site-body-center::-webkit-scrollbar-thumb {
+  background: var(--green-dark);
+}
+
+.site-body-center::-webkit-scrollbar-thumb:hover {
+  background: var(--green);
+}
+
 .site-body-right-column {
-  width: 160px;        /* 더 좁게 */
-  min-width: 160px;
+  width: 180px;
   flex-shrink: 0;
-  padding: 8px 0;
+  padding: 12px 8px;
   position: sticky;
   top: 32px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
 }
 
-/* 오른쪽 패널의 푸터 아이템들을 세로로 쌓음 */
-.site-body-right-column .sys-mini-res,
-.site-body-right-column .sys-eq-wrap,
-.site-body-right-column .sys-contact-wrap {
-  margin-bottom: 16px;
-  padding: 0 8px;
-}
-
-.site-body-right-column .sys-m-title {
-  font-size: 11px;
-  margin-bottom: 8px;
-}
-
-.site-body-right-column .sys-w-label {
-  font-size: 11px;
-  width: 30px;
-}
-
-.site-body-right-column .sys-eq-bars {
-  height: 50px;
-}
-
-.site-body-right-column .eq-bar {
-  width: 10px;
-}
-
-.site-body-right-column .sys-c-row {
-  font-size: 11px;
-  margin-bottom: 5px;
-}
-
-/* ── 모바일 ── */
-@media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-    padding-top: 0;
-  }
-  .site-body-left-column {
-    width: 100%;
-    min-width: unset;
-    border-right: none;
-    border-bottom: 2px solid var(--green);
-    position: static;
-    max-height: none;
-  }
-  .site-body-right-column {
-    width: 100%;
-    min-width: unset;
-    position: static;
-  }
-}
-
-/* ========================================================
-   그래프 패널 (숨김)
-   ======================================================== */
-.graph-view-container {
-  display: none;
-}
-
-.graph-header-bar {
-  display: none;
-}
-
-#graphCanvas {
-  display: none;
-}
-
-/* ========================================================
-   본문 타이포그래피
-   ======================================================== */
+/* 타이포그래피 */
 .markdown-rendered {
   font-family: var(--font);
   color: var(--green);
@@ -269,20 +169,23 @@ a:visited { color: var(--green); }
   margin-bottom: 20px;
   position: relative;
 }
+
 .markdown-rendered h1::before {
   content: "root@system:~# ";
   opacity: 0.6;
   font-size: 14px;
 }
+
 .markdown-rendered h1::after {
   content: " █";
   animation: terminal-blink 1s step-start infinite;
 }
 
-.markdown-rendered p { font-size: 13px; line-height: 1.6; }
-.markdown-rendered li { font-size: 13px; line-height: 1.6; }
-.markdown-rendered h2 { font-size: 18px; margin: 16px 0 8px; }
-.markdown-rendered h3 { font-size: 15px; margin: 12px 0 6px; }
+.markdown-rendered p { font-size: 16px !important; line-height: 1.6; }
+.markdown-rendered li { font-size: 16px !important; line-height: 1.6; }
+.markdown-rendered h2 { font-size: 22px !important; margin: 20px 0 10px; }
+.markdown-rendered h3 { font-size: 18px !important; margin: 16px 0 8px; }
+.markdown-rendered div, .markdown-rendered span { font-size: 14px !important; }
 
 .markdown-rendered :not(pre) > code {
   background: transparent;
@@ -290,7 +193,6 @@ a:visited { color: var(--green); }
   padding: 0 4px;
   font-weight: bold;
   border: none;
-  box-shadow: none;
 }
 
 @keyframes terminal-blink {
@@ -298,9 +200,7 @@ a:visited { color: var(--green); }
   50%       { opacity: 0; }
 }
 
-/* ========================================================
-   시스템 경고 박스
-   ======================================================== */
+/* 경고 박스 */
 .sys-alert {
   border: 2px dashed var(--red);
   background: rgba(255,51,51,0.05);
@@ -329,9 +229,7 @@ a:visited { color: var(--green); }
   animation: terminal-blink 1s step-end infinite;
 }
 
-/* ========================================================
-   메인 터미널 모니터
-   ======================================================== */
+/* 메인 모니터 */
 .m-monitor {
   border: 2px solid var(--green);
   background: var(--bg);
@@ -344,21 +242,12 @@ a:visited { color: var(--green); }
 
 .m-monitor p { margin: 0; padding: 0; line-height: 1.5; }
 .m-monitor div, .m-monitor span {
-  font-size: 11px;
+  font-size: 12px;
   letter-spacing: 0;
   line-height: 1.5;
 }
 
-@media (max-width: 768px) {
-  .m-monitor [style*="grid-template-columns:1fr 1fr"],
-  [style*="grid-template-columns: 1fr 1fr"] {
-    display: block !important;
-  }
-}
-
-/* ========================================================
-   로딩 바
-   ======================================================== */
+/* 로딩 바 */
 .m-loading-wrap {
   display: flex;
   align-items: center;
@@ -377,7 +266,6 @@ a:visited { color: var(--green); }
   margin-right: 15px;
   letter-spacing: 2px;
   animation: loading-blink 1.2s infinite;
-  transform: translateZ(0);
 }
 
 @keyframes loading-blink {
@@ -413,46 +301,23 @@ a:visited { color: var(--green); }
   100% { width: 70%; }
 }
 
-/* ========================================================
-   하단 푸터 패널
-   ======================================================== */
-.sys-footer-panel {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  border-top: 1px dashed var(--green);
-  margin-top: 25px;
-  padding-top: 20px;
-  gap: 35px;
-}
-
-.sys-m-title {
-  font-size: 14px;
-  color: var(--orange);
-  margin-bottom: 12px;
-  font-family: var(--font);
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-/* CPU/MEM 모니터 */
-.sys-mini-res { width: 165px; flex-shrink: 0; }
-.sys-w-row { display: flex; align-items: center; margin-bottom: 9px; }
-.sys-w-label { font-size: 13px; width: 35px; color: var(--green); flex-shrink: 0; }
-.sys-w-bar { flex-grow: 1; height: 10px; border: 1px solid var(--green-dark); background: var(--bg); }
+/* 우측 패널 */
+.sys-mini-res { flex-shrink: 0; }
+.sys-w-row { display: flex; align-items: center; margin-bottom: 10px; }
+.sys-w-label { font-size: 12px; width: 40px; color: var(--green); flex-shrink: 0; }
+.sys-w-bar { flex-grow: 1; height: 12px; border: 1px solid var(--green-dark); background: var(--bg); }
 .sys-w-fill { height: 100%; background: var(--green); }
 
-/* 이퀄라이저 */
-.sys-eq-wrap { width: 120px; flex-shrink: 0; }
+.sys-eq-wrap { flex-shrink: 0; }
 .sys-eq-bars {
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
-  height: 65px;
-  gap: 5px;
+  height: 80px;
+  gap: 6px;
 }
 .eq-bar {
-  width: 14px;
+  width: 16px;
   background: var(--green);
   animation: eq-bounce 1s infinite ease-in-out alternate;
 }
@@ -463,66 +328,75 @@ a:visited { color: var(--green); }
 .eq-5 { animation-delay: 0.3s; }
 
 @keyframes eq-bounce {
-  0%   { height: 10px; }
-  100% { height: 65px; }
+  0%   { height: 15px; }
+  100% { height: 80px; }
 }
 
-/* 연락처 */
 .sys-contact-wrap { flex-shrink: 0; }
-.sys-c-row { display: flex; align-items: center; margin-bottom: 7px; font-size: 13px; color: var(--green); }
-.sys-c-label { width: 45px; color: var(--green); opacity: 0.8; }
+
+.sys-m-title {
+  font-size: 13px;
+  color: var(--orange);
+  margin-bottom: 10px;
+  font-family: var(--font);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.sys-c-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; color: var(--green); }
+.sys-c-label { width: 42px; color: var(--green); opacity: 0.8; }
 .sys-c-link { color: var(--green); text-decoration: none; }
 
-/* ========================================================
-   호버 글리치 효과
-   ======================================================== */
-.sys-m-title:hover {
-  color: var(--orange);
-  text-shadow: 2px 0 var(--green), -2px 0 var(--green-dark);
-  animation: glitch-shake 0.15s linear infinite;
-  cursor: crosshair;
+.site-body-right-column .sys-mini-res,
+.site-body-right-column .sys-eq-wrap,
+.site-body-right-column .sys-contact-wrap {
+  margin-bottom: 20px;
+  padding: 0 8px;
+  border-bottom: 1px dashed var(--green);
+  padding-bottom: 12px;
 }
 
-@keyframes glitch-shake {
-  0%   { transform: translate(0); }
-  20%  { transform: translate(-2px, 1px); }
-  40%  { transform: translate(-1px, -1px); }
-  60%  { transform: translate(2px, 1px); }
-  80%  { transform: translate(1px, -1px); }
-  100% { transform: translate(0); }
+.site-body-right-column .sys-contact-wrap {
+  border-bottom: none;
 }
 
-/* ========================================================
-   콜아웃 박스 (마크다운 > [!note] 등)
-   ======================================================== */
-.callout {
-  background: rgba(255,176,0,0.1);
-  border: 1px solid var(--orange);
-  border-radius: 0;
-  padding: 12px 16px;
-  margin: 20px 0;
-}
-.callout-title { color: var(--orange); font-weight: bold; margin-bottom: 6px; }
-.callout-content { color: var(--orange); font-family: var(--font); letter-spacing: 1px; }
-
-/* ========================================================
-   데이터 글리치 애니메이션
-   ======================================================== */
-@keyframes core-data-glitch {
-  0%, 74%   { opacity: 1; }
-  75%, 84%  { opacity: 0; }
-  85%, 91%  { opacity: 1; }
-  92%, 100% { opacity: 0; }
-}
-
-.sys-blink {
-  animation: fatal-glitch 0.5s infinite;
-  transform: translateZ(0);
-}
-
-@keyframes fatal-glitch {
-  0%, 74%   { opacity: 1; filter: blur(0px); }
-  75%, 84%  { opacity: 0; filter: blur(2px); }
-  85%, 91%  { opacity: 1; filter: blur(0px); }
-  92%, 100% { opacity: 0; filter: blur(2px); }
+/* 모바일 */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+  }
+  .site-body-left-column {
+    width: 100%;
+    border-right: none;
+    border-bottom: 2px solid var(--green);
+    position: static;
+    max-height: none;
+    padding: 16px 12px;
+  }
+  .site-body-center {
+    width: 100%;
+    padding: 20px 16px;
+    max-height: none;
+    min-width: unset;
+  }
+  .site-body-right-column {
+    width: 100%;
+    position: static;
+    padding: 16px;
+    border-top: 1px dashed var(--green);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    max-height: none;
+  }
+  .site-body-right-column .sys-mini-res,
+  .site-body-right-column .sys-eq-wrap,
+  .site-body-right-column .sys-contact-wrap {
+    flex: 1;
+    min-width: 150px;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 }
