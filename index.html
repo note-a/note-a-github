@@ -6,7 +6,7 @@
   <title>SET IS THE WORLD</title>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: hidden; }
+html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; scroll-behavior: smooth; overflow-x: hidden; }
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
   background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
@@ -14,169 +14,214 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   animation: marquee 12s linear infinite;
 }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
-::-webkit-scrollbar {
-  width: 10px; height: 10px; background: #000;
+::-webkit-scrollbar { width: 10px; height: 10px; background: #000; }
+::-webkit-scrollbar-track { background: rgba(57,220,0,0.05); }
+::-webkit-scrollbar-thumb { background: #1e7400; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5); }
+
+.app-container {
+  display: flex; flex-direction: row; width: 1200px; margin: 32px auto 0;
+  gap: 0; padding: 0; min-height: calc(100vh - 32px);
 }
-::-webkit-scrollbar-track {
-  background: rgba(57,220,0,0.05);
-}
-::-webkit-scrollbar-thumb {
-  background: #1e7400; border-radius: 5px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5);
-}
-.app-container-top {
-  display: flex; flex-direction: row; width: 1000px; margin: 32px auto 0; gap: 20px;
-  padding: 0px; min-height: auto;
-  overflow-y: auto; max-height: auto;
-  contain: layout style paint;
-  scrollbar-width: none;
-}
-.app-container-top::-webkit-scrollbar {
-  display: none;
-}
-.app-container-bottom {
-  width: 100%; margin: 0; padding: 0 12px;
-  display: flex; justify-content: center;
-}
+
 .site-body-left-column {
-  width: 180px; flex-shrink: 0; border-right: 2px solid #39dc00; border-bottom: none;
-  padding: 20px 12px 12px 12px; position: static;
-  will-change: transform; transform: translateZ(0);
-  min-height: auto;
+  width: 200px; flex-shrink: 0; border-right: 2px solid #39dc00;
+  padding: 20px 12px; position: static; max-height: calc(100vh - 32px); overflow-y: auto;
 }
-.nav-links { padding: 12px 8px; }
+
+.nav-links { padding: 6px 8px; }
 .nav-file-title {
-  display: block; font-size: 15px; color: #39dc00; padding: 8px 12px;
-  text-decoration: none; cursor: pointer; margin-bottom: 4px;
+  display: block; font-size: 13px; color: #39dc00; padding: 6px 10px;
+  text-decoration: none; cursor: pointer; margin-bottom: 2px;
 }
+.nav-file-title:hover,
 .nav-file-title.is-active { background: #39dc00; color: #000; }
+
 .nav-terminal-log {
-  font-size: 13px; color: #39dc00; opacity: 0.7; padding: 12px 10px;
-  white-space: pre-wrap; margin-top: 14px; border-top: 1px dashed #39dc00;
-  line-height: 1.4; word-break: break-all;
+  font-size: 10px; color: #39dc00; opacity: 0.7; padding: 10px 8px;
+  white-space: pre-wrap; margin-top: 12px; border-top: 1px dashed #39dc00;
+  line-height: 1.3; word-break: break-all;
 }
+
 .site-body-center {
-  flex: 1; padding: 20px 24px 12px 24px;
-  will-change: scroll-position; backface-visibility: hidden;
+  flex: 0 0 600px; padding: 20px 12px; overflow-y: auto;
+  max-height: calc(100vh - 32px);
 }
+
 .site-body-right-column {
-  width: 100%; max-width: 1000px; flex-shrink: 0; padding: 20px; position: static;
-  border-left: none; border-top: 2px solid #39dc00;
-  will-change: transform; transform: translateZ(0);
-  min-height: auto;
-  display: flex; flex-direction: row; gap: 20px;
+  flex: 0 0 250px; padding: 20px 12px; border-left: 2px solid #39dc00;
+  position: static; max-height: calc(100vh - 32px); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 20px;
 }
-.markdown-rendered h1 {
-  font-size: 20px; margin-bottom: 20px;
-}
-.markdown-rendered h1::before {
-  content: ""; opacity: 0.6;
-}
+
 .sys-alert {
   border: 2px dashed #ff3333; background: rgba(255,51,51,0.05);
   margin: 10px 0 15px; padding: 12px 15px;
 }
+
+.sys-alert-header {
+  background: #ff3333; color: #000; padding: 6px 12px;
+  font-weight: bold; font-size: 11px;
+}
+
+.sys-alert-body {
+  padding: 8px 12px; color: #ffb000; font-size: 10px;
+}
+
 .m-monitor {
-  border: 2px solid #39dc00; background: #000; padding: 12px;
-  margin-top: 5px; color: #39dc00; width: 100%;
+  border: 2px solid #39dc00; background: #000; padding: 0;
+  color: #39dc00; width: 100%; min-height: 350px;
+  display: flex; flex-direction: column;
 }
+
+.m-monitor > div:first-child {
+  background: #39dc00; color: #000; padding: 6px 10px;
+  font-weight: bold; font-size: 11px;
+}
+
+.m-monitor > div:nth-child(2) {
+  flex: 1; padding: 10px; overflow-y: auto;
+  background: #000; color: #39dc00; font-size: 12px;
+  line-height: 1.5;
+}
+
+.m-monitor > div:last-child {
+  background: #000; border-top: 1px solid #39dc00;
+  padding: 6px 10px; font-size: 10px; color: #39dc00;
+}
+
+#terminal-text { margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; }
+#cursor { animation: blink 0.7s infinite; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
 .m-loading-wrap {
-  display: flex; align-items: center; width: 100%; margin-top: 20px;
-  padding: 10px 15px; border: 1px dashed #39dc00; background: #000;
+  display: flex; align-items: center; width: 100%;
+  padding: 8px 10px; border: 1px dashed #39dc00; background: #000;
+  margin-top: 10px;
 }
+
 .load-txt {
-  color: #39dc00; font-size: 13px; margin-right: 15px;
-  animation: blink 1.2s infinite;
+  color: #39dc00; font-size: 12px; margin-right: 10px;
+  animation: blink 1.2s infinite; font-weight: bold;
 }
-@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
 .m-loading-bar {
-  flex-grow: 1; height: 14px; border: 1px solid #39dc00; background: #000;
+  flex-grow: 1; height: 10px; border: 1px solid #39dc00; background: #000;
   position: relative; overflow: hidden;
 }
+
 .m-loading-bar::before {
   content: ""; position: absolute; top: 0; left: 0; height: 100%;
   width: 30%; background: #39dc00;
   animation: pulse 1.2s ease-in-out infinite alternate;
 }
+
 @keyframes pulse { 0% { width: 5%; } 100% { width: 70%; } }
-.sys-mini-res { margin-bottom: 0; flex: 0.8; min-width: 250px; }
-.sys-eq-wrap { margin-bottom: 0; flex: 1.5; min-width: 250px; }
-.sys-contact-wrap { margin-bottom: 0; flex: 0.8; min-width: 250px; }
-.sys-m-title { font-size: 13px; color: #ffb000; margin-bottom: 10px; font-weight: bold; }
-.sys-w-row { display: flex; align-items: center; margin-bottom: 10px; }
-.sys-w-label { font-size: 12px; width: 40px; flex-shrink: 0; }
-.sys-w-bar { flex-grow: 1; height: 12px; border: 1px solid #1e7400; background: #000; }
+
+.sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { flex: 1; }
+
+.sys-m-title { font-size: 12px; color: #ffb000; margin-bottom: 8px; font-weight: bold; }
+
+.sys-w-row { display: flex; align-items: center; margin-bottom: 6px; }
+.sys-w-label { font-size: 11px; width: 35px; color: #39dc00; }
+.sys-w-bar { flex-grow: 1; height: 10px; border: 1px solid #1e7400; background: #000; }
 .sys-w-fill { height: 100%; background: #39dc00; }
-.sys-eq-bars { display: flex; align-items: flex-end; height: 80px; gap: 6px; }
-.eq-bar { width: 16px; background: #39dc00; animation: bounce 1s infinite ease-in-out alternate; }
+
+.sys-eq-bars { display: flex; align-items: flex-end; height: 60px; gap: 4px; margin-bottom: 10px; }
+.eq-bar { flex: 1; background: #39dc00; animation: bounce 1s infinite ease-in-out alternate; }
 .eq-1 { animation-delay: 0.1s; } .eq-2 { animation-delay: 0.4s; } .eq-3 { animation-delay: 0.2s; }
 .eq-4 { animation-delay: 0.6s; } .eq-5 { animation-delay: 0.3s; }
-@keyframes bounce { 0% { height: 15px; } 100% { height: 80px; } }
-.sys-c-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
-.sys-c-label { width: 42px; opacity: 0.8; }
+
+@keyframes bounce { 0% { height: 15px; } 100% { height: 60px; } }
+
+.sys-c-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 11px; color: #39dc00; }
+.sys-c-label { width: 35px; opacity: 0.8; }
+.sys-c-link { color: #39dc00; text-decoration: none; word-break: break-all; }
+
 @media (max-width: 768px) {
-  .app-container-top { flex-direction: column; gap: 0; padding: 0; width: 100%; }
-  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; position: static; }
-  .site-body-center { width: 100%; padding: 20px 16px; max-height: none; min-width: unset; flex: unset; }
-  .app-container-bottom { width: 100%; padding: 0; }
-  .site-body-right-column { width: 100%; border-top: 2px solid #39dc00; padding: 16px; flex-direction: column; gap: 0; }
+  .app-container { flex-direction: column; width: 100%; gap: 0; padding: 0; }
+  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; max-height: none; }
+  .site-body-center { flex: 1; width: 100%; max-height: none; padding: 16px; }
+  .site-body-right-column { width: 100%; border-left: none; border-top: 2px solid #39dc00;
+    flex-direction: row; gap: 0; max-height: none; padding: 16px; }
+  .sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { flex: 1; min-width: 0; border-right: 1px dashed #39dc00; padding-right: 10px; }
+  .sys-contact-wrap { border-right: none; }
 }
   </style>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
-  <div class="app-container-top">
+  <div class="app-container">
+    <!-- 좌측 메뉴 + 터미널 로그 -->
     <div class="site-body-left-column">
       <nav class="nav-links">
         <a href="index.html" class="nav-file-title is-active">Project SET</a>
+        <a href="#" class="nav-file-title">SET Inclusion</a>
+        <a href="#" class="nav-file-title">Intro text</a>
+        <a href="#" class="nav-file-title">rule</a>
+        <a href="#" class="nav-file-title">reference</a>
         <a href="#" class="nav-file-title">Portfolio</a>
-        <a href="#" class="nav-file-title">About</a>
+        <a href="#" class="nav-file-title">video archive</a>
       </nav>
+      <div class="nav-terminal-log">----------------------------------------
+Linux kernel 6.8.0-v2-generic (x86_64)
+[  0.000000] init_archiver:
+structure_of_photography
+[  0.015241] sensors: body(coerced),
+gaze(suspended)
+[  0.110293] exec: ./measure_set --
+target=WORLD
+[  WARN ] scale_contaminated:
+already_part_of_world
+----------------------------------------
+root@system:~# ./merge_voices
+--apply_noise
+[ INFO ] port_1(AI): precise,
+indifferent
+[ INFO ] port_2(HUMAN): wandering,
+affective
+[ LOG  ] interference detected:
+words_transform_to_noise
+[ LOG  ] superimposition:
+vision_meets_language
+----------------------------------------
+root@system:~# check_status --final
+[ FAIL ] system_status: INCOMPLETE
+[ FAIL ] error_code: failure_to_close
+[ EXIT ] world_remains_open.
+root@system:~# █</div>
     </div>
 
-    <div class="site-body-center" style="flex:1; padding:16px 24px;">
-      <div class="markdown-rendered">
-        <div class="sys-alert">
-          <div style="background: #ff3333; color: #000; padding: 6px 20px; font-weight: bold;">
-            [!] SYSTEM_CRITICAL_WARNING
-          </div>
-          <div style="padding: 12px 15px; color: #ffb000; font-size: 11px;">
-            오류 코드 404: 아카이브 접근이 거부되었습니다.<br>
-            강제 열람을 시도할 경우 데이터가 손상될 수 있습니다.
-          </div>
-        </div>
-
-        <div class="m-monitor" style="padding:0;border:2px solid #39dc00;min-height:450px;display:flex;flex-direction:column;">
-          <!-- 헤더 -->
-          <div style="background:#39dc00;color:#000;padding:6px 12px;display:flex;justify-content:space-between;align-items:center;font-weight:bold;font-size:12px;">
-            <span>TERMINAL CHAT SYSTEM V.2.1</span>
-            <span style="color:#000;opacity:0.7;font-size:10px;">━━━━━━━</span>
-          </div>
-
-          <!-- 컨텐츠 영역 (TypeWriter 애니메이션) -->
-          <div style="flex:1;padding:15px;overflow-y:auto;background:#000;color:#39dc00;">
-            <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;line-height:1.6;"></pre><span id="cursor" style="animation:blink 0.7s infinite;">█</span>
-          </div>
-
-          <!-- 하단 상태바 -->
-          <div style="background:#000;border-top:1px solid #39dc00;padding:6px 12px;display:flex;justify-content:space-between;font-size:10px;color:#39dc00;">
-            <span style="opacity:0.6;">STATUS: ONLINE</span>
-            <span style="opacity:0.6;">█ ████░ 50%</span>
-          </div>
-        </div>
-
-        <div class="m-loading-wrap">
-          <div class="load-txt">LOADING...</div>
-          <div class="m-loading-bar"></div>
+    <!-- 중앙 콘텐츠 (600px 고정) -->
+    <div class="site-body-center">
+      <div class="sys-alert">
+        <div class="sys-alert-header">[!] SYSTEM_CRITICAL_WARNING</div>
+        <div class="sys-alert-body">
+          오류 코드 404: 아카이브 접근이 거부되었습니다.<br>
+          강제 열람을 시도할 경우 데이터가 손상될 수 있습니다.
         </div>
       </div>
-    </div>
-  </div>
 
-  <div class="app-container-bottom">
+      <div class="m-monitor">
+        <div>TERMINAL CHAT SYSTEM V.2.1</div>
+        <div>
+          <pre id="terminal-text"></pre><span id="cursor">█</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="opacity:0.6;">STATUS: ONLINE</span>
+          <span style="opacity:0.6;">█ ████░ 50%</span>
+        </div>
+      </div>
+
+      <div class="m-loading-wrap">
+        <div class="load-txt">LOADING...</div>
+        <div class="m-loading-bar"></div>
+      </div>
+    </div>
+
+    <!-- 우측 SYSTEM 패널 -->
     <div class="site-body-right-column">
       <div class="sys-mini-res">
         <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
@@ -198,15 +243,14 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 
       <div class="sys-contact-wrap">
         <div class="sys-m-title">&gt;&gt; CONNECTION</div>
-        <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" style="color:#39dc00;">noteofficial@naver.com</a></div>
-        <div class="sys-c-row"><span class="sys-c-label">insta</span> <span style="color:#39dc00;">saintnoted</span></div>
-        <div class="sys-c-row"><span class="sys-c-label">tell</span> <span style="color:#39dc00;">010-9793-5522</span></div>
+        <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" class="sys-c-link">noteofficial@naver.com</a></div>
+        <div class="sys-c-row"><span class="sys-c-label">insta</span> <span class="sys-c-link">saintnoted</span></div>
+        <div class="sys-c-row"><span class="sys-c-label">tell</span> <span class="sys-c-link">010-9793-5522</span></div>
       </div>
     </div>
   </div>
 
   <script>
-    // TypeWriter 애니메이션 함수
     function typeWriter(elementId, text, speed = 50) {
       const element = document.getElementById(elementId);
       const cursor = document.getElementById('cursor');
@@ -222,16 +266,12 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
           index++;
           setTimeout(type, speed);
         } else {
-          // 완료 후 커서 유지
-          if (cursor) {
-            cursor.style.animation = 'blink 0.7s infinite';
-          }
+          if (cursor) cursor.style.animation = 'blink 0.7s infinite';
         }
       }
       type();
     }
 
-    // 페이지 로드 시 실행
     document.addEventListener('DOMContentLoaded', function() {
       const text = "Set is the world. I'm measuring the perimeter of the set.\nBut the scale I hold is already contaminated by the world itself.";
       typeWriter('terminal-text', text, 50);
