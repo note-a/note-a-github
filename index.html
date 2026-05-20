@@ -27,9 +27,9 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5);
 }
 .app-container-top {
-  display: flex; width: 1000px; margin: 32px auto 0; gap: 20px;
-  padding: 0px; min-height: calc(100vh - 32px);
-  overflow-y: auto; max-height: calc(100vh - 32px);
+  display: flex; flex-direction: column; width: 1000px; margin: 32px auto 0; gap: 0;
+  padding: 0px; min-height: auto;
+  overflow-y: auto; max-height: auto;
   contain: layout style paint;
   scrollbar-width: none;
 }
@@ -41,10 +41,10 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   display: flex; justify-content: center;
 }
 .site-body-left-column {
-  width: 220px; flex-shrink: 0; border-right: 2px solid #39dc00;
-  padding: 20px 12px 12px 12px; position: sticky; top: 0;
+  width: 100%; flex-shrink: 0; border-right: none; border-bottom: 2px solid #39dc00;
+  padding: 20px 12px 12px 12px; position: static;
   will-change: transform; transform: translateZ(0);
-  min-height: 100vh;
+  min-height: auto;
 }
 .nav-links { padding: 12px 8px; }
 .nav-file-title {
@@ -134,7 +134,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
       </nav>
     </div>
 
-    <div class="site-body-center" style="flex:0 0 600px; padding:16px 0px;">
+    <div class="site-body-center" style="flex:1; width:100%; padding:16px 24px;">
       <div class="markdown-rendered">
         <div class="sys-alert">
           <div style="background: #ff3333; color: #000; padding: 6px 20px; font-weight: bold;">
