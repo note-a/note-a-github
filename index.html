@@ -15,8 +15,9 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 .app-container {
-  display: flex; width: 100%; margin-top: 32px; gap: 12px;
-  padding: 12px; min-height: calc(100vh - 32px);
+  display: flex; width: 100%; margin-top: 32px; gap: 30px;
+  padding: 12px 40px; min-height: calc(100vh - 32px);
+  justify-content: center;
 }
 .site-body-left-column {
   width: 180px; flex-shrink: 0; border-right: 2px solid #39dc00;
@@ -35,8 +36,8 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   line-height: 1.4; word-break: break-all;
 }
 .site-body-center {
-  flex: 1; padding: 24px; overflow-y: auto;
-  max-height: calc(100vh - 32px); min-width: 300px;
+  flex: 0 0 700px; padding: 16px; overflow-y: auto;
+  max-height: calc(100vh - 32px);
 }
 .site-body-right-column {
   width: 180px; flex-shrink: 0; padding: 12px 8px; position: sticky; top: 32px;
@@ -53,8 +54,8 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   margin: 30px 0 25px; padding: 12px 15px;
 }
 .m-monitor {
-  border: 2px solid #39dc00; background: #000; padding: 15px;
-  margin-top: 15px; color: #39dc00; width: 100%;
+  border: 2px solid #39dc00; background: #000; padding: 12px;
+  margin-top: 10px; color: #39dc00; width: 100%;
 }
 .m-loading-wrap {
   display: flex; align-items: center; width: 100%; margin-top: 20px;
