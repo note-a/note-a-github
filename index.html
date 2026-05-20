@@ -170,9 +170,9 @@ root@system:~# █</div>
             <span style="color:#000;opacity:0.7;font-size:10px;">━━━━━━━</span>
           </div>
 
-          <!-- 컨텐츠 영역 (나중에 채울 예정) -->
+          <!-- 컨텐츠 영역 (TypeWriter 애니메이션) -->
           <div style="flex:1;padding:15px;overflow-y:auto;background:#000;color:#39dc00;">
-            <!-- 여기에 콘텐츠가 들어갑니다 -->
+            <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;line-height:1.6;"></pre><span id="cursor" style="animation:blink 0.7s infinite;">█</span>
           </div>
 
           <!-- 하단 상태바 -->
@@ -216,5 +216,38 @@ root@system:~# █</div>
       </div>
     </div>
   </div>
+
+  <script>
+    // TypeWriter 애니메이션 함수
+    function typeWriter(elementId, text, speed = 50) {
+      const element = document.getElementById(elementId);
+      const cursor = document.getElementById('cursor');
+      let index = 0;
+
+      function type() {
+        if (index < text.length) {
+          if (text[index] === '\n') {
+            element.textContent += '\n';
+          } else {
+            element.textContent += text[index];
+          }
+          index++;
+          setTimeout(type, speed);
+        } else {
+          // 완료 후 커서 유지
+          if (cursor) {
+            cursor.style.animation = 'blink 0.7s infinite';
+          }
+        }
+      }
+      type();
+    }
+
+    // 페이지 로드 시 실행
+    document.addEventListener('DOMContentLoaded', function() {
+      const text = "Set is the world. I'm measuring the perimeter of the set.\nBut the scale I hold is already contaminated by the world itself.";
+      typeWriter('terminal-text', text, 50);
+    });
+  </script>
 </body>
 </html>
