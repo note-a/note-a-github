@@ -26,15 +26,19 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 ::-webkit-scrollbar-thumb:hover {
   background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5);
 }
-.app-container {
+.app-container-top {
   display: flex; width: 1000px; margin: 32px auto 0; gap: 20px;
   padding: 0px; min-height: calc(100vh - 32px);
   overflow-y: auto; max-height: calc(100vh - 32px);
   contain: layout style paint;
   scrollbar-width: none;
 }
-.app-container::-webkit-scrollbar {
+.app-container-top::-webkit-scrollbar {
   display: none;
+}
+.app-container-bottom {
+  width: 100%; margin: 0; padding: 0 12px;
+  display: flex; justify-content: center;
 }
 .site-body-left-column {
   width: 220px; flex-shrink: 0; border-right: 2px solid #39dc00;
@@ -58,10 +62,10 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   will-change: scroll-position; backface-visibility: hidden;
 }
 .site-body-right-column {
-  width: 250px; flex-shrink: 0; padding: 20px 20px 12px 20px; position: sticky; top: 0;
-  border-left: 2px solid #39dc00;
+  width: 100%; max-width: 1000px; flex-shrink: 0; padding: 20px; position: static;
+  border-left: none; border-top: 2px solid #39dc00;
   will-change: transform; transform: translateZ(0);
-  min-height: 100vh;
+  min-height: auto;
 }
 .markdown-rendered h1 {
   font-size: 20px; margin-bottom: 20px;
@@ -110,17 +114,18 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 .sys-c-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
 .sys-c-label { width: 42px; opacity: 0.8; }
 @media (max-width: 768px) {
-  .app-container { flex-direction: column; gap: 0; padding: 0; }
+  .app-container-top { flex-direction: column; gap: 0; padding: 0; width: 100%; }
   .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; position: static; }
   .site-body-center { width: 100%; padding: 20px 16px; max-height: none; min-width: unset; }
-  .site-body-right-column { width: 100%; position: static; padding: 16px; border-top: 1px dashed #39dc00; }
+  .app-container-bottom { width: 100%; padding: 0; }
+  .site-body-right-column { width: 100%; border-top: 2px solid #39dc00; padding: 16px; }
 }
   </style>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
-  <div class="app-container">
+  <div class="app-container-top">
     <div class="site-body-left-column">
       <nav class="nav-links">
         <a href="index.html" class="nav-file-title is-active">Project SET</a>
@@ -166,7 +171,9 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
         </div>
       </div>
     </div>
+  </div>
 
+  <div class="app-container-bottom">
     <div class="site-body-right-column">
       <div class="sys-mini-res">
         <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
