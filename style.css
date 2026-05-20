@@ -1,0 +1,528 @@
+/* ========================================================
+   GitHub Pages 전용 CSS — SET IS THE WORLD
+   ======================================================== */
+
+/* === 폰트 === */
+/* Win95Font.ttf 파일을 fonts/ 폴더에 넣으면 자동 적용 */
+@font-face {
+  font-family: "Win95Font";
+  src: url("fonts/Win95Font.ttf") format("truetype");
+}
+
+/* === 전역 리셋 === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --green:      #39dc00;
+  --green-dark: #1e7400;
+  --orange:     #ffb000;
+  --red:        #ff3333;
+  --bg:         #000000;
+  --font:       "Win95Font", "VT323", monospace;
+}
+
+/* === 기본 body === */
+html, body {
+  background-color: var(--bg);
+  color: var(--green);
+  font-family: var(--font);
+  -webkit-font-smoothing: none;
+  text-rendering: optimizeSpeed;
+  letter-spacing: -0.5px;
+  min-height: 100vh;
+  scrollbar-width: thin;
+  scrollbar-color: var(--green) var(--bg);
+}
+
+body {
+  background-image:
+    linear-gradient(rgba(57,220,0,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(52,161,0,0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* 스크롤바 (Chrome/Safari) */
+::-webkit-scrollbar { width: 10px; height: 10px; background: var(--bg); }
+::-webkit-scrollbar-track { background: var(--bg); border-left: 1px solid var(--green-dark); }
+::-webkit-scrollbar-thumb { background: var(--green); border: 2px solid var(--bg); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+::-webkit-scrollbar-corner { background: var(--bg); }
+
+/* 커서 */
+html, body { cursor: crosshair; }
+a:hover, button:hover {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><circle cx="5" cy="5" r="2" fill="%2339dc00"/></svg>'), pointer;
+}
+
+/* 선택 영역 */
+::selection { background: var(--green); color: var(--bg); }
+
+/* 링크 */
+a { color: var(--green); text-decoration: none; }
+a:visited { color: var(--green); }
+
+/* ========================================================
+   부팅 스플래시
+   ======================================================== */
+.sys-splash-blanket {
+  display: none;
+}
+
+.sys-splash-text {
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 2;
+  text-align: left;
+  padding: 30px;
+  text-shadow: 0 0 10px var(--green);
+}
+
+/* ========================================================
+   상단 스크롤 배너 (데스크탑)
+   ======================================================== */
+.top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bg);
+  border-bottom: 2px dashed var(--red);
+  color: var(--red);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 6px 0;
+  z-index: 99999;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: cyber-marquee 12s linear infinite;
+}
+
+@keyframes cyber-marquee {
+  0%   { text-indent: 100vw; }
+  100% { text-indent: -150vw; }
+}
+
+@media (max-width: 768px) {
+  .top-banner { display: none; }
+}
+
+/* ========================================================
+   전체 레이아웃 — 3단 컬럼 (중앙 정렬 + 여백 최소화)
+   ======================================================== */
+.app-container {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 850px;    /* 더 줄임 */
+  margin: 0 auto;      /* 화면 가운데 정렬 */
+  padding-top: 32px;   /* 상단 배너 높이 확보 */
+  min-height: 100vh;
+  gap: 6px;            /* 섹션 간 공백 더 최소화 */
+}
+
+/* ── 왼쪽 사이드바 ── */
+.site-body-left-column {
+  width: 200px;        /* 조금 줄임 */
+  min-width: 200px;
+  flex-shrink: 0;
+  border-right: 2px solid var(--green);
+  padding: 16px 8px;   /* padding 줄임 */
+  position: sticky;
+  top: 32px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+.nav-links {
+  padding: 6px 8px;
+}
+
+.nav-file-title {
+  display: block;
+  font-size: 13px;     /* 조금 작게 */
+  color: var(--green);
+  padding: 5px 8px;
+  text-decoration: none;
+  font-family: var(--font);
+  cursor: pointer;
+}
+.nav-file-title:hover,
+.nav-file-title.is-active {
+  background: var(--green);
+  color: var(--bg);
+}
+
+.nav-terminal-log {
+  font-size: 9px;      /* 조금 작게 */
+  color: var(--green);
+  opacity: 0.7;
+  padding: 10px 8px;
+  white-space: pre-wrap;
+  margin-top: 12px;
+  border-top: 1px dashed var(--green);
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+/* ── 메인 콘텐츠 ── */
+.site-body-center {
+  flex: 0 0 460px;     /* 더 좁게 */
+  padding: 16px 18px;  /* padding 줄임 */
+  overflow-x: hidden;
+}
+
+/* ── 오른쪽 패널 (푸터 내용) ── */
+.site-body-right-column {
+  width: 160px;        /* 더 좁게 */
+  min-width: 160px;
+  flex-shrink: 0;
+  padding: 8px 0;
+  position: sticky;
+  top: 32px;
+}
+
+/* 오른쪽 패널의 푸터 아이템들을 세로로 쌓음 */
+.site-body-right-column .sys-mini-res,
+.site-body-right-column .sys-eq-wrap,
+.site-body-right-column .sys-contact-wrap {
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.site-body-right-column .sys-m-title {
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.site-body-right-column .sys-w-label {
+  font-size: 11px;
+  width: 30px;
+}
+
+.site-body-right-column .sys-eq-bars {
+  height: 50px;
+}
+
+.site-body-right-column .eq-bar {
+  width: 10px;
+}
+
+.site-body-right-column .sys-c-row {
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+/* ── 모바일 ── */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+    padding-top: 0;
+  }
+  .site-body-left-column {
+    width: 100%;
+    min-width: unset;
+    border-right: none;
+    border-bottom: 2px solid var(--green);
+    position: static;
+    max-height: none;
+  }
+  .site-body-right-column {
+    width: 100%;
+    min-width: unset;
+    position: static;
+  }
+}
+
+/* ========================================================
+   그래프 패널 (숨김)
+   ======================================================== */
+.graph-view-container {
+  display: none;
+}
+
+.graph-header-bar {
+  display: none;
+}
+
+#graphCanvas {
+  display: none;
+}
+
+/* ========================================================
+   본문 타이포그래피
+   ======================================================== */
+.markdown-rendered {
+  font-family: var(--font);
+  color: var(--green);
+}
+
+.markdown-rendered h1 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.markdown-rendered h1::before {
+  content: "root@system:~# ";
+  opacity: 0.6;
+  font-size: 14px;
+}
+.markdown-rendered h1::after {
+  content: " █";
+  animation: terminal-blink 1s step-start infinite;
+}
+
+.markdown-rendered p { font-size: 13px; line-height: 1.6; }
+.markdown-rendered li { font-size: 13px; line-height: 1.6; }
+.markdown-rendered h2 { font-size: 18px; margin: 16px 0 8px; }
+.markdown-rendered h3 { font-size: 15px; margin: 12px 0 6px; }
+
+.markdown-rendered :not(pre) > code {
+  background: transparent;
+  color: var(--orange);
+  padding: 0 4px;
+  font-weight: bold;
+  border: none;
+  box-shadow: none;
+}
+
+@keyframes terminal-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ========================================================
+   시스템 경고 박스
+   ======================================================== */
+.sys-alert {
+  border: 2px dashed var(--red);
+  background: rgba(255,51,51,0.05);
+  margin: 30px 0 25px;
+  font-family: var(--font);
+}
+
+.sys-alert-header {
+  background: var(--red);
+  color: var(--bg);
+  padding: 6px 20px;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.sys-alert-body {
+  padding: 12px 15px;
+  color: var(--orange);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.blink-warn {
+  animation: terminal-blink 1s step-end infinite;
+}
+
+/* ========================================================
+   메인 터미널 모니터
+   ======================================================== */
+.m-monitor {
+  border: 2px solid var(--green);
+  background: var(--bg);
+  padding: 15px;
+  margin-top: 15px;
+  font-family: var(--font);
+  color: var(--green);
+  width: 100%;
+}
+
+.m-monitor p { margin: 0; padding: 0; line-height: 1.5; }
+.m-monitor div, .m-monitor span {
+  font-size: 11px;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .m-monitor [style*="grid-template-columns:1fr 1fr"],
+  [style*="grid-template-columns: 1fr 1fr"] {
+    display: block !important;
+  }
+}
+
+/* ========================================================
+   로딩 바
+   ======================================================== */
+.m-loading-wrap {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px 15px;
+  border: 1px dashed var(--green);
+  background: var(--bg);
+}
+
+.load-txt {
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 15px;
+  letter-spacing: 2px;
+  animation: loading-blink 1.2s infinite;
+  transform: translateZ(0);
+}
+
+@keyframes loading-blink {
+  0%, 49%   { visibility: visible; opacity: 1; }
+  50%, 100% { visibility: hidden;  opacity: 0; }
+}
+
+.m-loading-bar {
+  flex-grow: 1;
+  height: 14px;
+  border: 1px solid var(--green);
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.m-loading-bar::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--green) 0px, var(--green) 12px,
+    transparent 12px, transparent 16px
+  );
+  background-size: 16px 100%;
+  animation: bar-eq-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes bar-eq-pulse {
+  0%   { width: 5%;  }
+  100% { width: 70%; }
+}
+
+/* ========================================================
+   하단 푸터 패널
+   ======================================================== */
+.sys-footer-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  border-top: 1px dashed var(--green);
+  margin-top: 25px;
+  padding-top: 20px;
+  gap: 35px;
+}
+
+.sys-m-title {
+  font-size: 14px;
+  color: var(--orange);
+  margin-bottom: 12px;
+  font-family: var(--font);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* CPU/MEM 모니터 */
+.sys-mini-res { width: 165px; flex-shrink: 0; }
+.sys-w-row { display: flex; align-items: center; margin-bottom: 9px; }
+.sys-w-label { font-size: 13px; width: 35px; color: var(--green); flex-shrink: 0; }
+.sys-w-bar { flex-grow: 1; height: 10px; border: 1px solid var(--green-dark); background: var(--bg); }
+.sys-w-fill { height: 100%; background: var(--green); }
+
+/* 이퀄라이저 */
+.sys-eq-wrap { width: 120px; flex-shrink: 0; }
+.sys-eq-bars {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  height: 65px;
+  gap: 5px;
+}
+.eq-bar {
+  width: 14px;
+  background: var(--green);
+  animation: eq-bounce 1s infinite ease-in-out alternate;
+}
+.eq-1 { animation-delay: 0.1s; }
+.eq-2 { animation-delay: 0.4s; }
+.eq-3 { animation-delay: 0.2s; }
+.eq-4 { animation-delay: 0.6s; }
+.eq-5 { animation-delay: 0.3s; }
+
+@keyframes eq-bounce {
+  0%   { height: 10px; }
+  100% { height: 65px; }
+}
+
+/* 연락처 */
+.sys-contact-wrap { flex-shrink: 0; }
+.sys-c-row { display: flex; align-items: center; margin-bottom: 7px; font-size: 13px; color: var(--green); }
+.sys-c-label { width: 45px; color: var(--green); opacity: 0.8; }
+.sys-c-link { color: var(--green); text-decoration: none; }
+
+/* ========================================================
+   호버 글리치 효과
+   ======================================================== */
+.sys-m-title:hover {
+  color: var(--orange);
+  text-shadow: 2px 0 var(--green), -2px 0 var(--green-dark);
+  animation: glitch-shake 0.15s linear infinite;
+  cursor: crosshair;
+}
+
+@keyframes glitch-shake {
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-2px, 1px); }
+  40%  { transform: translate(-1px, -1px); }
+  60%  { transform: translate(2px, 1px); }
+  80%  { transform: translate(1px, -1px); }
+  100% { transform: translate(0); }
+}
+
+/* ========================================================
+   콜아웃 박스 (마크다운 > [!note] 등)
+   ======================================================== */
+.callout {
+  background: rgba(255,176,0,0.1);
+  border: 1px solid var(--orange);
+  border-radius: 0;
+  padding: 12px 16px;
+  margin: 20px 0;
+}
+.callout-title { color: var(--orange); font-weight: bold; margin-bottom: 6px; }
+.callout-content { color: var(--orange); font-family: var(--font); letter-spacing: 1px; }
+
+/* ========================================================
+   데이터 글리치 애니메이션
+   ======================================================== */
+@keyframes core-data-glitch {
+  0%, 74%   { opacity: 1; }
+  75%, 84%  { opacity: 0; }
+  85%, 91%  { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+.sys-blink {
+  animation: fatal-glitch 0.5s infinite;
+  transform: translateZ(0);
+}
+
+@keyframes fatal-glitch {
+  0%, 74%   { opacity: 1; filter: blur(0px); }
+  75%, 84%  { opacity: 0; filter: blur(2px); }
+  85%, 91%  { opacity: 1; filter: blur(0px); }
+  92%, 100% { opacity: 0; filter: blur(2px); }
+}
