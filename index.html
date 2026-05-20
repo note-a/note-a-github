@@ -66,6 +66,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   border-left: none; border-top: 2px solid #39dc00;
   will-change: transform; transform: translateZ(0);
   min-height: auto;
+  display: flex; flex-direction: row; gap: 20px;
 }
 .markdown-rendered h1 {
   font-size: 20px; margin-bottom: 20px;
@@ -100,7 +101,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   animation: pulse 1.2s ease-in-out infinite alternate;
 }
 @keyframes pulse { 0% { width: 5%; } 100% { width: 70%; } }
-.sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { margin-bottom: 20px; }
+.sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { margin-bottom: 0; flex: 1; min-width: 250px; }
 .sys-m-title { font-size: 13px; color: #ffb000; margin-bottom: 10px; font-weight: bold; }
 .sys-w-row { display: flex; align-items: center; margin-bottom: 10px; }
 .sys-w-label { font-size: 12px; width: 40px; flex-shrink: 0; }
@@ -118,7 +119,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; position: static; }
   .site-body-center { width: 100%; padding: 20px 16px; max-height: none; min-width: unset; }
   .app-container-bottom { width: 100%; padding: 0; }
-  .site-body-right-column { width: 100%; border-top: 2px solid #39dc00; padding: 16px; }
+  .site-body-right-column { width: 100%; border-top: 2px solid #39dc00; padding: 16px; flex-direction: column; gap: 0; }
 }
   </style>
 </head>
