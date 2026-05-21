@@ -201,6 +201,7 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100%; s
     function typeWriter(elementId, text, speed = 50, callback, cursorId = 'cursor') {
       const element = document.getElementById(elementId);
       const cursor = document.getElementById(cursorId);
+      const container = element.parentElement;
       let index = 0;
 
       function type() {
@@ -211,6 +212,12 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100%; s
             element.textContent += text[index];
           }
           index++;
+          // 자동 스크롤: 컨테이너를 최하단으로
+          if (container) {
+            setTimeout(() => {
+              container.scrollTop = container.scrollHeight;
+            }, 0);
+          }
           setTimeout(type, speed);
         } else {
           if (cursor) cursor.style.animation = 'blink 0.7s infinite';
