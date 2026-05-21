@@ -46,7 +46,7 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; 
 .m-monitor > div:nth-child(2) {
   flex: 1; padding: 10px; overflow-y: auto; min-height: 0;
   background: #000; color: #39dc00; font-size: 12px;
-  line-height: 1.5; position: relative;
+  line-height: 1.5; position: relative; overflow: visible;
 }
 
 .m-monitor > div:last-child {
@@ -99,10 +99,10 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; 
 }
 
 #error-page {
-  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
   background: #000; color: #ff9900; padding: 20px; text-align: center;
   overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.8;
-  z-index: 9999;
+  z-index: 100;
 }
 
 @keyframes glitch {
