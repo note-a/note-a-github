@@ -2647,17 +2647,18 @@ ${preview}
         }, 0);
       } else if (content.isSlideshow) {
         // Slideshow format - show all slides as list
+        const escHtml = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
         mobileContent.innerHTML = '';
         const slides = content.slides || [];
         let html = `<div style="padding: 12px;"><strong>${content.title} (${slides.length} slides)</strong><br><br>`;
 
         slides.forEach((slide, idx) => {
           html += `<div style="border: 1px solid #39dc00; padding: 8px; margin-bottom: 8px;">
-            <div style="color: #39dc00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${slide.title}</div>
+            <div style="color: #39dc00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${escHtml(slide.title)}</div>
             <div style="color: #888; font-size: 11px; margin-bottom: 6px;">
-              ${slide.category} | ${slide.author} | ${slide.year}
+              ${escHtml(slide.category)} | ${escHtml(slide.author)} | ${escHtml(slide.year)}
             </div>
-            <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${slide.text}</div>
+            <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${escHtml(slide.text)}</div>
           </div>`;
         });
         html += '</div>';
