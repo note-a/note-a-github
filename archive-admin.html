@@ -598,11 +598,33 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     // Portfolio data storage
     let portfolioEditData = {};
 
-    // Load portfolio data from storage
-    function loadPortfolioData() {
+    // Load portfolio data from storage or admin-contents.json
+    async function loadPortfolioData() {
+      // First try localStorage
       const saved = localStorage.getItem('adminContents');
       if (saved) {
         portfolioEditData = JSON.parse(saved);
+        console.log('Loaded portfolio data from localStorage');
+        return;
+      }
+
+      // If not in localStorage, try to fetch from admin-contents.json
+      try {
+        console.log('Fetching admin-contents.json...');
+        const response = await fetch('/admin-contents.json?t=' + Date.now());
+        if (response.ok) {
+          const data = await response.json();
+          portfolioEditData = data;
+          console.log('Loaded portfolio data from admin-contents.json');
+          console.log('portfolioEditData.project:', portfolioEditData.project ? 'exists' : 'missing');
+          if (portfolioEditData.project?.slides) {
+            console.log('SLIDE 1 text in portfolioEditData:', portfolioEditData.project.slides[0]?.text?.substring(0, 100));
+          }
+        } else {
+          console.log('admin-contents.json response not ok:', response.status);
+        }
+      } catch (err) {
+        console.log('Could not load admin-contents.json:', err);
       }
     }
 
@@ -620,7 +642,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         // Show portfolio edit UI
         if (terminalSection) terminalSection.style.display = 'none';
         if (portfolioEditSection) portfolioEditSection.style.display = 'flex';
-        loadPortfolioEditForm('project');
+        loadPortfolioEditForm('project').catch(console.error);
         return;
       }
 
@@ -903,9 +925,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     }
 
     // Portfolio Edit Functions
-    function loadPortfolioEditForm(subsection) {
+    async function loadPortfolioEditForm(subsection) {
       const portfolioEditContent = document.getElementById('portfolio-edit-content');
-      loadPortfolioData();
+      await loadPortfolioData();
 
       let formHTML = '';
 
@@ -941,7 +963,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     function onSubsectionTabClick(e) {
       const subsection = e.target.getAttribute('data-subsection');
-      loadPortfolioEditForm(subsection);
+      loadPortfolioEditForm(subsection).catch(console.error);
     }
 
     function generateProjectSlidesForm() {
