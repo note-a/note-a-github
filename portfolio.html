@@ -2667,11 +2667,11 @@ ${preview}
         const isCardFormat = section === 'reference';
 
         let html = `
-          <div style="padding: ${isCardFormat ? '12px' : '0'}; border-top: 1px solid #39dc00;">
+          <div style="padding: 0; border-top: 1px solid #39dc00;">
             <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; font-weight: bold; color: #39dc00; font-size: 11px;">
               ${content.title.toUpperCase()} (${allItems.length} items)
             </div>
-            <div style="padding: ${isCardFormat ? '8px' : '0'};">
+            <div style="padding: ${isCardFormat ? '8px' : '0'}; ${isCardFormat ? 'display: grid; grid-template-columns: 1fr 1fr; gap: 8px;' : ''}">
         `;
 
         allItems.forEach((item, idx) => {
