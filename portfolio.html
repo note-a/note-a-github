@@ -1331,8 +1331,9 @@ REQUIRE LOGIN: No (Public access enabled)
           `;
           terminalContent.innerHTML = archiveHTML;
 
-          // Display all photos initially
-          displayPhotoGallery(content.photos, content.photos);
+          // Don't display photos initially - wait for search
+          const gallery = document.getElementById('photoGallery');
+          gallery.innerHTML = '<div class="no-results">검색 키워드를 입력하세요: crash, floating, shadow</div>';
 
           // Setup search functionality
           setupPhotoSearch(content.photos);
@@ -1864,6 +1865,7 @@ ${preview}
     function setupPhotoSearch(allPhotos) {
       const searchInput = document.getElementById('archiveSearchInput');
       const searchBtn = document.getElementById('archiveSearchBtn');
+      const gallery = document.getElementById('photoGallery');
 
       if (!searchInput || !searchBtn) return;
 
@@ -1871,7 +1873,8 @@ ${preview}
         const query = searchInput.value.toLowerCase().trim();
 
         if (!query) {
-          displayPhotoGallery(allPhotos, allPhotos);
+          // No search term - show empty message
+          gallery.innerHTML = '<div class="no-results">검색 키워드를 입력하세요: crash, floating, shadow</div>';
           return;
         }
 
