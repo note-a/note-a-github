@@ -363,6 +363,8 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
+                  document.getElementById('terminal-text').style.display = 'none';
+                  document.getElementById('cursor').style.display = 'none';
                   document.getElementById('error-page').style.display = 'block';
                 }, 3000);
               }, 800);
