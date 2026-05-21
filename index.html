@@ -171,18 +171,6 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   </style>
 </head>
 <body>
-  <div id="error-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;z-index:10000;color:#ff9900;font-family:monospace;padding:40px;text-align:center;align-items:center;justify-content:center;flex-direction:column;">
-    <div style="font-size:36px;font-weight:bold;border:3px solid #ff9900;padding:20px 40px;margin-bottom:60px;">Error</div>
-    <div style="max-width:700px;margin-bottom:40px;line-height:2;font-size:13px;">
-      <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
-      <div>00001563. The current application will be terminated.</div>
-      <div style="margin-top:40px;">* Press any key to terminate the current application.</div>
-      <div>* Press your hot keys again to restart your computer. You will</div>
-      <div style="margin-bottom:40px;">lose any unsaved information in all applications.</div>
-      <div style="margin-top:60px;font-size:16px;">Press any key continue</div>
-    </div>
-  </div>
-
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="app-container">
@@ -238,8 +226,21 @@ root@system:~# █</div>
 
       <div class="m-monitor">
         <div>TERMINAL CHAT SYSTEM V.2.1</div>
-        <div>
-          <pre id="terminal-text"></pre><span id="cursor">█</span>
+        <div style="flex:1;padding:10px;overflow-y:auto;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+          <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor">█</span>
+          <div id="error-page" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;">
+            <div style="margin-top:40px;">
+              <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
+              <div style="margin-bottom:40px;line-height:2;font-size:11px;">
+                <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+                <div>00001563. The current application will be terminated.</div>
+                <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
+                <div>* Press your hot keys again to restart your computer. You will</div>
+                <div>lose any unsaved information in all applications.</div>
+                <div style="margin-top:40px;">Press any key continue</div>
+              </div>
+            </div>
+          </div>
         </div>
         <div style="display:flex;justify-content:space-between;">
           <span style="opacity:0.6;">STATUS: ONLINE</span>
@@ -364,11 +365,11 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
-                  document.getElementById('error-overlay').style.display = 'flex';
+                  document.getElementById('error-page').style.display = 'block';
 
                   // 에러 페이지에서 아무 키나 누르면 창 닫기
                   document.addEventListener('keydown', function closeError() {
-                    document.getElementById('error-overlay').style.display = 'none';
+                    document.getElementById('error-page').style.display = 'none';
                     document.removeEventListener('keydown', closeError);
                   });
                 }, 3000);
