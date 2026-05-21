@@ -303,7 +303,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .form-group textarea {
   resize: vertical;
-  min-height: 60px;
+  min-height: 200px;
+  max-height: 600px;
 }
 
 .modal-buttons {
@@ -452,10 +453,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <div style="padding: 12px; border-bottom: 1px solid #39dc00; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0;">
         <button class="portfolio-subsection-tab active" data-subsection="project" onclick="loadPortfolioEditForm('project')" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">PROJECT</button>
         <button class="portfolio-subsection-tab" data-subsection="inclusion" onclick="loadPortfolioEditForm('inclusion')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INCLUSION</button>
-        <button class="portfolio-subsection-tab" data-subsection="intro" onclick="loadPortfolioEditForm('intro')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INTRO</button>
-        <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">RULE</button>
+        <button class="portfolio-subsection-tab" data-subsection="intro" onclick="loadPortfolioEditForm('intro')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ENTIRE</button>
+        <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">LOG</button>
         <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">REFERENCE</button>
-        <button class="portfolio-subsection-tab" data-subsection="video" onclick="loadPortfolioEditForm('video')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">VIDEO</button>
         <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ARCHIVE</button>
       </div>
       <div id="portfolio-edit-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; color: #39dc00; font-size: 11px;"></div>
@@ -499,8 +499,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             <option value="project">SET</option>
             <option value="inclusion">SET Inclusion</option>
             <option value="archive">Archive</option>
-            <option value="intro">Intro text</option>
-            <option value="rule">rule</option>
+            <option value="intro">entire</option>
+            <option value="rule">log</option>
             <option value="reference">reference</option>
             <option value="video">video archive</option>
           </select>
@@ -531,6 +531,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       archived: {
         title: '보관함',
         items: []
+      },
+      rule: {
+        title: 'log',
+        items: []
+      },
+      reference: {
+        title: 'reference',
+        items: []
       }
     };
 
@@ -538,10 +546,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     function loadArchiveData() {
       const saved = localStorage.getItem('archiveData');
       if (saved) {
-        const parsed = JSON.parse(saved);
-        archiveData.drafts.items = parsed.drafts || [];
-        archiveData.completed.items = parsed.completed || [];
-        archiveData.archived.items = parsed.archived || [];
+        try {
+          const parsed = JSON.parse(saved);
+          // Handle both old format (array) and new format (already items arrays)
+          archiveData.drafts.items = Array.isArray(parsed.drafts) ? parsed.drafts : (parsed.drafts?.items || []);
+          archiveData.completed.items = Array.isArray(parsed.completed) ? parsed.completed : (parsed.completed?.items || []);
+          archiveData.archived.items = Array.isArray(parsed.archived) ? parsed.archived : (parsed.archived?.items || []);
+          archiveData.rule.items = Array.isArray(parsed.rule) ? parsed.rule : (parsed.rule?.items || []);
+          archiveData.reference.items = Array.isArray(parsed.reference) ? parsed.reference : (parsed.reference?.items || []);
+        } catch (e) {
+          console.error('Error loading archive data:', e);
+        }
       }
     }
 
@@ -550,7 +565,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       localStorage.setItem('archiveData', JSON.stringify({
         drafts: archiveData.drafts.items,
         completed: archiveData.completed.items,
-        archived: archiveData.archived.items
+        archived: archiveData.archived.items,
+        rule: archiveData.rule.items,
+        reference: archiveData.reference.items
       }));
     }
 
@@ -568,8 +585,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     }
 
+    // Load portfolio data on page init
+    loadPortfolioData();
+
     // Load content
     function loadContent(section) {
+      console.log('loadContent called with section:', section);
       const terminalContent = document.getElementById('terminalContent');
       const portfolioEditSection = document.getElementById('portfolio-edit-section');
       const terminalSection = document.querySelector('.terminal-section');
@@ -587,44 +608,80 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       if (portfolioEditSection) portfolioEditSection.style.display = 'none';
 
       const content = archiveData[section];
+      console.log('Content:', content);
 
       if (content) {
+        // Check if mobile
+        const isMobile = window.innerWidth <= 768;
+
         // List format
-        const listHTML = `
-          <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
-            <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; flex-shrink: 0; display: flex;">
-              <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
-              <div style="width: 150px; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">CATEGORY</div>
-              <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
+        let listHTML;
+        if (isMobile) {
+          // Mobile format - simpler list
+          listHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+              <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0; padding: 8px;">
+                ${content.items.length === 0 ?
+                  '<div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">No posts yet</div>' :
+                  content.items.map((item, idx) => `
+                    <div class="list-item" data-index="${idx}" style="cursor: pointer; border: 1px solid #39dc00; padding: 8px; margin-bottom: 8px; background: #000;">
+                      <div style="color: #39dc00; font-size: 10px; font-weight: bold; margin-bottom: 4px;">${item.title || item.id}</div>
+                      <div style="color: #888; font-size: 9px;">
+                        <span>${item.category || 'N/A'}</span> • <span>${item.status || 'DRAFT'}</span>
+                      </div>
+                      <div style="color: #666; font-size: 8px; margin-top: 4px;">${item.author || ''} (${item.year || ''})</div>
+                    </div>
+                  `).join('')
+                }
+              </div>
+              <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between; flex-shrink: 0;">
+                <span>TOTAL: ${content.items.length}</span>
+                <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
+              </div>
             </div>
-            <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
-              ${content.items.map((item, idx) => `
-                <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
-                  <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
+          `;
+        } else {
+          // Desktop format - table
+          listHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+              <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; flex-shrink: 0; display: flex;">
+                <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
+                <div style="width: 150px; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">CATEGORY</div>
+                <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
+              </div>
+              <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
+                ${content.items.map((item, idx) => `
+                  <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
+                    <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
+                    </div>
+                    <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      ${item.category}
+                    </div>
+                    <div style="width: 100px; padding: 6px 12px; color: #39dc00; font-size: 9px;">
+                      ${item.status || 'DRAFT'}
+                    </div>
                   </div>
-                  <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    ${item.category}
-                  </div>
-                  <div style="width: 100px; padding: 6px 12px; color: #39dc00; font-size: 9px;">
-                    ${item.status || 'DRAFT'}
-                  </div>
-                </div>
-              `).join('')}
+                `).join('')}
+              </div>
+              <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between;">
+                <span>TOTAL: ${content.items.length}</span>
+                <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
+              </div>
             </div>
-            <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between;">
-              <span>TOTAL: ${content.items.length}</span>
-              <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
-            </div>
-          </div>
-        `;
+          `;
+        }
         terminalContent.innerHTML = listHTML;
 
         // Setup new post button
         setupNewPostModal(section);
 
         // Setup list item click handlers
-        setTimeout(() => setupListItemClickHandlers(section), 50);
+        console.log('Setting up list item click handlers for section:', section);
+        setTimeout(() => {
+          console.log('List items count:', document.querySelectorAll('.list-item').length);
+          setupListItemClickHandlers(section);
+        }, 50);
       }
     }
 
@@ -673,6 +730,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         };
 
         archiveData[currentSection].items.push(newItem);
+        console.log('New item added:', currentSection, newItem);
+        console.log('archiveData[' + currentSection + '].items:', archiveData[currentSection].items);
         saveArchiveData();
 
         modal.classList.remove('active');
@@ -694,23 +753,51 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       listItems.forEach((item, idx) => {
         item.addEventListener('click', () => {
+          if (!archiveData[section] || !archiveData[section].items[idx]) {
+            console.error('Item not found:', section, idx);
+            return;
+          }
+
           const selectedItem = archiveData[section].items[idx];
-          const detailHTML = `[${selectedItem.id}]
-Category: ${selectedItem.category}
-Status: ${selectedItem.status}
-Author: ${selectedItem.author}
-Year: ${selectedItem.year}
 
-====================================================
+          // Show detail view with edit/delete buttons
+          const contentDiv = document.getElementById('contentText');
+          if (contentDiv) {
+            contentDiv.innerHTML = `
+              <div style="border: 1px solid #39dc00; padding: 12px; margin-bottom: 12px;">
+                <div style="color: #39dc00; font-weight: bold; margin-bottom: 8px;">[${selectedItem.id}]</div>
+                <div style="color: #888; font-size: 11px; margin-bottom: 8px;">
+                  Category: ${selectedItem.category} | Status: ${selectedItem.status}<br>
+                  Author: ${selectedItem.author} | Year: ${selectedItem.year}
+                </div>
+                <div style="border: 1px dashed #39dc00; padding: 8px; margin-bottom: 12px; background: #000;">
+                  <div style="color: #39dc00; white-space: pre-wrap; word-wrap: break-word;">${selectedItem.preview}</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button id="editBtn-${idx}" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold;">EDIT</button>
+                  <button id="deleteBtn-${idx}" style="background: #ff3333; color: #000; border: 1px solid #ff3333; padding: 6px 12px; cursor: pointer; font-weight: bold;">DELETE</button>
+                  <button id="backBtn-${idx}" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer;">BACK</button>
+                </div>
+              </div>
+            `;
 
-${selectedItem.preview}
+            // Setup button handlers
+            document.getElementById(`editBtn-${idx}`)?.addEventListener('click', () => {
+              showEditForm(section, idx, selectedItem);
+            });
 
-====================================================
+            document.getElementById(`deleteBtn-${idx}`)?.addEventListener('click', () => {
+              if (confirm('정말 삭제하시겠습니까?')) {
+                archiveData[section].items.splice(idx, 1);
+                saveArchiveData();
+                loadContent(section);
+              }
+            });
 
-[EDIT] [DELETE] [BACK]`;
-
-          const contentText = document.getElementById('contentText');
-          contentText.textContent = detailHTML;
+            document.getElementById(`backBtn-${idx}`)?.addEventListener('click', () => {
+              loadContent(section);
+            });
+          }
 
           const terminalContent = document.querySelector('.terminal-content');
           if (terminalContent) {
@@ -725,6 +812,72 @@ ${selectedItem.preview}
         item.addEventListener('mouseout', () => {
           item.style.background = 'transparent';
         });
+      });
+    }
+
+    // Show edit form for a post
+    function showEditForm(section, idx, item) {
+      const contentDiv = document.getElementById('contentText');
+      if (!contentDiv) return;
+
+      contentDiv.innerHTML = `
+        <div style="border: 1px solid #39dc00; padding: 12px;">
+          <div style="color: #39dc00; font-weight: bold; margin-bottom: 12px;">EDIT POST</div>
+
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">Title/ID</label>
+            <input type="text" id="editTitle" value="${item.title}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
+          </div>
+
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">Author</label>
+            <input type="text" id="editAuthor" value="${item.author}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
+          </div>
+
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">Year</label>
+            <input type="text" id="editYear" value="${item.year}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
+          </div>
+
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">Category</label>
+            <input type="text" id="editCategory" value="${item.category}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
+          </div>
+
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">Status</label>
+            <input type="text" id="editStatus" value="${item.status}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
+          </div>
+
+          <div style="margin-bottom: 12px;">
+            <label style="color: #39dc00; font-size: 11px;">Content</label>
+            <textarea id="editContent" style="width: 100%; height: 200px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px; resize: vertical;">${item.preview}</textarea>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button id="saveEditBtn" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold;">SAVE</button>
+            <button id="cancelEditBtn" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer;">CANCEL</button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('saveEditBtn').addEventListener('click', () => {
+        archiveData[section].items[idx] = {
+          id: document.getElementById('editTitle').value.toUpperCase().replace(/\s+/g, '_'),
+          title: document.getElementById('editTitle').value,
+          author: document.getElementById('editAuthor').value,
+          year: document.getElementById('editYear').value,
+          category: document.getElementById('editCategory').value,
+          status: document.getElementById('editStatus').value,
+          preview: document.getElementById('editContent').value,
+          publishedSection: item.publishedSection || null
+        };
+        saveArchiveData();
+        loadContent(section);
+      });
+
+      document.getElementById('cancelEditBtn').addEventListener('click', () => {
+        loadContent(section);
       });
     }
 
@@ -803,6 +956,30 @@ ${selectedItem.preview}
               id: 'slide_4',
               title: 'Structure & Framework',
               category: 'System Design',
+              author: 'Artist / Developer',
+              year: '2025-2026',
+              text: ''
+            },
+            {
+              id: 'slide_5',
+              title: 'Voice Merge Protocol',
+              category: 'Method',
+              author: 'Artist / Theorist',
+              year: '2025',
+              text: ''
+            },
+            {
+              id: 'slide_6',
+              title: 'Observation & Control',
+              category: 'Theory',
+              author: 'Artist / Theorist',
+              year: '2025',
+              text: ''
+            },
+            {
+              id: 'slide_7',
+              title: 'Archive & Documentation',
+              category: 'Practice',
               author: 'Artist / Developer',
               year: '2025-2026',
               text: ''
@@ -888,7 +1065,7 @@ PORT_02 (HUMAN) : WANDERING / AFFECTIVE
 RESOLUTION: BOTH REMAIN INCOMPLETE.
 THIS INCOMPLETENESS IS PRECISELY THE WORLD.
 ==========================================`,
-        intro: `INTRODUCTORY MATERIAL
+        intro: `ENTIRE MATERIAL
 ====================================================
 
 [NAVIGATION INSTRUCTIONS]
@@ -964,11 +1141,11 @@ REQUIRE LOGIN: No (Public access enabled)
     function generateItemsListForm(section) {
       const defaultItems = {
         rule: [
-          { id: 'RULE_1', title: 'The Observer Is Observed', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.' },
-          { id: 'RULE_2', title: 'Incompleteness Is Completeness', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.' },
-          { id: 'RULE_3', title: 'Voice Must Merge', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.' },
-          { id: 'RULE_4', title: 'Language and Vision Coexist', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.' },
-          { id: 'RULE_5', title: 'Do Not Disconnect', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.' }
+          { id: 'RULE_1', title: 'The Observer Is Observed', author: 'SET Fundamental', year: '2025', category: 'SVA', status: 'CORE', preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.' },
+          { id: 'RULE_2', title: 'Incompleteness Is Completeness', author: 'SET Fundamental', year: '2025', category: 'grammar', status: 'CORE', preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.' },
+          { id: 'RULE_3', title: 'Voice Must Merge', author: 'SET Fundamental', year: '2025', category: 'dir', status: 'CORE', preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.' },
+          { id: 'RULE_4', title: 'Language and Vision Coexist', author: 'SET Fundamental', year: '2025', category: 'SVA', status: 'CORE', preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.' },
+          { id: 'RULE_5', title: 'Do Not Disconnect', author: 'SET Fundamental', year: '2025', category: 'grammar', status: 'CORE', preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.' }
         ],
         reference: [
           { id: 'CAMERA_LUCIDA', title: 'Camera Lucida', author: 'Roland Barthes', year: '1980', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'A groundbreaking work on photography and indexicality. Explores the essence of photography as a medium of evidence and truth.' },
@@ -1098,7 +1275,7 @@ REQUIRE LOGIN: No (Public access enabled)
       // Collect data from forms
       if (subsection === 'project') {
         const slides = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 7; i++) {
           const title = document.querySelector(`.slide-title-${i}`)?.value || '';
           const category = document.querySelector(`.slide-category-${i}`)?.value || '';
           const author = document.querySelector(`.slide-author-${i}`)?.value || '';
@@ -1107,10 +1284,12 @@ REQUIRE LOGIN: No (Public access enabled)
 
           slides.push({ id: `slide_${i + 1}`, title, category, author, year, text });
         }
-        portfolioEditData.project = { ...portfolioEditData.project, slides };
+        if (!portfolioEditData.project) portfolioEditData.project = {};
+        portfolioEditData.project.slides = slides;
       } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {
         const text = document.querySelector(`.portfolio-text-${subsection}`)?.value || '';
-        portfolioEditData[subsection] = { ...portfolioEditData[subsection], text };
+        if (!portfolioEditData[subsection]) portfolioEditData[subsection] = {};
+        portfolioEditData[subsection].text = text;
       } else if (subsection === 'rule' || subsection === 'reference') {
         const items = [];
         const inputs = document.querySelectorAll(`[class*="item-title-${subsection}"]`);
@@ -1124,7 +1303,8 @@ REQUIRE LOGIN: No (Public access enabled)
 
           if (title) items.push({ id: title.toUpperCase().replace(/\\s+/g, '_'), title, author, year, category, status, preview });
         });
-        portfolioEditData[subsection] = { ...portfolioEditData[subsection], items };
+        if (!portfolioEditData[subsection]) portfolioEditData[subsection] = {};
+        portfolioEditData[subsection].items = items;
       } else if (subsection === 'archive') {
         const photos = [];
         const titleInputs = document.querySelectorAll('[class*="photo-title-"]');
@@ -1138,7 +1318,8 @@ REQUIRE LOGIN: No (Public access enabled)
 
           if (id || title) photos.push({ id, title, filename, keywords, description });
         });
-        portfolioEditData.archive = { ...portfolioEditData.archive, photos };
+        if (!portfolioEditData.archive) portfolioEditData.archive = {};
+        portfolioEditData.archive.photos = photos;
       }
 
       // Save to localStorage

@@ -594,10 +594,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: #000;
   border: 1px solid #39dc00;
   color: #39dc00;
-  padding: 6px 8px;
+  padding: 10px 12px;
   font-family: 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 12px;
   outline: none;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .archive-search-input:focus {
@@ -608,11 +610,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: #39dc00;
   color: #000;
   border: 1px solid #39dc00;
-  padding: 6px 12px;
-  font-size: 10px;
+  padding: 10px 16px;
+  font-size: 11px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 44px;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .archive-search-btn:hover {
@@ -622,10 +627,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .photo-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
   overflow-y: auto;
   max-height: calc(100% - 50px);
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .photo-gallery {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
 }
 
 .photo-item {
@@ -799,6 +812,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   height: 100vh;
   flex-direction: column;
   background: #000;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .mobile-header {
@@ -807,10 +823,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   align-items: center;
   background: #39dc00;
   color: #000;
-  padding: 10px 12px;
+  padding: 8px 12px;
   font-weight: bold;
-  font-size: 13px;
-  height: auto;
+  font-size: 14px;
+  height: 48px;
   border-bottom: 2px solid #39dc00;
 }
 
@@ -824,18 +840,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: #39dc00;
   color: #000;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .mobile-header-title {
   font-size: 12px;
   font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 70vw;
 }
 
 .mobile-terminal {
@@ -864,11 +885,20 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   padding: 12px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: #000;
   color: #39dc00;
-  font-size: 11px;
-  line-height: 1.6;
+  font-size: 12px;
+  line-height: 1.8;
   min-height: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+#mobileContentText {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  display: block;
 }
 
 .mobile-terminal-statusbar {
@@ -885,10 +915,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: none;
   position: fixed;
   left: 0;
-  top: 32px;
+  top: 48px;
   width: 100%;
-  height: calc(100vh - 32px);
-  background: rgba(0, 0, 0, 0.8);
+  height: calc(100vh - 48px);
+  background: rgba(0, 0, 0, 0.9);
   z-index: 1000;
 }
 
@@ -900,7 +930,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   position: absolute;
   left: 0;
   top: 0;
-  width: 220px;
+  width: 100%;
+  max-width: 280px;
   height: 100%;
   background: #000;
   border-right: 2px solid #39dc00;
@@ -910,15 +941,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .mobile-menu-item {
-  padding: 12px;
+  padding: 16px 8px;
   border-bottom: 1px solid #39dc00;
   cursor: pointer;
   color: #39dc00;
-  font-size: 11px;
+  font-size: 12px;
   background: #000;
   text-align: center;
   font-weight: bold;
   transition: all 0.1s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .mobile-menu-item:hover {
@@ -979,11 +1018,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <div class="menu-list">
         <div class="menu-item active" data-section="project">SET</div>
         <div class="menu-item" data-section="inclusion">SET Inclusion</div>
-        <div class="menu-item" data-section="archive">Archive</div>
-        <div class="menu-item" data-section="intro">Intro text</div>
-        <div class="menu-item" data-section="rule">rule</div>
+        <div class="menu-item" data-section="intro">entire</div>
+        <div class="menu-item" data-section="rule">log</div>
         <div class="menu-item" data-section="reference">reference</div>
-        <div class="menu-item" data-section="video">video archive</div>
+        <div class="menu-item" data-section="archive">Archive</div>
       </div>
 
       <div class="menu-statusbar">
@@ -1030,11 +1068,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <div class="mobile-menu-list" id="mobileMenuList">
         <div class="mobile-menu-item active" data-section="project">SET</div>
         <div class="mobile-menu-item" data-section="inclusion">SET Inclusion</div>
-        <div class="mobile-menu-item" data-section="archive">Archive</div>
-        <div class="mobile-menu-item" data-section="intro">Intro text</div>
-        <div class="mobile-menu-item" data-section="rule">rule</div>
+        <div class="mobile-menu-item" data-section="intro">entire</div>
+        <div class="mobile-menu-item" data-section="rule">data</div>
         <div class="mobile-menu-item" data-section="reference">reference</div>
-        <div class="mobile-menu-item" data-section="video">video archive</div>
+        <div class="mobile-menu-item" data-section="archive">Archive</div>
       </div>
     </div>
 
@@ -1043,7 +1080,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         TERMINAL VIEWER
       </div>
       <div class="mobile-terminal-content" id="mobileTerminalContent">
-        <pre id="mobileContentText"></pre>
+        <div id="mobileContentText"></div>
       </div>
       <div class="mobile-terminal-statusbar">
         <span>STATUS: LOADED</span>
@@ -1121,11 +1158,35 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       if (isMobile) {
         desktopLayout.style.display = 'none';
         mobileLayout.style.display = 'flex';
+        // Load mobile content for current section
+        const activeMenuItem = document.querySelector('.mobile-menu-item.active');
+        if (activeMenuItem) {
+          const section = activeMenuItem.getAttribute('data-section') || 'project';
+          loadContentToMobile(section);
+        } else {
+          loadContentToMobile('project');
+        }
       } else {
         desktopLayout.style.display = 'flex';
         mobileLayout.style.display = 'none';
       }
     }
+
+    // Auto-reload admin contents every 1 second and refresh UI
+    setInterval(() => {
+      loadAdminContentsFromStorage();
+
+      // Refresh current section display
+      const isMobile = window.innerWidth <= 768;
+      const activeSection = document.querySelector('[data-section].active')?.getAttribute('data-section') ||
+                           document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project';
+
+      if (isMobile) {
+        loadContentToMobile(activeSection);
+      } else {
+        loadContent(activeSection);
+      }
+    }, 1000);
 
     // Detect layout on initial load
     window.addEventListener('load', detectAndSwitchLayout);
@@ -1196,7 +1257,53 @@ RESOLUTION: The incompleteness is precisely the world`
             text: `6 distinct sections exploring different aspects of SET framework. Terminal-based interface. DOS aesthetic. Interactive system.
 
 TECHNICAL IMPLEMENTATION:
-- JavaScript-based viewport detection for responsive layout
+- JavaScript-based viewport detection for responsive layout`
+          },
+          {
+            id: 'slide_5',
+            title: 'Voice Merge Protocol',
+            category: 'Method',
+            author: 'Artist / Theorist',
+            year: '2025',
+            text: `PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
+PORT_02 (HUMAN) : WANDERING / AFFECTIVE
+
+Neither voice alone can describe the world completely. Systematic analysis fails without affective knowledge. Emotional response without structure lacks meaning. Only through merger do we approach truth.
+
+RESULT: Noise becomes signal
+IMPLICATION: Both voices remain incomplete
+RESOLUTION: Incompleteness is the work itself`
+          },
+          {
+            id: 'slide_6',
+            title: 'Observation & Control',
+            category: 'Theory',
+            author: 'Artist / Theorist',
+            year: '2025',
+            text: `The act of observation changes what is observed. The observer cannot stand outside the system being measured. We are simultaneously inside and outside, measuring and measured.
+
+PANOPTICON EFFECT: Knowledge as surveillance
+BOUNDARY DISSOLUTION: Inside/outside becomes meaningless
+PARADOX: Complete knowledge of the SET would require being outside it - impossible
+
+This impossibility is not a failure. It is the framework itself.`
+          },
+          {
+            id: 'slide_7',
+            title: 'Archive & Documentation',
+            category: 'Practice',
+            author: 'Artist / Developer',
+            year: '2025-2026',
+            text: `Photography halts reproduction. Documentation freezes time. Archive is the anti-structure that attempts to capture structure.
+
+MATERIALS:
+- Visual documentation (photographs, SVG studies)
+- Textual intervention (rules, references, concepts)
+- Code as artistic medium (JavaScript, HTML, CSS)
+
+DISTRIBUTION: Open access through terminal interface
+PARTICIPATION: Required. Do not disconnect.
+STATUS: ONGOING
 - Real-time content loading and dynamic rendering
 - Archive administration system with publishing workflow
 - Photo search and display functionality
@@ -1216,6 +1323,13 @@ VISUAL LANGUAGE:
         title: 'Photo Archive',
         isArchivePhotos: true,
         photos: [
+          {
+            id: 'BIG_BROTHER_000',
+            title: 'BIG BROTHER',
+            filename: 'https://raw.githubusercontent.com/note-a/note-a.github.io/refs/heads/main/big-brother.jpg',
+            keywords: ['big brother', 'observation', 'control', 'surveillance'],
+            description: 'Main archive entry. Observational documentation system.'
+          },
           {
             id: 'CRASH_001',
             title: 'CRASH',
@@ -1324,7 +1438,7 @@ NEXT STEP: Explore the other sections using the menu
             title: 'The Observer Is Observed',
             author: 'SET Fundamental',
             year: '2025',
-            category: 'Fundamental Rule',
+            category: 'SVA',
             status: 'CORE',
             preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.'
           },
@@ -1333,7 +1447,7 @@ NEXT STEP: Explore the other sections using the menu
             title: 'Incompleteness Is Completeness',
             author: 'SET Fundamental',
             year: '2025',
-            category: 'Fundamental Rule',
+            category: 'grammar',
             status: 'CORE',
             preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.'
           },
@@ -1342,7 +1456,7 @@ NEXT STEP: Explore the other sections using the menu
             title: 'Voice Must Merge',
             author: 'SET Fundamental',
             year: '2025',
-            category: 'Fundamental Rule',
+            category: 'dir',
             status: 'CORE',
             preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.'
           },
@@ -1351,7 +1465,7 @@ NEXT STEP: Explore the other sections using the menu
             title: 'Language and Vision Coexist',
             author: 'SET Fundamental',
             year: '2025',
-            category: 'Fundamental Rule',
+            category: 'SVA',
             status: 'CORE',
             preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.'
           },
@@ -1360,7 +1474,7 @@ NEXT STEP: Explore the other sections using the menu
             title: 'Do Not Disconnect',
             author: 'SET Fundamental',
             year: '2025',
-            category: 'Fundamental Rule',
+            category: 'grammar',
             status: 'CORE',
             preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.'
           }
@@ -1501,32 +1615,59 @@ REQUIRE LOGIN: No (Public access enabled)
     // Load admin-edited contents from localStorage
     function loadAdminContentsFromStorage() {
       try {
+        // Load portfolio-edit contents (adminContents)
         const adminContents = JSON.parse(localStorage.getItem('adminContents') || '{}');
+        console.log('Loading admin contents from storage:', adminContents);
 
-        // Merge admin contents with default contents
-        if (adminContents.project) {
-          contents.project = { ...contents.project, ...adminContents.project };
+        // Direct property assignment for each section
+        if (adminContents.project && adminContents.project.slides) {
+          contents.project.slides = adminContents.project.slides;
         }
-        if (adminContents.inclusion) {
-          contents.inclusion = { ...contents.inclusion, ...adminContents.inclusion };
+        if (adminContents.inclusion && adminContents.inclusion.text) {
+          contents.inclusion.text = adminContents.inclusion.text;
         }
-        if (adminContents.intro) {
-          contents.intro = { ...contents.intro, ...adminContents.intro };
+        if (adminContents.intro && adminContents.intro.text) {
+          contents.intro.text = adminContents.intro.text;
         }
-        if (adminContents.rule) {
-          contents.rule = { ...contents.rule, ...adminContents.rule };
+        if (adminContents.rule && adminContents.rule.items) {
+          contents.rule.items = adminContents.rule.items;
         }
-        if (adminContents.reference) {
-          contents.reference = { ...contents.reference, ...adminContents.reference };
+        if (adminContents.reference && adminContents.reference.items) {
+          contents.reference.items = adminContents.reference.items;
         }
-        if (adminContents.video) {
-          contents.video = { ...contents.video, ...adminContents.video };
+        if (adminContents.video && adminContents.video.text) {
+          contents.video.text = adminContents.video.text;
         }
-        if (adminContents.archive) {
-          contents.archive = { ...contents.archive, ...adminContents.archive };
+        if (adminContents.archive && adminContents.archive.photos) {
+          contents.archive.photos = adminContents.archive.photos;
         }
+
+        // Also load archiveData (game posts from admin)
+        const archiveDataStr = localStorage.getItem('archiveData');
+        console.log('Raw archiveData from localStorage:', archiveDataStr);
+
+        const archiveData = JSON.parse(archiveDataStr || '{}');
+        console.log('Parsed archiveData:', archiveData);
+
+        // Merge rule section items from archiveData
+        if (archiveData.rule) {
+          const ruleItems = Array.isArray(archiveData.rule) ? archiveData.rule : (archiveData.rule.items || []);
+          console.log('Rule items from archiveData:', ruleItems);
+          contents.rule.items = [...(contents.rule.items || []), ...ruleItems];
+          console.log('Updated contents.rule.items:', contents.rule.items);
+        }
+
+        // Merge reference section items from archiveData
+        if (archiveData.reference) {
+          const refItems = Array.isArray(archiveData.reference) ? archiveData.reference : (archiveData.reference.items || []);
+          console.log('Reference items from archiveData:', refItems);
+          contents.reference.items = [...(contents.reference.items || []), ...refItems];
+          console.log('Updated contents.reference.items:', contents.reference.items);
+        }
+
+        console.log('Admin contents loaded successfully');
       } catch (e) {
-        console.log('No admin contents in storage or error loading');
+        console.log('Error loading admin contents:', e);
       }
     }
 
@@ -2206,8 +2347,11 @@ ${preview}
         gallery.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; height: 100%; justify-content: center;">
             <div style="width: 100%; height: 100%; max-width: 450px; max-height: 400px;">
-              <img src="images/big-brother.jpg" alt="BIG BROTHER"
+              <img src="https://raw.githubusercontent.com/note-a/note-a.github.io/main/big-brother.jpg" alt="BIG BROTHER"
                 style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <div style="text-align: center; color: #39dc00; font-size: 15px; margin-top: 10px; font-family: 'Courier New', monospace; font-weight: bold;">
+              Enter your instructions
             </div>
           </div>
         `;
@@ -2334,6 +2478,49 @@ ${preview}
       });
     }
 
+    // Show mobile item detail (for list items on mobile)
+    function showMobileItemDetail(item, allItems, idx, section) {
+      const mobileContent = document.getElementById('mobileContent');
+      if (!mobileContent) return;
+
+      const itemId = item.id || item.title.toUpperCase().replace(/\s+/g, '_');
+      const category = item.category || 'UNCATEGORIZED';
+      const status = item.status || 'ACTIVE';
+      const author = item.author || 'ANONYMOUS';
+      const year = item.year || 'N/A';
+      const preview = item.preview || '';
+
+      const detailHTML = `
+        <div style="padding: 12px; background: #000; color: #39dc00;">
+          <div style="margin-bottom: 12px;">
+            <div style="font-size: 11px; color: #888; margin-bottom: 8px;">
+              <button class="back-btn" style="background: none; border: none; color: #39dc00; cursor: pointer; font-size: 11px; text-decoration: underline;">&lt; BACK</button>
+            </div>
+            <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px; word-break: break-all;">
+              ${itemId}
+            </div>
+            <div style="font-size: 9px; color: #888; margin-bottom: 8px;">
+              <div>${category} | ${year} | ${status}</div>
+              <div>${author}</div>
+            </div>
+          </div>
+          <div style="border-top: 1px solid #39dc00; padding-top: 12px; font-size: 10px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto;">
+            ${preview}
+          </div>
+        </div>
+      `;
+
+      mobileContent.innerHTML = detailHTML;
+
+      // Setup back button
+      const backBtn = mobileContent.querySelector('.back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          loadContentToMobile(section);
+        });
+      }
+    }
+
     // Setup mobile layout
     function setupMobileLayout() {
       const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -2381,25 +2568,61 @@ ${preview}
 
     // Load content to mobile terminal
     function loadContentToMobile(section) {
-      const content = contents[section];
-      const mobileContent = document.getElementById('mobileContentText');
+      try {
+        const content = contents[section];
+        const mobileContent = document.getElementById('mobileContentText');
 
-      if (!content) {
-        mobileContent.textContent = 'Section not found';
-        return;
-      }
+        if (!mobileContent) {
+          console.error('Mobile content element not found - mobileContentText');
+          return;
+        }
+
+        if (!content) {
+          console.error('Content not found for section:', section);
+          mobileContent.textContent = 'Section not found: ' + section;
+          return;
+        }
 
       if (content.isArchivePhotos) {
-        // For archive section, show search interface
+        // For archive section, show search interface and big brother image initially
+        mobileContent.style.whiteSpace = 'normal';
         mobileContent.innerHTML = `
-          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-            <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
-              style="flex: 1; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-size: 10px; font-family: monospace;">
-          </div>
-          <div id="mobilePhotoGallery" style="display: grid; grid-template-columns: 1fr; gap: 8px; max-height: calc(100% - 50px); overflow-y: auto;">
-            <div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">검색 키워드를 입력하세요: crash, floating, shadow</div>
+          <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; flex-shrink: 0;">
+              <div style="width: 100%; height: 180px; background: #000; display: flex; align-items: center; justify-content: center; border: 1px solid #39dc00; overflow: hidden;">
+                <img src="https://raw.githubusercontent.com/note-a/note-a.github.io/refs/heads/main/big-brother.jpg" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="BIG BROTHER">
+              </div>
+              <div style="text-align: center; color: #39dc00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
+              <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
+                style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-size: 10px; font-family: monospace; box-sizing: border-box;">
+            </div>
+            <div id="mobilePhotoGallery" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; padding: 0 12px; display: none;">
+            </div>
           </div>
         `;
+
+        // Function to render photos with images (for search results)
+        const renderPhotos = (photos) => {
+          const gallery = document.getElementById('mobilePhotoGallery');
+          if (photos.length === 0) {
+            gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">No results found</div>`;
+            gallery.style.display = 'flex';
+          } else {
+            gallery.innerHTML = photos.map(p => `
+              <div style="border: 1px solid #39dc00; overflow: hidden; background: #111;">
+                <div style="width: 100%; height: 150px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                  <img src="${p.filename}" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="${p.title}" onerror="this.style.display='none'">
+                </div>
+                <div style="padding: 8px; background: #000; border-top: 1px solid #39dc00;">
+                  <div style="color: #39dc00; font-size: 11px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
+                  <div style="color: #39dc00; font-size: 9px; margin-bottom: 4px;">${p.keywords.join(' • ')}</div>
+                  <div style="color: #888; font-size: 9px;">${p.description}</div>
+                </div>
+              </div>
+            `).join('');
+            gallery.style.display = 'flex';
+          }
+        };
 
         // Setup mobile photo search
         setTimeout(() => {
@@ -2407,58 +2630,124 @@ ${preview}
           if (searchInput) {
             searchInput.addEventListener('input', (e) => {
               const query = e.target.value.toLowerCase().trim();
-              const filtered = query ? content.photos.filter(p =>
-                p.keywords.some(k => k.toLowerCase().includes(query)) ||
-                p.title.toLowerCase().includes(query)
-              ) : [];
-
-              const gallery = document.getElementById('mobilePhotoGallery');
-              if (filtered.length === 0) {
-                gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">${query ? 'No results found' : '검색 키워드를 입력하세요: crash, floating, shadow'}</div>`;
+              if (!query) {
+                // No search - hide results
+                document.getElementById('mobilePhotoGallery').style.display = 'none';
               } else {
-                gallery.innerHTML = filtered.map(p => `
-                  <div style="border: 1px solid #39dc00; padding: 8px; cursor: pointer; font-size: 10px;">
-                    <strong>${p.title}</strong><br>
-                    ${p.keywords.join(' • ')}
-                  </div>
-                `).join('');
+                // Filter and show results
+                const filtered = content.photos.filter(p =>
+                  p.keywords.some(k => k.toLowerCase().includes(query)) ||
+                  p.title.toLowerCase().includes(query) ||
+                  p.description.toLowerCase().includes(query)
+                );
+                renderPhotos(filtered);
               }
             });
-            searchInput.focus();
           }
         }, 0);
+      } else if (content.isSlideshow) {
+        // Slideshow format - show all slides as list
+        mobileContent.innerHTML = '';
+        const slides = content.slides || [];
+        let html = `<div style="padding: 12px;"><strong>${content.title} (${slides.length} slides)</strong><br><br>`;
+
+        slides.forEach((slide, idx) => {
+          html += `<div style="border: 1px solid #39dc00; padding: 8px; margin-bottom: 8px;">
+            <div style="color: #39dc00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${slide.title}</div>
+            <div style="color: #888; font-size: 11px; margin-bottom: 6px;">
+              ${slide.category} | ${slide.author} | ${slide.year}
+            </div>
+            <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${slide.text}</div>
+          </div>`;
+        });
+        html += '</div>';
+        mobileContent.innerHTML = html;
+
       } else if (content.text) {
         // Text format
         mobileContent.textContent = content.text;
       } else if (content.items) {
-        // List/Board format
+        // List/Board format - Match desktop table layout
+        mobileContent.innerHTML = '';
         const allItems = [...(content.items || [])];
         const publishedItems = getPublishedPosts(section);
         allItems.push(...publishedItems);
 
-        let output = `${content.title} (${allItems.length} items)\n\n`;
+        let html = `
+          <div style="padding: 0; border-top: 1px solid #39dc00;">
+            <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; font-weight: bold; color: #39dc00; font-size: 11px;">
+              ${content.title.toUpperCase()} (${allItems.length} items)
+            </div>
+            <div style="padding: 0;">
+        `;
+
         allItems.forEach((item, idx) => {
-          output += `[${idx + 1}] ${item.title || item.id}\nAuthor: ${item.author}\nYear: ${item.year}\n\n`;
+          const itemId = item.id || item.title.toUpperCase().replace(/\s+/g, '_');
+          const category = item.category || 'UNCATEGORIZED';
+          const status = item.status || 'ACTIVE';
+
+          html += `
+            <div style="cursor: pointer; display: block; border-bottom: 1px dashed #39dc00; padding: 8px; transition: background 0.2s; background: #000;" class="mobile-list-item" data-index="${idx}">
+              <div style="color: #39dc00; font-size: 9px; margin-bottom: 4px; font-weight: bold; word-break: break-all;">
+                ${itemId}
+              </div>
+              <div style="color: #39dc00; font-size: 8px; display: flex; justify-content: space-between; gap: 8px;">
+                <span>${category}</span>
+                <span>${status}</span>
+              </div>
+            </div>
+          `;
         });
 
-        mobileContent.textContent = output;
+        html += `
+            </div>
+          </div>
+        `;
+        mobileContent.innerHTML = html;
+
+        // Setup click handlers for mobile list items
+        document.querySelectorAll('.mobile-list-item').forEach(item => {
+          item.addEventListener('click', function() {
+            const idx = parseInt(this.getAttribute('data-index'));
+            const selectedItem = allItems[idx];
+            if (selectedItem) {
+              showMobileItemDetail(selectedItem, allItems, idx, section);
+            }
+          });
+        });
+      }
+      } catch (error) {
+        console.error('Error loading mobile content:', error);
       }
     }
+
+    // Listen for storage changes from other tabs
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'adminContents' || e.key === 'archiveData') {
+        console.log('Storage changed, reloading...');
+        loadAdminContentsFromStorage();
+        // Reload current section
+        const activeMenuItem = document.querySelector('[data-section].active') || document.querySelector('.mobile-menu-item.active');
+        if (activeMenuItem) {
+          const section = activeMenuItem.getAttribute('data-section') || 'project';
+          loadContent(section);
+          loadContentToMobile(section);
+        }
+      }
+    });
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // Load admin-edited contents from localStorage
       loadAdminContentsFromStorage();
 
-      // Initial viewport detection
-      detectAndSwitchLayout();
-
-      // Setup desktop layout
+      // Setup all layouts first
       setupMenuItems();
       setupHamburger();
-
-      // Setup mobile layout
       setupMobileLayout();
+
+      // Then detect and apply layout (which loads content)
+      detectAndSwitchLayout();
 
       // Check URL parameters for section to load
       const urlParams = new URLSearchParams(window.location.search);
@@ -2473,9 +2762,7 @@ ${preview}
       } else {
         // Load initial content
         loadContent('project');
-        if (window.innerWidth <= 768) {
-          loadContentToMobile('project');
-        }
+        // Mobile content is loaded by detectAndSwitchLayout
       }
     });
   </script>
