@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <rect width="300" height="200" fill="#a8b8a8"/>
+  <rect x="10" y="10" width="280" height="180" fill="#b0c0b0"/>
+  <!-- Damage marks -->
+  <circle cx="80" cy="60" r="15" fill="#5a6a5a" opacity="0.6"/>
+  <circle cx="100" cy="90" r="20" fill="#3a4a3a" opacity="0.7"/>
+  <path d="M 120 50 Q 130 70 115 85" stroke="#3a4a3a" stroke-width="2" fill="none" opacity="0.6"/>
+  <rect x="150" y="40" width="40" height="50" fill="#1a2a1a" opacity="0.5"/>
+  <!-- Cracks -->
+  <path d="M 60 150 L 80 130 L 100 145 L 120 125" stroke="#7a8a7a" stroke-width="1" fill="none" opacity="0.8"/>
+  <text x="150" y="100" font-family="monospace" font-size="12" fill="#39dc00">[CRASH_MEASUREMENT]</text>
+</svg>

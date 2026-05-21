@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <rect width="300" height="200" fill="#333333"/>
+  <!-- Road lines -->
+  <line x1="0" y1="150" x2="300" y2="150" stroke="#ffff00" stroke-width="2" stroke-dasharray="20,10"/>
+  <line x1="0" y1="120" x2="300" y2="120" stroke="#ffffff" stroke-width="1"/>
+  <rect x="0" y="160" width="300" height="40" fill="#444444"/>
+  <!-- Floating object -->
+  <rect x="100" y="80" width="50" height="35" fill="#1a1a1a" opacity="0.8" transform="skewY(-15)"/>
+  <rect x="105" y="75" width="40" height="30" fill="#2a2a2a" opacity="0.6" transform="skewY(-15)"/>
+  <!-- Shadow -->
+  <ellipse cx="125" cy="160" rx="35" ry="5" fill="#000000" opacity="0.3"/>
+  <text x="150" y="30" font-family="monospace" font-size="12" fill="#ffff00">[FLOATING_DISTANCE]</text>
+</svg>

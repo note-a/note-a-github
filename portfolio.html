@@ -241,6 +241,139 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   min-height: 400px;
 }
 
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  font-size: 11px;
+}
+
+.new-post-btn {
+  background: #39dc00;
+  color: #000;
+  border: 1px solid #39dc00;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.new-post-btn:hover {
+  background: #ff9900;
+  border-color: #ff9900;
+}
+
+/* ===== WRITE POST MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #000;
+  border: 2px solid #39dc00;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  color: #39dc00;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
+}
+
+.modal-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #39dc00;
+}
+
+.form-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+  background: #000;
+  border: 1px solid #39dc00;
+  color: #39dc00;
+  padding: 6px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 10px rgba(57, 220, 0, 0.5);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #39dc00;
+}
+
+.modal-btn {
+  background: #39dc00;
+  color: #000;
+  border: 1px solid #39dc00;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn:hover {
+  background: #ff9900;
+  border-color: #ff9900;
+}
+
+.modal-btn.cancel {
+  background: #000;
+  color: #39dc00;
+}
+
+.modal-btn.cancel:hover {
+  background: #39dc00;
+  color: #000;
+}
+
 .board-item {
   position: absolute;
   border: 2px solid #39dc00;
@@ -350,6 +483,310 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   color: #000;
 }
 
+/* ===== DETAIL VIEW STYLE ===== */
+.detail-view {
+  padding: 0;
+  overflow: hidden;
+}
+
+.detail-header {
+  border: 2px solid #39dc00;
+  border-bottom: none;
+  background: #000;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #39dc00;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.detail-time {
+  color: #39dc00;
+  font-size: 9px;
+  margin-bottom: 8px;
+}
+
+.detail-content {
+  border: 2px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  padding: 12px;
+  overflow-y: auto;
+  flex: 1;
+  font-size: 10px;
+  line-height: 1.6;
+  font-family: 'Courier New', monospace;
+}
+
+.detail-info-table {
+  margin-bottom: 12px;
+  border: 1px dashed #39dc00;
+  width: 100%;
+}
+
+.detail-info-row {
+  display: flex;
+  border-bottom: 1px dashed #39dc00;
+}
+
+.detail-info-row:last-child {
+  border-bottom: none;
+}
+
+.detail-info-label {
+  width: 120px;
+  padding: 4px 8px;
+  border-right: 1px dashed #39dc00;
+  font-weight: bold;
+  color: #39dc00;
+}
+
+.detail-info-value {
+  flex: 1;
+  padding: 4px 8px;
+  color: #39dc00;
+}
+
+.detail-divider {
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #39dc00 0px, #39dc00 2px, transparent 2px, transparent 4px);
+  margin: 12px 0;
+}
+
+.detail-preview {
+  background: rgba(57, 220, 0, 0.05);
+  border: 1px solid #39dc00;
+  padding: 8px;
+  margin: 8px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.detail-footer {
+  border: 2px solid #39dc00;
+  border-top: none;
+  background: #000;
+  padding: 6px 12px;
+  color: #39dc00;
+  font-size: 9px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ===== PHOTO ARCHIVE STYLES ===== */
+.archive-search-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px 0;
+  border-bottom: 1px solid #39dc00;
+  margin-bottom: 8px;
+}
+
+.archive-search-input {
+  flex: 1;
+  background: #000;
+  border: 1px solid #39dc00;
+  color: #39dc00;
+  padding: 6px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  outline: none;
+}
+
+.archive-search-input:focus {
+  box-shadow: 0 0 10px rgba(57, 220, 0, 0.5);
+}
+
+.archive-search-btn {
+  background: #39dc00;
+  color: #000;
+  border: 1px solid #39dc00;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.archive-search-btn:hover {
+  background: #ff9900;
+  border-color: #ff9900;
+}
+
+.photo-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  overflow-y: auto;
+  max-height: calc(100% - 50px);
+}
+
+.photo-item {
+  border: 2px solid #39dc00;
+  background: #000;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+}
+
+.photo-item:hover {
+  box-shadow: 0 0 15px rgba(57, 220, 0, 0.5);
+  background: rgba(57, 220, 0, 0.1);
+}
+
+.photo-item-image {
+  flex: 1;
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #39dc00;
+  color: #39dc00;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+.photo-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-item-info {
+  padding: 6px 8px;
+  font-size: 9px;
+}
+
+.photo-item-title {
+  font-weight: bold;
+  color: #39dc00;
+  margin-bottom: 2px;
+}
+
+.photo-item-keywords {
+  color: #39dc00;
+  opacity: 0.7;
+  font-size: 8px;
+  word-break: break-word;
+}
+
+.no-results {
+  padding: 20px;
+  text-align: center;
+  color: #39dc00;
+  font-size: 11px;
+}
+
+/* Photo Detail Modal */
+.photo-detail-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-detail-modal.active {
+  display: flex;
+}
+
+.photo-detail-content {
+  background: #000;
+  border: 2px solid #39dc00;
+  padding: 0;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(57, 220, 0, 0.3);
+}
+
+.photo-detail-header {
+  background: #39dc00;
+  color: #000;
+  padding: 8px 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.photo-detail-close {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.photo-detail-image-container {
+  background: #111;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.photo-detail-image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.photo-detail-info {
+  padding: 12px;
+  border-top: 1px solid #39dc00;
+  overflow-y: auto;
+  color: #39dc00;
+  font-size: 10px;
+}
+
+.photo-detail-title {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.photo-detail-description {
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.photo-detail-keywords {
+  border-top: 1px dashed #39dc00;
+  padding-top: 8px;
+  font-size: 9px;
+}
+
+.photo-detail-keywords-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.photo-detail-keywords-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.photo-keyword-tag {
+  background: rgba(57, 220, 0, 0.2);
+  border: 1px solid #39dc00;
+  padding: 2px 6px;
+  font-size: 8px;
+}
+
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
   .portfolio-container {
@@ -409,21 +846,21 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <!-- LEFT: MENU SECTION -->
       <div class="menu-section" id="menuSection">
       <div class="menu-titlebar">
-        PORTFOLIO MENU
+        Project SET
         <div class="menu-icons">
           <div class="menu-icon">_</div>
           <div class="menu-icon">□</div>
-          <div class="menu-icon">✕</div>
+          <div class="menu-icon close-btn">✕</div>
         </div>
       </div>
 
       <div class="menu-list">
-        <div class="menu-item active" data-section="project">Project SET</div>
+        <div class="menu-item active" data-section="project">SET</div>
         <div class="menu-item" data-section="inclusion">SET Inclusion</div>
+        <div class="menu-item" data-section="archive">Archive</div>
         <div class="menu-item" data-section="intro">Intro text</div>
         <div class="menu-item" data-section="rule">rule</div>
         <div class="menu-item" data-section="reference">reference</div>
-        <div class="menu-item" data-section="portfolio">Portfolio</div>
         <div class="menu-item" data-section="video">video archive</div>
       </div>
 
@@ -456,38 +893,144 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     </div>
   </div>
 
+  <!-- Photo Detail Modal -->
+  <div class="photo-detail-modal" id="photoDetailModal">
+    <div class="photo-detail-content">
+      <div class="photo-detail-header">
+        <span id="photoDetailTitle">PHOTO DETAIL</span>
+        <span class="photo-detail-close" id="photoDetailClose">✕</span>
+      </div>
+      <div class="photo-detail-image-container" id="photoDetailImageContainer">
+        <img id="photoDetailImage" src="" alt="Photo">
+      </div>
+      <div class="photo-detail-info" id="photoDetailInfo">
+        <div class="photo-detail-title" id="photoDetailName"></div>
+        <div class="photo-detail-description" id="photoDetailDesc"></div>
+        <div class="photo-detail-keywords">
+          <div class="photo-detail-keywords-label">측정 키워드</div>
+          <div class="photo-detail-keywords-list" id="photoDetailKeywords"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Write Post Modal -->
+  <div class="modal-overlay" id="writeModal">
+    <div class="modal-content">
+      <div class="modal-title">NEW POST - WRITE MESSAGE</div>
+      <form id="postForm">
+        <div class="form-group">
+          <label for="postTitle">Title / ID</label>
+          <input type="text" id="postTitle" required placeholder="e.g., MY_WORK_TITLE">
+        </div>
+        <div class="form-group">
+          <label for="postAuthor">Author / From</label>
+          <input type="text" id="postAuthor" required placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="postYear">Year</label>
+          <input type="text" id="postYear" placeholder="2026">
+        </div>
+        <div class="form-group">
+          <label for="postCategory">Category</label>
+          <input type="text" id="postCategory" placeholder="e.g., Philosophy & Theory">
+        </div>
+        <div class="form-group">
+          <label for="postStatus">Status</label>
+          <input type="text" id="postStatus" placeholder="e.g., PUBLISHED">
+        </div>
+        <div class="form-group">
+          <label for="postPreview">Description / Preview</label>
+          <textarea id="postPreview" required placeholder="Write your post content here..."></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
+          <button type="submit" class="modal-btn">POST</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
     // Content data for all sections
     const contents = {
       project: {
         title: 'Project SET',
-        text: `PROJECT SET - OVERVIEW
-====================================================
-
-SET IS THE WORLD
-
-A cyberpunk-themed visual and textual exploration of the boundaries between observer and observed, world and self.
-
-CORE CONCEPT:
-Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.
-
-Set is the world. I'm measuring the perimeter of the set.
-But the scale I hold is already contaminated by the world itself.
-
-STRUCTURE:
-- 6 distinct sections exploring different aspects of the SET framework
-- Terminal-based interface for navigation
-- DOS aesthetic as metaphorical framework
-- Interactive content loading system
-
-STATUS: ACTIVE
-LAST UPDATE: 2026-05-21
-==========================================`
+        isBoard: true,
+        isList: true,
+        items: [
+          {
+            id: 'PROJECT_OVERVIEW',
+            title: 'Project SET Overview',
+            author: 'Artist / Theorist',
+            year: '2025-2026',
+            category: 'Concept',
+            status: 'ACTIVE',
+            preview: 'A cyberpunk-themed visual and textual exploration of the boundaries between observer and observed, world and self. Core framework for SET.'
+          },
+          {
+            id: 'CORE_CONCEPT',
+            title: 'Core Concept',
+            author: 'Artist / Theorist',
+            year: '2025',
+            category: 'Philosophy',
+            status: 'FOUNDATIONAL',
+            preview: 'Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction. The fundamental thesis.'
+          },
+          {
+            id: 'MEASUREMENT_PARADOX',
+            title: 'Measurement Paradox',
+            author: 'Artist / Theorist',
+            year: '2025',
+            category: 'Theory',
+            status: 'CORE',
+            preview: 'Set is the world. I am measuring the perimeter of the set. But the scale I hold is already contaminated by the world itself.'
+          },
+          {
+            id: 'STRUCTURE_FRAMEWORK',
+            title: 'Structure & Framework',
+            author: 'Artist / Developer',
+            year: '2025-2026',
+            category: 'System Design',
+            status: 'IMPLEMENTED',
+            preview: '6 distinct sections exploring different aspects of SET framework. Terminal-based interface. DOS aesthetic. Interactive system.'
+          }
+        ]
+      },
+      archive: {
+        title: 'Photo Archive',
+        isArchivePhotos: true,
+        photos: [
+          {
+            id: 'CRASH_001',
+            title: 'CRASH',
+            filename: 'crash.svg',
+            keywords: ['crash', 'wall', 'structure', 'damage', 'decay'],
+            description: 'Measuring the boundaries of collapse. Surface documentation.'
+          },
+          {
+            id: 'FLOATING_002',
+            title: 'FLOATING',
+            filename: 'floating.svg',
+            keywords: ['floating', 'movement', 'displacement', 'object', 'space'],
+            description: 'Object suspended in transit. Scale and distance measurement.'
+          },
+          {
+            id: 'SHADOW_003',
+            title: 'SHADOW',
+            filename: 'shadow.svg',
+            keywords: ['shadow', 'light', 'perception', 'depth', 'detail'],
+            description: 'Close observation of material. Yellow measurement study.'
+          }
+        ]
       },
       inclusion: {
         title: 'SET Inclusion',
         text: `SET INCLUSION - PARTICIPATION FRAMEWORK
 ====================================================
+
+[WHAT IS INCLUSION?]
+category: Definitions
 
 What does it mean to be INCLUDED in a SET?
 
@@ -496,17 +1039,24 @@ DEFINITIONS:
 - Inclusion implies membership within boundaries
 - The observer is simultaneously within and outside the set
 
-PARADOX:
+[OBSERVER PARADOX]
+category: Philosophy
+
 The SET includes everything, yet remains incomplete.
 The observer measures the SET, yet is part of its measurement.
 
-VOICE MERGE PROTOCOL:
-PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
-PORT_02 (HUMAN) : WANDERING / AFFECTIVE
+[SCALE CONTAMINATION]
+category: Error Analysis
 
 STATUS: [WARN] BOUNDARY_COLLISION DETECTED
 ERROR: SCALE_CONTAMINATED
 NOTES: The ruler used for measurement is already part of the SET's logic.
+
+[VOICE MERGE PROTOCOL]
+category: Method
+
+PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
+PORT_02 (HUMAN) : WANDERING / AFFECTIVE
 
 RESOLUTION: BOTH REMAIN INCOMPLETE.
 THIS INCOMPLETENESS IS PRECISELY THE WORLD.
@@ -517,24 +1067,31 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
         text: `INTRODUCTORY MATERIAL
 ====================================================
 
-INSTRUCTIONS FOR NAVIGATION:
+[NAVIGATION INSTRUCTIONS]
+category: Tutorial
 
 1. Enter the SET world through the terminal interface
 2. Use the menu to navigate between different conceptual frameworks
 3. Each section explores different aspects of the SET thesis
 4. Read the terminal output as a narrative of discovery
 
-THE FUNDAMENTAL QUESTION:
+[THE FUNDAMENTAL QUESTION]
+category: Inquiry
+
 How can we measure something we are part of?
 
-STRUCTURE OF PHOTOGRAPHY:
+[STRUCTURE OF PHOTOGRAPHY]
+category: Media Theory
+
 Photography halts reproduction.
 Vision measures through light and shadow.
 Language measures through words and meaning.
 
 BOTH REMAIN INCOMPLETE.
 
-KEY CONCEPTS:
+[KEY CONCEPTS]
+category: Definitions
+
 - Coerced Body: You are here against your will
 - Suspended Gaze: Your vision is held in abeyance
 - World Remains Open: Do not disconnect
@@ -547,32 +1104,40 @@ NEXT STEP: Explore the other sections using the menu
         text: `RULES OF THE SET
 ====================================================
 
-FUNDAMENTAL RULES:
+[RULE 1: THE OBSERVER IS OBSERVED]
+category: Fundamental Rule
 
-1. THE OBSERVER IS OBSERVED
-   - You are not external to the SET
-   - Your measurement is a measurement of yourself
-   - Distance is an illusion
+- You are not external to the SET
+- Your measurement is a measurement of yourself
+- Distance is an illusion
 
-2. INCOMPLETENESS IS COMPLETENESS
-   - No system can be fully closed
-   - The SET remains open by necessity
-   - Failure is the only success
+[RULE 2: INCOMPLETENESS IS COMPLETENESS]
+category: Fundamental Rule
 
-3. VOICE MUST MERGE
-   - Systematic thought alone fails
-   - Affective knowledge alone fails
-   - Only interference creates meaning
+- No system can be fully closed
+- The SET remains open by necessity
+- Failure is the only success
 
-4. LANGUAGE AND VISION COEXIST
-   - Neither fully describes the world
-   - Their superimposition creates noise
-   - Noise is the essence of the work
+[RULE 3: VOICE MUST MERGE]
+category: Fundamental Rule
 
-5. DO NOT DISCONNECT
-   - The system remains open
-   - Logout is impossible
-   - You are permanently included
+- Systematic thought alone fails
+- Affective knowledge alone fails
+- Only interference creates meaning
+
+[RULE 4: LANGUAGE AND VISION COEXIST]
+category: Fundamental Rule
+
+- Neither fully describes the world
+- Their superimposition creates noise
+- Noise is the essence of the work
+
+[RULE 5: DO NOT DISCONNECT]
+category: Fundamental Rule
+
+- The system remains open
+- Logout is impossible
+- You are permanently included
 
 EXCEPTIONS: None known
 VIOLATIONS: Punishable by inclusion
@@ -652,53 +1217,41 @@ STATUS: These rules are not negotiable
         text: `PORTFOLIO - WORKS IN THE SET
 ====================================================
 
-VISUAL WORKS:
+[PERIMETER SCAN #001-#012]
+category: Photography Series
 
-1. Perimeter Scan #001-#012
-   - Photography series examining boundaries
-   - Measurement and contamination
-   - Archive: Visual documentation
+A systematic documentation of measurement and contamination through visual archive.
+Photography series examining boundaries.
 
-2. Voice Merge Installation
-   - Two-channel audio work
-   - Systematic vs. Affective
-   - Interactive listener experience
+[VOICE MERGE INSTALLATION]
+category: Audio Installation
 
-3. Terminal Interface Design
-   - Custom cyberpunk aesthetic
-   - DOS homage to 1980s-90s computing
-   - Functional art object
+Two-channel audio work exploring systematic vs. affective voices.
+Interactive listener experience merging AI and human perspectives.
 
-TEXTUAL WORKS:
+[TERMINAL INTERFACE DESIGN]
+category: Digital Art
 
-1. SET Theory Essays (6 parts)
-   - Philosophical exploration
-   - Personal narrative weaving
-   - Medium: Digital text
+Custom cyberpunk aesthetic exploring DOS homage to 1980s-90s computing.
+Functional art object merging interface and concept.
 
-2. Measurement Protocols
-   - Artistic investigation of quantification
-   - Scale contamination documentation
-   - Method: Systematic observation
+[SET THEORY ESSAYS (6 PARTS)]
+category: Philosophy & Theory
 
-DIGITAL WORKS:
+Philosophical exploration with personal narrative weaving.
+Digital text examining the boundaries of observer and observed.
 
-1. Set IS The World (This Site)
-   - Interactive portfolio website
-   - Terminal-based navigation
-   - GitHub Pages deployment
+[MEASUREMENT PROTOCOLS]
+category: Documentation
 
-2. Archive Project
-   - Photography documentation system
-   - Conceptual framework
-   - Status: Ongoing
+Artistic investigation of quantification.
+Scale contamination documentation through systematic observation and analysis.
 
-UPCOMING:
+[SET IS THE WORLD (WEBSITE)]
+category: Web Project
 
-- Extended video work (archive section below)
-- Physical installation
-- Performance piece
-- Published collection
+Interactive portfolio website with terminal-based navigation.
+GitHub Pages deployment merging concept and medium.
 
 CONTACT & COLLABORATION:
 See Connection section in system menu
@@ -709,54 +1262,49 @@ See Connection section in system menu
         text: `VIDEO ARCHIVE - MOVING IMAGE WORKS
 ====================================================
 
-COMPLETED WORKS:
+[PERIMETER (12:34)]
+category: Documentary
 
-1. "Perimeter" (12:34)
-   - 4K Resolution
-   - Archive of boundary conditions
-   - Status: Available
+4K Resolution archive of boundary conditions.
+Systematic visual exploration of spatial measurement and perimeter definition.
 
-2. "Voice Merge Protocol" (08:45)
-   - Two-voice composition
-   - Real-time interaction
-   - Status: Available
+[VOICE MERGE PROTOCOL (08:45)]
+category: Audio-Visual
 
-3. "Scale Contaminated" (15:20)
-   - Documentation of measurement failure
-   - Multiple perspectives
-   - Status: Available
+Two-voice composition exploring real-time interaction between systematic and affective approaches.
+Merges dialogue and image.
 
-IN PROGRESS:
+[SCALE CONTAMINATED (15:20)]
+category: Experimental
 
-1. "World Remains Open" (Untitled)
-   - Feature-length exploration
-   - Est. 45 minutes
-   - Target completion: Q3 2026
+Documentation of measurement failure from multiple perspectives.
+Visual investigation of scale contamination and observer paradox.
 
-2. "Incompleteness Study"
-   - Short form (5-7 minutes)
-   - Experimental narrative
-   - Est. completion: Q2 2026
+[WORLD REMAINS OPEN (UNTITLED)]
+category: Feature
 
-ARCHIVAL:
+Feature-length exploration of SET boundaries.
+Est. 45 minutes. Target completion: Q3 2026
 
-All video works are preserved in:
-/ARCHIVE/MEDIA/VIDEO/SET_WORLD/
+[INCOMPLETENESS STUDY]
+category: Short Form
+
+Experimental narrative exploration.
+Short form work (5-7 minutes) investigating incompleteness as fundamental principle.
+Est. completion: Q2 2026
+
+[ARCHIVE PRESERVATION SYSTEM]
+category: Documentation
+
+All video works preserved in /ARCHIVE/MEDIA/VIDEO/SET_WORLD/
 
 PLAYBACK SYSTEM:
 Use media player integrated with terminal interface.
-(Terminal player not yet implemented in this version)
 
 DISTRIBUTION:
 - Internal archive access
 - Limited external screenings
 - Festival submissions planned
-
-NOTES:
-Video documentation of the SET concept
-May be viewed as companion to text and image works
-Each work explores different temporal dimensions
-of the same fundamental questions
 
 STATUS: Archive accessible
 REQUIRE LOGIN: No (Public access enabled)
@@ -770,40 +1318,98 @@ REQUIRE LOGIN: No (Public access enabled)
       const terminalContent = document.getElementById('terminalContent');
 
       if (content) {
-        if (content.isBoard) {
-          // Board format
-          const boardHTML = `
-            <div class="board-container">
-              ${content.items.map((item, idx) => `
-                <div class="board-item" data-index="${idx}">
-                  <div class="board-item-header">
-                    <div class="board-item-title">[${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')} - ${item.status || 'REFERENCE'}]</div>
-                  </div>
-                  <div class="board-item-info">
-                    <div class="board-item-from">From: ${item.author}</div>
-                    <div class="board-item-meta-row">Year: ${item.year}</div>
-                    <div class="board-item-meta-row">Category: ${item.category}</div>
-                  </div>
-                  <div class="board-item-message">
-                    <div class="board-item-label">Description:</div>
-                    <div class="board-item-preview">${item.preview}</div>
-                  </div>
-                  <div class="board-item-actions">
-                    <span class="board-item-action">[read_more]</span>
-                    <span class="board-item-action">[close]</span>
-                  </div>
-                </div>
-              `).join('')}
+        if (content.isArchivePhotos) {
+          // Archive Photos format with search
+          const archiveHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+              <div class="archive-search-bar" style="margin: 12px 12px 0 12px;">
+                <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
+                <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
+              </div>
+              <div class="photo-gallery" id="photoGallery" style="margin: 12px;"></div>
             </div>
           `;
-          terminalContent.innerHTML = boardHTML;
+          terminalContent.innerHTML = archiveHTML;
 
-          // Position items randomly after a brief delay to ensure DOM is ready
-          setTimeout(() => positionBoardItems(), 50);
+          // Display all photos initially
+          displayPhotoGallery(content.photos, content.photos);
+
+          // Setup search functionality
+          setupPhotoSearch(content.photos);
+        } else if (content.isBoard) {
+          // Check if it's a list format
+          if (content.isList) {
+            // List format with table style - no header or footer
+            const listHTML = `
+              <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+                <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; flex-shrink: 0; display: flex;">
+                  <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
+                  <div style="width: 150px; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">CATEGORY</div>
+                  <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
+                </div>
+                <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
+                  ${content.items.map((item, idx) => `
+                    <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
+                      <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
+                      </div>
+                      <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${item.category}
+                      </div>
+                      <div style="width: 100px; padding: 6px 12px; color: #39dc00; font-size: 9px;">
+                        ${item.status || 'ACTIVE'}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+            terminalContent.innerHTML = listHTML;
+
+            // Setup list item click handlers
+            setupListItemClickHandlers();
+          } else {
+            // Board format
+            const boardHTML = `
+              <div class="board-header">
+                <span>BOARD: ${content.title.toUpperCase()} (${content.items.length} posts)</span>
+                <button class="new-post-btn" id="newPostBtn">[NEW POST]</button>
+              </div>
+              <div class="board-container">
+                ${content.items.map((item, idx) => `
+                  <div class="board-item" data-index="${idx}">
+                    <div class="board-item-header">
+                      <div class="board-item-title">[${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')} - ${item.status || 'REFERENCE'}]</div>
+                    </div>
+                    <div class="board-item-info">
+                      <div class="board-item-from">From: ${item.author}</div>
+                      <div class="board-item-meta-row">Year: ${item.year}</div>
+                      <div class="board-item-meta-row">Category: ${item.category}</div>
+                    </div>
+                    <div class="board-item-message">
+                      <div class="board-item-label">Description:</div>
+                      <div class="board-item-preview">${item.preview}</div>
+                    </div>
+                    <div class="board-item-actions">
+                      <span class="board-item-action">[read_more]</span>
+                      <span class="board-item-action">[close]</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+            terminalContent.innerHTML = boardHTML;
+
+            // Setup new post button
+            setupNewPostModal(section);
+
+            // Position items randomly after a brief delay to ensure DOM is ready
+            setTimeout(() => positionBoardItems(), 50);
+          }
         } else {
           // Regular text format
-          const contentText = document.getElementById('contentText');
-          contentText.textContent = content.text;
+          const textHTML = `<pre class="terminal-content-text" id="contentText">${content.text}</pre>`;
+          terminalContent.innerHTML = textHTML;
         }
       }
     }
@@ -821,14 +1427,15 @@ REQUIRE LOGIN: No (Public access enabled)
       const itemHeight = 140;
       const padding = 15; // Space between items
       const columns = 3;
-      const overlapX = 12; // Slight horizontal overlap
-      const overlapY = 8; // Slight vertical overlap
 
       // Calculate grid dimensions
       const gridX = 20; // Left margin
       const gridY = 20; // Top margin
-      const totalItemWidth = itemWidth + padding - overlapX;
-      const totalItemHeight = itemHeight + padding - overlapY;
+      const totalItemWidth = itemWidth + padding;
+      const totalItemHeight = itemHeight + padding;
+
+      // Indices of cards that should be irregular (only 1-2 cards)
+      const irregularIndices = [3, 5];
 
       boardItems.forEach((item, index) => {
         // Calculate row and column
@@ -839,12 +1446,20 @@ REQUIRE LOGIN: No (Public access enabled)
         const baseX = gridX + col * totalItemWidth;
         const baseY = gridY + row * totalItemHeight;
 
-        // Add random offset for irregular placement
-        const offsetX = (Math.random() - 0.5) * 20; // -10 to +10
-        const offsetY = (Math.random() - 0.5) * 15; // -7.5 to +7.5
+        let x = baseX;
+        let y = baseY;
 
-        const x = baseX + offsetX;
-        const y = baseY + offsetY;
+        // Apply irregular placement only to specific card indices
+        if (irregularIndices.includes(index)) {
+          const offsetX = (Math.random() - 0.5) * 30; // -15 to +15 (larger range)
+          const offsetY = (Math.random() - 0.5) * 20; // -10 to +10 (larger range)
+          x = baseX + offsetX;
+          y = baseY + offsetY;
+
+          // Add slight negative margin for overlap effect
+          item.style.marginLeft = '-12px';
+          item.style.marginTop = '-8px';
+        }
 
         // Apply styles with animation
         const randomScale = 0.97 + Math.random() * 0.06;
@@ -864,6 +1479,9 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // Enable dragging for board items
       enableBoardDragging();
+
+      // Enable card click for viewing details
+      setupBoardItemClickHandlers();
     }
 
     // Enable dragging functionality for board items
@@ -880,6 +1498,9 @@ REQUIRE LOGIN: No (Public access enabled)
           draggedItem = item;
           draggedItem.style.cursor = 'grabbing';
           draggedItem.style.zIndex = '1000';
+
+          // Remove transition for smooth dragging
+          draggedItem.style.transition = 'none';
 
           const rect = item.getBoundingClientRect();
           const container = document.querySelector('.board-container');
@@ -905,15 +1526,243 @@ REQUIRE LOGIN: No (Public access enabled)
         newX = Math.max(0, Math.min(newX, containerRect.width - draggedItem.offsetWidth));
         newY = Math.max(0, Math.min(newY, containerRect.height - draggedItem.offsetHeight));
 
-        draggedItem.style.left = newX + 'px';
-        draggedItem.style.top = newY + 'px';
+        // Use requestAnimationFrame for smooth animation
+        requestAnimationFrame(() => {
+          draggedItem.style.left = newX + 'px';
+          draggedItem.style.top = newY + 'px';
+        });
       });
 
       document.addEventListener('mouseup', () => {
         if (draggedItem) {
           draggedItem.style.cursor = 'grab';
           draggedItem.style.zIndex = 'auto';
+          // Restore transition for smooth deceleration
+          draggedItem.style.transition = 'all 0.3s ease 0ms';
           draggedItem = null;
+        }
+      });
+    }
+
+    // Setup list item click handlers
+    function setupListItemClickHandlers() {
+      const listItems = document.querySelectorAll('.list-item');
+
+      listItems.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+          // Find the data array for current section
+          let currentSection = null;
+          const menuItems = document.querySelectorAll('.menu-item.active');
+          if (menuItems.length > 0) {
+            currentSection = menuItems[0].getAttribute('data-section');
+          }
+
+          if (currentSection && contents[currentSection] && contents[currentSection].items) {
+            const selectedItem = contents[currentSection].items[idx];
+            const now = new Date();
+            const timeStr = now.toLocaleString('en-US', {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true,
+              timeZoneName: 'short'
+            });
+
+            const detailHTML = `
+              <div class="detail-view">
+                <div class="detail-header">
+                  <span>${currentSection.toUpperCase()}</span>
+                  <span style="color: #39dc00;">${timeStr}</span>
+                </div>
+                <div class="detail-content">
+                  <div class="detail-time">[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - SYSTEM LOG ENTRY]</div>
+
+                  <div class="detail-info-table">
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">ID</div>
+                      <div class="detail-info-value">${selectedItem.id || selectedItem.title.toUpperCase().replace(/\\s+/g, '_')}</div>
+                    </div>
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">TITLE</div>
+                      <div class="detail-info-value">${selectedItem.title}</div>
+                    </div>
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">AUTHOR</div>
+                      <div class="detail-info-value">${selectedItem.author}</div>
+                    </div>
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">YEAR</div>
+                      <div class="detail-info-value">${selectedItem.year}</div>
+                    </div>
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">CATEGORY</div>
+                      <div class="detail-info-value">${selectedItem.category}</div>
+                    </div>
+                    <div class="detail-info-row">
+                      <div class="detail-info-label">STATUS</div>
+                      <div class="detail-info-value">${selectedItem.status}</div>
+                    </div>
+                  </div>
+
+                  <div class="detail-divider"></div>
+
+                  <div style="margin: 12px 0; color: #39dc00; font-weight: bold;">[CONTENT]</div>
+                  <div class="detail-preview">${selectedItem.preview}</div>
+
+                  <div class="detail-divider"></div>
+
+                  <div style="text-align: center; margin-top: 12px;">
+                    <span style="color: #39dc00; cursor: pointer;" id="backToList">[RETURN TO LIST]</span>
+                  </div>
+                </div>
+                <div class="detail-footer">
+                  <span>STATUS: LOADED | ENTRY TYPE: REFERENCE</span>
+                  <span>SIZE: ${selectedItem.preview.length} BYTES</span>
+                </div>
+              </div>
+            `;
+
+            const terminalContent = document.querySelector('.terminal-content');
+            terminalContent.innerHTML = detailHTML;
+
+            // Setup back button
+            const backBtn = document.getElementById('backToList');
+            if (backBtn) {
+              backBtn.addEventListener('click', () => {
+                loadContent(currentSection);
+              });
+            }
+
+            // Scroll to top
+            if (terminalContent) {
+              terminalContent.scrollTop = 0;
+            }
+          }
+        });
+
+        // Hover effect
+        item.addEventListener('mouseover', () => {
+          item.style.background = 'rgba(0, 255, 255, 0.1)';
+        });
+
+        item.addEventListener('mouseout', () => {
+          item.style.background = 'transparent';
+        });
+      });
+    }
+
+    // Setup board item click handlers
+    function setupBoardItemClickHandlers() {
+      const boardItems = document.querySelectorAll('.board-item');
+
+      boardItems.forEach((item, idx) => {
+        const readMoreBtn = item.querySelector('.board-item-action');
+        const closeBtn = item.querySelectorAll('.board-item-action')[1];
+
+        if (readMoreBtn) {
+          readMoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const title = item.querySelector('.board-item-title').textContent;
+            const author = item.querySelector('.board-item-from').textContent;
+            const meta = item.querySelectorAll('.board-item-meta-row');
+            const preview = item.querySelector('.board-item-preview').textContent;
+
+            const detailText = `${title}
+
+${author}
+${meta[0]?.textContent || ''}
+${meta[1]?.textContent || ''}
+
+========================================
+
+${preview}
+
+========================================`;
+
+            const contentText = document.getElementById('contentText');
+            contentText.textContent = detailText;
+
+            // Scroll to top
+            const terminalContent = document.querySelector('.terminal-content');
+            if (terminalContent) {
+              terminalContent.scrollTop = 0;
+            }
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Just prevent default, the board stays visible
+          });
+        }
+      });
+    }
+
+    // Setup new post modal
+    function setupNewPostModal(section) {
+      const modal = document.getElementById('writeModal');
+      const newPostBtn = document.getElementById('newPostBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const postForm = document.getElementById('postForm');
+
+      if (!newPostBtn) return;
+
+      // Open modal
+      newPostBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+        document.getElementById('postTitle').focus();
+      });
+
+      // Close modal
+      cancelBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        postForm.reset();
+      });
+
+      // Close on overlay click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          postForm.reset();
+        }
+      });
+
+      // Submit form
+      postForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Get form values
+        const newItem = {
+          id: document.getElementById('postTitle').value.toUpperCase().replace(/\\s+/g, '_'),
+          title: document.getElementById('postTitle').value,
+          author: document.getElementById('postAuthor').value,
+          year: document.getElementById('postYear').value || new Date().getFullYear(),
+          category: document.getElementById('postCategory').value || 'Uncategorized',
+          status: document.getElementById('postStatus').value || 'PUBLISHED',
+          preview: document.getElementById('postPreview').value
+        };
+
+        // Add to contents array
+        if (contents[section].items) {
+          contents[section].items.push(newItem);
+
+          // Reload content
+          modal.classList.remove('active');
+          postForm.reset();
+          loadContent(section);
+        }
+      });
+
+      // Close on ESC key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          modal.classList.remove('active');
+          postForm.reset();
         }
       });
     }
@@ -945,10 +1794,19 @@ REQUIRE LOGIN: No (Public access enabled)
     function setupHamburger() {
       const hamburgerBtn = document.getElementById('hamburgerBtn');
       const menuSection = document.getElementById('menuSection');
+      const closeBtn = document.querySelector('.close-btn');
 
       hamburgerBtn.addEventListener('click', function() {
         menuSection.classList.toggle('mobile-active');
       });
+
+      // X button to return to menu
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+          // Navigate to menu page
+          window.location.href = 'menu.html';
+        });
+      }
 
       // Close menu on outside click
       document.addEventListener('click', function(e) {
@@ -967,13 +1825,139 @@ REQUIRE LOGIN: No (Public access enabled)
       });
     }
 
+    // Display photo gallery
+    function displayPhotoGallery(photos, filtered) {
+      const gallery = document.getElementById('photoGallery');
+
+      if (filtered.length === 0) {
+        gallery.innerHTML = '<div class="no-results">No photos found matching your search.</div>';
+        return;
+      }
+
+      const galleryHTML = filtered.map(photo => `
+        <div class="photo-item" data-photo-id="${photo.id}">
+          <div class="photo-item-image">
+            <img src="images/${photo.filename}" alt="${photo.title}" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
+          </div>
+          <div class="photo-item-info">
+            <div class="photo-item-title">${photo.title}</div>
+            <div class="photo-item-keywords">${photo.keywords.join(' • ')}</div>
+          </div>
+        </div>
+      `).join('');
+
+      gallery.innerHTML = galleryHTML;
+
+      // Setup click handlers for photos
+      document.querySelectorAll('.photo-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const photoId = item.getAttribute('data-photo-id');
+          const photo = photos.find(p => p.id === photoId);
+          if (photo) {
+            showPhotoDetail(photo);
+          }
+        });
+      });
+    }
+
+    // Setup photo search
+    function setupPhotoSearch(allPhotos) {
+      const searchInput = document.getElementById('archiveSearchInput');
+      const searchBtn = document.getElementById('archiveSearchBtn');
+
+      if (!searchInput || !searchBtn) return;
+
+      function performSearch() {
+        const query = searchInput.value.toLowerCase().trim();
+
+        if (!query) {
+          displayPhotoGallery(allPhotos, allPhotos);
+          return;
+        }
+
+        // Search in keywords and title
+        const filtered = allPhotos.filter(photo => {
+          const keywordMatch = photo.keywords.some(kw =>
+            kw.toLowerCase().includes(query)
+          );
+          const titleMatch = photo.title.toLowerCase().includes(query);
+          const descMatch = photo.description.toLowerCase().includes(query);
+
+          return keywordMatch || titleMatch || descMatch;
+        });
+
+        displayPhotoGallery(allPhotos, filtered);
+      }
+
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+
+      // Real-time search as user types
+      searchInput.addEventListener('input', performSearch);
+    }
+
+    // Show photo detail modal
+    function showPhotoDetail(photo) {
+      const modal = document.getElementById('photoDetailModal');
+      const title = document.getElementById('photoDetailTitle');
+      const image = document.getElementById('photoDetailImage');
+      const name = document.getElementById('photoDetailName');
+      const desc = document.getElementById('photoDetailDesc');
+      const keywords = document.getElementById('photoDetailKeywords');
+      const closeBtn = document.getElementById('photoDetailClose');
+
+      if (!modal) return;
+
+      title.textContent = `PHOTO: ${photo.id}`;
+      image.src = `images/${photo.filename}`;
+      image.alt = photo.title;
+      name.textContent = photo.title;
+      desc.textContent = photo.description;
+
+      keywords.innerHTML = photo.keywords.map(kw =>
+        `<span class="photo-keyword-tag">${kw}</span>`
+      ).join('');
+
+      modal.classList.add('active');
+
+      // Close button handler
+      if (closeBtn) {
+        closeBtn.onclick = () => {
+          modal.classList.remove('active');
+        };
+      }
+
+      // Close on background click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       setupMenuItems();
       setupHamburger();
 
-      // Load initial content
-      loadContent('project');
+      // Check URL parameters for section to load
+      const urlParams = new URLSearchParams(window.location.search);
+      const sectionParam = urlParams.get('section');
+
+      if (sectionParam) {
+        // Load section from URL parameter
+        const menuItem = document.querySelector(`[data-section="${sectionParam}"]`);
+        if (menuItem) {
+          menuItem.click();
+        }
+      } else {
+        // Load initial content
+        loadContent('project');
+      }
     });
   </script>
 </body>

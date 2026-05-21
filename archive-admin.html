@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SET IS THE WORLD - ARCHIVE ADMIN</title>
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
+
+.top-banner {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
+  background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
+  padding: 6px 0; z-index: 999; overflow: hidden;
+  animation: marquee 12s linear infinite;
+  font-size: 12px;
+}
+
+@keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
+
+.portfolio-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 32px);
+  margin-top: 32px;
+  padding: 20px;
+  gap: 0;
+}
+
+.portfolio-window {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  height: 550px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+/* ===== MENU SECTION (LEFT) ===== */
+.menu-section {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #39dc00;
+  background: #000;
+  box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
+}
+
+.menu-titlebar {
+  background: #39dc00;
+  color: #000;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.menu-icon {
+  width: 16px;
+  height: 16px;
+  background: #39dc00;
+  border: 1px solid #000;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.menu-list {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.menu-item {
+  padding: 12px;
+  border: 2px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.1s;
+  user-select: none;
+}
+
+.menu-item:hover {
+  background: #39dc00;
+  color: #000;
+}
+
+.menu-item.active {
+  background: #39dc00;
+  color: #000;
+}
+
+.menu-statusbar {
+  padding: 8px 12px;
+  border-top: 1px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ===== TERMINAL SECTION (RIGHT) ===== */
+.terminal-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #39dc00;
+  background: #000;
+  box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
+}
+
+.terminal-titlebar {
+  background: #39dc00;
+  color: #000;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terminal-icons {
+  display: flex;
+  gap: 4px;
+}
+
+.terminal-icon {
+  width: 16px;
+  height: 16px;
+  background: #39dc00;
+  border: 1px solid #000;
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.terminal-content {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #000;
+  color: #39dc00;
+  font-size: 12px;
+  line-height: 1.6;
+  border-top: 1px solid #39dc00;
+  min-height: 0;
+}
+
+.terminal-content-text {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.terminal-statusbar {
+  padding: 8px 12px;
+  border-top: 1px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+  border-left: 1px solid #39dc00;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #39dc00;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff9900;
+}
+
+/* ===== BOARD STYLE ===== */
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  font-size: 11px;
+}
+
+.new-post-btn {
+  background: #39dc00;
+  color: #000;
+  border: 1px solid #39dc00;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.new-post-btn:hover {
+  background: #ff9900;
+  border-color: #ff9900;
+}
+
+/* ===== WRITE POST MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #000;
+  border: 2px solid #39dc00;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  color: #39dc00;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
+}
+
+.modal-title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #39dc00;
+}
+
+.form-group {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+  background: #000;
+  border: 1px solid #39dc00;
+  color: #39dc00;
+  padding: 6px 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  box-shadow: 0 0 10px rgba(57, 220, 0, 0.5);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #39dc00;
+}
+
+.modal-btn {
+  background: #39dc00;
+  color: #000;
+  border: 1px solid #39dc00;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-btn:hover {
+  background: #ff9900;
+  border-color: #ff9900;
+}
+
+.modal-btn.cancel {
+  background: #000;
+  color: #39dc00;
+}
+
+.modal-btn.cancel:hover {
+  background: #39dc00;
+  color: #000;
+}
+
+.list-container {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .portfolio-container {
+    gap: 0;
+    padding: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .portfolio-window {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 32px);
+    gap: 0;
+  }
+
+  .menu-section {
+    position: fixed;
+    left: -240px;
+    top: 32px;
+    width: 240px;
+    height: calc(100vh - 32px);
+    z-index: 500;
+    transition: left 0.3s ease;
+  }
+
+  .menu-section.mobile-active {
+    left: 0;
+  }
+
+  .terminal-section {
+    width: 100%;
+  }
+
+  .terminal-content {
+    font-size: 11px;
+  }
+
+  .menu-item {
+    padding: 10px;
+    font-size: 11px;
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="top-banner">&gt;&gt;&gt; ARCHIVE ADMIN - HIDDEN WORKSPACE &lt;&lt;&lt;</div>
+
+  <div class="portfolio-container">
+    <div class="portfolio-window">
+      <!-- LEFT: MENU SECTION -->
+      <div class="menu-section" id="menuSection">
+      <div class="menu-titlebar">
+        ARCHIVE ADMIN
+        <div class="menu-icons">
+          <div class="menu-icon">_</div>
+          <div class="menu-icon">□</div>
+          <div class="menu-icon close-btn">✕</div>
+        </div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-item active" data-section="drafts">작업중</div>
+        <div class="menu-item" data-section="completed">완성</div>
+        <div class="menu-item" data-section="archived">보관함</div>
+      </div>
+
+      <div class="menu-statusbar">
+        <span>ADMIN MODE</span>
+        <span>HIDDEN</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: TERMINAL SECTION -->
+    <div class="terminal-section">
+      <div class="terminal-titlebar">
+        ARCHIVE WORKSPACE
+        <div class="terminal-icons">
+          <div class="terminal-icon">_</div>
+          <div class="terminal-icon">□</div>
+          <div class="terminal-icon">✕</div>
+        </div>
+      </div>
+
+      <div class="terminal-content" id="terminalContent">
+        <pre class="terminal-content-text" id="contentText"></pre>
+      </div>
+
+      <div class="terminal-statusbar">
+        <span>STATUS: ADMIN</span>
+        <span>MODE: WRITE</span>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Write Post Modal -->
+  <div class="modal-overlay" id="writeModal">
+    <div class="modal-content">
+      <div class="modal-title">NEW ARCHIVE POST - ADMIN</div>
+      <form id="postForm">
+        <div class="form-group">
+          <label for="postTitle">Title / ID</label>
+          <input type="text" id="postTitle" required placeholder="e.g., MY_DRAFT_TITLE">
+        </div>
+        <div class="form-group">
+          <label for="postAuthor">Author / From</label>
+          <input type="text" id="postAuthor" required placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="postYear">Year</label>
+          <input type="text" id="postYear" placeholder="2026">
+        </div>
+        <div class="form-group">
+          <label for="postCategory">Category</label>
+          <input type="text" id="postCategory" placeholder="e.g., Draft">
+        </div>
+        <div class="form-group">
+          <label for="postStatus">Status</label>
+          <input type="text" id="postStatus" placeholder="DRAFT / COMPLETED">
+        </div>
+        <div class="form-group">
+          <label for="postPreview">Description / Content</label>
+          <textarea id="postPreview" required placeholder="Write your draft content here..."></textarea>
+        </div>
+        <div class="modal-buttons">
+          <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
+          <button type="submit" class="modal-btn">SAVE</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Archive storage
+    const archiveData = {
+      drafts: {
+        title: '작업중',
+        items: []
+      },
+      completed: {
+        title: '완성',
+        items: []
+      },
+      archived: {
+        title: '보관함',
+        items: []
+      }
+    };
+
+    // Load data from localStorage
+    function loadArchiveData() {
+      const saved = localStorage.getItem('archiveData');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        archiveData.drafts.items = parsed.drafts || [];
+        archiveData.completed.items = parsed.completed || [];
+        archiveData.archived.items = parsed.archived || [];
+      }
+    }
+
+    // Save data to localStorage
+    function saveArchiveData() {
+      localStorage.setItem('archiveData', JSON.stringify({
+        drafts: archiveData.drafts.items,
+        completed: archiveData.completed.items,
+        archived: archiveData.archived.items
+      }));
+    }
+
+    // Initialize
+    loadArchiveData();
+
+    // Load content
+    function loadContent(section) {
+      const content = archiveData[section];
+      const terminalContent = document.getElementById('terminalContent');
+
+      if (content) {
+        // List format
+        const listHTML = `
+          <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+            <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; flex-shrink: 0; display: flex;">
+              <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
+              <div style="width: 150px; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">CATEGORY</div>
+              <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
+            </div>
+            <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
+              ${content.items.map((item, idx) => `
+                <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
+                  <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
+                  </div>
+                  <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${item.category}
+                  </div>
+                  <div style="width: 100px; padding: 6px 12px; color: #39dc00; font-size: 9px;">
+                    ${item.status || 'DRAFT'}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between;">
+              <span>TOTAL: ${content.items.length}</span>
+              <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
+            </div>
+          </div>
+        `;
+        terminalContent.innerHTML = listHTML;
+
+        // Setup new post button
+        setupNewPostModal(section);
+
+        // Setup list item click handlers
+        setTimeout(() => setupListItemClickHandlers(section), 50);
+      }
+    }
+
+    // Setup new post modal
+    function setupNewPostModal(section) {
+      const modal = document.getElementById('writeModal');
+      const newPostBtn = document.getElementById('newPostBtn');
+      const cancelBtn = document.getElementById('cancelBtn');
+      const postForm = document.getElementById('postForm');
+
+      if (!newPostBtn) return;
+
+      newPostBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+        document.getElementById('postTitle').focus();
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        modal.classList.remove('active');
+        postForm.reset();
+      });
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          postForm.reset();
+        }
+      });
+
+      postForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const newItem = {
+          id: document.getElementById('postTitle').value.toUpperCase().replace(/\\s+/g, '_'),
+          title: document.getElementById('postTitle').value,
+          author: document.getElementById('postAuthor').value,
+          year: document.getElementById('postYear').value || new Date().getFullYear(),
+          category: document.getElementById('postCategory').value || 'Draft',
+          status: document.getElementById('postStatus').value || 'DRAFT',
+          preview: document.getElementById('postPreview').value
+        };
+
+        archiveData[section].items.push(newItem);
+        saveArchiveData();
+
+        modal.classList.remove('active');
+        postForm.reset();
+        loadContent(section);
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+          modal.classList.remove('active');
+          postForm.reset();
+        }
+      });
+    }
+
+    // Setup list item click handlers
+    function setupListItemClickHandlers(section) {
+      const listItems = document.querySelectorAll('.list-item');
+
+      listItems.forEach((item, idx) => {
+        item.addEventListener('click', () => {
+          const selectedItem = archiveData[section].items[idx];
+          const detailHTML = `[${selectedItem.id}]
+Category: ${selectedItem.category}
+Status: ${selectedItem.status}
+Author: ${selectedItem.author}
+Year: ${selectedItem.year}
+
+====================================================
+
+${selectedItem.preview}
+
+====================================================
+
+[EDIT] [DELETE] [BACK]`;
+
+          const contentText = document.getElementById('contentText');
+          contentText.textContent = detailHTML;
+
+          const terminalContent = document.querySelector('.terminal-content');
+          if (terminalContent) {
+            terminalContent.scrollTop = 0;
+          }
+        });
+
+        item.addEventListener('mouseover', () => {
+          item.style.background = 'rgba(57, 220, 0, 0.1)';
+        });
+
+        item.addEventListener('mouseout', () => {
+          item.style.background = 'transparent';
+        });
+      });
+    }
+
+    // Setup menu items
+    function setupMenuItems() {
+      const menuItems = document.querySelectorAll('.menu-item');
+
+      menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+          menuItems.forEach(m => m.classList.remove('active'));
+          this.classList.add('active');
+
+          const section = this.getAttribute('data-section');
+          loadContent(section);
+
+          const menuSection = document.getElementById('menuSection');
+          if (window.innerWidth <= 768) {
+            menuSection.classList.remove('mobile-active');
+          }
+        });
+      });
+    }
+
+    // Setup close button
+    function setupCloseButton() {
+      const closeBtn = document.querySelector('.close-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          window.location.href = 'index.html';
+        });
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      setupMenuItems();
+      setupCloseButton();
+      loadContent('drafts');
+    });
+  </script>
+</body>
+</html>
