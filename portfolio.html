@@ -2663,30 +2663,52 @@ ${preview}
         const publishedItems = getPublishedPosts(section);
         allItems.push(...publishedItems);
 
+        // Use card format for reference section, list format for others
+        const isCardFormat = section === 'reference';
+
         let html = `
-          <div style="padding: 0; border-top: 1px solid #39dc00;">
+          <div style="padding: ${isCardFormat ? '12px' : '0'}; border-top: 1px solid #39dc00;">
             <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; font-weight: bold; color: #39dc00; font-size: 11px;">
               ${content.title.toUpperCase()} (${allItems.length} items)
             </div>
-            <div style="padding: 0;">
+            <div style="padding: ${isCardFormat ? '8px' : '0'};">
         `;
 
         allItems.forEach((item, idx) => {
           const itemId = item.id || item.title.toUpperCase().replace(/\s+/g, '_');
           const category = item.category || 'UNCATEGORIZED';
           const status = item.status || 'ACTIVE';
+          const author = item.author || '';
+          const year = item.year || '';
 
-          html += `
-            <div style="cursor: pointer; display: block; border-bottom: 1px dashed #39dc00; padding: 8px; transition: background 0.2s; background: #000;" class="mobile-list-item" data-index="${idx}">
-              <div style="color: #39dc00; font-size: 9px; margin-bottom: 4px; font-weight: bold; word-break: break-all;">
-                ${itemId}
+          if (isCardFormat) {
+            // Card format for reference
+            html += `
+              <div style="cursor: pointer; border: 1px solid #39dc00; padding: 12px; margin-bottom: 10px; background: #111; transition: all 0.2s; hover:background: #1a1a1a;" class="mobile-list-item mobile-card" data-index="${idx}">
+                <div style="color: #39dc00; font-size: 10px; margin-bottom: 6px; font-weight: bold; word-break: break-all;">
+                  ${itemId}
+                </div>
+                <div style="color: #888; font-size: 9px; margin-bottom: 6px; display: flex; justify-content: space-between; gap: 8px;">
+                  <span>${category}</span>
+                  <span>${status}</span>
+                </div>
+                ${author || year ? `<div style="color: #666; font-size: 8px; margin-bottom: 6px;">${year ? year + ' | ' : ''}${author}</div>` : ''}
               </div>
-              <div style="color: #39dc00; font-size: 8px; display: flex; justify-content: space-between; gap: 8px;">
-                <span>${category}</span>
-                <span>${status}</span>
+            `;
+          } else {
+            // List format for rule and others
+            html += `
+              <div style="cursor: pointer; display: block; border-bottom: 1px dashed #39dc00; padding: 8px; transition: background 0.2s; background: #000;" class="mobile-list-item" data-index="${idx}">
+                <div style="color: #39dc00; font-size: 9px; margin-bottom: 4px; font-weight: bold; word-break: break-all;">
+                  ${itemId}
+                </div>
+                <div style="color: #39dc00; font-size: 8px; display: flex; justify-content: space-between; gap: 8px;">
+                  <span>${category}</span>
+                  <span>${status}</span>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          }
         });
 
         html += `
