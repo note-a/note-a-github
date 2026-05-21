@@ -20,13 +20,13 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 ::-webkit-scrollbar-thumb:hover { background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5); }
 
 .app-container {
-  display: flex; flex-direction: row; width: 1200px; margin: 32px auto 0;
-  gap: 0; padding: 0; min-height: calc(100vh - 32px);
+  display: flex; flex-direction: column; width: 100%; margin: 32px 0 0;
+  gap: 0; padding: 0; min-height: auto;
 }
 
 .site-body-left-column {
-  width: 200px; flex-shrink: 0; border-right: 2px solid #39dc00;
-  padding: 20px 12px; position: static; max-height: calc(100vh - 32px); overflow-y: auto;
+  width: 100%; flex-shrink: 0; border-right: none; border-bottom: 2px solid #39dc00;
+  padding: 20px 12px; position: static; max-height: auto; overflow-y: auto;
 }
 
 .nav-links { padding: 6px 8px; }
@@ -44,14 +44,14 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 }
 
 .site-body-center {
-  flex: 0 0 600px; padding: 20px 12px; overflow-y: auto;
-  max-height: calc(100vh - 32px);
+  flex: 1; width: 100%; padding: 20px 12px; overflow-y: auto;
+  max-height: auto;
 }
 
 .site-body-right-column {
-  flex: 0 0 250px; padding: 20px 12px; border-left: 2px solid #39dc00;
-  position: static; max-height: calc(100vh - 32px); overflow-y: auto;
-  display: flex; flex-direction: column; gap: 20px;
+  flex: 0 0 auto; width: 100%; padding: 20px 12px; border-left: none; border-top: 2px solid #39dc00;
+  position: static; max-height: auto; overflow-y: auto;
+  display: flex; flex-direction: row; gap: 20px;
 }
 
 .sys-alert {
