@@ -2739,7 +2739,7 @@ ${preview}
 
     // Fetch admin-contents.json from GitHub and apply
     function fetchAndApplyAdminContents() {
-      fetch('admin-contents.json?t=' + Date.now())
+      fetch('https://raw.githubusercontent.com/note-a/note-a-github/main/admin-contents.json?t=' + Date.now())
         .then(r => r.json())
         .then(data => {
           if (data && Object.keys(data).length > 0) {

@@ -611,7 +611,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       // If not in localStorage, try to fetch from admin-contents.json
       try {
         console.log('Fetching admin-contents.json...');
-        const response = await fetch('/admin-contents.json?t=' + Date.now());
+        const response = await fetch('https://raw.githubusercontent.com/note-a/note-a-github/main/admin-contents.json?t=' + Date.now());
         if (response.ok) {
           const data = await response.json();
           portfolioEditData = data;
