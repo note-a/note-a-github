@@ -158,49 +158,99 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 .sys-c-label { width: 35px; opacity: 0.8; }
 .sys-c-link { color: #39dc00; text-decoration: none; word-break: break-all; }
 
-@media (max-width: 768px) {
-  .app-container { flex-direction: column; width: 100%; gap: 0; padding: 0; }
+/* 모바일 레이아웃 스타일 */
+#mobile-layout { display: none; }
+.app-container-mobile {
+  display: flex; flex-direction: column; width: 100%; height: calc(100vh - 32px);
+  margin: 32px 0 0; padding: 0; gap: 0;
+}
 
-  /* 메뉴 최소화 */
-  .site-body-left-column {
-    width: 100%; border-right: none; border-bottom: 2px solid #39dc00;
-    max-height: auto; overflow: visible; position: static;
-    padding: 8px 12px;
-  }
-  .nav-links { padding: 4px 0; }
-  .nav-file-title { font-size: 12px; padding: 4px 8px; margin-bottom: 1px; }
-  .nav-terminal-log { display: none; }
+.mobile-header {
+  width: 100%; background: #000; border-bottom: 2px solid #39dc00;
+  padding: 8px 12px; flex-shrink: 0; height: auto;
+}
 
-  /* 터미널 최적화 */
-  .site-body-center {
-    flex: 1; width: 100%; max-height: none; padding: 12px;
-  }
-  .m-monitor { height: auto; min-height: 300px; }
-  #terminal-text { font-size: 11px; }
-  .sys-alert { display: none; }
+.mobile-nav-title {
+  color: #39dc00; font-size: 12px; font-weight: bold;
+  margin: 0; padding: 0;
+}
 
-  /* 시스템 패널 세로 배치 */
-  .site-body-right-column {
-    width: 100%; border-left: none; border-top: 2px solid #39dc00;
-    flex-direction: column; gap: 8px; max-height: none; padding: 8px 12px;
-  }
-  .sys-mini-res, .sys-eq-wrap, .sys-contact-wrap {
-    flex: none; width: 100%; border-right: none; border-bottom: 1px dashed #39dc00;
-    padding-right: 0; padding-bottom: 8px;
-  }
-  .sys-contact-wrap { border-bottom: none; }
+.mobile-terminal-container {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 12px; gap: 8px; overflow-y: auto;
+  width: 100%;
+}
 
-  /* 기타 UI */
-  .m-loading-wrap { padding: 8px; gap: 6px; margin-top: 8px; }
-  .load-txt { font-size: 11px; }
-  button { padding: 6px 12px; font-size: 10px; min-height: 36px; }
-  input[type="text"] { font-size: 11px; padding: 6px 8px; min-height: 36px; }
+.m-monitor-mobile {
+  border: 2px solid #39dc00; background: #000; padding: 0;
+  color: #39dc00; width: 100%; flex: 1;
+  display: flex; flex-direction: column;
+}
+
+.m-monitor-mobile > div:first-child {
+  background: #39dc00; color: #000; padding: 6px 10px;
+  font-weight: bold; font-size: 11px;
+}
+
+.m-monitor-mobile > div:nth-child(2) {
+  flex: 1; padding: 10px; overflow-y: auto;
+  background: #000; color: #39dc00; font-size: 12px;
+  line-height: 1.5;
+}
+
+.m-monitor-mobile > div:last-child {
+  background: #000; border-top: 1px solid #39dc00;
+  padding: 6px 10px; font-size: 10px; color: #39dc00;
+}
+
+.mobile-controls {
+  display: flex; flex-direction: column; gap: 8px;
+  flex-shrink: 0; width: 100%;
+}
+
+.m-loading-wrap-mobile {
+  display: flex; align-items: center; width: 100%;
+  padding: 8px 10px; border: 1px dashed #39dc00; background: #000;
+}
+
+.load-txt-mobile {
+  color: #39dc00; font-size: 12px; margin-right: 10px;
+  animation: blink 1.2s infinite; font-weight: bold;
+}
+
+.m-loading-bar-mobile {
+  flex-grow: 1; height: 10px; border: 1px solid #39dc00; background: #000;
+  position: relative; overflow: hidden;
+}
+
+.m-loading-bar-mobile::before {
+  content: ""; position: absolute; top: 0; left: 0; height: 100%;
+  width: 30%; background: #39dc00;
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.mobile-search {
+  display: flex; gap: 8px; width: 100%;
+}
+
+.mobile-search input {
+  flex: 1; background: #000; border: 1px solid #39dc00;
+  color: #39dc00; padding: 4px 8px; font-family: monospace;
+  font-size: 11px; outline: none;
+}
+
+.mobile-search button {
+  background: #39dc00; color: #000; border: 1px solid #39dc00;
+  padding: 4px 12px; font-family: monospace; font-size: 11px;
+  font-weight: bold; cursor: pointer; min-height: auto;
 }
   </style>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
+  <!-- 데스크탑 레이아웃 -->
+  <div id="desktop-layout">
   <div class="app-container">
     <!-- 좌측 메뉴 + 터미널 로그 -->
     <div class="site-body-left-column">
@@ -315,11 +365,80 @@ root@system:~# █</div>
       </div>
     </div>
   </div>
+  </div>
+
+  <!-- 모바일 레이아웃 -->
+  <div id="mobile-layout">
+    <div class="app-container-mobile">
+      <div class="mobile-header">
+        <div class="mobile-nav-title">&gt;&gt; PROJECT SET</div>
+      </div>
+
+      <div class="mobile-terminal-container">
+        <div class="m-monitor-mobile">
+          <div>TERMINAL CHAT SYSTEM V.2.1</div>
+          <div style="flex:1;padding:10px;overflow-y:auto;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+            <pre id="terminal-text-mobile" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor-mobile">█</span>
+            <div id="error-page-mobile" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;">
+              <div style="margin-top:40px;">
+                <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
+                <div style="margin-bottom:40px;line-height:2;font-size:11px;">
+                  <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+                  <div>00001563. The current application will be terminated.</div>
+                  <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
+                  <div>* Press your hot keys again to restart your computer. You will</div>
+                  <div>lose any unsaved information in all applications.</div>
+                  <div style="margin-top:40px;">Press any key continue</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="opacity:0.6;">STATUS: ONLINE</span>
+            <span style="opacity:0.6;">█ ████░ 50%</span>
+          </div>
+        </div>
+
+        <div class="mobile-controls">
+          <div class="m-loading-wrap-mobile">
+            <div class="load-txt-mobile">LOADING...</div>
+            <div class="m-loading-bar-mobile"></div>
+          </div>
+
+          <div class="mobile-search">
+            <input type="text" id="search-input-mobile" placeholder="search_archive --query" />
+            <button>ENTER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    function typeWriter(elementId, text, speed = 50, callback) {
+    // 뷰포트 감지 함수
+    function detectViewport() {
+      const isMobile = window.innerWidth <= 768;
+      const desktopLayout = document.getElementById('desktop-layout');
+      const mobileLayout = document.getElementById('mobile-layout');
+
+      if (isMobile) {
+        desktopLayout.style.display = 'none';
+        mobileLayout.style.display = 'block';
+      } else {
+        desktopLayout.style.display = 'block';
+        mobileLayout.style.display = 'none';
+      }
+    }
+
+    // 초기 로드 시 실행
+    window.addEventListener('load', detectViewport);
+
+    // 창 리사이즈 시 실행
+    window.addEventListener('resize', detectViewport);
+
+    function typeWriter(elementId, text, speed = 50, callback, cursorId = 'cursor') {
       const element = document.getElementById(elementId);
-      const cursor = document.getElementById('cursor');
+      const cursor = document.getElementById(cursorId);
       let index = 0;
 
       function type() {
@@ -340,6 +459,8 @@ root@system:~# █</div>
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      // 초기 뷰포트 감지
+      detectViewport();
       const mainText = `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.
 
 Set is the world. I'm measuring the perimeter of the set.
@@ -375,17 +496,24 @@ But the scale I hold is already contaminated by the world itself.`;
 [00:00:07.500] SYSTEM REMAINS OPEN. DO NOT DISCONNECT.
 [00:00:07.999] █`;
 
-      typeWriter('terminal-text', mainText, 25, function() {
+      // 현재 표시되는 레이아웃 감지
+      const isMobile = window.innerWidth <= 768;
+      const terminalElementId = isMobile ? 'terminal-text-mobile' : 'terminal-text';
+      const cursorId = isMobile ? 'cursor-mobile' : 'cursor';
+      const errorPageId = isMobile ? 'error-page-mobile' : 'error-page';
+      const monitorSelector = isMobile ? '.m-monitor-mobile' : '.m-monitor';
+
+      typeWriter(terminalElementId, mainText, 25, function() {
         setTimeout(function() {
           // 텍스트 클리어
-          document.getElementById('terminal-text').textContent = '';
+          document.getElementById(terminalElementId).textContent = '';
           // 텍스트 사라졌다가 500ms 후에 해킹 문구 시작
           setTimeout(function() {
-            typeWriter('terminal-text', hackingText, 3, function() {
+            typeWriter(terminalElementId, hackingText, 3, function() {
               // 해킹 문구 완료 후 글리치 효과 시작
               setTimeout(function() {
-                const monitor = document.querySelector('.m-monitor');
-                const terminalText = document.getElementById('terminal-text');
+                const monitor = document.querySelector(monitorSelector);
+                const terminalText = document.getElementById(terminalElementId);
                 monitor.classList.add('glitch-mode');
                 terminalText.classList.add('glitch-mode');
 
@@ -393,16 +521,16 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
-                  document.getElementById('error-page').style.display = 'block';
+                  document.getElementById(errorPageId).style.display = 'block';
 
                   // 에러 페이지에서 아무 키나 누르면 창 닫기
                   document.addEventListener('keydown', function closeError() {
-                    document.getElementById('error-page').style.display = 'none';
+                    document.getElementById(errorPageId).style.display = 'none';
                     document.removeEventListener('keydown', closeError);
                   });
                 }, 3000);
               }, 800);
-            });
+            }, cursorId);
           }, 500);
         }, 1200); // 주요 텍스트 표시 후 1200ms 대기
       });
