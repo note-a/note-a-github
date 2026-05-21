@@ -70,7 +70,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 
 .m-monitor {
   border: 2px solid #39dc00; background: #000; padding: 0;
-  color: #39dc00; width: 100%; min-height: 280px;
+  color: #39dc00; width: 100%; height: 280px;
   display: flex; flex-direction: column;
 }
 
@@ -282,24 +282,33 @@ But the scale I hold is already contaminated by the world itself.`;
 
       const hackingText = `
 
-root@system:~# ./scan --recursive
-[ INFO ] protocol_initialized
-[ WARN ] structure_detected: photography
-[ WARN ] scale_contaminated: world_influence
-[ INFO ] port_1(AI): analyzing_boundaries
-[ INFO ] port_2(HUMAN): measuring_contamination
-[ LOG  ] interference: visibility_collapse
-[ LOG  ] superimposition: language_meets_vision
-[ FAIL ] system_status: INCOMPLETENESS_CONFIRMED
-[ EXIT ] world_remains_undefined
-root@system:~# ./archive --structure
-[ WARN ] reproduction_halted
-[ INFO ] body_coerced: perception_suspended
-[ INFO ] gaze_suspended: archive_complete
-[ LOG  ] contamination_level: 100%
-[ FAIL ] boundary_closure: FAILED
-[ EXIT ] set_remains_open.
-root@system:~# `;
+[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
+[00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS
+[00:00:01.201] >>> ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...
+[00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.
+[00:00:01.890] INITIALIZING PERIMETER_SCAN.EXE --TARGET="SET"
+[00:00:02.100] SCANNING SPATIAL COORDINATES... 12%... 45%... 94.2%...
+[00:00:02.405] [FATAL] BOUNDARY_COLLISION AT SECTOR 4. OVERLAP DETECTED.
+[00:00:02.550] DIAGNOSTIC LOG: SCALE_CONTAMINATED.
+[00:00:02.601] THE RULER USED FOR MEASUREMENT IS ALREADY PART OF THE SET'S LOGIC.
+[00:00:03.000] >>> RE-CALIBRATING OBSERVER PROTOCOL...
+[00:00:03.112] STATUS: WE ARE NOT THE OBSERVER. WE ARE THE OBSERVED.
+[00:00:03.500] ENGAGING SENSORY_OVERRIDE_MODULE...
+[00:00:03.650] [OK] BODY_STATE ENFORCED: COERCED_MODE ACTIVE.
+[00:00:03.700] [OK] VISUAL_RECEPTORS TUNED: GAZE_SUSPENDED.
+[00:00:04.102] EXECUTING MULTI-THREAD: VOICE_MERGE_PROTOCOL
+[00:00:04.220] PORT_01 (AI) : SYSTEMATIC / INDIFFERENT -> CONNECTED.
+[00:00:04.340] PORT_02 (HUMAN) : WANDERING / AFFECTIVE -> CONNECTED.
+[00:00:04.800] >>> SYNCING PORTS... CAUTION: HIGH INTERFERENCE DETECTED.
+[00:00:05.105] DATA CORRUPTION: TEXTUAL SUPERIMPOSITION CAUSING SEMANTIC DISSOLUTION.
+[00:00:05.400] [LOG] WORDS ARE TRANSFORMING INTO PURE NOISE.
+[00:00:05.800] [LOG] WHAT CANNOT BE FULLY READ BECOMES THE ESSENCE OF THE WORK ITSELF.
+[00:00:06.002] ATTEMPTING FINAL RENDER: VISION + LANGUAGE...
+[00:00:06.505] [CRITICAL ERROR] SYSTEM HALTED: FAILURE_TO_CLOSE.
+[00:00:06.880] 〈SET〉 MEASURES THROUGH VISION; TEXTS MEASURE THROUGH LANGUAGE.
+[00:00:07.100] BOTH REMAIN INCOMPLETE. THIS INCOMPLETENESS IS PRECISELY THE WORLD.
+[00:00:07.500] SYSTEM REMAINS OPEN. DO NOT DISCONNECT.
+[00:00:07.999] █`;
 
       typeWriter('terminal-text', mainText, 25, function() {
         setTimeout(function() {
