@@ -846,13 +846,12 @@ REQUIRE LOGIN: No (Public access enabled)
 
           if (!overlaps) {
             // Position found, apply styles
-            const randomRotation = (Math.random() - 0.5) * 6;
             const randomScale = 0.97 + Math.random() * 0.06;
             const randomDelay = index * 30;
 
             item.style.left = randomX + 'px';
             item.style.top = randomY + 'px';
-            item.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
+            item.style.transform = `scale(${randomScale})`;
             item.style.transition = `all 0.3s ease ${randomDelay}ms`;
             item.style.opacity = '0';
 
@@ -878,11 +877,10 @@ REQUIRE LOGIN: No (Public access enabled)
         if (!placed) {
           const fallbackX = (index % 3) * 280 + 20;
           const fallbackY = Math.floor(index / 3) * 180 + 20;
-          const randomRotation = (Math.random() - 0.5) * 4;
 
           item.style.left = fallbackX + 'px';
           item.style.top = fallbackY + 'px';
-          item.style.transform = `rotate(${randomRotation}deg) scale(0.98)`;
+          item.style.transform = `scale(0.98)`;
         }
       });
 
