@@ -833,9 +833,16 @@ REQUIRE LOGIN: No (Public access enabled)
         const col = index % columns;
         const row = Math.floor(index / columns);
 
-        // Calculate position
-        const x = gridX + col * totalItemWidth;
-        const y = gridY + row * totalItemHeight;
+        // Calculate base position
+        const baseX = gridX + col * totalItemWidth;
+        const baseY = gridY + row * totalItemHeight;
+
+        // Add random offset for irregular placement
+        const offsetX = (Math.random() - 0.5) * 20; // -10 to +10
+        const offsetY = (Math.random() - 0.5) * 15; // -7.5 to +7.5
+
+        const x = baseX + offsetX;
+        const y = baseY + offsetY;
 
         // Apply styles with animation
         const randomScale = 0.97 + Math.random() * 0.06;
