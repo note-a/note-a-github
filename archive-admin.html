@@ -466,6 +466,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <input type="text" id="postStatus" placeholder="DRAFT / COMPLETED">
         </div>
         <div class="form-group">
+          <label for="postSection">발행할 섹션</label>
+          <select id="postSection" style="background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px 8px; font-family: 'Courier New', monospace; font-size: 10px; outline: none;">
+            <option value="">-- 섹션 선택 --</option>
+            <option value="project">Project SET</option>
+            <option value="reference">Reference</option>
+            <option value="intro">Intro text</option>
+            <option value="rule">rule</option>
+            <option value="portfolio">Portfolio</option>
+            <option value="inclusion">SET Inclusion</option>
+            <option value="video">Video Archive</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="postPreview">Description / Content</label>
           <textarea id="postPreview" required placeholder="Write your draft content here..."></textarea>
         </div>
@@ -598,7 +611,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           year: document.getElementById('postYear').value || new Date().getFullYear(),
           category: document.getElementById('postCategory').value || 'Draft',
           status: document.getElementById('postStatus').value || 'DRAFT',
-          preview: document.getElementById('postPreview').value
+          preview: document.getElementById('postPreview').value,
+          publishedSection: document.getElementById('postSection').value || null
         };
 
         archiveData[section].items.push(newItem);

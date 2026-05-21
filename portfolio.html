@@ -1312,10 +1312,26 @@ REQUIRE LOGIN: No (Public access enabled)
       }
     };
 
+    // Get published posts from archive-admin
+    function getPublishedPosts(section) {
+      try {
+        const archiveData = JSON.parse(localStorage.getItem('archiveData') || '{}');
+        const completed = archiveData.completed || { items: [] };
+
+        // Filter items that are published to this section
+        return completed.items.filter(item => item.publishedSection === section) || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
     // Initialize content display
     function loadContent(section) {
       const content = contents[section];
       const terminalContent = document.getElementById('terminalContent');
+
+      // Get published posts from archive-admin
+      const publishedPosts = getPublishedPosts(section);
 
       if (content) {
         if (content.isArchivePhotos) {
@@ -1340,6 +1356,9 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isBoard) {
           // Check if it's a list format
           if (content.isList) {
+            // Combine default items with published posts
+            const allItems = [...content.items, ...publishedPosts];
+
             // List format with table style - no header or footer
             const listHTML = `
               <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
@@ -1349,7 +1368,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
                 </div>
                 <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
-                  ${content.items.map((item, idx) => `
+                  ${allItems.map((item, idx) => `
                     <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
                       <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 9px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
@@ -1371,13 +1390,16 @@ REQUIRE LOGIN: No (Public access enabled)
             setupListItemClickHandlers();
           } else {
             // Board format
+            // Combine default items with published posts
+            const allBoardItems = [...content.items, ...publishedPosts];
+
             const boardHTML = `
               <div class="board-header">
-                <span>BOARD: ${content.title.toUpperCase()} (${content.items.length} posts)</span>
+                <span>BOARD: ${content.title.toUpperCase()} (${allBoardItems.length} posts)</span>
                 <button class="new-post-btn" id="newPostBtn">[NEW POST]</button>
               </div>
               <div class="board-container">
-                ${content.items.map((item, idx) => `
+                ${allBoardItems.map((item, idx) => `
                   <div class="board-item" data-index="${idx}">
                     <div class="board-item-header">
                       <div class="board-item-title">[${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')} - ${item.status || 'REFERENCE'}]</div>
@@ -1409,7 +1431,26 @@ REQUIRE LOGIN: No (Public access enabled)
           }
         } else {
           // Regular text format
-          const textHTML = `<pre class="terminal-content-text" id="contentText">${content.text}</pre>`;
+          let textHTML = `<pre class="terminal-content-text" id="contentText">${content.text}</pre>`;
+
+          // Add published posts if any
+          if (publishedPosts.length > 0) {
+            textHTML += `
+              <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #39dc00; color: #39dc00; font-size: 11px;">
+                <div style="font-weight: bold; margin-bottom: 10px;">최근 게시물:</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                  ${publishedPosts.map(item => `
+                    <div style="border: 1px solid #39dc00; padding: 8px; font-size: 9px;">
+                      <div style="font-weight: bold;">${item.title}</div>
+                      <div style="opacity: 0.8; font-size: 8px;">By ${item.author} (${item.year})</div>
+                      <div style="margin-top: 4px;">${item.preview.substring(0, 100)}...</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
+
           terminalContent.innerHTML = textHTML;
         }
       }
