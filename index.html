@@ -171,6 +171,18 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   </style>
 </head>
 <body>
+  <div id="error-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);display:none;z-index:10000;color:#ff9900;font-family:monospace;padding:40px;text-align:center;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="font-size:36px;font-weight:bold;border:3px solid #ff9900;padding:20px 40px;margin-bottom:60px;">Error</div>
+    <div style="max-width:700px;margin-bottom:40px;line-height:2;font-size:13px;">
+      <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+      <div>00001563. The current application will be terminated.</div>
+      <div style="margin-top:40px;">* Press any key to terminate the current application.</div>
+      <div>* Press your hot keys again to restart your computer. You will</div>
+      <div style="margin-bottom:40px;">lose any unsaved information in all applications.</div>
+      <div style="margin-top:60px;font-size:16px;">Press any key continue</div>
+    </div>
+  </div>
+
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="app-container">
@@ -347,6 +359,19 @@ But the scale I hold is already contaminated by the world itself.`;
                 const terminalText = document.getElementById('terminal-text');
                 monitor.classList.add('glitch-mode');
                 terminalText.classList.add('glitch-mode');
+
+                // 글리치 효과 3초 후 에러 페이지 표시
+                setTimeout(function() {
+                  monitor.classList.remove('glitch-mode');
+                  terminalText.classList.remove('glitch-mode');
+                  document.getElementById('error-overlay').style.display = 'flex';
+
+                  // 에러 페이지에서 아무 키나 누르면 창 닫기
+                  document.addEventListener('keydown', function closeError() {
+                    document.getElementById('error-overlay').style.display = 'none';
+                    document.removeEventListener('keydown', closeError);
+                  });
+                }, 3000);
               }, 800);
             });
           }, 500);
