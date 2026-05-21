@@ -317,9 +317,7 @@ root@system:~# █</div>
 Set is the world. I'm measuring the perimeter of the set.
 But the scale I hold is already contaminated by the world itself.`;
 
-      const hackingText = `
-
-[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
+      const hackingText = `[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
 [00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS
 [00:00:01.201] >>> ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...
 [00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.
@@ -366,12 +364,6 @@ But the scale I hold is already contaminated by the world itself.`;
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
                   document.getElementById('error-page').style.display = 'block';
-
-                  // 에러 페이지에서 아무 키나 누르면 창 닫기
-                  document.addEventListener('keydown', function closeError() {
-                    document.getElementById('error-page').style.display = 'none';
-                    document.removeEventListener('keydown', closeError);
-                  });
                 }, 3000);
               }, 800);
             });
