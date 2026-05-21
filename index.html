@@ -20,18 +20,8 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 ::-webkit-scrollbar-thumb:hover { background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5); }
 
 .app-container {
-  display: flex; flex-direction: column; width: 100%; margin: 0;
-  gap: 0; padding: 0; min-height: calc(100vh - 32px);
-}
-
-.app-container-top {
   display: flex; flex-direction: row; width: 1000px; margin: 32px auto 0;
-  gap: 0; padding: 0; min-height: auto;
-}
-
-.app-container-bottom {
-  width: 100%; margin: 0; padding: 0;
-  display: flex; justify-content: center;
+  gap: 0; padding: 0; min-height: calc(100vh - 32px);
 }
 
 .site-body-left-column {
@@ -59,10 +49,9 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 }
 
 .site-body-right-column {
-  width: 100%; flex-shrink: 0; padding: 20px 12px; border-left: none; border-top: 2px solid #39dc00;
-  position: static; max-height: none; overflow-y: visible;
+  width: 220px; flex-shrink: 0; padding: 20px 12px; border-left: 2px solid #39dc00; border-top: none;
+  position: sticky; top: 32px; max-height: calc(100vh - 32px); overflow-y: auto;
   display: flex; flex-direction: column; gap: 8px;
-  max-width: 1000px; margin: 0 auto; box-sizing: border-box;
 }
 
 .sys-alert {
@@ -170,8 +159,8 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 .sys-c-link { color: #39dc00; text-decoration: none; word-break: break-all; }
 
 @media (max-width: 768px) {
-  .app-container-top { flex-direction: column; width: 100%; }
-  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; max-height: none; padding: 16px; }
+  .app-container { flex-direction: column; width: 100%; gap: 0; padding: 0; }
+  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; max-height: none; }
   .site-body-center { flex: 1; width: 100%; max-height: none; padding: 16px; }
   .site-body-right-column { width: 100%; border-left: none; border-top: 2px solid #39dc00;
     flex-direction: row; gap: 0; max-height: none; padding: 16px; }
@@ -185,9 +174,8 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="app-container">
-    <div class="app-container-top">
-      <!-- 좌측 메뉴 + 터미널 로그 -->
-      <div class="site-body-left-column">
+    <!-- 좌측 메뉴 + 터미널 로그 -->
+    <div class="site-body-left-column">
       <nav class="nav-links">
         <a href="index.html" class="nav-file-title is-active">Project SET</a>
         <a href="#" class="nav-file-title">SET Inclusion</a>
@@ -270,11 +258,9 @@ root@system:~# █</div>
         <button style="background:#39dc00;color:#000;border:1px solid #39dc00;padding:4px 12px;font-family:monospace;font-size:11px;font-weight:bold;cursor:pointer;">ENTER</button>
       </div>
     </div>
-    </div>
 
-    <!-- 하단 SYSTEM 패널 -->
-    <div class="app-container-bottom">
-      <div class="site-body-right-column">
+    <!-- 우측 SYSTEM 패널 -->
+    <div class="site-body-right-column">
       <div class="sys-mini-res">
         <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
         <div class="sys-w-row"><span class="sys-w-label">CPU</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:78%;"></div></div></div>
@@ -298,7 +284,6 @@ root@system:~# █</div>
         <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" class="sys-c-link">noteofficial@naver.com</a></div>
         <div class="sys-c-row"><span class="sys-c-label">insta</span> <span class="sys-c-link">saintnoted</span></div>
         <div class="sys-c-row"><span class="sys-c-label">tell</span> <span class="sys-c-link">010-9793-5522</span></div>
-      </div>
       </div>
     </div>
   </div>
@@ -332,7 +317,9 @@ root@system:~# █</div>
 Set is the world. I'm measuring the perimeter of the set.
 But the scale I hold is already contaminated by the world itself.`;
 
-      const hackingText = `[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
+      const hackingText = `
+
+[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
 [00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS
 [00:00:01.201] >>> ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...
 [00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.
@@ -378,9 +365,13 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
-                  document.getElementById('terminal-text').style.display = 'none';
-                  document.getElementById('cursor').style.display = 'none';
                   document.getElementById('error-page').style.display = 'block';
+
+                  // 에러 페이지에서 아무 키나 누르면 창 닫기
+                  document.addEventListener('keydown', function closeError() {
+                    document.getElementById('error-page').style.display = 'none';
+                    document.removeEventListener('keydown', closeError);
+                  });
                 }, 3000);
               }, 800);
             });
