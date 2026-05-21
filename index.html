@@ -234,17 +234,28 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; 
       const searchInput = document.getElementById('search-input');
       const searchButton = document.querySelector('.intro-search button');
 
-      function checkSearch() {
+      function checkSearch(e) {
+        if (e) e.preventDefault();
         const value = searchInput.value.toLowerCase().trim();
+        console.log('Search value:', value);
         if (value === 'set') {
+          console.log('Redirecting to menu.html');
           window.location.href = 'menu.html';
+          return;
         }
       }
 
-      searchButton.addEventListener('click', checkSearch);
+      if (searchButton) {
+        searchButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          checkSearch(e);
+        });
+      }
+
       searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-          checkSearch();
+          e.preventDefault();
+          checkSearch(e);
         }
       });
 
