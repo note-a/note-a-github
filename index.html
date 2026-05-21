@@ -230,6 +230,24 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; 
     }
 
     document.addEventListener('DOMContentLoaded', function() {
+      // 검색 입력 처리
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.querySelector('.intro-search button');
+
+      function checkSearch() {
+        const value = searchInput.value.toLowerCase().trim();
+        if (value === 'set') {
+          window.location.href = 'portfolio.html';
+        }
+      }
+
+      searchButton.addEventListener('click', checkSearch);
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          checkSearch();
+        }
+      });
+
       const mainText = `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.
 
 Set is the world. I'm measuring the perimeter of the set.
