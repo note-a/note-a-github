@@ -135,6 +135,25 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 
 @keyframes bounce { 0% { height: 15px; } 100% { height: 60px; } }
 
+@keyframes glitch {
+  0%, 100% { color: #39dc00; opacity: 1; text-shadow: 0 0 0 transparent; }
+  20% { color: #ff3333; opacity: 0.8; text-shadow: 2px 2px #39dc00, -2px -2px #ffb000; }
+  40% { color: #39dc00; opacity: 0.95; text-shadow: -1px 1px #ff3333; }
+  60% { color: #ffb000; opacity: 0.85; text-shadow: 1px -1px #39dc00, -1px 1px #ff3333; }
+  80% { color: #39dc00; opacity: 0.9; text-shadow: 0 0 0 transparent; }
+}
+
+@keyframes screenFlicker {
+  0%, 100% { background: #000; opacity: 1; }
+  25% { background: rgba(255, 51, 51, 0.1); opacity: 0.95; }
+  50% { background: rgba(0, 0, 0, 0.9); opacity: 0.98; }
+  75% { background: rgba(255, 200, 0, 0.05); opacity: 0.92; }
+}
+
+.glitch-mode {
+  animation: glitch 0.1s infinite, screenFlicker 0.15s infinite;
+}
+
 .sys-c-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 11px; color: #39dc00; }
 .sys-c-label { width: 35px; opacity: 0.8; }
 .sys-c-link { color: #39dc00; text-decoration: none; word-break: break-all; }
@@ -316,7 +335,15 @@ But the scale I hold is already contaminated by the world itself.`;
           document.getElementById('terminal-text').textContent = '';
           // 텍스트 사라졌다가 500ms 후에 해킹 문구 시작
           setTimeout(function() {
-            typeWriter('terminal-text', hackingText, 3);
+            typeWriter('terminal-text', hackingText, 3, function() {
+              // 해킹 문구 완료 후 글리치 효과 시작
+              setTimeout(function() {
+                const monitor = document.querySelector('.m-monitor');
+                const terminalText = document.getElementById('terminal-text');
+                monitor.classList.add('glitch-mode');
+                terminalText.classList.add('glitch-mode');
+              }, 800);
+            });
           }, 500);
         }, 1200); // 주요 텍스트 표시 후 1200ms 대기
       });
