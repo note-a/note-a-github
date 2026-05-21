@@ -279,10 +279,13 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
+                  const terminalDiv = terminalText.parentElement;
+                  terminalDiv.style.overflow = 'visible';
                   document.getElementById('error-page').style.display = 'block';
 
                   document.addEventListener('keydown', function closeError() {
                     document.getElementById('error-page').style.display = 'none';
+                    terminalDiv.style.overflow = 'hidden';
                     document.removeEventListener('keydown', closeError);
                   });
                 }, 3000);
