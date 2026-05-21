@@ -604,6 +604,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       postForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        // Get currently active section dynamically
+        const activeMenu = document.querySelector('.menu-item.active');
+        const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : section;
+
         const newItem = {
           id: document.getElementById('postTitle').value.toUpperCase().replace(/\\s+/g, '_'),
           title: document.getElementById('postTitle').value,
@@ -615,12 +619,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           publishedSection: document.getElementById('postSection').value || null
         };
 
-        archiveData[section].items.push(newItem);
+        archiveData[currentSection].items.push(newItem);
         saveArchiveData();
 
         modal.classList.remove('active');
         postForm.reset();
-        loadContent(section);
+        loadContent(currentSection);
       });
 
       document.addEventListener('keydown', (e) => {
