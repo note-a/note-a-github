@@ -417,6 +417,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <span>ADMIN MODE</span>
         <span>HIDDEN</span>
       </div>
+      <div style="padding: 8px; border-top: 1px solid #39dc00;">
+        <div style="font-size: 9px; color: #39dc00; margin-bottom: 4px;">GITHUB TOKEN</div>
+        <input id="githubTokenInput" type="password" placeholder="ghp_..." style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 4px; font-size: 9px; font-family: monospace; box-sizing: border-box;">
+        <button onclick="saveGithubToken()" style="width: 100%; margin-top: 4px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 4px; font-size: 9px; cursor: pointer;">SET TOKEN</button>
+      </div>
     </div>
 
     <!-- RIGHT: TERMINAL SECTION -->
@@ -570,6 +575,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         reference: archiveData.reference.items
       }));
     }
+
+    function saveGithubToken() {
+      const input = document.getElementById('githubTokenInput');
+      if (input && input.value.trim()) {
+        localStorage.setItem('githubToken', input.value.trim());
+        input.value = '';
+        alert('토큰 저장 완료!');
+      }
+    }
+
+    // Load saved token into input placeholder
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('githubToken');
+      const input = document.getElementById('githubTokenInput');
+      if (saved && input) input.placeholder = '✓ 토큰 설정됨';
+    });
 
     // Initialize
     loadArchiveData();
@@ -1324,7 +1345,35 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // Save to localStorage
       localStorage.setItem('adminContents', JSON.stringify(portfolioEditData));
-      alert('포트폴리오 변경사항이 저장되었습니다!');
+
+      // Push to GitHub so all devices see the change
+      const token = localStorage.getItem('githubToken');
+      const repo = 'note-a/note-a-github';
+      const filePath = 'admin-contents.json';
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(portfolioEditData, null, 2))));
+
+      fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+        method: 'GET',
+        headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' }
+      })
+      .then(r => r.json())
+      .then(fileData => {
+        return fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: 'Update admin-contents',
+            content: content,
+            sha: fileData.sha
+          })
+        });
+      })
+      .then(r => r.json())
+      .then(() => alert('저장 완료! 모든 기기에 반영됩니다.'))
+      .catch(e => {
+        console.error(e);
+        alert('로컬 저장은 완료됐지만 GitHub 업로드 실패: ' + e.message);
+      });
     }
 
     function resetPortfolioChanges() {

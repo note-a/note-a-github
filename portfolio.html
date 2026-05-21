@@ -2736,6 +2736,31 @@ ${preview}
       }
     });
 
+    // Fetch admin-contents.json from GitHub and apply
+    function fetchAndApplyAdminContents() {
+      fetch('admin-contents.json?t=' + Date.now())
+        .then(r => r.json())
+        .then(data => {
+          if (data && Object.keys(data).length > 0) {
+            if (data.project && data.project.slides) contents.project.slides = data.project.slides;
+            if (data.inclusion && data.inclusion.text) contents.inclusion.text = data.inclusion.text;
+            if (data.intro && data.intro.text) contents.intro.text = data.intro.text;
+            if (data.rule && data.rule.items) contents.rule.items = data.rule.items;
+            if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
+            if (data.video && data.video.text) contents.video.text = data.video.text;
+            if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
+
+            // Re-render current section
+            const isMobile = window.innerWidth <= 768;
+            const activeSection = document.querySelector('[data-section].active')?.getAttribute('data-section') ||
+                                 document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project';
+            if (isMobile) loadContentToMobile(activeSection);
+            else loadContent(activeSection);
+          }
+        })
+        .catch(() => {});
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // Load admin-edited contents from localStorage
@@ -2748,6 +2773,9 @@ ${preview}
 
       // Then detect and apply layout (which loads content)
       detectAndSwitchLayout();
+
+      // Fetch latest admin-contents.json from GitHub
+      fetchAndApplyAdminContents();
 
       // Check URL parameters for section to load
       const urlParams = new URLSearchParams(window.location.search);
