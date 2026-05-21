@@ -160,13 +160,41 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 
 @media (max-width: 768px) {
   .app-container { flex-direction: column; width: 100%; gap: 0; padding: 0; }
-  .site-body-left-column { width: 100%; border-right: none; border-bottom: 2px solid #39dc00; max-height: none; }
-  .site-body-center { flex: 1; width: 100%; max-height: none; padding: 16px; }
-  .site-body-right-column { width: 100%; border-left: none; border-top: 2px solid #39dc00;
-    flex-direction: row; gap: 0; max-height: none; padding: 16px; }
-  .sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { flex: 1; min-width: 0; border-right: 1px dashed #39dc00; padding-right: 10px; }
-  .sys-contact-wrap { border-right: none; }
+
+  /* 메뉴 최소화 */
+  .site-body-left-column {
+    width: 100%; border-right: none; border-bottom: 2px solid #39dc00;
+    max-height: auto; overflow: visible; position: static;
+    padding: 8px 12px;
+  }
+  .nav-links { padding: 4px 0; }
+  .nav-file-title { font-size: 12px; padding: 4px 8px; margin-bottom: 1px; }
+  .nav-terminal-log { display: none; }
+
+  /* 터미널 최적화 */
+  .site-body-center {
+    flex: 1; width: 100%; max-height: none; padding: 12px;
+  }
+  .m-monitor { height: auto; min-height: 300px; }
+  #terminal-text { font-size: 11px; }
   .sys-alert { display: none; }
+
+  /* 시스템 패널 세로 배치 */
+  .site-body-right-column {
+    width: 100%; border-left: none; border-top: 2px solid #39dc00;
+    flex-direction: column; gap: 8px; max-height: none; padding: 8px 12px;
+  }
+  .sys-mini-res, .sys-eq-wrap, .sys-contact-wrap {
+    flex: none; width: 100%; border-right: none; border-bottom: 1px dashed #39dc00;
+    padding-right: 0; padding-bottom: 8px;
+  }
+  .sys-contact-wrap { border-bottom: none; }
+
+  /* 기타 UI */
+  .m-loading-wrap { padding: 8px; gap: 6px; margin-top: 8px; }
+  .load-txt { font-size: 11px; }
+  button { padding: 6px 12px; font-size: 10px; min-height: 36px; }
+  input[type="text"] { font-size: 11px; padding: 6px 8px; min-height: 36px; }
 }
   </style>
 </head>
