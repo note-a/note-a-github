@@ -823,6 +823,61 @@ REQUIRE LOGIN: No (Public access enabled)
           item.style.transform = `rotate(${randomRotation}deg) scale(0.98)`;
         }
       });
+
+      // Enable dragging for board items
+      enableBoardDragging();
+    }
+
+    // Enable dragging functionality for board items
+    function enableBoardDragging() {
+      const boardItems = document.querySelectorAll('.board-item');
+      let draggedItem = null;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      boardItems.forEach(item => {
+        item.style.cursor = 'grab';
+
+        item.addEventListener('mousedown', (e) => {
+          draggedItem = item;
+          draggedItem.style.cursor = 'grabbing';
+          draggedItem.style.zIndex = '1000';
+
+          const rect = item.getBoundingClientRect();
+          const container = document.querySelector('.board-container');
+          const containerRect = container.getBoundingClientRect();
+
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+
+          e.preventDefault();
+        });
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!draggedItem) return;
+
+        const container = document.querySelector('.board-container');
+        const containerRect = container.getBoundingClientRect();
+
+        let newX = e.clientX - containerRect.left - offsetX;
+        let newY = e.clientY - containerRect.top - offsetY;
+
+        // Constrain within container
+        newX = Math.max(0, Math.min(newX, containerRect.width - draggedItem.offsetWidth));
+        newY = Math.max(0, Math.min(newY, containerRect.height - draggedItem.offsetHeight));
+
+        draggedItem.style.left = newX + 'px';
+        draggedItem.style.top = newY + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (draggedItem) {
+          draggedItem.style.cursor = 'grab';
+          draggedItem.style.zIndex = 'auto';
+          draggedItem = null;
+        }
+      });
     }
 
     // Menu item click handler
