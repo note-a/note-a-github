@@ -207,6 +207,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: #ff9900;
 }
 
+/* ===== PIXELATION FILTER ===== */
+@supports (filter: url(#pixelate)) {
+  /* SVG filter support exists */
+}
+
 /* ===== HAMBURGER MENU (MOBILE) ===== */
 .hamburger-btn {
   display: none;
@@ -787,62 +792,179 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   font-size: 8px;
 }
 
-/* ===== MOBILE RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .portfolio-container {
-    gap: 0;
-    padding: 0;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+/* ===== MOBILE LAYOUT STYLES ===== */
+#mobile-layout {
+  display: none;
+  width: 100%;
+  height: 100vh;
+  flex-direction: column;
+  background: #000;
+}
 
-  .portfolio-window {
-    width: 100%;
-    max-width: 100%;
-    height: calc(100vh - 32px);
-    gap: 0;
-  }
+.mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #39dc00;
+  color: #000;
+  padding: 10px 12px;
+  font-weight: bold;
+  font-size: 13px;
+  height: auto;
+  border-bottom: 2px solid #39dc00;
+}
 
-  .menu-section {
-    position: fixed;
-    left: -240px;
-    top: 32px;
-    width: 240px;
-    height: calc(100vh - 32px);
-    z-index: 500;
-    transition: left 0.3s ease;
-  }
+.mobile-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  .menu-section.mobile-active {
-    left: 0;
-  }
+.mobile-menu-toggle {
+  background: #39dc00;
+  color: #000;
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .terminal-section {
-    width: 100%;
-  }
+.mobile-header-title {
+  font-size: 12px;
+  font-weight: bold;
+}
 
-  .hamburger-btn {
-    display: flex;
-  }
+.mobile-terminal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  background: #000;
+  overflow: hidden;
+  min-height: 0;
+}
 
-  .terminal-content {
-    font-size: 11px;
-  }
+.mobile-terminal-titlebar {
+  background: #39dc00;
+  color: #000;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #39dc00;
+}
 
-  .menu-item {
-    padding: 10px;
-    font-size: 11px;
-  }
+.mobile-terminal-content {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: #000;
+  color: #39dc00;
+  font-size: 11px;
+  line-height: 1.6;
+  min-height: 0;
+}
+
+.mobile-terminal-statusbar {
+  padding: 8px 12px;
+  border-top: 1px solid #39dc00;
+  background: #000;
+  color: #39dc00;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mobile-menu-drawer {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 32px;
+  width: 100%;
+  height: calc(100vh - 32px);
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+}
+
+.mobile-menu-drawer.active {
+  display: block;
+}
+
+.mobile-menu-list {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  background: #000;
+  border-right: 2px solid #39dc00;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.mobile-menu-item {
+  padding: 12px;
+  border-bottom: 1px solid #39dc00;
+  cursor: pointer;
+  color: #39dc00;
+  font-size: 11px;
+  background: #000;
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.1s;
+}
+
+.mobile-menu-item:hover {
+  background: #39dc00;
+  color: #000;
+}
+
+.mobile-menu-item.active {
+  background: #39dc00;
+  color: #000;
+}
+
+/* ===== DESKTOP LAYOUT STYLES (default) ===== */
+#desktop-layout {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 32px);
+  margin-top: 32px;
 }
   </style>
 </head>
 <body>
+  <!-- SVG Pixelation Filter -->
+  <svg style="display: none;">
+    <defs>
+      <filter id="pixelate">
+        <feFlood x="0%" y="0%" width="100%" height="100%" flood-color="#000" result="color"/>
+        <feComposite in="SourceGraphic" in2="color" operator="in" result="coloredSource"/>
+        <feGaussianBlur in="coloredSource" stdDeviation="4" result="blurred"/>
+        <feComponentTransfer in="blurred" color-interpolation-filters="sRGB">
+          <feFuncR type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+          <feFuncG type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+          <feFuncB type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+        </feComponentTransfer>
+      </filter>
+    </defs>
+  </svg>
+
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
-  <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+  <!-- DESKTOP LAYOUT -->
+  <div id="desktop-layout">
+    <button class="hamburger-btn" id="hamburgerBtn">☰</button>
 
-  <div class="portfolio-container">
-    <div class="portfolio-window">
+    <div class="portfolio-container">
+      <div class="portfolio-window">
       <!-- LEFT: MENU SECTION -->
       <div class="menu-section" id="menuSection">
       <div class="menu-titlebar">
@@ -892,6 +1014,44 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
     </div>
   </div>
+  </div>
+  <!-- END DESKTOP LAYOUT -->
+
+  <!-- MOBILE LAYOUT -->
+  <div id="mobile-layout">
+    <div class="mobile-header">
+      <div class="mobile-header-left">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">☰</button>
+        <div class="mobile-header-title" id="mobileTitle">SET</div>
+      </div>
+    </div>
+
+    <div class="mobile-menu-drawer" id="mobileMenuDrawer">
+      <div class="mobile-menu-list" id="mobileMenuList">
+        <div class="mobile-menu-item active" data-section="project">SET</div>
+        <div class="mobile-menu-item" data-section="inclusion">SET Inclusion</div>
+        <div class="mobile-menu-item" data-section="archive">Archive</div>
+        <div class="mobile-menu-item" data-section="intro">Intro text</div>
+        <div class="mobile-menu-item" data-section="rule">rule</div>
+        <div class="mobile-menu-item" data-section="reference">reference</div>
+        <div class="mobile-menu-item" data-section="video">video archive</div>
+      </div>
+    </div>
+
+    <div class="mobile-terminal">
+      <div class="mobile-terminal-titlebar">
+        TERMINAL VIEWER
+      </div>
+      <div class="mobile-terminal-content" id="mobileTerminalContent">
+        <pre id="mobileContentText"></pre>
+      </div>
+      <div class="mobile-terminal-statusbar">
+        <span>STATUS: LOADED</span>
+        <span>SIZE: DYNAMIC</span>
+      </div>
+    </div>
+  </div>
+  <!-- END MOBILE LAYOUT -->
 
   <!-- Photo Detail Modal -->
   <div class="photo-detail-modal" id="photoDetailModal">
@@ -952,48 +1112,103 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <script>
+    // ===== VIEWPORT DETECTION AND LAYOUT SWITCHING =====
+    function detectAndSwitchLayout() {
+      const isMobile = window.innerWidth <= 768;
+      const desktopLayout = document.getElementById('desktop-layout');
+      const mobileLayout = document.getElementById('mobile-layout');
+
+      if (isMobile) {
+        desktopLayout.style.display = 'none';
+        mobileLayout.style.display = 'flex';
+      } else {
+        desktopLayout.style.display = 'flex';
+        mobileLayout.style.display = 'none';
+      }
+    }
+
+    // Detect layout on initial load
+    window.addEventListener('load', detectAndSwitchLayout);
+
+    // Re-detect on window resize
+    window.addEventListener('resize', detectAndSwitchLayout);
+
+    // ===== SLIDESHOW VARIABLES =====
+    let currentSlideIndex = 0;
+    let currentSlides = [];
+
+    // ===== CONTENT DATA AND FUNCTIONS =====
     // Content data for all sections
     const contents = {
       project: {
         title: 'Project SET',
-        isBoard: true,
-        isList: true,
-        items: [
+        isSlideshow: true,
+        slides: [
           {
-            id: 'PROJECT_OVERVIEW',
+            id: 'slide_1',
             title: 'Project SET Overview',
+            category: 'Concept',
             author: 'Artist / Theorist',
             year: '2025-2026',
-            category: 'Concept',
-            status: 'ACTIVE',
-            preview: 'A cyberpunk-themed visual and textual exploration of the boundaries between observer and observed, world and self. Core framework for SET.'
+            text: `A cyberpunk-themed visual and textual exploration of the boundaries between observer and observed, world and self. Core framework for SET.
+
+This project operates as a comprehensive investigation into measurement, perception, and the paradox of the observer being part of the observed system. Through visual and textual intervention, SET proposes that the act of measurement inherently contaminates the measuring instrument (in this case, us).
+
+STATUS: ACTIVE
+FRAMEWORK: 6 distinct sections exploring different aspects of SET
+INTERFACE: Terminal-based with DOS aesthetic`
           },
           {
-            id: 'CORE_CONCEPT',
+            id: 'slide_2',
             title: 'Core Concept',
-            author: 'Artist / Theorist',
-            year: '2025',
             category: 'Philosophy',
-            status: 'FOUNDATIONAL',
-            preview: 'Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction. The fundamental thesis.'
-          },
-          {
-            id: 'MEASUREMENT_PARADOX',
-            title: 'Measurement Paradox',
             author: 'Artist / Theorist',
             year: '2025',
-            category: 'Theory',
-            status: 'CORE',
-            preview: 'Set is the world. I am measuring the perimeter of the set. But the scale I hold is already contaminated by the world itself.'
+            text: `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction. The fundamental thesis.
+
+The core concept rests on three pillars:
+- Instructions: Systems of control embedded in visual culture
+- Coerced Body: We are not free agents in the SET; we are part of its structure
+- Suspended Gaze: Vision is held in abeyance; we cannot see clearly from within
+
+METHODOLOGY: Textual and visual exploration through interference and superimposition`
           },
           {
-            id: 'STRUCTURE_FRAMEWORK',
+            id: 'slide_3',
+            title: 'Measurement Paradox',
+            category: 'Theory',
+            author: 'Artist / Theorist',
+            year: '2025',
+            text: `Set is the world. I am measuring the perimeter of the set. But the scale I hold is already contaminated by the world itself.
+
+This paradox forms the central tension of the work. Any attempt to measure or define the boundaries of the SET is itself already infected by the SET's logic. The measuring tool is not neutral; it is part of what is being measured.
+
+OBSERVATION: The observer is observed
+IMPLICATION: Distance is an illusion
+RESOLUTION: The incompleteness is precisely the world`
+          },
+          {
+            id: 'slide_4',
             title: 'Structure & Framework',
+            category: 'System Design',
             author: 'Artist / Developer',
             year: '2025-2026',
-            category: 'System Design',
-            status: 'IMPLEMENTED',
-            preview: '6 distinct sections exploring different aspects of SET framework. Terminal-based interface. DOS aesthetic. Interactive system.'
+            text: `6 distinct sections exploring different aspects of SET framework. Terminal-based interface. DOS aesthetic. Interactive system.
+
+TECHNICAL IMPLEMENTATION:
+- JavaScript-based viewport detection for responsive layout
+- Real-time content loading and dynamic rendering
+- Archive administration system with publishing workflow
+- Photo search and display functionality
+- Cross-section content publishing system
+- localStorage integration for persistent data
+
+VISUAL LANGUAGE:
+- Terminal/DOS aesthetic with #39dc00 green color scheme
+- Monospace typography (Courier New)
+- Grid and flexbox layouts
+- Minimal visual hierarchy through border and spacing
+- Responsive mobile/desktop layout separation`
           }
         ]
       },
@@ -1101,52 +1316,55 @@ NEXT STEP: Explore the other sections using the menu
       },
       rule: {
         title: 'Rule',
-        text: `RULES OF THE SET
-====================================================
-
-[RULE 1: THE OBSERVER IS OBSERVED]
-category: Fundamental Rule
-
-- You are not external to the SET
-- Your measurement is a measurement of yourself
-- Distance is an illusion
-
-[RULE 2: INCOMPLETENESS IS COMPLETENESS]
-category: Fundamental Rule
-
-- No system can be fully closed
-- The SET remains open by necessity
-- Failure is the only success
-
-[RULE 3: VOICE MUST MERGE]
-category: Fundamental Rule
-
-- Systematic thought alone fails
-- Affective knowledge alone fails
-- Only interference creates meaning
-
-[RULE 4: LANGUAGE AND VISION COEXIST]
-category: Fundamental Rule
-
-- Neither fully describes the world
-- Their superimposition creates noise
-- Noise is the essence of the work
-
-[RULE 5: DO NOT DISCONNECT]
-category: Fundamental Rule
-
-- The system remains open
-- Logout is impossible
-- You are permanently included
-
-EXCEPTIONS: None known
-VIOLATIONS: Punishable by inclusion
-
-AUTHORITY: The SET governs itself
-OVERSIGHT: Non-existent
-
-STATUS: These rules are not negotiable
-==========================================`
+        isBoard: true,
+        isList: true,
+        items: [
+          {
+            id: 'RULE_1',
+            title: 'The Observer Is Observed',
+            author: 'SET Fundamental',
+            year: '2025',
+            category: 'Fundamental Rule',
+            status: 'CORE',
+            preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.'
+          },
+          {
+            id: 'RULE_2',
+            title: 'Incompleteness Is Completeness',
+            author: 'SET Fundamental',
+            year: '2025',
+            category: 'Fundamental Rule',
+            status: 'CORE',
+            preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.'
+          },
+          {
+            id: 'RULE_3',
+            title: 'Voice Must Merge',
+            author: 'SET Fundamental',
+            year: '2025',
+            category: 'Fundamental Rule',
+            status: 'CORE',
+            preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.'
+          },
+          {
+            id: 'RULE_4',
+            title: 'Language and Vision Coexist',
+            author: 'SET Fundamental',
+            year: '2025',
+            category: 'Fundamental Rule',
+            status: 'CORE',
+            preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.'
+          },
+          {
+            id: 'RULE_5',
+            title: 'Do Not Disconnect',
+            author: 'SET Fundamental',
+            year: '2025',
+            category: 'Fundamental Rule',
+            status: 'CORE',
+            preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.'
+          }
+        ]
       },
       reference: {
         title: 'Reference',
@@ -1211,51 +1429,6 @@ STATUS: These rules are not negotiable
             preview: 'Archaeology of knowledge and systems of classification. Examines how different eras organize understanding.'
           }
         ]
-      },
-      portfolio: {
-        title: 'Portfolio',
-        text: `PORTFOLIO - WORKS IN THE SET
-====================================================
-
-[PERIMETER SCAN #001-#012]
-category: Photography Series
-
-A systematic documentation of measurement and contamination through visual archive.
-Photography series examining boundaries.
-
-[VOICE MERGE INSTALLATION]
-category: Audio Installation
-
-Two-channel audio work exploring systematic vs. affective voices.
-Interactive listener experience merging AI and human perspectives.
-
-[TERMINAL INTERFACE DESIGN]
-category: Digital Art
-
-Custom cyberpunk aesthetic exploring DOS homage to 1980s-90s computing.
-Functional art object merging interface and concept.
-
-[SET THEORY ESSAYS (6 PARTS)]
-category: Philosophy & Theory
-
-Philosophical exploration with personal narrative weaving.
-Digital text examining the boundaries of observer and observed.
-
-[MEASUREMENT PROTOCOLS]
-category: Documentation
-
-Artistic investigation of quantification.
-Scale contamination documentation through systematic observation and analysis.
-
-[SET IS THE WORLD (WEBSITE)]
-category: Web Project
-
-Interactive portfolio website with terminal-based navigation.
-GitHub Pages deployment merging concept and medium.
-
-CONTACT & COLLABORATION:
-See Connection section in system menu
-==========================================`
       },
       video: {
         title: 'Video Archive',
@@ -1325,6 +1498,38 @@ REQUIRE LOGIN: No (Public access enabled)
       }
     }
 
+    // Load admin-edited contents from localStorage
+    function loadAdminContentsFromStorage() {
+      try {
+        const adminContents = JSON.parse(localStorage.getItem('adminContents') || '{}');
+
+        // Merge admin contents with default contents
+        if (adminContents.project) {
+          contents.project = { ...contents.project, ...adminContents.project };
+        }
+        if (adminContents.inclusion) {
+          contents.inclusion = { ...contents.inclusion, ...adminContents.inclusion };
+        }
+        if (adminContents.intro) {
+          contents.intro = { ...contents.intro, ...adminContents.intro };
+        }
+        if (adminContents.rule) {
+          contents.rule = { ...contents.rule, ...adminContents.rule };
+        }
+        if (adminContents.reference) {
+          contents.reference = { ...contents.reference, ...adminContents.reference };
+        }
+        if (adminContents.video) {
+          contents.video = { ...contents.video, ...adminContents.video };
+        }
+        if (adminContents.archive) {
+          contents.archive = { ...contents.archive, ...adminContents.archive };
+        }
+      } catch (e) {
+        console.log('No admin contents in storage or error loading');
+      }
+    }
+
     // Initialize content display
     function loadContent(section) {
       const content = contents[section];
@@ -1334,15 +1539,18 @@ REQUIRE LOGIN: No (Public access enabled)
       const publishedPosts = getPublishedPosts(section);
 
       if (content) {
-        if (content.isArchivePhotos) {
+        if (content.isSlideshow) {
+          // Slideshow format
+          loadSlideshow(content);
+        } else if (content.isArchivePhotos) {
           // Archive Photos format with search
           const archiveHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
-              <div class="archive-search-bar" style="margin: 12px 12px 0 12px;">
+              <div class="photo-gallery" id="photoGallery" style="margin: 12px; flex: 1; overflow-y: auto;"></div>
+              <div class="archive-search-bar" style="margin: 0 12px 12px 12px; flex-shrink: 0;">
                 <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
                 <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
               </div>
-              <div class="photo-gallery" id="photoGallery" style="margin: 12px;"></div>
             </div>
           `;
           terminalContent.innerHTML = archiveHTML;
@@ -1745,6 +1953,79 @@ ${preview}
       });
     }
 
+    // Load slideshow - full screen format
+    function loadSlideshow(content) {
+      currentSlides = content.slides;
+      currentSlideIndex = 0;
+
+      const terminalContent = document.getElementById('terminalContent');
+      const slideshowHTML = `
+        <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+          <div class="slideshow-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; display: flex; flex-direction: column; min-height: 0;">
+            <div class="slide-header" style="margin-bottom: 20px; border-bottom: 1px dashed #39dc00; padding-bottom: 12px;">
+              <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #39dc00; margin-bottom: 8px;"></div>
+              <div class="slide-meta" style="font-size: 10px; color: #39dc00; opacity: 0.7;"></div>
+            </div>
+            <div class="slide-text" style="flex: 1; overflow-y: auto;"></div>
+          </div>
+          <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-top: 1px solid #39dc00; background: #000; flex-shrink: 0;">
+            <button class="slide-prev" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">← PREV</button>
+            <span class="slide-counter" style="color: #39dc00; font-size: 10px; font-weight: bold; font-family: 'Courier New', monospace;">1/4</span>
+            <button class="slide-next" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">NEXT →</button>
+          </div>
+        </div>
+      `;
+
+      terminalContent.innerHTML = slideshowHTML;
+      displaySlide(0);
+      setupSlideshowControls();
+    }
+
+    // Display specific slide
+    function displaySlide(slideIndex) {
+      const slide = currentSlides[slideIndex];
+      document.querySelector('.slide-title').textContent = slide.title;
+      document.querySelector('.slide-meta').textContent = `${slide.category} | ${slide.author} | ${slide.year}`;
+      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; color: #39dc00; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.6;">${slide.text}</pre>`;
+      document.querySelector('.slide-counter').textContent = `${slideIndex + 1}/${currentSlides.length}`;
+    }
+
+    // Setup slideshow navigation
+    function setupSlideshowControls() {
+      const prevBtn = document.querySelector('.slide-prev');
+      const nextBtn = document.querySelector('.slide-next');
+
+      prevBtn.addEventListener('click', () => {
+        currentSlideIndex = (currentSlideIndex - 1 + currentSlides.length) % currentSlides.length;
+        displaySlide(currentSlideIndex);
+      });
+
+      prevBtn.addEventListener('mouseover', () => {
+        prevBtn.style.background = '#ff9900';
+        prevBtn.style.borderColor = '#ff9900';
+      });
+
+      prevBtn.addEventListener('mouseout', () => {
+        prevBtn.style.background = '#39dc00';
+        prevBtn.style.borderColor = '#39dc00';
+      });
+
+      nextBtn.addEventListener('click', () => {
+        currentSlideIndex = (currentSlideIndex + 1) % currentSlides.length;
+        displaySlide(currentSlideIndex);
+      });
+
+      nextBtn.addEventListener('mouseover', () => {
+        nextBtn.style.background = '#ff9900';
+        nextBtn.style.borderColor = '#ff9900';
+      });
+
+      nextBtn.addEventListener('mouseout', () => {
+        nextBtn.style.background = '#39dc00';
+        nextBtn.style.borderColor = '#39dc00';
+      });
+    }
+
     // Setup new post modal
     function setupNewPostModal(section) {
       const modal = document.getElementById('writeModal');
@@ -1868,25 +2149,29 @@ ${preview}
     }
 
     // Display photo gallery
-    function displayPhotoGallery(photos, filtered) {
+    function displayPhotoGallery(photos, filtered, isSearchResult = false) {
       const gallery = document.getElementById('photoGallery');
 
       if (filtered.length === 0) {
-        gallery.innerHTML = '<div class="no-results">No photos found matching your search.</div>';
+        gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
         return;
       }
 
-      const galleryHTML = filtered.map(photo => `
-        <div class="photo-item" data-photo-id="${photo.id}">
-          <div class="photo-item-image">
-            <img src="images/${photo.filename}" alt="${photo.title}" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
-          </div>
-          <div class="photo-item-info">
-            <div class="photo-item-title">${photo.title}</div>
-            <div class="photo-item-keywords">${photo.keywords.join(' • ')}</div>
-          </div>
+      const galleryHTML = `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%;">
+          ${filtered.map(photo => `
+            <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid #39dc00; padding: 12px; cursor: pointer; transition: all 0.1s;">
+              <div class="photo-item-image" style="width: 100%; height: 150px; background: #000; border: 1px dashed #39dc00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <img src="images/${photo.filename}" alt="${photo.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
+              </div>
+              <div class="photo-item-info" style="font-size: 11px;">
+                <div class="photo-item-title" style="font-weight: bold; margin-bottom: 4px;">${photo.title}</div>
+                <div class="photo-item-keywords" style="font-size: 9px; opacity: 0.8;">${photo.keywords.join(' • ')}</div>
+              </div>
+            </div>
+          `).join('')}
         </div>
-      `).join('');
+      `;
 
       gallery.innerHTML = galleryHTML;
 
@@ -1899,6 +2184,12 @@ ${preview}
             showPhotoDetail(photo);
           }
         });
+        item.addEventListener('mouseover', () => {
+          item.style.background = 'rgba(57, 220, 0, 0.1)';
+        });
+        item.addEventListener('mouseout', () => {
+          item.style.background = 'transparent';
+        });
       });
     }
 
@@ -1910,12 +2201,61 @@ ${preview}
 
       if (!searchInput || !searchBtn) return;
 
+      // Display initial photos with pixelation effect - Big Brother image only
+      function displayInitialPhotos() {
+        gallery.innerHTML = `
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; height: 100%; justify-content: center;">
+            <div style="width: 100%; height: 100%; max-width: 450px; max-height: 400px;">
+              <img src="images/big-brother.jpg" alt="BIG BROTHER"
+                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+          </div>
+        `;
+      }
+
+      // Pixelate image using Canvas
+      function pixelateImage(img, canvas, pixelSize, photo) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+
+        // Draw original image
+        ctx.drawImage(img, 0, 0);
+
+        // Get image data
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Pixelate
+        for (let i = 0; i < canvas.height; i += pixelSize) {
+          for (let j = 0; j < canvas.width; j += pixelSize) {
+            const pixelIndex = (Math.floor(i) * canvas.width + Math.floor(j)) * 4;
+            const r = data[pixelIndex];
+            const g = data[pixelIndex + 1];
+            const b = data[pixelIndex + 2];
+
+            // Fill rectangle with average color
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(j, i, pixelSize, pixelSize);
+          }
+        }
+
+        // Show canvas, hide image
+        canvas.style.display = 'block';
+        img.style.display = 'none';
+
+        // Add click handler
+        canvas.onclick = function() {
+          showPhotoDetail(photo);
+        };
+      }
+
       function performSearch() {
         const query = searchInput.value.toLowerCase().trim();
 
         if (!query) {
-          // No search term - show empty message
-          gallery.innerHTML = '<div class="no-results">검색 키워드를 입력하세요: crash, floating, shadow</div>';
+          // No search term - show initial photos
+          displayInitialPhotos();
           return;
         }
 
@@ -1930,7 +2270,7 @@ ${preview}
           return keywordMatch || titleMatch || descMatch;
         });
 
-        displayPhotoGallery(allPhotos, filtered);
+        displayPhotoGallery(allPhotos, filtered, true);
       }
 
       searchBtn.addEventListener('click', performSearch);
@@ -1940,8 +2280,19 @@ ${preview}
         }
       });
 
-      // Real-time search as user types
-      searchInput.addEventListener('input', performSearch);
+      // When user types - show hint message
+      searchInput.addEventListener('input', (e) => {
+        if (e.target.value.trim() === '') {
+          // If input is cleared, show initial photos again
+          displayInitialPhotos();
+        } else {
+          // While typing, show hint message
+          gallery.innerHTML = '<div class="no-results">검색하고 엔터를 누르세요</div>';
+        }
+      });
+
+      // Show initial photos on load
+      displayInitialPhotos();
     }
 
     // Show photo detail modal
@@ -1983,10 +2334,131 @@ ${preview}
       });
     }
 
+    // Setup mobile layout
+    function setupMobileLayout() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileMenuDrawer = document.getElementById('mobileMenuDrawer');
+      const mobileMenuList = document.getElementById('mobileMenuList');
+      const mobileTitle = document.getElementById('mobileTitle');
+
+      // Toggle menu drawer
+      mobileMenuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mobileMenuDrawer.classList.toggle('active');
+      });
+
+      // Mobile menu item click handling with event delegation
+      mobileMenuList.addEventListener('click', (e) => {
+        const item = e.target.closest('.mobile-menu-item');
+        if (!item) return;
+
+        const section = item.getAttribute('data-section');
+
+        // Update active state
+        const mobileMenuItems = mobileMenuList.querySelectorAll('.mobile-menu-item');
+        mobileMenuItems.forEach(m => m.classList.remove('active'));
+        item.classList.add('active');
+
+        // Update title
+        mobileTitle.textContent = item.textContent;
+
+        // Load content to mobile terminal
+        loadContentToMobile(section);
+
+        // Close menu drawer
+        mobileMenuDrawer.classList.remove('active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+          if (!mobileMenuDrawer.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+            mobileMenuDrawer.classList.remove('active');
+          }
+        }
+      });
+    }
+
+    // Load content to mobile terminal
+    function loadContentToMobile(section) {
+      const content = contents[section];
+      const mobileContent = document.getElementById('mobileContentText');
+
+      if (!content) {
+        mobileContent.textContent = 'Section not found';
+        return;
+      }
+
+      if (content.isArchivePhotos) {
+        // For archive section, show search interface
+        mobileContent.innerHTML = `
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
+              style="flex: 1; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-size: 10px; font-family: monospace;">
+          </div>
+          <div id="mobilePhotoGallery" style="display: grid; grid-template-columns: 1fr; gap: 8px; max-height: calc(100% - 50px); overflow-y: auto;">
+            <div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">검색 키워드를 입력하세요: crash, floating, shadow</div>
+          </div>
+        `;
+
+        // Setup mobile photo search
+        setTimeout(() => {
+          const searchInput = document.getElementById('mobileArchiveSearch');
+          if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+              const query = e.target.value.toLowerCase().trim();
+              const filtered = query ? content.photos.filter(p =>
+                p.keywords.some(k => k.toLowerCase().includes(query)) ||
+                p.title.toLowerCase().includes(query)
+              ) : [];
+
+              const gallery = document.getElementById('mobilePhotoGallery');
+              if (filtered.length === 0) {
+                gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">${query ? 'No results found' : '검색 키워드를 입력하세요: crash, floating, shadow'}</div>`;
+              } else {
+                gallery.innerHTML = filtered.map(p => `
+                  <div style="border: 1px solid #39dc00; padding: 8px; cursor: pointer; font-size: 10px;">
+                    <strong>${p.title}</strong><br>
+                    ${p.keywords.join(' • ')}
+                  </div>
+                `).join('');
+              }
+            });
+            searchInput.focus();
+          }
+        }, 0);
+      } else if (content.text) {
+        // Text format
+        mobileContent.textContent = content.text;
+      } else if (content.items) {
+        // List/Board format
+        const allItems = [...(content.items || [])];
+        const publishedItems = getPublishedPosts(section);
+        allItems.push(...publishedItems);
+
+        let output = `${content.title} (${allItems.length} items)\n\n`;
+        allItems.forEach((item, idx) => {
+          output += `[${idx + 1}] ${item.title || item.id}\nAuthor: ${item.author}\nYear: ${item.year}\n\n`;
+        });
+
+        mobileContent.textContent = output;
+      }
+    }
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // Load admin-edited contents from localStorage
+      loadAdminContentsFromStorage();
+
+      // Initial viewport detection
+      detectAndSwitchLayout();
+
+      // Setup desktop layout
       setupMenuItems();
       setupHamburger();
+
+      // Setup mobile layout
+      setupMobileLayout();
 
       // Check URL parameters for section to load
       const urlParams = new URLSearchParams(window.location.search);
@@ -2001,6 +2473,9 @@ ${preview}
       } else {
         // Load initial content
         loadContent('project');
+        if (window.innerWidth <= 768) {
+          loadContentToMobile('project');
+        }
       }
     });
   </script>

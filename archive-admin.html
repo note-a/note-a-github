@@ -33,7 +33,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .portfolio-window {
   display: flex;
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   height: 550px;
   gap: 12px;
   overflow: hidden;
@@ -406,7 +406,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
 
       <div class="menu-list">
-        <div class="menu-item active" data-section="drafts">작업중</div>
+        <div class="menu-item active" data-section="portfolio-edit">포트폴리오 편집</div>
+        <div class="menu-item" data-section="drafts">작업중</div>
         <div class="menu-item" data-section="completed">완성</div>
         <div class="menu-item" data-section="archived">보관함</div>
       </div>
@@ -436,7 +437,33 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <span>STATUS: ADMIN</span>
         <span>MODE: WRITE</span>
       </div>
+    </div>
+
+    <!-- PORTFOLIO EDIT SECTION -->
+    <div id="portfolio-edit-section" style="display: none; flex: 1; flex-direction: column; border: 2px solid #39dc00; background: #000; box-shadow: 0 0 20px rgba(57, 220, 0, 0.3); overflow-y: auto; min-height: 0; min-width: 0;">
+      <div style="background: #39dc00; color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+        PORTFOLIO EDIT
+        <div style="display: flex; gap: 4px;">
+          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">_</div>
+          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">□</div>
+          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">✕</div>
+        </div>
       </div>
+      <div style="padding: 12px; border-bottom: 1px solid #39dc00; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0;">
+        <button class="portfolio-subsection-tab active" data-subsection="project" onclick="loadPortfolioEditForm('project')" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">PROJECT</button>
+        <button class="portfolio-subsection-tab" data-subsection="inclusion" onclick="loadPortfolioEditForm('inclusion')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INCLUSION</button>
+        <button class="portfolio-subsection-tab" data-subsection="intro" onclick="loadPortfolioEditForm('intro')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INTRO</button>
+        <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">RULE</button>
+        <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">REFERENCE</button>
+        <button class="portfolio-subsection-tab" data-subsection="video" onclick="loadPortfolioEditForm('video')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">VIDEO</button>
+        <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ARCHIVE</button>
+      </div>
+      <div id="portfolio-edit-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; color: #39dc00; font-size: 11px;"></div>
+      <div style="padding: 12px; border-top: 1px solid #39dc00; display: flex; gap: 8px; flex-shrink: 0; background: #000;">
+        <button id="portfolio-save-btn" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 8px 16px; cursor: pointer; font-weight: bold; font-size: 10px;">SAVE</button>
+        <button id="portfolio-reset-btn" style="background: #ff3333; color: #000; border: 1px solid #ff3333; padding: 8px 16px; cursor: pointer; font-weight: bold; font-size: 10px;">RESET</button>
+      </div>
+    </div>
     </div>
   </div>
 
@@ -469,13 +496,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <label for="postSection">발행할 섹션</label>
           <select id="postSection" style="background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px 8px; font-family: 'Courier New', monospace; font-size: 10px; outline: none;">
             <option value="">-- 섹션 선택 --</option>
-            <option value="project">Project SET</option>
-            <option value="reference">Reference</option>
+            <option value="project">SET</option>
+            <option value="inclusion">SET Inclusion</option>
+            <option value="archive">Archive</option>
             <option value="intro">Intro text</option>
             <option value="rule">rule</option>
-            <option value="portfolio">Portfolio</option>
-            <option value="inclusion">SET Inclusion</option>
-            <option value="video">Video Archive</option>
+            <option value="reference">reference</option>
+            <option value="video">video archive</option>
           </select>
         </div>
         <div class="form-group">
@@ -530,10 +557,36 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     // Initialize
     loadArchiveData();
 
+    // Portfolio data storage
+    let portfolioEditData = {};
+
+    // Load portfolio data from storage
+    function loadPortfolioData() {
+      const saved = localStorage.getItem('adminContents');
+      if (saved) {
+        portfolioEditData = JSON.parse(saved);
+      }
+    }
+
     // Load content
     function loadContent(section) {
-      const content = archiveData[section];
       const terminalContent = document.getElementById('terminalContent');
+      const portfolioEditSection = document.getElementById('portfolio-edit-section');
+      const terminalSection = document.querySelector('.terminal-section');
+
+      if (section === 'portfolio-edit') {
+        // Show portfolio edit UI
+        if (terminalSection) terminalSection.style.display = 'none';
+        if (portfolioEditSection) portfolioEditSection.style.display = 'flex';
+        loadPortfolioEditForm('project');
+        return;
+      }
+
+      // Hide portfolio edit UI
+      if (terminalSection) terminalSection.style.display = 'flex';
+      if (portfolioEditSection) portfolioEditSection.style.display = 'none';
+
+      const content = archiveData[section];
 
       if (content) {
         // List format
@@ -675,6 +728,432 @@ ${selectedItem.preview}
       });
     }
 
+    // Portfolio Edit Functions
+    function loadPortfolioEditForm(subsection) {
+      const portfolioEditContent = document.getElementById('portfolio-edit-content');
+      loadPortfolioData();
+
+      let formHTML = '';
+
+      if (subsection === 'project') {
+        formHTML = generateProjectSlidesForm();
+      } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {
+        formHTML = generateTextForm(subsection);
+      } else if (subsection === 'rule' || subsection === 'reference') {
+        formHTML = generateItemsListForm(subsection);
+      } else if (subsection === 'archive') {
+        formHTML = generateArchivePhotosForm();
+      }
+
+      portfolioEditContent.innerHTML = formHTML;
+
+      // Setup subsection tab clicks
+      const tabs = document.querySelectorAll('.portfolio-subsection-tab');
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (tab.getAttribute('data-subsection') === subsection) {
+          tab.classList.add('active');
+          tab.style.background = '#39dc00';
+          tab.style.color = '#000';
+        } else {
+          tab.style.background = '#000';
+          tab.style.color = '#39dc00';
+        }
+
+        tab.removeEventListener('click', onSubsectionTabClick);
+        tab.addEventListener('click', onSubsectionTabClick);
+      });
+    }
+
+    function onSubsectionTabClick(e) {
+      const subsection = e.target.getAttribute('data-subsection');
+      loadPortfolioEditForm(subsection);
+    }
+
+    function generateProjectSlidesForm() {
+      // Get slides from portfolio data or use defaults
+      const defaultData = {
+        project: {
+          slides: [
+            {
+              id: 'slide_1',
+              title: 'Project SET Overview',
+              category: 'Concept',
+              author: 'Artist / Theorist',
+              year: '2025-2026',
+              text: ''
+            },
+            {
+              id: 'slide_2',
+              title: 'Core Concept',
+              category: 'Philosophy',
+              author: 'Artist / Theorist',
+              year: '2025',
+              text: ''
+            },
+            {
+              id: 'slide_3',
+              title: 'Measurement Paradox',
+              category: 'Theory',
+              author: 'Artist / Theorist',
+              year: '2025',
+              text: ''
+            },
+            {
+              id: 'slide_4',
+              title: 'Structure & Framework',
+              category: 'System Design',
+              author: 'Artist / Developer',
+              year: '2025-2026',
+              text: ''
+            }
+          ]
+        }
+      };
+
+      const slides = portfolioEditData.project?.slides || defaultData.project.slides;
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
+
+      slides.forEach((slide, idx) => {
+        html += `
+          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 12px;">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">SLIDE ${idx + 1} / ${slides.length}</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
+                <input type="text" class="slide-title-${idx}" value="${slide.title}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">CATEGORY</label>
+                  <input type="text" class="slide-category-${idx}" value="${slide.category}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">AUTHOR</label>
+                  <input type="text" class="slide-author-${idx}" value="${slide.author}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">YEAR</label>
+                  <input type="text" class="slide-year-${idx}" value="${slide.year}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">CONTENT TEXT</label>
+                <textarea class="slide-text-${idx}" style="width: 100%; height: 150px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${slide.text}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    function generateTextForm(section) {
+      const defaultTexts = {
+        inclusion: `SET INCLUSION - PARTICIPATION FRAMEWORK
+====================================================
+
+[WHAT IS INCLUSION?]
+category: Definitions
+
+What does it mean to be INCLUDED in a SET?
+
+DEFINITIONS:
+- A set is a collection of distinct objects
+- Inclusion implies membership within boundaries
+- The observer is simultaneously within and outside the set
+
+[OBSERVER PARADOX]
+category: Philosophy
+
+The SET includes everything, yet remains incomplete.
+The observer measures the SET, yet is part of its measurement.
+
+[SCALE CONTAMINATION]
+category: Error Analysis
+
+STATUS: [WARN] BOUNDARY_COLLISION DETECTED
+ERROR: SCALE_CONTAMINATED
+NOTES: The ruler used for measurement is already part of the SET's logic.
+
+[VOICE MERGE PROTOCOL]
+category: Method
+
+PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
+PORT_02 (HUMAN) : WANDERING / AFFECTIVE
+
+RESOLUTION: BOTH REMAIN INCOMPLETE.
+THIS INCOMPLETENESS IS PRECISELY THE WORLD.
+==========================================`,
+        intro: `INTRODUCTORY MATERIAL
+====================================================
+
+[NAVIGATION INSTRUCTIONS]
+category: Tutorial
+
+1. Enter the SET world through the terminal interface
+2. Use the menu to navigate between different conceptual frameworks
+3. Each section explores different aspects of the SET thesis
+4. Read the terminal output as a narrative of discovery
+
+[THE FUNDAMENTAL QUESTION]
+category: Inquiry
+
+How can we measure something we are part of?
+
+[STRUCTURE OF PHOTOGRAPHY]
+category: Media Theory
+
+Photography halts reproduction.
+Vision measures through light and shadow.
+Language measures through words and meaning.
+
+BOTH REMAIN INCOMPLETE.
+
+[KEY CONCEPTS]
+category: Definitions
+
+- Coerced Body: You are here against your will
+- Suspended Gaze: Your vision is held in abeyance
+- World Remains Open: Do not disconnect
+
+NEXT STEP: Explore the other sections using the menu
+==========================================`,
+        video: `VIDEO ARCHIVE - DOCUMENTATION SYSTEM
+====================================================
+
+[WHAT IS VIDEO?]
+category: Medium
+
+Video as measurement tool. Recording halts time.
+Documentation of the SET's visual progression.
+
+[ARCHIVE CONTENTS]
+category: Index
+
+All video works preserved in /ARCHIVE/MEDIA/VIDEO/SET_WORLD/
+
+PLAYBACK SYSTEM:
+Use media player integrated with terminal interface.
+
+[DISTRIBUTION]
+category: Access
+
+- Internal archive access
+- Limited external screenings
+- Festival submissions planned
+
+STATUS: Archive accessible
+REQUIRE LOGIN: No (Public access enabled)
+==========================================`
+      };
+
+      const text = portfolioEditData[section]?.text || defaultTexts[section];
+
+      return `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="display: block; font-size: 10px; font-weight: bold;">EDIT ${section.toUpperCase()}</label>
+          <textarea class="portfolio-text-${section}" style="width: 100%; height: 400px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 8px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${text}</textarea>
+        </div>
+      `;
+    }
+
+    function generateItemsListForm(section) {
+      const defaultItems = {
+        rule: [
+          { id: 'RULE_1', title: 'The Observer Is Observed', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.' },
+          { id: 'RULE_2', title: 'Incompleteness Is Completeness', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.' },
+          { id: 'RULE_3', title: 'Voice Must Merge', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.' },
+          { id: 'RULE_4', title: 'Language and Vision Coexist', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.' },
+          { id: 'RULE_5', title: 'Do Not Disconnect', author: 'SET Fundamental', year: '2025', category: 'Fundamental Rule', status: 'CORE', preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.' }
+        ],
+        reference: [
+          { id: 'CAMERA_LUCIDA', title: 'Camera Lucida', author: 'Roland Barthes', year: '1980', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'A groundbreaking work on photography and indexicality. Explores the essence of photography as a medium of evidence and truth.' },
+          { id: 'ON_PHOTOGRAPHY', title: 'On Photography', author: 'Susan Sontag', year: '1977', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'Essays exploring photography as experience and metaphor. Investigates how images shape consciousness and perception.' },
+          { id: 'PHILOSOPHY_PHOTO', title: 'Towards a Philosophy of Photography', author: 'Vilém Flusser', year: '1983', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'Philosophical inquiry into the nature of photographic images and their role in human perception and culture.' },
+          { id: 'DISCIPLINE_PUNISH', title: 'Discipline and Punish', author: 'Michel Foucault', year: '1975', category: 'Theory', status: 'FOUNDATIONAL', preview: 'Explores systems of observation and control. The concept of panopticon relates directly to the observer paradox in SET.' },
+          { id: 'ORDERS_DISCOURSE', title: 'The Order of Discourse', author: 'Michel Foucault', year: '1971', category: 'Language & Power', status: 'FOUNDATIONAL', preview: 'Examines how language systems structure reality and restrict meaning. Critical for understanding voice merge protocols.' },
+          { id: 'SIGN_IMAGE', title: 'Sign and Image', author: 'Charles Sanders Peirce', year: '1931', category: 'Semiotics', status: 'FOUNDATIONAL', preview: 'Foundational work on semiotics. The index, icon, and symbol framework applies to visual measurement systems.' },
+          { id: 'WOMAN_SPECTACLE', title: 'Ways of Seeing', author: 'John Berger', year: '1972', category: 'Visual Culture', status: 'FOUNDATIONAL', preview: 'Examines vision and visual perception in modern culture. Directly relevant to suspended gaze concepts.' },
+          { id: 'IMAGE_KNOWLEDGE', title: 'The Image', author: 'Jean-Luc Nancy', year: '2005', category: 'Philosophy of Image', status: 'CONTEMPORARY', preview: 'Contemporary philosophical reflection on image, meaning, and presence in the age of reproduction.' }
+        ]
+      };
+
+      const items = portfolioEditData[section]?.items || defaultItems[section];
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 16px;">';
+
+      items.forEach((item, idx) => {
+        html += `
+          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 8px;">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">ITEM ${idx + 1}</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
+                <input type="text" class="item-title-${section}-${idx}" value="${item.title || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">AUTHOR</label>
+                  <input type="text" class="item-author-${section}-${idx}" value="${item.author || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+                <div style="flex: 0.5;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">YEAR</label>
+                  <input type="text" class="item-year-${section}-${idx}" value="${item.year || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <div style="flex: 1;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">CATEGORY</label>
+                  <input type="text" class="item-category-${section}-${idx}" value="${item.category || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+                <div style="flex: 0.5;">
+                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">STATUS</label>
+                  <input type="text" class="item-status-${section}-${idx}" value="${item.status || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+                </div>
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">PREVIEW / DESCRIPTION</label>
+                <textarea class="item-preview-${section}-${idx}" style="width: 100%; height: 100px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${item.preview || ''}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    function generateArchivePhotosForm() {
+      const defaultPhotos = [
+        {
+          id: 'CRASH_001',
+          title: 'CRASH',
+          filename: 'crash.svg',
+          keywords: ['crash', 'wall', 'structure', 'damage', 'decay'],
+          description: 'Measuring the boundaries of collapse. Surface documentation.'
+        },
+        {
+          id: 'FLOATING_002',
+          title: 'FLOATING',
+          filename: 'floating.svg',
+          keywords: ['floating', 'movement', 'displacement', 'object', 'space'],
+          description: 'Object suspended in transit. Scale and distance measurement.'
+        },
+        {
+          id: 'SHADOW_003',
+          title: 'SHADOW',
+          filename: 'shadow.svg',
+          keywords: ['shadow', 'light', 'perception', 'depth', 'detail'],
+          description: 'Close observation of material. Yellow measurement study.'
+        }
+      ];
+      const photos = portfolioEditData.archive?.photos || defaultPhotos;
+
+      let html = '<div style="display: flex; flex-direction: column; gap: 16px;">';
+
+      photos.forEach((photo, idx) => {
+        html += `
+          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 8px;">
+            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">PHOTO ${idx + 1}</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">ID</label>
+                <input type="text" class="photo-id-${idx}" value="${photo.id || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
+                <input type="text" class="photo-title-${idx}" value="${photo.title || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">FILENAME</label>
+                <input type="text" class="photo-filename-${idx}" value="${photo.filename || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">KEYWORDS (쉼표로 구분)</label>
+                <input type="text" class="photo-keywords-${idx}" value="${(photo.keywords || []).join(', ')}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
+              </div>
+              <div>
+                <label style="display: block; font-size: 9px; margin-bottom: 4px;">DESCRIPTION</label>
+                <textarea class="photo-description-${idx}" style="width: 100%; height: 80px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${photo.description || ''}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    function savePortfolioChanges() {
+      const tabs = document.querySelectorAll('.portfolio-subsection-tab.active');
+      const activeTab = tabs.length > 0 ? tabs[0] : null;
+      const subsection = activeTab ? activeTab.getAttribute('data-subsection') : 'project';
+
+      // Collect data from forms
+      if (subsection === 'project') {
+        const slides = [];
+        for (let i = 0; i < 4; i++) {
+          const title = document.querySelector(`.slide-title-${i}`)?.value || '';
+          const category = document.querySelector(`.slide-category-${i}`)?.value || '';
+          const author = document.querySelector(`.slide-author-${i}`)?.value || '';
+          const year = document.querySelector(`.slide-year-${i}`)?.value || '';
+          const text = document.querySelector(`.slide-text-${i}`)?.value || '';
+
+          slides.push({ id: `slide_${i + 1}`, title, category, author, year, text });
+        }
+        portfolioEditData.project = { ...portfolioEditData.project, slides };
+      } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {
+        const text = document.querySelector(`.portfolio-text-${subsection}`)?.value || '';
+        portfolioEditData[subsection] = { ...portfolioEditData[subsection], text };
+      } else if (subsection === 'rule' || subsection === 'reference') {
+        const items = [];
+        const inputs = document.querySelectorAll(`[class*="item-title-${subsection}"]`);
+        inputs.forEach((input, idx) => {
+          const title = document.querySelector(`.item-title-${subsection}-${idx}`)?.value || '';
+          const author = document.querySelector(`.item-author-${subsection}-${idx}`)?.value || '';
+          const year = document.querySelector(`.item-year-${subsection}-${idx}`)?.value || '';
+          const category = document.querySelector(`.item-category-${subsection}-${idx}`)?.value || '';
+          const status = document.querySelector(`.item-status-${subsection}-${idx}`)?.value || '';
+          const preview = document.querySelector(`.item-preview-${subsection}-${idx}`)?.value || '';
+
+          if (title) items.push({ id: title.toUpperCase().replace(/\\s+/g, '_'), title, author, year, category, status, preview });
+        });
+        portfolioEditData[subsection] = { ...portfolioEditData[subsection], items };
+      } else if (subsection === 'archive') {
+        const photos = [];
+        const titleInputs = document.querySelectorAll('[class*="photo-title-"]');
+        titleInputs.forEach((input, idx) => {
+          const id = document.querySelector(`.photo-id-${idx}`)?.value || '';
+          const title = document.querySelector(`.photo-title-${idx}`)?.value || '';
+          const filename = document.querySelector(`.photo-filename-${idx}`)?.value || '';
+          const keywordsStr = document.querySelector(`.photo-keywords-${idx}`)?.value || '';
+          const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k);
+          const description = document.querySelector(`.photo-description-${idx}`)?.value || '';
+
+          if (id || title) photos.push({ id, title, filename, keywords, description });
+        });
+        portfolioEditData.archive = { ...portfolioEditData.archive, photos };
+      }
+
+      // Save to localStorage
+      localStorage.setItem('adminContents', JSON.stringify(portfolioEditData));
+      alert('포트폴리오 변경사항이 저장되었습니다!');
+    }
+
+    function resetPortfolioChanges() {
+      if (confirm('모든 변경사항을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+        localStorage.removeItem('adminContents');
+        portfolioEditData = {};
+        alert('초기화되었습니다. 포트폴리오를 새로고침하세요.');
+      }
+    }
+
     // Setup menu items
     function setupMenuItems() {
       const menuItems = document.querySelectorAll('.menu-item');
@@ -707,9 +1186,29 @@ ${selectedItem.preview}
 
     // Initialize
     document.addEventListener('DOMContentLoaded', function() {
+      loadPortfolioData();
       setupMenuItems();
       setupCloseButton();
-      loadContent('drafts');
+
+      // Setup portfolio edit buttons
+      const saveBtn = document.getElementById('portfolio-save-btn');
+      const resetBtn = document.getElementById('portfolio-reset-btn');
+
+      if (saveBtn) {
+        saveBtn.addEventListener('click', savePortfolioChanges);
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener('click', resetPortfolioChanges);
+      }
+
+      // Load portfolio-edit and set active state
+      loadContent('portfolio-edit');
+      const portfolioEditItem = document.querySelector('[data-section="portfolio-edit"]');
+      if (portfolioEditItem) {
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        portfolioEditItem.classList.add('active');
+      }
     });
   </script>
 </body>
