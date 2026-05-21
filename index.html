@@ -70,7 +70,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 
 .m-monitor {
   border: 2px solid #39dc00; background: #000; padding: 0;
-  color: #39dc00; width: 100%; min-height: 600px;
+  color: #39dc00; width: 100%; min-height: 280px;
   display: flex; flex-direction: column;
 }
 
@@ -303,8 +303,13 @@ root@system:~# `;
 
       typeWriter('terminal-text', mainText, 25, function() {
         setTimeout(function() {
-          typeWriter('terminal-text', hackingText, 3);
-        }, 500);
+          // 텍스트 클리어
+          document.getElementById('terminal-text').textContent = '';
+          // 텍스트 사라졌다가 500ms 후에 해킹 문구 시작
+          setTimeout(function() {
+            typeWriter('terminal-text', hackingText, 3);
+          }, 500);
+        }, 1200); // 주요 텍스트 표시 후 1200ms 대기
       });
     });
   </script>
