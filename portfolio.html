@@ -821,12 +821,14 @@ REQUIRE LOGIN: No (Public access enabled)
       const itemHeight = 140;
       const padding = 15; // Space between items
       const columns = 3;
+      const overlapX = 12; // Slight horizontal overlap
+      const overlapY = 8; // Slight vertical overlap
 
       // Calculate grid dimensions
       const gridX = 20; // Left margin
       const gridY = 20; // Top margin
-      const totalItemWidth = itemWidth + padding;
-      const totalItemHeight = itemHeight + padding;
+      const totalItemWidth = itemWidth + padding - overlapX;
+      const totalItemHeight = itemHeight + padding - overlapY;
 
       boardItems.forEach((item, index) => {
         // Calculate row and column
