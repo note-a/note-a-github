@@ -44,7 +44,7 @@ html, body { background: #000; color: #39dc00; font-family: monospace; height: 1
 }
 
 .site-body-center {
-  flex: 1; padding: 20px 12px; overflow-y: auto;
+  flex: 1; padding: 20px 12px; overflow: hidden;
   max-height: calc(100vh - 32px);
 }
 
@@ -304,9 +304,9 @@ root@system:~# █</div>
 
       <div class="m-monitor">
         <div>TERMINAL CHAT SYSTEM V.2.1</div>
-        <div style="flex:1;padding:10px;overflow-y:auto;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+        <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
           <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor">█</span>
-          <div id="error-page" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;">
+          <div id="error-page" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;z-index:100;">
             <div style="margin-top:40px;">
               <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
               <div style="margin-bottom:40px;line-height:2;font-size:11px;">
@@ -377,9 +377,9 @@ root@system:~# █</div>
       <div class="mobile-terminal-container">
         <div class="m-monitor-mobile">
           <div>TERMINAL CHAT SYSTEM V.2.1</div>
-          <div style="flex:1;padding:10px;overflow-y:auto;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+          <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
             <pre id="terminal-text-mobile" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor-mobile">█</span>
-            <div id="error-page-mobile" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;">
+            <div id="error-page-mobile" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;z-index:100;">
               <div style="margin-top:40px;">
                 <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
                 <div style="margin-bottom:40px;line-height:2;font-size:11px;">
