@@ -1172,21 +1172,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     }
 
-    // Auto-reload admin contents every 1 second and refresh UI
+    // Auto-reload admin contents every 3 seconds (without forcing UI refresh)
     setInterval(() => {
       loadAdminContentsFromStorage();
-
-      // Refresh current section display
-      const isMobile = window.innerWidth <= 768;
-      const activeSection = document.querySelector('[data-section].active')?.getAttribute('data-section') ||
-                           document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project';
-
-      if (isMobile) {
-        loadContentToMobile(activeSection);
-      } else {
-        loadContent(activeSection);
-      }
-    }, 1000);
+    }, 3000);
 
     // Detect layout on initial load
     window.addEventListener('load', detectAndSwitchLayout);
