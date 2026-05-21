@@ -805,7 +805,7 @@ REQUIRE LOGIN: No (Public access enabled)
       }
     }
 
-    // Position board items randomly without overlapping
+    // Position board items in aligned grid
     function positionBoardItems() {
       const boardItems = document.querySelectorAll('.board-item');
       const container = document.querySelector('.board-container');
@@ -814,74 +814,40 @@ REQUIRE LOGIN: No (Public access enabled)
 
       const containerWidth = container.offsetWidth;
       const containerHeight = container.offsetHeight;
-      const positions = [];
+      const itemWidth = 240;
+      const itemHeight = 140;
       const padding = 15; // Space between items
-      const maxAttempts = 50;
+      const columns = 3;
+
+      // Calculate grid dimensions
+      const gridX = 20; // Left margin
+      const gridY = 20; // Top margin
+      const totalItemWidth = itemWidth + padding;
+      const totalItemHeight = itemHeight + padding;
 
       boardItems.forEach((item, index) => {
-        const itemWidth = item.offsetWidth || 240;
-        const itemHeight = item.offsetHeight || 140;
+        // Calculate row and column
+        const col = index % columns;
+        const row = Math.floor(index / columns);
 
-        let placed = false;
-        let attempts = 0;
+        // Calculate position
+        const x = gridX + col * totalItemWidth;
+        const y = gridY + row * totalItemHeight;
 
-        // Try to find a non-overlapping position
-        while (!placed && attempts < maxAttempts) {
-          const randomX = Math.random() * (containerWidth - itemWidth - 40) + 20;
-          const randomY = Math.random() * (containerHeight - itemHeight - 40) + 20;
+        // Apply styles with animation
+        const randomScale = 0.97 + Math.random() * 0.06;
+        const randomDelay = index * 30;
 
-          // Check if this position overlaps with existing items
-          let overlaps = false;
-          for (let pos of positions) {
-            const distX = Math.abs((randomX + itemWidth / 2) - (pos.x + pos.width / 2));
-            const distY = Math.abs((randomY + itemHeight / 2) - (pos.y + pos.height / 2));
-            const minDistX = (itemWidth + pos.width) / 2 + padding;
-            const minDistY = (itemHeight + pos.height) / 2 + padding;
+        item.style.left = x + 'px';
+        item.style.top = y + 'px';
+        item.style.transform = `scale(${randomScale})`;
+        item.style.transition = `all 0.3s ease ${randomDelay}ms`;
+        item.style.opacity = '0';
 
-            if (distX < minDistX && distY < minDistY) {
-              overlaps = true;
-              break;
-            }
-          }
-
-          if (!overlaps) {
-            // Position found, apply styles
-            const randomScale = 0.97 + Math.random() * 0.06;
-            const randomDelay = index * 30;
-
-            item.style.left = randomX + 'px';
-            item.style.top = randomY + 'px';
-            item.style.transform = `scale(${randomScale})`;
-            item.style.transition = `all 0.3s ease ${randomDelay}ms`;
-            item.style.opacity = '0';
-
-            // Trigger animation
-            setTimeout(() => {
-              item.style.opacity = '1';
-            }, 10);
-
-            positions.push({
-              x: randomX,
-              y: randomY,
-              width: itemWidth,
-              height: itemHeight
-            });
-
-            placed = true;
-          }
-
-          attempts++;
-        }
-
-        // Fallback if can't find space
-        if (!placed) {
-          const fallbackX = (index % 3) * 280 + 20;
-          const fallbackY = Math.floor(index / 3) * 180 + 20;
-
-          item.style.left = fallbackX + 'px';
-          item.style.top = fallbackY + 'px';
-          item.style.transform = `scale(0.98)`;
-        }
+        // Trigger animation
+        setTimeout(() => {
+          item.style.opacity = '1';
+        }, 10);
       });
 
       // Enable dragging for board items
