@@ -231,6 +231,72 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   border-color: #ff9900;
 }
 
+/* ===== BOARD STYLE ===== */
+.board-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.board-item {
+  position: absolute;
+  border: 2px solid #39dc00;
+  background: #000;
+  padding: 12px;
+  color: #39dc00;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 0 15px rgba(57, 220, 0, 0.2);
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.board-item:hover {
+  box-shadow: 0 0 25px rgba(57, 220, 0, 0.5);
+  transform: scale(1.02);
+}
+
+.board-item-title {
+  font-weight: bold;
+  color: #39dc00;
+  margin-bottom: 4px;
+  word-wrap: break-word;
+}
+
+.board-item-meta {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #39dc00;
+  padding-bottom: 6px;
+}
+
+.board-item-author {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.board-item-year {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.board-item-category {
+  display: block;
+  font-style: italic;
+}
+
+.board-item-preview {
+  font-size: 10px;
+  line-height: 1.4;
+  opacity: 0.8;
+  word-wrap: break-word;
+}
+
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
   .portfolio-container {
@@ -466,62 +532,65 @@ STATUS: These rules are not negotiable
       },
       reference: {
         title: 'Reference',
-        text: `FILE: reference.txt
-SIZE: 1.8KB
-TYPE: TEXT_DOCUMENT
-DATE: 2026-05-21
-
-════════════════════════════════════════════════════
-[PREVIEW]
-════════════════════════════════════════════════════
-
-REFERENCE MATERIALS AND SOURCES
-
-THEORETICAL FRAMEWORKS:
-
-Photography & Vision:
-- Roland Barthes, Camera Lucida
-- Susan Sontag, On Photography
-- Vilém Flusser, Towards a Philosophy of Photography
-
-Systems & Measurement:
-- Ludwig von Bertalanffy, General System Theory
-- Gregory Bateson, Steps to an Ecology of Mind
-- Douglas Hofstadter, Gödel, Escher, Bach
-
-Language & Noise:
-- Jacques Derrida, Différance and différence
-- Claude Shannon, A Mathematical Theory of Communication
-- Vilém Flusser, Into the Universe of Technical Images
-
-Philosophy of Self:
-- Michel Foucault, The Order of Things
-- Jean-Paul Sartre, Being and Nothingness
-- Gilles Deleuze, A Thousand Plateaus
-
-TECHNICAL REFERENCES:
-- DOS/Windows 95 Terminal Aesthetics
-- Cyberpunk Visual Language
-- Retro-computing Culture
-
-INSPIRATIONS:
-- The Matrix trilogy
-- Tron
-- Neuromancer (William Gibson)
-- Ghost in the Shell
-
-METHODOLOGY:
-Cross-disciplinary approach combining:
-- Visual art
-- Literary theory
-- Systems thinking
-- Technical aesthetics
-
-CITATION: Please reference as "SET IS THE WORLD (2026)"
-
-════════════════════════════════════════════════════
-[END OF FILE]
-════════════════════════════════════════════════════`
+        isBoard: true,
+        items: [
+          {
+            title: 'Camera Lucida',
+            author: 'Roland Barthes',
+            year: '1980',
+            category: 'Photography & Vision',
+            preview: 'A groundbreaking work on photography and indexicality. Explores the essence of photography as a medium of evidence and truth.'
+          },
+          {
+            title: 'On Photography',
+            author: 'Susan Sontag',
+            year: '1977',
+            category: 'Photography & Vision',
+            preview: 'Essays exploring photography as experience and metaphor. Investigates how images shape consciousness and perception.'
+          },
+          {
+            title: 'Towards a Philosophy of Photography',
+            author: 'Vilém Flusser',
+            year: '1983',
+            category: 'Photography & Vision',
+            preview: 'Technical images and apparatus. Examines photography as a form of technical mediation between humans and world.'
+          },
+          {
+            title: 'General System Theory',
+            author: 'Ludwig von Bertalanffy',
+            year: '1968',
+            category: 'Systems & Measurement',
+            preview: 'Foundational text on systems thinking. Provides framework for understanding complex wholes and their properties.'
+          },
+          {
+            title: 'Steps to an Ecology of Mind',
+            author: 'Gregory Bateson',
+            year: '1972',
+            category: 'Systems & Measurement',
+            preview: 'Integration of ideas across disciplines. Explores patterns and relationships in living systems.'
+          },
+          {
+            title: 'A Thousand Plateaus',
+            author: 'Gilles Deleuze & Félix Guattari',
+            year: '1987',
+            category: 'Philosophy & Theory',
+            preview: 'Rhizomatic thinking beyond hierarchy. Challenges linear and arborescent modes of organization.'
+          },
+          {
+            title: 'Gödel, Escher, Bach',
+            author: 'Douglas Hofstadter',
+            year: '1979',
+            category: 'Systems & Measurement',
+            preview: 'Dialogues on consciousness and self-reference. Explores strange loops and tangled hierarchies in art and thought.'
+          },
+          {
+            title: 'The Order of Things',
+            author: 'Michel Foucault',
+            year: '1966',
+            category: 'Philosophy of Self',
+            preview: 'Archaeology of knowledge and systems of classification. Examines how different eras organize understanding.'
+          }
+        ]
       },
       portfolio: {
         title: 'Portfolio',
@@ -643,11 +712,70 @@ REQUIRE LOGIN: No (Public access enabled)
     // Initialize content display
     function loadContent(section) {
       const content = contents[section];
-      const contentText = document.getElementById('contentText');
+      const terminalContent = document.getElementById('terminalContent');
 
       if (content) {
-        contentText.textContent = content.text;
+        if (content.isBoard) {
+          // Board format
+          const boardHTML = `
+            <div class="board-container">
+              ${content.items.map((item, idx) => `
+                <div class="board-item" data-index="${idx}">
+                  <div class="board-item-title">[${idx + 1}] ${item.title}</div>
+                  <div class="board-item-meta">
+                    <span class="board-item-author">Author: ${item.author}</span>
+                    <span class="board-item-year">Year: ${item.year}</span>
+                    <span class="board-item-category">Category: ${item.category}</span>
+                  </div>
+                  <div class="board-item-preview">${item.preview}</div>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          terminalContent.innerHTML = boardHTML;
+
+          // Position items randomly after a brief delay to ensure DOM is ready
+          setTimeout(() => positionBoardItems(), 50);
+        } else {
+          // Regular text format
+          const contentText = document.getElementById('contentText');
+          contentText.textContent = content.text;
+        }
       }
+    }
+
+    // Position board items randomly
+    function positionBoardItems() {
+      const boardItems = document.querySelectorAll('.board-item');
+      const container = document.querySelector('.board-container');
+
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const containerWidth = containerRect.width;
+      const containerHeight = containerRect.height;
+
+      boardItems.forEach((item, index) => {
+        const itemWidth = item.offsetWidth || 250;
+        const itemHeight = item.offsetHeight || 150;
+
+        // Random position with some padding
+        const maxX = Math.max(containerWidth - itemWidth - 20, 0);
+        const maxY = Math.max(containerHeight - itemHeight - 20, 0);
+
+        const randomX = Math.random() * maxX;
+        const randomY = Math.random() * maxY;
+
+        // Random rotation
+        const randomRotation = (Math.random() - 0.5) * 8;
+
+        // Random slight size variation
+        const randomScale = 0.95 + Math.random() * 0.1;
+
+        item.style.left = randomX + 'px';
+        item.style.top = randomY + 'px';
+        item.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
+      });
     }
 
     // Menu item click handler
