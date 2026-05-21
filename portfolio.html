@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SET IS THE WORLD</title>
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #000; color: #39dc00; font-family: monospace; height: 100%; scroll-behavior: smooth; overflow-x: hidden; }
+.top-banner {
+  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
+  background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
+  padding: 6px 0; z-index: 999; overflow: hidden;
+  animation: marquee 12s linear infinite;
+}
+@keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
+::-webkit-scrollbar { width: 10px; height: 10px; background: #000; }
+::-webkit-scrollbar-track { background: rgba(57,220,0,0.05); }
+::-webkit-scrollbar-thumb { background: #1e7400; border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5); }
+
+.app-container {
+  display: flex; flex-direction: row; width: 1000px; margin: 32px auto 0;
+  gap: 0; padding: 0; min-height: calc(100vh - 32px);
+}
+
+.site-body-left-column {
+  width: 200px; flex-shrink: 0; border-right: 2px solid #39dc00; border-bottom: none;
+  padding: 20px 12px; position: sticky; top: 32px; max-height: calc(100vh - 32px); overflow-y: auto;
+}
+
+.nav-links { padding: 6px 8px; }
+.nav-file-title {
+  display: block; font-size: 13px; color: #39dc00; padding: 6px 10px;
+  text-decoration: none; cursor: pointer; margin-bottom: 2px;
+}
+.nav-file-title:hover,
+.nav-file-title.is-active { background: #39dc00; color: #000; }
+
+.nav-terminal-log {
+  font-size: 10px; color: #39dc00; opacity: 0.7; padding: 10px 8px;
+  white-space: pre-wrap; margin-top: 12px; border-top: 1px dashed #39dc00;
+  line-height: 1.3; word-break: break-all;
+}
+
+.site-body-center {
+  flex: 1; padding: 20px 12px; overflow: hidden;
+  max-height: calc(100vh - 32px);
+}
+
+.site-body-right-column {
+  width: 220px; flex-shrink: 0; padding: 20px 12px; border-left: 2px solid #39dc00; border-top: none;
+  position: sticky; top: 32px; max-height: calc(100vh - 32px); overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.sys-alert {
+  border: 2px dashed #ff3333; background: rgba(255,51,51,0.05);
+  margin: 10px 0 15px; padding: 12px 15px;
+}
+
+.sys-alert-header {
+  background: #ff3333; color: #000; padding: 6px 12px;
+  font-weight: bold; font-size: 11px;
+}
+
+.sys-alert-body {
+  padding: 8px 12px; color: #ffb000; font-size: 10px;
+}
+
+.m-monitor {
+  border: 2px solid #39dc00; background: #000; padding: 0;
+  color: #39dc00; width: 100%; height: 420px;
+  display: flex; flex-direction: column;
+}
+
+.m-monitor > div:first-child {
+  background: #39dc00; color: #000; padding: 6px 10px;
+  font-weight: bold; font-size: 11px;
+}
+
+.m-monitor > div:nth-child(2) {
+  flex: 1; padding: 10px; overflow-y: auto;
+  background: #000; color: #39dc00; font-size: 12px;
+  line-height: 1.5;
+}
+
+.m-monitor > div:last-child {
+  background: #000; border-top: 1px solid #39dc00;
+  padding: 6px 10px; font-size: 10px; color: #39dc00;
+}
+
+#terminal-text { margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; }
+#cursor { animation: blink 0.7s infinite; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.m-loading-wrap {
+  display: flex; align-items: center; width: 100%;
+  padding: 8px 10px; border: 1px dashed #39dc00; background: #000;
+  margin-top: 10px;
+}
+
+.load-txt {
+  color: #39dc00; font-size: 12px; margin-right: 10px;
+  animation: blink 1.2s infinite; font-weight: bold;
+}
+
+.m-loading-bar {
+  flex-grow: 1; height: 10px; border: 1px solid #39dc00; background: #000;
+  position: relative; overflow: hidden;
+}
+
+.m-loading-bar::before {
+  content: ""; position: absolute; top: 0; left: 0; height: 100%;
+  width: 30%; background: #39dc00;
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pulse { 0% { width: 5%; } 100% { width: 70%; } }
+
+.sys-mini-res, .sys-eq-wrap, .sys-contact-wrap { flex: 0; }
+
+.sys-m-title { font-size: 12px; color: #ffb000; margin-bottom: 8px; font-weight: bold; }
+
+.sys-w-row { display: flex; align-items: center; margin-bottom: 6px; }
+.sys-w-label { font-size: 11px; width: 35px; color: #39dc00; }
+.sys-w-bar { flex-grow: 1; height: 10px; border: 1px solid #1e7400; background: #000; }
+.sys-w-fill { height: 100%; background: #39dc00; }
+
+.sys-eq-bars { display: flex; align-items: flex-end; height: 60px; gap: 4px; margin-bottom: 10px; }
+.eq-bar { flex: 1; background: #39dc00; animation: bounce 1s infinite ease-in-out alternate; }
+.eq-1 { animation-delay: 0.1s; } .eq-2 { animation-delay: 0.4s; } .eq-3 { animation-delay: 0.2s; }
+.eq-4 { animation-delay: 0.6s; } .eq-5 { animation-delay: 0.3s; }
+
+@keyframes bounce { 0% { height: 15px; } 100% { height: 60px; } }
+
+@keyframes glitch {
+  0%, 100% { color: #39dc00; opacity: 1; text-shadow: 0 0 0 transparent; }
+  20% { color: #ff3333; opacity: 0.8; text-shadow: 2px 2px #39dc00, -2px -2px #ffb000; }
+  40% { color: #39dc00; opacity: 0.95; text-shadow: -1px 1px #ff3333; }
+  60% { color: #ffb000; opacity: 0.85; text-shadow: 1px -1px #39dc00, -1px 1px #ff3333; }
+  80% { color: #39dc00; opacity: 0.9; text-shadow: 0 0 0 transparent; }
+}
+
+@keyframes screenFlicker {
+  0%, 100% { background: #000; opacity: 1; }
+  25% { background: rgba(255, 51, 51, 0.1); opacity: 0.95; }
+  50% { background: rgba(0, 0, 0, 0.9); opacity: 0.98; }
+  75% { background: rgba(255, 200, 0, 0.05); opacity: 0.92; }
+}
+
+.glitch-mode {
+  animation: glitch 0.1s infinite, screenFlicker 0.15s infinite;
+}
+
+.sys-c-row { display: flex; align-items: center; margin-bottom: 6px; font-size: 11px; color: #39dc00; }
+.sys-c-label { width: 35px; opacity: 0.8; }
+.sys-c-link { color: #39dc00; text-decoration: none; word-break: break-all; }
+
+/* 모바일 레이아웃 스타일 */
+#mobile-layout { display: none; }
+.app-container-mobile {
+  display: flex; flex-direction: column; width: 100%; height: calc(100vh - 32px);
+  margin: 32px 0 0; padding: 0; gap: 0;
+}
+
+.mobile-header {
+  width: 100%; background: #000; border-bottom: 2px solid #39dc00;
+  padding: 8px 12px; flex-shrink: 0; height: auto;
+}
+
+.mobile-nav-title {
+  color: #39dc00; font-size: 12px; font-weight: bold;
+  margin: 0; padding: 0;
+}
+
+.mobile-terminal-container {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 12px; gap: 8px; overflow-y: auto;
+  width: 100%;
+}
+
+.m-monitor-mobile {
+  border: 2px solid #39dc00; background: #000; padding: 0;
+  color: #39dc00; width: 100%; flex: 1;
+  display: flex; flex-direction: column;
+}
+
+.m-monitor-mobile > div:first-child {
+  background: #39dc00; color: #000; padding: 6px 10px;
+  font-weight: bold; font-size: 11px;
+}
+
+.m-monitor-mobile > div:nth-child(2) {
+  flex: 1; padding: 10px; overflow-y: auto;
+  background: #000; color: #39dc00; font-size: 12px;
+  line-height: 1.5;
+}
+
+.m-monitor-mobile > div:last-child {
+  background: #000; border-top: 1px solid #39dc00;
+  padding: 6px 10px; font-size: 10px; color: #39dc00;
+}
+
+.mobile-controls {
+  display: flex; flex-direction: column; gap: 8px;
+  flex-shrink: 0; width: 100%;
+}
+
+.m-loading-wrap-mobile {
+  display: flex; align-items: center; width: 100%;
+  padding: 8px 10px; border: 1px dashed #39dc00; background: #000;
+}
+
+.load-txt-mobile {
+  color: #39dc00; font-size: 12px; margin-right: 10px;
+  animation: blink 1.2s infinite; font-weight: bold;
+}
+
+.m-loading-bar-mobile {
+  flex-grow: 1; height: 10px; border: 1px solid #39dc00; background: #000;
+  position: relative; overflow: hidden;
+}
+
+.m-loading-bar-mobile::before {
+  content: ""; position: absolute; top: 0; left: 0; height: 100%;
+  width: 30%; background: #39dc00;
+  animation: pulse 1.2s ease-in-out infinite alternate;
+}
+
+.mobile-search {
+  display: flex; gap: 8px; width: 100%;
+}
+
+.mobile-search input {
+  flex: 1; background: #000; border: 1px solid #39dc00;
+  color: #39dc00; padding: 4px 8px; font-family: monospace;
+  font-size: 11px; outline: none;
+}
+
+.mobile-search button {
+  background: #39dc00; color: #000; border: 1px solid #39dc00;
+  padding: 4px 12px; font-family: monospace; font-size: 11px;
+  font-weight: bold; cursor: pointer; min-height: auto;
+}
+  </style>
+</head>
+<body>
+  <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
+
+  <!-- 데스크탑 레이아웃 -->
+  <div id="desktop-layout">
+  <div class="app-container">
+    <!-- 좌측 메뉴 + 터미널 로그 -->
+    <div class="site-body-left-column">
+      <nav class="nav-links">
+        <a href="index.html" class="nav-file-title is-active">Project SET</a>
+        <a href="#" class="nav-file-title">SET Inclusion</a>
+        <a href="#" class="nav-file-title">Intro text</a>
+        <a href="#" class="nav-file-title">rule</a>
+        <a href="#" class="nav-file-title">reference</a>
+        <a href="#" class="nav-file-title">Portfolio</a>
+        <a href="#" class="nav-file-title">video archive</a>
+      </nav>
+      <div class="nav-terminal-log">----------------------------------------
+Linux kernel 6.8.0-v2-generic (x86_64)
+[  0.000000] init_archiver:
+structure_of_photography
+[  0.015241] sensors: body(coerced),
+gaze(suspended)
+[  0.110293] exec: ./measure_set --
+target=WORLD
+[  WARN ] scale_contaminated:
+already_part_of_world
+----------------------------------------
+root@system:~# ./merge_voices
+--apply_noise
+[ INFO ] port_1(AI): precise,
+indifferent
+[ INFO ] port_2(HUMAN): wandering,
+affective
+[ LOG  ] interference detected:
+words_transform_to_noise
+[ LOG  ] superimposition:
+vision_meets_language
+----------------------------------------
+root@system:~# check_status --final
+[ FAIL ] system_status: INCOMPLETE
+[ FAIL ] error_code: failure_to_close
+[ EXIT ] world_remains_open.
+root@system:~# █</div>
+    </div>
+
+    <!-- 중앙 콘텐츠 (600px 고정) -->
+    <div class="site-body-center">
+      <div class="sys-alert">
+        <div class="sys-alert-header">[!] SYSTEM_CRITICAL_WARNING</div>
+        <div class="sys-alert-body">
+          오류 코드 404: 아카이브 접근이 거부되었습니다.<br>
+          강제 열람을 시도할 경우 데이터가 손상될 수 있습니다.
+        </div>
+      </div>
+
+      <div class="m-monitor">
+        <div>TERMINAL CHAT SYSTEM V.2.1</div>
+        <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+          <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor">█</span>
+          <div id="error-page" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;z-index:100;">
+            <div style="margin-top:40px;">
+              <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
+              <div style="margin-bottom:40px;line-height:2;font-size:11px;">
+                <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+                <div>00001563. The current application will be terminated.</div>
+                <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
+                <div>* Press your hot keys again to restart your computer. You will</div>
+                <div>lose any unsaved information in all applications.</div>
+                <div style="margin-top:40px;">Press any key continue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="opacity:0.6;">STATUS: ONLINE</span>
+          <span style="opacity:0.6;">█ ████░ 50%</span>
+        </div>
+      </div>
+
+      <div class="m-loading-wrap">
+        <div class="load-txt">LOADING...</div>
+        <div class="m-loading-bar"></div>
+      </div>
+
+      <div style="display:flex;gap:8px;padding:8px 10px;border:1px dashed #39dc00;background:#000;margin-top:0;">
+        <input type="text" id="search-input" placeholder="search_archive --query" style="flex:1;background:#000;border:1px solid #39dc00;color:#39dc00;padding:4px 8px;font-family:monospace;font-size:11px;outline:none;" />
+        <button style="background:#39dc00;color:#000;border:1px solid #39dc00;padding:4px 12px;font-family:monospace;font-size:11px;font-weight:bold;cursor:pointer;">ENTER</button>
+      </div>
+    </div>
+
+    <!-- 우측 SYSTEM 패널 -->
+    <div class="site-body-right-column">
+      <div class="sys-mini-res">
+        <div class="sys-m-title">&gt;&gt; SYSTEM_LOAD</div>
+        <div class="sys-w-row"><span class="sys-w-label">CPU</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:78%;"></div></div></div>
+        <div class="sys-w-row"><span class="sys-w-label">MEM</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:42%;"></div></div></div>
+        <div class="sys-w-row"><span class="sys-w-label">NET</span><div class="sys-w-bar"><div class="sys-w-fill" style="width:95%;background:#ffb000;"></div></div></div>
+      </div>
+
+      <div class="sys-eq-wrap">
+        <div class="sys-m-title">&gt;&gt; AUDIO_SYNC</div>
+        <div class="sys-eq-bars">
+          <div class="eq-bar eq-1"></div>
+          <div class="eq-bar eq-2"></div>
+          <div class="eq-bar eq-3"></div>
+          <div class="eq-bar eq-4"></div>
+          <div class="eq-bar eq-5"></div>
+        </div>
+      </div>
+
+      <div class="sys-contact-wrap">
+        <div class="sys-m-title">&gt;&gt; CONNECTION</div>
+        <div class="sys-c-row"><span class="sys-c-label">email</span> <a href="mailto:noteofficial@naver.com" class="sys-c-link">noteofficial@naver.com</a></div>
+        <div class="sys-c-row"><span class="sys-c-label">insta</span> <span class="sys-c-link">saintnoted</span></div>
+        <div class="sys-c-row"><span class="sys-c-label">tell</span> <span class="sys-c-link">010-9793-5522</span></div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- 모바일 레이아웃 -->
+  <div id="mobile-layout">
+    <div class="app-container-mobile">
+      <div class="mobile-header">
+        <div class="mobile-nav-title">&gt;&gt; PROJECT SET</div>
+      </div>
+
+      <div class="mobile-terminal-container">
+        <div class="m-monitor-mobile">
+          <div>TERMINAL CHAT SYSTEM V.2.1</div>
+          <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
+            <pre id="terminal-text-mobile" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor-mobile">█</span>
+            <div id="error-page-mobile" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:#000;color:#ff9900;padding:20px;text-align:center;overflow-y:auto;font-family:monospace;font-size:12px;line-height:1.8;z-index:100;">
+              <div style="margin-top:40px;">
+                <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
+                <div style="margin-bottom:40px;line-height:2;font-size:11px;">
+                  <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+                  <div>00001563. The current application will be terminated.</div>
+                  <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
+                  <div>* Press your hot keys again to restart your computer. You will</div>
+                  <div>lose any unsaved information in all applications.</div>
+                  <div style="margin-top:40px;">Press any key continue</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="opacity:0.6;">STATUS: ONLINE</span>
+            <span style="opacity:0.6;">█ ████░ 50%</span>
+          </div>
+        </div>
+
+        <div class="mobile-controls">
+          <div class="m-loading-wrap-mobile">
+            <div class="load-txt-mobile">LOADING...</div>
+            <div class="m-loading-bar-mobile"></div>
+          </div>
+
+          <div class="mobile-search">
+            <input type="text" id="search-input-mobile" placeholder="search_archive --query" />
+            <button>ENTER</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 뷰포트 감지 함수
+    function detectViewport() {
+      const isMobile = window.innerWidth <= 768;
+      const desktopLayout = document.getElementById('desktop-layout');
+      const mobileLayout = document.getElementById('mobile-layout');
+
+      if (isMobile) {
+        desktopLayout.style.display = 'none';
+        mobileLayout.style.display = 'block';
+      } else {
+        desktopLayout.style.display = 'block';
+        mobileLayout.style.display = 'none';
+      }
+    }
+
+    // 초기 로드 시 실행
+    window.addEventListener('load', detectViewport);
+
+    // 창 리사이즈 시 실행
+    window.addEventListener('resize', detectViewport);
+
+    function typeWriter(elementId, text, speed = 50, callback, cursorId = 'cursor') {
+      const element = document.getElementById(elementId);
+      const cursor = document.getElementById(cursorId);
+      let index = 0;
+
+      function type() {
+        if (index < text.length) {
+          if (text[index] === '\n') {
+            element.textContent += '\n';
+          } else {
+            element.textContent += text[index];
+          }
+          index++;
+          setTimeout(type, speed);
+        } else {
+          if (cursor) cursor.style.animation = 'blink 0.7s infinite';
+          if (callback) callback();
+        }
+      }
+      type();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // 초기 뷰포트 감지
+      detectViewport();
+      const mainText = `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.
+
+Set is the world. I'm measuring the perimeter of the set.
+But the scale I hold is already contaminated by the world itself.`;
+
+      const hackingText = `
+
+[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
+[00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS
+[00:00:01.201] >>> ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...
+[00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.
+[00:00:01.890] INITIALIZING PERIMETER_SCAN.EXE --TARGET="SET"
+[00:00:02.100] SCANNING SPATIAL COORDINATES... 12%... 45%... 94.2%...
+[00:00:02.405] [FATAL] BOUNDARY_COLLISION AT SECTOR 4. OVERLAP DETECTED.
+[00:00:02.550] DIAGNOSTIC LOG: SCALE_CONTAMINATED.
+[00:00:02.601] THE RULER USED FOR MEASUREMENT IS ALREADY PART OF THE SET'S LOGIC.
+[00:00:03.000] >>> RE-CALIBRATING OBSERVER PROTOCOL...
+[00:00:03.112] STATUS: WE ARE NOT THE OBSERVER. WE ARE THE OBSERVED.
+[00:00:03.500] ENGAGING SENSORY_OVERRIDE_MODULE...
+[00:00:03.650] [OK] BODY_STATE ENFORCED: COERCED_MODE ACTIVE.
+[00:00:03.700] [OK] VISUAL_RECEPTORS TUNED: GAZE_SUSPENDED.
+[00:00:04.102] EXECUTING MULTI-THREAD: VOICE_MERGE_PROTOCOL
+[00:00:04.220] PORT_01 (AI) : SYSTEMATIC / INDIFFERENT -> CONNECTED.
+[00:00:04.340] PORT_02 (HUMAN) : WANDERING / AFFECTIVE -> CONNECTED.
+[00:00:04.800] >>> SYNCING PORTS... CAUTION: HIGH INTERFERENCE DETECTED.
+[00:00:05.105] DATA CORRUPTION: TEXTUAL SUPERIMPOSITION CAUSING SEMANTIC DISSOLUTION.
+[00:00:05.400] [LOG] WORDS ARE TRANSFORMING INTO PURE NOISE.
+[00:00:05.800] [LOG] WHAT CANNOT BE FULLY READ BECOMES THE ESSENCE OF THE WORK ITSELF.
+[00:00:06.002] ATTEMPTING FINAL RENDER: VISION + LANGUAGE...
+[00:00:06.505] [CRITICAL ERROR] SYSTEM HALTED: FAILURE_TO_CLOSE.
+[00:00:06.880] 〈SET〉 MEASURES THROUGH VISION; TEXTS MEASURE THROUGH LANGUAGE.
+[00:00:07.100] BOTH REMAIN INCOMPLETE. THIS INCOMPLETENESS IS PRECISELY THE WORLD.
+[00:00:07.500] SYSTEM REMAINS OPEN. DO NOT DISCONNECT.
+[00:00:07.999] █`;
+
+      // 현재 표시되는 레이아웃 감지
+      const isMobile = window.innerWidth <= 768;
+      const terminalElementId = isMobile ? 'terminal-text-mobile' : 'terminal-text';
+      const cursorId = isMobile ? 'cursor-mobile' : 'cursor';
+      const errorPageId = isMobile ? 'error-page-mobile' : 'error-page';
+      const monitorSelector = isMobile ? '.m-monitor-mobile' : '.m-monitor';
+
+      typeWriter(terminalElementId, mainText, 25, function() {
+        setTimeout(function() {
+          // 텍스트 클리어
+          document.getElementById(terminalElementId).textContent = '';
+          // 텍스트 사라졌다가 500ms 후에 해킹 문구 시작
+          setTimeout(function() {
+            typeWriter(terminalElementId, hackingText, 3, function() {
+              // 해킹 문구 완료 후 글리치 효과 시작
+              setTimeout(function() {
+                const monitor = document.querySelector(monitorSelector);
+                const terminalText = document.getElementById(terminalElementId);
+                monitor.classList.add('glitch-mode');
+                terminalText.classList.add('glitch-mode');
+
+                // 글리치 효과 3초 후 에러 페이지 표시
+                setTimeout(function() {
+                  monitor.classList.remove('glitch-mode');
+                  terminalText.classList.remove('glitch-mode');
+                  document.getElementById(errorPageId).style.display = 'block';
+
+                  // 에러 페이지에서 아무 키나 누르면 창 닫기
+                  document.addEventListener('keydown', function closeError() {
+                    document.getElementById(errorPageId).style.display = 'none';
+                    document.removeEventListener('keydown', closeError);
+                  });
+                }, 3000);
+              }, 800);
+            }, cursorId);
+          }, 500);
+        }, 1200); // 주요 텍스트 표시 후 1200ms 대기
+      });
+    });
+  </script>
+</body>
+</html>
