@@ -20,17 +20,27 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .portfolio-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: calc(100vh - 32px);
   margin-top: 32px;
+  padding: 20px;
+  gap: 0;
+}
+
+.portfolio-window {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  height: 550px;
   gap: 12px;
-  padding: 12px;
   overflow: hidden;
 }
 
 /* ===== MENU SECTION (LEFT) ===== */
 .menu-section {
-  width: 280px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -225,12 +235,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   .portfolio-container {
     gap: 0;
     padding: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .portfolio-window {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100vh - 32px);
+    gap: 0;
   }
 
   .menu-section {
     position: fixed;
-    left: -280px;
+    left: -240px;
     top: 32px;
+    width: 240px;
     height: calc(100vh - 32px);
     z-index: 500;
     transition: left 0.3s ease;
@@ -265,8 +285,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <button class="hamburger-btn" id="hamburgerBtn">☰</button>
 
   <div class="portfolio-container">
-    <!-- LEFT: MENU SECTION -->
-    <div class="menu-section" id="menuSection">
+    <div class="portfolio-window">
+      <!-- LEFT: MENU SECTION -->
+      <div class="menu-section" id="menuSection">
       <div class="menu-titlebar">
         PORTFOLIO MENU
         <div class="menu-icons">
@@ -310,6 +331,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <div class="terminal-statusbar">
         <span>STATUS: LOADED</span>
         <span>SIZE: DYNAMIC</span>
+      </div>
       </div>
     </div>
   </div>
