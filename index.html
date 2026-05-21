@@ -163,27 +163,27 @@ body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; 
 
   <div class="intro-container">
     <div class="intro-terminal">
-      <div class="m-monitor">
+      <div class="m-monitor" style="position:relative;">
         <div>TERMINAL CHAT SYSTEM V.2.1</div>
         <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
           <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor">█</span>
-          <div id="error-page">
-            <div style="margin-top:40px;">
-              <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
-              <div style="margin-bottom:40px;line-height:2;font-size:11px;">
-                <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
-                <div>00001563. The current application will be terminated.</div>
-                <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
-                <div>* Press your hot keys again to restart your computer. You will</div>
-                <div>lose any unsaved information in all applications.</div>
-                <div style="margin-top:40px;">Press any key continue</div>
-              </div>
-            </div>
-          </div>
         </div>
         <div style="display:flex;justify-content:space-between;">
           <span style="opacity:0.6;">STATUS: ONLINE</span>
           <span style="opacity:0.6;">█ ████░ 50%</span>
+        </div>
+        <div id="error-page">
+          <div style="margin-top:40px;">
+            <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
+            <div style="margin-bottom:40px;line-height:2;font-size:11px;">
+              <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
+              <div>00001563. The current application will be terminated.</div>
+              <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
+              <div>* Press your hot keys again to restart your computer. You will</div>
+              <div>lose any unsaved information in all applications.</div>
+              <div style="margin-top:40px;">Press any key continue</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -279,13 +279,10 @@ But the scale I hold is already contaminated by the world itself.`;
                 setTimeout(function() {
                   monitor.classList.remove('glitch-mode');
                   terminalText.classList.remove('glitch-mode');
-                  const terminalDiv = terminalText.parentElement;
-                  terminalDiv.style.overflow = 'visible';
                   document.getElementById('error-page').style.display = 'block';
 
                   document.addEventListener('keydown', function closeError() {
                     document.getElementById('error-page').style.display = 'none';
-                    terminalDiv.style.overflow = 'hidden';
                     document.removeEventListener('keydown', closeError);
                   });
                 }, 3000);
