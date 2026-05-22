@@ -56,15 +56,21 @@
 
             const COLS = 40;
             const CELL_H = 15;
+            const FADE_SPEED = 0.15;
             let cells = [];
+            let domNodes = [];
 
-            function initCells() {
-                cells = [];
+            function buildDOM() {
+                container.innerHTML = '';
+                domNodes = [];
+                const colW = window.innerWidth / COLS;
                 const rows = Math.ceil(window.innerHeight / CELL_H) + 1;
+                cells = [];
+
                 for (let r = 0; r < rows; r++) {
                     for (let c = 0; c < COLS; c++) {
                         const ba = Math.random() * 0.2 + 0.2;
-                        cells.push({
+                        const cell = {
                             code: codes[Math.floor(Math.random() * codes.length)],
                             nextCode: null,
                             alpha: ba,
@@ -72,21 +78,22 @@
                             timer: Math.floor(Math.random() * 50),
                             interval: Math.floor(Math.random() * 30) + 15,
                             baseAlpha: ba
-                        });
+                        };
+                        cells.push(cell);
+
+                        const span = document.createElement('div');
+                        span.textContent = cell.code;
+                        span.style.cssText = `position:absolute;left:${c * colW + 8}px;top:${r * CELL_H + CELL_H - 4}px;opacity:${ba};white-space:nowrap;`;
+                        container.appendChild(span);
+                        domNodes.push(span);
                     }
                 }
             }
 
-            function renderText() {
-                container.innerHTML = '';
-                const colW = window.innerWidth / COLS;
-                const FADE_SPEED = 0.15;
-
+            function tick() {
                 cells.forEach((cell, i) => {
-                    const r = Math.floor(i / COLS);
-                    const c = i % COLS;
-                    const x = c * colW + 8;
-                    const y = r * CELL_H + CELL_H - 4;
+                    const node = domNodes[i];
+                    if (!node) return;
 
                     if (cell.state === 'idle') {
                         cell.timer++;
@@ -103,42 +110,30 @@
                             cell.code = cell.nextCode;
                             cell.baseAlpha = Math.random() * 0.2 + 0.2;
                             cell.state = 'fadein';
+                            node.textContent = cell.code;
                         }
+                        node.style.opacity = cell.alpha;
                     } else if (cell.state === 'fadein') {
                         cell.alpha += FADE_SPEED * 0.6;
                         if (cell.alpha >= cell.baseAlpha) {
                             cell.alpha = cell.baseAlpha;
                             cell.state = 'idle';
                         }
-                    }
-
-                    if (cell.alpha > 0.01) {
-                        const span = document.createElement('div');
-                        span.textContent = cell.code;
-                        span.style.position = 'absolute';
-                        span.style.left = x + 'px';
-                        span.style.top = y + 'px';
-                        span.style.opacity = cell.alpha;
-                        span.style.whiteSpace = 'nowrap';
-                        span.style.fontSize = '14px';
-                        span.style.letterSpacing = '-1px';
-                        container.appendChild(span);
+                        node.style.opacity = cell.alpha;
                     }
                 });
             }
 
-            initCells();
+            buildDOM();
 
             function animate() {
                 requestAnimationFrame(animate);
-                renderText();
+                tick();
             }
 
             animate();
 
-            window.addEventListener('resize', () => {
-                initCells();
-            });
+            window.addEventListener('resize', buildDOM);
         }
 
         // Initialize on page load
