@@ -305,8 +305,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #itemPreviewModal .popup-box {
   background: #000;
   border: 2px solid #39dc00;
-  width: 420px;
-  max-width: 90vw;
+  width: 520px;
+  max-width: 92vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
   font-family: 'Courier New', monospace;
   color: #39dc00;
   box-shadow: 0 0 20px rgba(57,220,0,0.4);
@@ -329,10 +332,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 12px 16px;
   font-size: 11px;
   line-height: 1.7;
-  max-height: 220px;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -2049,7 +2050,8 @@ REQUIRE LOGIN: No (Public access enabled)
       const modal = document.getElementById('itemPreviewModal');
       document.getElementById('popupTitle').textContent = item.title || '';
       document.getElementById('popupCategory').textContent = (item.category || '') + (item.year ? '  ·  ' + item.year : '');
-      document.getElementById('popupBody').innerHTML = (typeof marked !== 'undefined') ? marked.parse(item.preview || '') : (item.preview || '');
+      const fullContent = item.text || item.preview || '';
+      document.getElementById('popupBody').innerHTML = (typeof marked !== 'undefined') ? marked.parse(fullContent) : fullContent;
       modal.classList.add('active');
     }
 
