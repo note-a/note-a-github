@@ -1152,7 +1152,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="mobile-menu-item active" data-section="project">SET</div>
         <div class="mobile-menu-item" data-section="inclusion">SET Inclusion</div>
         <div class="mobile-menu-item" data-section="intro">entire</div>
-        <div class="mobile-menu-item" data-section="rule">data</div>
+        <div class="mobile-menu-item" data-section="rule">log</div>
         <div class="mobile-menu-item" data-section="reference">reference</div>
         <div class="mobile-menu-item" data-section="archive">Archive</div>
       </div>
@@ -1666,10 +1666,12 @@ REQUIRE LOGIN: No (Public access enabled)
     function getPublishedPosts(section) {
       try {
         const archiveData = JSON.parse(localStorage.getItem('archiveData') || '{}');
-        const completed = archiveData.completed || { items: [] };
+        // admin은 completed를 flat array로 저장 — 양쪽 형식 모두 처리
+        const completedItems = Array.isArray(archiveData.completed)
+          ? archiveData.completed
+          : (archiveData.completed?.items || []);
 
-        // Filter items that are published to this section
-        return completed.items.filter(item => item.publishedSection === section) || [];
+        return completedItems.filter(item => item.publishedSection === section);
       } catch (e) {
         return [];
       }
@@ -1707,28 +1709,16 @@ REQUIRE LOGIN: No (Public access enabled)
           contents.archive.photos = adminContents.archive.photos;
         }
 
-        // Also load archiveData (posts saved from admin NEW POST form)
+        // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
+        // published posts(publishedSection 기반)는 renderSection의 getPublishedPosts()가 처리하므로
+        // 여기서는 구버전 직접저장 항목만 병합해 중복을 방지한다
         const archiveDataStr = localStorage.getItem('archiveData');
         const archiveData = JSON.parse(archiveDataStr || '{}');
 
-        // completed 배열 정규화
-        const completedItems = Array.isArray(archiveData.completed)
-          ? archiveData.completed
-          : (archiveData.completed?.items || []);
-
-        // rule/reference 직접 저장 항목 (구버전 호환)
-        const directRuleItems = Array.isArray(archiveData.rule)
-          ? archiveData.rule
-          : (archiveData.rule?.items || []);
         const directRefItems = Array.isArray(archiveData.reference)
           ? archiveData.reference
           : (archiveData.reference?.items || []);
 
-        // completed에서 publishedSection으로 발행된 항목
-        const publishedToRule = completedItems.filter(i => i.publishedSection === 'rule');
-        const publishedToRef  = completedItems.filter(i => i.publishedSection === 'reference');
-
-        // 합산해서 contents에 반영 (중복 id 제거)
         const mergeItems = (existing, ...additions) => {
           const all = [...(existing || [])];
           additions.flat().forEach(item => {
@@ -1737,8 +1727,7 @@ REQUIRE LOGIN: No (Public access enabled)
           return all;
         };
 
-        contents.rule.items      = mergeItems(contents.rule.items, directRuleItems, publishedToRule);
-        contents.reference.items = mergeItems(contents.reference.items, directRefItems, publishedToRef);
+        contents.reference.items = mergeItems(contents.reference.items, directRefItems);
       } catch (e) {
         console.log('Error loading admin contents:', e);
       }
@@ -1756,8 +1745,16 @@ REQUIRE LOGIN: No (Public access enabled)
         if (content.isGrammarCodes) {
           loadGrammarCodes(content);
         } else if (content.isSlideshow) {
-          // Slideshow format
-          loadSlideshow(content);
+          // Slideshow format — merge published posts as additional slides
+          const extraSlides = publishedPosts.map(p => ({
+            id: p.id || (p.title || '').toUpperCase().replace(/\s+/g, '_'),
+            title: p.title || '',
+            category: p.category || 'Post',
+            author: p.author || '',
+            year: p.year || '',
+            text: p.preview || p.text || ''
+          }));
+          loadSlideshow({ ...content, slides: [...content.slides, ...extraSlides] });
         } else if (content.isArchivePhotos) {
           // Archive Photos format with search
           const archiveHTML = `
@@ -1810,8 +1807,15 @@ REQUIRE LOGIN: No (Public access enabled)
             }
           }, 100);
 
-          // Setup search functionality
-          setupPhotoSearch(content.photos);
+          // Setup search functionality — merge published posts as photo entries
+          const extraPhotos = publishedPosts.map(p => ({
+            id: p.id || (p.title || '').toUpperCase().replace(/\s+/g, '_'),
+            title: p.title || '',
+            filename: p.filename || '',
+            keywords: [p.category, p.title].filter(Boolean).concat((p.preview || '').split(/\s+/).slice(0, 5)),
+            description: p.preview || p.text || ''
+          }));
+          setupPhotoSearch([...content.photos, ...extraPhotos]);
         } else if (content.isBoard) {
           // Check if it's a list format
           if (content.isList) {
@@ -1829,7 +1833,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   ${allItems.map((item, idx) => `
                     <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
                       <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 11px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
+                        ${item.title || item.id}
                       </div>
                       <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${item.category}
@@ -1841,8 +1845,8 @@ REQUIRE LOGIN: No (Public access enabled)
             `;
             terminalContent.innerHTML = listHTML;
 
-            // Setup list item click handlers
-            setupListItemClickHandlers();
+            // Setup list item click handlers — allItems 전달해서 정확한 index 참조
+            setupListItemClickHandlers(allItems);
           } else {
             // Board format
             // Combine default items with published posts
@@ -1877,15 +1881,30 @@ REQUIRE LOGIN: No (Public access enabled)
             setTimeout(() => positionBoardItems(), 50);
           }
         } else if (content.isFigmaBoard) {
-          // Figma board format with embedded iframe
+          // Figma board format with embedded iframe + published posts below
+          const postsHTML = publishedPosts.length > 0 ? `
+            <div style="flex-shrink: 0; padding: 12px; border-top: 1px solid #39dc00; background: #000;">
+              <div style="font-size: 11px; font-weight: bold; color: #39dc00; margin-bottom: 8px;">POSTS</div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                ${publishedPosts.map(p => `
+                  <div style="border: 1px solid #39dc00; padding: 8px; font-size: 10px; color: #39dc00; cursor: pointer;" onclick="openItemPreviewPopup(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <div style="font-weight: bold;">${p.title || ''}</div>
+                    <div style="opacity: 0.7; font-size: 9px;">${p.author || ''} ${p.year ? '· ' + p.year : ''}</div>
+                    ${p.preview ? `<div style="margin-top: 4px; opacity: 0.8;">${(p.preview || '').substring(0, 80)}${(p.preview||'').length > 80 ? '...' : ''}</div>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : '';
           const figmaHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; background: #000;">
               <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; font-weight: bold;">
                 TIMELINE
               </div>
-              <div style="flex: 1; padding: 12px; overflow: auto; background: #000;">
+              <div style="flex: 1; padding: 12px; overflow: auto; background: #000; min-height: 0;">
                 <iframe style="width: 100%; height: 100%; border: 1px solid #39dc00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
               </div>
+              ${postsHTML}
             </div>
           `;
           terminalContent.innerHTML = figmaHTML;
@@ -2063,17 +2082,18 @@ REQUIRE LOGIN: No (Public access enabled)
       modal.classList.add('active');
     }
 
-    function setupListItemClickHandlers() {
+    function setupListItemClickHandlers(itemsArray) {
       const listItems = document.querySelectorAll('.list-item');
 
       listItems.forEach((item, idx) => {
         item.addEventListener('click', () => {
-          let currentSection = null;
-          const menuItems = document.querySelectorAll('.menu-item.active');
-          if (menuItems.length > 0) currentSection = menuItems[0].getAttribute('data-section');
-          if (currentSection && contents[currentSection] && contents[currentSection].items) {
-            openItemPreviewPopup(contents[currentSection].items[idx]);
-          }
+          // itemsArray가 전달된 경우 그것 사용, 아닐 경우 현재 섹션의 contents에서 fallback
+          const targetItems = itemsArray || (() => {
+            const activeMenu = document.querySelector('.menu-item.active');
+            const sec = activeMenu ? activeMenu.getAttribute('data-section') : null;
+            return sec && contents[sec] ? contents[sec].items : [];
+          })();
+          if (targetItems[idx]) openItemPreviewPopup(targetItems[idx]);
         });
 
         // Hover effect
@@ -2876,7 +2896,7 @@ REQUIRE LOGIN: No (Public access enabled)
             html += `
               <div style="cursor: pointer; display: block; border-bottom: 1px dashed #39dc00; padding: 10px 12px; transition: background 0.2s; background: #000;" class="mobile-list-item" data-index="${idx}">
                 <div style="color: #39dc00; font-size: 12px; margin-bottom: 5px; font-weight: bold; word-break: break-all;">
-                  ${itemId}
+                  ${item.title || itemId}
                 </div>
                 <div style="color: #39dc00; font-size: 11px; display: flex; justify-content: space-between; gap: 8px;">
                   <span>${category}</span>
