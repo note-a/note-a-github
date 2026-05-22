@@ -634,8 +634,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   gap: 6px;
   padding: 8px 0;
-  border-bottom: 1px solid #39dc00;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .archive-search-input {
@@ -1753,9 +1752,9 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isArchivePhotos) {
           // Archive Photos format with search
           const archiveHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; position: relative;">
-              <div class="photo-gallery" id="photoGallery" style="margin: 12px; flex: 1; overflow-y: auto;"></div>
-              <div style="position: relative; margin: 0 12px 12px 12px; flex-shrink: 0;">
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px; position: relative;">
+              <div class="photo-gallery" id="photoGallery" style="padding: 12px 20px; flex: 1; overflow-y: auto;"></div>
+              <div style="position: relative; padding: 0 20px 12px 20px; flex-shrink: 0;">
                 <canvas id="archiveWireframeCanvas" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; z-index: 5; pointer-events: none;"></canvas>
                 <div class="archive-search-bar" style="position: relative; z-index: 10;">
                   <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
