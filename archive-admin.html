@@ -855,25 +855,29 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           const selectedItem = archiveData[section].items[idx];
 
           // Show detail view with edit/delete buttons
-          const contentDiv = document.getElementById('contentText');
-          if (contentDiv) {
-            contentDiv.innerHTML = `
-              <div style="border: 1px solid #39dc00; padding: 12px; margin-bottom: 12px;">
-                <div style="color: #39dc00; font-weight: bold; margin-bottom: 8px;">[${selectedItem.id}]</div>
-                <div style="color: #888; font-size: 11px; margin-bottom: 8px;">
-                  Category: ${selectedItem.category} | Status: ${selectedItem.status}<br>
-                  Author: ${selectedItem.author} | Year: ${selectedItem.year}
-                </div>
-                <div style="border: 1px dashed #39dc00; padding: 8px; margin-bottom: 12px; background: #000;">
-                  <div style="color: #39dc00; white-space: pre-wrap; word-wrap: break-word;">${selectedItem.preview}</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button id="editBtn-${idx}" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold;">EDIT</button>
-                  <button id="deleteBtn-${idx}" style="background: #ff3333; color: #000; border: 1px solid #ff3333; padding: 6px 12px; cursor: pointer; font-weight: bold;">DELETE</button>
-                  <button id="backBtn-${idx}" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer;">BACK</button>
+          const terminalContent = document.getElementById('terminalContent');
+          if (terminalContent) {
+            terminalContent.innerHTML = `
+              <div style="padding: 12px; overflow-y: auto; height: 100%;">
+                <div style="border: 1px solid #39dc00; padding: 12px; margin-bottom: 12px;">
+                  <div style="color: #39dc00; font-weight: bold; margin-bottom: 8px; font-size: 13px;">${selectedItem.title || selectedItem.id}</div>
+                  <div style="color: #888; font-size: 11px; margin-bottom: 12px;">
+                    Category: ${selectedItem.category || '-'} | Status: ${selectedItem.status || '-'}<br>
+                    Author: ${selectedItem.author || '-'} | Year: ${selectedItem.year || '-'}
+                    ${selectedItem.publishedSection ? '<br>Published to: ' + selectedItem.publishedSection : ''}
+                  </div>
+                  <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 12px; background: #000; max-height: 50vh; overflow-y: auto;">
+                    <div style="color: #39dc00; white-space: pre-wrap; word-wrap: break-word; font-size: 11px; line-height: 1.7;">${selectedItem.preview || ''}</div>
+                  </div>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button id="editBtn-${idx}" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold;">EDIT</button>
+                    <button id="deleteBtn-${idx}" style="background: #ff3333; color: #000; border: 1px solid #ff3333; padding: 6px 12px; cursor: pointer; font-weight: bold;">DELETE</button>
+                    <button id="backBtn-${idx}" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer;">BACK</button>
+                  </div>
                 </div>
               </div>
             `;
+            terminalContent.scrollTop = 0;
 
             // Setup button handlers
             document.getElementById(`editBtn-${idx}`)?.addEventListener('click', () => {
@@ -892,11 +896,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
               loadContent(section);
             });
           }
-
-          const terminalContent = document.querySelector('.terminal-content');
-          if (terminalContent) {
-            terminalContent.scrollTop = 0;
-          }
         });
 
         item.addEventListener('mouseover', () => {
@@ -911,7 +910,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     // Show edit form for a post
     function showEditForm(section, idx, item) {
-      const contentDiv = document.getElementById('contentText');
+      const contentDiv = document.getElementById('terminalContent');
       if (!contentDiv) return;
 
       contentDiv.innerHTML = `
