@@ -538,6 +538,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="form-group">
           <label>Description / Content (Markdown 지원)</label>
           <textarea id="postPreview" placeholder="Write your draft content here..." oninput="updateMdPreview(this.value)"></textarea>
+          <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
+            <input type="file" id="fileAttachInput" accept="image/*,video/*,.pdf,.txt,.md" style="display:none;" onchange="handleFileAttach(this)">
+            <button type="button" onclick="document.getElementById('fileAttachInput').click()"
+              style="background:#000;border:1px dashed #39dc00;color:#39dc00;padding:5px 10px;font-family:monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">
+              [📎 파일 첨부]
+            </button>
+            <span id="fileAttachStatus" style="font-size:9px;color:#ffb000;"></span>
+          </div>
         </div>
         <div class="form-group">
           <label>미리보기</label>
@@ -552,6 +560,79 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <script>
+    // ===== 파일 첨부 & GitHub 업로드 =====
+    async function handleFileAttach(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      const statusEl = document.getElementById('fileAttachStatus');
+      const token = localStorage.getItem('githubToken');
+
+      if (!token) {
+        statusEl.textContent = '⚠ GitHub 토큰 없음. 먼저 토큰을 설정해주세요.';
+        statusEl.style.color = '#ff3333';
+        input.value = '';
+        return;
+      }
+
+      statusEl.style.color = '#ffb000';
+      statusEl.textContent = '▶ 업로드 중...';
+
+      try {
+        // 파일 → base64
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result.split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        // 고유 파일명 생성
+        const ts = Date.now();
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const uploadPath = `uploads/${ts}_${safeName}`;
+        const repo = 'note-a/note-a-github';
+
+        const res = await fetch(`https://api.github.com/repos/${repo}/contents/${uploadPath}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `upload: ${safeName}`, content: base64 })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.message || '업로드 실패');
+        }
+
+        const data = await res.json();
+        const rawUrl = data.content.download_url;
+
+        // 이미지면 <img> 태그, 그 외는 링크로 삽입
+        const isImage = /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(file.name);
+        const insertText = isImage
+          ? `<img src="${rawUrl}" alt="${file.name}" style="max-width:100%;">`
+          : `<a href="${rawUrl}">${file.name}</a>`;
+
+        // 커서 위치에 삽입
+        const ta = document.getElementById('postPreview');
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        ta.value = ta.value.slice(0, start) + insertText + ta.value.slice(end);
+        ta.selectionStart = ta.selectionEnd = start + insertText.length;
+        updateMdPreview(ta.value);
+
+        statusEl.style.color = '#39dc00';
+        statusEl.textContent = `✓ ${file.name} 업로드 완료`;
+        setTimeout(() => { statusEl.textContent = ''; }, 4000);
+
+      } catch (e) {
+        statusEl.style.color = '#ff3333';
+        statusEl.textContent = `✗ 오류: ${e.message}`;
+      }
+
+      input.value = ''; // 같은 파일 재선택 가능하도록 초기화
+    }
+
     // ===== 모달 전역 함수 (가장 확실한 방식) =====
     function closeWriteModal() {
       var modal = document.getElementById('writeModal');
