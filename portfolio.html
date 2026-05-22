@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET IS THE WORLD - PORTFOLIO</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
@@ -1025,11 +1024,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="menu-item" data-section="rule">log</div>
         <div class="menu-item" data-section="reference">reference</div>
         <div class="menu-item" data-section="archive">Archive</div>
-        <div style="position: relative; flex: 1; width: 100%; min-height: 0;">
-          <div id="menuGrammarTextBg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; font-family: 'Courier New', monospace; color: #39dc00; font-size: 9px; overflow: hidden; padding: 4px; opacity: 0.2;"></div>
-          <canvas id="menuGrammarCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; background: transparent; z-index: 1;"></canvas>
-          <div id="menuGrammarText" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; font-family: 'Courier New', monospace; color: #39dc00; font-size: 9px; overflow: hidden; padding: 4px;"></div>
-        </div>
+        <div style="position: relative; flex: 1; width: 100%; min-height: 0;"></div>
       </div>
 
       <div class="menu-statusbar">
@@ -2968,153 +2963,11 @@ REQUIRE LOGIN: No (Public access enabled)
         });
     }
 
-    // Menu panel grammar canvas animation — geometric polygon orbits
-    function startMenuGrammarCanvas() {
-      const canvas = document.getElementById('menuGrammarCanvas');
-      const textDiv = document.getElementById('menuGrammarText');
-      const textBgDiv = document.getElementById('menuGrammarTextBg');
-      if (!canvas || typeof THREE === 'undefined') return;
-
-      const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
-
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-
-      function setSize() {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-      }
-      setSize();
-      window.addEventListener('resize', setSize);
-
-      renderer.setClearColor(0x000000, 0);
-      camera.position.z = 150;
-
-      // 회전하는 와이어프레임 구 생성
-      const geometry = new THREE.IcosahedronGeometry(80, 4);
-      const material = new THREE.LineBasicMaterial({
-        color: 0x39dc00,
-        linewidth: 1.5,
-        transparent: true,
-        opacity: 0.4
-      });
-      const wireframe = new THREE.LineSegments(
-        new THREE.WireframeGeometry(geometry),
-        material
-      );
-      scene.add(wireframe);
-
-      // 글자 애니메이션
-      const COLS = 4;
-      const CELL_H = 18;
-      let cells = [];
-
-      function initCells() {
-        const rows = Math.ceil(canvas.height / CELL_H) + 1;
-        cells = [];
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < COLS; c++) {
-            const ba = Math.random() * 0.2 + 0.75;
-            cells.push({
-              code: codes[Math.floor(Math.random() * codes.length)],
-              nextCode: null,
-              alpha: ba,
-              state: 'idle',
-              timer: Math.floor(Math.random() * 100),
-              interval: Math.floor(Math.random() * 40) + 20,
-              baseAlpha: ba,
-              element: null
-            });
-          }
-        }
-        renderText();
-      }
-
-      function renderText() {
-        textDiv.innerHTML = '';
-        textBgDiv.innerHTML = '';
-        const colW = canvas.width / COLS;
-        const FADE_SPEED = 0.12;
-
-        cells.forEach((cell, i) => {
-          const r = Math.floor(i / COLS);
-          const c = i % COLS;
-          const x = c * colW + 4;
-          const y = r * CELL_H + CELL_H - 4;
-
-          if (cell.state === 'idle') {
-            cell.timer++;
-            if (cell.timer >= cell.interval) {
-              cell.timer = 0;
-              cell.interval = Math.floor(Math.random() * 40) + 20;
-              cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
-              cell.state = 'fadeout';
-            }
-          } else if (cell.state === 'fadeout') {
-            cell.alpha -= FADE_SPEED;
-            if (cell.alpha <= 0) {
-              cell.alpha = 0;
-              cell.code = cell.nextCode;
-              cell.baseAlpha = Math.random() * 0.2 + 0.75;
-              cell.state = 'fadein';
-            }
-          } else if (cell.state === 'fadein') {
-            cell.alpha += FADE_SPEED * 0.7;
-            if (cell.alpha >= cell.baseAlpha) {
-              cell.alpha = cell.baseAlpha;
-              cell.state = 'idle';
-            }
-          }
-
-          if (cell.alpha > 0) {
-            // Foreground text (full opacity, on top)
-            const span = document.createElement('div');
-            span.textContent = cell.code;
-            span.style.position = 'absolute';
-            span.style.left = x + 'px';
-            span.style.top = y + 'px';
-            span.style.opacity = cell.alpha;
-            span.style.whiteSpace = 'nowrap';
-            textDiv.appendChild(span);
-
-            // Background text (same content, dimmed by CSS opacity 0.2)
-            const bgSpan = document.createElement('div');
-            bgSpan.textContent = cell.code;
-            bgSpan.style.position = 'absolute';
-            bgSpan.style.left = x + 'px';
-            bgSpan.style.top = y + 'px';
-            bgSpan.style.opacity = cell.alpha;
-            bgSpan.style.whiteSpace = 'nowrap';
-            textBgDiv.appendChild(bgSpan);
-          }
-        });
-      }
-
-      initCells();
-
-      // 애니메이션 루프
-      function animate() {
-        requestAnimationFrame(animate);
-        wireframe.rotation.x += 0.005;
-        wireframe.rotation.y += 0.01;
-        renderer.render(scene, camera);
-        renderText();
-      }
-
-      animate();
-    }
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // Load admin-edited contents from localStorage
       loadAdminContentsFromStorage();
-
-      // Start menu grammar canvas animation
-      setTimeout(startMenuGrammarCanvas, 100);
 
       // Setup all layouts first
       setupMenuItems();
