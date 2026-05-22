@@ -1190,10 +1190,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <div style="color: #39dc00; font-size: 11px; font-weight: bold; border-bottom: 1px solid #39dc00; padding-bottom: 8px;">
             ENTIRE — CONTACT SHEET 편집
           </div>
-          <div style="font-size: 10px; color: #ffb000; line-height: 1.6; border: 1px dashed rgba(255,176,0,0.4); padding: 10px;">
-            [D 오브젝트 형식] 20260217.html의 const D = { ... } 내용을 아래에 붙여넣으면 자동 변환됩니다.<br>
+          <div style="font-size: 10px; color: #ffb000; line-height: 1.7; border: 1px dashed rgba(255,176,0,0.4); padding: 10px;">
+            <b style="color:#ffb000;">[평면 형식]</b> 20260217.html의 const D = { ... } 그대로 붙여넣기:<br>
+            <code style="color:#39dc00;">{"5232":["core","FUNREV","이유"],"5233":["support","LIGHT",""]}</code><br>
             imgDir 입력 예: <code style="color:#39dc00;">uploads/DSCF</code> → 파일명: uploads/DSCF5232.jpg<br><br>
-            [배열 형식] JSON 배열로 직접 입력도 가능합니다:<br>
+            <b style="color:#ffb000;">[중첩 형식]</b> 서브 콘택트 시트 (클릭하면 안으로 들어가는 폴더):<br>
+            <code style="color:#39dc00;">{"20260217":{"type":"sheet","title":"2026.02.17","imgDir":"uploads/DSCF","children":{"5232":["core","FUNREV",""]}}}</code><br>
+            → 클릭하면 해당 롤의 서브 콘택트 시트로 진입. 평면과 혼합 가능.<br><br>
+            <b style="color:#ffb000;">[배열 형식]</b> JSON 배열로 직접 입력도 가능:<br>
             <code style="color:#39dc00;">[{"id":"DSCF5232","filename":"uploads/DSCF5232.jpg","verdict":"core","dir":"FUNREV","reason":"..."}]</code>
           </div>
           <div>
@@ -1622,22 +1626,49 @@ REQUIRE LOGIN: No (Public access enabled)
           if (Array.isArray(raw)) {
             photos = raw;
           } else {
-            // D object format: {5232: ["core","FUNREV","reason"], ...}
+            // D object format — supports flat and nested (sub-sheet) entries
             const imgDir = (document.getElementById('csImgDir')?.value || '').trim();
-            Object.entries(raw).forEach(([n, d]) => {
-              photos.push({
+            function parsePhotoEntry(n, d, dir) {
+              return {
                 id: 'DSCF' + n,
-                filename: imgDir ? imgDir + n + '.jpg' : n + '.jpg',
+                filename: dir ? dir + n + '.jpg' : n + '.jpg',
                 verdict: d[0] || 'drop',
                 dir: d[1] || '',
                 reason: d[2] || ''
-              });
+              };
+            }
+            Object.entries(raw).forEach(([key, val]) => {
+              if (Array.isArray(val)) {
+                // Flat photo: {"5232": ["core","FUNREV","reason"]}
+                photos.push(parsePhotoEntry(key, val, imgDir));
+              } else if (val && typeof val === 'object' && val.type === 'sheet') {
+                // Sub-contact sheet: {"20260217": {"type":"sheet","title":"...","imgDir":"...","children":{...}}}
+                const subDir = val.imgDir || imgDir;
+                const children = [];
+                Object.entries(val.children || {}).forEach(([n, d]) => {
+                  if (Array.isArray(d)) children.push(parsePhotoEntry(n, d, subDir));
+                });
+                photos.push({
+                  id: key,
+                  title: val.title || key,
+                  type: 'sheet',
+                  children: children
+                });
+              }
             });
           }
           if (!portfolioEditData.intro) portfolioEditData.intro = {};
           portfolioEditData.intro.photos = photos;
+          const sheetCount = photos.filter(p => p.type === 'sheet').length;
+          const leafCount = photos.filter(p => p.type !== 'sheet').length;
           const status = document.getElementById('csParseStatus');
-          if (status) status.textContent = `✓ ${photos.length}장 파싱 완료`;
+          if (status) {
+            const parts = [];
+            if (sheetCount > 0) parts.push(`${sheetCount}개 서브시트`);
+            if (leafCount > 0) parts.push(`${leafCount}장 사진`);
+            status.textContent = `✓ ${parts.join(', ')} 파싱 완료`;
+            status.style.color = '#39dc00';
+          }
         } catch (e) {
           const status = document.getElementById('csParseStatus');
           if (status) { status.textContent = '✗ JSON 파싱 오류: ' + e.message; status.style.color='#ff3333'; }
