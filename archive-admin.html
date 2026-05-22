@@ -498,32 +498,32 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <!-- Write Post Modal -->
-  <div class="modal-overlay" id="writeModal">
+  <div class="modal-overlay" id="writeModal" onclick="if(event.target===this)closeWriteModal()">
     <div class="modal-content">
       <div class="modal-title">NEW ARCHIVE POST - ADMIN</div>
-      <form id="postForm">
+      <div id="postForm">
         <div class="form-group">
-          <label for="postTitle">Title / ID</label>
-          <input type="text" id="postTitle" required placeholder="e.g., MY_DRAFT_TITLE">
+          <label>Title / ID</label>
+          <input type="text" id="postTitle" placeholder="e.g., MY_DRAFT_TITLE" onkeydown="if(event.key==='Enter')event.preventDefault()">
         </div>
         <div class="form-group">
-          <label for="postAuthor">Author / From</label>
-          <input type="text" id="postAuthor" required placeholder="Your name">
+          <label>Author / From</label>
+          <input type="text" id="postAuthor" placeholder="Your name" onkeydown="if(event.key==='Enter')event.preventDefault()">
         </div>
         <div class="form-group">
-          <label for="postYear">Year</label>
-          <input type="text" id="postYear" placeholder="2026">
+          <label>Year</label>
+          <input type="text" id="postYear" placeholder="2026" onkeydown="if(event.key==='Enter')event.preventDefault()">
         </div>
         <div class="form-group">
-          <label for="postCategory">Category</label>
-          <input type="text" id="postCategory" placeholder="e.g., Draft">
+          <label>Category</label>
+          <input type="text" id="postCategory" placeholder="e.g., Draft" onkeydown="if(event.key==='Enter')event.preventDefault()">
         </div>
         <div class="form-group">
-          <label for="postStatus">Status</label>
-          <input type="text" id="postStatus" placeholder="DRAFT / COMPLETED">
+          <label>Status</label>
+          <input type="text" id="postStatus" placeholder="DRAFT / COMPLETED" onkeydown="if(event.key==='Enter')event.preventDefault()">
         </div>
         <div class="form-group">
-          <label for="postSection">발행할 섹션</label>
+          <label>발행할 섹션</label>
           <select id="postSection" style="background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px 8px; font-family: 'Courier New', monospace; font-size: 10px; outline: none;">
             <option value="">-- 섹션 선택 --</option>
             <option value="project">SET</option>
@@ -536,23 +536,95 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           </select>
         </div>
         <div class="form-group">
-          <label for="postPreview">Description / Content (Markdown 지원: **굵게**, # 제목, | 표 |, ![이미지](URL))</label>
-          <textarea id="postPreview" required placeholder="Write your draft content here..." oninput="updateMdPreview(this.value)"></textarea>
+          <label>Description / Content (Markdown 지원)</label>
+          <textarea id="postPreview" placeholder="Write your draft content here..." oninput="updateMdPreview(this.value)"></textarea>
         </div>
         <div class="form-group">
           <label>미리보기</label>
           <div class="md-preview" id="mdPreviewBox">내용을 입력하면 미리보기가 표시됩니다.</div>
         </div>
         <div class="modal-buttons">
-          <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
-          <button type="button" class="modal-btn" id="savePostBtn">SAVE</button>
+          <button type="button" class="modal-btn cancel" onclick="closeWriteModal()">CANCEL</button>
+          <button type="button" class="modal-btn" onclick="doSavePost()">SAVE</button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 
   <script>
-    // Archive storage
+    // ===== 모달 전역 함수 (가장 확실한 방식) =====
+    function closeWriteModal() {
+      var modal = document.getElementById('writeModal');
+      if (modal) modal.style.display = 'none';
+      // 폼 초기화
+      var fields = ['postTitle','postAuthor','postYear','postCategory','postStatus','postPreview'];
+      fields.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      var sec = document.getElementById('postSection');
+      if (sec) sec.value = '';
+      var prev = document.getElementById('mdPreviewBox');
+      if (prev) prev.textContent = '내용을 입력하면 미리보기가 표시됩니다.';
+    }
+
+    function openWriteModal() {
+      var modal = document.getElementById('writeModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        var titleEl = document.getElementById('postTitle');
+        if (titleEl) titleEl.focus();
+      }
+    }
+
+    function doSavePost() {
+      var title = document.getElementById('postTitle').value.trim();
+      if (!title) {
+        alert('제목을 입력해주세요');
+        return;
+      }
+
+      var activeMenu = document.querySelector('.menu-item.active');
+      var currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
+      var publishedSection = document.getElementById('postSection').value || null;
+      var previewVal = document.getElementById('postPreview').value;
+
+      var newItem = {
+        id: title.toUpperCase().replace(/\s+/g, '_'),
+        title: title,
+        author: document.getElementById('postAuthor').value || 'Unknown',
+        year: document.getElementById('postYear').value || new Date().getFullYear().toString(),
+        category: document.getElementById('postCategory').value || 'Draft',
+        status: document.getElementById('postStatus').value || 'DRAFT',
+        preview: previewVal,
+        text: previewVal,
+        publishedSection: publishedSection || null
+      };
+
+      var saveSection;
+      if (publishedSection) {
+        saveSection = 'completed';
+      } else if (['drafts','completed','archived'].indexOf(currentSection) !== -1) {
+        saveSection = currentSection;
+      } else {
+        saveSection = 'drafts';
+      }
+
+      archiveData[saveSection].items.push(newItem);
+      saveArchiveData();
+      closeWriteModal();
+      loadContent(saveSection);
+    }
+
+    // Escape 키로 모달 닫기
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var modal = document.getElementById('writeModal');
+        if (modal && modal.style.display === 'flex') closeWriteModal();
+      }
+    });
+
+    // ===== Archive storage =====
     const archiveData = {
       drafts: {
         title: '작업중',
@@ -717,7 +789,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
               </div>
               <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between; flex-shrink: 0;">
                 <span>TOTAL: ${content.items.length}</span>
-                <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
+                <button class="new-post-btn" onclick="openWriteModal()" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
               </div>
             </div>
           `;
@@ -747,15 +819,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
               </div>
               <div style="padding: 8px 12px; border-top: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 9px; display: flex; justify-content: space-between;">
                 <span>TOTAL: ${content.items.length}</span>
-                <button class="new-post-btn" id="newPostBtn" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
+                <button class="new-post-btn" onclick="openWriteModal()" style="font-size: 9px; padding: 2px 6px;">[NEW]</button>
               </div>
             </div>
           `;
         }
         terminalContent.innerHTML = listHTML;
-
-        // Setup new post button
-        setupNewPostModal(section);
 
         // Setup list item click handlers
         console.log('Setting up list item click handlers for section:', section);
@@ -764,53 +833,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           setupListItemClickHandlers(section);
         }, 50);
       }
-    }
-
-    // Setup new post modal (한 번만 초기화)
-    let newPostModalInitialized = false;
-    function setupNewPostModal(section) {
-      const modal = document.getElementById('writeModal');
-      const newPostBtn = document.getElementById('newPostBtn');
-      const cancelBtn = document.getElementById('cancelBtn');
-      const postForm = document.getElementById('postForm');
-
-      if (!newPostBtn) return;
-
-      // newPostBtn은 매번 새로 생성되므로 항상 리스너 추가
-      newPostBtn.addEventListener('click', () => {
-        modal.classList.add('active');
-        document.getElementById('postTitle').focus();
-      });
-
-      // 나머지는 최초 1회만 등록
-      if (newPostModalInitialized) return;
-      newPostModalInitialized = true;
-
-      cancelBtn.addEventListener('click', () => {
-        modal.classList.remove('active');
-        postForm.reset();
-      });
-
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-          postForm.reset();
-        }
-      });
-
-      // 엔터키로 폼 제출 방지
-      postForm.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
-          e.preventDefault();
-        }
-      });
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-          modal.classList.remove('active');
-          postForm.reset();
-        }
-      });
     }
 
     // Setup list item click handlers
@@ -1466,43 +1488,6 @@ REQUIRE LOGIN: No (Public access enabled)
       loadPortfolioData();
       setupMenuItems();
       setupCloseButton();
-
-      // SAVE 버튼 - DOMContentLoaded에서 한 번만 등록 (가장 안정적)
-      const savePostBtn = document.getElementById('savePostBtn');
-      const modal = document.getElementById('writeModal');
-      const postForm = document.getElementById('postForm');
-      if (savePostBtn) {
-        savePostBtn.addEventListener('click', function() {
-          const title = document.getElementById('postTitle').value.trim();
-          if (!title) { alert('제목을 입력해주세요'); return; }
-
-          const activeMenu = document.querySelector('.menu-item.active');
-          const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
-          const publishedSection = document.getElementById('postSection').value || null;
-
-          const newItem = {
-            id: title.toUpperCase().replace(/\s+/g, '_'),
-            title: title,
-            author: document.getElementById('postAuthor').value || 'Unknown',
-            year: document.getElementById('postYear').value || new Date().getFullYear(),
-            category: document.getElementById('postCategory').value || 'Draft',
-            status: document.getElementById('postStatus').value || 'DRAFT',
-            preview: document.getElementById('postPreview').value,
-            text: document.getElementById('postPreview').value,
-            publishedSection: publishedSection
-          };
-
-          const saveSection = publishedSection ? 'completed' : (['drafts','completed','archived'].includes(currentSection) ? currentSection : 'drafts');
-          archiveData[saveSection].items.push(newItem);
-          saveArchiveData();
-
-          if (modal) modal.classList.remove('active');
-          if (postForm) postForm.reset();
-          const previewBox = document.getElementById('mdPreviewBox');
-          if (previewBox) previewBox.textContent = '내용을 입력하면 미리보기가 표시됩니다.';
-          loadContent(saveSection);
-        });
-      }
 
       // Setup portfolio edit buttons
       const saveBtn = document.getElementById('portfolio-save-btn');
