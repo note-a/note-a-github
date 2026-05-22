@@ -2131,7 +2131,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   </div>
                 </div>
                 <div class="detail-divider"></div>
-                <div class="detail-preview">${selectedItem.preview || ''}</div>
+                <div class="detail-preview md-content">${(typeof marked !== 'undefined') ? marked.parse(selectedItem.preview || '') : (selectedItem.preview || '')}</div>
               </div>
             </div>
           `;
@@ -2667,8 +2667,8 @@ REQUIRE LOGIN: No (Public access enabled)
               <div>${author}</div>
             </div>
           </div>
-          <div style="border-top: 1px solid #39dc00; padding-top: 12px; font-size: 10px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; max-height: 400px; overflow-y: auto;">
-            ${preview}
+          <div class="md-content" style="border-top: 1px solid #39dc00; padding-top: 12px; max-height: 400px; overflow-y: auto; font-size: 10px;">
+            ${(typeof marked !== 'undefined') ? marked.parse(preview) : preview}
           </div>
         </div>
       `;
