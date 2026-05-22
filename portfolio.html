@@ -1005,7 +1005,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     <button class="hamburger-btn" id="hamburgerBtn">☰</button>
 
     <!-- Background blinking code names -->
-    <div id="backgroundCodeNames" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; font-family: 'Courier New', monospace; color: #39dc00; font-size: 13px; letter-spacing: 1px; padding: 4px;"></div>
+    <div id="backgroundCodeNames" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; font-family: 'Courier New', monospace; color: #39dc00; font-size: 13px; letter-spacing: -0.5px; padding: 4px;"></div>
 
     <div class="portfolio-container">
       <div class="portfolio-window">
@@ -3040,13 +3040,15 @@ REQUIRE LOGIN: No (Public access enabled)
             span.style.opacity = cell.alpha;
             span.style.whiteSpace = 'nowrap';
             span.style.fontSize = '13px';
-            span.style.letterSpacing = '1px';
+            span.style.letterSpacing = '-0.5px';
             span.style.textShadow = `
-              1px 0 0 rgba(57, 220, 0, 0.4),
-              -1px 0 0 rgba(255, 0, 0, 0.3),
-              0 1px 0 rgba(0, 255, 255, 0.3),
-              0 -1px 0 rgba(255, 0, 0, 0.2)
+              2px 0 0 rgba(57, 220, 0, 0.5),
+              -2px 0 0 rgba(255, 0, 0, 0.4),
+              1px 1px 0 rgba(0, 255, 255, 0.4),
+              -1px -1px 0 rgba(255, 0, 0, 0.3),
+              0 2px 0 rgba(0, 255, 255, 0.3)
             `;
+            span.style.filter = 'blur(0.4px)';
             container.appendChild(span);
           }
         });
