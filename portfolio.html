@@ -2649,7 +2649,10 @@ REQUIRE LOGIN: No (Public access enabled)
       // Display initial photos with placeholder
       function displayInitialPhotos() {
         gallery.innerHTML = `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; height: 100%; justify-content: center;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px;">
+            <img src="images/big-brother.jpg"
+              style="max-width: 100%; max-height: 340px; object-fit: contain; display: block;"
+              onerror="this.style.display='none'">
             <div style="text-align: center; color: #39dc00; font-size: 15px; font-family: 'Courier New', monospace; font-weight: bold;">
               Enter your instructions
             </div>
@@ -2901,7 +2904,10 @@ REQUIRE LOGIN: No (Public access enabled)
         mobileContent.style.whiteSpace = 'normal';
         mobileContent.innerHTML = `
           <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; flex-shrink: 0;">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; flex-shrink: 0;">
+              <img src="images/big-brother.jpg"
+                style="max-width: 100%; max-height: 220px; object-fit: contain; display: block;"
+                onerror="this.style.display='none'">
               <div style="text-align: center; color: #39dc00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
               <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
                 style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-size: 10px; font-family: monospace; box-sizing: border-box;">
