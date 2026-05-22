@@ -1046,6 +1046,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   .md-content th { background: #39dc00; color: #000; font-weight: bold; }
   </style>
   <script src="./marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 </head>
 <body>
   <!-- SVG Pixelation Filter -->
@@ -1718,10 +1719,24 @@ REQUIRE LOGIN: No (Public access enabled)
       }
     };
 
+    // localStorage에서 archiveData 파싱 (LZString 압축 지원)
+    function getArchiveData() {
+      try {
+        let raw = localStorage.getItem('archiveData') || '{}';
+        if (typeof LZString !== 'undefined') {
+          const decompressed = LZString.decompress(raw);
+          if (decompressed) raw = decompressed;
+        }
+        return JSON.parse(raw);
+      } catch (e) {
+        return {};
+      }
+    }
+
     // Get published posts from archive-admin
     function getPublishedPosts(section) {
       try {
-        const archiveData = JSON.parse(localStorage.getItem('archiveData') || '{}');
+        const archiveData = getArchiveData();
         // admin은 completed를 flat array로 저장 — 양쪽 형식 모두 처리
         const completedItems = Array.isArray(archiveData.completed)
           ? archiveData.completed
@@ -1768,8 +1783,7 @@ REQUIRE LOGIN: No (Public access enabled)
         // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
         // published posts(publishedSection 기반)는 renderSection의 getPublishedPosts()가 처리하므로
         // 여기서는 구버전 직접저장 항목만 병합해 중복을 방지한다
-        const archiveDataStr = localStorage.getItem('archiveData');
-        const archiveData = JSON.parse(archiveDataStr || '{}');
+        const archiveData = getArchiveData();
 
         const directRefItems = Array.isArray(archiveData.reference)
           ? archiveData.reference

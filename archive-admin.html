@@ -406,6 +406,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   .sys-alert-body { color: #ff9900; line-height: 1.6; }
   </style>
   <script src="./marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
   <script>
     if (typeof marked !== 'undefined') {
       try { marked.use({ gfm: true, breaks: true }); } catch(e) {
@@ -651,33 +652,47 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     };
 
-    // Load data from localStorage
+    // Load data from localStorage (압축/비압축 둘 다 지원)
     function loadArchiveData() {
-      const saved = localStorage.getItem('archiveData');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          // Handle both old format (array) and new format (already items arrays)
-          archiveData.drafts.items = Array.isArray(parsed.drafts) ? parsed.drafts : (parsed.drafts?.items || []);
-          archiveData.completed.items = Array.isArray(parsed.completed) ? parsed.completed : (parsed.completed?.items || []);
-          archiveData.archived.items = Array.isArray(parsed.archived) ? parsed.archived : (parsed.archived?.items || []);
-          archiveData.rule.items = Array.isArray(parsed.rule) ? parsed.rule : (parsed.rule?.items || []);
-          archiveData.reference.items = Array.isArray(parsed.reference) ? parsed.reference : (parsed.reference?.items || []);
-        } catch (e) {
-          console.error('Error loading archive data:', e);
+      let raw = localStorage.getItem('archiveData');
+      if (!raw) return;
+      try {
+        // LZString 압축 데이터인지 먼저 시도
+        let jsonStr = raw;
+        if (typeof LZString !== 'undefined') {
+          const decompressed = LZString.decompress(raw);
+          if (decompressed) jsonStr = decompressed;
         }
+        const parsed = JSON.parse(jsonStr);
+        archiveData.drafts.items = Array.isArray(parsed.drafts) ? parsed.drafts : (parsed.drafts?.items || []);
+        archiveData.completed.items = Array.isArray(parsed.completed) ? parsed.completed : (parsed.completed?.items || []);
+        archiveData.archived.items = Array.isArray(parsed.archived) ? parsed.archived : (parsed.archived?.items || []);
+        archiveData.rule.items = Array.isArray(parsed.rule) ? parsed.rule : (parsed.rule?.items || []);
+        archiveData.reference.items = Array.isArray(parsed.reference) ? parsed.reference : (parsed.reference?.items || []);
+      } catch (e) {
+        console.error('Error loading archive data:', e);
       }
     }
 
-    // Save data to localStorage
+    // Save data to localStorage (LZString 압축으로 용량 절약)
     function saveArchiveData() {
-      localStorage.setItem('archiveData', JSON.stringify({
-        drafts: archiveData.drafts.items,
-        completed: archiveData.completed.items,
-        archived: archiveData.archived.items,
-        rule: archiveData.rule.items,
-        reference: archiveData.reference.items
-      }));
+      try {
+        const json = JSON.stringify({
+          drafts: archiveData.drafts.items,
+          completed: archiveData.completed.items,
+          archived: archiveData.archived.items,
+          rule: archiveData.rule.items,
+          reference: archiveData.reference.items
+        });
+        const toSave = (typeof LZString !== 'undefined') ? LZString.compress(json) : json;
+        localStorage.setItem('archiveData', toSave);
+      } catch (e) {
+        if (e.name === 'QuotaExceededError') {
+          alert('저장 공간이 부족합니다. 일부 오래된 글을 삭제하고 다시 시도해주세요.');
+        } else {
+          alert('저장 오류: ' + e.message);
+        }
+      }
     }
 
     function updateMdPreview(val) {
