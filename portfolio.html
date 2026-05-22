@@ -1878,7 +1878,7 @@ REQUIRE LOGIN: No (Public access enabled)
           terminalContent.innerHTML = figmaHTML;
         } else {
           // Regular text format
-          const mdText = (typeof marked !== 'undefined') ? marked.parse(content.text || '') : `<pre>${content.text}</pre>`;
+          const mdText = content.text || '';
           let textHTML = `<div class="md-content" style="padding: 12px;" id="contentText">${mdText}</div>`;
 
           // Add published posts if any
@@ -2813,7 +2813,7 @@ REQUIRE LOGIN: No (Public access enabled)
         `;
       } else if (content.text) {
         // Text format
-        mobileContent.textContent = content.text;
+        mobileContent.innerHTML = content.text;
       } else if (content.items) {
         // List/Board format - Match desktop table layout
         mobileContent.innerHTML = '';
