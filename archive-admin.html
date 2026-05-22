@@ -258,7 +258,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   border: 2px solid #39dc00;
   padding: 20px;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
   color: #39dc00;
   font-family: 'Courier New', monospace;
   box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
@@ -304,7 +306,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .form-group textarea {
   resize: vertical;
   min-height: 200px;
-  max-height: 600px;
 }
 
 .modal-buttons {
@@ -396,8 +397,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   .md-preview img { max-width: 100%; border: 1px solid #39dc00; margin: 4px 0; display: block; }
   .md-preview code { background: #1a1a1a; border: 1px solid #39dc00; padding: 1px 3px; }
   .md-preview blockquote { border-left: 2px solid #39dc00; margin: 4px 0; padding-left: 8px; opacity: 0.8; }
+  .md-preview hr { border: none; border-top: 1px solid #39dc00; margin: 8px 0; }
+  .md-preview del { opacity: 0.5; }
+  .sys-alert { border: 1px solid #ff3333; background: rgba(255,51,51,0.08); padding: 10px 14px; margin: 10px 0; font-family: 'Courier New', monospace; font-size: 11px; color: #ff3333; }
+  .sys-alert-header { font-weight: bold; margin-bottom: 6px; letter-spacing: 1px; }
+  .blink-warn { animation: blink 0.8s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .sys-alert-body { color: #ff9900; line-height: 1.6; }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="./marked.min.js"></script>
+  <script>
+    if (typeof marked !== 'undefined') {
+      try { marked.use({ gfm: true, breaks: true }); } catch(e) {
+        try { marked.setOptions({ gfm: true, breaks: true }); } catch(e2) {}
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; ARCHIVE ADMIN - HIDDEN WORKSPACE &lt;&lt;&lt;</div>
