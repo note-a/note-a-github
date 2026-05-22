@@ -459,6 +459,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <button class="portfolio-subsection-tab active" data-subsection="project" onclick="loadPortfolioEditForm('project')" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">PROJECT</button>
         <button class="portfolio-subsection-tab" data-subsection="inclusion" onclick="loadPortfolioEditForm('inclusion')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INCLUSION</button>
         <button class="portfolio-subsection-tab" data-subsection="intro" onclick="loadPortfolioEditForm('intro')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ENTIRE</button>
+        <button class="portfolio-subsection-tab" data-subsection="video" onclick="loadPortfolioEditForm('video')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">VIDEO</button>
         <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">LOG</button>
         <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">REFERENCE</button>
         <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ARCHIVE</button>
@@ -1318,15 +1319,18 @@ REQUIRE LOGIN: No (Public access enabled)
       // Collect data from forms
       if (subsection === 'project') {
         const slides = [];
-        for (let i = 0; i < 7; i++) {
-          const title = document.querySelector(`.slide-title-${i}`)?.value || '';
-          const category = document.querySelector(`.slide-category-${i}`)?.value || '';
-          const author = document.querySelector(`.slide-author-${i}`)?.value || '';
-          const year = document.querySelector(`.slide-year-${i}`)?.value || '';
-          const text = document.querySelector(`.slide-text-${i}`)?.value || '';
+        const slideTitles = document.querySelectorAll('[class*="slide-title-"]');
+        slideTitles.forEach((input, idx) => {
+          const title = document.querySelector(`.slide-title-${idx}`)?.value || '';
+          const category = document.querySelector(`.slide-category-${idx}`)?.value || '';
+          const author = document.querySelector(`.slide-author-${idx}`)?.value || '';
+          const year = document.querySelector(`.slide-year-${idx}`)?.value || '';
+          const text = document.querySelector(`.slide-text-${idx}`)?.value || '';
 
-          slides.push({ id: `slide_${i + 1}`, title, category, author, year, text });
-        }
+          if (title || category || author || year || text) {
+            slides.push({ id: `slide_${idx + 1}`, title, category, author, year, text });
+          }
+        });
         if (!portfolioEditData.project) portfolioEditData.project = {};
         portfolioEditData.project.slides = slides;
       } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {

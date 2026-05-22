@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Editing System Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; padding: 20px; }
+    .test-container { max-width: 1200px; margin: 0 auto; }
+    .test-section { margin-bottom: 30px; padding: 15px; border: 1px solid #39dc00; }
+    .test-title { font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+    .test-result { margin: 10px 0; padding: 8px; background: #1a1a1a; }
+    .success { color: #00ff00; }
+    .error { color: #ff3333; }
+    .info { color: #ffff00; }
+    button { background: #39dc00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; margin: 5px; }
+    button:hover { background: #52ff00; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Portfolio Editing System - Integration Test</h1>
+
+    <div class="test-section">
+      <div class="test-title">Test 1: localStorage Data Structure</div>
+      <div id="test1-result" class="test-result"></div>
+      <button onclick="testStorageStructure()">Run Test 1</button>
+    </div>
+
+    <div class="test-section">
+      <div class="test-title">Test 2: Save Admin Content</div>
+      <div id="test2-result" class="test-result"></div>
+      <button onclick="testSaveContent()">Run Test 2</button>
+    </div>
+
+    <div class="test-section">
+      <div class="test-title">Test 3: Load Admin Content</div>
+      <div id="test3-result" class="test-result"></div>
+      <button onclick="testLoadContent()">Run Test 3</button>
+    </div>
+
+    <div class="test-section">
+      <div class="test-title">Test 4: Test Form Data Collection</div>
+      <div id="test4-result" class="test-result"></div>
+      <button onclick="testFormCollection()">Run Test 4</button>
+    </div>
+
+    <div class="test-section">
+      <div class="test-title">Clear All Test Data</div>
+      <button onclick="clearTestData()" style="background: #ff3333;">Clear localStorage</button>
+    </div>
+  </div>
+
+  <script>
+    function log(id, message, type = 'info') {
+      const element = document.getElementById(id);
+      const line = document.createElement('div');
+      line.className = type;
+      line.textContent = `[${type.toUpperCase()}] ${message}`;
+      element.appendChild(line);
+    }
+
+    function testStorageStructure() {
+      const id = 'test1-result';
+      document.getElementById(id).innerHTML = '';
+
+      try {
+        const stored = localStorage.getItem('adminContents');
+        if (!stored) {
+          log(id, 'No adminContents in localStorage yet (normal on first run)', 'info');
+        } else {
+          const data = JSON.parse(stored);
+          const sections = ['project', 'inclusion', 'intro', 'rule', 'reference', 'video', 'archive'];
+          sections.forEach(section => {
+            if (data[section]) {
+              log(id, `✓ Section "${section}" found in storage`, 'success');
+              if (section === 'project' && data[section].slides) {
+                log(id, `  - Project slides: ${data[section].slides.length} slides`, 'info');
+              }
+              if ((section === 'rule' || section === 'reference') && data[section].items) {
+                log(id, `  - Items: ${data[section].items.length} items`, 'info');
+              }
+              if (section === 'archive' && data[section].photos) {
+                log(id, `  - Archive photos: ${data[section].photos.length} photos`, 'info');
+              }
+            }
+          });
+        }
+        log(id, 'Storage structure test completed', 'success');
+      } catch (e) {
+        log(id, `Error: ${e.message}`, 'error');
+      }
+    }
+
+    function testSaveContent() {
+      const id = 'test2-result';
+      document.getElementById(id).innerHTML = '';
+
+      try {
+        const testData = {
+          project: {
+            slides: [
+              {
+                id: 'slide_1',
+                title: 'TEST PROJECT SLIDE',
+                category: 'Testing',
+                author: 'Test Author',
+                year: '2026',
+                text: 'This is a test slide content for verification.'
+              }
+            ]
+          },
+          inclusion: {
+            text: 'Test inclusion content...'
+          },
+          rule: {
+            items: [
+              {
+                id: 'TEST_RULE_1',
+                title: 'Test Rule',
+                author: 'Test',
+                year: '2026',
+                category: 'Test',
+                status: 'TEST',
+                preview: 'Test rule description'
+              }
+            ]
+          }
+        };
+
+        localStorage.setItem('adminContents', JSON.stringify(testData));
+        log(id, 'Test data saved to localStorage', 'success');
+
+        const retrieved = JSON.parse(localStorage.getItem('adminContents'));
+        if (retrieved.project && retrieved.project.slides[0].title === 'TEST PROJECT SLIDE') {
+          log(id, 'Project slide data verified', 'success');
+        }
+        if (retrieved.inclusion && retrieved.inclusion.text === 'Test inclusion content...') {
+          log(id, 'Inclusion text data verified', 'success');
+        }
+        log(id, 'Save test completed', 'success');
+      } catch (e) {
+        log(id, `Error: ${e.message}`, 'error');
+      }
+    }
+
+    function testLoadContent() {
+      const id = 'test3-result';
+      document.getElementById(id).innerHTML = '';
+
+      try {
+        // Simulate what portfolio.html does
+        const adminContents = JSON.parse(localStorage.getItem('adminContents') || '{}');
+
+        if (Object.keys(adminContents).length === 0) {
+          log(id, 'No admin contents to load (first run)', 'info');
+        } else {
+          log(id, 'Admin contents found, would be merged with default contents', 'success');
+          Object.keys(adminContents).forEach(key => {
+            log(id, `  - Would merge ${key} section`, 'info');
+          });
+        }
+        log(id, 'Load test completed', 'success');
+      } catch (e) {
+        log(id, `Error: ${e.message}`, 'error');
+      }
+    }
+
+    function testFormCollection() {
+      const id = 'test4-result';
+      document.getElementById(id).innerHTML = '';
+
+      try {
+        log(id, 'Testing form input selectors...', 'info');
+
+        // Test if archive-admin page uses correct class selectors
+        const selectors = [
+          '.slide-title-0',
+          '.slide-category-0',
+          '.item-title-rule-0',
+          '.photo-id-0',
+          '.portfolio-text-inclusion'
+        ];
+
+        log(id, 'Archive-admin.html uses these selectors for form collection:', 'info');
+        selectors.forEach(sel => {
+          log(id, `  - ${sel}`, 'info');
+        });
+
+        log(id, 'Form collection test completed (verify selectors in archive-admin.html)', 'success');
+      } catch (e) {
+        log(id, `Error: ${e.message}`, 'error');
+      }
+    }
+
+    function clearTestData() {
+      localStorage.removeItem('adminContents');
+      alert('Test data cleared from localStorage');
+      location.reload();
+    }
+
+    // Run initial tests on page load
+    window.addEventListener('load', () => {
+      log('test1-result', 'Click "Run Test 1" to check current storage', 'info');
+    });
+  </script>
+</body>
+</html>

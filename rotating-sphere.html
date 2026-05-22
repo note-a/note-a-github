@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotating Wireframe Sphere</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+        #canvas {
+            display: block;
+        }
+        .text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #39dc00;
+            z-index: 10;
+            text-shadow: 0 0 20px #39dc00;
+            pointer-events: none;
+        }
+        .text h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+        }
+        .text p {
+            font-size: 14px;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="text">
+        <h1>SET</h1>
+        <p>회전하는 구조<br>Rotating Wireframe</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene, Camera, Renderer 설정
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0.2);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.z = 300;
+
+        // 와이어프레임 구 생성
+        const geometry = new THREE.IcosahedronGeometry(150, 5);
+        const material = new THREE.LineBasicMaterial({
+            color: 0x39dc00,
+            linewidth: 2
+        });
+        const wireframe = new THREE.LineSegments(
+            new THREE.WireframeGeometry(geometry),
+            material
+        );
+        scene.add(wireframe);
+
+        // 애니메이션
+        function animate() {
+            requestAnimationFrame(animate);
+            wireframe.rotation.x += 0.005;
+            wireframe.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+
+        // 윈도우 리사이즈
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

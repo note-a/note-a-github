@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET IS THE WORLD - PORTFOLIO</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
@@ -28,6 +29,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   margin-top: 32px;
   padding: 20px;
   gap: 0;
+  position: relative;
+  z-index: 10;
 }
 
 .portfolio-window {
@@ -1022,6 +1025,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="menu-item" data-section="rule">log</div>
         <div class="menu-item" data-section="reference">reference</div>
         <div class="menu-item" data-section="archive">Archive</div>
+        <div style="position: relative; flex: 1; width: 100%; min-height: 0;">
+          <div id="menuGrammarTextBg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; font-family: 'Courier New', monospace; color: #39dc00; font-size: 9px; overflow: hidden; padding: 4px; opacity: 0.2;"></div>
+          <canvas id="menuGrammarCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; background: transparent; z-index: 1;"></canvas>
+          <div id="menuGrammarText" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; font-family: 'Courier New', monospace; color: #39dc00; font-size: 9px; overflow: hidden; padding: 4px;"></div>
+        </div>
       </div>
 
       <div class="menu-statusbar">
@@ -1117,28 +1125,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       <div class="modal-title">NEW POST - WRITE MESSAGE</div>
       <form id="postForm">
         <div class="form-group">
-          <label for="postTitle">Title / ID</label>
-          <input type="text" id="postTitle" required placeholder="e.g., MY_WORK_TITLE">
+          <label for="postTitle">Title</label>
+          <input type="text" id="postTitle" required placeholder="Write your title here...">
         </div>
         <div class="form-group">
-          <label for="postAuthor">Author / From</label>
-          <input type="text" id="postAuthor" required placeholder="Your name">
-        </div>
-        <div class="form-group">
-          <label for="postYear">Year</label>
-          <input type="text" id="postYear" placeholder="2026">
-        </div>
-        <div class="form-group">
-          <label for="postCategory">Category</label>
-          <input type="text" id="postCategory" placeholder="e.g., Philosophy & Theory">
-        </div>
-        <div class="form-group">
-          <label for="postStatus">Status</label>
-          <input type="text" id="postStatus" placeholder="e.g., PUBLISHED">
-        </div>
-        <div class="form-group">
-          <label for="postPreview">Description / Preview</label>
-          <textarea id="postPreview" required placeholder="Write your post content here..."></textarea>
+          <label for="postPreview">Content</label>
+          <textarea id="postPreview" required placeholder="Write your content here..."></textarea>
         </div>
         <div class="modal-buttons">
           <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
@@ -1382,6 +1374,8 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
       },
       intro: {
         title: 'Intro Text',
+        isFigmaBoard: true,
+        figmaUrl: 'https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0',
         text: `INTRODUCTORY MATERIAL
 ====================================================
 
@@ -1533,6 +1527,11 @@ NEXT STEP: Explore the other sections using the menu
           }
         ]
       },
+      grammar: {
+        title: 'Grammar Codes',
+        isGrammarCodes: true,
+        codes: ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO']
+      },
       video: {
         title: 'Video Archive',
         text: `VIDEO ARCHIVE - MOVING IMAGE WORKS
@@ -1610,7 +1609,9 @@ REQUIRE LOGIN: No (Public access enabled)
 
         // Direct property assignment for each section
         if (adminContents.project && adminContents.project.slides) {
+          console.log('Updating project slides from admin:', adminContents.project.slides[0]?.title);
           contents.project.slides = adminContents.project.slides;
+          console.log('Project slides updated, current slide 0 title:', contents.project.slides[0]?.title);
         }
         if (adminContents.inclusion && adminContents.inclusion.text) {
           contents.inclusion.text = adminContents.inclusion.text;
@@ -1669,17 +1670,22 @@ REQUIRE LOGIN: No (Public access enabled)
       const publishedPosts = getPublishedPosts(section);
 
       if (content) {
-        if (content.isSlideshow) {
+        if (content.isGrammarCodes) {
+          loadGrammarCodes(content);
+        } else if (content.isSlideshow) {
           // Slideshow format
           loadSlideshow(content);
         } else if (content.isArchivePhotos) {
           // Archive Photos format with search
           const archiveHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; position: relative;">
               <div class="photo-gallery" id="photoGallery" style="margin: 12px; flex: 1; overflow-y: auto;"></div>
-              <div class="archive-search-bar" style="margin: 0 12px 12px 12px; flex-shrink: 0;">
-                <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
-                <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
+              <div style="position: relative; margin: 0 12px 12px 12px; flex-shrink: 0;">
+                <canvas id="archiveWireframeCanvas" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; z-index: 5; pointer-events: none;"></canvas>
+                <div class="archive-search-bar" style="position: relative; z-index: 10;">
+                  <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
+                  <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
+                </div>
               </div>
             </div>
           `;
@@ -1688,6 +1694,38 @@ REQUIRE LOGIN: No (Public access enabled)
           // Don't display photos initially - wait for search
           const gallery = document.getElementById('photoGallery');
           gallery.innerHTML = '<div class="no-results">검색 키워드를 입력하세요: crash, floating, shadow</div>';
+
+          // Initialize rotating wireframe sphere at archive bottom
+          setTimeout(() => {
+            const archiveCanvas = document.getElementById('archiveWireframeCanvas');
+            if (archiveCanvas && typeof THREE !== 'undefined') {
+              const scene = new THREE.Scene();
+              const w = archiveCanvas.clientWidth;
+              const h = archiveCanvas.clientHeight;
+              const camera = new THREE.PerspectiveCamera(75, w / h || 1, 0.1, 1000);
+              const renderer = new THREE.WebGLRenderer({ canvas: archiveCanvas, antialias: true, alpha: true });
+
+              renderer.setSize(w, h);
+              renderer.setClearColor(0x000000, 0.05);
+              camera.position.z = 200;
+
+              const geometry = new THREE.IcosahedronGeometry(80, 3);
+              const material = new THREE.LineBasicMaterial({ color: 0x39dc00, linewidth: 1 });
+              const wireframe = new THREE.LineSegments(
+                new THREE.WireframeGeometry(geometry),
+                material
+              );
+              scene.add(wireframe);
+
+              function animateArchive() {
+                requestAnimationFrame(animateArchive);
+                wireframe.rotation.x += 0.005;
+                wireframe.rotation.y += 0.01;
+                renderer.render(scene, camera);
+              }
+              animateArchive();
+            }
+          }, 100);
 
           // Setup search functionality
           setupPhotoSearch(content.photos);
@@ -1738,22 +1776,14 @@ REQUIRE LOGIN: No (Public access enabled)
               </div>
               <div class="board-container">
                 ${allBoardItems.map((item, idx) => `
-                  <div class="board-item" data-index="${idx}">
-                    <div class="board-item-header">
-                      <div class="board-item-title">[${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')} - ${item.status || 'REFERENCE'}]</div>
+                  <div class="board-item" data-index="${idx}" style="display: flex; flex-direction: column; background: #000; border: 1px solid #39dc00; position: absolute; min-width: 200px; width: 200px;">
+                    <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 2px 12px; font-weight: bold; font-size: 11px; border-bottom: 1px solid #39dc00; display: flex; justify-content: flex-end; align-items: center;">
+                      <span style="cursor: pointer; font-size: 12px; flex-shrink: 0;">×</span>
                     </div>
-                    <div class="board-item-info">
-                      <div class="board-item-from">From: ${item.author}</div>
-                      <div class="board-item-meta-row">Year: ${item.year}</div>
-                      <div class="board-item-meta-row">Category: ${item.category}</div>
-                    </div>
-                    <div class="board-item-message">
-                      <div class="board-item-label">Description:</div>
-                      <div class="board-item-preview">${item.preview}</div>
-                    </div>
-                    <div class="board-item-actions">
-                      <span class="board-item-action">[read_more]</span>
-                      <span class="board-item-action">[close]</span>
+                    <div style="padding: 6px 12px; color: #39dc00; font-size: 9px; display: flex; flex-direction: column; gap: 0;">
+                      <div style="word-break: break-word; padding-bottom: 4px; border-bottom: 1px solid #39dc00;">${item.title}</div>
+                      <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #39dc00;">${item.category || '-'}</div>
+                      <div style="padding-top: 4px; font-size: 8px; color: #888; white-space: normal; line-height: 1.4; word-break: break-word;">${item.preview || ''}</div>
                     </div>
                   </div>
                 `).join('')}
@@ -1767,6 +1797,19 @@ REQUIRE LOGIN: No (Public access enabled)
             // Position items randomly after a brief delay to ensure DOM is ready
             setTimeout(() => positionBoardItems(), 50);
           }
+        } else if (content.isFigmaBoard) {
+          // Figma board format with embedded iframe
+          const figmaHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; background: #000;">
+              <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; font-weight: bold;">
+                TIMELINE
+              </div>
+              <div style="flex: 1; padding: 12px; overflow: auto; background: #000;">
+                <iframe style="width: 100%; height: 100%; border: 1px solid #39dc00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
+              </div>
+            </div>
+          `;
+          terminalContent.innerHTML = figmaHTML;
         } else {
           // Regular text format
           let textHTML = `<pre class="terminal-content-text" id="contentText">${content.text}</pre>`;
@@ -1870,16 +1913,16 @@ REQUIRE LOGIN: No (Public access enabled)
       let draggedItem = null;
       let offsetX = 0;
       let offsetY = 0;
+      let hasMoved = false;
 
       boardItems.forEach(item => {
         item.style.cursor = 'grab';
 
         item.addEventListener('mousedown', (e) => {
           draggedItem = item;
+          hasMoved = false;
           draggedItem.style.cursor = 'grabbing';
           draggedItem.style.zIndex = '1000';
-
-          // Remove transition for smooth dragging
           draggedItem.style.transition = 'none';
 
           const rect = item.getBoundingClientRect();
@@ -1895,6 +1938,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
       document.addEventListener('mousemove', (e) => {
         if (!draggedItem) return;
+        hasMoved = true;
 
         const container = document.querySelector('.board-container');
         const containerRect = container.getBoundingClientRect();
@@ -1902,11 +1946,9 @@ REQUIRE LOGIN: No (Public access enabled)
         let newX = e.clientX - containerRect.left - offsetX;
         let newY = e.clientY - containerRect.top - offsetY;
 
-        // Constrain within container
         newX = Math.max(0, Math.min(newX, containerRect.width - draggedItem.offsetWidth));
         newY = Math.max(0, Math.min(newY, containerRect.height - draggedItem.offsetHeight));
 
-        // Use requestAnimationFrame for smooth animation
         requestAnimationFrame(() => {
           draggedItem.style.left = newX + 'px';
           draggedItem.style.top = newY + 'px';
@@ -1915,11 +1957,15 @@ REQUIRE LOGIN: No (Public access enabled)
 
       document.addEventListener('mouseup', () => {
         if (draggedItem) {
+          // 실제로 드래그된 경우에만 플래그 설정
+          if (hasMoved) {
+            draggedItem._wasDragged = true;
+          }
           draggedItem.style.cursor = 'grab';
           draggedItem.style.zIndex = 'auto';
-          // Restore transition for smooth deceleration
           draggedItem.style.transition = 'all 0.3s ease 0ms';
           draggedItem = null;
+          hasMoved = false;
         }
       });
     }
@@ -1963,28 +2009,12 @@ REQUIRE LOGIN: No (Public access enabled)
 
                   <div class="detail-info-table">
                     <div class="detail-info-row">
-                      <div class="detail-info-label">ID</div>
-                      <div class="detail-info-value">${selectedItem.id || selectedItem.title.toUpperCase().replace(/\\s+/g, '_')}</div>
-                    </div>
-                    <div class="detail-info-row">
                       <div class="detail-info-label">TITLE</div>
                       <div class="detail-info-value">${selectedItem.title}</div>
                     </div>
                     <div class="detail-info-row">
-                      <div class="detail-info-label">AUTHOR</div>
-                      <div class="detail-info-value">${selectedItem.author}</div>
-                    </div>
-                    <div class="detail-info-row">
-                      <div class="detail-info-label">YEAR</div>
-                      <div class="detail-info-value">${selectedItem.year}</div>
-                    </div>
-                    <div class="detail-info-row">
                       <div class="detail-info-label">CATEGORY</div>
                       <div class="detail-info-value">${selectedItem.category}</div>
-                    </div>
-                    <div class="detail-info-row">
-                      <div class="detail-info-label">STATUS</div>
-                      <div class="detail-info-value">${selectedItem.status}</div>
                     </div>
                   </div>
 
@@ -2039,48 +2069,180 @@ REQUIRE LOGIN: No (Public access enabled)
     function setupBoardItemClickHandlers() {
       const boardItems = document.querySelectorAll('.board-item');
 
-      boardItems.forEach((item, idx) => {
-        const readMoreBtn = item.querySelector('.board-item-action');
-        const closeBtn = item.querySelectorAll('.board-item-action')[1];
+      boardItems.forEach((item) => {
+        const idx = parseInt(item.getAttribute('data-index'));
 
-        if (readMoreBtn) {
-          readMoreBtn.addEventListener('click', (e) => {
+        // × 버튼 클릭 시 아무것도 안 함 (드래그와 구분)
+        const closeSpan = item.querySelector('span');
+        if (closeSpan) {
+          closeSpan.addEventListener('click', (e) => {
             e.stopPropagation();
-            const title = item.querySelector('.board-item-title').textContent;
-            const author = item.querySelector('.board-item-from').textContent;
-            const meta = item.querySelectorAll('.board-item-meta-row');
-            const preview = item.querySelector('.board-item-preview').textContent;
-
-            const detailText = `${title}
-
-${author}
-${meta[0]?.textContent || ''}
-${meta[1]?.textContent || ''}
-
-========================================
-
-${preview}
-
-========================================`;
-
-            const contentText = document.getElementById('contentText');
-            contentText.textContent = detailText;
-
-            // Scroll to top
-            const terminalContent = document.querySelector('.terminal-content');
-            if (terminalContent) {
-              terminalContent.scrollTop = 0;
-            }
           });
         }
 
-        if (closeBtn) {
-          closeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            // Just prevent default, the board stays visible
+        // 카드 클릭 시 상세 보기 열기
+        item.addEventListener('click', (e) => {
+          // 드래그 중이면 클릭 무시
+          if (item._wasDragged) {
+            item._wasDragged = false;
+            return;
+          }
+
+          // 현재 섹션의 아이템 찾기
+          const activeMenu = document.querySelector('[data-section].active');
+          const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'reference';
+          const publishedPosts = getPublishedPosts(currentSection);
+          const baseItems = (contents[currentSection] && contents[currentSection].items) ? contents[currentSection].items : [];
+          const allBoardItems = [...baseItems, ...publishedPosts];
+          const selectedItem = allBoardItems[idx];
+
+          if (!selectedItem) return;
+
+          const terminalContent = document.querySelector('.terminal-content');
+          if (!terminalContent) return;
+
+          const detailHTML = `
+            <div class="detail-view">
+              <div class="detail-header">
+                <span>${currentSection.toUpperCase()}</span>
+                <span style="color: #39dc00; cursor: pointer;" id="backToBoard">[BACK]</span>
+              </div>
+              <div class="detail-content">
+                <div class="detail-info-table">
+                  <div class="detail-info-row">
+                    <div class="detail-info-label">TITLE</div>
+                    <div class="detail-info-value">${selectedItem.title}</div>
+                  </div>
+                  <div class="detail-info-row">
+                    <div class="detail-info-label">CATEGORY</div>
+                    <div class="detail-info-value">${selectedItem.category || '-'}</div>
+                  </div>
+                </div>
+                <div class="detail-divider"></div>
+                <div class="detail-preview">${selectedItem.preview || ''}</div>
+              </div>
+            </div>
+          `;
+
+          terminalContent.innerHTML = detailHTML;
+          terminalContent.scrollTop = 0;
+
+          const backBtn = document.getElementById('backToBoard');
+          if (backBtn) {
+            backBtn.addEventListener('click', () => {
+              loadContent(currentSection);
+            });
+          }
+        });
+      });
+    }
+
+    // Grammar Codes floating animation
+    let grammarAnimId = null;
+    function loadGrammarCodes(content) {
+      const terminalContent = document.getElementById('terminalContent');
+      if (grammarAnimId) { cancelAnimationFrame(grammarAnimId); grammarAnimId = null; }
+
+      terminalContent.innerHTML = `<canvas id="grammarCanvas" style="display:block;width:100%;height:100%;background:#000;"></canvas>`;
+
+      const canvas = document.getElementById('grammarCanvas');
+      const ctx = canvas.getContext('2d');
+      const codes = content.codes;
+
+      function resize() {
+        canvas.width = terminalContent.clientWidth;
+        canvas.height = terminalContent.clientHeight;
+      }
+      resize();
+
+      // 파티클 생성
+      const particles = [];
+      codes.forEach(code => {
+        // 각 코드를 2~3개씩 흩뿌림
+        const count = Math.floor(Math.random() * 2) + 1;
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            text: code,
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: (Math.random() - 0.5) * 0.3,
+            opacity: Math.random() * 0.7 + 0.1,
+            targetOpacity: Math.random() * 0.8 + 0.1,
+            size: Math.floor(Math.random() * 7) + 7,
+            bright: Math.random() > 0.85
           });
         }
       });
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(p => {
+          // 이동
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.x < -80) p.x = canvas.width + 40;
+          if (p.x > canvas.width + 80) p.x = -40;
+          if (p.y < -20) p.y = canvas.height + 10;
+          if (p.y > canvas.height + 20) p.y = -10;
+
+          // opacity 서서히 변화
+          const diff = p.targetOpacity - p.opacity;
+          if (Math.abs(diff) < 0.005) {
+            p.targetOpacity = Math.random() * 0.75 + 0.05;
+          }
+          p.opacity += diff * 0.008;
+
+          // 그리기
+          ctx.globalAlpha = p.opacity;
+          ctx.font = `${p.size}px 'Courier New', monospace`;
+          ctx.fillStyle = p.bright ? '#ffffff' : '#39dc00';
+          ctx.letterSpacing = '1px';
+          ctx.fillText(p.text, p.x, p.y);
+        });
+
+        ctx.globalAlpha = 1;
+        grammarAnimId = requestAnimationFrame(draw);
+      }
+      draw();
+
+      // 모바일 버전도 동일하게
+      const mobileCanvas = document.getElementById('mobileGrammarCanvas');
+      if (mobileCanvas) startGrammarMobile(mobileCanvas, codes);
+    }
+
+    function startGrammarMobile(canvas, codes) {
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      const particles = codes.map(code => ({
+        text: code, x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+        vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.3,
+        opacity: Math.random()*0.7+0.1, targetOpacity: Math.random()*0.8+0.1,
+        size: Math.floor(Math.random()*5)+6, bright: Math.random()>0.85
+      }));
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        particles.forEach(p => {
+          p.x+=p.vx; p.y+=p.vy;
+          if(p.x<-60) p.x=canvas.width+20; if(p.x>canvas.width+60) p.x=-20;
+          if(p.y<-20) p.y=canvas.height+10; if(p.y>canvas.height+20) p.y=-10;
+          const diff=p.targetOpacity-p.opacity;
+          if(Math.abs(diff)<0.005) p.targetOpacity=Math.random()*0.75+0.05;
+          p.opacity+=diff*0.008;
+          ctx.globalAlpha=p.opacity;
+          ctx.font=`${p.size}px 'Courier New',monospace`;
+          ctx.fillStyle=p.bright?'#ffffff':'#39dc00';
+          ctx.fillText(p.text,p.x,p.y);
+        });
+        ctx.globalAlpha=1;
+        requestAnimationFrame(draw);
+      }
+      draw();
     }
 
     // Load slideshow - full screen format
@@ -2193,10 +2355,10 @@ ${preview}
         const newItem = {
           id: document.getElementById('postTitle').value.toUpperCase().replace(/\\s+/g, '_'),
           title: document.getElementById('postTitle').value,
-          author: document.getElementById('postAuthor').value,
-          year: document.getElementById('postYear').value || new Date().getFullYear(),
-          category: document.getElementById('postCategory').value || 'Uncategorized',
-          status: document.getElementById('postStatus').value || 'PUBLISHED',
+          author: 'User',
+          year: new Date().getFullYear().toString(),
+          category: 'General',
+          status: 'PUBLISHED',
           preview: document.getElementById('postPreview').value
         };
 
@@ -2572,7 +2734,20 @@ ${preview}
           return;
         }
 
-      if (content.isArchivePhotos) {
+      if (content.isGrammarCodes) {
+        mobileContent.style.whiteSpace = 'normal';
+        mobileContent.style.padding = '0';
+        mobileContent.innerHTML = `<canvas id="mobileGrammarCanvas" style="display:block;width:100%;height:100%;min-height:400px;background:#000;"></canvas>`;
+        setTimeout(() => {
+          const canvas = document.getElementById('mobileGrammarCanvas');
+          if (canvas) {
+            canvas.width = canvas.clientWidth || 300;
+            canvas.height = canvas.clientHeight || 400;
+            startGrammarMobile(canvas, content.codes);
+          }
+        }, 50);
+        return;
+      } else if (content.isArchivePhotos) {
         // For archive section, show search interface and big brother image initially
         mobileContent.style.whiteSpace = 'normal';
         mobileContent.innerHTML = `
@@ -2653,6 +2828,18 @@ ${preview}
         html += '</div>';
         mobileContent.innerHTML = html;
 
+      } else if (content.isFigmaBoard) {
+        // Figma board format
+        mobileContent.innerHTML = `
+          <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
+            <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; font-weight: bold;">
+              TIMELINE
+            </div>
+            <div style="flex: 1; padding: 12px; overflow: auto; background: #000;">
+              <iframe style="width: 100%; height: 100%; border: 1px solid #39dc00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
+            </div>
+          </div>
+        `;
       } else if (content.text) {
         // Text format
         mobileContent.textContent = content.text;
@@ -2685,18 +2872,14 @@ ${preview}
           if (isCardFormat) {
             // Board format for reference (matching desktop)
             html += `
-              <div style="cursor: pointer; border: 1px solid #39dc00; margin-bottom: 12px; background: #000; transition: all 0.2s;" class="mobile-list-item mobile-board-item" data-index="${idx}">
-                <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 8px; font-weight: bold; font-size: 9px; border-bottom: 2px solid #1a6600;">
-                  [${itemId} - ${status}]
+              <div style="cursor: pointer; border: 1px solid #39dc00; margin-bottom: 12px; background: #000; transition: all 0.2s; display: flex; flex-direction: column;" class="mobile-list-item mobile-board-item" data-index="${idx}">
+                <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 1px 8px; font-weight: bold; font-size: 9px; border-bottom: 1px solid #39dc00; display: flex; justify-content: flex-end; align-items: center;">
+                  <span style="flex-shrink: 0;">×</span>
                 </div>
-                <div style="padding: 8px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 8px;">
-                  <div style="color: #39dc00; font-weight: bold; margin-bottom: 3px;">From: ${author}</div>
-                  <div style="color: #888; margin-bottom: 2px;">Year: ${year}</div>
-                  <div style="color: #888;">Category: ${category}</div>
-                </div>
-                <div style="padding: 8px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; min-height: 60px; font-size: 8px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; overflow: hidden;">
-                  <div style="font-weight: bold; margin-bottom: 4px; color: #888;">Description:</div>
-                  <div style="color: #39dc00;">${preview || '(no description)'}</div>
+                <div style="padding: 4px 8px; color: #39dc00; font-size: 7px; display: flex; flex-direction: column; gap: 0;">
+                  <div style="word-break: break-word; padding-bottom: 3px; border-bottom: 1px solid #39dc00;">${item.title}</div>
+                  <div style="padding-top: 3px; padding-bottom: 3px; border-bottom: 1px solid #39dc00;">${category}</div>
+                  <div style="padding-top: 3px; color: #666; white-space: normal; line-height: 1.3; word-break: break-word;">${item.preview || ''}</div>
                 </div>
               </div>
             `;
@@ -2766,23 +2949,172 @@ ${preview}
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
             if (data.video && data.video.text) contents.video.text = data.video.text;
             if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
-
-            // Re-render current section
-            const isMobile = window.innerWidth <= 768;
-            const activeSection = isMobile
-              ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project')
-              : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'project');
-            if (isMobile) loadContentToMobile(activeSection);
-            else loadContent(activeSection);
           }
+
+          // Re-apply localStorage data (admin edits take priority over GitHub)
+          loadAdminContentsFromStorage();
+
+          // Re-render current section
+          const isMobile = window.innerWidth <= 768;
+          const activeSection = isMobile
+            ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project')
+            : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'project');
+          if (isMobile) loadContentToMobile(activeSection);
+          else loadContent(activeSection);
         })
-        .catch(() => {});
+        .catch(() => {
+          // Even if GitHub fetch fails, re-apply localStorage data
+          loadAdminContentsFromStorage();
+        });
+    }
+
+    // Menu panel grammar canvas animation — geometric polygon orbits
+    function startMenuGrammarCanvas() {
+      const canvas = document.getElementById('menuGrammarCanvas');
+      const textDiv = document.getElementById('menuGrammarText');
+      const textBgDiv = document.getElementById('menuGrammarTextBg');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+
+      function setSize() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      }
+      setSize();
+      window.addEventListener('resize', setSize);
+
+      renderer.setClearColor(0x000000, 0);
+      camera.position.z = 150;
+
+      // 회전하는 와이어프레임 구 생성
+      const geometry = new THREE.IcosahedronGeometry(80, 4);
+      const material = new THREE.LineBasicMaterial({
+        color: 0x39dc00,
+        linewidth: 1.5,
+        transparent: true,
+        opacity: 0.4
+      });
+      const wireframe = new THREE.LineSegments(
+        new THREE.WireframeGeometry(geometry),
+        material
+      );
+      scene.add(wireframe);
+
+      // 글자 애니메이션
+      const COLS = 4;
+      const CELL_H = 18;
+      let cells = [];
+
+      function initCells() {
+        const rows = Math.ceil(canvas.height / CELL_H) + 1;
+        cells = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const ba = Math.random() * 0.2 + 0.75;
+            cells.push({
+              code: codes[Math.floor(Math.random() * codes.length)],
+              nextCode: null,
+              alpha: ba,
+              state: 'idle',
+              timer: Math.floor(Math.random() * 100),
+              interval: Math.floor(Math.random() * 40) + 20,
+              baseAlpha: ba,
+              element: null
+            });
+          }
+        }
+        renderText();
+      }
+
+      function renderText() {
+        textDiv.innerHTML = '';
+        textBgDiv.innerHTML = '';
+        const colW = canvas.width / COLS;
+        const FADE_SPEED = 0.12;
+
+        cells.forEach((cell, i) => {
+          const r = Math.floor(i / COLS);
+          const c = i % COLS;
+          const x = c * colW + 4;
+          const y = r * CELL_H + CELL_H - 4;
+
+          if (cell.state === 'idle') {
+            cell.timer++;
+            if (cell.timer >= cell.interval) {
+              cell.timer = 0;
+              cell.interval = Math.floor(Math.random() * 40) + 20;
+              cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
+              cell.state = 'fadeout';
+            }
+          } else if (cell.state === 'fadeout') {
+            cell.alpha -= FADE_SPEED;
+            if (cell.alpha <= 0) {
+              cell.alpha = 0;
+              cell.code = cell.nextCode;
+              cell.baseAlpha = Math.random() * 0.2 + 0.75;
+              cell.state = 'fadein';
+            }
+          } else if (cell.state === 'fadein') {
+            cell.alpha += FADE_SPEED * 0.7;
+            if (cell.alpha >= cell.baseAlpha) {
+              cell.alpha = cell.baseAlpha;
+              cell.state = 'idle';
+            }
+          }
+
+          if (cell.alpha > 0) {
+            // Foreground text (full opacity, on top)
+            const span = document.createElement('div');
+            span.textContent = cell.code;
+            span.style.position = 'absolute';
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            span.style.opacity = cell.alpha;
+            span.style.whiteSpace = 'nowrap';
+            textDiv.appendChild(span);
+
+            // Background text (same content, dimmed by CSS opacity 0.2)
+            const bgSpan = document.createElement('div');
+            bgSpan.textContent = cell.code;
+            bgSpan.style.position = 'absolute';
+            bgSpan.style.left = x + 'px';
+            bgSpan.style.top = y + 'px';
+            bgSpan.style.opacity = cell.alpha;
+            bgSpan.style.whiteSpace = 'nowrap';
+            textBgDiv.appendChild(bgSpan);
+          }
+        });
+      }
+
+      initCells();
+
+      // 애니메이션 루프
+      function animate() {
+        requestAnimationFrame(animate);
+        wireframe.rotation.x += 0.005;
+        wireframe.rotation.y += 0.01;
+        renderer.render(scene, camera);
+        renderText();
+      }
+
+      animate();
     }
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // Load admin-edited contents from localStorage
       loadAdminContentsFromStorage();
+
+      // Start menu grammar canvas animation
+      setTimeout(startMenuGrammarCanvas, 100);
 
       // Setup all layouts first
       setupMenuItems();
