@@ -668,13 +668,16 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     // Load content
     function loadContent(section) {
-      console.log('loadContent called with section:', section);
       const terminalContent = document.getElementById('terminalContent');
       const portfolioEditSection = document.getElementById('portfolio-edit-section');
       const terminalSection = document.querySelector('.terminal-section');
 
+      // 메뉴 활성화 상태 업데이트
+      document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+      const activeMenuItem = document.querySelector(`.menu-item[data-section="${section}"]`);
+      if (activeMenuItem) activeMenuItem.classList.add('active');
+
       if (section === 'portfolio-edit') {
-        // Show portfolio edit UI
         if (terminalSection) terminalSection.style.display = 'none';
         if (portfolioEditSection) portfolioEditSection.style.display = 'flex';
         loadPortfolioEditForm('project').catch(console.error);
@@ -824,7 +827,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
         // 발행 섹션이 선택됐으면 completed에 저장 (포트폴리오에 바로 반영)
         // 아니면 현재 탭에 저장
-        const saveSection = publishedSection ? 'completed' : currentSection;
+        const saveSection = publishedSection ? 'completed' : (currentSection || 'drafts');
+        if (!archiveData[saveSection]) {
+          alert('저장 실패: 올바른 탭을 선택해주세요');
+          return;
+        }
         archiveData[saveSection].items.push(newItem);
         saveArchiveData();
 
