@@ -45,47 +45,106 @@
         <p>회전하는 구조<br>Rotating Wireframe</p>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <div id="backgroundCodeNames" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; font-family: 'Courier New', monospace; color: #2d8f00; font-size: 14px; letter-spacing: -1px; padding: 4px;"></div>
     <script>
-        // Scene, Camera, Renderer 설정
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // Initialize background blinking code names
+        function initBackgroundCodeNames() {
+            const container = document.getElementById('backgroundCodeNames');
+            if (!container) return;
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0.2);
-        document.body.appendChild(renderer.domElement);
+            const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
 
-        camera.position.z = 300;
+            const COLS = 40;
+            const CELL_H = 15;
+            let cells = [];
 
-        // 와이어프레임 구 생성
-        const geometry = new THREE.IcosahedronGeometry(150, 5);
-        const material = new THREE.LineBasicMaterial({
-            color: 0x39dc00,
-            linewidth: 2
-        });
-        const wireframe = new THREE.LineSegments(
-            new THREE.WireframeGeometry(geometry),
-            material
-        );
-        scene.add(wireframe);
+            function initCells() {
+                cells = [];
+                const rows = Math.ceil(window.innerHeight / CELL_H) + 1;
+                for (let r = 0; r < rows; r++) {
+                    for (let c = 0; c < COLS; c++) {
+                        const ba = Math.random() * 0.2 + 0.2;
+                        cells.push({
+                            code: codes[Math.floor(Math.random() * codes.length)],
+                            nextCode: null,
+                            alpha: ba,
+                            state: 'idle',
+                            timer: Math.floor(Math.random() * 50),
+                            interval: Math.floor(Math.random() * 30) + 15,
+                            baseAlpha: ba
+                        });
+                    }
+                }
+            }
 
-        // 애니메이션
-        function animate() {
-            requestAnimationFrame(animate);
-            wireframe.rotation.x += 0.005;
-            wireframe.rotation.y += 0.01;
-            renderer.render(scene, camera);
+            function renderText() {
+                container.innerHTML = '';
+                const colW = window.innerWidth / COLS;
+                const FADE_SPEED = 0.15;
+
+                cells.forEach((cell, i) => {
+                    const r = Math.floor(i / COLS);
+                    const c = i % COLS;
+                    const x = c * colW + 8;
+                    const y = r * CELL_H + CELL_H - 4;
+
+                    if (cell.state === 'idle') {
+                        cell.timer++;
+                        if (cell.timer >= cell.interval) {
+                            cell.timer = 0;
+                            cell.interval = Math.floor(Math.random() * 30) + 15;
+                            cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
+                            cell.state = 'fadeout';
+                        }
+                    } else if (cell.state === 'fadeout') {
+                        cell.alpha -= FADE_SPEED;
+                        if (cell.alpha <= 0) {
+                            cell.alpha = 0;
+                            cell.code = cell.nextCode;
+                            cell.baseAlpha = Math.random() * 0.2 + 0.2;
+                            cell.state = 'fadein';
+                        }
+                    } else if (cell.state === 'fadein') {
+                        cell.alpha += FADE_SPEED * 0.6;
+                        if (cell.alpha >= cell.baseAlpha) {
+                            cell.alpha = cell.baseAlpha;
+                            cell.state = 'idle';
+                        }
+                    }
+
+                    if (cell.alpha > 0.01) {
+                        const span = document.createElement('div');
+                        span.textContent = cell.code;
+                        span.style.position = 'absolute';
+                        span.style.left = x + 'px';
+                        span.style.top = y + 'px';
+                        span.style.opacity = cell.alpha;
+                        span.style.whiteSpace = 'nowrap';
+                        span.style.fontSize = '14px';
+                        span.style.letterSpacing = '-1px';
+                        container.appendChild(span);
+                    }
+                });
+            }
+
+            initCells();
+
+            function animate() {
+                requestAnimationFrame(animate);
+                renderText();
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+                initCells();
+            });
         }
 
-        // 윈도우 리사이즈
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initBackgroundCodeNames();
         });
-
-        animate();
     </script>
 </body>
 </html>
