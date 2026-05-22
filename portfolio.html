@@ -48,7 +48,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   flex-direction: column;
   border: 2px solid #39dc00;
-  background: #000;
+  background: rgba(0, 0, 0, 0.75);
   box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
 }
 
@@ -116,7 +116,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .menu-statusbar {
   padding: 8px 12px;
   border-top: 1px solid #39dc00;
-  background: #000;
+  background: rgba(0, 0, 0, 0.85);
   color: #39dc00;
   font-size: 10px;
   display: flex;
@@ -129,7 +129,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   flex-direction: column;
   border: 2px solid #39dc00;
-  background: #000;
+  background: rgba(0, 0, 0, 0.75);
   box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
 }
 
@@ -166,7 +166,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   padding: 12px;
   overflow-y: auto;
-  background: #000;
+  background: rgba(0, 0, 0, 0.85);
   color: #39dc00;
   font-size: 12px;
   line-height: 1.6;
@@ -1003,6 +1003,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <!-- DESKTOP LAYOUT -->
   <div id="desktop-layout">
     <button class="hamburger-btn" id="hamburgerBtn">☰</button>
+
+    <!-- Background blinking code names -->
+    <div id="backgroundCodeNames" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; font-family: 'Courier New', monospace; color: #39dc00; font-size: 11px; padding: 8px;"></div>
 
     <div class="portfolio-container">
       <div class="portfolio-window">
@@ -2963,6 +2966,98 @@ REQUIRE LOGIN: No (Public access enabled)
         });
     }
 
+    // Initialize background blinking code names
+    function initBackgroundCodeNames() {
+      const container = document.getElementById('backgroundCodeNames');
+      if (!container) return;
+
+      const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
+
+      const COLS = 6;
+      const CELL_H = 18;
+      let cells = [];
+
+      function initCells() {
+        cells = [];
+        const rows = Math.ceil(window.innerHeight / CELL_H) + 1;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const ba = Math.random() * 0.25 + 0.4;
+            cells.push({
+              code: codes[Math.floor(Math.random() * codes.length)],
+              nextCode: null,
+              alpha: ba,
+              state: 'idle',
+              timer: Math.floor(Math.random() * 100),
+              interval: Math.floor(Math.random() * 60) + 40,
+              baseAlpha: ba
+            });
+          }
+        }
+      }
+
+      function renderText() {
+        container.innerHTML = '';
+        const colW = window.innerWidth / COLS;
+        const FADE_SPEED = 0.08;
+
+        cells.forEach((cell, i) => {
+          const r = Math.floor(i / COLS);
+          const c = i % COLS;
+          const x = c * colW + 8;
+          const y = r * CELL_H + CELL_H - 4;
+
+          if (cell.state === 'idle') {
+            cell.timer++;
+            if (cell.timer >= cell.interval) {
+              cell.timer = 0;
+              cell.interval = Math.floor(Math.random() * 60) + 40;
+              cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
+              cell.state = 'fadeout';
+            }
+          } else if (cell.state === 'fadeout') {
+            cell.alpha -= FADE_SPEED;
+            if (cell.alpha <= 0) {
+              cell.alpha = 0;
+              cell.code = cell.nextCode;
+              cell.baseAlpha = Math.random() * 0.25 + 0.4;
+              cell.state = 'fadein';
+            }
+          } else if (cell.state === 'fadein') {
+            cell.alpha += FADE_SPEED * 0.6;
+            if (cell.alpha >= cell.baseAlpha) {
+              cell.alpha = cell.baseAlpha;
+              cell.state = 'idle';
+            }
+          }
+
+          if (cell.alpha > 0.01) {
+            const span = document.createElement('div');
+            span.textContent = cell.code;
+            span.style.position = 'absolute';
+            span.style.left = x + 'px';
+            span.style.top = y + 'px';
+            span.style.opacity = cell.alpha;
+            span.style.whiteSpace = 'nowrap';
+            span.style.fontSize = '11px';
+            container.appendChild(span);
+          }
+        });
+      }
+
+      initCells();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        renderText();
+      }
+
+      animate();
+
+      window.addEventListener('resize', () => {
+        initCells();
+      });
+    }
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
@@ -2973,6 +3068,9 @@ REQUIRE LOGIN: No (Public access enabled)
       setupMenuItems();
       setupHamburger();
       setupMobileLayout();
+
+      // Initialize background code names animation
+      initBackgroundCodeNames();
 
       // Then detect and apply layout (which loads content)
       detectAndSwitchLayout();
