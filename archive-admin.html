@@ -545,7 +545,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         </div>
         <div class="modal-buttons">
           <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
-          <button type="submit" class="modal-btn">SAVE</button>
+          <button type="button" class="modal-btn" id="savePostBtn">SAVE</button>
         </div>
       </form>
     </div>
@@ -798,26 +798,26 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         }
       });
 
-      // 엔터키로 폼 제출 방지 (textarea 제외)
+      // 엔터키로 폼 제출 방지
       postForm.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
           e.preventDefault();
         }
       });
 
-      postForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+      // SAVE 버튼 직접 클릭으로 처리
+      document.getElementById('savePostBtn').addEventListener('click', () => {
+        const title = document.getElementById('postTitle').value.trim();
+        if (!title) { alert('제목을 입력해주세요'); return; }
 
-        // Get currently active section dynamically
         const activeMenu = document.querySelector('.menu-item.active');
-        const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : section;
-
+        const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
         const publishedSection = document.getElementById('postSection').value || null;
 
         const newItem = {
-          id: document.getElementById('postTitle').value.toUpperCase().replace(/\s+/g, '_'),
-          title: document.getElementById('postTitle').value,
-          author: document.getElementById('postAuthor').value,
+          id: title.toUpperCase().replace(/\s+/g, '_'),
+          title: title,
+          author: document.getElementById('postAuthor').value || 'Unknown',
           year: document.getElementById('postYear').value || new Date().getFullYear(),
           category: document.getElementById('postCategory').value || 'Draft',
           status: document.getElementById('postStatus').value || 'DRAFT',
@@ -825,18 +825,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           publishedSection: publishedSection
         };
 
-        // 발행 섹션이 선택됐으면 completed에 저장 (포트폴리오에 바로 반영)
-        // 아니면 현재 탭에 저장
-        const saveSection = publishedSection ? 'completed' : (currentSection || 'drafts');
-        if (!archiveData[saveSection]) {
-          alert('저장 실패: 올바른 탭을 선택해주세요');
-          return;
-        }
+        const saveSection = publishedSection ? 'completed' : (['drafts','completed','archived'].includes(currentSection) ? currentSection : 'drafts');
         archiveData[saveSection].items.push(newItem);
         saveArchiveData();
 
         modal.classList.remove('active');
         postForm.reset();
+        document.getElementById('mdPreviewBox').textContent = '내용을 입력하면 미리보기가 표시됩니다.';
         loadContent(saveSection);
       });
 
