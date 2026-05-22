@@ -242,10 +242,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .board-container {
   position: relative;
   width: 100%;
-  height: 100%;
   padding: 0;
-  overflow: auto;
-  min-height: 600px;
+  overflow: visible;
 }
 
 .board-header {
@@ -1919,7 +1917,6 @@ REQUIRE LOGIN: No (Public access enabled)
       if (!container) return;
 
       const containerWidth = container.offsetWidth;
-      const containerHeight = container.offsetHeight;
       const itemWidth = 240;
       const itemHeight = 160;
       const padding = 15; // Space between items
@@ -1930,6 +1927,10 @@ REQUIRE LOGIN: No (Public access enabled)
       const gridY = 20; // Top margin
       const totalItemWidth = itemWidth + padding;
       const totalItemHeight = itemHeight + padding;
+
+      // Set container height based on number of rows
+      const rows = Math.ceil(boardItems.length / columns);
+      container.style.height = (gridY + rows * totalItemHeight + padding) + 'px';
 
       // Indices of cards that should be irregular (only 1-2 cards)
       const irregularIndices = [3, 5];
