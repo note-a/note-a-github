@@ -809,6 +809,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         const activeMenu = document.querySelector('.menu-item.active');
         const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : section;
 
+        const publishedSection = document.getElementById('postSection').value || null;
+
         const newItem = {
           id: document.getElementById('postTitle').value.toUpperCase().replace(/\s+/g, '_'),
           title: document.getElementById('postTitle').value,
@@ -817,15 +819,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           category: document.getElementById('postCategory').value || 'Draft',
           status: document.getElementById('postStatus').value || 'DRAFT',
           preview: document.getElementById('postPreview').value,
-          publishedSection: document.getElementById('postSection').value || null
+          publishedSection: publishedSection
         };
 
-        archiveData[currentSection].items.push(newItem);
+        // 발행 섹션이 선택됐으면 completed에 저장 (포트폴리오에 바로 반영)
+        // 아니면 현재 탭에 저장
+        const saveSection = publishedSection ? 'completed' : currentSection;
+        archiveData[saveSection].items.push(newItem);
         saveArchiveData();
 
         modal.classList.remove('active');
         postForm.reset();
-        loadContent(currentSection);
+        loadContent(saveSection);
       });
 
       document.addEventListener('keydown', (e) => {
