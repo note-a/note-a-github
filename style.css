@@ -400,3 +400,14 @@ a:visited { color: var(--green); }
     padding-bottom: 0;
   }
 }
+
+/* hr and table border fix */
+hr {
+  border: none;
+  border-top: 1px solid var(--green) !important;
+  margin: 10px 0;
+}
+
+table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+th, td { border: 1px solid var(--green) !important; padding: 4px 8px; text-align: left; }
+th { background: var(--green); color: #000; font-weight: bold; }
