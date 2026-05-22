@@ -3005,7 +3005,7 @@ REQUIRE LOGIN: No (Public access enabled)
             cell.alpha += FADE_SPEED * 0.6;
             if (cell.alpha >= cell.baseAlpha) { cell.alpha = cell.baseAlpha; cell.state = 'idle'; }
           }
-          ctx.fillStyle = `rgba(57,220,0,${cell.alpha})`;
+          ctx.fillStyle = `rgba(48,185,0,${cell.alpha})`;
           ctx.fillText(cell.code, cell.x, cell.y);
         });
       }
