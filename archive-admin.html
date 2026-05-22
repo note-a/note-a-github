@@ -388,7 +388,16 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     font-size: 11px;
   }
 }
+  .md-preview { font-family: 'Courier New', monospace; font-size: 10px; color: #39dc00; line-height: 1.7; padding: 8px; border: 1px solid #39dc00; background: #000; min-height: 80px; }
+  .md-preview h1,.md-preview h2,.md-preview h3 { font-size: 12px; border-bottom: 1px solid #39dc00; padding-bottom: 3px; margin: 8px 0 4px; }
+  .md-preview table { border-collapse: collapse; width: 100%; margin: 6px 0; font-size: 9px; }
+  .md-preview th, .md-preview td { border: 1px solid #39dc00; padding: 3px 6px; }
+  .md-preview th { background: #39dc00; color: #000; }
+  .md-preview img { max-width: 100%; border: 1px solid #39dc00; margin: 4px 0; display: block; }
+  .md-preview code { background: #1a1a1a; border: 1px solid #39dc00; padding: 1px 3px; }
+  .md-preview blockquote { border-left: 2px solid #39dc00; margin: 4px 0; padding-left: 8px; opacity: 0.8; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; ARCHIVE ADMIN - HIDDEN WORKSPACE &lt;&lt;&lt;</div>
@@ -512,8 +521,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           </select>
         </div>
         <div class="form-group">
-          <label for="postPreview">Description / Content</label>
-          <textarea id="postPreview" required placeholder="Write your draft content here..."></textarea>
+          <label for="postPreview">Description / Content (Markdown 지원: **굵게**, # 제목, | 표 |, ![이미지](URL))</label>
+          <textarea id="postPreview" required placeholder="Write your draft content here..." oninput="updateMdPreview(this.value)"></textarea>
+        </div>
+        <div class="form-group">
+          <label>미리보기</label>
+          <div class="md-preview" id="mdPreviewBox">내용을 입력하면 미리보기가 표시됩니다.</div>
         </div>
         <div class="modal-buttons">
           <button type="button" class="modal-btn cancel" id="cancelBtn">CANCEL</button>
@@ -575,6 +588,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         rule: archiveData.rule.items,
         reference: archiveData.reference.items
       }));
+    }
+
+    function updateMdPreview(val) {
+      const box = document.getElementById('mdPreviewBox');
+      if (!box) return;
+      box.innerHTML = (typeof marked !== 'undefined' && val.trim()) ? marked.parse(val) : (val || '내용을 입력하면 미리보기가 표시됩니다.');
     }
 
     function saveGithubToken() {

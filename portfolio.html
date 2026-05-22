@@ -979,7 +979,21 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   height: calc(100vh - 32px);
   margin-top: 32px;
 }
+  .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #39dc00; line-height: 1.7; }
+  .md-content h1,.md-content h2,.md-content h3 { color: #39dc00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #39dc00; padding-bottom: 4px; }
+  .md-content p { margin: 6px 0; }
+  .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10px; }
+  .md-content th, .md-content td { border: 1px solid #39dc00; padding: 4px 8px; text-align: left; }
+  .md-content th { background: #39dc00; color: #000; font-weight: bold; }
+  .md-content img { max-width: 100%; border: 1px solid #39dc00; margin: 8px 0; display: block; }
+  .md-content ul, .md-content ol { margin: 6px 0 6px 16px; }
+  .md-content li { margin: 2px 0; }
+  .md-content code { background: #1a1a1a; border: 1px solid #39dc00; padding: 1px 4px; font-size: 10px; }
+  .md-content pre { background: #1a1a1a; border: 1px solid #39dc00; padding: 8px; margin: 8px 0; overflow-x: auto; }
+  .md-content blockquote { border-left: 2px solid #39dc00; margin: 8px 0; padding-left: 10px; opacity: 0.8; }
+  .md-content a { color: #39dc00; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <!-- SVG Pixelation Filter -->
@@ -1809,7 +1823,8 @@ REQUIRE LOGIN: No (Public access enabled)
           terminalContent.innerHTML = figmaHTML;
         } else {
           // Regular text format
-          let textHTML = `<pre class="terminal-content-text" id="contentText">${content.text}</pre>`;
+          const mdText = (typeof marked !== 'undefined') ? marked.parse(content.text || '') : `<pre>${content.text}</pre>`;
+          let textHTML = `<div class="md-content" style="padding: 12px;" id="contentText">${mdText}</div>`;
 
           // Add published posts if any
           if (publishedPosts.length > 0) {
@@ -2018,7 +2033,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <div class="detail-divider"></div>
 
                   <div style="margin: 12px 0; color: #39dc00; font-weight: bold;">[CONTENT]</div>
-                  <div class="detail-preview">${selectedItem.preview}</div>
+                  <div class="detail-preview md-content">${(typeof marked !== 'undefined') ? marked.parse(selectedItem.preview || '') : selectedItem.preview}</div>
 
                   <div class="detail-divider"></div>
 
