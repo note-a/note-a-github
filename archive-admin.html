@@ -939,6 +939,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             <input type="text" id="editStatus" value="${item.status}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px;">
           </div>
 
+          <div style="margin-bottom: 8px;">
+            <label style="color: #39dc00; font-size: 11px;">발행할 섹션</label>
+            <select id="editSection" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px; outline: none;">
+              <option value="">-- 섹션 선택 --</option>
+              <option value="project" ${item.publishedSection==='project'?'selected':''}>SET</option>
+              <option value="inclusion" ${item.publishedSection==='inclusion'?'selected':''}>SET Inclusion</option>
+              <option value="intro" ${item.publishedSection==='intro'?'selected':''}>entire</option>
+              <option value="rule" ${item.publishedSection==='rule'?'selected':''}>log</option>
+              <option value="reference" ${item.publishedSection==='reference'?'selected':''}>reference</option>
+              <option value="archive" ${item.publishedSection==='archive'?'selected':''}>Archive</option>
+            </select>
+          </div>
+
           <div style="margin-bottom: 12px;">
             <label style="color: #39dc00; font-size: 11px;">Content</label>
             <textarea id="editContent" style="width: 100%; height: 200px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; box-sizing: border-box; margin-top: 4px; resize: vertical;">${item.preview}</textarea>
@@ -960,7 +973,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           category: document.getElementById('editCategory').value,
           status: document.getElementById('editStatus').value,
           preview: document.getElementById('editContent').value,
-          publishedSection: item.publishedSection || null
+          text: document.getElementById('editContent').value,
+          publishedSection: document.getElementById('editSection').value || null
         };
         saveArchiveData();
         loadContent(section);
