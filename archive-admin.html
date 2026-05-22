@@ -805,36 +805,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         }
       });
 
-      // SAVE 버튼 직접 클릭으로 처리
-      document.getElementById('savePostBtn').addEventListener('click', () => {
-        const title = document.getElementById('postTitle').value.trim();
-        if (!title) { alert('제목을 입력해주세요'); return; }
-
-        const activeMenu = document.querySelector('.menu-item.active');
-        const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
-        const publishedSection = document.getElementById('postSection').value || null;
-
-        const newItem = {
-          id: title.toUpperCase().replace(/\s+/g, '_'),
-          title: title,
-          author: document.getElementById('postAuthor').value || 'Unknown',
-          year: document.getElementById('postYear').value || new Date().getFullYear(),
-          category: document.getElementById('postCategory').value || 'Draft',
-          status: document.getElementById('postStatus').value || 'DRAFT',
-          preview: document.getElementById('postPreview').value,
-          publishedSection: publishedSection
-        };
-
-        const saveSection = publishedSection ? 'completed' : (['drafts','completed','archived'].includes(currentSection) ? currentSection : 'drafts');
-        archiveData[saveSection].items.push(newItem);
-        saveArchiveData();
-
-        modal.classList.remove('active');
-        postForm.reset();
-        document.getElementById('mdPreviewBox').textContent = '내용을 입력하면 미리보기가 표시됩니다.';
-        loadContent(saveSection);
-      });
-
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
           modal.classList.remove('active');
@@ -1496,6 +1466,43 @@ REQUIRE LOGIN: No (Public access enabled)
       loadPortfolioData();
       setupMenuItems();
       setupCloseButton();
+
+      // SAVE 버튼 - DOMContentLoaded에서 한 번만 등록 (가장 안정적)
+      const savePostBtn = document.getElementById('savePostBtn');
+      const modal = document.getElementById('writeModal');
+      const postForm = document.getElementById('postForm');
+      if (savePostBtn) {
+        savePostBtn.addEventListener('click', function() {
+          const title = document.getElementById('postTitle').value.trim();
+          if (!title) { alert('제목을 입력해주세요'); return; }
+
+          const activeMenu = document.querySelector('.menu-item.active');
+          const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
+          const publishedSection = document.getElementById('postSection').value || null;
+
+          const newItem = {
+            id: title.toUpperCase().replace(/\s+/g, '_'),
+            title: title,
+            author: document.getElementById('postAuthor').value || 'Unknown',
+            year: document.getElementById('postYear').value || new Date().getFullYear(),
+            category: document.getElementById('postCategory').value || 'Draft',
+            status: document.getElementById('postStatus').value || 'DRAFT',
+            preview: document.getElementById('postPreview').value,
+            text: document.getElementById('postPreview').value,
+            publishedSection: publishedSection
+          };
+
+          const saveSection = publishedSection ? 'completed' : (['drafts','completed','archived'].includes(currentSection) ? currentSection : 'drafts');
+          archiveData[saveSection].items.push(newItem);
+          saveArchiveData();
+
+          if (modal) modal.classList.remove('active');
+          if (postForm) postForm.reset();
+          const previewBox = document.getElementById('mdPreviewBox');
+          if (previewBox) previewBox.textContent = '내용을 입력하면 미리보기가 표시됩니다.';
+          loadContent(saveSection);
+        });
+      }
 
       // Setup portfolio edit buttons
       const saveBtn = document.getElementById('portfolio-save-btn');
