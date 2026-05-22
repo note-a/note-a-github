@@ -763,7 +763,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     }
 
-    // Setup new post modal
+    // Setup new post modal (한 번만 초기화)
+    let newPostModalInitialized = false;
     function setupNewPostModal(section) {
       const modal = document.getElementById('writeModal');
       const newPostBtn = document.getElementById('newPostBtn');
@@ -772,10 +773,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       if (!newPostBtn) return;
 
+      // newPostBtn은 매번 새로 생성되므로 항상 리스너 추가
       newPostBtn.addEventListener('click', () => {
         modal.classList.add('active');
         document.getElementById('postTitle').focus();
       });
+
+      // 나머지는 최초 1회만 등록
+      if (newPostModalInitialized) return;
+      newPostModalInitialized = true;
 
       cancelBtn.addEventListener('click', () => {
         modal.classList.remove('active');
@@ -789,6 +795,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         }
       });
 
+      // 엔터키로 폼 제출 방지 (textarea 제외)
+      postForm.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+        }
+      });
+
       postForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -797,7 +810,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         const currentSection = activeMenu ? activeMenu.getAttribute('data-section') : section;
 
         const newItem = {
-          id: document.getElementById('postTitle').value.toUpperCase().replace(/\\s+/g, '_'),
+          id: document.getElementById('postTitle').value.toUpperCase().replace(/\s+/g, '_'),
           title: document.getElementById('postTitle').value,
           author: document.getElementById('postAuthor').value,
           year: document.getElementById('postYear').value || new Date().getFullYear(),
@@ -808,8 +821,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         };
 
         archiveData[currentSection].items.push(newItem);
-        console.log('New item added:', currentSection, newItem);
-        console.log('archiveData[' + currentSection + '].items:', archiveData[currentSection].items);
         saveArchiveData();
 
         modal.classList.remove('active');
