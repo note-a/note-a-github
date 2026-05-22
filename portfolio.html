@@ -494,6 +494,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .detail-view {
   padding: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .detail-header {
@@ -2049,12 +2052,14 @@ REQUIRE LOGIN: No (Public access enabled)
             `;
 
             const terminalContent = document.querySelector('.terminal-content');
+            terminalContent.style.padding = '0';
             terminalContent.innerHTML = detailHTML;
 
             // Setup back button
             const backBtn = document.getElementById('backToList');
             if (backBtn) {
               backBtn.addEventListener('click', () => {
+                terminalContent.style.padding = '';
                 loadContent(currentSection);
               });
             }
@@ -2136,12 +2141,14 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           `;
 
+          terminalContent.style.padding = '0';
           terminalContent.innerHTML = detailHTML;
           terminalContent.scrollTop = 0;
 
           const backBtn = document.getElementById('backToBoard');
           if (backBtn) {
             backBtn.addEventListener('click', () => {
+              terminalContent.style.padding = '';
               loadContent(currentSection);
             });
           }
