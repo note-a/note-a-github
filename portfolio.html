@@ -2232,15 +2232,15 @@ REQUIRE LOGIN: No (Public access enabled)
 
       const terminalContent = document.getElementById('terminalContent');
       const slideshowHTML = `
-        <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
-          <div class="slideshow-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; display: flex; flex-direction: column; min-height: 0;">
-            <div class="slide-header" style="margin-bottom: 20px; border-bottom: 1px dashed #39dc00; padding-bottom: 12px;">
+        <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px;">
+          <div class="slideshow-content" style="flex: 1; padding: 16px 20px; background: #000; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
+            <div class="slide-header" style="margin-bottom: 16px; border-bottom: 1px dashed #39dc00; padding-bottom: 12px; flex-shrink: 0;">
               <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #39dc00; margin-bottom: 8px;"></div>
               <div class="slide-meta" style="font-size: 10px; color: #39dc00; opacity: 0.7;"></div>
             </div>
-            <div class="slide-text" style="flex: 1; overflow-y: auto;"></div>
+            <div class="slide-text" style="flex: 1; overflow-y: auto; min-height: 0;"></div>
           </div>
-          <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border-top: 1px solid #39dc00; background: #000; flex-shrink: 0;">
+          <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid #39dc00; background: #000; flex-shrink: 0;">
             <button class="slide-prev" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">← PREV</button>
             <span class="slide-counter" style="color: #39dc00; font-size: 10px; font-weight: bold; font-family: 'Courier New', monospace;">1/4</span>
             <button class="slide-next" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">NEXT →</button>
