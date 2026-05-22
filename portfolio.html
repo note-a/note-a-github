@@ -1810,8 +1810,7 @@ REQUIRE LOGIN: No (Public access enabled)
               <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
                 <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; flex-shrink: 0; display: flex;">
                   <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
-                  <div style="width: 150px; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">CATEGORY</div>
-                  <div style="width: 100px; padding: 0 12px; font-weight: bold;">STATUS</div>
+                  <div style="width: 150px; padding: 0 12px; font-weight: bold;">CATEGORY</div>
                 </div>
                 <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
                   ${allItems.map((item, idx) => `
@@ -1819,11 +1818,8 @@ REQUIRE LOGIN: No (Public access enabled)
                       <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 11px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${item.id || item.title.toUpperCase().replace(/\\s+/g, '_')}
                       </div>
-                      <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 11px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         ${item.category}
-                      </div>
-                      <div style="width: 100px; padding: 6px 12px; color: #39dc00; font-size: 11px;">
-                        ${item.status || 'ACTIVE'}
                       </div>
                     </div>
                   `).join('')}
