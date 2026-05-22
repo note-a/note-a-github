@@ -293,6 +293,50 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
 }
 
+/* Item preview popup */
+#itemPreviewModal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+#itemPreviewModal.active { display: flex; }
+#itemPreviewModal .popup-box {
+  background: #000;
+  border: 2px solid #39dc00;
+  width: 420px;
+  max-width: 90vw;
+  font-family: 'Courier New', monospace;
+  color: #39dc00;
+  box-shadow: 0 0 20px rgba(57,220,0,0.4);
+}
+#itemPreviewModal .popup-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 14px 16px 8px;
+  border-bottom: 1px solid #39dc00;
+}
+#itemPreviewModal .popup-title { font-size: 14px; font-weight: bold; }
+#itemPreviewModal .popup-close {
+  cursor: pointer; font-size: 16px; line-height: 1;
+  background: none; border: none; color: #39dc00; padding: 0;
+}
+#itemPreviewModal .popup-category {
+  font-size: 11px; color: #39dc00; opacity: 0.7;
+  padding: 6px 16px; border-bottom: 1px solid #39dc00;
+}
+#itemPreviewModal .popup-body {
+  padding: 12px 16px;
+  font-size: 11px;
+  line-height: 1.7;
+  max-height: 220px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+}
+
 .modal-content {
   background: #000;
   border: 2px solid #39dc00;
@@ -1016,6 +1060,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </svg>
 
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
+
+  <!-- Item Preview Popup -->
+  <div id="itemPreviewModal">
+    <div class="popup-box">
+      <div class="popup-header">
+        <div class="popup-title" id="popupTitle"></div>
+        <button class="popup-close" id="popupClose">×</button>
+      </div>
+      <div class="popup-category" id="popupCategory"></div>
+      <div class="popup-body md-content" id="popupBody"></div>
+    </div>
+  </div>
 
   <!-- DESKTOP LAYOUT -->
   <div id="desktop-layout">
@@ -1986,88 +2042,24 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // Setup list item click handlers
+    function openItemPreviewPopup(item) {
+      const modal = document.getElementById('itemPreviewModal');
+      document.getElementById('popupTitle').textContent = item.title || '';
+      document.getElementById('popupCategory').textContent = (item.category || '') + (item.year ? '  ·  ' + item.year : '');
+      document.getElementById('popupBody').innerHTML = (typeof marked !== 'undefined') ? marked.parse(item.preview || '') : (item.preview || '');
+      modal.classList.add('active');
+    }
+
     function setupListItemClickHandlers() {
       const listItems = document.querySelectorAll('.list-item');
 
       listItems.forEach((item, idx) => {
         item.addEventListener('click', () => {
-          // Find the data array for current section
           let currentSection = null;
           const menuItems = document.querySelectorAll('.menu-item.active');
-          if (menuItems.length > 0) {
-            currentSection = menuItems[0].getAttribute('data-section');
-          }
-
+          if (menuItems.length > 0) currentSection = menuItems[0].getAttribute('data-section');
           if (currentSection && contents[currentSection] && contents[currentSection].items) {
-            const selectedItem = contents[currentSection].items[idx];
-            const now = new Date();
-            const timeStr = now.toLocaleString('en-US', {
-              weekday: 'short',
-              year: 'numeric',
-              month: 'short',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: true,
-              timeZoneName: 'short'
-            });
-
-            const detailHTML = `
-              <div class="detail-view">
-                <div class="detail-header">
-                  <span>${currentSection.toUpperCase()}</span>
-                  <span style="color: #39dc00;">${timeStr}</span>
-                </div>
-                <div class="detail-content">
-                  <div class="detail-time">[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - SYSTEM LOG ENTRY]</div>
-
-                  <div class="detail-info-table">
-                    <div class="detail-info-row">
-                      <div class="detail-info-label">TITLE</div>
-                      <div class="detail-info-value">${selectedItem.title}</div>
-                    </div>
-                    <div class="detail-info-row">
-                      <div class="detail-info-label">CATEGORY</div>
-                      <div class="detail-info-value">${selectedItem.category}</div>
-                    </div>
-                  </div>
-
-                  <div class="detail-divider"></div>
-
-                  <div style="margin: 12px 0; color: #39dc00; font-weight: bold;">[CONTENT]</div>
-                  <div class="detail-preview md-content">${(typeof marked !== 'undefined') ? marked.parse(selectedItem.preview || '') : selectedItem.preview}</div>
-
-                  <div class="detail-divider"></div>
-
-                  <div style="text-align: center; margin-top: 12px;">
-                    <span style="color: #39dc00; cursor: pointer;" id="backToList">[RETURN TO LIST]</span>
-                  </div>
-                </div>
-                <div class="detail-footer">
-                  <span>STATUS: LOADED | ENTRY TYPE: REFERENCE</span>
-                  <span>SIZE: ${selectedItem.preview.length} BYTES</span>
-                </div>
-              </div>
-            `;
-
-            const terminalContent = document.querySelector('.terminal-content');
-            terminalContent.style.padding = '0';
-            terminalContent.innerHTML = detailHTML;
-
-            // Setup back button
-            const backBtn = document.getElementById('backToList');
-            if (backBtn) {
-              backBtn.addEventListener('click', () => {
-                terminalContent.style.padding = '';
-                loadContent(currentSection);
-              });
-            }
-
-            // Scroll to top
-            if (terminalContent) {
-              terminalContent.scrollTop = 0;
-            }
+            openItemPreviewPopup(contents[currentSection].items[idx]);
           }
         });
 
@@ -2115,43 +2107,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
           if (!selectedItem) return;
 
-          const terminalContent = document.querySelector('.terminal-content');
-          if (!terminalContent) return;
-
-          const detailHTML = `
-            <div class="detail-view">
-              <div class="detail-header">
-                <span>${currentSection.toUpperCase()}</span>
-                <span style="color: #39dc00; cursor: pointer;" id="backToBoard">[BACK]</span>
-              </div>
-              <div class="detail-content">
-                <div class="detail-info-table">
-                  <div class="detail-info-row">
-                    <div class="detail-info-label">TITLE</div>
-                    <div class="detail-info-value">${selectedItem.title}</div>
-                  </div>
-                  <div class="detail-info-row">
-                    <div class="detail-info-label">CATEGORY</div>
-                    <div class="detail-info-value">${selectedItem.category || '-'}</div>
-                  </div>
-                </div>
-                <div class="detail-divider"></div>
-                <div class="detail-preview md-content">${(typeof marked !== 'undefined') ? marked.parse(selectedItem.preview || '') : (selectedItem.preview || '')}</div>
-              </div>
-            </div>
-          `;
-
-          terminalContent.style.padding = '0';
-          terminalContent.innerHTML = detailHTML;
-          terminalContent.scrollTop = 0;
-
-          const backBtn = document.getElementById('backToBoard');
-          if (backBtn) {
-            backBtn.addEventListener('click', () => {
-              terminalContent.style.padding = '';
-              loadContent(currentSection);
-            });
-          }
+          openItemPreviewPopup(selectedItem);
         });
       });
     }
@@ -3039,6 +2995,11 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
+      // Popup close handlers
+      const popupModal = document.getElementById('itemPreviewModal');
+      document.getElementById('popupClose').addEventListener('click', () => popupModal.classList.remove('active'));
+      popupModal.addEventListener('click', (e) => { if (e.target === popupModal) popupModal.classList.remove('active'); });
+
       // Load admin-edited contents from localStorage
       loadAdminContentsFromStorage();
 
