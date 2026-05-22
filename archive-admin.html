@@ -578,42 +578,47 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     }
 
     function doSavePost() {
-      var title = document.getElementById('postTitle').value.trim();
-      if (!title) {
-        alert('제목을 입력해주세요');
-        return;
+      try {
+        var title = document.getElementById('postTitle').value.trim();
+        if (!title) {
+          alert('제목을 입력해주세요');
+          return;
+        }
+
+        var activeMenu = document.querySelector('.menu-item.active');
+        var currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
+        var publishedSection = document.getElementById('postSection').value || null;
+        var previewVal = document.getElementById('postPreview').value;
+
+        var newItem = {
+          id: title.toUpperCase().replace(/\s+/g, '_'),
+          title: title,
+          author: document.getElementById('postAuthor').value || 'Unknown',
+          year: document.getElementById('postYear').value || new Date().getFullYear().toString(),
+          category: document.getElementById('postCategory').value || 'Draft',
+          status: document.getElementById('postStatus').value || 'DRAFT',
+          preview: previewVal,
+          text: previewVal,
+          publishedSection: publishedSection || null
+        };
+
+        var saveSection;
+        if (publishedSection) {
+          saveSection = 'completed';
+        } else if (['drafts','completed','archived'].indexOf(currentSection) !== -1) {
+          saveSection = currentSection;
+        } else {
+          saveSection = 'drafts';
+        }
+
+        archiveData[saveSection].items.push(newItem);
+        saveArchiveData();
+        closeWriteModal();
+        loadContent(saveSection);
+        alert('저장 완료: ' + title + ' → ' + saveSection);
+      } catch(err) {
+        alert('저장 오류: ' + err.message + '\n\n' + err.stack);
       }
-
-      var activeMenu = document.querySelector('.menu-item.active');
-      var currentSection = activeMenu ? activeMenu.getAttribute('data-section') : 'drafts';
-      var publishedSection = document.getElementById('postSection').value || null;
-      var previewVal = document.getElementById('postPreview').value;
-
-      var newItem = {
-        id: title.toUpperCase().replace(/\s+/g, '_'),
-        title: title,
-        author: document.getElementById('postAuthor').value || 'Unknown',
-        year: document.getElementById('postYear').value || new Date().getFullYear().toString(),
-        category: document.getElementById('postCategory').value || 'Draft',
-        status: document.getElementById('postStatus').value || 'DRAFT',
-        preview: previewVal,
-        text: previewVal,
-        publishedSection: publishedSection || null
-      };
-
-      var saveSection;
-      if (publishedSection) {
-        saveSection = 'completed';
-      } else if (['drafts','completed','archived'].indexOf(currentSection) !== -1) {
-        saveSection = currentSection;
-      } else {
-        saveSection = 'drafts';
-      }
-
-      archiveData[saveSection].items.push(newItem);
-      saveArchiveData();
-      closeWriteModal();
-      loadContent(saveSection);
     }
 
     // Escape 키로 모달 닫기
