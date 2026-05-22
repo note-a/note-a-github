@@ -1145,8 +1145,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       if (subsection === 'project') {
         formHTML = generateProjectSlidesForm();
-      } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {
+      } else if (subsection === 'inclusion' || subsection === 'video') {
         formHTML = generateTextForm(subsection);
+      } else if (subsection === 'intro') {
+        formHTML = generateContactSheetForm();
       } else if (subsection === 'rule' || subsection === 'reference') {
         formHTML = generateItemsListForm(subsection);
       } else if (subsection === 'archive') {
@@ -1176,6 +1178,37 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     function onSubsectionTabClick(e) {
       const subsection = e.target.getAttribute('data-subsection');
       loadPortfolioEditForm(subsection).catch(console.error);
+    }
+
+    function generateContactSheetForm() {
+      const currentPhotos = portfolioEditData.intro && portfolioEditData.intro.photos
+        ? JSON.stringify(portfolioEditData.intro.photos, null, 2)
+        : '';
+
+      return `
+        <div style="padding: 12px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="color: #39dc00; font-size: 11px; font-weight: bold; border-bottom: 1px solid #39dc00; padding-bottom: 8px;">
+            ENTIRE — CONTACT SHEET 편집
+          </div>
+          <div style="font-size: 10px; color: #ffb000; line-height: 1.6; border: 1px dashed rgba(255,176,0,0.4); padding: 10px;">
+            [D 오브젝트 형식] 20260217.html의 const D = { ... } 내용을 아래에 붙여넣으면 자동 변환됩니다.<br>
+            imgDir 입력 예: <code style="color:#39dc00;">uploads/DSCF</code> → 파일명: uploads/DSCF5232.jpg<br><br>
+            [배열 형식] JSON 배열로 직접 입력도 가능합니다:<br>
+            <code style="color:#39dc00;">[{"id":"DSCF5232","filename":"uploads/DSCF5232.jpg","verdict":"core","dir":"FUNREV","reason":"..."}]</code>
+          </div>
+          <div>
+            <label style="color:#39dc00;font-size:10px;">imgDir (D 형식 사용 시)</label>
+            <input id="csImgDir" type="text" placeholder="예: uploads/DSCF" value=""
+              style="width:100%;margin-top:4px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:5px 8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;">
+          </div>
+          <div>
+            <label style="color:#39dc00;font-size:10px;">사진 데이터 (JSON)</label>
+            <textarea id="csPhotosJson" rows="18"
+              style="width:100%;margin-top:4px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;resize:vertical;"
+              placeholder='{"5232":["core","FUNREV","설명..."],"5235":["core","FUNREV","설명..."]}&#10;또는 배열 형식으로 붙여넣기'>${currentPhotos}</textarea>
+          </div>
+          <div id="csParseStatus" style="font-size:10px;color:#ffb000;"></div>
+        </div>`;
     }
 
     function generateProjectSlidesForm() {
@@ -1544,7 +1577,7 @@ REQUIRE LOGIN: No (Public access enabled)
         });
         if (!portfolioEditData.project) portfolioEditData.project = {};
         portfolioEditData.project.slides = slides;
-      } else if (subsection === 'inclusion' || subsection === 'intro' || subsection === 'video') {
+      } else if (subsection === 'inclusion' || subsection === 'video') {
         const text = document.querySelector(`.portfolio-text-${subsection}`)?.value || '';
         if (!portfolioEditData[subsection]) portfolioEditData[subsection] = {};
         portfolioEditData[subsection].text = text;
@@ -1578,6 +1611,38 @@ REQUIRE LOGIN: No (Public access enabled)
         });
         if (!portfolioEditData.archive) portfolioEditData.archive = {};
         portfolioEditData.archive.photos = photos;
+      }
+
+      // Parse contact sheet data if on intro tab
+      const csJson = document.getElementById('csPhotosJson');
+      if (csJson && csJson.value.trim()) {
+        try {
+          const raw = JSON.parse(csJson.value.trim());
+          let photos = [];
+          if (Array.isArray(raw)) {
+            photos = raw;
+          } else {
+            // D object format: {5232: ["core","FUNREV","reason"], ...}
+            const imgDir = (document.getElementById('csImgDir')?.value || '').trim();
+            Object.entries(raw).forEach(([n, d]) => {
+              photos.push({
+                id: 'DSCF' + n,
+                filename: imgDir ? imgDir + n + '.jpg' : n + '.jpg',
+                verdict: d[0] || 'drop',
+                dir: d[1] || '',
+                reason: d[2] || ''
+              });
+            });
+          }
+          if (!portfolioEditData.intro) portfolioEditData.intro = {};
+          portfolioEditData.intro.photos = photos;
+          const status = document.getElementById('csParseStatus');
+          if (status) status.textContent = `✓ ${photos.length}장 파싱 완료`;
+        } catch (e) {
+          const status = document.getElementById('csParseStatus');
+          if (status) { status.textContent = '✗ JSON 파싱 오류: ' + e.message; status.style.color='#ff3333'; }
+          return;
+        }
       }
 
       // Save to localStorage
