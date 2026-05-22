@@ -36,7 +36,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   width: 100%;
   max-width: 900px;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 180px);
   gap: 12px;
   overflow: hidden;
 }
@@ -1819,8 +1819,8 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isBoard) {
           // Check if it's a list format
           if (content.isList) {
-            // Combine default items with published posts
-            const allItems = [...content.items, ...publishedPosts];
+            // 최신 등록 순서로 — published posts를 역순(최신 먼저)으로, 기본 항목은 그 뒤
+            const allItems = [...publishedPosts].reverse().concat(content.items);
 
             // List format with table style - no header or footer
             const listHTML = `
