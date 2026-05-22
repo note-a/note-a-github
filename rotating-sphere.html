@@ -45,101 +45,78 @@
         <p>회전하는 구조<br>Rotating Wireframe</p>
     </div>
 
-    <div id="backgroundCodeNames" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; overflow: hidden; font-family: 'Courier New', monospace; color: #2d8f00; font-size: 14px; letter-spacing: -1px; padding: 4px;"></div>
+    <canvas id="bgCanvas" style="position:fixed;top:0;left:0;z-index:5;pointer-events:none;"></canvas>
     <script>
-        // Initialize background blinking code names
-        function initBackgroundCodeNames() {
-            const container = document.getElementById('backgroundCodeNames');
-            if (!container) return;
+        const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
 
-            const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        const COLS = 40;
+        const CELL_H = 15;
+        const FADE_SPEED = 0.15;
+        let cells = [];
 
-            const COLS = 40;
-            const CELL_H = 15;
-            const FADE_SPEED = 0.15;
-            let cells = [];
-            let domNodes = [];
-
-            function buildDOM() {
-                container.innerHTML = '';
-                domNodes = [];
-                const colW = window.innerWidth / COLS;
-                const rows = Math.ceil(window.innerHeight / CELL_H) + 1;
-                cells = [];
-
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < COLS; c++) {
-                        const ba = Math.random() * 0.2 + 0.2;
-                        const cell = {
-                            code: codes[Math.floor(Math.random() * codes.length)],
-                            nextCode: null,
-                            alpha: ba,
-                            state: 'idle',
-                            timer: Math.floor(Math.random() * 50),
-                            interval: Math.floor(Math.random() * 30) + 15,
-                            baseAlpha: ba
-                        };
-                        cells.push(cell);
-
-                        const span = document.createElement('div');
-                        span.textContent = cell.code;
-                        span.style.cssText = `position:absolute;left:${c * colW + 8}px;top:${r * CELL_H + CELL_H - 4}px;opacity:${ba};white-space:nowrap;`;
-                        container.appendChild(span);
-                        domNodes.push(span);
-                    }
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const colW = canvas.width / COLS;
+            const rows = Math.ceil(canvas.height / CELL_H) + 1;
+            cells = [];
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const ba = Math.random() * 0.2 + 0.2;
+                    cells.push({
+                        code: codes[Math.floor(Math.random() * codes.length)],
+                        nextCode: null,
+                        x: c * colW + 8,
+                        y: r * CELL_H + CELL_H,
+                        alpha: ba,
+                        baseAlpha: ba,
+                        state: 'idle',
+                        timer: Math.floor(Math.random() * 50),
+                        interval: Math.floor(Math.random() * 30) + 15
+                    });
                 }
             }
-
-            function tick() {
-                cells.forEach((cell, i) => {
-                    const node = domNodes[i];
-                    if (!node) return;
-
-                    if (cell.state === 'idle') {
-                        cell.timer++;
-                        if (cell.timer >= cell.interval) {
-                            cell.timer = 0;
-                            cell.interval = Math.floor(Math.random() * 30) + 15;
-                            cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
-                            cell.state = 'fadeout';
-                        }
-                    } else if (cell.state === 'fadeout') {
-                        cell.alpha -= FADE_SPEED;
-                        if (cell.alpha <= 0) {
-                            cell.alpha = 0;
-                            cell.code = cell.nextCode;
-                            cell.baseAlpha = Math.random() * 0.2 + 0.2;
-                            cell.state = 'fadein';
-                            node.textContent = cell.code;
-                        }
-                        node.style.opacity = cell.alpha;
-                    } else if (cell.state === 'fadein') {
-                        cell.alpha += FADE_SPEED * 0.6;
-                        if (cell.alpha >= cell.baseAlpha) {
-                            cell.alpha = cell.baseAlpha;
-                            cell.state = 'idle';
-                        }
-                        node.style.opacity = cell.alpha;
-                    }
-                });
-            }
-
-            buildDOM();
-
-            function animate() {
-                requestAnimationFrame(animate);
-                tick();
-            }
-
-            animate();
-
-            window.addEventListener('resize', buildDOM);
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initBackgroundCodeNames();
-        });
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '14px "Courier New", monospace';
+
+            cells.forEach(cell => {
+                if (cell.state === 'idle') {
+                    if (++cell.timer >= cell.interval) {
+                        cell.timer = 0;
+                        cell.interval = Math.floor(Math.random() * 30) + 15;
+                        cell.nextCode = codes[Math.floor(Math.random() * codes.length)];
+                        cell.state = 'fadeout';
+                    }
+                } else if (cell.state === 'fadeout') {
+                    cell.alpha -= FADE_SPEED;
+                    if (cell.alpha <= 0) {
+                        cell.alpha = 0;
+                        cell.code = cell.nextCode;
+                        cell.baseAlpha = Math.random() * 0.2 + 0.2;
+                        cell.state = 'fadein';
+                    }
+                } else {
+                    cell.alpha += FADE_SPEED * 0.6;
+                    if (cell.alpha >= cell.baseAlpha) {
+                        cell.alpha = cell.baseAlpha;
+                        cell.state = 'idle';
+                    }
+                }
+
+                ctx.fillStyle = `rgba(45,143,0,${cell.alpha})`;
+                ctx.fillText(cell.code, cell.x, cell.y);
+            });
+        }
+
+        resize();
+        animate();
+        window.addEventListener('resize', resize);
     </script>
 </body>
 </html>
