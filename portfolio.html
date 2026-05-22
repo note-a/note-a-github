@@ -1707,30 +1707,38 @@ REQUIRE LOGIN: No (Public access enabled)
           contents.archive.photos = adminContents.archive.photos;
         }
 
-        // Also load archiveData (game posts from admin)
+        // Also load archiveData (posts saved from admin NEW POST form)
         const archiveDataStr = localStorage.getItem('archiveData');
-        console.log('Raw archiveData from localStorage:', archiveDataStr);
-
         const archiveData = JSON.parse(archiveDataStr || '{}');
-        console.log('Parsed archiveData:', archiveData);
 
-        // Merge rule section items from archiveData
-        if (archiveData.rule) {
-          const ruleItems = Array.isArray(archiveData.rule) ? archiveData.rule : (archiveData.rule.items || []);
-          console.log('Rule items from archiveData:', ruleItems);
-          contents.rule.items = [...(contents.rule.items || []), ...ruleItems];
-          console.log('Updated contents.rule.items:', contents.rule.items);
-        }
+        // completed 배열 정규화
+        const completedItems = Array.isArray(archiveData.completed)
+          ? archiveData.completed
+          : (archiveData.completed?.items || []);
 
-        // Merge reference section items from archiveData
-        if (archiveData.reference) {
-          const refItems = Array.isArray(archiveData.reference) ? archiveData.reference : (archiveData.reference.items || []);
-          console.log('Reference items from archiveData:', refItems);
-          contents.reference.items = [...(contents.reference.items || []), ...refItems];
-          console.log('Updated contents.reference.items:', contents.reference.items);
-        }
+        // rule/reference 직접 저장 항목 (구버전 호환)
+        const directRuleItems = Array.isArray(archiveData.rule)
+          ? archiveData.rule
+          : (archiveData.rule?.items || []);
+        const directRefItems = Array.isArray(archiveData.reference)
+          ? archiveData.reference
+          : (archiveData.reference?.items || []);
 
-        console.log('Admin contents loaded successfully');
+        // completed에서 publishedSection으로 발행된 항목
+        const publishedToRule = completedItems.filter(i => i.publishedSection === 'rule');
+        const publishedToRef  = completedItems.filter(i => i.publishedSection === 'reference');
+
+        // 합산해서 contents에 반영 (중복 id 제거)
+        const mergeItems = (existing, ...additions) => {
+          const all = [...(existing || [])];
+          additions.flat().forEach(item => {
+            if (!all.find(e => e.id === item.id)) all.push(item);
+          });
+          return all;
+        };
+
+        contents.rule.items      = mergeItems(contents.rule.items, directRuleItems, publishedToRule);
+        contents.reference.items = mergeItems(contents.reference.items, directRefItems, publishedToRef);
       } catch (e) {
         console.log('Error loading admin contents:', e);
       }
