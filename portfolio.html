@@ -433,8 +433,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   font-size: 9px;
   cursor: pointer;
   box-shadow: 0 0 15px rgba(57, 220, 0, 0.2);
-  width: 240px;
-  height: 160px;
+  width: 150px;
+  height: 100px;
   overflow: hidden;
   opacity: 1;
   display: flex;
@@ -1922,7 +1922,7 @@ REQUIRE LOGIN: No (Public access enabled)
               </div>
               <div class="board-container">
                 ${allBoardItems.map((item, idx) => `
-                  <div class="board-item" data-index="${idx}" style="display: flex; flex-direction: column; background: #000; border: 1px solid #39dc00; position: absolute; width: 240px;">
+                  <div class="board-item" data-index="${idx}" style="display: flex; flex-direction: column; background: #000; border: 1px solid #39dc00; position: absolute;">
                     <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 3px 12px; font-weight: bold; font-size: 11px; border-bottom: 1px solid #39dc00; display: flex; justify-content: flex-end; align-items: center;">
                       <span style="cursor: pointer; font-size: 12px; flex-shrink: 0;">×</span>
                     </div>
@@ -2007,10 +2007,10 @@ REQUIRE LOGIN: No (Public access enabled)
       if (!container) return;
 
       const containerWidth = container.offsetWidth;
-      const itemWidth = 180;
-      const itemHeight = 120;
-      const padding = 12; // Space between items
-      const columns = 4;
+      const itemWidth = 150;
+      const itemHeight = 100;
+      const padding = 10; // Space between items
+      const columns = 5;
 
       // Calculate grid dimensions
       const gridX = 20; // Left margin
