@@ -1004,7 +1004,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div id="desktop-layout">
     <button class="hamburger-btn" id="hamburgerBtn">☰</button>
 
-    <!-- Background blinking code names -->
+    <canvas id="bgCanvas" style="position:fixed;top:0;left:0;z-index:5;pointer-events:none;"></canvas>
 
     <div class="portfolio-container">
       <div class="portfolio-window">
@@ -2965,7 +2965,52 @@ REQUIRE LOGIN: No (Public access enabled)
         });
     }
 
-    // Initialize background blinking code names
+    // Canvas background
+    (function() {
+      const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
+      const canvas = document.getElementById('bgCanvas');
+      const ctx = canvas.getContext('2d');
+      const COLS = 40, CELL_H = 15, FADE_SPEED = 0.15;
+      let cells = [];
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const colW = canvas.width / COLS;
+        const rows = Math.ceil(canvas.height / CELL_H) + 1;
+        cells = [];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const ba = Math.random() * 0.2 + 0.2;
+            cells.push({ code: codes[Math.floor(Math.random() * codes.length)], nextCode: null, x: c * colW + 8, y: r * CELL_H + CELL_H, alpha: ba, baseAlpha: ba, state: 'idle', timer: Math.floor(Math.random() * 50), interval: Math.floor(Math.random() * 30) + 15 });
+          }
+        }
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.font = '14px "Courier New", monospace';
+        cells.forEach(cell => {
+          if (cell.state === 'idle') {
+            if (++cell.timer >= cell.interval) { cell.timer = 0; cell.interval = Math.floor(Math.random() * 30) + 15; cell.nextCode = codes[Math.floor(Math.random() * codes.length)]; cell.state = 'fadeout'; }
+          } else if (cell.state === 'fadeout') {
+            cell.alpha -= FADE_SPEED;
+            if (cell.alpha <= 0) { cell.alpha = 0; cell.code = cell.nextCode; cell.baseAlpha = Math.random() * 0.2 + 0.2; cell.state = 'fadein'; }
+          } else {
+            cell.alpha += FADE_SPEED * 0.6;
+            if (cell.alpha >= cell.baseAlpha) { cell.alpha = cell.baseAlpha; cell.state = 'idle'; }
+          }
+          ctx.fillStyle = `rgba(45,143,0,${cell.alpha})`;
+          ctx.fillText(cell.code, cell.x, cell.y);
+        });
+      }
+
+      resize();
+      animate();
+      window.addEventListener('resize', resize);
+    })();
+
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       // Load admin-edited contents from localStorage
