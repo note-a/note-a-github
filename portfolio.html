@@ -2994,7 +2994,7 @@ REQUIRE LOGIN: No (Public access enabled)
         if (ts - lastTime < FPS_INTERVAL) return;
         lastTime = ts;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '14px "Courier New", monospace';
+        ctx.font = '15px "Courier New", monospace';
         cells.forEach(cell => {
           if (cell.state === 'idle') {
             if (++cell.timer >= cell.interval) { cell.timer = 0; cell.interval = Math.floor(Math.random() * 30) + 15; cell.nextCode = codes[Math.floor(Math.random() * codes.length)]; cell.state = 'fadeout'; }
