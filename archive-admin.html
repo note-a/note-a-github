@@ -696,6 +696,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         saveArchiveData();
         closeWriteModal();
         loadContent(saveSection);
+        // publishedSection 있으면 GitHub에도 동기화 → 모바일에서 보임
+        if (newItem.publishedSection) syncPublishedPostsToGitHub();
       } catch(err) {
         alert('저장 오류: ' + err.message);
       }
@@ -1033,6 +1035,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
                 archiveData[section].items.splice(idx, 1);
                 saveArchiveData();
                 loadContent(section);
+                if (section === 'completed') syncPublishedPostsToGitHub();
               }
             });
 
@@ -1125,6 +1128,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         };
         saveArchiveData();
         loadContent(section);
+        if (section === 'completed') syncPublishedPostsToGitHub();
       });
 
       document.getElementById('cancelEditBtn').addEventListener('click', () => {
@@ -1607,6 +1611,44 @@ REQUIRE LOGIN: No (Public access enabled)
         console.error(e);
         alert('로컬 저장은 완료됐지만 GitHub 업로드 실패: ' + e.message);
       });
+    }
+
+    // ── Published posts → GitHub 동기화 (모바일/다른 기기에서 보이도록) ──
+    async function syncPublishedPostsToGitHub() {
+      const token = localStorage.getItem('githubToken');
+      if (!token) return; // 토큰 없으면 스킵
+
+      const repo = 'note-a/note-a-github';
+      const filePath = 'published-posts.json';
+
+      // publishedSection이 있는 completed 글만 추려서 동기화
+      const publishedPosts = archiveData.completed.items.filter(item => item.publishedSection);
+      if (publishedPosts.length === 0) return;
+
+      try {
+        // 현재 published-posts.json SHA 가져오기 (업데이트에 필요)
+        let sha = null;
+        const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+          headers: { 'Authorization': `token ${token}` }
+        });
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+
+        const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(publishedPosts, null, 2))));
+        const body = { message: 'Sync published posts', content: newContent };
+        if (sha) body.sha = sha;
+
+        await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        console.log('[sync] published posts pushed to GitHub');
+      } catch (e) {
+        console.warn('[sync] GitHub sync failed:', e.message);
+      }
     }
 
     function resetPortfolioChanges() {

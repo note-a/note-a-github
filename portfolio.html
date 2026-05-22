@@ -1754,6 +1754,8 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // 캐시: 비동기 IndexedDB 읽기 결과를 동기 호출에서 사용하기 위한 캐시
     let _archiveDataCache = null;
+    // GitHub에서 동기화된 published posts (모바일 등 다른 기기에서 읽기용)
+    let _githubPublishedPosts = [];
 
     async function refreshArchiveCache() {
       try {
@@ -1792,15 +1794,24 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // Get published posts from archive-admin
+    // IndexedDB 캐시(현재 기기) + GitHub 동기화 데이터(모바일 등 다른 기기) 병합
     function getPublishedPosts(section) {
       try {
         const archiveData = getArchiveData();
-        // admin은 completed를 flat array로 저장 — 양쪽 형식 모두 처리
         const completedItems = Array.isArray(archiveData.completed)
           ? archiveData.completed
           : (archiveData.completed?.items || []);
 
-        return completedItems.filter(item => item.publishedSection === section);
+        // IndexedDB 글 + GitHub 동기화 글 합치고 중복(id 기준) 제거
+        const all = [...completedItems, ..._githubPublishedPosts];
+        const seen = new Set();
+        return all.filter(item => {
+          if (item.publishedSection !== section) return false;
+          const key = item.id || item.title;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
       } catch (e) {
         return [];
       }
@@ -3071,11 +3082,17 @@ REQUIRE LOGIN: No (Public access enabled)
       }
     });
 
-    // Fetch admin-contents.json from GitHub and apply
+    // Fetch admin-contents.json + published-posts.json from GitHub and apply
     function fetchAndApplyAdminContents() {
-      fetch('https://raw.githubusercontent.com/note-a/note-a-github/main/admin-contents.json?t=' + Date.now())
-        .then(r => r.json())
-        .then(data => {
+      const ts = Date.now();
+      const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+
+      Promise.all([
+        fetch(base + 'admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}),
+        fetch(base + 'published-posts.json?t=' + ts).then(r => r.ok ? r.json() : []).catch(() => [])
+      ])
+        .then(([data, publishedPosts]) => {
+          // admin-contents.json 적용
           if (data && Object.keys(data).length > 0) {
             if (data.project && data.project.slides) contents.project.slides = data.project.slides;
             if (data.inclusion && data.inclusion.text) contents.inclusion.text = data.inclusion.text;
@@ -3084,6 +3101,11 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
             if (data.video && data.video.text) contents.video.text = data.video.text;
             if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
+          }
+
+          // published-posts.json 적용 (모바일 등 다른 기기에서 글 보이도록)
+          if (Array.isArray(publishedPosts) && publishedPosts.length > 0) {
+            _githubPublishedPosts = publishedPosts;
           }
 
           // Re-apply localStorage data (admin edits take priority over GitHub)
@@ -3098,7 +3120,6 @@ REQUIRE LOGIN: No (Public access enabled)
           else loadContent(activeSection);
         })
         .catch(() => {
-          // Even if GitHub fetch fails, re-apply localStorage data
           loadAdminContentsFromStorage();
         });
     }
