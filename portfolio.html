@@ -1240,9 +1240,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     }
 
-    // Auto-reload admin contents every 3 seconds (without forcing UI refresh)
+    // Auto-reload admin contents every 3 seconds (IndexedDB 캐시 갱신 후 적용)
     setInterval(() => {
-      loadAdminContentsFromStorage();
+      refreshArchiveCache().then(() => {
+        loadAdminContentsFromStorage();
+      });
     }, 3000);
 
     // Detect layout on initial load
@@ -1720,7 +1722,62 @@ REQUIRE LOGIN: No (Public access enabled)
     };
 
     // localStorage에서 archiveData 파싱 (LZString 압축 지원)
+    // ── IndexedDB helpers (archive-admin과 동일 DB 공유) ──────────
+    const SET_IDB_NAME = 'setWorldDB';
+    const SET_IDB_STORE = 'archive';
+
+    function openSetIDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(SET_IDB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(SET_IDB_STORE)) {
+            db.createObjectStore(SET_IDB_STORE);
+          }
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    async function idbGetItem(key) {
+      const db = await openSetIDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(SET_IDB_STORE, 'readonly');
+        const req = tx.objectStore(SET_IDB_STORE).get(key);
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+    // ─────────────────────────────────────────────────────────────
+
+    // 캐시: 비동기 IndexedDB 읽기 결과를 동기 호출에서 사용하기 위한 캐시
+    let _archiveDataCache = null;
+
+    async function refreshArchiveCache() {
+      try {
+        const json = await idbGetItem('archiveData');
+        if (json) {
+          _archiveDataCache = JSON.parse(json);
+          return;
+        }
+      } catch (e) {}
+      // IndexedDB에 없으면 localStorage 폴백
+      try {
+        let raw = localStorage.getItem('archiveData') || '{}';
+        if (typeof LZString !== 'undefined') {
+          const decompressed = LZString.decompress(raw);
+          if (decompressed) raw = decompressed;
+        }
+        _archiveDataCache = JSON.parse(raw);
+      } catch (e) {
+        _archiveDataCache = {};
+      }
+    }
+
     function getArchiveData() {
+      if (_archiveDataCache !== null) return _archiveDataCache;
+      // 캐시 준비 전 동기 폴백 (localStorage)
       try {
         let raw = localStorage.getItem('archiveData') || '{}';
         if (typeof LZString !== 'undefined') {
@@ -3090,13 +3147,16 @@ REQUIRE LOGIN: No (Public access enabled)
     })();
 
     // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      // IndexedDB 캐시 먼저 로드 (admin에서 저장한 대용량 데이터 읽기)
+      await refreshArchiveCache();
+
       // Popup close handlers
       const popupModal = document.getElementById('itemPreviewModal');
       document.getElementById('popupClose').addEventListener('click', () => popupModal.classList.remove('active'));
       popupModal.addEventListener('click', (e) => { if (e.target === popupModal) popupModal.classList.remove('active'); });
 
-      // Load admin-edited contents from localStorage
+      // Load admin-edited contents from storage
       loadAdminContentsFromStorage();
 
       // Setup all layouts first

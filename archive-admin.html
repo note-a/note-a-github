@@ -652,18 +652,64 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     };
 
-    // Load data from localStorage (압축/비압축 둘 다 지원)
-    function loadArchiveData() {
-      let raw = localStorage.getItem('archiveData');
-      if (!raw) return;
+    // ── IndexedDB helpers (용량 무제한) ──────────────────────────
+    const SET_IDB_NAME = 'setWorldDB';
+    const SET_IDB_STORE = 'archive';
+
+    function openSetIDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(SET_IDB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(SET_IDB_STORE)) {
+            db.createObjectStore(SET_IDB_STORE);
+          }
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    async function idbGetItem(key) {
+      const db = await openSetIDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(SET_IDB_STORE, 'readonly');
+        const req = tx.objectStore(SET_IDB_STORE).get(key);
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    async function idbSetItem(key, value) {
+      const db = await openSetIDB();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(SET_IDB_STORE, 'readwrite');
+        tx.objectStore(SET_IDB_STORE).put(value, key);
+        tx.oncomplete = () => resolve();
+        tx.onerror = e => reject(e.target.error);
+      });
+    }
+    // ─────────────────────────────────────────────────────────────
+
+    // Load data: IndexedDB 우선, 없으면 localStorage 마이그레이션
+    async function loadArchiveData() {
       try {
-        // LZString 압축 데이터인지 먼저 시도
-        let jsonStr = raw;
-        if (typeof LZString !== 'undefined') {
-          const decompressed = LZString.decompress(raw);
-          if (decompressed) jsonStr = decompressed;
+        let json = await idbGetItem('archiveData');
+
+        if (!json) {
+          // 구버전 localStorage 데이터 마이그레이션
+          let raw = localStorage.getItem('archiveData');
+          if (!raw) return;
+          if (typeof LZString !== 'undefined') {
+            const decompressed = LZString.decompress(raw);
+            if (decompressed) json = decompressed;
+            else json = raw;
+          } else {
+            json = raw;
+          }
         }
-        const parsed = JSON.parse(jsonStr);
+
+        const parsed = JSON.parse(json);
         archiveData.drafts.items = Array.isArray(parsed.drafts) ? parsed.drafts : (parsed.drafts?.items || []);
         archiveData.completed.items = Array.isArray(parsed.completed) ? parsed.completed : (parsed.completed?.items || []);
         archiveData.archived.items = Array.isArray(parsed.archived) ? parsed.archived : (parsed.archived?.items || []);
@@ -674,8 +720,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       }
     }
 
-    // Save data to localStorage (LZString 압축으로 용량 절약)
-    function saveArchiveData() {
+    // Save data: IndexedDB 우선 저장 (용량 무제한), localStorage에도 백업 시도
+    async function saveArchiveData() {
       try {
         const json = JSON.stringify({
           drafts: archiveData.drafts.items,
@@ -684,14 +730,20 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           rule: archiveData.rule.items,
           reference: archiveData.reference.items
         });
-        const toSave = (typeof LZString !== 'undefined') ? LZString.compress(json) : json;
-        localStorage.setItem('archiveData', toSave);
-      } catch (e) {
-        if (e.name === 'QuotaExceededError') {
-          alert('저장 공간이 부족합니다. 일부 오래된 글을 삭제하고 다시 시도해주세요.');
-        } else {
-          alert('저장 오류: ' + e.message);
+
+        // IndexedDB에 저장 (용량 제한 없음)
+        await idbSetItem('archiveData', json);
+
+        // localStorage에도 압축 백업 시도 (portfolio.html 호환용)
+        try {
+          const toSave = (typeof LZString !== 'undefined') ? LZString.compress(json) : json;
+          localStorage.setItem('archiveData', toSave);
+        } catch (e) {
+          // localStorage 가득 차도 IndexedDB 저장은 성공 — 무시
+          console.log('localStorage full, IndexedDB save succeeded');
         }
+      } catch (e) {
+        alert('저장 오류: ' + e.message);
       }
     }
 
@@ -717,8 +769,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       if (saved && input) input.placeholder = '✓ 토큰 설정됨';
     });
 
-    // Initialize
-    loadArchiveData();
+    // Initialize (DOMContentLoaded에서 await 후 실행됨)
 
     // Portfolio data storage
     let portfolioEditData = {};
@@ -1516,7 +1567,9 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
+      // IndexedDB에서 데이터 먼저 로드 후 UI 초기화
+      await loadArchiveData();
       loadPortfolioData();
       setupMenuItems();
       setupCloseButton();
