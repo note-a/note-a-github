@@ -2969,9 +2969,11 @@ REQUIRE LOGIN: No (Public access enabled)
     (function() {
       const codes = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
       const canvas = document.getElementById('bgCanvas');
+      canvas.style.transform = 'translateZ(0)';
       const ctx = canvas.getContext('2d');
       const COLS = 40, CELL_H = 15, FADE_SPEED = 0.15;
-      let cells = [];
+      const FPS_INTERVAL = 1000 / 24;
+      let cells = [], lastTime = 0;
 
       function resize() {
         canvas.width = window.innerWidth;
@@ -2987,8 +2989,10 @@ REQUIRE LOGIN: No (Public access enabled)
         }
       }
 
-      function animate() {
+      function animate(ts) {
         requestAnimationFrame(animate);
+        if (ts - lastTime < FPS_INTERVAL) return;
+        lastTime = ts;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = '14px "Courier New", monospace';
         cells.forEach(cell => {
@@ -3001,13 +3005,13 @@ REQUIRE LOGIN: No (Public access enabled)
             cell.alpha += FADE_SPEED * 0.6;
             if (cell.alpha >= cell.baseAlpha) { cell.alpha = cell.baseAlpha; cell.state = 'idle'; }
           }
-          ctx.fillStyle = `rgba(45,143,0,${cell.alpha})`;
+          ctx.fillStyle = `rgba(57,220,0,${cell.alpha})`;
           ctx.fillText(cell.code, cell.x, cell.y);
         });
       }
 
       resize();
-      animate();
+      animate(0);
       window.addEventListener('resize', resize);
     })();
 
