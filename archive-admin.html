@@ -1157,6 +1157,52 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       portfolioEditContent.innerHTML = formHTML;
 
+      // 마크다운 변환 버튼 (INTRO 탭)
+      const mdConvertBtn = document.getElementById('csMdConvertBtn');
+      if (mdConvertBtn) {
+        mdConvertBtn.addEventListener('click', () => {
+          const mdText = (document.getElementById('csMdInput')?.value || '').trim();
+          const imgDir = (document.getElementById('csImgDir')?.value || '').trim();
+          const title = (document.getElementById('csMdTitle')?.value || '').trim();
+          const statusEl = document.getElementById('csMdStatus');
+
+          if (!mdText) { statusEl.textContent = '마크다운을 붙여넣으세요'; return; }
+
+          const photos = parseMarkdownTable(mdText, imgDir);
+          if (photos.length === 0) {
+            statusEl.textContent = '파싱된 사진 없음. 표 형식(|DSCF4871|...|🟢|) 확인';
+            statusEl.style.color = '#ff3333'; return;
+          }
+
+          // 기존 JSON에 추가
+          const jsonEl = document.getElementById('csPhotosJson');
+          let currentData = [];
+          try {
+            if (jsonEl.value.trim()) {
+              const parsed = JSON.parse(jsonEl.value.trim());
+              currentData = Array.isArray(parsed) ? parsed : [];
+            }
+          } catch(e) { currentData = []; }
+
+          if (title) {
+            // 서브시트로 추가 (같은 제목 있으면 덮어쓰기)
+            const existIdx = currentData.findIndex(p => p.title === title || p.id === title.replace(/[^a-zA-Z0-9]/g,''));
+            const newSheet = { id: title.replace(/[^a-zA-Z0-9]/g, ''), title, type: 'sheet', children: photos };
+            if (existIdx >= 0) currentData[existIdx] = newSheet;
+            else currentData.push(newSheet);
+            statusEl.textContent = `✓ "${title}" 서브시트 ${photos.length}장 추가됨`;
+          } else {
+            // 플랫으로 추가 (중복 id 스킵)
+            photos.forEach(p => { if (!currentData.find(e => e.id === p.id)) currentData.push(p); });
+            statusEl.textContent = `✓ 플랫으로 ${photos.length}장 추가됨`;
+          }
+
+          statusEl.style.color = '#39dc00';
+          jsonEl.value = JSON.stringify(currentData, null, 2);
+          document.getElementById('csMdInput').value = '';
+        });
+      }
+
       // Setup subsection tab clicks
       const tabs = document.querySelectorAll('.portfolio-subsection-tab');
       tabs.forEach(tab => {
@@ -1180,37 +1226,97 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       loadPortfolioEditForm(subsection).catch(console.error);
     }
 
+    // 옵시디언 마크다운 표 파싱 → photos 배열
+    function parseMarkdownTable(mdText, imgDir) {
+      const photos = [];
+      const VERDICT = { '🟢': 'core', '🟡': 'support', '❓': 'hold', '🔴': 'drop' };
+      mdText.split('\n').forEach(line => {
+        line = line.trim();
+        if (!line.startsWith('|')) return;
+        const cols = line.split('|').slice(1, -1).map(c => c.trim());
+        if (cols.length < 5) return;
+        const fname = cols[0];
+        // 헤더/구분선 스킵
+        if (!fname || fname === '파일명' || fname.startsWith(':') || fname.startsWith('---')) return;
+        // DSCF숫자 또는 숫자만 있는 파일명만
+        if (!/DSCF\d+|\d{4,}/.test(fname)) return;
+
+        const dir = (cols[1] === '—' || cols[1] === '-' || !cols[1]) ? '' : cols[1];
+        // cols[3] = 층2 간섭 (4번째 컬럼)
+        const interf = (cols[3] === '—' || cols[3] === '-' || !cols[3]) ? '' : cols[3];
+        const vCell = cols[4] || '';
+        const reason = cols[5] || '';
+
+        let verdict = null;
+        for (const [emoji, v] of Object.entries(VERDICT)) {
+          if (vCell.includes(emoji)) { verdict = v; break; }
+        }
+        if (!verdict) return;
+
+        const num = fname.replace(/[^0-9]/g, '');
+        const id = fname.startsWith('DSCF') ? fname : 'DSCF' + num;
+        const filename = imgDir ? imgDir + num + '.jpg' : fname + '.jpg';
+        const dirTag = [dir, interf].filter(Boolean).join('·');
+
+        photos.push({ id, filename, verdict, dir: dirTag, reason });
+      });
+      return photos;
+    }
+
     function generateContactSheetForm() {
       const currentPhotos = portfolioEditData.intro && portfolioEditData.intro.photos
         ? JSON.stringify(portfolioEditData.intro.photos, null, 2)
         : '';
 
       return `
-        <div style="padding: 12px; display: flex; flex-direction: column; gap: 12px;">
-          <div style="color: #39dc00; font-size: 11px; font-weight: bold; border-bottom: 1px solid #39dc00; padding-bottom: 8px;">
+        <div style="padding:12px;display:flex;flex-direction:column;gap:14px;">
+
+          <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">
             ENTIRE — CONTACT SHEET 편집
           </div>
-          <div style="font-size: 10px; color: #ffb000; line-height: 1.7; border: 1px dashed rgba(255,176,0,0.4); padding: 10px;">
-            <b style="color:#ffb000;">[평면 형식]</b> 20260217.html의 const D = { ... } 그대로 붙여넣기:<br>
-            <code style="color:#39dc00;">{"5232":["core","FUNREV","이유"],"5233":["support","LIGHT",""]}</code><br>
-            imgDir 입력 예: <code style="color:#39dc00;">uploads/DSCF</code> → 파일명: uploads/DSCF5232.jpg<br><br>
-            <b style="color:#ffb000;">[중첩 형식]</b> 서브 콘택트 시트 (클릭하면 안으로 들어가는 폴더):<br>
-            <code style="color:#39dc00;">{"20260217":{"type":"sheet","title":"2026.02.17","imgDir":"uploads/DSCF","children":{"5232":["core","FUNREV",""]}}}</code><br>
-            → 클릭하면 해당 롤의 서브 콘택트 시트로 진입. 평면과 혼합 가능.<br><br>
-            <b style="color:#ffb000;">[배열 형식]</b> JSON 배열로 직접 입력도 가능:<br>
-            <code style="color:#39dc00;">[{"id":"DSCF5232","filename":"uploads/DSCF5232.jpg","verdict":"core","dir":"FUNREV","reason":"..."}]</code>
+
+          <!-- ① 옵시디언 마크다운 가져오기 -->
+          <div style="border:1px solid rgba(57,220,0,0.4);padding:10px;display:flex;flex-direction:column;gap:8px;">
+            <div style="color:#39dc00;font-size:10px;font-weight:bold;">① 옵시디언 마크다운에서 가져오기</div>
+            <div style="font-size:9px;color:#888;line-height:1.6;">
+              옵시디언 .md 파일 내용을 전체 복사해서 아래에 붙여넣으세요.<br>
+              🟢코어 🟡서포트 ❓보류 🔴탈락 자동 인식.
+            </div>
+            <div style="display:flex;gap:8px;">
+              <div style="flex:1;">
+                <label style="color:#39dc00;font-size:9px;">세션 제목 (예: 2026.02.16)</label>
+                <input id="csMdTitle" type="text" placeholder="2026.02.16"
+                  style="width:100%;margin-top:3px;background:#000;border:1px solid rgba(57,220,0,0.5);color:#39dc00;padding:4px 8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;">
+              </div>
+              <div style="flex:1;">
+                <label style="color:#39dc00;font-size:9px;">이미지 경로 (예: images/entire/DSCF)</label>
+                <input id="csImgDir" type="text" placeholder="images/entire/DSCF"
+                  style="width:100%;margin-top:3px;background:#000;border:1px solid rgba(57,220,0,0.5);color:#39dc00;padding:4px 8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;">
+              </div>
+            </div>
+            <textarea id="csMdInput" rows="8"
+              style="width:100%;background:#000;border:1px solid rgba(57,220,0,0.4);color:#aaa;padding:8px;font-family:monospace;font-size:9px;box-sizing:border-box;outline:none;resize:vertical;"
+              placeholder="|파일명|DIR|카테고리|층2 간섭|등급|근거|&#10;|DSCF4871|OVERGROW|OBJECT||🟢|설명...|&#10;|DSCF4884|OVERGROW|OBJECT|배경 간섭|🟡|설명...|&#10;..."></textarea>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <button id="csMdConvertBtn"
+                style="background:#39dc00;color:#000;border:none;padding:6px 14px;font-family:monospace;font-size:10px;font-weight:bold;cursor:pointer;">
+                → 변환 후 추가
+              </button>
+              <div id="csMdStatus" style="font-size:9px;color:#ffb000;"></div>
+            </div>
           </div>
+
+          <!-- ② 현재 데이터 (JSON) -->
           <div>
-            <label style="color:#39dc00;font-size:10px;">imgDir (D 형식 사용 시)</label>
-            <input id="csImgDir" type="text" placeholder="예: uploads/DSCF" value=""
-              style="width:100%;margin-top:4px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:5px 8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;">
+            <label style="color:#39dc00;font-size:10px;font-weight:bold;">② 현재 데이터 (JSON 직접 편집 가능)</label>
+            <textarea id="csPhotosJson" rows="12"
+              style="width:100%;margin-top:4px;background:#000;border:1px solid rgba(57,220,0,0.5);color:#39dc00;padding:8px;font-family:monospace;font-size:9px;box-sizing:border-box;outline:none;resize:vertical;"
+              placeholder="마크다운 변환 후 여기에 데이터가 채워집니다.">${currentPhotos}</textarea>
+            <div style="font-size:9px;color:#555;margin-top:4px;">
+              type:"sheet" 항목은 클릭하면 서브 콘택트 시트로 진입하는 폴더입니다.
+            </div>
           </div>
-          <div>
-            <label style="color:#39dc00;font-size:10px;">사진 데이터 (JSON)</label>
-            <textarea id="csPhotosJson" rows="18"
-              style="width:100%;margin-top:4px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;resize:vertical;"
-              placeholder='{"5232":["core","FUNREV","설명..."],"5235":["core","FUNREV","설명..."]}&#10;또는 배열 형식으로 붙여넣기'>${currentPhotos}</textarea>
-          </div>
+
           <div id="csParseStatus" style="font-size:10px;color:#ffb000;"></div>
         </div>`;
     }
