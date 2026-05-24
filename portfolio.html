@@ -47,10 +47,20 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(57,220,0,0.35);
+  border: 2px solid #39dc00;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.15);
+  box-shadow: 0 0 20px rgba(57,220,0,0.3);
   position: relative;
+  overflow: hidden;
+}
+.menu-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .menu-titlebar {
@@ -129,10 +139,20 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(57,220,0,0.35);
+  border: 2px solid #39dc00;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.15);
+  box-shadow: 0 0 20px rgba(57,220,0,0.3);
   position: relative;
+  overflow: hidden;
+}
+.terminal-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .terminal-titlebar {
@@ -3726,39 +3746,7 @@ REQUIRE LOGIN: No (Public access enabled)
     })();
 
     // Initialize on page load
-    // ASCII 프레임 코너 + 상하 선 추가
-    function addAsciiFrames() {
-      const FILL = '═'.repeat(200);
-      document.querySelectorAll('.terminal-section, .menu-section').forEach(function(el) {
-        // 상단 바
-        const top = document.createElement('div');
-        top.setAttribute('aria-hidden','true');
-        top.style.cssText = 'position:absolute;top:-8px;left:0;right:0;height:10px;overflow:hidden;white-space:nowrap;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:5;';
-        top.textContent = '╔' + FILL;
-        el.appendChild(top);
-        // 하단 바
-        const bot = document.createElement('div');
-        bot.setAttribute('aria-hidden','true');
-        bot.style.cssText = 'position:absolute;bottom:-8px;left:0;right:0;height:10px;overflow:hidden;white-space:nowrap;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:5;';
-        bot.textContent = '╚' + FILL;
-        el.appendChild(bot);
-        // 우상단 ╗
-        const tr = document.createElement('span');
-        tr.setAttribute('aria-hidden','true');
-        tr.style.cssText = 'position:absolute;top:-8px;right:0;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:6;background:#000;';
-        tr.textContent = '╗';
-        el.appendChild(tr);
-        // 우하단 ╝
-        const br = document.createElement('span');
-        br.setAttribute('aria-hidden','true');
-        br.style.cssText = 'position:absolute;bottom:-8px;right:0;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:6;background:#000;';
-        br.textContent = '╝';
-        el.appendChild(br);
-      });
-    }
-
     document.addEventListener('DOMContentLoaded', async function() {
-      addAsciiFrames();
       // IndexedDB 캐시 먼저 로드 (admin에서 저장한 대용량 데이터 읽기)
       await refreshArchiveCache();
 
