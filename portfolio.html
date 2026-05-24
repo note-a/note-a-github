@@ -2142,15 +2142,20 @@ REQUIRE LOGIN: No (Public access enabled)
       // 헤더 바
       overlay.innerHTML = `
         <div id="csOverlayHeader" style="
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 8px 16px; border-bottom: 1px solid #39dc00;
+          display: flex; align-items: center; gap: 12px;
+          padding: 7px 14px; border-bottom: 1px solid #39dc00;
           flex-shrink: 0; background: #000;
         ">
-          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;font-family:monospace;">ENTIRE</span>
+          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ENTIRE</span>
+          <label style="cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;">
+            <input type="file" id="csLocalFolder" multiple accept="image/*" style="display:none;">
+            <span id="csLoadBtn" style="font-family:monospace;font-size:10px;padding:3px 10px;border:1px solid rgba(57,220,0,0.5);color:rgba(57,220,0,0.7);white-space:nowrap;cursor:pointer;">📁 사진 폴더 선택</span>
+          </label>
+          <span id="csLoadStatus" style="font-size:9px;color:#666;font-family:monospace;flex-shrink:0;"></span>
           <button id="csOverlayClose" style="
             background: transparent; border: 1px solid #39dc00; color: #39dc00;
-            font-family: monospace; font-size: 11px; padding: 3px 10px; cursor: pointer;
-          ">✕ CLOSE</button>
+            font-family: monospace; font-size: 11px; padding: 3px 10px; cursor: pointer; flex-shrink:0;
+          ">✕</button>
         </div>
         <div id="csOverlayBody" style="flex:1;overflow:hidden;min-height:0;"></div>
       `;
@@ -2158,13 +2163,52 @@ REQUIRE LOGIN: No (Public access enabled)
       document.body.appendChild(overlay);
 
       // 닫기
-      function closeOverlay() { overlay.remove(); }
+      function closeOverlay() {
+        // 사용한 blob URL 해제
+        if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
+        overlay.remove();
+      }
       document.getElementById('csOverlayClose').addEventListener('click', closeOverlay);
       document.addEventListener('keydown', function onEsc(e) {
         if (e.key === 'Escape') { closeOverlay(); document.removeEventListener('keydown', onEsc); }
       });
 
-      renderContactSheet(content, document.getElementById('csOverlayBody'), document.getElementById('csOverlayTitle'));
+      // 로컬 폴더에서 사진 불러오기
+      document.getElementById('csLocalFolder').addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        if (!files.length) return;
+
+        const statusEl = document.getElementById('csLoadStatus');
+        statusEl.textContent = `${files.length}개 파일 로딩 중...`;
+
+        // 파일명(숫자) → blob URL 매핑
+        const blobMap = {};
+        const blobUrls = [];
+        files.forEach(f => {
+          const url = URL.createObjectURL(f);
+          blobUrls.push(url);
+          // DSCF4871.jpg → key: "4871" and "DSCF4871"
+          const name = f.name.replace(/\.[^.]+$/, ''); // 확장자 제거
+          const num = name.replace(/\D/g, '');
+          blobMap[name.toUpperCase()] = url;
+          if (num) blobMap[num] = url;
+        });
+        overlay._blobUrls = blobUrls;
+
+        // 현재 화면의 모든 img 태그 src를 blob URL로 교체
+        overlay.querySelectorAll('img[data-fname]').forEach(img => {
+          const fname = img.getAttribute('data-fname');
+          const num = fname.replace(/\D/g, '');
+          const url = blobMap[fname.toUpperCase()] || blobMap[num];
+          if (url) { img.style.opacity = '1'; img.src = url; }
+        });
+
+        // 전역 blobMap 저장 (페이지 이동 후에도 적용)
+        overlay._blobMap = blobMap;
+        statusEl.textContent = `✓ ${files.length}장`;
+      });
+
+      renderContactSheet(content, document.getElementById('csOverlayBody'), document.getElementById('csOverlayTitle'), overlay);
     }
 
     // 프레임 번호 기반 가상 사진 느낌의 그라디언트 생성
@@ -2186,7 +2230,7 @@ REQUIRE LOGIN: No (Public access enabled)
         hsl(${h1},${s}%,${Math.max(l1-4,3)}%) 100%);`;
     }
 
-    function renderContactSheet(content, container, titleEl) {
+    function renderContactSheet(content, container, titleEl, overlayEl) {
       const COLORS = { core:'#39dc00', support:'#ffb000', hold:'#00ccaa', dup:'#444', note:'#444', drop:'#111' };
       const LABELS = { core:'CORE', support:'SUP', hold:'HOLD', dup:'DUP', note:'NOTE', drop:'DROP' };
       const SHOW_BORDER = ['core','support','hold'];
@@ -2257,11 +2301,16 @@ REQUIRE LOGIN: No (Public access enabled)
             const v = p.verdict || 'drop';
             const color = COLORS[v] || '#333';
             const isKey = SHOW_BORDER.includes(v);
-            const num = (p.id||'').replace(/\D/g,'');
+            const fname = (p.id || '').toUpperCase();
+            const num = fname.replace(/\D/g,'');
             const fakeStyle = fakeThumbnailStyle(num);
+            // 이미 blob URL 있으면 바로 적용
+            const blobMap = overlayEl && overlayEl._blobMap;
+            const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
+            const imgSrc = blobSrc || p.filename || '';
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:1;cursor:pointer;position:relative;overflow:hidden;${fakeStyle}${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.35);`}">
-              <img src="${p.filename}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.opacity='0'">
+              <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.opacity='0'">
               <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;pointer-events:none;">
                 <span style="font-size:5px;font-family:monospace;color:${isKey ? color : 'rgba(255,255,255,0.2)'};">${num}</span>
               </div>
@@ -2319,6 +2368,16 @@ REQUIRE LOGIN: No (Public access enabled)
             if (p.type === 'sheet') {
               csNavStack.push({ title: levelTitle, photos: photos });
               renderLevel(p.children || [], p.title || p.id);
+              // blob URL 새로 렌더된 img에 적용
+              if (overlayEl && overlayEl._blobMap) {
+                const bm = overlayEl._blobMap;
+                container.querySelectorAll('img[data-fname]').forEach(img => {
+                  const fn = img.getAttribute('data-fname');
+                  const n = fn.replace(/\D/g,'');
+                  const u = bm[fn] || bm[n];
+                  if (u) { img.style.opacity = '1'; img.src = u; }
+                });
+              }
               return;
             }
 
