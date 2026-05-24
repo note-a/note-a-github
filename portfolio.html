@@ -2435,6 +2435,12 @@ REQUIRE LOGIN: No (Public access enabled)
         currentLevelTitle = levelTitle;
         updateTitle(levelTitle);
 
+        // 페이드 트랜지션
+        container.style.transition = 'opacity 0.18s ease';
+        container.style.opacity = '0';
+
+        setTimeout(function() {
+
         // Empty state
         if (!photos || photos.length === 0) {
           container.innerHTML = `
@@ -2444,6 +2450,7 @@ REQUIRE LOGIN: No (Public access enabled)
                 어드민 → 포트폴리오 편집 → INTRO 탭에서<br>사진 데이터를 입력하고 SAVE 하세요.
               </div>
             </div>`;
+          requestAnimationFrame(function() { container.style.opacity = '1'; });
           return;
         }
 
@@ -2536,6 +2543,9 @@ REQUIRE LOGIN: No (Public access enabled)
               <div id="csDetReason" style="padding:7px 12px;font-size:10px;line-height:1.6;color:#aaa;border-top:1px dashed rgba(57,220,0,0.25);word-break:break-word;"></div>
             </div>
           </div>`;
+
+        requestAnimationFrame(function() { container.style.opacity = '1'; });
+        }, 180); // fade out 완료 후 렌더
 
       }
       // ─── 이벤트 위임: container에 단 하나의 리스너로 모든 클릭 처리 ───
