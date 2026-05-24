@@ -1477,8 +1477,8 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
             {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
             {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
             {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
-            {id:'DSCF6079', verdict:'core',    reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
-            {id:'DSCF6080', verdict:'support', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
+            {id:'DSCF6079', verdict:'core',    dir:'OBJREP', category:'OBJECT', reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
+            {id:'DSCF6080', verdict:'support', dir:'OBJREP', category:'OBJECT', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
             {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
             {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
             {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
@@ -2240,8 +2240,8 @@ REQUIRE LOGIN: No (Public access enabled)
         {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
         {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
         {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
-        {id:'DSCF6079', verdict:'core',    reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
-        {id:'DSCF6080', verdict:'support', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
+        {id:'DSCF6079', verdict:'core',    dir:'OBJREP', category:'OBJECT', reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
+        {id:'DSCF6080', verdict:'support', dir:'OBJREP', category:'OBJECT', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
         {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
         {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
         {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
@@ -2463,8 +2463,17 @@ REQUIRE LOGIN: No (Public access enabled)
                     <span style="font-size:12px;color:#39dc00;">${p.id || ''}</span>
                   </div>
                 </div>
-                <div style="border:1px solid #39dc00;padding:20px;display:flex;flex-direction:column;gap:10px;min-height:200px;width:280px;">
-                  <div style="font-size:9px;color:#444;letter-spacing:2px;">NOTE</div>
+                <div style="border:1px solid #39dc00;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:200px;width:280px;">
+                  ${p.dir ? `<div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:9px;color:#444;letter-spacing:2px;">DIR</span>
+                    <span style="font-size:11px;color:#39dc00;letter-spacing:1px;">${p.dir}</span>
+                  </div>` : ''}
+                  ${p.category ? `<div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:9px;color:#444;letter-spacing:2px;">CATEGORY</span>
+                    <span style="font-size:11px;color:#39dc00;letter-spacing:1px;">${p.category}</span>
+                  </div>` : ''}
+                  ${(p.dir || p.category) ? `<div style="border-top:1px solid rgba(57,220,0,0.2);"></div>` : ''}
+                  <div style="font-size:9px;color:#444;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
                   <div style="font-size:12px;color:#ccc;line-height:1.9;">${p.reason || '—'}</div>
                 </div>
               </div>
