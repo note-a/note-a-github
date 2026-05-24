@@ -1893,6 +1893,14 @@ REQUIRE LOGIN: No (Public access enabled)
       const content = contents[section];
       const terminalContent = document.getElementById('terminalContent');
 
+      terminalContent.style.transition = 'opacity 0.2s ease';
+      terminalContent.style.opacity = '0';
+      setTimeout(function() { _loadContentInner(section); requestAnimationFrame(function() { terminalContent.style.opacity = '1'; }); }, 200);
+    }
+    function _loadContentInner(section) {
+      const content = contents[section];
+      const terminalContent = document.getElementById('terminalContent');
+
       // Get published posts from archive-admin
       const publishedPosts = getPublishedPosts(section);
 
@@ -3331,6 +3339,14 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // Load content to mobile terminal
     function loadContentToMobile(section) {
+      const _mc = document.getElementById('mobileContentText');
+      if (_mc) {
+        _mc.style.transition = 'opacity 0.2s ease';
+        _mc.style.opacity = '0';
+        setTimeout(function() { _loadContentToMobileInner(section); requestAnimationFrame(function() { _mc.style.opacity = '1'; }); }, 200);
+      } else { _loadContentToMobileInner(section); }
+    }
+    function _loadContentToMobileInner(section) {
       try {
         const content = contents[section];
         const mobileContent = document.getElementById('mobileContentText');
