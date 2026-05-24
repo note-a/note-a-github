@@ -179,29 +179,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   }
 }
 
-/* ===== SCANLINES ===== */
-.scanlines {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 99999;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.13) 0px,
-    rgba(0, 0, 0, 0.13) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  animation: scanroll 8s linear infinite;
-}
-@keyframes scanroll {
-  from { background-position: 0 0; }
-  to   { background-position: 0 4px; }
-}
   </style>
 </head>
 <body>
-  <div class="scanlines"></div>
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="menu-container">
