@@ -3842,6 +3842,9 @@ REQUIRE LOGIN: No (Public access enabled)
         // Load initial content
         loadContent('project');
         // Mobile content is loaded by detectAndSwitchLayout
+
+        // 작품소개 팝업 자동 표시
+        setTimeout(openInfoPopup, 600);
       }
     });
 
