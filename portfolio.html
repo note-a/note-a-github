@@ -2131,10 +2131,12 @@ REQUIRE LOGIN: No (Public access enabled)
       const overlay = document.createElement('div');
       overlay.id = 'csOverlay';
       overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        position: fixed; inset: 24px;
         background: #000; z-index: 9000;
         display: flex; flex-direction: column;
         font-family: monospace;
+        border: 1px solid #39dc00;
+        box-shadow: 0 0 40px rgba(57,220,0,0.15);
       `;
 
       // 헤더 바
@@ -2144,7 +2146,7 @@ REQUIRE LOGIN: No (Public access enabled)
           padding: 8px 16px; border-bottom: 1px solid #39dc00;
           flex-shrink: 0; background: #000;
         ">
-          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;">ENTIRE</span>
+          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;font-family:monospace;">ENTIRE</span>
           <button id="csOverlayClose" style="
             background: transparent; border: 1px solid #39dc00; color: #39dc00;
             font-family: monospace; font-size: 11px; padding: 3px 10px; cursor: pointer;
@@ -2165,12 +2167,29 @@ REQUIRE LOGIN: No (Public access enabled)
       renderContactSheet(content, document.getElementById('csOverlayBody'), document.getElementById('csOverlayTitle'));
     }
 
+    // 프레임 번호 기반 가상 사진 느낌의 그라디언트 생성
+    function fakeThumbnailStyle(frameNum) {
+      const n = parseInt(String(frameNum).replace(/\D/g,'')) || 0;
+      // 골든 앵글 분포로 색상 다양화
+      const h1 = (n * 137.508) % 360;
+      const h2 = (h1 + 30 + (n % 7) * 12) % 360;
+      const s  = 12 + (n % 6) * 4;         // 낮은 채도 (사진 느낌)
+      const l1 = 6  + (n % 9) * 3;
+      const l2 = l1 + 8 + (n % 5) * 4;
+      const angle = (n * 73) % 180;
+      // 가끔 어두운 수직/수평 라인으로 피사체 암시
+      const linePos = 20 + (n % 60);
+      const lineOp  = 0.06 + (n % 5) * 0.04;
+      return `background: linear-gradient(${angle}deg,
+        hsl(${h1},${s}%,${l1}%) 0%,
+        hsl(${h2},${s}%,${l2}%) 60%,
+        hsl(${h1},${s}%,${Math.max(l1-4,3)}%) 100%);`;
+    }
+
     function renderContactSheet(content, container, titleEl) {
       const COLORS = { core:'#39dc00', support:'#ffb000', hold:'#00ccaa', dup:'#444', note:'#444', drop:'#111' };
       const LABELS = { core:'CORE', support:'SUP', hold:'HOLD', dup:'DUP', note:'NOTE', drop:'DROP' };
       const SHOW_BORDER = ['core','support','hold'];
-      // 플레이스홀더 배경색 (이미지 없을 때)
-      const PH_COLORS = { core:'#0a2a0a', support:'#2a1e00', hold:'#002a2a', dup:'#111', note:'#111', drop:'#080808' };
 
       // Navigation stack for hierarchical contact sheets
       let csNavStack = []; // [{title, photos}]
@@ -2237,15 +2256,14 @@ REQUIRE LOGIN: No (Public access enabled)
           } else {
             const v = p.verdict || 'drop';
             const color = COLORS[v] || '#333';
-            const phBg = PH_COLORS[v] || '#080808';
             const isKey = SHOW_BORDER.includes(v);
-            const num = (p.id||'').replace('DSCF','');
+            const num = (p.id||'').replace(/\D/g,'');
+            const fakeStyle = fakeThumbnailStyle(num);
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
-              style="aspect-ratio:1;background:${phBg};cursor:pointer;position:relative;overflow:hidden;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `opacity:0.35;`}">
+              style="aspect-ratio:1;cursor:pointer;position:relative;overflow:hidden;${fakeStyle}${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.35);`}">
               <img src="${p.filename}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.opacity='0'">
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;gap:1px;">
-                ${isKey ? `<span style="font-size:6px;font-family:monospace;color:${color};opacity:0.7;">${LABELS[v]}</span>` : ''}
-                <span style="font-size:5px;font-family:monospace;color:${isKey ? color : '#333'};opacity:0.6;">${num}</span>
+              <div style="position:absolute;bottom:2px;left:0;right:0;text-align:center;pointer-events:none;">
+                <span style="font-size:5px;font-family:monospace;color:${isKey ? color : 'rgba(255,255,255,0.2)'};">${num}</span>
               </div>
             </div>`;
           }
