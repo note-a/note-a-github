@@ -1455,7 +1455,7 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
                       70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
                       90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109];
           // 판정 분포: 60% drop, 20% support, 10% hold, 10% core
-          var VERDICTS = ['drop','drop','drop','drop','drop','drop','support','support','hold','core'];
+          var VERDICTS = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
           function makePhotos(startFrame, picsumOffset, count) {
             return Array.from({length: count}, function(_, i) {
               var pid = POOL[(picsumOffset + i) % POOL.length];
@@ -2189,7 +2189,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,
                   70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
                   90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107];
-      var V = ['drop','drop','drop','drop','drop','drop','support','support','hold','core'];
+      var V = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
       var REASONS = {
         core:    ['결정적 순간. 빛과 구도 모두 살아있음','표정이 담겼다. 이 컷이 전체를 대표함','움직임이 정지된 순간. 긴장감 있음','배경과 피사체의 관계가 완성됨','가장 선명하고 구도가 명확함'],
         support: ['코어컷 보완용. 앵글 변주','같은 순간의 다른 프레임. 레이아웃에 쓸 만함','분위기는 좋으나 포인트 약함','코어와 함께 배치 고려'],
@@ -2347,9 +2347,9 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     function renderContactSheet(content, container, titleEl, overlayEl) {
-      const COLORS = { core:'#39dc00', support:'#ffb000', hold:'#00ccaa', dup:'#444', note:'#444', drop:'#111' };
-      const LABELS = { core:'CORE', support:'SUP', hold:'HOLD', dup:'DUP', note:'NOTE', drop:'DROP' };
-      const SHOW_BORDER = ['core','support','hold'];
+      const COLORS = { core:'#39dc00', support:'#ffb000', drop:'#111' };
+      const LABELS = { core:'CORE', support:'SUP', drop:'DROP' };
+      const SHOW_BORDER = ['core','support'];
 
       // Navigation stack + current level state (for event delegation)
       let csNavStack = []; // [{title, photos}]
