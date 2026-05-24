@@ -2462,17 +2462,17 @@ REQUIRE LOGIN: No (Public access enabled)
                     <span style="font-size:9px;color:#444;letter-spacing:2px;">FRAME</span>
                     <span style="font-size:12px;color:#39dc00;">${p.id || ''}</span>
                   </div>
-                </div>
-                <div style="border:1px solid #39dc00;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:200px;width:280px;">
                   ${p.dir ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#444;letter-spacing:2px;">DIR</span>
                     <span style="font-size:11px;color:#39dc00;letter-spacing:1px;">${p.dir}</span>
                   </div>` : ''}
+                </div>
+                <div style="border:1px solid #39dc00;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:200px;width:280px;">
                   ${p.category ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#444;letter-spacing:2px;">CATEGORY</span>
                     <span style="font-size:11px;color:#39dc00;letter-spacing:1px;">${p.category}</span>
                   </div>` : ''}
-                  ${(p.dir || p.category) ? `<div style="border-top:1px solid rgba(57,220,0,0.2);"></div>` : ''}
+                  ${p.category ? `<div style="border-top:1px solid rgba(57,220,0,0.2);"></div>` : ''}
                   <div style="font-size:9px;color:#444;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
                   <div style="font-size:12px;color:#ccc;line-height:1.9;">${p.reason || '—'}</div>
                 </div>
