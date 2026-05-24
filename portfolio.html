@@ -1160,18 +1160,16 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <!-- END DESKTOP LAYOUT -->
 
   <!-- INFO POPUP -->
-  <div id="infoPopupBg" onclick="closeInfoPopup()" style="
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
-    z-index:10000; justify-content:center; align-items:center;
+  <div id="infoPopupBg" style="
+    display:none; position:fixed; right:20px; bottom:52px;
+    z-index:10000; width:min(320px,90vw); max-height:70vh;
+    display:none; flex-direction:column;
+    border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
+    border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
+    box-shadow:0 0 30px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+    background:#000; font-family:'Courier New',monospace;
   ">
-    <div onclick="event.stopPropagation()" style="
-      width:min(600px,92vw); max-height:85vh;
-      display:flex; flex-direction:column;
-      border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
-      border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
-      box-shadow:0 0 40px rgba(57,220,0,0.25), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
-      background:#000; font-family:'Courier New',monospace;
-    ">
+    <div>
       <!-- titlebar -->
       <div style="background:#39dc00;color:#000;padding:6px 12px;font-weight:bold;font-size:13px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
         <span>ABOUT THIS WORK</span>
@@ -1216,6 +1214,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     </div>
   </div>
   <!-- END INFO POPUP -->
+
 
   <!-- MOBILE LAYOUT -->
   <div id="mobile-layout">
@@ -3850,19 +3849,22 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // ── INFO POPUP ──────────────────────────────────
     function openInfoPopup() {
-      const bg = document.getElementById('infoPopupBg');
-      bg.style.display = 'flex';
-      requestAnimationFrame(function() { bg.style.opacity = '0'; bg.style.transition = 'opacity 0.25s ease'; requestAnimationFrame(function() { bg.style.opacity = '1'; }); });
+      const el = document.getElementById('infoPopupBg');
+      el.style.display = 'flex';
+      el.style.opacity = '0';
+      el.style.transition = 'opacity 0.3s ease';
+      requestAnimationFrame(function() { requestAnimationFrame(function() { el.style.opacity = '1'; }); });
     }
     function closeInfoPopup() {
-      const bg = document.getElementById('infoPopupBg');
-      bg.style.transition = 'opacity 0.2s ease';
-      bg.style.opacity = '0';
-      setTimeout(function() { bg.style.display = 'none'; }, 200);
+      const el = document.getElementById('infoPopupBg');
+      el.style.transition = 'opacity 0.2s ease';
+      el.style.opacity = '0';
+      setTimeout(function() { el.style.display = 'none'; }, 200);
     }
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && document.getElementById('infoPopupBg').style.display === 'flex') {
-        closeInfoPopup();
+      if (e.key === 'Escape') {
+        const el = document.getElementById('infoPopupBg');
+        if (el && el.style.display === 'flex') closeInfoPopup();
       }
     });
   </script>
