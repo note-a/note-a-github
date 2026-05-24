@@ -2186,9 +2186,22 @@ REQUIRE LOGIN: No (Public access enabled)
                   70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
                   90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107];
       var V = ['drop','drop','drop','drop','drop','drop','support','support','hold','core'];
+      var REASONS = {
+        core:    ['결정적 순간. 빛과 구도 모두 살아있음','표정이 담겼다. 이 컷이 전체를 대표함','움직임이 정지된 순간. 긴장감 있음','배경과 피사체의 관계가 완성됨','가장 선명하고 구도가 명확함'],
+        support: ['코어컷 보완용. 앵글 변주','같은 순간의 다른 프레임. 레이아웃에 쓸 만함','분위기는 좋으나 포인트 약함','코어와 함께 배치 고려'],
+        hold:    ['흔들림 있으나 분위기가 독특함. 재검토 필요','초점 아웃이지만 의도적으로 볼 수도 있음','재검토. 쓸 수도 있고 아닐 수도'],
+        drop:    ['초점 나감','중복컷','노출 실패','구도 불균형','움직임 블러']
+      };
       function frames(start, offset, count) {
         return Array.from({length:count}, function(_,i) {
-          return { id:'DSCF'+(start+i), picsumId: POOL[(offset+i)%POOL.length], verdict: V[(start+i*7)%V.length] };
+          var verdict = V[(start+i*7)%V.length];
+          var reasons = REASONS[verdict];
+          return {
+            id: 'DSCF'+(start+i),
+            picsumId: POOL[(offset+i)%POOL.length],
+            verdict: verdict,
+            reason: reasons[(start+i*3)%reasons.length]
+          };
         });
       }
       return [
@@ -2367,10 +2380,13 @@ REQUIRE LOGIN: No (Public access enabled)
               <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">←</button>
               <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">→</button>
             </div>
-            <div style="flex:1;position:relative;overflow:hidden;${fakeStyle}">
-              <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;" loading="lazy" onerror="this.style.opacity='0'">
+            <div style="flex:1;position:relative;overflow:hidden;background:#0a0a0a;">
+              <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;" loading="lazy">
             </div>
-            ${p.reason ? `<div style="padding:6px 14px;border-top:1px dashed rgba(57,220,0,0.25);font-size:9px;color:#888;font-family:monospace;flex-shrink:0;">${p.reason}</div>` : ''}
+            <div style="padding:10px 14px;border-top:1px solid rgba(57,220,0,0.3);flex-shrink:0;display:flex;align-items:center;gap:10px;background:#000;">
+              <span style="font-size:9px;padding:2px 8px;border:1px solid ${color};color:${color};font-family:monospace;letter-spacing:1px;">${LABELS[v]||v}</span>
+              <span style="font-size:11px;color:#ccc;font-family:monospace;flex:1;">${p.reason || ''}</span>
+            </div>
           `;
           container.style.position = 'relative';
           container.appendChild(lb);
