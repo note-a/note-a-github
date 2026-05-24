@@ -62,25 +62,6 @@
   "inclusion": {
     "text": "loading"
   },
-  "intro": {
-    "text": "https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=221-109&t=WrDMGwGZBp0nmFrV-0",
-    "photos": [
-      {
-        "id": "DSCF6326",
-        "filename": "images/entire/DSCF6326.jpg",
-        "verdict": "core",
-        "dir": "",
-        "reason": ""
-      },
-      {
-        "id": "DSCF6327",
-        "filename": "images/entire/DSCF6327.jpg",
-        "verdict": "support",
-        "dir": "",
-        "reason": ""
-      }
-    ]
-  },
   "rule": {
     "items": [
       {

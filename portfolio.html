@@ -3480,7 +3480,7 @@ REQUIRE LOGIN: No (Public access enabled)
           if (data && Object.keys(data).length > 0) {
             if (data.project && data.project.slides) contents.project.slides = data.project.slides;
             if (data.inclusion && data.inclusion.text) contents.inclusion.text = data.inclusion.text;
-            if (data.intro && data.intro.photos) contents.intro.photos = data.intro.photos;
+            if (data.intro && data.intro.photos && data.intro.photos.some(p => p.type === 'sheet')) contents.intro.photos = data.intro.photos;
             if (data.rule && data.rule.items) contents.rule.items = data.rule.items;
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
             if (data.video && data.video.text) contents.video.text = data.video.text;
