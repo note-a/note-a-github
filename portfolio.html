@@ -2554,8 +2554,9 @@ REQUIRE LOGIN: No (Public access enabled)
             const previewImgs = [0,1,2,3].map(ci => {
               const child = previewChildren[ci];
               const pid2 = child ? (child.picsumId || 50) : (10 + ci * 17);
+              const previewSrc = (child && child.url) ? child.url : `https://picsum.photos/id/${pid2}/100/150`;
               return `<div style="position:relative;overflow:hidden;background:#111;">
-                <img src="https://picsum.photos/id/${pid2}/100/150" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
+                <img src="${previewSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
               </div>`;
             }).join('');
             return `<div class="cs-cell cs-folder" data-idx="${i}" data-type="sheet"
