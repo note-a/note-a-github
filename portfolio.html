@@ -3886,13 +3886,15 @@ REQUIRE LOGIN: No (Public access enabled)
     // ── INFO POPUP ──────────────────────────────────
     function openInfoPopup() {
       const mini = document.getElementById('infoMini');
-      const term = document.querySelector('.terminal-section');
-      if (term) {
-        const r = term.getBoundingClientRect();
-        // 터미널 우측 테두리에서 30px 안으로, 상단에서 1/3 지점
-        mini.style.right = (window.innerWidth - r.right + 30) + 'px';
-        mini.style.top   = (r.top + (r.height * 0.22)) + 'px';
+      const win = document.querySelector('.portfolio-window');
+      if (win) {
+        const r = win.getBoundingClientRect();
+        // 포트폴리오 창 우하단 코너에 걸치게
+        // 세로: 창 하단 테두리에서 28px 위 → 팝업 대부분이 창 아래쪽 빈 공간에 위치
+        mini.style.top    = (r.bottom - 28) + 'px';
         mini.style.bottom = 'auto';
+        // 가로: 창 우측 테두리에서 16px 안쪽 → 팝업 대부분이 창 오른쪽 바깥에 위치
+        mini.style.right  = Math.max(8, window.innerWidth - r.right - 16) + 'px';
       }
       mini.style.display = 'block';
       mini.style.opacity = '0';
