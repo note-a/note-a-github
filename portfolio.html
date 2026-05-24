@@ -3877,6 +3877,13 @@ REQUIRE LOGIN: No (Public access enabled)
     // ── INFO POPUP ──────────────────────────────────
     function openInfoPopup() {
       const mini = document.getElementById('infoMini');
+      // 터미널 창 우하단에 겹치게 위치 계산
+      const term = document.querySelector('.terminal-section');
+      if (term) {
+        const r = term.getBoundingClientRect();
+        mini.style.right  = (window.innerWidth  - r.right  + 20) + 'px'; // 20px 안으로
+        mini.style.bottom = (window.innerHeight - r.bottom + 30) + 'px'; // 30px 위로 겹침
+      }
       mini.style.display = 'block';
       mini.style.opacity = '0';
       requestAnimationFrame(function() { requestAnimationFrame(function() { mini.style.opacity = '1'; }); });
