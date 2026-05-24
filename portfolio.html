@@ -1467,7 +1467,19 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
               };
             });
           }
+          var BASE = 'https://note-a.github.io/images/entire/';
+          var V10 = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
+          var realShoot = [
+            {id:'DSCF6071',verdict:V10[0]}, {id:'DSCF6072',verdict:V10[1]}, {id:'DSCF6073',verdict:V10[2]},
+            {id:'DSCF6074',verdict:V10[3]}, {id:'DSCF6075',verdict:V10[4]}, {id:'DSCF6076',verdict:V10[5]},
+            {id:'DSCF6077',verdict:V10[6]}, {id:'DSCF6078',verdict:V10[7]}, {id:'DSCF6079',verdict:V10[8]},
+            {id:'DSCF6080',verdict:V10[9]}, {id:'DSCF6081',verdict:V10[0]}, {id:'DSCF6082',verdict:V10[1]},
+            {id:'DSCF6083',verdict:V10[2]}, {id:'DSCF6084',verdict:V10[3]}, {id:'DSCF6085',verdict:V10[4]},
+            {id:'DSCF6086',verdict:V10[5]}, {id:'DSCF6087',verdict:V10[6]}
+          ].map(function(p){ return Object.assign({}, p, {url: BASE + p.id + '.jpg'}); });
+
           return [
+            { type:'sheet', id:'real_shoot', title:'25.??', children: realShoot },
             { type:'sheet', id:'2025_01', title:'25.01', children:[
               { type:'sheet', id:'20250116', title:'01.16', children: makePhotos(6301, 0,  108) },
               { type:'sheet', id:'20250203', title:'02.03', children: makePhotos(5801, 10, 94)  }
@@ -2208,7 +2220,15 @@ REQUIRE LOGIN: No (Public access enabled)
           };
         });
       }
+      var BASE2 = 'https://note-a.github.io/images/entire/';
+      var VV = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
+      var realShoot2 = [
+        'DSCF6071','DSCF6072','DSCF6073','DSCF6074','DSCF6075','DSCF6076','DSCF6077','DSCF6078',
+        'DSCF6079','DSCF6080','DSCF6081','DSCF6082','DSCF6083','DSCF6084','DSCF6085','DSCF6086','DSCF6087'
+      ].map(function(id,i){ return {id:id, verdict:VV[i%VV.length], url:BASE2+id+'.jpg'}; });
+
       return [
+        { type:'sheet', id:'real_shoot', title:'25.??', children: realShoot2 },
         { type:'sheet', id:'2025_01', title:'25.01', children:[
           { type:'sheet', id:'20250116', title:'01.16', children: frames(6301, 0,  108) },
           { type:'sheet', id:'20250203', title:'02.03', children: frames(5801, 10, 94)  }
@@ -2392,7 +2412,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const fname = (p.id || '').toUpperCase();
           const blobSrc = bm && (bm[fname] || bm[num]);
           const pid = p.picsumId || ((parseInt(num) % 990) + 10) || 50;
-          const imgSrc = blobSrc || `https://picsum.photos/id/${pid}/800/1200`;
+          const imgSrc = blobSrc || p.url || `https://picsum.photos/id/${pid}/800/1200`;
           const lb = document.createElement('div');
           lb.id = 'csLightbox';
           lb.style.cssText = 'position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:monospace;';
@@ -2524,7 +2544,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
             // picsum ID 직접 사용 (없으면 num 기반)
             const pid = p.picsumId || ((parseInt(num) % 990) + 10) || 50;
-            const imgSrc = blobSrc || `https://picsum.photos/id/${pid}/200/300`;
+            const imgSrc = blobSrc || p.url || `https://picsum.photos/id/${pid}/200/300`;
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.4) saturate(0.3);`}">
               <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
