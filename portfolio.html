@@ -2179,10 +2179,52 @@ REQUIRE LOGIN: No (Public access enabled)
       setupBoardItemClickHandlers();
     }
 
+    function buildDemoContactSheet() {
+      var POOL = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,
+                  30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,
+                  50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,
+                  70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
+                  90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107];
+      var V = ['drop','drop','drop','drop','drop','drop','support','support','hold','core'];
+      function frames(start, offset, count) {
+        return Array.from({length:count}, function(_,i) {
+          return { id:'DSCF'+(start+i), picsumId: POOL[(offset+i)%POOL.length], verdict: V[(start+i*7)%V.length] };
+        });
+      }
+      return [
+        { type:'sheet', id:'2025', title:'2025', children:[
+          { type:'sheet', id:'2025_01', title:'1월', children:[
+            { type:'sheet', id:'20250116', title:'01.16', children: frames(6301, 0,  108) },
+            { type:'sheet', id:'20250203', title:'02.03', children: frames(5801, 10, 94)  }
+          ]},
+          { type:'sheet', id:'2025_03', title:'3월', children:[
+            { type:'sheet', id:'20250315', title:'03.15', children: frames(7012, 20, 122) },
+            { type:'sheet', id:'20250328', title:'03.28', children: frames(7140, 30, 88)  }
+          ]},
+          { type:'sheet', id:'2025_07', title:'7월', children:[
+            { type:'sheet', id:'20250722', title:'07.22', children: frames(8143, 40, 115) }
+          ]}
+        ]},
+        { type:'sheet', id:'2026', title:'2026', children:[
+          { type:'sheet', id:'2026_02', title:'2월', children:[
+            { type:'sheet', id:'20260216', title:'02.16', children: frames(5226, 50, 130) }
+          ]},
+          { type:'sheet', id:'2026_05', title:'5월', children:[
+            { type:'sheet', id:'20260510', title:'05.10', children: frames(9001, 60, 97)  }
+          ]}
+        ]}
+      ];
+    }
+
     function openContactSheetOverlay(content) {
       // 기존 오버레이 제거
       const existing = document.getElementById('csOverlay');
       if (existing) existing.remove();
+
+      // photos가 계층구조가 아니면 항상 데모 데이터 사용
+      if (!content.photos || !content.photos.length || !content.photos.some(p => p.type === 'sheet')) {
+        content = Object.assign({}, content, { photos: buildDemoContactSheet() });
+      }
 
       const overlay = document.createElement('div');
       overlay.id = 'csOverlay';
