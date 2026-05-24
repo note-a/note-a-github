@@ -1185,12 +1185,25 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           } catch(e) { currentData = []; }
 
           if (title) {
-            // 서브시트로 추가 (같은 제목 있으면 덮어쓰기)
-            const existIdx = currentData.findIndex(p => p.title === title || p.id === title.replace(/[^a-zA-Z0-9]/g,''));
-            const newSheet = { id: title.replace(/[^a-zA-Z0-9]/g, ''), title, type: 'sheet', children: photos };
-            if (existIdx >= 0) currentData[existIdx] = newSheet;
-            else currentData.push(newSheet);
-            statusEl.textContent = `✓ "${title}" 서브시트 ${photos.length}장 추가됨`;
+            // 경로 방식: "2025/1월/20250116" → 중첩 폴더 자동 생성
+            const pathParts = title.split('/').map(p => p.trim()).filter(Boolean);
+
+            function addAtPath(arr, parts, leafPhotos) {
+              const part = parts[0];
+              let node = arr.find(p => p.type === 'sheet' && p.title === part);
+              if (!node) {
+                node = { id: part.replace(/\s/g, '_'), title: part, type: 'sheet', children: [] };
+                arr.push(node);
+              }
+              if (parts.length === 1) {
+                node.children = leafPhotos; // 최종 leaf: 사진 배열
+              } else {
+                addAtPath(node.children, parts.slice(1), leafPhotos);
+              }
+            }
+
+            addAtPath(currentData, pathParts, photos);
+            statusEl.textContent = `✓ "${pathParts.join(' › ')}" ${photos.length}장 추가됨`;
           } else {
             // 플랫으로 추가 (중복 id 스킵)
             photos.forEach(p => { if (!currentData.find(e => e.id === p.id)) currentData.push(p); });
@@ -1285,7 +1298,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             <div style="display:flex;gap:8px;">
               <div style="flex:1;">
                 <label style="color:#39dc00;font-size:9px;">세션 제목 (예: 2026.02.16)</label>
-                <input id="csMdTitle" type="text" placeholder="2026.02.16"
+                <input id="csMdTitle" type="text" placeholder="2025/1월/20250116  (/ 로 경로 구분)"
                   style="width:100%;margin-top:3px;background:#000;border:1px solid rgba(57,220,0,0.5);color:#39dc00;padding:4px 8px;font-family:monospace;font-size:10px;box-sizing:border-box;outline:none;">
               </div>
               <div style="flex:1;">
