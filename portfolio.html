@@ -2375,8 +2375,8 @@ REQUIRE LOGIN: No (Public access enabled)
 
       const overlay = document.createElement('div');
       overlay.id = 'csOverlay';
-      const isMobileOverlay = window.innerWidth < 768;
-      const overlayInset = isMobileOverlay ? '0px' : '10vh 23vw';
+      const isMobileOverlay = window.innerWidth < 1024;
+      const overlayInset = isMobileOverlay ? '4px' : '10vh 23vw';
       overlay.style.cssText = `
         position: fixed; inset: ${overlayInset};
         background: #000; z-index: 9000;
