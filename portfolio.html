@@ -1833,7 +1833,9 @@ REQUIRE LOGIN: No (Public access enabled)
           contents.inclusion.text = adminContents.inclusion.text;
         }
         if (adminContents.intro && adminContents.intro.photos && adminContents.intro.photos.length > 0) {
-          contents.intro.photos = adminContents.intro.photos;
+          // 계층구조(type:'sheet')가 있는 경우만 적용 — 평면 배열은 가상 데모 데이터 유지
+          const hasHierarchy = adminContents.intro.photos.some(p => p.type === 'sheet');
+          if (hasHierarchy) contents.intro.photos = adminContents.intro.photos;
         }
         if (adminContents.rule && adminContents.rule.items && adminContents.rule.items.length > 0) {
           contents.rule.items = adminContents.rule.items;
