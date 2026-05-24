@@ -1447,7 +1447,40 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
       intro: {
         title: 'entire',
         isContactSheet: true,
-        photos: []
+        photos: (function(){
+          // 가상 밀착 시뮬레이션 데이터 생성
+          function sess(base, count, dirs) {
+            var V = ['drop','drop','drop','drop','drop','drop','drop','support','support','hold','core'];
+            return Array.from({length: count}, function(_, i) {
+              var n = base + i;
+              var seed = (n * 7 + i * 13) % V.length;
+              return { id: 'DSCF' + n, filename: 'DSCF' + n + '.jpg', verdict: V[seed], dir: dirs ? dirs[n % dirs.length] : '' };
+            });
+          }
+          return [
+            { type:'sheet', id:'2025', title:'2025', children:[
+              { type:'sheet', id:'2025_01', title:'1월', children:[
+                { type:'sheet', id:'20250116', title:'20250116', children: sess(6301, 74, ['corridor','rooftop','transit']) },
+                { type:'sheet', id:'20250203', title:'20250203', children: sess(5801, 62, ['window','street','platform']) }
+              ]},
+              { type:'sheet', id:'2025_03', title:'3월', children:[
+                { type:'sheet', id:'20250315', title:'20250315', children: sess(7012, 88, ['interior','market','entrance']) },
+                { type:'sheet', id:'20250328', title:'20250328', children: sess(7104, 55, ['alley','rooftop','night']) }
+              ]},
+              { type:'sheet', id:'2025_07', title:'7월', children:[
+                { type:'sheet', id:'20250722', title:'20250722', children: sess(8143, 95, ['garden','bridge','station']) }
+              ]}
+            ]},
+            { type:'sheet', id:'2026', title:'2026', children:[
+              { type:'sheet', id:'2026_02', title:'2월', children:[
+                { type:'sheet', id:'20260216', title:'20260216', children: sess(5226, 113, ['bus','apartment','crosswalk','overpass']) }
+              ]},
+              { type:'sheet', id:'2026_05', title:'5월', children:[
+                { type:'sheet', id:'20260510', title:'20260510', children: sess(9001, 68, ['park','underpass','market']) }
+              ]}
+            ]}
+          ];
+        })()
       },
       rule: {
         title: 'Rule',
@@ -2244,6 +2277,55 @@ REQUIRE LOGIN: No (Public access enabled)
       // Navigation stack for hierarchical contact sheets
       let csNavStack = []; // [{title, photos}]
 
+      // 사진 클릭 → 풀스크린 라이트박스
+      function showLightbox(leafPhotos, startIdx) {
+        let idx = startIdx;
+        function renderLb() {
+          const existing = container.querySelector('#csLightbox');
+          if (existing) existing.remove();
+          const p = leafPhotos[idx];
+          const v = p.verdict || 'drop';
+          const color = COLORS[v] || '#333';
+          const num = (p.id || '').replace(/\D/g, '');
+          const fakeStyle = fakeThumbnailStyle(num);
+          const bm = overlayEl && overlayEl._blobMap;
+          const fname = (p.id || '').toUpperCase();
+          const blobSrc = bm && (bm[fname] || bm[num]);
+          const imgSrc = blobSrc || p.filename || '';
+          const lb = document.createElement('div');
+          lb.id = 'csLightbox';
+          lb.style.cssText = 'position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:monospace;';
+          lb.innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid #39dc00;flex-shrink:0;background:#000;">
+              <button id="lbBackBtn" style="font-size:9px;padding:2px 8px;border:1px solid rgba(57,220,0,0.5);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;letter-spacing:1px;">↩ GRID</button>
+              <span style="font-size:10px;color:#39dc00;flex:1;letter-spacing:1px;">${p.id || ''}</span>
+              <span style="font-size:9px;padding:1px 6px;border:1px solid ${color};color:${color};">${LABELS[v] || v}</span>
+              ${p.dir ? `<span style="font-size:9px;color:#555;font-family:monospace;">${p.dir}</span>` : ''}
+              <span style="font-size:9px;color:#333;font-family:monospace;">${idx + 1} / ${leafPhotos.length}</span>
+              <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">←</button>
+              <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">→</button>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden;${fakeStyle}">
+              <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;" loading="lazy" onerror="this.style.opacity='0'">
+            </div>
+            ${p.reason ? `<div style="padding:6px 14px;border-top:1px dashed rgba(57,220,0,0.25);font-size:9px;color:#888;font-family:monospace;flex-shrink:0;">${p.reason}</div>` : ''}
+          `;
+          container.style.position = 'relative';
+          container.appendChild(lb);
+          lb.querySelector('#lbBackBtn').addEventListener('click', () => { lb.remove(); document.removeEventListener('keydown', onKey); });
+          lb.querySelector('#lbPrevBtn').addEventListener('click', () => { idx = (idx - 1 + leafPhotos.length) % leafPhotos.length; renderLb(); });
+          lb.querySelector('#lbNextBtn').addEventListener('click', () => { idx = (idx + 1) % leafPhotos.length; renderLb(); });
+        }
+        function onKey(e) {
+          if (!container.querySelector('#csLightbox')) { document.removeEventListener('keydown', onKey); return; }
+          if (e.key === 'ArrowRight') { idx = (idx + 1) % leafPhotos.length; renderLb(); }
+          if (e.key === 'ArrowLeft') { idx = (idx - 1 + leafPhotos.length) % leafPhotos.length; renderLb(); }
+          if (e.key === 'Escape') { container.querySelector('#csLightbox')?.remove(); document.removeEventListener('keydown', onKey); }
+        }
+        document.addEventListener('keydown', onKey);
+        renderLb();
+      }
+
       // 오버레이 헤더 타이틀 업데이트
       function updateTitle(levelTitle) {
         if (!titleEl) return;
@@ -2387,33 +2469,10 @@ REQUIRE LOGIN: No (Public access enabled)
               return;
             }
 
-            const v = p.verdict || 'drop';
-            if (activeCell === cell) {
-              cell.style.outline = SHOW_BORDER.includes(v) ? `2px solid ${COLORS[v]}` : 'none';
-              cell.style.opacity = SHOW_BORDER.includes(v) ? '1' : '0.35';
-              document.getElementById('csDetail').style.display = 'none';
-              activeCell = null;
-              return;
-            }
-            if (activeCell) {
-              const pv = activeCell.getAttribute('data-v') || 'drop';
-              activeCell.style.outline = SHOW_BORDER.includes(pv) ? `2px solid ${COLORS[pv]}` : 'none';
-              activeCell.style.opacity = SHOW_BORDER.includes(pv) ? '1' : '0.35';
-            }
-            cell.style.outline = '2px solid #fff';
-            cell.style.opacity = '1';
-            activeCell = cell;
-
-            document.getElementById('csDetName').textContent = p.id || '';
-            document.getElementById('csDetTags').innerHTML =
-              `<span style="font-size:9px;font-family:monospace;padding:1px 5px;border:1px solid ${COLORS[v]||'#555'};color:${COLORS[v]||'#555'};">${LABELS[v]||v}</span>` +
-              (p.dir ? p.dir.split('·').map(t=>`<span style="font-size:9px;font-family:monospace;padding:1px 5px;border:1px solid rgba(57,220,0,0.3);color:#888;">${t.trim()}</span>`).join('') : '');
-            document.getElementById('csDetReason').textContent = p.reason || '';
-            document.getElementById('csDetImg').innerHTML =
-              `<img src="${p.filename}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.outerHTML='<span style=\\"font-size:9px;color:#444;font-family:monospace;\\">${p.id||''}</span>'">`;
-            const det = document.getElementById('csDetail');
-            det.style.display = 'block';
-            det.scrollIntoView({ behavior:'smooth', block:'nearest' });
+            // 사진 클릭 → 라이트박스
+            const leafPhotos = photos.filter(pp => pp.type !== 'sheet');
+            const leafIdx = leafPhotos.indexOf(p);
+            if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
           });
         });
 
