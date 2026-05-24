@@ -2248,6 +2248,7 @@ REQUIRE LOGIN: No (Public access enabled)
         font-family: monospace;
         border: 1px solid #39dc00;
         box-shadow: 0 0 40px rgba(57,220,0,0.15);
+        opacity: 0; transition: opacity 0.3s ease;
       `;
 
       // 헤더 바
@@ -2272,16 +2273,20 @@ REQUIRE LOGIN: No (Public access enabled)
       `;
 
       document.body.appendChild(overlay);
+      requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
       // 닫기
       function closeOverlay() {
-        // 사용한 blob URL 해제
-        if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
-        overlay.remove();
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
+          overlay.remove();
+        }, 300);
       }
       document.getElementById('csOverlayClose').addEventListener('click', closeOverlay);
       document.addEventListener('keydown', function onEsc(e) {
         if (e.key === 'Escape') { closeOverlay(); document.removeEventListener('keydown', onEsc); }
+        // Escape는 closeOverlay 내부에서 fade 후 remove됨
       });
 
       // 로컬 폴더에서 사진 불러오기
