@@ -47,12 +47,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border: 1px solid rgba(57,220,0,0.35);
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.15), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(57,220,0,0.15);
+  position: relative;
 }
 
 .menu-titlebar {
@@ -95,10 +93,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .menu-item {
   padding: 12px;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border: 1px solid rgba(57,220,0,0.5);
   background: #000;
   color: #39dc00;
   cursor: pointer;
@@ -134,12 +129,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border: 1px solid rgba(57,220,0,0.35);
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.15), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(57,220,0,0.15);
+  position: relative;
 }
 
 .terminal-titlebar {
@@ -3733,7 +3726,39 @@ REQUIRE LOGIN: No (Public access enabled)
     })();
 
     // Initialize on page load
+    // ASCII 프레임 코너 + 상하 선 추가
+    function addAsciiFrames() {
+      const FILL = '═'.repeat(200);
+      document.querySelectorAll('.terminal-section, .menu-section').forEach(function(el) {
+        // 상단 바
+        const top = document.createElement('div');
+        top.setAttribute('aria-hidden','true');
+        top.style.cssText = 'position:absolute;top:-8px;left:0;right:0;height:10px;overflow:hidden;white-space:nowrap;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:5;';
+        top.textContent = '╔' + FILL;
+        el.appendChild(top);
+        // 하단 바
+        const bot = document.createElement('div');
+        bot.setAttribute('aria-hidden','true');
+        bot.style.cssText = 'position:absolute;bottom:-8px;left:0;right:0;height:10px;overflow:hidden;white-space:nowrap;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:5;';
+        bot.textContent = '╚' + FILL;
+        el.appendChild(bot);
+        // 우상단 ╗
+        const tr = document.createElement('span');
+        tr.setAttribute('aria-hidden','true');
+        tr.style.cssText = 'position:absolute;top:-8px;right:0;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:6;background:#000;';
+        tr.textContent = '╗';
+        el.appendChild(tr);
+        // 우하단 ╝
+        const br = document.createElement('span');
+        br.setAttribute('aria-hidden','true');
+        br.style.cssText = 'position:absolute;bottom:-8px;right:0;font-family:"Courier New",monospace;font-size:11px;color:#39dc00;line-height:1;pointer-events:none;z-index:6;background:#000;';
+        br.textContent = '╝';
+        el.appendChild(br);
+      });
+    }
+
     document.addEventListener('DOMContentLoaded', async function() {
+      addAsciiFrames();
       // IndexedDB 캐시 먼저 로드 (admin에서 저장한 대용량 데이터 읽기)
       await refreshArchiveCache();
 
