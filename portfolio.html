@@ -2274,8 +2274,10 @@ REQUIRE LOGIN: No (Public access enabled)
       const LABELS = { core:'CORE', support:'SUP', hold:'HOLD', dup:'DUP', note:'NOTE', drop:'DROP' };
       const SHOW_BORDER = ['core','support','hold'];
 
-      // Navigation stack for hierarchical contact sheets
+      // Navigation stack + current level state (for event delegation)
       let csNavStack = []; // [{title, photos}]
+      let currentPhotos = [];
+      let currentLevelTitle = '';
 
       // 사진 클릭 → 풀스크린 라이트박스
       function showLightbox(leafPhotos, startIdx) {
@@ -2336,6 +2338,8 @@ REQUIRE LOGIN: No (Public access enabled)
       }
 
       function renderLevel(photos, levelTitle) {
+        currentPhotos = photos;
+        currentLevelTitle = levelTitle;
         updateTitle(levelTitle);
 
         // Empty state
@@ -2435,78 +2439,60 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>`;
 
-        // Back button
-        const backBtnEl = document.getElementById('csBackBtn');
-        if (backBtnEl) {
-          backBtnEl.addEventListener('click', () => {
+      }
+      // ─── 이벤트 위임: container에 단 하나의 리스너로 모든 클릭 처리 ───
+      container.addEventListener('click', function(e) {
+        // BACK 버튼
+        if (e.target.closest('#csBackBtn')) {
+          if (csNavStack.length > 0) {
             const prev = csNavStack.pop();
             renderLevel(prev.photos, prev.title);
-            updateTitle(prev.title);
-          });
+          }
+          return;
         }
-
-        // Cell click handlers
-        let activeCell = null;
-        document.querySelectorAll('.cs-cell').forEach(cell => {
-          cell.addEventListener('click', () => {
-            const idx = parseInt(cell.getAttribute('data-idx'));
-            const p = photos[idx];
-
-            // Folder → navigate into sub-sheet
-            if (p.type === 'sheet') {
-              csNavStack.push({ title: levelTitle, photos: photos });
-              renderLevel(p.children || [], p.title || p.id);
-              // blob URL 새로 렌더된 img에 적용
-              if (overlayEl && overlayEl._blobMap) {
-                const bm = overlayEl._blobMap;
-                container.querySelectorAll('img[data-fname]').forEach(img => {
-                  const fn = img.getAttribute('data-fname');
-                  const n = fn.replace(/\D/g,'');
-                  const u = bm[fn] || bm[n];
-                  if (u) { img.style.opacity = '1'; img.src = u; }
-                });
-              }
-              return;
-            }
-
-            // 사진 클릭 → 라이트박스
-            const leafPhotos = photos.filter(pp => pp.type !== 'sheet');
-            const leafIdx = leafPhotos.indexOf(p);
-            if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
+        // 필터 버튼
+        const fb = e.target.closest('.cs-fb');
+        if (fb) {
+          const f = fb.getAttribute('data-f');
+          container.querySelectorAll('.cs-fb').forEach(b => {
+            const bv = b.getAttribute('data-f');
+            const bc = bv === 'all' ? '#39dc00' : (COLORS[bv] || '#666');
+            b.style.background = b === fb ? bc : 'transparent';
+            b.style.color = b === fb ? '#000' : bc;
           });
-        });
-
-        // Filter button handlers (leaf photos only)
-        document.querySelectorAll('.cs-fb').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const f = btn.getAttribute('data-f');
-            document.querySelectorAll('.cs-fb').forEach(b => {
-              const bv = b.getAttribute('data-f');
-              const bc = bv === 'all' ? '#39dc00' : (COLORS[bv]||'#666');
-              const isActive = b === btn;
-              b.style.background = isActive ? bc : 'transparent';
-              b.style.color = isActive ? '#000' : bc;
-            });
-            document.querySelectorAll('.cs-cell').forEach(cell => {
-              if (cell.getAttribute('data-type') === 'sheet') {
-                cell.style.display = f === 'all' ? '' : 'none';
-                return;
-              }
-              const v = cell.getAttribute('data-v') || 'drop';
-              if (f === 'all' || v === f) {
-                cell.style.display = '';
-                cell.style.opacity = SHOW_BORDER.includes(v) ? '1' : '0.35';
-              } else {
-                cell.style.display = 'none';
-              }
-            });
-            if (activeCell) {
-              document.getElementById('csDetail').style.display = 'none';
-              activeCell = null;
-            }
+          container.querySelectorAll('.cs-cell').forEach(cell => {
+            if (cell.getAttribute('data-type') === 'sheet') { cell.style.display = f === 'all' ? '' : 'none'; return; }
+            const v = cell.getAttribute('data-v') || 'drop';
+            if (f === 'all' || v === f) { cell.style.display = ''; cell.style.opacity = SHOW_BORDER.includes(v) ? '1' : '0.35'; }
+            else { cell.style.display = 'none'; }
           });
-        });
-      }
+          return;
+        }
+        // 셀 클릭 (.cs-cell)
+        const cell = e.target.closest('.cs-cell');
+        if (!cell) return;
+        const idx = parseInt(cell.getAttribute('data-idx'));
+        const p = currentPhotos[idx];
+        if (!p) return;
+        if (p.type === 'sheet') {
+          // 폴더 → 안으로 들어가기
+          csNavStack.push({ title: currentLevelTitle, photos: currentPhotos });
+          renderLevel(p.children || [], p.title || p.id);
+          if (overlayEl && overlayEl._blobMap) {
+            const bm = overlayEl._blobMap;
+            container.querySelectorAll('img[data-fname]').forEach(img => {
+              const fn = img.getAttribute('data-fname');
+              const u = bm[fn] || bm[fn.replace(/\D/g, '')];
+              if (u) { img.style.opacity = '1'; img.src = u; }
+            });
+          }
+          return;
+        }
+        // 사진 → 라이트박스
+        const leafPhotos = currentPhotos.filter(pp => pp.type !== 'sheet');
+        const leafIdx = leafPhotos.indexOf(p);
+        if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
+      });
 
       renderLevel(content.photos || [], 'ENTIRE');
     }
