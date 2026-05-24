@@ -2258,7 +2258,8 @@ REQUIRE LOGIN: No (Public access enabled)
           padding: 7px 14px; border-bottom: 1px solid #39dc00;
           flex-shrink: 0; background: #000;
         ">
-          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;font-family:monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ENTIRE</span>
+          <span id="csOverlayTitle" style="color:#39dc00;font-size:11px;letter-spacing:2px;font-family:monospace;flex-shrink:0;">ENTIRE</span>
+          <span id="csWaveform" style="flex:1;font-family:monospace;font-size:11px;color:rgba(57,220,0,0.5);letter-spacing:2px;overflow:hidden;white-space:nowrap;text-align:center;"></span>
           <label style="cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;">
             <input type="file" id="csLocalFolder" multiple accept="image/*" style="display:none;">
             <span id="csLoadBtn" style="font-family:monospace;font-size:10px;padding:3px 10px;border:1px solid rgba(57,220,0,0.5);color:rgba(57,220,0,0.7);white-space:nowrap;cursor:pointer;">📁 사진 폴더 선택</span>
@@ -2275,8 +2276,28 @@ REQUIRE LOGIN: No (Public access enabled)
       document.body.appendChild(overlay);
       requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
+      // 파형 애니메이션
+      const BARS = ['▁','▂','▃','▄','▅','▆','▇','█'];
+      const BAR_COUNT = 24;
+      let waveOffset = 0;
+      function renderWave() {
+        const el = document.getElementById('csWaveform');
+        if (!el) return;
+        let s = '';
+        for (let i = 0; i < BAR_COUNT; i++) {
+          const val = Math.sin((i + waveOffset) * 0.45) * 0.5 + Math.sin((i + waveOffset) * 0.9) * 0.3 + Math.sin((i + waveOffset * 1.3) * 0.3) * 0.2;
+          const idx = Math.round((val + 1) / 2 * (BARS.length - 1));
+          s += BARS[Math.max(0, Math.min(BARS.length - 1, idx))];
+        }
+        el.textContent = s;
+        waveOffset += 0.4;
+      }
+      const waveTimer = setInterval(renderWave, 60);
+      overlay.addEventListener('remove', () => clearInterval(waveTimer));
+
       // 닫기
       function closeOverlay() {
+        clearInterval(waveTimer);
         overlay.style.opacity = '0';
         setTimeout(() => {
           if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
