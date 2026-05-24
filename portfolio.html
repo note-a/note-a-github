@@ -1063,32 +1063,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   .md-content th { background: #39dc00; color: #000; font-weight: bold; }
 
 
-/* ===== GLITCH TRANSITION ===== */
-.glitch-overlay {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 99999;
-  opacity: 0;
-}
-@keyframes glitch-run {
-  0%   { opacity: 0; background: none; }
-  8%   { opacity: 1; background: repeating-linear-gradient(0deg, rgba(57,220,0,0.07) 0px, rgba(57,220,0,0.07) 1px, transparent 1px, transparent 3px); transform: translateY(0); }
-  20%  { opacity: 1; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 2px, transparent 2px, transparent 4px); transform: translateY(-2px) skewX(-1deg); }
-  35%  { opacity: 1; background: repeating-linear-gradient(0deg, rgba(57,220,0,0.15) 0px, rgba(57,220,0,0.15) 1px, transparent 1px, transparent 2px); transform: translateY(1px) skewX(0.5deg); }
-  50%  { opacity: 1; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.8) 0px, rgba(0,0,0,0.8) 2px, transparent 2px, transparent 3px); transform: translateY(-1px) skewX(-0.5deg); }
-  70%  { opacity: 0.6; background: repeating-linear-gradient(0deg, rgba(57,220,0,0.05) 0px, rgba(57,220,0,0.05) 1px, transparent 1px, transparent 4px); transform: translateY(0); }
-  100% { opacity: 0; background: none; transform: none; }
-}
-.glitch-overlay.active {
-  animation: glitch-run 0.2s steps(1, end) forwards;
-}
   </style>
   <script src="./marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 </head>
 <body>
-  <div class="glitch-overlay" id="glitchOverlay"></div>
   <!-- SVG Pixelation Filter -->
   <svg style="display: none;">
     <defs>
@@ -1946,17 +1925,11 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // Initialize content display
-    function triggerGlitch(cb) {
-      const el = document.getElementById('glitchOverlay');
-      if (!el) { cb(); return; }
-      el.classList.remove('active');
-      void el.offsetWidth; // reflow to restart animation
-      el.classList.add('active');
-      setTimeout(cb, 100); // 콘텐츠는 글리치 중간(0.1s)에 교체
-    }
-
     function loadContent(section) {
-      triggerGlitch(function() { _loadContentInner(section); });
+      const terminalContent = document.getElementById('terminalContent');
+      terminalContent.style.transition = 'opacity 0.25s ease';
+      terminalContent.style.opacity = '0';
+      setTimeout(function() { _loadContentInner(section); setTimeout(function() { terminalContent.style.opacity = '1'; }, 20); }, 250);
     }
     function _loadContentInner(section) {
       const content = contents[section];
@@ -2559,8 +2532,10 @@ REQUIRE LOGIN: No (Public access enabled)
         currentLevelTitle = levelTitle;
         updateTitle(levelTitle);
 
-        // 글리치 트랜지션
-        triggerGlitch(function() {
+        // 페이드 트랜지션
+        container.style.transition = 'opacity 0.25s ease';
+        container.style.opacity = '0';
+        setTimeout(function() {
 
         // Empty state
         if (!photos || photos.length === 0) {
@@ -2663,7 +2638,8 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>`;
 
-        }); // 글리치 중 콘텐츠 교체
+        setTimeout(function() { container.style.opacity = '1'; }, 20);
+        }, 250);
 
       }
       // ─── 이벤트 위임: container에 단 하나의 리스너로 모든 클릭 처리 ───
