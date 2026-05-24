@@ -1893,9 +1893,9 @@ REQUIRE LOGIN: No (Public access enabled)
       const content = contents[section];
       const terminalContent = document.getElementById('terminalContent');
 
-      terminalContent.style.transition = 'opacity 0.2s ease';
+      terminalContent.style.transition = 'opacity 0.1s ease';
       terminalContent.style.opacity = '0';
-      setTimeout(function() { _loadContentInner(section); requestAnimationFrame(function() { terminalContent.style.opacity = '1'; }); }, 200);
+      setTimeout(function() { _loadContentInner(section); requestAnimationFrame(function() { terminalContent.style.opacity = '1'; }); }, 100);
     }
     function _loadContentInner(section) {
       const content = contents[section];
@@ -2256,7 +2256,7 @@ REQUIRE LOGIN: No (Public access enabled)
         font-family: monospace;
         border: 1px solid #39dc00;
         box-shadow: 0 0 40px rgba(57,220,0,0.15);
-        opacity: 0; transition: opacity 0.3s ease;
+        opacity: 0; transition: opacity 0.15s ease;
       `;
 
       // 헤더 바
@@ -2289,7 +2289,7 @@ REQUIRE LOGIN: No (Public access enabled)
         setTimeout(() => {
           if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
           overlay.remove();
-        }, 300);
+        }, 150);
       }
       document.getElementById('csOverlayClose').addEventListener('click', closeOverlay);
       document.addEventListener('keydown', function onEsc(e) {
@@ -2444,7 +2444,7 @@ REQUIRE LOGIN: No (Public access enabled)
         updateTitle(levelTitle);
 
         // 페이드 트랜지션
-        container.style.transition = 'opacity 0.18s ease';
+        container.style.transition = 'opacity 0.1s ease';
         container.style.opacity = '0';
 
         setTimeout(function() {
@@ -2553,7 +2553,7 @@ REQUIRE LOGIN: No (Public access enabled)
           </div>`;
 
         requestAnimationFrame(function() { container.style.opacity = '1'; });
-        }, 180); // fade out 완료 후 렌더
+        }, 100); // fade out 완료 후 렌더
 
       }
       // ─── 이벤트 위임: container에 단 하나의 리스너로 모든 클릭 처리 ───
@@ -3341,9 +3341,9 @@ REQUIRE LOGIN: No (Public access enabled)
     function loadContentToMobile(section) {
       const _mc = document.getElementById('mobileContentText');
       if (_mc) {
-        _mc.style.transition = 'opacity 0.2s ease';
+        _mc.style.transition = 'opacity 0.1s ease';
         _mc.style.opacity = '0';
-        setTimeout(function() { _loadContentToMobileInner(section); requestAnimationFrame(function() { _mc.style.opacity = '1'; }); }, 200);
+        setTimeout(function() { _loadContentToMobileInner(section); requestAnimationFrame(function() { _mc.style.opacity = '1'; }); }, 100);
       } else { _loadContentToMobileInner(section); }
     }
     function _loadContentToMobileInner(section) {
