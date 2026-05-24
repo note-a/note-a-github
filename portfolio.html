@@ -1468,14 +1468,24 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
             });
           }
           var BASE = 'https://note-a.github.io/images/entire/';
-          var V10 = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
           var realShoot = [
-            {id:'DSCF6071',verdict:V10[0]}, {id:'DSCF6072',verdict:V10[1]}, {id:'DSCF6073',verdict:V10[2]},
-            {id:'DSCF6074',verdict:V10[3]}, {id:'DSCF6075',verdict:V10[4]}, {id:'DSCF6076',verdict:V10[5]},
-            {id:'DSCF6077',verdict:V10[6]}, {id:'DSCF6078',verdict:V10[7]}, {id:'DSCF6079',verdict:V10[8]},
-            {id:'DSCF6080',verdict:V10[9]}, {id:'DSCF6081',verdict:V10[0]}, {id:'DSCF6082',verdict:V10[1]},
-            {id:'DSCF6083',verdict:V10[2]}, {id:'DSCF6084',verdict:V10[3]}, {id:'DSCF6085',verdict:V10[4]},
-            {id:'DSCF6086',verdict:V10[5]}, {id:'DSCF6087',verdict:V10[6]}
+            {id:'DSCF6071', verdict:'drop',    reason:'6070 동일씬'},
+            {id:'DSCF6072', verdict:'drop',    reason:'지하철 역 대합실, DIR 미작동'},
+            {id:'DSCF6073', verdict:'drop',    reason:'단독 벤치, 1차 ISOOBJ, 2차 미작동'},
+            {id:'DSCF6074', verdict:'drop',    reason:'과노출 광고판'},
+            {id:'DSCF6075', verdict:'drop',    reason:'완전 과노출'},
+            {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
+            {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
+            {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
+            {id:'DSCF6079', verdict:'core',    reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
+            {id:'DSCF6080', verdict:'support', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
+            {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6084', verdict:'drop',    reason:'흙 바닥+바퀴 자국, DIR 미작동'},
+            {id:'DSCF6085', verdict:'drop',    reason:'공사장 흙 바닥+갈대밭 전경, DIR 미작동'},
+            {id:'DSCF6086', verdict:'drop',    reason:'공사장 흙더미+배경 건물, DIR 미작동'},
+            {id:'DSCF6087', verdict:'drop',    reason:'6086 동일씬'}
           ].map(function(p){ return Object.assign({}, p, {url: BASE + p.id + '.jpg'}); });
 
           return [
@@ -2221,11 +2231,25 @@ REQUIRE LOGIN: No (Public access enabled)
         });
       }
       var BASE2 = 'https://note-a.github.io/images/entire/';
-      var VV = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
       var realShoot2 = [
-        'DSCF6071','DSCF6072','DSCF6073','DSCF6074','DSCF6075','DSCF6076','DSCF6077','DSCF6078',
-        'DSCF6079','DSCF6080','DSCF6081','DSCF6082','DSCF6083','DSCF6084','DSCF6085','DSCF6086','DSCF6087'
-      ].map(function(id,i){ return {id:id, verdict:VV[i%VV.length], url:BASE2+id+'.jpg'}; });
+        {id:'DSCF6071', verdict:'drop',    reason:'6070 동일씬'},
+        {id:'DSCF6072', verdict:'drop',    reason:'지하철 역 대합실, DIR 미작동'},
+        {id:'DSCF6073', verdict:'drop',    reason:'단독 벤치, 1차 ISOOBJ, 2차 미작동'},
+        {id:'DSCF6074', verdict:'drop',    reason:'과노출 광고판'},
+        {id:'DSCF6075', verdict:'drop',    reason:'완전 과노출'},
+        {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
+        {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
+        {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
+        {id:'DSCF6079', verdict:'core',    reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
+        {id:'DSCF6080', verdict:'support', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
+        {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
+        {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
+        {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
+        {id:'DSCF6084', verdict:'drop',    reason:'흙 바닥+바퀴 자국, DIR 미작동'},
+        {id:'DSCF6085', verdict:'drop',    reason:'공사장 흙 바닥+갈대밭 전경, DIR 미작동'},
+        {id:'DSCF6086', verdict:'drop',    reason:'공사장 흙더미+배경 건물, DIR 미작동'},
+        {id:'DSCF6087', verdict:'drop',    reason:'6086 동일씬'}
+      ].map(function(p){ return Object.assign({}, p, {url: BASE2+p.id+'.jpg'}); });
 
       return [
         { type:'sheet', id:'real_shoot', title:'25.??', children: realShoot2 },
