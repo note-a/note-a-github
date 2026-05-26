@@ -1308,7 +1308,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       if (subsection === 'project') {
         formHTML = generateContactSheetForm('project');
-      } else if (subsection === 'inclusion' || subsection === 'video') {
+      } else if (subsection === 'inclusion') {
+        formHTML = generateContactSheetForm('inclusion');
+      } else if (subsection === 'video') {
         formHTML = generateTextForm(subsection);
       } else if (subsection === 'intro') {
         formHTML = generateContactSheetForm('intro');
@@ -1448,7 +1450,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       const currentPhotos = sectionData && sectionData.photos
         ? JSON.stringify(sectionData.photos, null, 2)
         : '';
-      const sectionLabel = section === 'project' ? 'SET — GALLERY 편집' : 'ENTIRE — CONTACT SHEET 편집';
+      const sectionLabel = section === 'project' ? 'SET — GALLERY 편집' : section === 'inclusion' ? 'SET INCLUSION — GALLERY 편집' : 'ENTIRE — CONTACT SHEET 편집';
 
       return `
         <div style="padding:12px;display:flex;flex-direction:column;gap:14px;">

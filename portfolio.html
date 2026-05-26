@@ -1596,7 +1596,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       },
       inclusion: {
         title: 'SET Inclusion',
-        isArchivePhotos: true,
+        isContactSheet: true,
         photos: []
       },
       rule: {
@@ -1982,9 +1982,11 @@ REQUIRE LOGIN: No (Public access enabled)
         if (adminContents.archive && adminContents.archive.photos) {
           contents.archive.photos = adminContents.archive.photos;
         }
+        if (adminContents.inclusion && adminContents.inclusion.photos && adminContents.inclusion.photos.some(p => p.type === 'sheet')) {
+          contents.inclusion.photos = adminContents.inclusion.photos;
+        }
         if (adminContents.inclusionPhotos && Array.isArray(adminContents.inclusionPhotos.photos)) {
           _inclusionPhotos = adminContents.inclusionPhotos.photos;
-          contents.inclusion.photos = adminContents.inclusionPhotos.photos;
         }
 
         // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
@@ -4141,7 +4143,7 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.project && data.project.photos && data.project.photos.some(p => p.type === 'sheet')) contents.project.photos = data.project.photos;
             if (data.about && data.about.text !== undefined) contents.about.text = data.about.text;
             if (data.about && data.about.artistStatement !== undefined) contents.about.artistStatement = data.about.artistStatement;
-            if (data.inclusion && data.inclusion.text) contents.inclusion.text = data.inclusion.text;
+            if (data.inclusion && data.inclusion.photos && data.inclusion.photos.some(p => p.type === 'sheet')) contents.inclusion.photos = data.inclusion.photos;
             if (data.intro && data.intro.photos && data.intro.photos.some(p => p.type === 'sheet')) contents.intro.photos = data.intro.photos;
             if (data.rule && data.rule.items) contents.rule.items = data.rule.items;
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
@@ -4149,7 +4151,6 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
             if (data.inclusionPhotos && Array.isArray(data.inclusionPhotos.photos)) {
               _inclusionPhotos = data.inclusionPhotos.photos;
-              contents.inclusion.photos = data.inclusionPhotos.photos;
             }
           }
 
