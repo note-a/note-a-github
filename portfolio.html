@@ -9,19 +9,20 @@
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
 /* ── WARNING BANNER: SWEEP SCANNER ── */
+/* ── WARNING BANNER: SWEEP SCANNER (반전) ── */
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #0a0000;
-  border-top: 1px solid #440000;
-  border-bottom: 1px solid #440000;
+  background: #ff0000;
+  border-top: 1px solid #cc0000;
+  border-bottom: 1px solid #cc0000;
   z-index: 9999;
   font-family: 'Courier New', monospace;
   overflow: hidden;
 }
-/* 스캔 빛 */
+/* 스캔 빛 — 밝은 배경에서 어두운 sweep */
 .top-banner-sweep {
   position:absolute; top:0; left:-20%; width:15%; height:100%;
-  background: linear-gradient(90deg, transparent, rgba(255,0,0,0.15), rgba(255,0,0,0.28), rgba(255,0,0,0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), rgba(0,0,0,0.2), rgba(0,0,0,0.1), transparent);
   animation: tb-sweep 2.8s linear infinite;
   pointer-events:none;
 }
@@ -32,30 +33,30 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding:0 36px 0 14px;
 }
 .top-banner-left {
-  color:#000; background:#ff0000;
+  color:#ff0000; background:#000;
   font-size:9px; font-weight:bold; letter-spacing:2px;
   padding:2px 8px; flex-shrink:0; display:inline-flex; align-items:center; gap:5px;
 }
 .top-banner-dot {
-  width:5px; height:5px; background:#000; border-radius:50%;
+  width:5px; height:5px; background:#ff0000; border-radius:50%;
   animation: tb-blink 1s ease-in-out infinite;
 }
 @keyframes tb-blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
 .top-banner-code {
-  color:#cc0000; font-size:9px; white-space:nowrap; flex-shrink:0;
-  letter-spacing:1px; border:1px solid #660000; padding:1px 5px;
+  color:#000; font-size:9px; white-space:nowrap; flex-shrink:0;
+  letter-spacing:1px; border:1px solid rgba(0,0,0,0.35); padding:1px 5px;
 }
 .top-banner-msg {
-  color:rgba(204,0,0,0.88); font-size:10px; letter-spacing:0.5px;
+  color:rgba(0,0,0,0.85); font-size:10px; letter-spacing:0.5px;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .top-banner-close {
   position:absolute; right:0; top:0; bottom:0; width:32px;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:#660000; font-size:12px;
-  border-left:1px solid #330000; transition:background 0.15s;
+  cursor:pointer; color:rgba(0,0,0,0.5); font-size:12px;
+  border-left:1px solid rgba(0,0,0,0.2); transition:background 0.15s;
 }
-.top-banner-close:hover { background:rgba(255,0,0,0.12); color:#ff0000; }
+.top-banner-close:hover { background:rgba(0,0,0,0.15); color:#000; }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -1243,7 +1244,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </span>
       <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
       <span class="top-banner-msg" id="tbMsg"></span>
-      <span id="tbIdx" style="font-size:8px;color:rgba(255,0,0,0.35);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
+      <span id="tbIdx" style="font-size:8px;color:rgba(0,0,0,0.35);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
     </div>
     <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
