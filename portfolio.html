@@ -8,79 +8,71 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
-/* ── WARNING BANNER ── */
+/* ── WARNING BANNER — HTTP 403 STYLE ── */
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #ff0000;
-  border-bottom: 1px solid #cc0000;
+  background: #080808;
+  border-top: 2px solid #cc0000;
+  border-bottom: 1px solid #1a1a1a;
   z-index: 9999;
   font-family: 'Courier New', monospace;
   overflow: hidden;
-  animation: tb-pulse 1.8s ease-in-out infinite;
+  display: flex; align-items: center;
 }
-/* 배경 맥박 */
-@keyframes tb-pulse {
-  0%,100% { background:#ff0000; }
-  50%     { background:#dd0000; }
+/* 하단 스캔 라인 */
+.top-banner::after {
+  content:''; position:absolute; bottom:0; left:0; height:1px;
+  background:#cc0000; opacity:0.5;
+  animation: tb-scan 3s linear infinite;
 }
-/* 스캔 빛 1 — 메인 */
-.top-banner-sweep {
-  position:absolute; top:0; left:-25%; width:18%; height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),rgba(255,255,255,0.32),rgba(255,255,255,0.18),transparent);
-  animation: tb-sweep1 2.4s linear infinite;
-  pointer-events:none;
+@keyframes tb-scan { 0%{width:0} 100%{width:100%} }
+/* 에러 코드 블록 */
+.top-banner-code {
+  font-size: 15px; font-weight: bold; color: #cc0000;
+  padding: 0 12px; letter-spacing: -0.5px; line-height: 1;
+  border-right: 1px solid #1a1a1a; flex-shrink: 0;
+  animation: tb-num 5s steps(1) infinite;
 }
-/* 스캔 빛 2 — 빠른 얇은 선 */
-.top-banner-sweep2 {
-  position:absolute; top:0; left:-10%; width:6%; height:100%;
-  background:linear-gradient(90deg,transparent,rgba(0,0,0,0.2),transparent);
-  animation: tb-sweep2 1.5s linear infinite 0.7s;
-  pointer-events:none;
+@keyframes tb-num {
+  0%,100%{ color:#cc0000; }
+  50%    { color:#ff2200; text-shadow:0 0 8px rgba(255,34,0,0.5); }
+  50.2%  { color:#cc0000; text-shadow:none; }
 }
-@keyframes tb-sweep1 { 0%{left:-25%} 100%{left:110%} }
-@keyframes tb-sweep2 { 0%{left:-10%} 100%{left:110%} }
-/* 노이즈 라인 */
-.top-banner-noise {
-  position:absolute; inset:0; pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px);
-}
+/* 중앙 영역 */
 .top-banner-body {
-  position:relative; z-index:2; height:100%;
-  display:flex; align-items:center; justify-content:center; gap:12px;
-  padding:0 36px 0 14px;
+  flex:1; display:flex; align-items:center; gap:10px;
+  padding:0 12px; overflow:hidden; position:relative;
 }
-/* WARNING 배지 — 반짝 */
+/* 배지 */
 .top-banner-left {
-  color:#ff0000; background:#000;
-  font-size:9px; font-weight:bold; letter-spacing:2px;
-  padding:2px 8px; flex-shrink:0; display:inline-flex; align-items:center; gap:5px;
-  animation: tb-badge 3.6s steps(1) infinite;
+  font-size: 8px; letter-spacing: 2px; color: #cc0000;
+  background: rgba(204,0,0,0.1); border: 1px solid rgba(204,0,0,0.3);
+  padding: 2px 6px; flex-shrink: 0;
+  animation: tb-badge 2.4s steps(1) infinite;
 }
 @keyframes tb-badge {
-  0%,100%{background:#000;color:#ff0000}
-  50%    {background:#ff0000;color:#000;outline:1px solid #000}
-  50.5%  {background:#000;color:#ff0000}
-}
-.top-banner-dot {
-  width:5px; height:5px; background:currentColor; border-radius:50%;
-  animation: tb-blink 0.7s ease-in-out infinite;
-}
-@keyframes tb-blink { 0%,100%{opacity:1} 50%{opacity:0} }
-.top-banner-code {
-  color:#000; font-size:9px; white-space:nowrap; flex-shrink:0;
-  letter-spacing:1px; border:1px solid rgba(0,0,0,0.4); padding:1px 5px;
+  0%,80%,100%{opacity:1}
+  85%{opacity:0.15} 90%{opacity:1} 93%{opacity:0.4} 96%{opacity:1}
 }
 .top-banner-msg {
-  color:rgba(0,0,0,0.88); font-size:10px; letter-spacing:0.5px;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size: 11px; color: #555;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex:1;
 }
+/* 우측 시각/카운터 */
+.top-banner-right {
+  font-size: 9px; color: #333; flex-shrink:0;
+  padding: 0 8px 0 0; text-align:right; line-height:1.5;
+  display:flex; flex-direction:column; align-items:flex-end;
+}
+.top-banner-count { color:#cc0000; font-size:9px; }
+/* 닫기 */
 .top-banner-close {
-  position:absolute; right:0; top:0; bottom:0; width:32px;
+  position:absolute; right:0; top:0; bottom:0; width:28px;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:rgba(0,0,0,0.45); font-size:12px;
-  border-left:1px solid rgba(0,0,0,0.2); transition:background 0.15s;
+  cursor:pointer; color:#333; font-size:11px;
+  border-left:1px solid #1a1a1a; transition:background 0.15s; flex-shrink:0;
 }
-.top-banner-close:hover { background:rgba(0,0,0,0.15); color:#000; }
+.top-banner-close:hover { background:rgba(204,0,0,0.12); color:#cc0000; }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -1260,82 +1252,83 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </svg>
 
   <div class="top-banner" id="topBanner">
-    <div class="top-banner-sweep"></div>
-    <div class="top-banner-sweep2"></div>
-    <div class="top-banner-noise"></div>
+    <span class="top-banner-code" id="tbCode">403</span>
     <div class="top-banner-body">
-      <span class="top-banner-left">
-        <span class="top-banner-dot"></span>
-        <span id="tbLabel">WARNING</span>
-      </span>
-      <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
+      <span class="top-banner-left" id="tbLabel">접근 거부</span>
       <span class="top-banner-msg" id="tbMsg"></span>
-      <span id="tbIdx" style="font-size:8px;color:rgba(0,0,0,0.35);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
+    </div>
+    <div class="top-banner-right">
+      <span id="tbTime">--:--:--</span>
+      <span class="top-banner-count" id="tbCount"></span>
     </div>
     <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
   <script>
   (function(){
     const MSGS = [
-      { code:'ERR_ACCESS_RESTRICTED', label:'WARNING', text:'UNAUTHORIZED REPRODUCTION OR USE OF THIS CONTENT IS STRICTLY PROHIBITED — ALL RIGHTS RESERVED' },
-      { code:'ERR_COPY_FORBIDDEN',    label:'WARNING', text:'DUPLICATION OR REDISTRIBUTION OF IMAGES WITHOUT CONSENT IS A LEGAL VIOLATION' },
-      { code:'SYS_MONITOR_ACTIVE',    label:'NOTICE',  text:'THIS SYSTEM IS MONITORED — ALL ACCESS ATTEMPTS ARE LOGGED FOR SECURITY PURPOSES' },
-      { code:'ERR_RIGHTS_VIOLATION',  label:'WARNING', text:'ALL PHOTOGRAPHS AND CONTENT ARE PROTECTED BY COPYRIGHT — UNAUTHORIZED USE IS FORBIDDEN' },
-      { code:'ERR_UNAUTHORIZED_USE',  label:'ALERT',   text:'PROCEED WITH AUTHORIZED ACCESS ONLY — VIOLATION OF THESE TERMS MAY RESULT IN LEGAL ACTION' },
+      '오류가 감지되었습니다 — 해당 요청이 차단되었습니다',
+      '비정상적인 접근이 탐지되었습니다 — 보안 시스템이 활성화되었습니다',
+      '오류가 발생했습니다 — 이 리소스에 대한 접근 권한이 없습니다',
+      '시스템 경고 · 허가되지 않은 접근 시도가 감지되었습니다',
+      '경고: 비정상적인 활동이 탐지되었습니다 — 세션이 모니터링 중입니다',
     ];
     const CHARS = '!@#$%&?/|[]{}<>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-=_+';
-    const codeEl = document.getElementById('tbCode');
-    const msgEl  = document.getElementById('tbMsg');
-    const lblEl  = document.getElementById('tbLabel');
-    const idxEl  = document.getElementById('tbIdx');
-    let mi = 0, ivs = [], tms = [];
+    const msgEl   = document.getElementById('tbMsg');
+    const timeEl  = document.getElementById('tbTime');
+    const countEl = document.getElementById('tbCount');
+    let mi = 0, attempts = Math.floor(Math.random()*30)+8, ivs = [], tms = [];
 
     function rc() { return CHARS[Math.floor(Math.random()*CHARS.length)]; }
 
     function decode(el, text, charDelay, startDelay, onDone) {
       const len = text.length;
       const locked = new Array(len).fill(false);
-      const buf = text.split('').map(c => /[\s—]/.test(c) ? c : rc());
+      const buf = text.split('').map(c => /[\s·—\-]/.test(c) ? c : rc());
       const iv = setInterval(() => {
         for (let i = 0; i < len; i++)
-          if (!locked[i] && !/[\s—]/.test(text[i])) buf[i] = rc();
+          if (!locked[i] && !/[\s·—\-]/.test(text[i])) buf[i] = rc();
         el.textContent = buf.join('');
       }, 40);
       ivs.push(iv);
       let pos = 0;
       function lockNext() {
-        while (pos < len && /[\s—]/.test(text[pos])) { locked[pos]=true; buf[pos]=text[pos]; pos++; }
+        while (pos < len && /[\s·—\-]/.test(text[pos])) { locked[pos]=true; buf[pos]=text[pos]; pos++; }
         if (pos >= len) { clearInterval(iv); el.textContent = text; onDone && onDone(); return; }
         locked[pos]=true; buf[pos]=text[pos]; pos++;
-        tms.push(setTimeout(lockNext, charDelay + Math.random()*14));
+        tms.push(setTimeout(lockNext, charDelay + Math.random()*12));
       }
       tms.push(setTimeout(lockNext, startDelay));
     }
 
-    function clearAll() {
-      ivs.forEach(clearInterval); ivs = [];
-      tms.forEach(clearTimeout);  tms = [];
+    function clearAll() { ivs.forEach(clearInterval); ivs=[]; tms.forEach(clearTimeout); tms=[]; }
+
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function tickTime(){
+      const d=new Date();
+      timeEl.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
     }
+    tickTime(); setInterval(tickTime, 1000);
+
+    setInterval(()=>{
+      attempts += Math.random()<0.3 ? Math.ceil(Math.random()*3) : 1;
+      countEl.textContent = attempts+'회 시도';
+    }, 2000);
+    countEl.textContent = attempts+'회 시도';
 
     function run() {
       clearAll();
-      const m = MSGS[mi];
-      lblEl.textContent = m.label;
-      idxEl.textContent = (mi+1)+'/'+MSGS.length;
-      decode(codeEl, m.code, 55, 60, null); // 바디 우측 코드
-      decode(msgEl,  m.text, 22, 100, () => {
-        tms.push(setTimeout(() => { mi = (mi+1)%MSGS.length; run(); }, 2800));
+      decode(msgEl, MSGS[mi], 28, 80, () => {
+        tms.push(setTimeout(() => { mi=(mi+1)%MSGS.length; run(); }, 3000));
       });
     }
-
-    tms.push(setTimeout(run, 300));
+    tms.push(setTimeout(run, 200));
 
     document.getElementById('topBannerClose').addEventListener('click', () => {
       clearAll();
       const b = document.getElementById('topBanner');
       b.style.transition = 'opacity 0.2s, transform 0.2s';
-      b.style.opacity = '0'; b.style.transform = 'translateY(-100%)';
-      setTimeout(() => b.remove(), 220);
+      b.style.opacity='0'; b.style.transform='translateY(-100%)';
+      setTimeout(()=>b.remove(), 220);
     });
   })();
   </script>
