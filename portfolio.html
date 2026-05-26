@@ -11,9 +11,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 /* ── WARNING BANNER — HTTP 403 STYLE ── */
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #080808;
+  background: #0d0d0d;
   border-top: 2px solid #cc0000;
-  border-bottom: 1px solid #1a1a1a;
+  border-bottom: 1px solid #2a0000;
   z-index: 9999;
   font-family: 'Courier New', monospace;
   overflow: hidden;
@@ -22,21 +22,21 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 /* 하단 스캔 라인 */
 .top-banner::after {
   content:''; position:absolute; bottom:0; left:0; height:1px;
-  background:#cc0000; opacity:0.5;
+  background:#cc0000; opacity:0.6;
   animation: tb-scan 3s linear infinite;
 }
 @keyframes tb-scan { 0%{width:0} 100%{width:100%} }
 /* 에러 코드 블록 */
 .top-banner-code {
-  font-size: 15px; font-weight: bold; color: #cc0000;
-  padding: 0 12px; letter-spacing: -0.5px; line-height: 1;
-  border-right: 1px solid #1a1a1a; flex-shrink: 0;
+  font-size: 15px; font-weight: bold; color: #ff2200;
+  padding: 0 14px; letter-spacing: -0.5px; line-height: 1;
+  border-right: 1px solid #2a0000; flex-shrink: 0;
   animation: tb-num 5s steps(1) infinite;
 }
 @keyframes tb-num {
-  0%,100%{ color:#cc0000; }
-  50%    { color:#ff2200; text-shadow:0 0 8px rgba(255,34,0,0.5); }
-  50.2%  { color:#cc0000; text-shadow:none; }
+  0%,100%{ color:#ff2200; }
+  50%    { color:#ff4400; text-shadow:0 0 10px rgba(255,34,0,0.6); }
+  50.2%  { color:#ff2200; text-shadow:none; }
 }
 /* 중앙 영역 */
 .top-banner-body {
@@ -45,34 +45,35 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 /* 배지 */
 .top-banner-left {
-  font-size: 8px; letter-spacing: 2px; color: #cc0000;
-  background: rgba(204,0,0,0.1); border: 1px solid rgba(204,0,0,0.3);
-  padding: 2px 6px; flex-shrink: 0;
+  font-size: 9px; letter-spacing: 2px; color: #ff3300;
+  background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.5);
+  padding: 2px 7px; flex-shrink: 0;
   animation: tb-badge 2.4s steps(1) infinite;
 }
 @keyframes tb-badge {
   0%,80%,100%{opacity:1}
-  85%{opacity:0.15} 90%{opacity:1} 93%{opacity:0.4} 96%{opacity:1}
+  85%{opacity:0.2} 90%{opacity:1} 93%{opacity:0.5} 96%{opacity:1}
 }
 .top-banner-msg {
-  font-size: 11px; color: #555;
+  font-size: 11px; color: #aaa;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex:1;
 }
 /* 우측 시각/카운터 */
 .top-banner-right {
-  font-size: 9px; color: #333; flex-shrink:0;
-  padding: 0 8px 0 0; text-align:right; line-height:1.5;
+  font-size: 9px; color: #666; flex-shrink:0;
+  padding: 0 10px; text-align:right; line-height:1.6;
   display:flex; flex-direction:column; align-items:flex-end;
+  border-left: 1px solid #1e1e1e;
 }
-.top-banner-count { color:#cc0000; font-size:9px; }
+.top-banner-count { color:#ff2200; font-size:9px; }
 /* 닫기 */
 .top-banner-close {
-  position:absolute; right:0; top:0; bottom:0; width:28px;
+  position:relative; right:auto; top:auto; bottom:auto; width:32px; height:32px;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:#333; font-size:11px;
-  border-left:1px solid #1a1a1a; transition:background 0.15s; flex-shrink:0;
+  cursor:pointer; color:#555; font-size:11px;
+  border-left:1px solid #1e1e1e; transition:background 0.15s; flex-shrink:0;
 }
-.top-banner-close:hover { background:rgba(204,0,0,0.12); color:#cc0000; }
+.top-banner-close:hover { background:rgba(204,0,0,0.15); color:#ff2200; }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
