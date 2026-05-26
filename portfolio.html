@@ -4402,7 +4402,7 @@ REQUIRE LOGIN: No (Public access enabled)
       // 스캔라인
       for (let y = 0; y < ch; y += 3) { cx.fillStyle='rgba(0,0,0,0.06)'; cx.fillRect(0,y,cw,1); }
 
-      // 셀 (young=yellow → old=green)
+      // 셀
       let alive = 0;
       cx.font = `bold ${SZ}px 'Courier New'`;
       for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
@@ -4411,13 +4411,8 @@ REQUIRE LOGIN: No (Public access enabled)
         const a = age[i][j];
         const gi = Math.min(Math.floor(a/9), 5);
         const alpha = .25 + gi * .14;
-        // t=0: 노랑(240,230,0) → t=1: 초록(57,220,0)
-        const t = gi / 5;
-        const r = Math.round(240 - t * 183);
-        const g2 = Math.round(230 - t * 10);
-        const b = Math.round(0);
-        if (a < 5) { cx.fillStyle=`rgba(${r},${g2},${b},0.1)`; cx.fillRect(i*SZ-1,j*SZ-1,SZ+2,SZ+2); }
-        cx.fillStyle = `rgba(${r},${g2},${b},${alpha})`;
+        if (a < 5) { cx.fillStyle='rgba(190,230,0,0.1)'; cx.fillRect(i*SZ-1,j*SZ-1,SZ+2,SZ+2); }
+        cx.fillStyle = `rgba(190,230,0,${alpha})`;
         cx.fillText(GL[gi], i*SZ, j*SZ+SZ-1);
       }
 
