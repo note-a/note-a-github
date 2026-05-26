@@ -21,7 +21,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 .top-banner-left {
   background: #9e1200; color: #000;
-  padding: 0 10px; display: flex; align-items: center;
+  padding: 2px 8px; display: inline-flex; align-items: center;
   font-weight: bold; font-size: 10px; letter-spacing: 1px;
   white-space: nowrap; flex-shrink: 0; gap: 5px;
 }
@@ -33,7 +33,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .top-banner-body {
   flex: 1; display: flex; align-items: center; justify-content: center;
   padding: 0 14px; gap: 10px; overflow: hidden;
-  border-left: 1px solid rgba(140,16,0,0.5);
 }
 .top-banner-code {
   color: #b01800; font-size: 9px; white-space: nowrap;
@@ -1232,15 +1231,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </svg>
 
   <div class="top-banner" id="topBanner">
-    <div class="top-banner-left">
-      <span class="top-banner-dot"></span>
-      <span id="tbLabel">WARNING</span>
-    </div>
     <div class="top-banner-body">
+      <span class="top-banner-left">
+        <span class="top-banner-dot"></span>
+        <span id="tbLabel">WARNING</span>
+      </span>
       <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
       <span class="top-banner-msg" id="tbMsg"></span>
+      <span id="tbIdx" style="font-size:8px;color:rgba(140,16,0,0.6);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
     </div>
-    <span id="tbIdx" style="font-size:8px;color:rgba(140,16,0,0.6);flex-shrink:0;padding:0 8px;align-self:center;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
     <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
   <script>
@@ -1374,7 +1373,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       <div class="menu-statusbar">
         <span style="color:#b0b0b0;">6 Files</span>
-        <span style="color:#ffff00;">SELECT FILE</span>
+        <span style="color:#b0b0b0;">SELECT FILE</span>
       </div>
     </div>
 
