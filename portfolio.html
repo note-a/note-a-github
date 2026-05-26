@@ -2762,7 +2762,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const previewSrc = _pFull ? _pFull.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
             return `<div class="cs-cell cs-folder" data-idx="${i}" data-type="sheet"
               style="aspect-ratio:1;background:#0d0d0d;cursor:pointer;position:relative;overflow:hidden;outline:1px solid rgba(57,220,0,0.6);">
-              <img src="${previewSrc}" style="position:absolute;top:0;left:0;width:100%;height:calc(100% - 18px);object-fit:cover;" loading="eager" decoding="async">
+              <img src="${previewSrc}" style="position:absolute;top:0;left:0;width:100%;height:calc(100% - 18px);object-fit:cover;filter:brightness(0.35) saturate(0) sepia(1) hue-rotate(85deg);" loading="eager" decoding="async">
               <div style="position:absolute;bottom:0;left:0;right:0;height:18px;background:rgba(0,0,0,0.75);border-top:1px solid rgba(57,220,0,0.4);display:flex;align-items:center;justify-content:center;gap:4px;">
                 <span style="font-size:6px;font-family:monospace;color:#39dc00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 3px;">${(p.title||p.id).toUpperCase()}</span>
                 <span style="font-size:5px;font-family:monospace;color:rgba(57,220,0,0.5);">(${childCount})</span>
