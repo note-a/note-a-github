@@ -18,6 +18,67 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
+@keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+.pm-blink { animation: pm-blink 1s infinite; }
+@keyframes vlpulse { 0%,100%{opacity:1;box-shadow:0 0 4px #ffb000;} 50%{opacity:0.3;box-shadow:none;} }
+@keyframes vlSlideIn { from{opacity:0;} to{opacity:1;} }
+
+/* ── 교집합 플로팅 창 ── */
+#ixFloat {
+  position: fixed;
+  z-index: 3100;
+  width: 160px;
+  background: #000;
+  border-top: 2px solid #7fff4f;
+  border-left: 2px solid #7fff4f;
+  border-bottom: 2px solid #1a5500;
+  border-right: 2px solid #1a5500;
+  box-shadow: 0 0 18px rgba(57,220,0,0.18), 0 0 30px rgba(255,176,0,0.04);
+  font-family: 'Courier New', monospace;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#ixFloat.ix-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+#ixFloat .ix-titlebar {
+  background: #39dc00; color: #000;
+  padding: 4px 8px; font-size: 9px; font-weight: bold;
+  letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;
+}
+#ixFloat .ix-btn {
+  width: 11px; height: 11px; background: #39dc00; border: 1px solid #000;
+  color: #000; font-size: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+#ixFloat .ix-body { padding: 7px; }
+#ixFloat .ix-match {
+  position: relative; border: 1px solid #ffb000;
+  overflow: hidden; background: #050505; margin-bottom: 6px;
+  transition: opacity 0.4s;
+}
+#ixFloat .ix-match img { width: 100%; height: auto; display: block; opacity: 0.88; }
+#ixFloat .ix-lbl {
+  position: absolute; top: 4px; left: 4px;
+  font-size: 7px; font-weight: bold; color: #000; background: #ffb000;
+  padding: 1px 5px; letter-spacing: 0.5px;
+}
+#ixFloat .ix-name {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.82); color: #ffb000; font-size: 7px; padding: 3px 5px;
+}
+#ixFloat .ix-tag-label { font-size: 7px; color: #333; margin-bottom: 3px; letter-spacing: 0.5px; }
+#ixFloat .ix-tags { display: flex; flex-wrap: wrap; gap: 3px; padding: 2px 0 4px; }
+#ixFloat .ix-tag { color: #ffb000; border: 1px solid #5a3800; font-size: 7px; padding: 1px 5px; letter-spacing: 0.5px; }
+#ixFloat .ix-progress { height: 2px; background: #0d2e00; }
+#ixFloat .ix-progress-fill { height: 100%; background: #39dc00; width: 0%; transition: width 0.1s linear; }
+#ixFloat .ix-statusbar {
+  border-top: 1px solid #0d2e00; padding: 3px 8px; font-size: 7px;
+  display: flex; justify-content: space-between; color: #1e5500;
+}
 
 .portfolio-container {
   display: flex;
@@ -35,8 +96,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .portfolio-window {
   display: flex;
   width: 100%;
-  max-width: 900px;
-  height: calc(100vh - 180px);
+  max-width: 1260px;
+  height: calc(100vh - 240px);
   gap: 12px;
   overflow: hidden;
 }
@@ -183,6 +244,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   line-height: 1.6;
   border-top: 1px solid #39dc00;
   min-height: 0;
+  position: relative;
 }
 
 .terminal-content-text {
@@ -324,11 +386,48 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   font-family: 'Courier New', monospace;
   color: #39dc00;
   box-shadow: 0 0 20px rgba(57,220,0,0.4);
+  position: relative;
+  margin-top: 26px;
+  border-top-left-radius: 0;
+  border-radius: 0 3px 3px 3px;
+}
+#itemPreviewModal .popup-file-tab {
+  position: absolute;
+  top: -28px;
+  left: -2px;
+  height: 28px;
+  padding: 0 18px;
+  background: #000;
+  border: 2px solid #39dc00;
+  border-bottom: 2px solid #000;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  color: #39dc00;
+  letter-spacing: 3px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 4px 4px 0 0;
+  text-transform: uppercase;
+}
+#itemPreviewModal .popup-file-tab::before {
+  content: '▤';
+  font-size: 11px;
+  opacity: 0.8;
 }
 #itemPreviewModal .popup-header {
   display: flex; justify-content: space-between; align-items: flex-start;
-  padding: 14px 16px 8px;
+  padding: 12px 16px 10px 20px;
   border-bottom: 1px solid #39dc00;
+  border-left: 3px solid rgba(57,220,0,0.25);
+  background: linear-gradient(180deg, rgba(57,220,0,0.04) 0%, transparent 100%);
+}
+#itemPreviewModal .popup-header-meta {
+  font-size: 8px;
+  color: rgba(57,220,0,0.4);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
 }
 #itemPreviewModal .popup-title { font-size: 14px; font-weight: bold; }
 #itemPreviewModal .popup-close {
@@ -337,14 +436,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 #itemPreviewModal .popup-category {
   font-size: 11px; color: #39dc00; opacity: 0.7;
-  padding: 6px 16px; border-bottom: 1px solid #39dc00;
+  padding: 6px 16px 6px 20px;
+  border-bottom: 1px solid #39dc00;
+  border-left: 3px solid rgba(57,220,0,0.25);
+  display: flex; align-items: center; gap: 8px;
+}
+#itemPreviewModal .popup-category::before {
+  content: '──';
+  opacity: 0.4;
+  font-size: 9px;
 }
 #itemPreviewModal .popup-body {
-  padding: 12px 16px;
+  padding: 14px 16px 12px 20px;
   font-size: 11px;
   line-height: 1.7;
   max-height: 60vh;
   overflow-y: auto;
+  border-left: 3px solid rgba(57,220,0,0.1);
 }
 
 .modal-content {
@@ -647,7 +755,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   gap: 6px;
   padding: 8px 0;
-  margin-bottom: 0;
+  margin: 0 auto 0 auto;
+  max-width: 500px;
 }
 
 .archive-search-input {
@@ -957,6 +1066,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   font-size: 12px;
   line-height: 1.8;
   min-height: 0;
+  position: relative;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -986,6 +1096,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   height: calc(100vh - 48px);
   background: rgba(0, 0, 0, 0.9);
   z-index: 1000;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .mobile-menu-drawer.active {
@@ -1089,8 +1200,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <!-- Item Preview Popup -->
   <div id="itemPreviewModal">
     <div class="popup-box">
+      <div class="popup-file-tab" id="popupFileTab">FILE</div>
       <div class="popup-header">
-        <div class="popup-title" id="popupTitle"></div>
+        <div>
+          <div class="popup-header-meta" id="popupHeaderMeta">DOC · REF</div>
+          <div class="popup-title" id="popupTitle"></div>
+        </div>
         <button class="popup-close" id="popupClose">×</button>
       </div>
       <div class="popup-category" id="popupCategory"></div>
@@ -1118,18 +1233,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
 
       <div class="menu-list">
-        <div class="menu-item active" data-section="project">SET</div>
+        <div class="menu-item" data-section="project">SET</div>
         <div class="menu-item" data-section="inclusion">SET Inclusion</div>
-        <div class="menu-item" data-section="intro">entire</div>
-        <div class="menu-item" data-section="rule">log</div>
+        <div class="menu-item" data-section="rule">Log</div>
         <div class="menu-item" data-section="reference">reference</div>
-        <div class="menu-item" data-section="archive">Archive</div>
+        <div class="menu-item" data-section="archive">Measure</div>
+        <div class="menu-item active" data-section="about">About</div>
         <div style="position: relative; flex: 1; width: 100%; min-height: 0;"></div>
       </div>
 
       <div class="menu-statusbar">
-        <span>7 Files</span>
-        <span>SELECT FILE</span>
+        <span style="color:#b0b0b0;">6 Files</span>
+        <span style="color:#ffff00;">SELECT FILE</span>
       </div>
     </div>
 
@@ -1150,105 +1265,80 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       <div class="terminal-statusbar">
         <span>STATUS: LOADED</span>
-        <span>SIZE: DYNAMIC</span>
-        <span id="infoBtn" onclick="openInfoPopup()" style="cursor:pointer;padding:0 6px;border:1px solid rgba(57,220,0,0.4);color:rgba(57,220,0,0.6);font-size:10px;letter-spacing:1px;user-select:none;" title="작품 소개">INFO</span>
+        <span style="color:#39dc00;">SIZE: DYNAMIC</span>
       </div>
       </div>
+
+      <!-- RIGHT COLUMN: TASK MANAGER + VIEWER LOG -->
+      <div style="width:230px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;align-self:flex-start;">
+
+        <!-- TASK MANAGER -->
+        <div id="pmWindow" style="
+          background:#000;
+          border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
+          border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
+          box-shadow:0 0 20px rgba(57,220,0,0.2);
+          font-family:'Courier New',monospace;
+          display:flex; flex-direction:column;
+        ">
+          <div style="background:#39dc00;color:#000;padding:5px 10px;font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+            <span>TASK MANAGER — SET.EXE</span>
+            <div style="display:flex;gap:3px;">
+              <div onclick="const b=document.getElementById('pmBody');b.style.display=b.style.display==='none'?'flex':'none';" style="width:14px;height:14px;background:#39dc00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
+              <div style="width:14px;height:14px;background:#39dc00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;">□</div>
+            </div>
+          </div>
+          <div style="border-bottom:1px solid #39dc00;padding:3px 10px;font-size:10px;display:flex;gap:12px;color:#39dc00;opacity:0.7;flex-shrink:0;">
+            <span>File</span><span>Options</span><span>View</span><span>Help</span>
+          </div>
+          <div id="pmBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+            <div style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;padding:3px 10px;font-size:9px;color:#39dc00;border-bottom:1px solid #1a5500;opacity:0.55;flex-shrink:0;">
+              <span>Process</span><span>PID</span><span>CPU</span><span>Status</span>
+            </div>
+            <div id="pmRows" style="flex:1;overflow:hidden;"></div>
+            <div style="border-top:1px solid #39dc00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#39dc00;opacity:0.65;flex-shrink:0;">
+              <span>Processes: 6</span>
+              <span>CPU: <span id="pmTotalCpu">--</span>%</span>
+              <span>MEM: 64MB <span class="pm-blink">█</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEWER LOG -->
+        <div id="vlWindow" style="
+          background:#000;
+          border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
+          border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
+          box-shadow:0 0 20px rgba(57,220,0,0.15);
+          font-family:'Courier New',monospace;
+        ">
+          <div style="background:#39dc00;color:#000;padding:5px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+            <span>VIEWER_LOG.EXE</span>
+            <div onclick="const b=document.getElementById('vlBody');b.style.display=b.style.display==='none'?'block':'none';" style="width:13px;height:13px;background:#39dc00;border:1px solid #000;color:#000;font-size:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
+          </div>
+          <div id="vlBody">
+            <div style="border-bottom:1px solid #1a1a1a;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;align-items:center;">
+              <span><span id="vlDot" style="display:inline-block;width:6px;height:6px;background:#ffb000;border-radius:50%;margin-right:5px;vertical-align:middle;animation:vlpulse 0.9s infinite;box-shadow:0 0 4px #ffb000;"></span><span style="color:#555;font-size:9px;">MEASURE SEARCH LOG</span></span>
+              <span style="color:#ffb000;font-size:9px;" id="vlCount">0 queries</span>
+            </div>
+            <div style="height:90px;overflow:hidden;">
+              <div id="vlList" style="display:flex;flex-direction:column;padding:4px 0;"></div>
+            </div>
+            <div style="border-top:1px solid #1a1a1a;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="color:#333;">SRC: /measure/search</span>
+              <span style="color:#555;" id="vlLastTime">--:--:--</span>
+              <span style="color:#ffb000;animation:pm-blink 1s infinite;">█</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   </div>
   </div>
   <!-- END DESKTOP LAYOUT -->
 
-  <!-- INFO POPUP -->
-  <!-- 미니 카드: 경고/메시지 알림 스타일 -->
-  <div id="infoMini" onclick="expandInfoPopup()" style="
-    display:none; position:fixed; z-index:10000;
-    cursor:pointer; font-family:'Courier New',monospace;
-    border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
-    border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
-    box-shadow:0 0 24px rgba(57,220,0,0.25);
-    background:#000; width:260px; transition:opacity 0.25s ease;
-  ">
-    <!-- 경고 헤더 바 -->
-    <div style="background:#39dc00;color:#000;padding:5px 10px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:11px;font-weight:bold;letter-spacing:0.5px;">● NEW MESSAGE</span>
-        <span style="background:#000;color:#39dc00;font-size:9px;font-weight:bold;padding:1px 5px;">1</span>
-      </div>
-      <span onclick="event.stopPropagation();closeInfoPopup()" style="font-size:10px;opacity:0.6;padding:0 2px;">✕</span>
-    </div>
-    <!-- 발신자 + 시간 -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px 4px;border-bottom:1px solid rgba(57,220,0,0.12);">
-      <div style="display:flex;align-items:center;gap:7px;">
-        <div style="width:24px;height:24px;background:#39dc00;color:#000;font-size:10px;font-weight:bold;display:flex;align-items:center;justify-content:center;">S</div>
-        <div>
-          <div style="font-size:11px;color:#39dc00;font-weight:bold;letter-spacing:1px;">SET</div>
-          <div style="font-size:8px;color:#555;letter-spacing:1px;margin-top:1px;">SET IS THE WORLD</div>
-        </div>
-      </div>
-      <div style="font-size:8px;color:#333;">방금 전</div>
-    </div>
-    <!-- 메시지 본문 -->
-    <div style="padding:10px 12px;font-size:10px;color:#888;line-height:1.9;border-bottom:1px solid rgba(57,220,0,0.1);">
-      Set은 세계다. 나는 set의 둘레를<br>측정하고 있다. 그러나 내가 쥔<br>자는 이미 오염되어 있다.
-    </div>
-    <!-- 액션 힌트 -->
-    <div style="padding:5px 10px;font-size:8px;color:rgba(57,220,0,0.35);letter-spacing:1px;display:flex;align-items:center;gap:5px;">
-      <span style="animation:blink 1s infinite;display:inline-block;">▶</span> 탭하여 열기
-    </div>
-  </div>
-
-  <!-- 확장 팝업 (클릭 후 표시) -->
-  <div id="infoFull" style="
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75);
-    z-index:10001; justify-content:center; align-items:center;
-  " onclick="collapseInfoPopup()">
-    <div onclick="event.stopPropagation()" style="
-      width:min(520px,92vw); max-height:82vh; display:flex; flex-direction:column;
-      border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
-      border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
-      box-shadow:0 0 40px rgba(57,220,0,0.25), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
-      background:#000; font-family:'Courier New',monospace;
-    ">
-      <div style="background:#39dc00;color:#000;padding:6px 12px;font-weight:bold;font-size:13px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
-        <span>SET IS THE WORLD</span>
-        <span onclick="collapseInfoPopup()" style="cursor:pointer;width:18px;height:18px;background:#000;color:#39dc00;display:flex;align-items:center;justify-content:center;font-size:11px;">✕</span>
-      </div>
-      <div style="flex:1;overflow-y:auto;padding:22px 26px;color:#39dc00;font-size:12px;line-height:2;">
-        <div style="font-size:20px;font-weight:bold;letter-spacing:4px;margin-bottom:4px;">SET</div>
-        <div style="font-size:10px;color:#555;letter-spacing:2px;margin-bottom:24px;">2025 — 2026 &nbsp;·&nbsp; 김혜지 (Hyeji Kim)</div>
-
-        <div style="border-top:1px solid rgba(57,220,0,0.25);padding-top:18px;margin-bottom:18px;">
-          <div style="font-size:9px;color:#444;letter-spacing:3px;margin-bottom:10px;">ARTIST NOTE</div>
-          <div style="color:#bbb;line-height:2.2;font-size:12px;">
-            지시된 신체, 강제된 응시, 정지된 시선.<br>
-            사진의 구조를 재현을 멈춤으로써 아카이빙한다.<br><br>
-            Set은 세계다. 나는 set의 둘레를 측정하고 있다.<br>
-            그러나 내가 쥔 자는 이미 세계 자체에 오염되어 있다.
-          </div>
-        </div>
-
-        <div style="border-top:1px solid rgba(57,220,0,0.25);padding-top:18px;margin-bottom:18px;">
-          <div style="font-size:9px;color:#444;letter-spacing:3px;margin-bottom:10px;">WORK INFO</div>
-          <table style="width:100%;border-collapse:collapse;font-size:11px;">
-            <tr><td style="color:#444;padding:4px 0;width:80px;">매체</td><td style="color:#999;">사진, 웹</td></tr>
-            <tr><td style="color:#444;padding:4px 0;">기간</td><td style="color:#999;">2025 — 진행 중</td></tr>
-            <tr><td style="color:#444;padding:4px 0;">형식</td><td style="color:#999;">밀착인화 시뮬레이션, 선정 로그, 아카이브</td></tr>
-          </table>
-        </div>
-
-        <div style="border-top:1px solid rgba(57,220,0,0.25);padding-top:18px;">
-          <div style="font-size:9px;color:#444;letter-spacing:3px;margin-bottom:10px;">CONTACT</div>
-          <div style="color:#555;font-size:11px;">— &nbsp; 내용을 여기에 추가하세요</div>
-        </div>
-      </div>
-      <div style="border-top:1px solid rgba(57,220,0,0.3);padding:6px 12px;font-size:10px;color:#444;display:flex;justify-content:space-between;flex-shrink:0;">
-        <span>click outside or ESC to close</span>
-        <span style="color:rgba(57,220,0,0.3);">SET IS THE WORLD</span>
-      </div>
-    </div>
-  </div>
-  <!-- END INFO POPUP -->
 
 
   <!-- MOBILE LAYOUT -->
@@ -1262,12 +1352,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     <div class="mobile-menu-drawer" id="mobileMenuDrawer">
       <div class="mobile-menu-list" id="mobileMenuList">
-        <div class="mobile-menu-item active" data-section="project">SET</div>
+        <div class="mobile-menu-item" data-section="project">SET</div>
         <div class="mobile-menu-item" data-section="inclusion">SET Inclusion</div>
-        <div class="mobile-menu-item" data-section="intro">entire</div>
-        <div class="mobile-menu-item" data-section="rule">log</div>
-        <div class="mobile-menu-item" data-section="reference">reference</div>
-        <div class="mobile-menu-item" data-section="archive">Archive</div>
+        <div class="mobile-menu-item" data-section="rule">Log</div>
+        <div class="mobile-menu-item" data-section="reference">Reference</div>
+        <div class="mobile-menu-item" data-section="archive">Measure</div>
+        <div class="mobile-menu-item active" data-section="about">About</div>
       </div>
     </div>
 
@@ -1280,7 +1370,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
       <div class="mobile-terminal-statusbar">
         <span>STATUS: LOADED</span>
-        <span>SIZE: DYNAMIC</span>
+        <span style="color:#39dc00;">SIZE: DYNAMIC</span>
       </div>
     </div>
   </div>
@@ -1304,6 +1394,29 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <div class="photo-detail-keywords-list" id="photoDetailKeywords"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- 교집합 플로팅 창 (position:fixed, showPhotoDetail 시 조건부 표시) -->
+  <div id="ixFloat">
+    <div class="ix-titlebar">
+      <span>∩ MATCHED</span>
+      <div class="ix-btn" id="ixCloseBtn">✕</div>
+    </div>
+    <div class="ix-body">
+      <div class="ix-match" id="ixMatch">
+        <img id="ixImg" src="" alt="">
+        <div class="ix-lbl">INCLUSION</div>
+        <div class="ix-name" id="ixName">—</div>
+      </div>
+      <div class="ix-tag-label">SHARED CODES</div>
+      <div class="ix-tags" id="ixTags"></div>
+    </div>
+    <div class="ix-progress"><div class="ix-progress-fill" id="ixFill"></div></div>
+    <div class="ix-statusbar">
+      <span>IN INCLUSION</span>
+      <span id="ixIdx">1 / 1</span>
+      <span style="color:#ffb000;animation:pm-blink 1s infinite;">█</span>
     </div>
   </div>
 
@@ -1341,10 +1454,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         // Load mobile content for current section
         const activeMenuItem = document.querySelector('.mobile-menu-item.active');
         if (activeMenuItem) {
-          const section = activeMenuItem.getAttribute('data-section') || 'project';
+          const section = activeMenuItem.getAttribute('data-section') || 'about';
           loadContentToMobile(section);
         } else {
-          loadContentToMobile('project');
+          loadContentToMobile('about');
         }
       } else {
         desktopLayout.style.display = 'flex';
@@ -1374,124 +1487,88 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     const contents = {
       project: {
         title: 'Project SET',
-        isSlideshow: true,
-        slides: [
-          {
-            id: 'slide_1',
-            title: 'Project SET Overview',
-            category: 'Concept',
-            author: 'Artist / Theorist',
-            year: '2025-2026',
-            text: `A cyberpunk-themed visual and textual exploration of the boundaries between observer and observed, world and self. Core framework for SET.
-
-This project operates as a comprehensive investigation into measurement, perception, and the paradox of the observer being part of the observed system. Through visual and textual intervention, SET proposes that the act of measurement inherently contaminates the measuring instrument (in this case, us).
-
-STATUS: ACTIVE
-FRAMEWORK: 6 distinct sections exploring different aspects of SET
-INTERFACE: Terminal-based with DOS aesthetic`
-          },
-          {
-            id: 'slide_2',
-            title: 'Core Concept',
-            category: 'Philosophy',
-            author: 'Artist / Theorist',
-            year: '2025',
-            text: `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction. The fundamental thesis.
-
-The core concept rests on three pillars:
-- Instructions: Systems of control embedded in visual culture
-- Coerced Body: We are not free agents in the SET; we are part of its structure
-- Suspended Gaze: Vision is held in abeyance; we cannot see clearly from within
-
-METHODOLOGY: Textual and visual exploration through interference and superimposition`
-          },
-          {
-            id: 'slide_3',
-            title: 'Measurement Paradox',
-            category: 'Theory',
-            author: 'Artist / Theorist',
-            year: '2025',
-            text: `Set is the world. I am measuring the perimeter of the set. But the scale I hold is already contaminated by the world itself.
-
-This paradox forms the central tension of the work. Any attempt to measure or define the boundaries of the SET is itself already infected by the SET's logic. The measuring tool is not neutral; it is part of what is being measured.
-
-OBSERVATION: The observer is observed
-IMPLICATION: Distance is an illusion
-RESOLUTION: The incompleteness is precisely the world`
-          },
-          {
-            id: 'slide_4',
-            title: 'Structure & Framework',
-            category: 'System Design',
-            author: 'Artist / Developer',
-            year: '2025-2026',
-            text: `6 distinct sections exploring different aspects of SET framework. Terminal-based interface. DOS aesthetic. Interactive system.
-
-TECHNICAL IMPLEMENTATION:
-- JavaScript-based viewport detection for responsive layout`
-          },
-          {
-            id: 'slide_5',
-            title: 'Voice Merge Protocol',
-            category: 'Method',
-            author: 'Artist / Theorist',
-            year: '2025',
-            text: `PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
-PORT_02 (HUMAN) : WANDERING / AFFECTIVE
-
-Neither voice alone can describe the world completely. Systematic analysis fails without affective knowledge. Emotional response without structure lacks meaning. Only through merger do we approach truth.
-
-RESULT: Noise becomes signal
-IMPLICATION: Both voices remain incomplete
-RESOLUTION: Incompleteness is the work itself`
-          },
-          {
-            id: 'slide_6',
-            title: 'Observation & Control',
-            category: 'Theory',
-            author: 'Artist / Theorist',
-            year: '2025',
-            text: `The act of observation changes what is observed. The observer cannot stand outside the system being measured. We are simultaneously inside and outside, measuring and measured.
-
-PANOPTICON EFFECT: Knowledge as surveillance
-BOUNDARY DISSOLUTION: Inside/outside becomes meaningless
-PARADOX: Complete knowledge of the SET would require being outside it - impossible
-
-This impossibility is not a failure. It is the framework itself.`
-          },
-          {
-            id: 'slide_7',
-            title: 'Archive & Documentation',
-            category: 'Practice',
-            author: 'Artist / Developer',
-            year: '2025-2026',
-            text: `Photography halts reproduction. Documentation freezes time. Archive is the anti-structure that attempts to capture structure.
-
-MATERIALS:
-- Visual documentation (photographs, SVG studies)
-- Textual intervention (rules, references, concepts)
-- Code as artistic medium (JavaScript, HTML, CSS)
-
-DISTRIBUTION: Open access through terminal interface
-PARTICIPATION: Required. Do not disconnect.
-STATUS: ONGOING
-- Real-time content loading and dynamic rendering
-- Archive administration system with publishing workflow
-- Photo search and display functionality
-- Cross-section content publishing system
-- localStorage integration for persistent data
-
-VISUAL LANGUAGE:
-- Terminal/DOS aesthetic with #39dc00 green color scheme
-- Monospace typography (Courier New)
-- Grid and flexbox layouts
-- Minimal visual hierarchy through border and spacing
-- Responsive mobile/desktop layout separation`
+        isContactSheet: true,
+        photos: (function(){
+          // picsum seed 풀 — 100개 고정 사진 ID (picsum.photos/id/{n})
+          var POOL = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,
+                      30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,
+                      50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,
+                      70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
+                      90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109];
+          // 판정 분포: 60% drop, 20% support, 10% hold, 10% core
+          var VERDICTS = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
+          function makePhotos(startFrame, picsumOffset, count) {
+            return Array.from({length: count}, function(_, i) {
+              var pid = POOL[(picsumOffset + i) % POOL.length];
+              var verdict = VERDICTS[(startFrame + i * 7) % VERDICTS.length];
+              return {
+                id: 'DSCF' + (startFrame + i),
+                picsumId: pid,
+                verdict: verdict
+              };
+            });
           }
-        ]
+          var BASE = 'https://note-a.github.io/images/entire/';
+          var realShoot = [
+            {id:'DSCF6071', verdict:'drop',    reason:'6070 동일씬'},
+            {id:'DSCF6072', verdict:'drop',    reason:'지하철 역 대합실, DIR 미작동'},
+            {id:'DSCF6073', verdict:'drop',    reason:'단독 벤치, 1차 ISOOBJ, 2차 미작동'},
+            {id:'DSCF6074', verdict:'drop',    reason:'과노출 광고판'},
+            {id:'DSCF6075', verdict:'drop',    reason:'완전 과노출'},
+            {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
+            {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
+            {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
+            {id:'DSCF6079', verdict:'core',    dir:'OBJREP', category:'OBJECT', reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
+            {id:'DSCF6080', verdict:'support', dir:'OBJREP', category:'OBJECT', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
+            {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
+            {id:'DSCF6084', verdict:'drop',    reason:'흙 바닥+바퀴 자국, DIR 미작동'},
+            {id:'DSCF6085', verdict:'drop',    reason:'공사장 흙 바닥+갈대밭 전경, DIR 미작동'},
+            {id:'DSCF6086', verdict:'drop',    reason:'공사장 흙더미+배경 건물, DIR 미작동'},
+            {id:'DSCF6087', verdict:'drop',    reason:'6086 동일씬'}
+          ].map(function(p){ return Object.assign({}, p, {url: BASE + p.id + '.jpg'}); });
+
+          return [
+            { type:'sheet', id:'202501', title:'2025.01', children:[
+              { type:'sheet', id:'20250116', title:'01.16', children: makePhotos(6301, 0,  108) },
+              { type:'sheet', id:'20250203', title:'02.03', children: makePhotos(5801, 10, 94)  }
+            ]},
+            { type:'sheet', id:'202502', title:'2025.02', children:[] },
+            { type:'sheet', id:'202503', title:'2025.03', children:[
+              { type:'sheet', id:'20250315', title:'03.15', children: makePhotos(7012, 20, 122) },
+              { type:'sheet', id:'20250328', title:'03.28', children: makePhotos(7140, 30, 88)  }
+            ]},
+            { type:'sheet', id:'202504', title:'2025.04', children:[] },
+            { type:'sheet', id:'202505', title:'2025.05', children:[] },
+            { type:'sheet', id:'202506', title:'2025.06', children:[] },
+            { type:'sheet', id:'202507', title:'2025.07', children:[
+              { type:'sheet', id:'20250722', title:'07.22', children: makePhotos(8143, 40, 115) }
+            ]},
+            { type:'sheet', id:'202508', title:'2025.08', children:[] },
+            { type:'sheet', id:'202509', title:'2025.09', children:[] },
+            { type:'sheet', id:'202510', title:'2025.10', children:[] },
+            { type:'sheet', id:'202511', title:'2025.11', children:[] },
+            { type:'sheet', id:'202512', title:'2025.12', children:[] },
+            { type:'sheet', id:'202602', title:'2026.02', children:[
+              { type:'sheet', id:'20260216', title:'02.16', children: makePhotos(5226, 50, 130) }
+            ]},
+            { type:'sheet', id:'202603', title:'2026.03', children:[
+              { type:'sheet', id:'real_shoot', title:'26.03.04', children: realShoot}
+            ]},
+            { type:'sheet', id:'202605', title:'2026.05', children:[
+              { type:'sheet', id:'20260510', title:'05.10', children: makePhotos(9001, 60, 97) }
+            ]}
+          ];
+        })()
+      },
+      about: {
+        title: 'About',
+        text: '',
+        artistStatement: ''
       },
       archive: {
-        title: 'Photo Archive',
+        title: 'Measure',
         isArchivePhotos: true,
         photos: [
           {
@@ -1555,74 +1632,9 @@ RESOLUTION: BOTH REMAIN INCOMPLETE.
 THIS INCOMPLETENESS IS PRECISELY THE WORLD.
 ==========================================`
       },
-      intro: {
-        title: 'entire',
-        isContactSheet: true,
-        photos: (function(){
-          // picsum seed 풀 — 100개 고정 사진 ID (picsum.photos/id/{n})
-          var POOL = [10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,
-                      30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,
-                      50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,
-                      70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,
-                      90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109];
-          // 판정 분포: 60% drop, 20% support, 10% hold, 10% core
-          var VERDICTS = ['drop','drop','drop','drop','drop','drop','support','support','support','core'];
-          function makePhotos(startFrame, picsumOffset, count) {
-            return Array.from({length: count}, function(_, i) {
-              var pid = POOL[(picsumOffset + i) % POOL.length];
-              var verdict = VERDICTS[(startFrame + i * 7) % VERDICTS.length];
-              return {
-                id: 'DSCF' + (startFrame + i),
-                picsumId: pid,
-                verdict: verdict
-              };
-            });
-          }
-          var BASE = 'https://note-a.github.io/images/entire/';
-          var realShoot = [
-            {id:'DSCF6071', verdict:'drop',    reason:'6070 동일씬'},
-            {id:'DSCF6072', verdict:'drop',    reason:'지하철 역 대합실, DIR 미작동'},
-            {id:'DSCF6073', verdict:'drop',    reason:'단독 벤치, 1차 ISOOBJ, 2차 미작동'},
-            {id:'DSCF6074', verdict:'drop',    reason:'과노출 광고판'},
-            {id:'DSCF6075', verdict:'drop',    reason:'완전 과노출'},
-            {id:'DSCF6076', verdict:'drop',    reason:'공사 현장 컨테이너+갈대밭, DIR 미작동'},
-            {id:'DSCF6077', verdict:'drop',    reason:'6076 동일씬'},
-            {id:'DSCF6078', verdict:'drop',    reason:'6076 동일씬'},
-            {id:'DSCF6079', verdict:'core',    dir:'OBJREP', category:'OBJECT', reason:'동종 고층 아파트 5동 반복, 파란 하늘 균질 배경'},
-            {id:'DSCF6080', verdict:'support', dir:'OBJREP', category:'OBJECT', reason:'주황/흰 차단 블록 이중 줄, 상단 갈대밭 경쟁'},
-            {id:'DSCF6081', verdict:'drop',    reason:'6080 동일씬'},
-            {id:'DSCF6082', verdict:'drop',    reason:'6080 동일씬'},
-            {id:'DSCF6083', verdict:'drop',    reason:'6080 동일씬'},
-            {id:'DSCF6084', verdict:'drop',    reason:'흙 바닥+바퀴 자국, DIR 미작동'},
-            {id:'DSCF6085', verdict:'drop',    reason:'공사장 흙 바닥+갈대밭 전경, DIR 미작동'},
-            {id:'DSCF6086', verdict:'drop',    reason:'공사장 흙더미+배경 건물, DIR 미작동'},
-            {id:'DSCF6087', verdict:'drop',    reason:'6086 동일씬'}
-          ].map(function(p){ return Object.assign({}, p, {url: BASE + p.id + '.jpg'}); });
-
-          return [
-            { type:'sheet', id:'real_shoot', title:'26.03.04', children: realShoot},
-            { type:'sheet', id:'2025_01', title:'25.01', children:[
-              { type:'sheet', id:'20250116', title:'01.16', children: makePhotos(6301, 0,  108) },
-              { type:'sheet', id:'20250203', title:'02.03', children: makePhotos(5801, 10, 94)  }
-            ]},
-            { type:'sheet', id:'2025_03', title:'25.03', children:[
-              { type:'sheet', id:'20250315', title:'03.15', children: makePhotos(7012, 20, 122) },
-              { type:'sheet', id:'20250328', title:'03.28', children: makePhotos(7140, 30, 88)  }
-            ]},
-            { type:'sheet', id:'2025_07', title:'25.07', children:[
-              { type:'sheet', id:'20250722', title:'07.22', children: makePhotos(8143, 40, 115) }
-            ]},
-            { type:'sheet', id:'2026_02', title:'26.02', children:[
-              { type:'sheet', id:'20260216', title:'02.16', children: makePhotos(5226, 50, 130) }
-            ]},
-            { type:'sheet', id:'2026_05', title:'26.05', children:[
-              { type:'sheet', id:'20260510', title:'05.10', children: makePhotos(9001, 60, 97)  }
-            ]}
-          ];
-        })()
-      },
       rule: {
-        title: 'Rule',
+        title: 'Log',
+        notice: '',
         isBoard: true,
         isList: true,
         items: [
@@ -1675,7 +1687,7 @@ THIS INCOMPLETENESS IS PRECISELY THE WORLD.
       },
       reference: {
         title: 'Reference',
-        isBoard: true,
+        isBookshelf: true,
         items: [
           {
             id: 'CAMERA_LUCIDA',
@@ -1963,13 +1975,23 @@ REQUIRE LOGIN: No (Public access enabled)
         console.log('Loading admin contents from storage:', adminContents);
 
         // Direct property assignment for each section
-        if (adminContents.project && adminContents.project.slides) {
-          console.log('Updating project slides from admin:', adminContents.project.slides[0]?.title);
-          contents.project.slides = adminContents.project.slides;
-          console.log('Project slides updated, current slide 0 title:', contents.project.slides[0]?.title);
+        if (adminContents.about && adminContents.about.text !== undefined) {
+          contents.about.text = adminContents.about.text;
+        }
+        if (adminContents.about && adminContents.about.artistStatement !== undefined) {
+          contents.about.artistStatement = adminContents.about.artistStatement;
         }
         if (adminContents.inclusion && adminContents.inclusion.text) {
           contents.inclusion.text = adminContents.inclusion.text;
+        }
+        if (adminContents.project && adminContents.project.photos) {
+          const hasHierarchy = adminContents.project.photos.some && adminContents.project.photos.some(p => p.type === 'sheet');
+          if (hasHierarchy) {
+            contents.project.photos = adminContents.project.photos;
+          } else {
+            delete adminContents.project;
+            try { localStorage.setItem('adminContents', JSON.stringify(adminContents)); } catch(e) {}
+          }
         }
         if (adminContents.intro && adminContents.intro.photos) {
           const hasHierarchy = adminContents.intro.photos.some && adminContents.intro.photos.some(p => p.type === 'sheet');
@@ -2019,10 +2041,18 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // Initialize content display
     function loadContent(section) {
+      // Close any open overlays before loading new content
+      console.log('loadContent called with section: ' + section);
+      closeAllOverlays();
+      if (typeof closeIxWindow === 'function') closeIxWindow();
+
+      // PM 창 활성 섹션 업데이트
+      if (typeof pmRender === 'function') pmRender(section);
+
       const terminalContent = document.getElementById('terminalContent');
       terminalContent.style.transition = 'opacity 0.25s ease';
       terminalContent.style.opacity = '0';
-      setTimeout(function() { _loadContentInner(section); setTimeout(function() { terminalContent.style.opacity = '1'; }, 20); }, 250);
+      setTimeout(function() { console.log('_loadContentInner calling with: ' + section); _loadContentInner(section); setTimeout(function() { terminalContent.style.opacity = '1'; }, 20); }, 250);
     }
     function _loadContentInner(section) {
       const content = contents[section];
@@ -2051,10 +2081,10 @@ REQUIRE LOGIN: No (Public access enabled)
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px; position: relative;">
               <div class="photo-gallery" id="photoGallery" style="padding: 12px 20px; flex: 1; overflow-y: auto;">
                 <div id="archiveInitialView" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px;">
-                  <img src="images/big-brother.jpg?v=2"
-                    style="max-width:100%;max-height:300px;object-fit:contain;display:block;"
+                  <img src="images/big-brother.jpg?v=3"
+                    style="max-width:100%;max-height:270px;object-fit:contain;display:block;"
                     onerror="this.style.display='none'">
-                  <div style="text-align:center;color:#39dc00;font-size:15px;font-family:'Courier New',monospace;font-weight:bold;">
+                  <div style="text-align:center;color:#39dc00;font-size:15px;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;font-weight:bold;">
                     Enter your instructions
                   </div>
                 </div>
@@ -2115,30 +2145,151 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isContactSheet) {
           // 풀스크린 오버레이로 열기
           openContactSheetOverlay(content);
+        } else if (content.isBookshelf) {
+          // Bookshelf format — single shelf, monotone, groups of 3
+          const allBookItems = [...content.items, ...publishedPosts];
+
+          // Terminal palette — CRT green + amber phosphor
+          // Near-black spines, vivid marks — exact from library_bookshelf.html shelf3
+          const grayThemes = [
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          ];
+          const baseWidths  = [24, 28, 25, 32, 22, 27, 31, 24, 28, 25, 27, 22, 28, 32, 24, 27];
+          const baseHeights = [221, 242, 229, 259, 214, 238, 234, 251, 225, 240, 214, 232, 238, 223, 253, 229];
+          const leans       = [-1.5, -0.8, 0, 0, 1.2, 0, -1, 0, 0.7, 0, 1.5, -0.6, 0, 0, 0.4, -0.3];
+
+          // Build single row: groups of 3 with clear empty gaps
+          const GROUP = 3;
+          let rowInner = '';
+          allBookItems.forEach((item, idx) => {
+            if (idx > 0 && idx % GROUP === 0) {
+              rowInner += `<div style="flex-shrink:0;width:48px;"></div>`;
+            }
+            const th   = grayThemes[idx % grayThemes.length];
+            const w    = baseWidths[idx % baseWidths.length];
+            const h    = baseHeights[idx % baseHeights.length];
+            const lean = leans[idx % leans.length];
+            rowInner += `<div class="bk3d" data-index="${idx}" style="width:${w}px;height:${h}px;transform:rotate(${lean}deg);transform-origin:bottom center;" title="${(item.title||'').replace(/"/g,'&quot;')}">
+              <div style="width:100%;height:100%;background:${th.bg};overflow:hidden;position:relative;border-radius:1px 0 0 1px;">
+                <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.06) 0%,transparent 40%,rgba(0,0,0,.18) 100%);pointer-events:none;"></div>
+                <div style="position:absolute;left:0;right:0;top:0;height:14px;background:${th.band};"></div>
+                ${th.line ? `<div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.28)}px;width:1px;background:${th.band};z-index:3;opacity:.5;"></div><div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.72)}px;width:1px;background:${th.band};z-index:3;opacity:.5;"></div>` : ''}
+                ${th.mark ? `<div style="position:absolute;top:-4px;right:${Math.max(4,Math.round(w*.3))}px;width:8px;height:18px;background:${th.mark};clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);z-index:5;opacity:.9;"></div>` : ''}
+                <div style="position:absolute;top:19px;bottom:8px;left:0;right:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;overflow:hidden;pointer-events:none;">
+                  <span style="writing-mode:vertical-rl;color:${th.tc};font-weight:700;font-size:9px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
+                  <span style="writing-mode:vertical-rl;color:${th.tc};opacity:.6;font-size:7px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
+                </div>
+              </div>
+              <div class="bk-side" style="background:${th.side};"></div>
+            </div>`;
+          });
+
+          const bookshelfHTML = `
+            <style>
+              .bk3d{position:relative;cursor:pointer;flex-shrink:0;transition:transform .2s ease,filter .2s ease;z-index:2;}
+              .bk3d:hover{transform:translateY(-12px) rotate(0deg) !important;filter:brightness(1.3);}
+              .bk3d::before{
+                content:'';position:absolute;left:4px;top:-5px;right:-5px;height:5px;
+                background:repeating-linear-gradient(90deg,#f0e8d0 0,#f0e8d0 1.5px,#d4c8a8 1.5px,#d4c8a8 2.8px);
+                transform:skewX(-45deg);transform-origin:bottom left;z-index:5;
+              }
+              .bk3d::after{content:none;}
+              .bk-side{position:absolute;right:-5px;top:-5px;width:5px;bottom:0;transform:skewY(-45deg);transform-origin:top left;z-index:5;}
+              .bk3d-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00cc00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
+              .bk3d-bend::after{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:3px;background:linear-gradient(90deg,#222 0%,#333 40%,#222 100%);border-radius:2px;}
+            </style>
+            <div style="display:flex;flex-direction:column;height:100%;margin:-12px;background:#000;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;overflow:hidden;">
+              <div style="padding:7px 12px;border-bottom:1px solid #39dc00;font-size:10px;font-weight:bold;flex-shrink:0;color:#39dc00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+                <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
+                <span style="opacity:.4;font-weight:normal;font-size:9px;">← scroll →</span>
+              </div>
+
+              <div style="flex:1;display:flex;flex-direction:column;min-height:0;">
+                <div style="flex:1;"></div>
+                <div style="overflow-x:auto;overflow-y:visible;padding:0 12px 0 40px;scrollbar-width:thin;scrollbar-color:#222 #000;">
+                  <div style="display:inline-flex;align-items:flex-end;gap:2px;min-width:min-content;">
+                    <div class="bk3d-bend" style="height:50px;"></div>
+                    ${rowInner}
+                    <div class="bk3d-bend" style="height:42px;"></div>
+                  </div>
+                </div>
+                <div style="flex-shrink:0;height:1px;background:#00ff00;"></div>
+              </div>
+
+              <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(57,220,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:2px solid #00ff00;">
+                <span>click to open</span>
+              </div>
+            </div>
+          `;
+          terminalContent.innerHTML = bookshelfHTML;
+
+          document.querySelectorAll('.bk3d').forEach(el => {
+            el.addEventListener('click', () => {
+              const idx = parseInt(el.dataset.index);
+              openItemPreviewPopup(allBookItems[idx]);
+            });
+          });
         } else if (content.isBoard) {
           // Check if it's a list format
           if (content.isList) {
             // 최신 등록 순서로 — published posts를 역순(최신 먼저)으로, 기본 항목은 그 뒤
-            const allItems = [...publishedPosts].reverse().concat(content.items);
+            const rawItems = [...publishedPosts].reverse().concat(content.items);
+            // 핀된 항목 상단 고정, 나머지 순서 유지
+            const pinnedItems = rawItems.filter(i => i.pinned);
+            const normalItems = rawItems.filter(i => !i.pinned);
+            const allItems = [...pinnedItems, ...normalItems];
 
             // List format with table style - no header or footer
+            const noticeHTML = content.notice ? `
+              <div style="padding: 12px; background: linear-gradient(180deg, rgba(57,220,0,0.1) 0%, rgba(0,0,0,0.5) 100%); border-bottom: 2px solid #39dc00; flex-shrink: 0; border-left: 3px solid #ffb000;">
+                <div style="color: #39dc00; font-size: 11px; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${content.notice}</div>
+              </div>
+            ` : '';
             const listHTML = `
               <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+                ${noticeHTML}
                 <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; flex-shrink: 0; display: flex;">
-                  <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">ID</div>
+                  <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">title</div>
                   <div style="width: 150px; padding: 0 12px; font-weight: bold;">CATEGORY</div>
                 </div>
                 <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
-                  ${allItems.map((item, idx) => `
-                    <div class="list-item" data-index="${idx}" style="cursor: pointer; display: flex; border-bottom: 1px dashed #39dc00; transition: background 0.2s; padding: 0;">
-                      <div style="flex: 1; padding: 6px 12px; color: #39dc00; font-size: 11px; border-right: 1px solid #39dc00; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${item.title || item.id}
+                  ${allItems.map((item, idx) => {
+                    const categoryColors = {
+                      'DIR': '#ff00ff',
+                      'GRAMMAR': '#3333ff',
+                      'SVA': '#ffff00'
+                    };
+                    const catColor = categoryColors[(item.category||'').toUpperCase()] || '#39dc00';
+                    const isPinned = !!item.pinned;
+                    const rowBg = isPinned ? 'background:rgba(255,176,0,0.07);border-bottom:1px solid rgba(255,176,0,0.4);' : 'border-bottom:1px dashed #39dc00;';
+                    const titleColor = isPinned ? '#ffb000' : '#e0e0e0';
+                    const pinMark = isPinned ? '<span style="color:#ffb000;margin-right:5px;font-size:10px;">●</span>' : '';
+                    return `
+                    <div class="list-item" data-index="${idx}" style="cursor:pointer;display:flex;${rowBg}transition:background 0.2s;padding:0;">
+                      <div style="flex:1;padding:6px 12px;color:${titleColor};font-size:11px;border-right:1px solid #39dc00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${pinMark}${item.title || item.id}
                       </div>
-                      <div style="width: 150px; padding: 6px 12px; color: #39dc00; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        ${item.category}
+                      <div style="width:150px;padding:6px 12px;color:${catColor};font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${item.category||''}
                       </div>
                     </div>
-                  `).join('')}
+                  `;
+                  }).join('')}
                 </div>
               </div>
             `;
@@ -2214,31 +2365,51 @@ REQUIRE LOGIN: No (Public access enabled)
           `;
           terminalContent.innerHTML = figmaHTML;
         } else {
-          // Regular text format
+          // Regular text format (About etc.)
           const mdText = content.text || '';
-          let textHTML = `<div class="md-content" style="padding: 12px;" id="contentText">${mdText}</div>`;
-
-          // Add published posts if any
-          if (publishedPosts.length > 0) {
-            textHTML += `
-              <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #39dc00; color: #39dc00; font-size: 11px;">
-                <div style="font-weight: bold; margin-bottom: 10px;">최근 게시물:</div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                  ${publishedPosts.map(item => `
-                    <div style="border: 1px solid #39dc00; padding: 8px; font-size: 9px;">
-                      <div style="font-weight: bold;">${item.title}</div>
-                      <div style="opacity: 0.8; font-size: 8px;">By ${item.author} (${item.year})</div>
-                      <div style="margin-top: 4px;">${item.preview.substring(0, 100)}...</div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            `;
-          }
-
+          const displayText = mdText || '<span style="opacity:0.5">[어드민에서 내용을 입력하세요]</span>';
+          const hasStatement = !!(content.artistStatement);
+          const statementBtnHTML = hasStatement
+            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:6px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#39dc00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#39dc00';">[ ARTIST STATEMENT → ]</button>`
+            : '';
+          let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;"><div class="md-content" id="contentText">${displayText}</div>${statementBtnHTML}</div>`;
           terminalContent.innerHTML = textHTML;
         }
       }
+    }
+
+    // Show artist statement view (desktop)
+    function loadAboutStatement() {
+      const terminalContent = document.getElementById('terminalContent');
+      if (!terminalContent) return;
+      const stmt = contents.about.artistStatement || '';
+      const displayStmt = stmt || '<span style="opacity:0.5">[어드민에서 아티스트 스테이트먼트를 입력하세요]</span>';
+      terminalContent.innerHTML = `
+        <div style="padding:12px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #39dc00;">
+            <button onclick="loadContent('about')" style="background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:4px 12px;font-family:'Courier New',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#39dc00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#39dc00';">[ ← BACK ]</button>
+            <span style="color:#39dc00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
+          </div>
+          <div class="md-content">${displayStmt}</div>
+        </div>
+      `;
+    }
+
+    // Show artist statement view (mobile)
+    function loadAboutStatementMobile() {
+      const mobileContent = document.getElementById('mobileContentText');
+      if (!mobileContent) return;
+      const stmt = contents.about.artistStatement || '';
+      const displayStmt = stmt || '<div style="padding:20px;color:#39dc00;opacity:0.5;font-size:11px;">[어드민에서 아티스트 스테이트먼트를 입력하세요]</div>';
+      mobileContent.innerHTML = `
+        <div style="padding:12px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #39dc00;">
+            <button onclick="loadContentToMobile('about')" style="background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:5px 12px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ← BACK ]</button>
+            <span style="color:#39dc00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
+          </div>
+          <div class="md-content">${displayStmt}</div>
+        </div>
+      `;
     }
 
     // Position board items in aligned grid
@@ -2416,7 +2587,7 @@ REQUIRE LOGIN: No (Public access enabled)
           padding: ${isMobileOverlay ? '8px 10px' : '7px 14px'}; border-bottom: 1px solid #39dc00;
           flex-shrink: 0; background: #39dc00;
         ">
-          <span id="csOverlayTitle" style="color:#000;font-size:11px;letter-spacing:2px;font-family:monospace;font-weight:bold;flex-shrink:0;">ENTIRE</span>
+          <span id="csOverlayTitle" style="color:#000;font-size:11px;letter-spacing:2px;font-family:monospace;font-weight:bold;flex-shrink:0;">${content.title || 'ARCHIVE'}</span>
           <span id="csWaveform" style="flex:1;font-family:monospace;font-size:${isMobileOverlay ? '8px' : '11px'};color:rgba(0,0,0,0.4);letter-spacing:1px;overflow:hidden;white-space:nowrap;text-align:center;"></span>
           ${isMobileOverlay ? '' : `<label style="cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;">
             <input type="file" id="csLocalFolder" multiple accept="image/*" style="display:none;">
@@ -2789,7 +2960,7 @@ REQUIRE LOGIN: No (Public access enabled)
         if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
       });
 
-      renderLevel(content.photos || [], 'ENTIRE');
+      renderLevel(content.photos || [], content.title || 'ARCHIVE');
     }
 
     // Enable dragging functionality for board items
@@ -2858,8 +3029,10 @@ REQUIRE LOGIN: No (Public access enabled)
     // Setup list item click handlers
     function openItemPreviewPopup(item) {
       const modal = document.getElementById('itemPreviewModal');
+      document.getElementById('popupFileTab').textContent = item.category || 'FILE';
+      document.getElementById('popupHeaderMeta').textContent = 'DOC · ' + (item.category || 'REF') + (item.year ? '  ·  ' + item.year : '');
       document.getElementById('popupTitle').textContent = item.title || '';
-      document.getElementById('popupCategory').textContent = (item.category || '') + (item.year ? '  ·  ' + item.year : '');
+      document.getElementById('popupCategory').textContent = (item.author ? item.author + '  ' : '') + (item.year ? '· ' + item.year : '');
       const fullContent = item.text || item.preview || '';
       document.getElementById('popupBody').innerHTML = (typeof marked !== 'undefined') ? marked.parse(fullContent) : fullContent;
       modal.classList.add('active');
@@ -3038,16 +3211,22 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // Load slideshow - full screen format
     function loadSlideshow(content) {
-      currentSlides = content.slides;
+      currentSlides = content.slides || [];
       currentSlideIndex = 0;
 
       const terminalContent = document.getElementById('terminalContent');
+
+      // 슬라이드 없으면 빈 상태 표시
+      if (currentSlides.length === 0) {
+        terminalContent.innerHTML = `<div style="padding:20px;color:#39dc00;font-size:11px;opacity:0.6;">[About 내용이 없습니다. 어드민에서 슬라이드를 추가하세요.]</div>`;
+        return;
+      }
       const slideshowHTML = `
         <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px;">
           <div class="slideshow-content" style="flex: 1; padding: 16px 20px; background: #000; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
-            <div class="slide-header" style="margin-bottom: 16px; border-bottom: 1px dashed #39dc00; padding-bottom: 12px; flex-shrink: 0;">
+            <div class="slide-header" style="margin-bottom: 16px; padding: 0 24px 12px 24px; flex-shrink: 0;">
               <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #39dc00; margin-bottom: 8px;"></div>
-              <div class="slide-meta" style="font-size: 10px; color: #39dc00; opacity: 0.7;"></div>
+              <div class="slide-meta" style="font-size: 10px; color: #ffdd00; opacity: 0.7;"></div>
             </div>
             <div class="slide-text" style="flex: 1; overflow-y: auto; min-height: 0;"></div>
           </div>
@@ -3068,8 +3247,8 @@ REQUIRE LOGIN: No (Public access enabled)
     function displaySlide(slideIndex) {
       const slide = currentSlides[slideIndex];
       document.querySelector('.slide-title').textContent = slide.title;
-      document.querySelector('.slide-meta').textContent = `${slide.category} | ${slide.author} | ${slide.year}`;
-      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; color: #39dc00; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.6;">${slide.text}</pre>`;
+      document.querySelector('.slide-meta').textContent = `${slide.category}`;
+      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 0 24px; color: #e0e0e0; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8;">${slide.text}</pre>`;
       document.querySelector('.slide-counter').textContent = `${slideIndex + 1}/${currentSlides.length}`;
     }
 
@@ -3179,6 +3358,9 @@ REQUIRE LOGIN: No (Public access enabled)
 
       menuItems.forEach(item => {
         item.addEventListener('click', function() {
+          // Close any open overlays first
+          closeAllOverlays();
+
           // Update active state
           menuItems.forEach(m => m.classList.remove('active'));
           this.classList.add('active');
@@ -3193,6 +3375,15 @@ REQUIRE LOGIN: No (Public access enabled)
             menuSection.classList.remove('mobile-active');
           }
         });
+      });
+    }
+
+    function closeAllOverlays() {
+      const overlays = document.querySelectorAll('[id^="csOverlay"]');
+      console.log('closeAllOverlays called, found ' + overlays.length + ' overlays');
+      overlays.forEach(overlay => {
+        if (overlay._blobUrls) overlay._blobUrls.forEach(u => URL.revokeObjectURL(u));
+        overlay.remove();
       });
     }
 
@@ -3253,7 +3444,7 @@ REQUIRE LOGIN: No (Public access enabled)
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%;">
           ${filtered.map(photo => `
             <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid #39dc00; padding: 12px; cursor: pointer; transition: all 0.1s;">
-              <div class="photo-item-image" style="width: 100%; height: 150px; background: #000; border: 1px dashed #39dc00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <div class="photo-item-image" style="width: 100%; height: 100px; background: #000; border: 1px dashed #39dc00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <img src="${resolvePhotoUrl(photo.filename)}" alt="${photo.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
               </div>
               <div class="photo-item-info" style="font-size: 11px;">
@@ -3297,8 +3488,8 @@ REQUIRE LOGIN: No (Public access enabled)
       function displayInitialPhotos() {
         gallery.innerHTML = `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px;">
-            <img src="images/big-brother.jpg?v=2"
-              style="max-width: 100%; max-height: 340px; object-fit: contain; display: block;"
+            <img src="images/big-brother.jpg?v=3"
+              style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
               onerror="this.style.display='none'">
             <div style="text-align: center; color: #39dc00; font-size: 15px; font-family: 'Courier New', monospace; font-weight: bold;">
               Enter your instructions
@@ -3353,6 +3544,9 @@ REQUIRE LOGIN: No (Public access enabled)
           return;
         }
 
+        // VIEWER LOG 기록
+        if (typeof vlAddEntry === 'function') vlAddEntry(query);
+
         // Search in keywords and title
         const filtered = allPhotos.filter(photo => {
           const keywordMatch = photo.keywords.some(kw =>
@@ -3390,6 +3584,114 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // Show photo detail modal
+    // ── 교집합 플로팅 창 ──────────────────────────────────────
+    // Inclusion 사진 데이터 (실제 사진 파일과 키워드)
+    // admin에서 업데이트 가능하도록 별도 관리
+    const inclusionPhotos = (function() {
+      try {
+        const stored = localStorage.getItem('inclusionPhotos');
+        if (stored) return JSON.parse(stored);
+      } catch(e) {}
+      // 기본 샘플 데이터 — 실제 파일명과 키워드로 교체 필요
+      return [
+        { id:'INCL_C01', title:'INCL_C01', filename:'', keywords:['crash','wall','structure','decay'] },
+        { id:'INCL_F07', title:'INCL_F07', filename:'', keywords:['floating','displacement','object','space'] },
+        { id:'INCL_SH2', title:'INCL_SH2', filename:'', keywords:['shadow','light','depth','perception'] },
+      ];
+    })();
+
+    // SET 사진의 키워드와 가장 많이 겹치는 Inclusion 사진 목록 반환 (겹침 없으면 빈 배열)
+    function findInclMatches(setPhoto) {
+      const setKws = new Set((setPhoto.keywords || []).map(k => k.toLowerCase()));
+      const scored = inclusionPhotos.map(ip => {
+        const shared = (ip.keywords || []).filter(k => setKws.has(k.toLowerCase()));
+        return { photo: ip, shared };
+      }).filter(x => x.shared.length > 0);
+      scored.sort((a, b) => b.shared.length - a.shared.length);
+      return scored; // [{ photo, shared }, ...]
+    }
+
+    let _ixMatches = [];
+    let _ixCur = 0;
+    let _ixTimer = null;
+    let _ixProg = 0;
+    const IX_DUR = 3500;
+
+    function _ixUpdateDOM(idx) {
+      const m = _ixMatches[idx];
+      if (!m) return;
+      const img = document.getElementById('ixImg');
+      const name = document.getElementById('ixName');
+      const tags = document.getElementById('ixTags');
+      const idxEl = document.getElementById('ixIdx');
+      // 이미지: filename 있으면 실제 경로, 없으면 빈 src (숨김)
+      if (m.photo.filename) {
+        img.src = resolvePhotoUrl(m.photo.filename);
+        img.style.display = 'block';
+        document.getElementById('ixMatch').style.display = 'block';
+      } else {
+        document.getElementById('ixMatch').style.display = 'none';
+      }
+      name.textContent = m.photo.title || m.photo.id;
+      tags.innerHTML = m.shared.map(k => `<span class="ix-tag">${k}</span>`).join('');
+      idxEl.textContent = (idx + 1) + ' / ' + _ixMatches.length;
+    }
+
+    function _ixStartCycle() {
+      clearInterval(_ixTimer);
+      _ixProg = 0;
+      if (_ixMatches.length <= 1) return; // 1개면 순환 불필요
+      _ixTimer = setInterval(function() {
+        _ixProg += 100 / (IX_DUR / 100);
+        if (_ixProg >= 100) {
+          _ixProg = 0;
+          _ixCur = (_ixCur + 1) % _ixMatches.length;
+          const match = document.getElementById('ixMatch');
+          match.style.opacity = '0';
+          setTimeout(function() { _ixUpdateDOM(_ixCur); match.style.opacity = '1'; }, 350);
+        }
+        document.getElementById('ixFill').style.width = _ixProg + '%';
+      }, 100);
+    }
+
+    function openIxWindow(setPhoto) {
+      _ixMatches = findInclMatches(setPhoto);
+      if (_ixMatches.length === 0) { closeIxWindow(); return; }
+      _ixCur = 0;
+      _ixUpdateDOM(0);
+      // 위치: photo detail modal 왼쪽에 붙이기
+      _ixPosition();
+      document.getElementById('ixFloat').classList.add('ix-visible');
+      _ixStartCycle();
+    }
+
+    function closeIxWindow() {
+      document.getElementById('ixFloat').classList.remove('ix-visible');
+      clearInterval(_ixTimer);
+      _ixTimer = null;
+      _ixProg = 0;
+      document.getElementById('ixFill').style.width = '0%';
+    }
+
+    function _ixPosition() {
+      const content = document.querySelector('.photo-detail-content');
+      const ix = document.getElementById('ixFloat');
+      if (!content || !ix) return;
+      const r = content.getBoundingClientRect();
+      const ixW = ix.offsetWidth || 180;
+      const gap = 8;
+      const left = Math.max(8, r.left - ixW - gap);
+      const top  = r.top;
+      ix.style.left = left + 'px';
+      ix.style.top  = top + 'px';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const closeBtn = document.getElementById('ixCloseBtn');
+      if (closeBtn) closeBtn.addEventListener('click', closeIxWindow);
+    });
+    // ─────────────────────────────────────────────────────────
+
     function showPhotoDetail(photo) {
       const modal = document.getElementById('photoDetailModal');
       const title = document.getElementById('photoDetailTitle');
@@ -3413,10 +3715,14 @@ REQUIRE LOGIN: No (Public access enabled)
 
       modal.classList.add('active');
 
+      // 교집합 창 — 매칭 있을 때만 열기
+      setTimeout(function() { openIxWindow(photo); _ixPosition(); }, 50);
+
       // Close button handler
       if (closeBtn) {
         closeBtn.onclick = () => {
           modal.classList.remove('active');
+          closeIxWindow();
         };
       }
 
@@ -3424,6 +3730,7 @@ REQUIRE LOGIN: No (Public access enabled)
       modal.addEventListener('click', (e) => {
         if (e.target === modal) {
           modal.classList.remove('active');
+          closeIxWindow();
         }
       });
     }
@@ -3560,8 +3867,8 @@ REQUIRE LOGIN: No (Public access enabled)
         mobileContent.innerHTML = `
           <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; flex-shrink: 0;">
-              <img src="images/big-brother.jpg?v=2"
-                style="max-width: 100%; max-height: 220px; object-fit: contain; display: block;"
+              <img src="images/big-brother.jpg?v=3"
+                style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
                 onerror="this.style.display='none'">
               <div style="text-align: center; color: #39dc00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
               <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
@@ -3605,6 +3912,7 @@ REQUIRE LOGIN: No (Public access enabled)
                 // No search - hide results
                 document.getElementById('mobilePhotoGallery').style.display = 'none';
               } else {
+                if (typeof vlAddEntry === 'function') vlAddEntry(query);
                 // Filter and show results
                 const filtered = content.photos.filter(p =>
                   p.keywords.some(k => k.toLowerCase().includes(query)) ||
@@ -3638,6 +3946,96 @@ REQUIRE LOGIN: No (Public access enabled)
         html += '</div>';
         mobileContent.innerHTML = html;
 
+      } else if (content.isBookshelf) {
+        // Bookshelf format for mobile — rich dark palette, same as desktop
+        const allBookItems = [...(content.items || []), ...getPublishedPosts(section)];
+        // library_bookshelf.html shelf3 colors — matches desktop
+        const bookPalette = [
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+        ];
+        const mWidths  = [24, 28, 25, 32, 22, 27, 31, 24, 28, 25, 27, 22, 28, 32, 24, 27];
+        const mHeights = [187, 204, 194, 219, 182, 201, 197, 212, 190, 202, 182, 195, 201, 189, 214, 194];
+        const mLeans   = [-1.5, -0.8, 0, 0, 1.2, 0, -1, 0, 0.7, 0, 1.5, -0.6, 0, 0, 0.4, -0.3];
+        const MGROUP   = 3;
+        let mRowInner  = '';
+        allBookItems.forEach((item, idx) => {
+          if (idx > 0 && idx % MGROUP === 0) {
+            mRowInner += `<div style="flex-shrink:0;width:40px;"></div>`;
+          }
+          const p    = bookPalette[idx % bookPalette.length];
+          const w    = mWidths[idx % mWidths.length];
+          const h    = mHeights[idx % mHeights.length];
+          const lean = mLeans[idx % mLeans.length];
+          mRowInner += `<div class="bk3d-m" data-index="${idx}" style="width:${w}px;height:${h}px;transform:rotate(${lean}deg);transform-origin:bottom center;" title="${(item.title||'').replace(/"/g,'&quot;')}">
+            <div style="width:100%;height:100%;background:${p.bg};overflow:hidden;position:relative;border-radius:1px 0 0 1px;">
+              <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.06) 0%,transparent 40%,rgba(0,0,0,.18) 100%);pointer-events:none;"></div>
+              <div style="position:absolute;left:0;right:0;top:0;height:12px;background:${p.band};"></div>
+              ${p.line ? `<div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.28)}px;width:1px;background:${p.band};z-index:3;opacity:.5;"></div><div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.72)}px;width:1px;background:${p.band};z-index:3;opacity:.5;"></div>` : ''}
+              ${p.mark ? `<div style="position:absolute;top:-4px;right:${Math.max(3,Math.round(w*.3))}px;width:7px;height:16px;background:${p.mark};clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);z-index:5;opacity:.9;"></div>` : ''}
+              <div style="position:absolute;top:17px;bottom:6px;left:0;right:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;overflow:hidden;pointer-events:none;">
+                <span style="writing-mode:vertical-rl;color:${p.tc};font-weight:700;font-size:9px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
+                <span style="writing-mode:vertical-rl;color:${p.tc};opacity:.6;font-size:7px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
+              </div>
+            </div>
+            <div class="bk-side" style="background:${p.side};"></div>
+          </div>`;
+        });
+        mobileContent.style.whiteSpace = 'normal';
+        mobileContent.style.padding = '0';
+        mobileContent.innerHTML = `
+          <style>
+            .bk3d-m{position:relative;cursor:pointer;flex-shrink:0;transition:transform .18s ease,filter .18s ease;z-index:2;}
+            .bk3d-m:active{transform:translateY(-12px) rotate(0deg) !important;filter:brightness(1.3);}
+            .bk3d-m::before{
+              content:'';position:absolute;left:4px;top:-5px;right:-5px;height:5px;
+              background:repeating-linear-gradient(90deg,#f0e8d0 0,#f0e8d0 1.5px,#d4c8a8 1.5px,#d4c8a8 2.8px);
+              transform:skewX(-45deg);transform-origin:bottom left;z-index:5;
+            }
+            .bk3d-m::after{content:none;}
+            .bk-side{position:absolute;right:-5px;top:-5px;width:5px;bottom:0;transform:skewY(-45deg);transform-origin:top left;z-index:5;}
+            .bk3d-m-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00cc00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
+          </style>
+          <div style="display:flex;flex-direction:column;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;background:#000;">
+            <div style="padding:7px 12px;border-bottom:1px solid #39dc00;font-size:10px;font-weight:bold;flex-shrink:0;color:#39dc00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+              <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
+              <span style="opacity:0.4;font-weight:normal;font-size:9px;">← scroll →</span>
+            </div>
+            <div style="overflow-x:auto;overflow-y:visible;padding:20px 12px 0 40px;scrollbar-width:thin;scrollbar-color:#1a1a1a #000;-webkit-overflow-scrolling:touch;">
+              <div style="display:inline-flex;align-items:flex-end;gap:2px;min-width:min-content;">
+                <div class="bk3d-m-bend" style="height:44px;"></div>
+                ${mRowInner}
+                <div class="bk3d-m-bend" style="height:36px;"></div>
+              </div>
+            </div>
+            <div style="flex-shrink:0;height:44px;background:linear-gradient(180deg,rgba(57,220,0,0.16) 0%,rgba(57,220,0,0.05) 55%,rgba(0,0,0,0) 100%);"></div>
+            <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(57,220,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:1px solid rgba(57,220,0,0.12);">
+              <span>tap to open</span>
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          document.querySelectorAll('.bk3d-m').forEach(el => {
+            el.addEventListener('click', () => {
+              const idx = parseInt(el.dataset.index);
+              if (allBookItems[idx]) showMobileItemDetail(allBookItems[idx], allBookItems, idx, section);
+            });
+          });
+        }, 0);
       } else if (content.isFigmaBoard) {
         // Figma board format
         mobileContent.innerHTML = `
@@ -3650,15 +4048,27 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>
         `;
-      } else if (content.text) {
-        // Text format
-        mobileContent.innerHTML = content.text;
+      } else if (content.text !== undefined) {
+        // Text format (텍스트가 빈 문자열이어도 표시)
+        const mobileMainText = content.text
+          ? content.text
+          : '<div style="padding:20px;color:#39dc00;opacity:0.5;font-size:11px;">[어드민에서 내용을 입력하세요]</div>';
+        const hasMobileStatement = !!(content.artistStatement);
+        const mobileStmtBtn = hasMobileStatement
+          ? `<button onclick="loadAboutStatementMobile()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:7px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ARTIST STATEMENT → ]</button>`
+          : '';
+        mobileContent.innerHTML = `<div style="padding:12px;position:relative;min-height:100%;box-sizing:border-box;">${mobileMainText}${mobileStmtBtn}</div>`;
       } else if (content.items) {
         // List/Board format - Match desktop table layout
         mobileContent.innerHTML = '';
-        const allItems = [...(content.items || [])];
+        const rawMobileItems = [...(content.items || [])];
         const publishedItems = getPublishedPosts(section);
-        allItems.push(...publishedItems);
+        rawMobileItems.push(...publishedItems);
+        // 핀된 항목 상단 고정
+        const allItems = [
+          ...rawMobileItems.filter(i => i.pinned),
+          ...rawMobileItems.filter(i => !i.pinned)
+        ];
 
         // Use card format for reference section, list format for others
         const isCardFormat = section === 'reference';
@@ -3688,21 +4098,26 @@ REQUIRE LOGIN: No (Public access enabled)
                 </div>
                 <div style="padding: 8px 10px; color: #39dc00; font-size: 11px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
                   <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #39dc00; font-weight: bold; flex-shrink: 0;">${item.title}</div>
-                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #39dc00; color: #ffb000; flex-shrink: 0;">${category}</div>
+                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #39dc00; color: #ffc800; flex-shrink: 0;">${category}</div>
                   <div style="padding-top: 5px; font-size: 10px; color: #aaa; overflow: hidden; line-height: 1.5; word-break: break-word;">${item.preview || ''}</div>
                 </div>
               </div>
             `;
           } else {
             // List format for rule and others
+            const isPinnedM = !!item.pinned;
+            const rowStyleM = isPinnedM
+              ? 'background:rgba(255,176,0,0.07);border-bottom:1px solid rgba(255,176,0,0.4);'
+              : 'background:#000;border-bottom:1px dashed #39dc00;';
+            const titleColorM = isPinnedM ? '#ffb000' : '#39dc00';
             html += `
-              <div style="cursor: pointer; display: block; border-bottom: 1px dashed #39dc00; padding: 10px 12px; transition: background 0.2s; background: #000;" class="mobile-list-item" data-index="${idx}">
-                <div style="color: #39dc00; font-size: 12px; margin-bottom: 5px; font-weight: bold; word-break: break-all;">
-                  ${item.title || itemId}
+              <div style="cursor:pointer;display:block;${rowStyleM}padding:10px 12px;transition:background 0.2s;" class="mobile-list-item" data-index="${idx}">
+                <div style="color:${titleColorM};font-size:12px;margin-bottom:5px;font-weight:bold;word-break:break-all;">
+                  ${isPinnedM ? '<span style="font-size:10px;margin-right:4px;">●</span>' : ''}${item.title || itemId}
                 </div>
-                <div style="color: #39dc00; font-size: 11px; display: flex; justify-content: space-between; gap: 8px;">
+                <div style="color:#39dc00;font-size:11px;display:flex;justify-content:space-between;gap:8px;">
                   <span>${category}</span>
-                  <span style="color: #ffb000;">${status}</span>
+                  <span style="color:#ffb000;">${status}</span>
                 </div>
               </div>
             `;
@@ -3739,7 +4154,7 @@ REQUIRE LOGIN: No (Public access enabled)
         // Reload current section
         const activeMenuItem = document.querySelector('[data-section].active') || document.querySelector('.mobile-menu-item.active');
         if (activeMenuItem) {
-          const section = activeMenuItem.getAttribute('data-section') || 'project';
+          const section = activeMenuItem.getAttribute('data-section') || 'about';
           loadContent(section);
           loadContentToMobile(section);
         }
@@ -3758,7 +4173,9 @@ REQUIRE LOGIN: No (Public access enabled)
         .then(([data, publishedPosts]) => {
           // admin-contents.json 적용
           if (data && Object.keys(data).length > 0) {
-            if (data.project && data.project.slides) contents.project.slides = data.project.slides;
+            if (data.project && data.project.photos && data.project.photos.some(p => p.type === 'sheet')) contents.project.photos = data.project.photos;
+            if (data.about && data.about.text !== undefined) contents.about.text = data.about.text;
+            if (data.about && data.about.artistStatement !== undefined) contents.about.artistStatement = data.about.artistStatement;
             if (data.inclusion && data.inclusion.text) contents.inclusion.text = data.inclusion.text;
             if (data.intro && data.intro.photos && data.intro.photos.some(p => p.type === 'sheet')) contents.intro.photos = data.intro.photos;
             if (data.rule && data.rule.items) contents.rule.items = data.rule.items;
@@ -3778,8 +4195,8 @@ REQUIRE LOGIN: No (Public access enabled)
           // Re-render current section
           const isMobile = window.innerWidth <= 768;
           const activeSection = isMobile
-            ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'project')
-            : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'project');
+            ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'about')
+            : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'about');
           if (isMobile) loadContentToMobile(activeSection);
           else loadContent(activeSection);
         })
@@ -3874,55 +4291,104 @@ REQUIRE LOGIN: No (Public access enabled)
         }
       } else {
         // Load initial content
-        loadContent('project');
+        closeAllOverlays();
+        loadContent('about');
         // Mobile content is loaded by detectAndSwitchLayout
 
-        // 작품소개 팝업 자동 표시
-        setTimeout(openInfoPopup, 600);
       }
+
+      // ── PROCESS MONITOR ──────────────────────────────────────
+      const pmProcesses = [
+        { key:'project',   name:'SET.EXE',        pid:'0x001', cpu:72 },
+        { key:'inclusion', name:'INCLUSION.EXE',   pid:'0x002', cpu:38 },
+        { key:'rule',      name:'LOG.DLL',          pid:'0x003', cpu:15 },
+        { key:'reference', name:'REFERENCE.SYS',   pid:'0x004', cpu:5  },
+        { key:'archive',   name:'MEASURE.EXE',     pid:'0x005', cpu:91 },
+        { key:'about',     name:'ABOUT.TXT',        pid:'0x006', cpu:8  },
+      ];
+
+      function pmRender(activeKey) {
+        const container = document.getElementById('pmRows');
+        if (!container) return;
+        container.innerHTML = pmProcesses.map(p => {
+          const isActive = p.key === activeKey;
+          const rowBg = isActive ? 'rgba(57,220,0,0.12)' : 'transparent';
+          const barW = Math.max(2, Math.min(99, p.cpu + (Math.random()-0.5)*10));
+          p._curCpu = barW;
+          // 샘플 색상 그대로: active=green, others=white(#e0e0e0)
+          const nameColor = isActive ? '#39dc00' : '#909090';
+          const statusColor = isActive ? '#39dc00' : '#39dc00';
+          const pidColor = '#888';
+          return `
+            <div onclick="loadContent('${p.key}'); pmRender('${p.key}');"
+              style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #0d2e00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
+              onmouseover="this.style.background='rgba(57,220,0,0.08)'"
+              onmouseout="this.style.background='${isActive?'rgba(57,220,0,0.12)':'transparent'}'">
+              <span style="font-weight:bold;color:${nameColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</span>
+              <span style="color:${pidColor};font-size:9px;">${p.pid}</span>
+              <span>
+                <span style="display:inline-block;width:34px;height:7px;border:1px solid #39dc00;background:#000;overflow:hidden;vertical-align:middle;">
+                  <span style="display:block;height:100%;width:${barW}%;background:#39dc00;"></span>
+                </span>
+              </span>
+              <span style="color:${statusColor};font-size:9px;">RUNNING</span>
+            </div>`;
+        }).join('');
+      }
+
+      // CPU 바 주기적 업데이트
+      setInterval(() => {
+        const activeKey = document.querySelector('.menu-item.active')?.getAttribute('data-section') || 'about';
+        pmRender(activeKey);
+        const avg = Math.floor(pmProcesses.reduce((s,p)=>s+(p._curCpu||p.cpu),0)/pmProcesses.length);
+        const el = document.getElementById('pmTotalCpu');
+        if (el) el.textContent = avg;
+      }, 1400);
+
+      // 초기 렌더
+      pmRender('about');
+
+      // ── VIEWER LOG ───────────────────────────────────────────
+
     });
 
-    // ── INFO POPUP ──────────────────────────────────
-    // ── INFO POPUP ──────────────────────────────────
-    function openInfoPopup() {
-      const mini = document.getElementById('infoMini');
-      const win = document.querySelector('.portfolio-window');
-      if (win) {
-        const r = win.getBoundingClientRect();
-        // 포트폴리오 창 우하단 코너에 걸치게
-        // 세로: 창 하단 테두리에서 28px 위 → 팝업 대부분이 창 아래쪽 빈 공간에 위치
-        mini.style.top    = (r.bottom - 28) + 'px';
-        mini.style.bottom = 'auto';
-        // 가로: 창 우측 테두리에서 16px 안쪽 → 팝업 대부분이 창 오른쪽 바깥에 위치
-        mini.style.right  = Math.max(8, window.innerWidth - r.right - 16) + 'px';
-      }
-      mini.style.display = 'block';
-      mini.style.opacity = '0';
-      requestAnimationFrame(function() { requestAnimationFrame(function() { mini.style.opacity = '1'; }); });
+    // ── VIEWER LOG (전역) ─────────────────────────────────────
+    let _vlTotal = 0;
+    function _pad2(n) { return String(n).padStart(2,'0'); }
+    function _vlTime() {
+      const d = new Date();
+      return `${_pad2(d.getHours())}:${_pad2(d.getMinutes())}:${_pad2(d.getSeconds())}`;
     }
-    function closeInfoPopup() {
-      document.getElementById('infoMini').style.display = 'none';
-      document.getElementById('infoFull').style.display = 'none';
+    function _vlApplyAge(el) {
+      const age = parseInt(el.getAttribute('data-age') || 0);
+      const colors = ['#ffb000','#c8c8c8','#888','#444','#222'];
+      const timeColors = ['#ffb000','#666','#444','#2a2a2a','#1a1a1a'];
+      const q = el.querySelector('span:last-child');
+      const tm = el.querySelector('span:first-child');
+      if (q) { q.style.color = colors[age]; q.style.fontWeight = age === 0 ? 'bold' : 'normal'; }
+      if (tm) tm.style.color = timeColors[age];
     }
-    function expandInfoPopup() {
-      const full = document.getElementById('infoFull');
-      full.style.display = 'flex';
-      full.style.opacity = '0';
-      full.style.transition = 'opacity 0.2s ease';
-      requestAnimationFrame(function() { requestAnimationFrame(function() { full.style.opacity = '1'; }); });
+    function vlAddEntry(query) {
+      const list = document.getElementById('vlList');
+      const countEl = document.getElementById('vlCount');
+      const lastEl = document.getElementById('vlLastTime');
+      if (!list) return;
+      _vlTotal++;
+      const t = _vlTime();
+      list.querySelectorAll('.vl-entry').forEach((el, i) => {
+        el.setAttribute('data-age', Math.min(i + 1, 4));
+        _vlApplyAge(el);
+      });
+      const entry = document.createElement('div');
+      entry.className = 'vl-entry';
+      entry.setAttribute('data-age', '0');
+      entry.style.cssText = 'display:grid;grid-template-columns:52px 1fr;gap:6px;padding:3px 10px;font-size:9px;border-bottom:1px solid #0a0a0a;animation:vlSlideIn 0.3s ease;';
+      entry.innerHTML = `<span style="color:#ffb000;font-size:8px;padding-top:1px;">[${t}]</span><span style="color:#ffb000;font-weight:bold;">${query}</span>`;
+      list.prepend(entry);
+      while (list.children.length > 7) list.lastElementChild.remove();
+      if (countEl) countEl.textContent = _vlTotal + ' queries';
+      if (lastEl) lastEl.textContent = t;
     }
-    function collapseInfoPopup() {
-      const full = document.getElementById('infoFull');
-      full.style.transition = 'opacity 0.15s ease';
-      full.style.opacity = '0';
-      setTimeout(function() { full.style.display = 'none'; }, 150);
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        if (document.getElementById('infoFull').style.display === 'flex') collapseInfoPopup();
-        else closeInfoPopup();
-      }
-    });
   </script>
 </body>
 </html>

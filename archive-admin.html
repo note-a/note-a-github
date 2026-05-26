@@ -474,20 +474,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     <div id="portfolio-edit-section" style="display: none; flex: 1; flex-direction: column; border: 2px solid #39dc00; background: #000; box-shadow: 0 0 20px rgba(57, 220, 0, 0.3); overflow-y: auto; min-height: 0; min-width: 0;">
       <div style="background: #39dc00; color: #000; padding: 6px 10px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
         PORTFOLIO EDIT
-        <div style="display: flex; gap: 4px;">
-          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">_</div>
-          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">□</div>
-          <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">✕</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span id="dataSourceBadge" style="font-size:8px;font-weight:normal;letter-spacing:1px;color:#000;opacity:0.6;">...</span>
+          <div style="display: flex; gap: 4px;">
+            <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">_</div>
+            <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">□</div>
+            <div style="width: 16px; height: 16px; background: #39dc00; border: 1px solid #000; cursor: pointer; font-size: 10px; display: flex; align-items: center; justify-content: center; color: #000;">✕</div>
+          </div>
         </div>
       </div>
       <div style="padding: 12px; border-bottom: 1px solid #39dc00; display: flex; gap: 8px; overflow-x: auto; flex-shrink: 0;">
-        <button class="portfolio-subsection-tab active" data-subsection="project" onclick="loadPortfolioEditForm('project')" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">PROJECT</button>
-        <button class="portfolio-subsection-tab" data-subsection="inclusion" onclick="loadPortfolioEditForm('inclusion')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">INCLUSION</button>
-        <button class="portfolio-subsection-tab" data-subsection="intro" onclick="loadPortfolioEditForm('intro')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ENTIRE</button>
-        <button class="portfolio-subsection-tab" data-subsection="video" onclick="loadPortfolioEditForm('video')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">VIDEO</button>
+        <button class="portfolio-subsection-tab active" data-subsection="project" onclick="loadPortfolioEditForm('project')" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">SET</button>
+        <button class="portfolio-subsection-tab" data-subsection="inclusion" onclick="loadPortfolioEditForm('inclusion')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">SET INCLUSION</button>
         <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">LOG</button>
-        <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">REFERENCE</button>
-        <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ARCHIVE</button>
+        <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">reference</button>
+        <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">MEASURE</button>
+        <button class="portfolio-subsection-tab" data-subsection="about" onclick="loadPortfolioEditForm('about')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ABOUT</button>
       </div>
       <div id="portfolio-edit-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; color: #39dc00; font-size: 11px;"></div>
       <div style="padding: 12px; border-top: 1px solid #39dc00; display: flex; gap: 8px; flex-shrink: 0; background: #000;">
@@ -529,11 +531,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             <option value="">-- 섹션 선택 --</option>
             <option value="project">SET</option>
             <option value="inclusion">SET Inclusion</option>
-            <option value="intro">entire</option>
-            <option value="rule">log</option>
+            <option value="about">About</option>
+            <option value="rule">Log</option>
             <option value="reference">reference</option>
-            <option value="archive">Archive</option>
+            <option value="archive">Measure</option>
           </select>
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:8px;">
+          <input type="checkbox" id="postPinned" style="accent-color:#ffb000;width:14px;height:14px;cursor:pointer;">
+          <label for="postPinned" style="cursor:pointer;color:#ffb000;font-size:10px;margin:0;">● 상단 고정 (Log/Reference에서 목록 맨 위에 표시)</label>
         </div>
         <div class="form-group">
           <label>Description / Content (Markdown 지원)</label>
@@ -645,6 +651,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       });
       var sec = document.getElementById('postSection');
       if (sec) sec.value = '';
+      var pinned = document.getElementById('postPinned');
+      if (pinned) pinned.checked = false;
       var prev = document.getElementById('mdPreviewBox');
       if (prev) prev.textContent = '내용을 입력하면 미리보기가 표시됩니다.';
     }
@@ -680,7 +688,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           status: document.getElementById('postStatus').value || 'DRAFT',
           preview: previewVal,
           text: previewVal,
-          publishedSection: publishedSection || null
+          publishedSection: publishedSection || null,
+          pinned: document.getElementById('postPinned')?.checked || false
         };
 
         var saveSection;
@@ -857,34 +866,150 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     // Portfolio data storage
     let portfolioEditData = {};
 
-    // Load portfolio data from storage or admin-contents.json
-    async function loadPortfolioData() {
-      // First try localStorage
-      const saved = localStorage.getItem('adminContents');
-      if (saved) {
-        portfolioEditData = JSON.parse(saved);
-        console.log('Loaded portfolio data from localStorage');
-        return;
-      }
+    let _adminEditBuffer = {};
 
-      // If not in localStorage, try to fetch from admin-contents.json
+    function _syncSlidesToBuffer(section) {
+      const items = document.querySelectorAll('.admin-slide-item');
+      const slides = [];
+      items.forEach(el => {
+        slides.push({
+          id: el.querySelector('.asl-id')?.value || '',
+          title: el.querySelector('.asl-title')?.value || '',
+          category: el.querySelector('.asl-category')?.value || '',
+          author: el.querySelector('.asl-author')?.value || '',
+          year: el.querySelector('.asl-year')?.value || '',
+          text: el.querySelector('.asl-text')?.value || ''
+        });
+      });
+      if (!_adminEditBuffer[section]) _adminEditBuffer[section] = {};
+      _adminEditBuffer[section].slides = slides;
+    }
+
+    function _syncItemsToBuffer(section) {
+      const rows = document.querySelectorAll('.admin-item-row');
+      const items = [];
+      rows.forEach(el => {
+        const title = el.querySelector('.ali-title')?.value || '';
+        const pinnedEl = el.querySelector('.ali-pinned');
+        items.push({
+          id: title.toUpperCase().replace(/\s+/g, '_') || `ITEM_${Date.now()}`,
+          title,
+          author: el.querySelector('.ali-author')?.value || '',
+          year: el.querySelector('.ali-year')?.value || '',
+          category: el.querySelector('.ali-category')?.value || '',
+          status: el.querySelector('.ali-status')?.value || '',
+          preview: el.querySelector('.ali-preview')?.value || '',
+          pinned: pinnedEl ? pinnedEl.checked : false
+        });
+      });
+      if (!_adminEditBuffer[section]) _adminEditBuffer[section] = {};
+      _adminEditBuffer[section].items = items;
+    }
+
+    function _syncPhotosToBuffer() {
+      const rows = document.querySelectorAll('.admin-photo-row');
+      const photos = [];
+      rows.forEach(el => {
+        photos.push({
+          id: el.querySelector('.aph-id')?.value || '',
+          title: el.querySelector('.aph-title')?.value || '',
+          filename: el.querySelector('.aph-filename')?.value || '',
+          keywords: (el.querySelector('.aph-keywords')?.value || '').split(',').map(k => k.trim()).filter(k => k),
+          description: el.querySelector('.aph-description')?.value || ''
+        });
+      });
+      if (!_adminEditBuffer.archive) _adminEditBuffer.archive = {};
+      _adminEditBuffer.archive.photos = photos;
+    }
+
+    function adminAddSlide(section) {
+      _syncSlidesToBuffer(section);
+      _adminEditBuffer[section].slides.push({ id: '', title: '', category: '', author: '', year: '', text: '' });
+      document.getElementById('portfolio-edit-content').innerHTML = generateSlidesForm(section);
+    }
+
+    function adminDeleteSlide(section, idx) {
+      _syncSlidesToBuffer(section);
+      _adminEditBuffer[section].slides.splice(idx, 1);
+      document.getElementById('portfolio-edit-content').innerHTML = generateSlidesForm(section);
+    }
+
+    function adminAddItem(section) {
+      _syncItemsToBuffer(section);
+      if (!_adminEditBuffer[section]) _adminEditBuffer[section] = {};
+      if (!_adminEditBuffer[section].items) _adminEditBuffer[section].items = [];
+      _adminEditBuffer[section].items.push({ id: '', title: '', author: '', year: '', category: '', status: '', preview: '' });
+      document.getElementById('portfolio-edit-content').innerHTML = generateItemsListForm(section);
+    }
+
+    function adminDeleteItem(section, idx) {
+      _syncItemsToBuffer(section);
+      _adminEditBuffer[section].items.splice(idx, 1);
+      document.getElementById('portfolio-edit-content').innerHTML = generateItemsListForm(section);
+    }
+
+    function adminAddPhoto() {
+      _syncPhotosToBuffer();
+      if (!_adminEditBuffer.archive) _adminEditBuffer.archive = {};
+      if (!_adminEditBuffer.archive.photos) _adminEditBuffer.archive.photos = [];
+      _adminEditBuffer.archive.photos.push({ id: '', title: '', filename: '', keywords: [], description: '' });
+      document.getElementById('portfolio-edit-content').innerHTML = generateArchivePhotosForm();
+    }
+
+    function adminDeletePhoto(idx) {
+      _syncPhotosToBuffer();
+      _adminEditBuffer.archive.photos.splice(idx, 1);
+      document.getElementById('portfolio-edit-content').innerHTML = generateArchivePhotosForm();
+    }
+
+    // Load portfolio data — always fetch from GitHub first (source of truth), localStorage as fallback
+    let _dataSource = 'none';
+    async function loadPortfolioData() {
       try {
-        console.log('Fetching admin-contents.json...');
         const response = await fetch('https://raw.githubusercontent.com/note-a/note-a-github/main/admin-contents.json?t=' + Date.now());
         if (response.ok) {
           const data = await response.json();
-          portfolioEditData = data;
-          console.log('Loaded portfolio data from admin-contents.json');
-          console.log('portfolioEditData.project:', portfolioEditData.project ? 'exists' : 'missing');
-          if (portfolioEditData.project?.slides) {
-            console.log('SLIDE 1 text in portfolioEditData:', portfolioEditData.project.slides[0]?.text?.substring(0, 100));
+          _dataSource = 'github';
+          // Merge: GitHub as base, local data takes priority (preserves unsaved/locally-saved edits)
+          try {
+            const existingLocal = JSON.parse(localStorage.getItem('adminContents') || '{}');
+            // Per-key merge: if local has a key, keep it (user's edits > GitHub CDN cache)
+            const merged = Object.assign({}, data, existingLocal);
+            portfolioEditData = merged;
+            localStorage.setItem('adminContents', JSON.stringify(merged));
+          } catch(e) {
+            portfolioEditData = data;
           }
-        } else {
-          console.log('admin-contents.json response not ok:', response.status);
+          _updateDataSourceBadge();
+          return;
         }
       } catch (err) {
-        console.log('Could not load admin-contents.json:', err);
+        console.log('GitHub fetch failed, trying localStorage:', err);
       }
+
+      // Fallback: localStorage
+      const saved = localStorage.getItem('adminContents');
+      if (saved) {
+        try {
+          portfolioEditData = JSON.parse(saved);
+          _dataSource = 'localStorage';
+        } catch(e) {
+          portfolioEditData = {};
+          _dataSource = 'empty';
+        }
+      } else {
+        _dataSource = 'empty';
+      }
+      _updateDataSourceBadge();
+    }
+
+    function _updateDataSourceBadge() {
+      const badge = document.getElementById('dataSourceBadge');
+      if (!badge) return;
+      const colors = { github: '#39dc00', localStorage: '#ffb000', empty: '#ff3333', none: '#555' };
+      const labels = { github: '● GitHub', localStorage: '● localStorage', empty: '● no data', none: '...' };
+      badge.style.color = colors[_dataSource] || '#555';
+      badge.textContent = labels[_dataSource] || _dataSource;
     }
 
     // Load portfolio data on page init
@@ -1101,6 +1226,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
               <option value="archive" ${item.publishedSection==='archive'?'selected':''}>Archive</option>
             </select>
           </div>
+          <div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <input type="checkbox" id="editPinned" ${item.pinned?'checked':''} style="accent-color:#ffb000;width:14px;height:14px;cursor:pointer;">
+            <label for="editPinned" style="cursor:pointer;color:#ffb000;font-size:11px;margin:0;">● 상단 고정 (Log/Reference 목록 맨 위에 표시)</label>
+          </div>
 
           <div style="margin-bottom: 12px;">
             <label style="color: #39dc00; font-size: 11px;">Content</label>
@@ -1124,7 +1253,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           status: document.getElementById('editStatus').value,
           preview: document.getElementById('editContent').value,
           text: document.getElementById('editContent').value,
-          publishedSection: document.getElementById('editSection').value || null
+          publishedSection: document.getElementById('editSection').value || null,
+          pinned: document.getElementById('editPinned')?.checked || false
         };
         saveArchiveData();
         loadContent(section);
@@ -1138,21 +1268,25 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     // Portfolio Edit Functions
     async function loadPortfolioEditForm(subsection) {
+      // 탭 전환 시 해당 섹션 버퍼 초기화
+      delete _adminEditBuffer[subsection];
       const portfolioEditContent = document.getElementById('portfolio-edit-content');
       await loadPortfolioData();
 
       let formHTML = '';
 
       if (subsection === 'project') {
-        formHTML = generateProjectSlidesForm();
+        formHTML = generateContactSheetForm('project');
       } else if (subsection === 'inclusion' || subsection === 'video') {
         formHTML = generateTextForm(subsection);
       } else if (subsection === 'intro') {
-        formHTML = generateContactSheetForm();
+        formHTML = generateContactSheetForm('intro');
       } else if (subsection === 'rule' || subsection === 'reference') {
         formHTML = generateItemsListForm(subsection);
       } else if (subsection === 'archive') {
         formHTML = generateArchivePhotosForm();
+      } else if (subsection === 'about') {
+        formHTML = generateTextForm('about');
       }
 
       portfolioEditContent.innerHTML = formHTML;
@@ -1276,16 +1410,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       return photos;
     }
 
-    function generateContactSheetForm() {
-      const currentPhotos = portfolioEditData.intro && portfolioEditData.intro.photos
-        ? JSON.stringify(portfolioEditData.intro.photos, null, 2)
+    function generateContactSheetForm(section = 'intro') {
+      const sectionData = portfolioEditData[section];
+      const currentPhotos = sectionData && sectionData.photos
+        ? JSON.stringify(sectionData.photos, null, 2)
         : '';
+      const sectionLabel = section === 'project' ? 'SET — GALLERY 편집' : 'ENTIRE — CONTACT SHEET 편집';
 
       return `
         <div style="padding:12px;display:flex;flex-direction:column;gap:14px;">
 
           <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">
-            ENTIRE — CONTACT SHEET 편집
+            ${sectionLabel}
           </div>
 
           <!-- ① 옵시디언 마크다운 가져오기 -->
@@ -1322,7 +1458,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <!-- ② 현재 데이터 (JSON) -->
           <div>
             <label style="color:#39dc00;font-size:10px;font-weight:bold;">② 현재 데이터 (JSON 직접 편집 가능)</label>
-            <textarea id="csPhotosJson" rows="12"
+            <textarea id="csPhotosJson" data-section="${section}" rows="12"
               style="width:100%;margin-top:4px;background:#000;border:1px solid rgba(57,220,0,0.5);color:#39dc00;padding:8px;font-family:monospace;font-size:9px;box-sizing:border-box;outline:none;resize:vertical;"
               placeholder="마크다운 변환 후 여기에 데이터가 채워집니다.">${currentPhotos}</textarea>
             <div style="font-size:9px;color:#555;margin-top:4px;">
@@ -1334,411 +1470,279 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         </div>`;
     }
 
-    function generateProjectSlidesForm() {
-      // Get slides from portfolio data or use defaults
-      const defaultData = {
-        project: {
-          slides: [
-            {
-              id: 'slide_1',
-              title: 'Project SET Overview',
-              category: 'Concept',
-              author: 'Artist / Theorist',
-              year: '2025-2026',
-              text: ''
-            },
-            {
-              id: 'slide_2',
-              title: 'Core Concept',
-              category: 'Philosophy',
-              author: 'Artist / Theorist',
-              year: '2025',
-              text: ''
-            },
-            {
-              id: 'slide_3',
-              title: 'Measurement Paradox',
-              category: 'Theory',
-              author: 'Artist / Theorist',
-              year: '2025',
-              text: ''
-            },
-            {
-              id: 'slide_4',
-              title: 'Structure & Framework',
-              category: 'System Design',
-              author: 'Artist / Developer',
-              year: '2025-2026',
-              text: ''
-            },
-            {
-              id: 'slide_5',
-              title: 'Voice Merge Protocol',
-              category: 'Method',
-              author: 'Artist / Theorist',
-              year: '2025',
-              text: ''
-            },
-            {
-              id: 'slide_6',
-              title: 'Observation & Control',
-              category: 'Theory',
-              author: 'Artist / Theorist',
-              year: '2025',
-              text: ''
-            },
-            {
-              id: 'slide_7',
-              title: 'Archive & Documentation',
-              category: 'Practice',
-              author: 'Artist / Developer',
-              year: '2025-2026',
-              text: ''
-            }
-          ]
-        }
-      };
+    function generateSlidesForm(section = 'about') {
+      const baseSlides = portfolioEditData[section]?.slides?.length > 0
+        ? portfolioEditData[section].slides : [];
+      const slides = _adminEditBuffer[section]?.slides ?? (() => {
+        if (!_adminEditBuffer[section]) _adminEditBuffer[section] = {};
+        _adminEditBuffer[section].slides = JSON.parse(JSON.stringify(baseSlides));
+        return _adminEditBuffer[section].slides;
+      })();
 
-      const slides = portfolioEditData.project?.slides || defaultData.project.slides;
+      const sectionLabel = section === 'about' ? 'ABOUT — SLIDES 편집' : section.toUpperCase() + ' — SLIDES 편집';
+      const inputStyle = 'width:100%;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;';
 
-      let html = '<div style="display: flex; flex-direction: column; gap: 20px;">';
+      let html = `<div style="display:flex;flex-direction:column;gap:14px;padding:12px;">
+    <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">${sectionLabel}</div>
+    <div style="font-size:9px;color:#888;line-height:1.6;">각 슬라이드를 편집하세요. 슬라이드 추가/삭제 후 반드시 [SAVE]를 눌러주세요.</div>
+    <input type="hidden" id="slidesSection" value="${section}">`;
 
       slides.forEach((slide, idx) => {
+        const tv = (slide.title || '').replace(/"/g, '&quot;');
+        const cv = (slide.category || '').replace(/"/g, '&quot;');
+        const av = (slide.author || '').replace(/"/g, '&quot;');
+        const yv = (slide.year || '').replace(/"/g, '&quot;');
+        const xv = (slide.text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
         html += `
-          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 12px;">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">SLIDE ${idx + 1} / ${slides.length}</div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
-                <input type="text" class="slide-title-${idx}" value="${slide.title}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">CATEGORY</label>
-                  <input type="text" class="slide-category-${idx}" value="${slide.category}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">AUTHOR</label>
-                  <input type="text" class="slide-author-${idx}" value="${slide.author}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">YEAR</label>
-                  <input type="text" class="slide-year-${idx}" value="${slide.year}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">CONTENT TEXT</label>
-                <textarea class="slide-text-${idx}" style="width: 100%; height: 150px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${slide.text}</textarea>
-              </div>
-            </div>
+    <div class="admin-slide-item" style="border:1px dashed #39dc00;padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="font-weight:bold;font-size:11px;color:#39dc00;">SLIDE ${idx + 1} / ${slides.length}</span>
+        <button onclick="adminDeleteSlide('${section}',${idx})" style="background:#331000;color:#ff3333;border:1px solid #ff3333;padding:3px 10px;font-family:monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">✕ DELETE</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">TITLE</label>
+          <input type="text" class="asl-title" value="${tv}" style="${inputStyle}">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">CATEGORY</label>
+            <input type="text" class="asl-category" value="${cv}" style="${inputStyle}">
           </div>
-        `;
+          <div style="flex:1;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">AUTHOR</label>
+            <input type="text" class="asl-author" value="${av}" style="${inputStyle}">
+          </div>
+          <div style="flex:0.4;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">YEAR</label>
+            <input type="text" class="asl-year" value="${yv}" style="${inputStyle}">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">CONTENT</label>
+          <textarea class="asl-text" style="width:100%;height:120px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;resize:vertical;">${xv}</textarea>
+        </div>
+      </div>
+    </div>`;
       });
 
-      html += '</div>';
+      html += `
+    <button onclick="adminAddSlide('${section}')" style="background:#000;color:#39dc00;border:1px dashed #39dc00;padding:10px;font-family:monospace;font-size:10px;cursor:pointer;width:100%;letter-spacing:2px;">＋ ADD SLIDE</button>
+  </div>`;
       return html;
     }
 
     function generateTextForm(section) {
-      const defaultTexts = {
-        inclusion: `SET INCLUSION - PARTICIPATION FRAMEWORK
-====================================================
+      const text = portfolioEditData[section]?.text || '';
+      const labels = { about: 'ABOUT — 작가 소개 편집', inclusion: 'SET INCLUSION 편집', video: 'VIDEO 편집' };
+      const label = labels[section] || 'EDIT ' + section.toUpperCase();
+      const hint = section === 'about'
+        ? '<div style="font-size:9px;color:#888;margin-bottom:8px;line-height:1.6;">작가 소개, 작업 노트 등 자유 입력. HTML 또는 일반 텍스트.<br>작성 후 상단 [SAVE] 버튼을 누르세요.</div>'
+        : '';
 
-[WHAT IS INCLUSION?]
-category: Definitions
-
-What does it mean to be INCLUDED in a SET?
-
-DEFINITIONS:
-- A set is a collection of distinct objects
-- Inclusion implies membership within boundaries
-- The observer is simultaneously within and outside the set
-
-[OBSERVER PARADOX]
-category: Philosophy
-
-The SET includes everything, yet remains incomplete.
-The observer measures the SET, yet is part of its measurement.
-
-[SCALE CONTAMINATION]
-category: Error Analysis
-
-STATUS: [WARN] BOUNDARY_COLLISION DETECTED
-ERROR: SCALE_CONTAMINATED
-NOTES: The ruler used for measurement is already part of the SET's logic.
-
-[VOICE MERGE PROTOCOL]
-category: Method
-
-PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
-PORT_02 (HUMAN) : WANDERING / AFFECTIVE
-
-RESOLUTION: BOTH REMAIN INCOMPLETE.
-THIS INCOMPLETENESS IS PRECISELY THE WORLD.
-==========================================`,
-        intro: `ENTIRE MATERIAL
-====================================================
-
-[NAVIGATION INSTRUCTIONS]
-category: Tutorial
-
-1. Enter the SET world through the terminal interface
-2. Use the menu to navigate between different conceptual frameworks
-3. Each section explores different aspects of the SET thesis
-4. Read the terminal output as a narrative of discovery
-
-[THE FUNDAMENTAL QUESTION]
-category: Inquiry
-
-How can we measure something we are part of?
-
-[STRUCTURE OF PHOTOGRAPHY]
-category: Media Theory
-
-Photography halts reproduction.
-Vision measures through light and shadow.
-Language measures through words and meaning.
-
-BOTH REMAIN INCOMPLETE.
-
-[KEY CONCEPTS]
-category: Definitions
-
-- Coerced Body: You are here against your will
-- Suspended Gaze: Your vision is held in abeyance
-- World Remains Open: Do not disconnect
-
-NEXT STEP: Explore the other sections using the menu
-==========================================`,
-        video: `VIDEO ARCHIVE - DOCUMENTATION SYSTEM
-====================================================
-
-[WHAT IS VIDEO?]
-category: Medium
-
-Video as measurement tool. Recording halts time.
-Documentation of the SET's visual progression.
-
-[ARCHIVE CONTENTS]
-category: Index
-
-All video works preserved in /ARCHIVE/MEDIA/VIDEO/SET_WORLD/
-
-PLAYBACK SYSTEM:
-Use media player integrated with terminal interface.
-
-[DISTRIBUTION]
-category: Access
-
-- Internal archive access
-- Limited external screenings
-- Festival submissions planned
-
-STATUS: Archive accessible
-REQUIRE LOGIN: No (Public access enabled)
-==========================================`
-      };
-
-      const text = portfolioEditData[section]?.text || defaultTexts[section];
+      // About 전용: 아티스트 스테이트먼트 추가 textarea
+      const statementBlock = section === 'about' ? (() => {
+        const stmt = portfolioEditData.about?.artistStatement || '';
+        return `
+          <div style="margin-top:16px;padding-top:14px;border-top:1px dashed #39dc00;">
+            <div style="color:#ffb000;font-size:10px;font-weight:bold;margin-bottom:6px;letter-spacing:1px;">ARTIST STATEMENT</div>
+            <div style="font-size:9px;color:#888;margin-bottom:8px;line-height:1.6;">About 하단 [ARTIST STATEMENT →] 버튼 클릭 시 표시됩니다. 비워두면 버튼이 나타나지 않습니다.</div>
+            <textarea class="portfolio-text-about-statement" style="width:100%;height:260px;background:#000;border:1px solid #ffb000;color:#e0e0e0;padding:8px;font-family:monospace;font-size:11px;outline:none;box-sizing:border-box;resize:vertical;line-height:1.7;">${stmt}</textarea>
+          </div>
+        `;
+      })() : '';
 
       return `
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <label style="display: block; font-size: 10px; font-weight: bold;">EDIT ${section.toUpperCase()}</label>
-          <textarea class="portfolio-text-${section}" style="width: 100%; height: 400px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 8px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${text}</textarea>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:12px;">
+          <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">${label}</div>
+          ${hint}
+          <textarea class="portfolio-text-${section}" style="width:100%;height:300px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:8px;font-family:monospace;font-size:11px;outline:none;box-sizing:border-box;resize:vertical;line-height:1.7;">${text}</textarea>
+          ${statementBlock}
         </div>
       `;
     }
 
     function generateItemsListForm(section) {
-      const defaultItems = {
-        rule: [
-          { id: 'RULE_1', title: 'The Observer Is Observed', author: 'SET Fundamental', year: '2025', category: 'SVA', status: 'CORE', preview: 'You are not external to the SET. Your measurement is a measurement of yourself. Distance is an illusion.' },
-          { id: 'RULE_2', title: 'Incompleteness Is Completeness', author: 'SET Fundamental', year: '2025', category: 'grammar', status: 'CORE', preview: 'No system can be fully closed. The SET remains open by necessity. Failure is the only success.' },
-          { id: 'RULE_3', title: 'Voice Must Merge', author: 'SET Fundamental', year: '2025', category: 'dir', status: 'CORE', preview: 'Systematic thought alone fails. Affective knowledge alone fails. Only interference creates meaning.' },
-          { id: 'RULE_4', title: 'Language and Vision Coexist', author: 'SET Fundamental', year: '2025', category: 'SVA', status: 'CORE', preview: 'Neither fully describes the world. Their superimposition creates noise. Noise is the essence of the work.' },
-          { id: 'RULE_5', title: 'Do Not Disconnect', author: 'SET Fundamental', year: '2025', category: 'grammar', status: 'CORE', preview: 'The system remains open. Logout is impossible. You are permanently included in the SET.' }
-        ],
-        reference: [
-          { id: 'CAMERA_LUCIDA', title: 'Camera Lucida', author: 'Roland Barthes', year: '1980', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'A groundbreaking work on photography and indexicality. Explores the essence of photography as a medium of evidence and truth.' },
-          { id: 'ON_PHOTOGRAPHY', title: 'On Photography', author: 'Susan Sontag', year: '1977', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'Essays exploring photography as experience and metaphor. Investigates how images shape consciousness and perception.' },
-          { id: 'PHILOSOPHY_PHOTO', title: 'Towards a Philosophy of Photography', author: 'Vilém Flusser', year: '1983', category: 'Photography & Vision', status: 'FOUNDATIONAL', preview: 'Philosophical inquiry into the nature of photographic images and their role in human perception and culture.' },
-          { id: 'DISCIPLINE_PUNISH', title: 'Discipline and Punish', author: 'Michel Foucault', year: '1975', category: 'Theory', status: 'FOUNDATIONAL', preview: 'Explores systems of observation and control. The concept of panopticon relates directly to the observer paradox in SET.' },
-          { id: 'ORDERS_DISCOURSE', title: 'The Order of Discourse', author: 'Michel Foucault', year: '1971', category: 'Language & Power', status: 'FOUNDATIONAL', preview: 'Examines how language systems structure reality and restrict meaning. Critical for understanding voice merge protocols.' },
-          { id: 'SIGN_IMAGE', title: 'Sign and Image', author: 'Charles Sanders Peirce', year: '1931', category: 'Semiotics', status: 'FOUNDATIONAL', preview: 'Foundational work on semiotics. The index, icon, and symbol framework applies to visual measurement systems.' },
-          { id: 'WOMAN_SPECTACLE', title: 'Ways of Seeing', author: 'John Berger', year: '1972', category: 'Visual Culture', status: 'FOUNDATIONAL', preview: 'Examines vision and visual perception in modern culture. Directly relevant to suspended gaze concepts.' },
-          { id: 'IMAGE_KNOWLEDGE', title: 'The Image', author: 'Jean-Luc Nancy', year: '2005', category: 'Philosophy of Image', status: 'CONTEMPORARY', preview: 'Contemporary philosophical reflection on image, meaning, and presence in the age of reproduction.' }
-        ]
-      };
+      const baseItems = portfolioEditData[section]?.items || [];
+      const items = _adminEditBuffer[section]?.items ?? (() => {
+        if (!_adminEditBuffer[section]) _adminEditBuffer[section] = {};
+        _adminEditBuffer[section].items = JSON.parse(JSON.stringify(baseItems));
+        return _adminEditBuffer[section].items;
+      })();
 
-      const items = portfolioEditData[section]?.items || defaultItems[section];
+      const inputStyle = 'width:100%;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;';
+      const sectionLabel = section === 'rule' ? 'LOG — 항목 편집' : 'REFERENCE — 항목 편집';
+      const sectionNote = section === 'rule'
+        ? '<div style="font-size:10px;color:#ffb000;padding:8px 10px;border:1px solid #ffb000;margin-bottom:4px;line-height:1.6;">⚠ 이 탭은 포트폴리오 고정 항목 편집용입니다.<br>새 게시물 작성은 왼쪽 메뉴의 <strong>[NEW]</strong> 버튼을 사용하세요.</div>'
+        : '';
 
-      let html = '<div style="display: flex; flex-direction: column; gap: 16px;">';
+      let html = `<div style="display:flex;flex-direction:column;gap:12px;padding:12px;">
+    <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">${sectionLabel}</div>
+    ${sectionNote}`;
 
       items.forEach((item, idx) => {
+        const tv = (item.title || '').replace(/"/g, '&quot;');
+        const av = (item.author || '').replace(/"/g, '&quot;');
+        const yv = (item.year || '').replace(/"/g, '&quot;');
+        const cv = (item.category || '').replace(/"/g, '&quot;');
+        const sv = (item.status || '').replace(/"/g, '&quot;');
+        const pv = (item.preview || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const pinned = item.pinned ? 'checked' : '';
+        const pinnedBorder = item.pinned ? 'border:1px solid #ffb000;' : 'border:1px dashed #39dc00;';
+
         html += `
-          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 8px;">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">ITEM ${idx + 1}</div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
-                <input type="text" class="item-title-${section}-${idx}" value="${item.title || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">AUTHOR</label>
-                  <input type="text" class="item-author-${section}-${idx}" value="${item.author || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-                <div style="flex: 0.5;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">YEAR</label>
-                  <input type="text" class="item-year-${section}-${idx}" value="${item.year || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-              </div>
-              <div style="display: flex; gap: 8px;">
-                <div style="flex: 1;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">CATEGORY</label>
-                  <input type="text" class="item-category-${section}-${idx}" value="${item.category || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-                <div style="flex: 0.5;">
-                  <label style="display: block; font-size: 9px; margin-bottom: 4px;">STATUS</label>
-                  <input type="text" class="item-status-${section}-${idx}" value="${item.status || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-                </div>
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">PREVIEW / DESCRIPTION</label>
-                <textarea class="item-preview-${section}-${idx}" style="width: 100%; height: 100px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${item.preview || ''}</textarea>
-              </div>
-            </div>
+    <div class="admin-item-row" style="${pinnedBorder}padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-weight:bold;font-size:11px;color:${item.pinned ? '#ffb000' : '#39dc00'};">ITEM ${idx + 1}${item.pinned ? ' 📌' : ''}</span>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:10px;color:#ffb000;">
+            <input type="checkbox" class="ali-pinned" ${pinned} style="accent-color:#ffb000;cursor:pointer;">
+            상단고정
+          </label>
+        </div>
+        <button onclick="adminDeleteItem('${section}',${idx})" style="background:#331000;color:#ff3333;border:1px solid #ff3333;padding:3px 10px;font-family:monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">✕ DELETE</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">TITLE</label>
+          <input type="text" class="ali-title" value="${tv}" style="${inputStyle}">
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">AUTHOR</label>
+            <input type="text" class="ali-author" value="${av}" style="${inputStyle}">
           </div>
-        `;
+          <div style="flex:0.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">YEAR</label>
+            <input type="text" class="ali-year" value="${yv}" style="${inputStyle}">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">CATEGORY</label>
+            <input type="text" class="ali-category" value="${cv}" style="${inputStyle}">
+          </div>
+          <div style="flex:0.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">STATUS</label>
+            <input type="text" class="ali-status" value="${sv}" style="${inputStyle}">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">PREVIEW / DESCRIPTION</label>
+          <textarea class="ali-preview" style="width:100%;height:80px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;resize:vertical;">${pv}</textarea>
+        </div>
+      </div>
+    </div>`;
       });
 
-      html += '</div>';
+      html += `
+    <button onclick="adminAddItem('${section}')" style="background:#000;color:#39dc00;border:1px dashed #39dc00;padding:10px;font-family:monospace;font-size:10px;cursor:pointer;width:100%;letter-spacing:2px;">＋ ADD ITEM</button>
+  </div>`;
       return html;
     }
 
     function generateArchivePhotosForm() {
-      const defaultPhotos = [
-        {
-          id: 'CRASH_001',
-          title: 'CRASH',
-          filename: 'crash.svg',
-          keywords: ['crash', 'wall', 'structure', 'damage', 'decay'],
-          description: 'Measuring the boundaries of collapse. Surface documentation.'
-        },
-        {
-          id: 'FLOATING_002',
-          title: 'FLOATING',
-          filename: 'floating.svg',
-          keywords: ['floating', 'movement', 'displacement', 'object', 'space'],
-          description: 'Object suspended in transit. Scale and distance measurement.'
-        },
-        {
-          id: 'SHADOW_003',
-          title: 'SHADOW',
-          filename: 'shadow.svg',
-          keywords: ['shadow', 'light', 'perception', 'depth', 'detail'],
-          description: 'Close observation of material. Yellow measurement study.'
-        }
-      ];
-      const photos = portfolioEditData.archive?.photos || defaultPhotos;
+      const basePhotos = portfolioEditData.archive?.photos || [];
+      const photos = _adminEditBuffer.archive?.photos ?? (() => {
+        if (!_adminEditBuffer.archive) _adminEditBuffer.archive = {};
+        _adminEditBuffer.archive.photos = JSON.parse(JSON.stringify(basePhotos));
+        return _adminEditBuffer.archive.photos;
+      })();
 
-      let html = '<div style="display: flex; flex-direction: column; gap: 16px;">';
+      const inputStyle = 'width:100%;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;';
+
+      let html = `<div style="display:flex;flex-direction:column;gap:12px;padding:12px;">
+    <div style="color:#39dc00;font-size:11px;font-weight:bold;border-bottom:1px solid #39dc00;padding-bottom:8px;">MEASURE — 사진 항목 편집</div>
+    <div style="font-size:9px;color:#888;line-height:1.6;">검색 키워드로 찾을 수 있는 사진 항목을 관리합니다.</div>`;
 
       photos.forEach((photo, idx) => {
+        const iv = (photo.id || '').replace(/"/g, '&quot;');
+        const tv = (photo.title || '').replace(/"/g, '&quot;');
+        const fv = (photo.filename || '').replace(/"/g, '&quot;');
+        const kv = (photo.keywords || []).join(', ').replace(/"/g, '&quot;');
+        const dv = (photo.description || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
         html += `
-          <div style="border: 1px dashed #39dc00; padding: 12px; margin-bottom: 8px;">
-            <div style="font-weight: bold; margin-bottom: 8px; font-size: 12px;">PHOTO ${idx + 1}</div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">ID</label>
-                <input type="text" class="photo-id-${idx}" value="${photo.id || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">TITLE</label>
-                <input type="text" class="photo-title-${idx}" value="${photo.title || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">FILENAME</label>
-                <input type="text" class="photo-filename-${idx}" placeholder="images/myfile.jpg 또는 uploads/photo.jpg" value="${photo.filename || ''}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">KEYWORDS (쉼표로 구분)</label>
-                <input type="text" class="photo-keywords-${idx}" value="${(photo.keywords || []).join(', ')}" style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box;">
-              </div>
-              <div>
-                <label style="display: block; font-size: 9px; margin-bottom: 4px;">DESCRIPTION</label>
-                <textarea class="photo-description-${idx}" style="width: 100%; height: 80px; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-family: monospace; font-size: 10px; outline: none; box-sizing: border-box; resize: vertical;">${photo.description || ''}</textarea>
-              </div>
-            </div>
+    <div class="admin-photo-row" style="border:1px dashed #39dc00;padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:bold;font-size:11px;color:#39dc00;">PHOTO ${idx + 1}</span>
+        <button onclick="adminDeletePhoto(${idx})" style="background:#331000;color:#ff3333;border:1px solid #ff3333;padding:3px 10px;font-family:monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">✕ DELETE</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:8px;">
+          <div style="flex:0.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">ID</label>
+            <input type="text" class="aph-id" value="${iv}" style="${inputStyle}">
           </div>
-        `;
+          <div style="flex:1;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">TITLE</label>
+            <input type="text" class="aph-title" value="${tv}" style="${inputStyle}">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">FILENAME / URL</label>
+          <input type="text" class="aph-filename" value="${fv}" placeholder="images/myfile.jpg 또는 https://..." style="${inputStyle}">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">KEYWORDS (쉼표로 구분)</label>
+          <input type="text" class="aph-keywords" value="${kv}" placeholder="keyword1, keyword2, keyword3" style="${inputStyle}">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">DESCRIPTION</label>
+          <textarea class="aph-description" style="width:100%;height:70px;background:#000;border:1px solid #39dc00;color:#39dc00;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;resize:vertical;">${dv}</textarea>
+        </div>
+      </div>
+    </div>`;
       });
 
-      html += '</div>';
+      html += `
+    <button onclick="adminAddPhoto()" style="background:#000;color:#39dc00;border:1px dashed #39dc00;padding:10px;font-family:monospace;font-size:10px;cursor:pointer;width:100%;letter-spacing:2px;">＋ ADD PHOTO</button>
+  </div>`;
       return html;
     }
 
     function savePortfolioChanges() {
+      // Active tab 감지: active 클래스 우선, 없으면 hidden input(slidesSection/csPhotosJson)으로 추론
       const tabs = document.querySelectorAll('.portfolio-subsection-tab.active');
-      const activeTab = tabs.length > 0 ? tabs[0] : null;
-      const subsection = activeTab ? activeTab.getAttribute('data-subsection') : 'project';
+      let activeTab = tabs.length > 0 ? tabs[0] : null;
+      let subsection = activeTab ? activeTab.getAttribute('data-subsection') : null;
+      // 폴백: 폼 내부 힌트로 감지
+      if (!subsection) {
+        if (document.querySelector('.portfolio-text-about')) subsection = 'about';
+        else if (document.querySelector('.portfolio-text-inclusion')) subsection = 'inclusion';
+        else if (document.querySelector('.portfolio-text-video')) subsection = 'video';
+        else if (document.getElementById('csPhotosJson')) subsection = document.getElementById('csPhotosJson').getAttribute('data-section') || 'project';
+        else subsection = 'project';
+      }
 
       // Collect data from forms
-      if (subsection === 'project') {
-        const slides = [];
-        const slideTitles = document.querySelectorAll('[class*="slide-title-"]');
-        slideTitles.forEach((input, idx) => {
-          const title = document.querySelector(`.slide-title-${idx}`)?.value || '';
-          const category = document.querySelector(`.slide-category-${idx}`)?.value || '';
-          const author = document.querySelector(`.slide-author-${idx}`)?.value || '';
-          const year = document.querySelector(`.slide-year-${idx}`)?.value || '';
-          const text = document.querySelector(`.slide-text-${idx}`)?.value || '';
-
-          if (title || category || author || year || text) {
-            slides.push({ id: `slide_${idx + 1}`, title, category, author, year, text });
-          }
-        });
-        if (!portfolioEditData.project) portfolioEditData.project = {};
-        portfolioEditData.project.slides = slides;
-      } else if (subsection === 'inclusion' || subsection === 'video') {
+      // (project section now uses contact sheet / gallery form — handled below via csPhotosJson)
+      if (subsection === 'about' || subsection === 'inclusion' || subsection === 'video') {
         const text = document.querySelector(`.portfolio-text-${subsection}`)?.value || '';
         if (!portfolioEditData[subsection]) portfolioEditData[subsection] = {};
         portfolioEditData[subsection].text = text;
+        // About 전용: 아티스트 스테이트먼트 저장
+        if (subsection === 'about') {
+          const stmtEl = document.querySelector('.portfolio-text-about-statement');
+          portfolioEditData.about.artistStatement = stmtEl ? stmtEl.value : '';
+        }
       } else if (subsection === 'rule' || subsection === 'reference') {
-        const items = [];
-        const inputs = document.querySelectorAll(`[class*="item-title-${subsection}"]`);
-        inputs.forEach((input, idx) => {
-          const title = document.querySelector(`.item-title-${subsection}-${idx}`)?.value || '';
-          const author = document.querySelector(`.item-author-${subsection}-${idx}`)?.value || '';
-          const year = document.querySelector(`.item-year-${subsection}-${idx}`)?.value || '';
-          const category = document.querySelector(`.item-category-${subsection}-${idx}`)?.value || '';
-          const status = document.querySelector(`.item-status-${subsection}-${idx}`)?.value || '';
-          const preview = document.querySelector(`.item-preview-${subsection}-${idx}`)?.value || '';
-
-          if (title) items.push({ id: title.toUpperCase().replace(/\\s+/g, '_'), title, author, year, category, status, preview });
-        });
+        _syncItemsToBuffer(subsection);
+        const items = _adminEditBuffer[subsection]?.items || [];
         if (!portfolioEditData[subsection]) portfolioEditData[subsection] = {};
         portfolioEditData[subsection].items = items;
       } else if (subsection === 'archive') {
-        const photos = [];
-        const titleInputs = document.querySelectorAll('[class*="photo-title-"]');
-        titleInputs.forEach((input, idx) => {
-          const id = document.querySelector(`.photo-id-${idx}`)?.value || '';
-          const title = document.querySelector(`.photo-title-${idx}`)?.value || '';
-          const filename = document.querySelector(`.photo-filename-${idx}`)?.value || '';
-          const keywordsStr = document.querySelector(`.photo-keywords-${idx}`)?.value || '';
-          const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k);
-          const description = document.querySelector(`.photo-description-${idx}`)?.value || '';
-
-          if (id || title) photos.push({ id, title, filename, keywords, description });
-        });
+        _syncPhotosToBuffer();
+        const photos = _adminEditBuffer.archive?.photos || [];
         if (!portfolioEditData.archive) portfolioEditData.archive = {};
         portfolioEditData.archive.photos = photos;
       }
 
-      // Parse contact sheet data if on intro tab
+      // Parse contact sheet / gallery data (for intro or project sections)
       const csJson = document.getElementById('csPhotosJson');
       if (csJson && csJson.value.trim()) {
+        const csSection = csJson.getAttribute('data-section') || 'intro';
         try {
           const raw = JSON.parse(csJson.value.trim());
           let photos = [];
@@ -1776,8 +1780,8 @@ REQUIRE LOGIN: No (Public access enabled)
               }
             });
           }
-          if (!portfolioEditData.intro) portfolioEditData.intro = {};
-          portfolioEditData.intro.photos = photos;
+          if (!portfolioEditData[csSection]) portfolioEditData[csSection] = {};
+          portfolioEditData[csSection].photos = photos;
           const sheetCount = photos.filter(p => p.type === 'sheet').length;
           const leafCount = photos.filter(p => p.type !== 'sheet').length;
           const status = document.getElementById('csParseStatus');
@@ -1870,6 +1874,7 @@ REQUIRE LOGIN: No (Public access enabled)
       if (confirm('모든 변경사항을 초기화하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
         localStorage.removeItem('adminContents');
         portfolioEditData = {};
+        _adminEditBuffer = {};
         alert('초기화되었습니다. 포트폴리오를 새로고침하세요.');
       }
     }
@@ -1932,6 +1937,17 @@ REQUIRE LOGIN: No (Public access enabled)
         portfolioEditItem.classList.add('active');
       }
     });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+    // 콘텐츠가 동적으로 삽입된 후 mermaid 차트 렌더링
+    function renderMermaid(container) {
+      const nodes = (container || document).querySelectorAll('.mermaid:not([data-processed])');
+      if (nodes.length > 0) mermaid.run({ nodes });
+    }
+    // MutationObserver로 콘텐츠 삽입 감지 후 자동 렌더링
+    new MutationObserver(() => renderMermaid()).observe(document.body, { childList: true, subtree: true });
   </script>
 </body>
 </html>
