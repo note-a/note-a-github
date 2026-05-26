@@ -1596,41 +1596,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       },
       inclusion: {
         title: 'SET Inclusion',
-        text: `SET INCLUSION - PARTICIPATION FRAMEWORK
-====================================================
-
-[WHAT IS INCLUSION?]
-category: Definitions
-
-What does it mean to be INCLUDED in a SET?
-
-DEFINITIONS:
-- A set is a collection of distinct objects
-- Inclusion implies membership within boundaries
-- The observer is simultaneously within and outside the set
-
-[OBSERVER PARADOX]
-category: Philosophy
-
-The SET includes everything, yet remains incomplete.
-The observer measures the SET, yet is part of its measurement.
-
-[SCALE CONTAMINATION]
-category: Error Analysis
-
-STATUS: [WARN] BOUNDARY_COLLISION DETECTED
-ERROR: SCALE_CONTAMINATED
-NOTES: The ruler used for measurement is already part of the SET's logic.
-
-[VOICE MERGE PROTOCOL]
-category: Method
-
-PORT_01 (AI) : SYSTEMATIC / INDIFFERENT
-PORT_02 (HUMAN) : WANDERING / AFFECTIVE
-
-RESOLUTION: BOTH REMAIN INCOMPLETE.
-THIS INCOMPLETENESS IS PRECISELY THE WORLD.
-==========================================`
+        isArchivePhotos: true,
+        photos: []
       },
       rule: {
         title: 'Log',
@@ -2017,6 +1984,7 @@ REQUIRE LOGIN: No (Public access enabled)
         }
         if (adminContents.inclusionPhotos && Array.isArray(adminContents.inclusionPhotos.photos)) {
           _inclusionPhotos = adminContents.inclusionPhotos.photos;
+          contents.inclusion.photos = adminContents.inclusionPhotos.photos;
         }
 
         // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
@@ -4179,7 +4147,10 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
             if (data.video && data.video.text) contents.video.text = data.video.text;
             if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
-            if (data.inclusionPhotos && Array.isArray(data.inclusionPhotos.photos)) _inclusionPhotos = data.inclusionPhotos.photos;
+            if (data.inclusionPhotos && Array.isArray(data.inclusionPhotos.photos)) {
+              _inclusionPhotos = data.inclusionPhotos.photos;
+              contents.inclusion.photos = data.inclusionPhotos.photos;
+            }
           }
 
           // published-posts.json 적용 (모바일 등 다른 기기에서 글 보이도록)
