@@ -4140,6 +4140,8 @@ REQUIRE LOGIN: No (Public access enabled)
         .then(([data, publishedPosts]) => {
           // admin-contents.json 적용
           if (data && Object.keys(data).length > 0) {
+            // GitHub 데이터로 localStorage도 동기화 (stale 데이터 방지)
+            try { localStorage.setItem('adminContents', JSON.stringify(data)); } catch(e) {}
             if (data.project && data.project.photos && data.project.photos.some(p => p.type === 'sheet')) contents.project.photos = data.project.photos;
             if (data.about && data.about.text !== undefined) contents.about.text = data.about.text;
             if (data.about && data.about.artistStatement !== undefined) contents.about.artistStatement = data.about.artistStatement;
