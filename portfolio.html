@@ -1239,7 +1239,25 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="menu-item" data-section="reference">reference</div>
         <div class="menu-item" data-section="archive">Measure</div>
         <div class="menu-item active" data-section="about">About</div>
-        <div style="position: relative; flex: 1; width: 100%; min-height: 0;"></div>
+        <!-- CELL AUTOMATA -->
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid rgba(57,220,0,0.2);margin-top:4px;">
+          <div id="caTitle" style="background:#39dc00;color:#000;padding:3px 6px;font-size:7px;font-weight:bold;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;cursor:pointer;" onclick="const b=document.getElementById('caBody');b.style.display=b.style.display==='none'?'flex':'flex';">
+            <span>CELL_AUTOMATA.EXE</span>
+            <div style="display:flex;gap:2px;">
+              <div style="width:10px;height:10px;background:#000;color:#39dc00;font-size:7px;display:flex;align-items:center;justify-content:center;">−</div>
+              <div style="width:10px;height:10px;background:#000;color:#39dc00;font-size:7px;display:flex;align-items:center;justify-content:center;">✕</div>
+            </div>
+          </div>
+          <div id="caBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+            <canvas id="caCanvas" style="display:block;width:100%;flex:1;min-height:120px;"></canvas>
+            <div style="padding:3px 6px;border-top:1px solid rgba(57,220,0,0.3);background:#000;display:flex;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:2px;">
+              <span id="caStat1" style="color:rgba(57,220,0,0.5);font-size:6px;font-family:'Courier New',monospace;">CELLS:0000</span>
+              <span id="caStat2" style="color:rgba(57,220,0,0.5);font-size:6px;font-family:'Courier New',monospace;">GEN:00000</span>
+              <span id="caStat3" style="color:rgba(57,220,0,0.5);font-size:6px;font-family:'Courier New',monospace;">DENSITY:0.0%</span>
+              <span id="caStat4" style="color:rgba(57,220,0,0.5);font-size:6px;font-family:'Courier New',monospace;">STABLE</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="menu-statusbar">
@@ -4329,6 +4347,112 @@ REQUIRE LOGIN: No (Public access enabled)
       if (countEl) countEl.textContent = _vlTotal + ' queries';
       if (lastEl) lastEl.textContent = t;
     }
+  // ── CELL AUTOMATA ──────────────────────────────────
+  (function(){
+    const cv = document.getElementById('caCanvas');
+    if (!cv) return;
+    const cx = cv.getContext('2d');
+    const SZ = 4;
+    const GL = ['·','▪','░','▒','▓','█'];
+    const EVENTS = ['PATTERN_DETECTED','CLUSTER_FORMED','BOUNDARY_SHIFT','CELL_DECAY','EMERGENCE','COLLAPSE'];
+    let W, H, g, age, gen = 0, frame = 0;
+    const flashes = [];
+    let flashTimer = 0;
+
+    function init() {
+      const rect = cv.parentElement.getBoundingClientRect();
+      const w = Math.max(rect.width || 196, 100);
+      const h = Math.max(cv.offsetHeight || 160, 100);
+      W = Math.floor(w / SZ);
+      H = Math.floor(h / SZ);
+      cv.width  = W * SZ;
+      cv.height = H * SZ;
+      g   = Array.from({length:W}, () => Array.from({length:H}, () => Math.random() > .78 ? 1 : 0));
+      age = Array.from({length:W}, () => new Array(H).fill(0));
+    }
+
+    function step() {
+      const ng = Array.from({length:W}, () => new Array(H).fill(0));
+      const na = Array.from({length:W}, () => new Array(H).fill(0));
+      for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
+        let n = 0;
+        for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++) {
+          if (di === 0 && dj === 0) continue;
+          n += g[(i+di+W)%W][(j+dj+H)%H];
+        }
+        ng[i][j] = g[i][j] ? (n===2||n===3?1:0) : (n===3?1:0);
+        if (!ng[i][j] && Math.random() < .0004) ng[i][j] = 1;
+        na[i][j] = ng[i][j] ? Math.min(age[i][j]+1, 55) : 0;
+      }
+      g = ng; age = na; gen++;
+    }
+
+    function draw() {
+      frame++;
+      if (frame % 5 === 0) step();
+      const cw = cv.width, ch = cv.height;
+
+      cx.fillStyle = 'rgba(0,0,0,0.18)'; cx.fillRect(0, 0, cw, ch);
+
+      // 그리드
+      cx.strokeStyle = 'rgba(57,220,0,0.04)'; cx.lineWidth = .3;
+      for (let i = 0; i <= W; i++) { cx.beginPath(); cx.moveTo(i*SZ,0); cx.lineTo(i*SZ,ch); cx.stroke(); }
+      for (let j = 0; j <= H; j++) { cx.beginPath(); cx.moveTo(0,j*SZ); cx.lineTo(cw,j*SZ); cx.stroke(); }
+
+      // 스캔라인
+      for (let y = 0; y < ch; y += 3) { cx.fillStyle='rgba(0,0,0,0.06)'; cx.fillRect(0,y,cw,1); }
+
+      // 셀
+      let alive = 0;
+      cx.font = `bold ${SZ}px 'Courier New'`;
+      for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
+        if (!g[i][j]) continue;
+        alive++;
+        const a = age[i][j];
+        const gi = Math.min(Math.floor(a/9), 5);
+        const alpha = .25 + gi * .14;
+        if (a < 5) { cx.fillStyle='rgba(57,220,0,0.08)'; cx.fillRect(i*SZ-1,j*SZ-1,SZ+2,SZ+2); }
+        cx.fillStyle = `rgba(57,220,0,${alpha})`;
+        cx.fillText(GL[gi], i*SZ, j*SZ+SZ-1);
+      }
+
+      // 플래시 이벤트
+      flashTimer++;
+      if (flashTimer > 80 + Math.random()*120) {
+        flashes.push({ text: EVENTS[Math.floor(Math.random()*EVENTS.length)],
+          x: 4+Math.random()*(cw-80), y: 10+Math.random()*(ch-14), life:50, max:50 });
+        flashTimer = 0;
+      }
+      cx.font = '6px Courier New';
+      flashes.forEach(f => {
+        f.life--;
+        const a = f.life/f.max;
+        const fw = cx.measureText(f.text).width;
+        cx.fillStyle=`rgba(0,15,0,${a*.85})`; cx.fillRect(f.x-2,f.y-8,fw+4,10);
+        cx.strokeStyle=`rgba(57,220,0,${a*.4})`; cx.lineWidth=.4; cx.strokeRect(f.x-2,f.y-8,fw+4,10);
+        cx.fillStyle=`rgba(57,220,0,${a*.7})`; cx.fillText(f.text,f.x,f.y);
+      });
+      for (let i = flashes.length-1; i >= 0; i--) if (flashes[i].life <= 0) flashes.splice(i,1);
+
+      // 밀도 바
+      const density = alive / (W*H);
+      const bx = cw-44, by = 3, bw = 40, bh = 4;
+      cx.strokeStyle='rgba(57,220,0,0.3)'; cx.lineWidth=.5; cx.strokeRect(bx,by,bw,bh);
+      cx.fillStyle='rgba(57,220,0,0.35)'; cx.fillRect(bx,by,bw*density,bh);
+
+      // 통계
+      document.getElementById('caStat1').textContent = `CELLS:${alive.toString().padStart(4,'0')}`;
+      document.getElementById('caStat2').textContent = `GEN:${gen.toString().padStart(5,'0')}`;
+      document.getElementById('caStat3').textContent = `${(density*100).toFixed(1)}%`;
+      document.getElementById('caStat4').textContent = alive<20?'DYING':alive>W*H*.4?'OVERPOP':'STABLE';
+
+      requestAnimationFrame(draw);
+    }
+
+    // 사이드바 렌더링 후 초기화
+    setTimeout(() => { init(); draw(); }, 500);
+    window.addEventListener('resize', () => { init(); });
+  })();
   </script>
 </body>
 </html>
