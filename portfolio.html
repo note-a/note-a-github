@@ -8,48 +8,71 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
-/* ── WARNING BANNER: DOS DIALOG ── */
+/* ── WARNING BANNER: VHS GLITCH ── */
 .top-banner {
-  position: fixed; top: 0; left: 0; width: 100%;
+  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
+  background: #000;
   z-index: 9999;
   font-family: 'Courier New', monospace;
-  display: flex; flex-direction: column;
-  box-shadow: 0 2px 12px rgba(150,0,0,0.3);
+  overflow: hidden;
 }
-.top-banner-titlebar {
-  background: #aa0000; color: #000;
-  height: 17px; display: flex; align-items: center; justify-content: space-between;
-  padding: 0 8px; font-size: 10px; font-weight: bold; letter-spacing: 1px;
-  flex-shrink: 0; user-select: none;
+/* 트래킹 라인 */
+.top-banner-track1 {
+  position:absolute; left:0; right:0; height:2px;
+  background:rgba(160,0,0,0.45); top:35%;
+  animation: tb-track1 1.3s steps(1) infinite;
 }
-.top-banner-titlebar-btns { display:flex; gap:2px; }
-.top-banner-titlebar-btn {
-  width:13px; height:11px; background:#880000; border:1px solid #660000;
-  color:#3a0000; font-size:8px; display:flex; align-items:center; justify-content:center;
-  cursor:pointer; font-weight:bold;
+.top-banner-track2 {
+  position:absolute; left:0; right:0; height:1px;
+  background:rgba(110,0,0,0.28); top:65%;
+  animation: tb-track2 1.9s steps(1) infinite;
 }
-.top-banner-titlebar-btn:hover { background:#660000; color:#000; }
+@keyframes tb-track1 {
+  0%,100%{top:35%;opacity:1} 45%{top:33%;opacity:0.8}
+  46%{top:78%;opacity:0.3}   47%{top:35%;opacity:1}
+}
+@keyframes tb-track2 {
+  0%,100%{top:65%;opacity:0.3} 62%{top:63%;opacity:0.5}
+  63%{top:18%;opacity:0.15}    65%{top:65%;opacity:0.3}
+}
 .top-banner-body {
-  background: #0d0000; border: 1px solid #4a0000; border-top: none;
-  height: 23px; display: flex; align-items: center;
-  gap: 10px; padding: 0 12px; position: relative;
+  position:relative; z-index:2; height:100%;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  padding:0 36px 0 14px;
 }
-@keyframes tb-blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-.top-banner-cursor {
-  color:#880000; font-size:12px; flex-shrink:0;
-  animation: tb-blink 1s steps(1) infinite;
+/* WARNING 라벨 — RGB 분리 */
+.top-banner-left {
+  color:#cc1400; font-size:11px; font-weight:bold; letter-spacing:3px;
+  flex-shrink:0; display:inline-block;
+  text-shadow: 2px 0 0 rgba(255,0,100,0.45), -2px 0 0 rgba(0,200,255,0.25);
+  animation: tb-shift 4s steps(1) infinite;
+}
+@keyframes tb-shift {
+  0%,100%{ text-shadow:2px 0 rgba(255,0,100,0.45),-2px 0 rgba(0,200,255,0.25); transform:translateX(0); }
+  88%    { text-shadow:2px 0 rgba(255,0,100,0.45),-2px 0 rgba(0,200,255,0.25); transform:translateX(0); }
+  89%    { text-shadow:5px 0 rgba(255,0,100,0.7), -5px 0 rgba(0,200,255,0.5);  transform:translateX(-2px); }
+  91%    { text-shadow:2px 0 rgba(255,0,100,0.45),-2px 0 rgba(0,200,255,0.25); transform:translateX(0); }
+}
+.top-banner-dot { display:none; }
+.top-banner-div { width:1px; height:13px; background:#330000; flex-shrink:0; }
+.top-banner-code {
+  color:#771000; font-size:9px; white-space:nowrap; flex-shrink:0;
+  letter-spacing:1px;
+  text-shadow:1px 0 rgba(200,0,60,0.3),-1px 0 rgba(0,150,180,0.15);
 }
 .top-banner-msg {
-  color:rgba(170,25,8,0.92); font-size:10px; letter-spacing:0.5px;
-  flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  color:rgba(180,22,6,0.9); font-size:10px; letter-spacing:0.5px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  text-shadow:1px 0 rgba(180,0,50,0.2),-1px 0 rgba(0,130,160,0.1);
 }
-.top-banner-code {
-  color:#550d00; font-size:9px; white-space:nowrap; flex-shrink:0;
-  letter-spacing:1px;
+.top-banner-close {
+  position:absolute; right:0; top:0; bottom:0; width:32px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:#550d00; font-size:12px;
+  border-left:1px solid #220000; transition:background 0.15s;
 }
-/* JS에서 lblEl 참조용 — 숨김 */
-.top-banner-left { display:none; }
-.top-banner-dot  { display:none; }
+.top-banner-close:hover { background:rgba(150,0,0,0.2); color:#aa1400; }
+@keyframes tb-blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -119,7 +142,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   align-items: center;
   width: 100%;
   height: calc(100vh - 32px);
-  margin-top: 40px;
+  margin-top: 32px;
   padding: 8px 20px 8px;
   gap: 0;
   position: relative;
@@ -1185,7 +1208,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   width: 100%;
   height: calc(100vh - 32px);
-  margin-top: 40px;
+  margin-top: 32px;
 }
   .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #39dc00; line-height: 1.7; padding: 0 16px; }
   .md-content h1,.md-content h2,.md-content h3 { color: #39dc00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #39dc00; padding-bottom: 4px; }
@@ -1229,18 +1252,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </svg>
 
   <div class="top-banner" id="topBanner">
-    <div class="top-banner-titlebar">
-      <span>SYSTEM WARNING — <span id="tbLabel">ERR_ACCESS_RESTRICTED</span></span>
-      <div class="top-banner-titlebar-btns">
-        <div class="top-banner-titlebar-btn" id="topBannerClose" title="닫기">✕</div>
-      </div>
-    </div>
+    <div class="top-banner-track1"></div>
+    <div class="top-banner-track2"></div>
     <div class="top-banner-body">
-      <span class="top-banner-cursor">█</span>
+      <span class="top-banner-left"><span id="tbLabel">WARNING</span></span>
+      <span class="top-banner-div"></span>
+      <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
+      <span class="top-banner-div"></span>
       <span class="top-banner-msg" id="tbMsg"></span>
-      <span class="top-banner-code" id="tbCode"></span>
-      <span id="tbIdx" style="font-size:8px;color:#3a0800;flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
+      <span id="tbIdx" style="font-size:8px;color:#330800;flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;margin-left:4px;"></span>
     </div>
+    <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
   <script>
   (function(){
@@ -1288,7 +1310,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     function run() {
       clearAll();
       const m = MSGS[mi];
-      lblEl.textContent = m.code;          // 타이틀바에 코드 표시
+      lblEl.textContent = m.label;
       idxEl.textContent = (mi+1)+'/'+MSGS.length;
       decode(codeEl, m.code, 55, 60, null); // 바디 우측 코드
       decode(msgEl,  m.text, 22, 100, () => {
