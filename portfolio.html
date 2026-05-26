@@ -52,6 +52,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   transition: background 0.15s;
 }
 .top-banner-close:hover { background: rgba(200,0,0,0.2); color: #ff4444; }
+@keyframes tb-cursor { 0%,100%{opacity:1} 49%{opacity:1} 50%,99%{opacity:0} }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -1233,21 +1234,79 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div class="top-banner" id="topBanner">
     <div class="top-banner-left">
       <span class="top-banner-dot"></span>
-      <span>WARNING</span>
+      <span id="tbLabel">WARNING</span>
     </div>
     <div class="top-banner-body">
-      <span class="top-banner-code">ERR_ACCESS_RESTRICTED</span>
-      <span class="top-banner-msg">UNAUTHORIZED REPRODUCTION OR USE OF THIS SITE'S CONTENT IS STRICTLY PROHIBITED — ALL RIGHTS RESERVED</span>
+      <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
+      <span class="top-banner-msg" id="tbMsg"></span>
     </div>
+    <span id="tbIdx" style="font-size:8px;color:rgba(200,0,0,0.5);flex-shrink:0;padding:0 8px;align-self:center;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
     <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
   <script>
+  (function(){
+    const MSGS = [
+      { code:'ERR_ACCESS_RESTRICTED',  label:'WARNING', text:'UNAUTHORIZED REPRODUCTION OR USE OF THIS CONTENT IS STRICTLY PROHIBITED — ALL RIGHTS RESERVED' },
+      { code:'ERR_COPY_FORBIDDEN',     label:'WARNING', text:'DUPLICATION, MODIFICATION OR REDISTRIBUTION OF IMAGES WITHOUT CONSENT CONSTITUTES A LEGAL VIOLATION' },
+      { code:'SYS_MONITOR_ACTIVE',     label:'NOTICE',  text:'THIS SYSTEM IS MONITORED — ALL ACCESS ATTEMPTS ARE LOGGED AND RECORDED FOR SECURITY PURPOSES' },
+      { code:'ERR_RIGHTS_VIOLATION',   label:'WARNING', text:'ALL PHOTOGRAPHS AND CONTENT ON THIS SITE ARE PROTECTED BY COPYRIGHT LAW — UNAUTHORIZED USE IS FORBIDDEN' },
+      { code:'ERR_UNAUTHORIZED_USE',   label:'ALERT',   text:'PROCEED WITH AUTHORIZED ACCESS ONLY — VIOLATION OF THESE TERMS WILL RESULT IN LEGAL ACTION' },
+    ];
+    const codeEl  = document.getElementById('tbCode');
+    const msgEl   = document.getElementById('tbMsg');
+    const lblEl   = document.getElementById('tbLabel');
+    const idxEl   = document.getElementById('tbIdx');
+    let mi = 0, ci = 0, phase = 'typing', timer = null;
+
+    function setMsg(m) {
+      codeEl.textContent = m.code;
+      lblEl.textContent  = m.label;
+      idxEl.textContent  = (mi+1)+'/'+MSGS.length;
+    }
+
+    function tick() {
+      const m = MSGS[mi];
+      if (phase === 'typing') {
+        ci++;
+        msgEl.innerHTML = m.text.slice(0, ci) + '<span style="color:#ff4444;animation:tb-blink 0.5s infinite;font-weight:bold;">█</span>';
+        if (ci >= m.text.length) {
+          phase = 'holding';
+          timer = setTimeout(tick, 2400);
+        } else {
+          timer = setTimeout(tick, 32 + Math.random() * 28);
+        }
+      } else if (phase === 'holding') {
+        phase = 'fading';
+        msgEl.style.transition  = 'opacity 0.35s';
+        codeEl.style.transition = 'opacity 0.35s';
+        msgEl.style.opacity  = '0';
+        codeEl.style.opacity = '0';
+        timer = setTimeout(() => {
+          mi = (mi + 1) % MSGS.length;
+          ci = 0;
+          setMsg(MSGS[mi]);
+          msgEl.innerHTML = '';
+          msgEl.style.transition  = 'opacity 0.25s';
+          codeEl.style.transition = 'opacity 0.25s';
+          msgEl.style.opacity  = '1';
+          codeEl.style.opacity = '1';
+          phase = 'typing';
+          timer = setTimeout(tick, 300);
+        }, 380);
+      }
+    }
+
+    setMsg(MSGS[0]);
+    timer = setTimeout(tick, 700);
+
     document.getElementById('topBannerClose').addEventListener('click', function() {
+      clearTimeout(timer);
       const b = document.getElementById('topBanner');
       b.style.transition = 'opacity 0.2s, transform 0.2s';
       b.style.opacity = '0'; b.style.transform = 'translateY(-100%)';
       setTimeout(() => b.remove(), 220);
     });
+  })();
   </script>
 
   <!-- Item Preview Popup -->
