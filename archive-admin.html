@@ -489,6 +489,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <button class="portfolio-subsection-tab" data-subsection="rule" onclick="loadPortfolioEditForm('rule')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">LOG</button>
         <button class="portfolio-subsection-tab" data-subsection="reference" onclick="loadPortfolioEditForm('reference')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">reference</button>
         <button class="portfolio-subsection-tab" data-subsection="archive" onclick="loadPortfolioEditForm('archive')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">MEASURE</button>
+        <button class="portfolio-subsection-tab" data-subsection="inclusionPhotos" onclick="loadPortfolioEditForm('inclusionPhotos')" style="background: #000; color: #ffb000; border: 1px solid #ffb000; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">∩ MATCHED</button>
         <button class="portfolio-subsection-tab" data-subsection="about" onclick="loadPortfolioEditForm('about')" style="background: #000; color: #39dc00; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px;">ABOUT</button>
       </div>
       <div id="portfolio-edit-content" style="flex: 1; overflow-y: auto; padding: 12px; background: #000; color: #39dc00; font-size: 11px;"></div>
@@ -962,6 +963,36 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       document.getElementById('portfolio-edit-content').innerHTML = generateArchivePhotosForm();
     }
 
+    // ── ∩ MATCHED (Inclusion Photos) 버퍼 관리 ──
+    function _syncInclPhotosToBuffer() {
+      const rows = document.querySelectorAll('.admin-incl-photo-row');
+      const photos = [];
+      rows.forEach(el => {
+        photos.push({
+          id:       el.querySelector('.aiph-id')?.value || '',
+          title:    el.querySelector('.aiph-title')?.value || '',
+          filename: el.querySelector('.aiph-filename')?.value || '',
+          keywords: (el.querySelector('.aiph-keywords')?.value || '').split(',').map(k => k.trim()).filter(k => k)
+        });
+      });
+      if (!_adminEditBuffer.inclusionPhotos) _adminEditBuffer.inclusionPhotos = {};
+      _adminEditBuffer.inclusionPhotos.photos = photos;
+    }
+
+    function adminAddInclPhoto() {
+      _syncInclPhotosToBuffer();
+      if (!_adminEditBuffer.inclusionPhotos) _adminEditBuffer.inclusionPhotos = {};
+      if (!_adminEditBuffer.inclusionPhotos.photos) _adminEditBuffer.inclusionPhotos.photos = [];
+      _adminEditBuffer.inclusionPhotos.photos.push({ id: '', title: '', filename: '', keywords: [] });
+      document.getElementById('portfolio-edit-content').innerHTML = generateInclusionPhotosForm();
+    }
+
+    function adminDeleteInclPhoto(idx) {
+      _syncInclPhotosToBuffer();
+      _adminEditBuffer.inclusionPhotos.photos.splice(idx, 1);
+      document.getElementById('portfolio-edit-content').innerHTML = generateInclusionPhotosForm();
+    }
+
     // Load portfolio data — always fetch from GitHub first (source of truth), localStorage as fallback
     let _dataSource = 'none';
     async function loadPortfolioData() {
@@ -1285,6 +1316,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         formHTML = generateItemsListForm(subsection);
       } else if (subsection === 'archive') {
         formHTML = generateArchivePhotosForm();
+      } else if (subsection === 'inclusionPhotos') {
+        formHTML = generateInclusionPhotosForm();
       } else if (subsection === 'about') {
         formHTML = generateTextForm('about');
       }
@@ -1702,6 +1735,61 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       return html;
     }
 
+    function generateInclusionPhotosForm() {
+      const basePhotos = portfolioEditData.inclusionPhotos?.photos || [];
+      const photos = _adminEditBuffer.inclusionPhotos?.photos ?? (() => {
+        if (!_adminEditBuffer.inclusionPhotos) _adminEditBuffer.inclusionPhotos = {};
+        _adminEditBuffer.inclusionPhotos.photos = JSON.parse(JSON.stringify(basePhotos));
+        return _adminEditBuffer.inclusionPhotos.photos;
+      })();
+
+      const inputStyle = 'width:100%;background:#000;border:1px solid #ffb000;color:#e0e0e0;padding:6px;font-family:monospace;font-size:10px;outline:none;box-sizing:border-box;';
+
+      let html = `<div style="display:flex;flex-direction:column;gap:12px;padding:12px;">
+    <div style="color:#ffb000;font-size:11px;font-weight:bold;border-bottom:1px solid #ffb000;padding-bottom:8px;">∩ MATCHED — Inclusion 매칭 사진 편집</div>
+    <div style="font-size:9px;color:#888;line-height:1.6;">SET 사진과 키워드가 겹치는 Inclusion 사진을 등록합니다.<br>키워드가 겹치는 SET 사진을 열 때 자동으로 ∩ MATCHED 창에 표시됩니다.</div>`;
+
+      photos.forEach((photo, idx) => {
+        const iv = (photo.id || '').replace(/"/g, '&quot;');
+        const tv = (photo.title || '').replace(/"/g, '&quot;');
+        const fv = (photo.filename || '').replace(/"/g, '&quot;');
+        const kv = (photo.keywords || []).join(', ').replace(/"/g, '&quot;');
+
+        html += `
+    <div class="admin-incl-photo-row" style="border:1px dashed #ffb000;padding:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:bold;font-size:11px;color:#ffb000;">INCL PHOTO ${idx + 1}</span>
+        <button onclick="adminDeleteInclPhoto(${idx})" style="background:#331000;color:#ff3333;border:1px solid #ff3333;padding:3px 10px;font-family:monospace;font-size:9px;cursor:pointer;letter-spacing:1px;">✕ DELETE</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;gap:8px;">
+          <div style="flex:0.5;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">ID</label>
+            <input type="text" class="aiph-id" value="${iv}" style="${inputStyle}">
+          </div>
+          <div style="flex:1;">
+            <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">TITLE (표시명)</label>
+            <input type="text" class="aiph-title" value="${tv}" style="${inputStyle}">
+          </div>
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">FILENAME / URL</label>
+          <input type="text" class="aiph-filename" value="${fv}" placeholder="images/incl_001.jpg 또는 https://..." style="${inputStyle}">
+        </div>
+        <div>
+          <label style="display:block;font-size:9px;color:#888;margin-bottom:3px;">KEYWORDS (쉼표로 구분 — SET 사진 키워드와 겹치는 단어로)</label>
+          <input type="text" class="aiph-keywords" value="${kv}" placeholder="crash, wall, structure" style="${inputStyle}">
+        </div>
+      </div>
+    </div>`;
+      });
+
+      html += `
+    <button onclick="adminAddInclPhoto()" style="background:#000;color:#ffb000;border:1px dashed #ffb000;padding:10px;font-family:monospace;font-size:10px;cursor:pointer;width:100%;letter-spacing:2px;">＋ ADD INCL PHOTO</button>
+  </div>`;
+      return html;
+    }
+
     function savePortfolioChanges() {
       // Active tab 감지: active 클래스 우선, 없으면 hidden input(slidesSection/csPhotosJson)으로 추론
       const tabs = document.querySelectorAll('.portfolio-subsection-tab.active');
@@ -1737,6 +1825,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         const photos = _adminEditBuffer.archive?.photos || [];
         if (!portfolioEditData.archive) portfolioEditData.archive = {};
         portfolioEditData.archive.photos = photos;
+      } else if (subsection === 'inclusionPhotos') {
+        _syncInclPhotosToBuffer();
+        const inclPhotos = _adminEditBuffer.inclusionPhotos?.photos || [];
+        if (!portfolioEditData.inclusionPhotos) portfolioEditData.inclusionPhotos = {};
+        portfolioEditData.inclusionPhotos.photos = inclPhotos;
       }
 
       // Parse contact sheet / gallery data (for intro or project sections)

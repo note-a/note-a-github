@@ -2015,6 +2015,9 @@ REQUIRE LOGIN: No (Public access enabled)
         if (adminContents.archive && adminContents.archive.photos) {
           contents.archive.photos = adminContents.archive.photos;
         }
+        if (adminContents.inclusionPhotos && Array.isArray(adminContents.inclusionPhotos.photos)) {
+          _inclusionPhotos = adminContents.inclusionPhotos.photos;
+        }
 
         // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
         // published posts(publishedSection 기반)는 renderSection의 getPublishedPosts()가 처리하므로
@@ -3587,23 +3590,17 @@ REQUIRE LOGIN: No (Public access enabled)
     // ── 교집합 플로팅 창 ──────────────────────────────────────
     // Inclusion 사진 데이터 (실제 사진 파일과 키워드)
     // admin에서 업데이트 가능하도록 별도 관리
-    const inclusionPhotos = (function() {
-      try {
-        const stored = localStorage.getItem('inclusionPhotos');
-        if (stored) return JSON.parse(stored);
-      } catch(e) {}
-      // 기본 샘플 데이터 — 실제 파일명과 키워드로 교체 필요
-      return [
-        { id:'INCL_C01', title:'INCL_C01', filename:'', keywords:['crash','wall','structure','decay'] },
-        { id:'INCL_F07', title:'INCL_F07', filename:'', keywords:['floating','displacement','object','space'] },
-        { id:'INCL_SH2', title:'INCL_SH2', filename:'', keywords:['shadow','light','depth','perception'] },
-      ];
-    })();
+    // admin에서 관리 — loadAdminContentsFromStorage / fetchAndApplyAdminContents 에서 덮어씀
+    let _inclusionPhotos = [
+      { id:'INCL_C01', title:'INCL_C01', filename:'', keywords:['crash','wall','structure','decay'] },
+      { id:'INCL_F07', title:'INCL_F07', filename:'', keywords:['floating','displacement','object','space'] },
+      { id:'INCL_SH2', title:'INCL_SH2', filename:'', keywords:['shadow','light','depth','perception'] },
+    ];
 
     // SET 사진의 키워드와 가장 많이 겹치는 Inclusion 사진 목록 반환 (겹침 없으면 빈 배열)
     function findInclMatches(setPhoto) {
       const setKws = new Set((setPhoto.keywords || []).map(k => k.toLowerCase()));
-      const scored = inclusionPhotos.map(ip => {
+      const scored = _inclusionPhotos.map(ip => {
         const shared = (ip.keywords || []).filter(k => setKws.has(k.toLowerCase()));
         return { photo: ip, shared };
       }).filter(x => x.shared.length > 0);
@@ -4182,6 +4179,7 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.reference && data.reference.items) contents.reference.items = data.reference.items;
             if (data.video && data.video.text) contents.video.text = data.video.text;
             if (data.archive && data.archive.photos) contents.archive.photos = data.archive.photos;
+            if (data.inclusionPhotos && Array.isArray(data.inclusionPhotos.photos)) _inclusionPhotos = data.inclusionPhotos.photos;
           }
 
           // published-posts.json 적용 (모바일 등 다른 기기에서 글 보이도록)
