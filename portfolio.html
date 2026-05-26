@@ -2742,7 +2742,8 @@ REQUIRE LOGIN: No (Public access enabled)
             const previewChildren = (p.children || []).flatMap(c => c.type === 'sheet' ? (c.children||[]) : [c]).slice(0,4);
             const previewImgs = [0,1,2,3].map(ci => {
               const child = previewChildren[ci];
-              const previewSrc = (child && (child.filename || child.url)) || '';
+              const _pFull = (child && (child.filename || child.url)) || '';
+              const previewSrc = _pFull ? _pFull.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
               return `<div style="position:relative;overflow:hidden;background:#111;">
                 <img src="${previewSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
               </div>`;
@@ -2764,12 +2765,13 @@ REQUIRE LOGIN: No (Public access enabled)
             const fakeStyle = fakeThumbnailStyle(num);
             const blobMap = overlayEl && overlayEl._blobMap;
             const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
-            // picsum ID 직접 사용 (없으면 num 기반)
-            const pid = p.picsumId || ((parseInt(num) % 990) + 10) || 50;
-            const imgSrc = blobSrc || p.filename || p.url || '';
+            // 그리드용 썸네일 URL: .../t/DSCF####.jpg (없으면 원본)
+            const fullSrc = p.filename || p.url || '';
+            const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+            const imgSrc = blobSrc || thumbSrc || fullSrc;
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.4) saturate(0.3);`}">
-              <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
+              <img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
           }
