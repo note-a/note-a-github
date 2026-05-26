@@ -2607,6 +2607,8 @@ REQUIRE LOGIN: No (Public access enabled)
       let csNavStack = []; // [{title, photos}]
       let currentPhotos = [];
       let currentLevelTitle = '';
+      // GitHub 데이터 새로 로드됐을 때 nav 초기화
+      if (window._csNavReset) { csNavStack = []; window._csNavReset = false; }
 
       // 사진 클릭 → 풀스크린 라이트박스
       function showLightbox(leafPhotos, startIdx) {
@@ -4067,7 +4069,8 @@ REQUIRE LOGIN: No (Public access enabled)
         .then(([data, publishedPosts]) => {
           // admin-contents.json 적용
           if (data && Object.keys(data).length > 0) {
-            // GitHub 데이터로 localStorage도 동기화 (stale 데이터 방지)
+            // 구버전 localStorage 완전 삭제 후 GitHub 최신 데이터로 교체
+            try { localStorage.removeItem('adminContents'); } catch(e) {}
             try { localStorage.setItem('adminContents', JSON.stringify(data)); } catch(e) {}
             if (data.project && data.project.photos && data.project.photos.some(p => p.type === 'sheet')) contents.project.photos = data.project.photos;
             if (data.about && data.about.text !== undefined) contents.about.text = data.about.text;
@@ -4088,8 +4091,8 @@ REQUIRE LOGIN: No (Public access enabled)
             _githubPublishedPosts = publishedPosts;
           }
 
-          // Re-apply localStorage data (admin edits take priority over GitHub)
-          loadAdminContentsFromStorage();
+          // nav 스택 초기화 플래그 (renderContactSheet가 체크)
+          window._csNavReset = true;
 
           // Re-render current section
           const isMobile = window.innerWidth <= 768;
