@@ -2617,7 +2617,7 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     function renderContactSheet(content, container, titleEl, overlayEl) {
-      const COLORS = { core:'#39dc00', support:'#ffb000', drop:'#111' };
+      const COLORS = { core:'#39dc00', support:'#ffb000', drop:'#1a3a0a' };
       const LABELS = { core:'CORE', support:'SUP', drop:'DROP' };
       const SHOW_BORDER = ['core','support'];
 
@@ -2782,7 +2782,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
             const imgSrc = blobSrc || thumbSrc || fullSrc;
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
-              style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.4) saturate(0.3);`}">
+              style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.35) saturate(0) sepia(1) hue-rotate(85deg);`}">
               <img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
@@ -2847,7 +2847,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
             const imgSrc = blobSrc || thumbSrc || fullSrc;
             return `<div class="cs-cell" data-idx="${loaded + i}" data-v="${v}" data-type="photo"
-              style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.4) saturate(0.3);`}">
+              style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.35) saturate(0) sepia(1) hue-rotate(85deg);`}">
               <img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
