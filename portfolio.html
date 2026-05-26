@@ -10,23 +10,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .top-banner {
   position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #080000;
-  border-bottom: 2px solid #6e0a00;
-  color: #8a1400;
+  background: #0a0300;
+  border-bottom: 2px solid #8c3000;
+  color: #aa3a00;
   z-index: 9999;
   display: flex; align-items: stretch;
   font-family: 'Courier New', monospace;
   font-size: 11px;
-  box-shadow: 0 2px 14px rgba(100,6,0,0.4);
+  box-shadow: 0 2px 14px rgba(120,40,0,0.4);
 }
 .top-banner-left {
-  background: #7a0e00; color: #1a0000;
+  background: #8c3000; color: #1a0800;
   padding: 2px 8px; display: inline-flex; align-items: center;
   font-weight: bold; font-size: 10px; letter-spacing: 1px;
   white-space: nowrap; flex-shrink: 0; gap: 5px;
 }
 .top-banner-dot {
-  width: 7px; height: 7px; background: #1a0000; border-radius: 50%;
+  width: 7px; height: 7px; background: #1a0800; border-radius: 50%;
   animation: tb-blink 0.9s infinite;
 }
 @keyframes tb-blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
@@ -35,22 +35,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 0 14px; gap: 10px; overflow: hidden;
 }
 .top-banner-code {
-  color: #8a1400; font-size: 9px; white-space: nowrap;
-  border: 1px solid #6e0a00; padding: 1px 5px; flex-shrink: 0;
+  color: #aa3a00; font-size: 9px; white-space: nowrap;
+  border: 1px solid #8c3000; padding: 1px 5px; flex-shrink: 0;
   letter-spacing: 1px;
 }
 .top-banner-msg {
-  color: rgba(155,35,15,0.92); font-size: 10px; letter-spacing: 0.5px;
+  color: rgba(175,65,10,0.92); font-size: 10px; letter-spacing: 0.5px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .top-banner-close {
   width: 32px; flex-shrink: 0; display: flex; align-items: center;
   justify-content: center; cursor: pointer;
-  border-left: 1px solid rgba(110,10,0,0.5);
-  color: #6e0a00; font-size: 13px;
+  border-left: 1px solid rgba(120,40,0,0.5);
+  color: #8c3000; font-size: 13px;
   transition: background 0.15s;
 }
-.top-banner-close:hover { background: rgba(110,10,0,0.25); color: #8a1400; }
+.top-banner-close:hover { background: rgba(120,40,0,0.25); color: #aa3a00; }
 @keyframes tb-cursor { 0%,100%{opacity:1} 49%{opacity:1} 50%,99%{opacity:0} }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
@@ -1238,7 +1238,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </span>
       <span class="top-banner-code" id="tbCode">ERR_ACCESS_RESTRICTED</span>
       <span class="top-banner-msg" id="tbMsg"></span>
-      <span id="tbIdx" style="font-size:8px;color:rgba(110,10,0,0.6);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
+      <span id="tbIdx" style="font-size:8px;color:rgba(120,40,0,0.6);flex-shrink:0;font-family:'Courier New',monospace;letter-spacing:1px;"></span>
     </div>
     <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
   </div>
