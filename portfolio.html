@@ -1246,61 +1246,61 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <script>
   (function(){
     const MSGS = [
-      { code:'ERR_ACCESS_RESTRICTED',  label:'WARNING', text:'UNAUTHORIZED REPRODUCTION OR USE OF THIS CONTENT IS STRICTLY PROHIBITED — ALL RIGHTS RESERVED' },
-      { code:'ERR_COPY_FORBIDDEN',     label:'WARNING', text:'DUPLICATION, MODIFICATION OR REDISTRIBUTION OF IMAGES WITHOUT CONSENT CONSTITUTES A LEGAL VIOLATION' },
-      { code:'SYS_MONITOR_ACTIVE',     label:'NOTICE',  text:'THIS SYSTEM IS MONITORED — ALL ACCESS ATTEMPTS ARE LOGGED AND RECORDED FOR SECURITY PURPOSES' },
-      { code:'ERR_RIGHTS_VIOLATION',   label:'WARNING', text:'ALL PHOTOGRAPHS AND CONTENT ON THIS SITE ARE PROTECTED BY COPYRIGHT LAW — UNAUTHORIZED USE IS FORBIDDEN' },
-      { code:'ERR_UNAUTHORIZED_USE',   label:'ALERT',   text:'PROCEED WITH AUTHORIZED ACCESS ONLY — VIOLATION OF THESE TERMS WILL RESULT IN LEGAL ACTION' },
+      { code:'ERR_ACCESS_RESTRICTED', label:'WARNING', text:'UNAUTHORIZED REPRODUCTION OR USE OF THIS CONTENT IS STRICTLY PROHIBITED — ALL RIGHTS RESERVED' },
+      { code:'ERR_COPY_FORBIDDEN',    label:'WARNING', text:'DUPLICATION OR REDISTRIBUTION OF IMAGES WITHOUT CONSENT IS A LEGAL VIOLATION' },
+      { code:'SYS_MONITOR_ACTIVE',    label:'NOTICE',  text:'THIS SYSTEM IS MONITORED — ALL ACCESS ATTEMPTS ARE LOGGED FOR SECURITY PURPOSES' },
+      { code:'ERR_RIGHTS_VIOLATION',  label:'WARNING', text:'ALL PHOTOGRAPHS AND CONTENT ARE PROTECTED BY COPYRIGHT — UNAUTHORIZED USE IS FORBIDDEN' },
+      { code:'ERR_UNAUTHORIZED_USE',  label:'ALERT',   text:'PROCEED WITH AUTHORIZED ACCESS ONLY — VIOLATION OF THESE TERMS MAY RESULT IN LEGAL ACTION' },
     ];
-    const codeEl  = document.getElementById('tbCode');
-    const msgEl   = document.getElementById('tbMsg');
-    const lblEl   = document.getElementById('tbLabel');
-    const idxEl   = document.getElementById('tbIdx');
-    let mi = 0, ci = 0, phase = 'typing', timer = null;
+    const CHARS = '!@#$%&?/|[]{}<>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-=_+';
+    const codeEl = document.getElementById('tbCode');
+    const msgEl  = document.getElementById('tbMsg');
+    const lblEl  = document.getElementById('tbLabel');
+    const idxEl  = document.getElementById('tbIdx');
+    let mi = 0, ivs = [], tms = [];
 
-    function setMsg(m) {
-      codeEl.textContent = m.code;
-      lblEl.textContent  = m.label;
-      idxEl.textContent  = (mi+1)+'/'+MSGS.length;
-    }
+    function rc() { return CHARS[Math.floor(Math.random()*CHARS.length)]; }
 
-    function tick() {
-      const m = MSGS[mi];
-      if (phase === 'typing') {
-        ci++;
-        msgEl.innerHTML = m.text.slice(0, ci) + '<span style="color:#ff4444;animation:tb-blink 0.5s infinite;font-weight:bold;">█</span>';
-        if (ci >= m.text.length) {
-          phase = 'holding';
-          timer = setTimeout(tick, 2400);
-        } else {
-          timer = setTimeout(tick, 32 + Math.random() * 28);
-        }
-      } else if (phase === 'holding') {
-        phase = 'fading';
-        msgEl.style.transition  = 'opacity 0.35s';
-        codeEl.style.transition = 'opacity 0.35s';
-        msgEl.style.opacity  = '0';
-        codeEl.style.opacity = '0';
-        timer = setTimeout(() => {
-          mi = (mi + 1) % MSGS.length;
-          ci = 0;
-          setMsg(MSGS[mi]);
-          msgEl.innerHTML = '';
-          msgEl.style.transition  = 'opacity 0.25s';
-          codeEl.style.transition = 'opacity 0.25s';
-          msgEl.style.opacity  = '1';
-          codeEl.style.opacity = '1';
-          phase = 'typing';
-          timer = setTimeout(tick, 300);
-        }, 380);
+    function decode(el, text, charDelay, startDelay, onDone) {
+      const len = text.length;
+      const locked = new Array(len).fill(false);
+      const buf = text.split('').map(c => /[\s—]/.test(c) ? c : rc());
+      const iv = setInterval(() => {
+        for (let i = 0; i < len; i++)
+          if (!locked[i] && !/[\s—]/.test(text[i])) buf[i] = rc();
+        el.textContent = buf.join('');
+      }, 40);
+      ivs.push(iv);
+      let pos = 0;
+      function lockNext() {
+        while (pos < len && /[\s—]/.test(text[pos])) { locked[pos]=true; buf[pos]=text[pos]; pos++; }
+        if (pos >= len) { clearInterval(iv); el.textContent = text; onDone && onDone(); return; }
+        locked[pos]=true; buf[pos]=text[pos]; pos++;
+        tms.push(setTimeout(lockNext, charDelay + Math.random()*14));
       }
+      tms.push(setTimeout(lockNext, startDelay));
     }
 
-    setMsg(MSGS[0]);
-    timer = setTimeout(tick, 700);
+    function clearAll() {
+      ivs.forEach(clearInterval); ivs = [];
+      tms.forEach(clearTimeout);  tms = [];
+    }
 
-    document.getElementById('topBannerClose').addEventListener('click', function() {
-      clearTimeout(timer);
+    function run() {
+      clearAll();
+      const m = MSGS[mi];
+      lblEl.textContent = m.label;
+      idxEl.textContent = (mi+1)+'/'+MSGS.length;
+      decode(codeEl, m.code, 55, 60, null);
+      decode(msgEl,  m.text, 22, 100, () => {
+        tms.push(setTimeout(() => { mi = (mi+1)%MSGS.length; run(); }, 2800));
+      });
+    }
+
+    tms.push(setTimeout(run, 300));
+
+    document.getElementById('topBannerClose').addEventListener('click', () => {
+      clearAll();
       const b = document.getElementById('topBanner');
       b.style.transition = 'opacity 0.2s, transform 0.2s';
       b.style.opacity = '0'; b.style.transform = 'translateY(-100%)';
