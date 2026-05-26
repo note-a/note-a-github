@@ -2623,7 +2623,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const fname = (p.id || '').toUpperCase();
           const blobSrc = bm && (bm[fname] || bm[num]);
           const pid = p.picsumId || ((parseInt(num) % 990) + 10) || 50;
-          const imgSrc = blobSrc || p.url || `https://picsum.photos/id/${pid}/800/1200`;
+          const imgSrc = blobSrc || p.filename || p.url || '';
           const lb = document.createElement('div');
           lb.id = 'csLightbox';
           lb.style.cssText = 'position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:monospace;';
@@ -2740,8 +2740,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const previewChildren = (p.children || []).flatMap(c => c.type === 'sheet' ? (c.children||[]) : [c]).slice(0,4);
             const previewImgs = [0,1,2,3].map(ci => {
               const child = previewChildren[ci];
-              const pid2 = child ? (child.picsumId || 50) : (10 + ci * 17);
-              const previewSrc = (child && child.url) ? child.url : `https://picsum.photos/id/${pid2}/100/150`;
+              const previewSrc = (child && (child.filename || child.url)) || '';
               return `<div style="position:relative;overflow:hidden;background:#111;">
                 <img src="${previewSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
               </div>`;
@@ -2765,7 +2764,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
             // picsum ID 직접 사용 (없으면 num 기반)
             const pid = p.picsumId || ((parseInt(num) % 990) + 10) || 50;
-            const imgSrc = blobSrc || p.url || `https://picsum.photos/id/${pid}/200/300`;
+            const imgSrc = blobSrc || p.filename || p.url || '';
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:1/1;cursor:pointer;position:relative;overflow:hidden;background:#111;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.4) saturate(0.3);`}">
               <img src="${imgSrc}" data-fname="${fname}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy">
