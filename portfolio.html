@@ -1261,7 +1261,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
 
       <div class="menu-statusbar">
-        <span style="color:#b0b0b0;">6 Files</span>
+        <span style="color:#ffb000;">6 Files</span>
         <span style="color:#ffff00;">SELECT FILE</span>
       </div>
     </div>
@@ -1282,7 +1282,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
 
       <div class="terminal-statusbar">
-        <span>STATUS: LOADED</span>
+        <span>STATUS: <span style="color:#ffb000;">LOADED</span></span>
         <span style="color:#39dc00;">SIZE: DYNAMIC</span>
       </div>
       </div>
@@ -1314,10 +1314,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
               <span>Process</span><span>PID</span><span>CPU</span><span>Status</span>
             </div>
             <div id="pmRows" style="flex:1;overflow:hidden;"></div>
-            <div style="border-top:1px solid #39dc00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#39dc00;opacity:0.65;flex-shrink:0;">
-              <span>Processes: 6</span>
-              <span>CPU: <span id="pmTotalCpu">--</span>%</span>
-              <span>MEM: 64MB <span class="pm-blink">█</span></span>
+            <div style="border-top:1px solid #39dc00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#555;flex-shrink:0;">
+              <span>Processes: <span style="color:#ffb000;">6</span></span>
+              <span>CPU: <span id="pmTotalCpu" style="color:#ffb000;">--</span>%</span>
+              <span>MEM: <span style="color:#ffb000;">64MB</span> <span class="pm-blink" style="color:#ffb000;">█</span></span>
             </div>
           </div>
         </div>
@@ -1336,15 +1336,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           </div>
           <div id="vlBody">
             <div style="border-bottom:1px solid #1a1a1a;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;align-items:center;">
-              <span><span id="vlDot" style="display:inline-block;width:6px;height:6px;background:#ffb000;border-radius:50%;margin-right:5px;vertical-align:middle;animation:vlpulse 0.9s infinite;box-shadow:0 0 4px #ffb000;"></span><span style="color:#555;font-size:9px;">MEASURE SEARCH LOG</span></span>
+              <span><span id="vlDot" style="display:inline-block;width:6px;height:6px;background:#ffb000;border-radius:50%;margin-right:5px;vertical-align:middle;animation:vlpulse 0.9s infinite;box-shadow:0 0 4px #ffb000;"></span><span style="color:#777;font-size:9px;">MEASURE SEARCH LOG</span></span>
               <span style="color:#ffb000;font-size:9px;" id="vlCount">0 queries</span>
             </div>
             <div style="height:90px;overflow:hidden;">
               <div id="vlList" style="display:flex;flex-direction:column;padding:4px 0;"></div>
             </div>
             <div style="border-top:1px solid #1a1a1a;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;align-items:center;">
-              <span style="color:#333;">SRC: /measure/search</span>
-              <span style="color:#555;" id="vlLastTime">--:--:--</span>
+              <span style="color:#555;">SRC: /measure/search</span>
+              <span style="color:#888;" id="vlLastTime">--:--:--</span>
               <span style="color:#ffb000;animation:pm-blink 1s infinite;">█</span>
             </div>
           </div>
@@ -1387,7 +1387,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div id="mobileContentText"></div>
       </div>
       <div class="mobile-terminal-statusbar">
-        <span>STATUS: LOADED</span>
+        <span>STATUS: <span style="color:#ffb000;">LOADED</span></span>
         <span style="color:#39dc00;">SIZE: DYNAMIC</span>
       </div>
     </div>
@@ -2512,7 +2512,7 @@ REQUIRE LOGIN: No (Public access enabled)
             <input type="file" id="csLocalFolder" multiple accept="image/*" style="display:none;">
             <span id="csLoadBtn" style="font-family:monospace;font-size:10px;padding:3px 10px;border:1px solid rgba(0,0,0,0.4);color:rgba(0,0,0,0.7);white-space:nowrap;cursor:pointer;">📁 사진 폴더 선택</span>
           </label>
-          <span id="csLoadStatus" style="font-size:9px;color:#333;font-family:monospace;flex-shrink:0;"></span>`}
+          <span id="csLoadStatus" style="font-size:9px;color:#666;font-family:monospace;flex-shrink:0;"></span>`}
           <button id="csOverlayClose" style="
             background: transparent; border: 1px solid rgba(0,0,0,0.4); color: #000;
             font-family: monospace; font-size: 11px; padding: 3px 10px; cursor: pointer; flex-shrink:0;
@@ -4273,10 +4273,10 @@ REQUIRE LOGIN: No (Public access enabled)
           const rowBg = isActive ? 'rgba(57,220,0,0.12)' : 'transparent';
           const barW = Math.max(2, Math.min(99, p.cpu + (Math.random()-0.5)*10));
           p._curCpu = barW;
-          // 샘플 색상 그대로: active=green, others=white(#e0e0e0)
+          // active=green, inactive=dim; high cpu=amber tint
           const nameColor = isActive ? '#39dc00' : '#909090';
-          const statusColor = isActive ? '#39dc00' : '#39dc00';
-          const pidColor = '#888';
+          const statusColor = isActive ? '#39dc00' : 'rgba(57,220,0,0.28)';
+          const pidColor = '#666';
           return `
             <div onclick="loadContent('${p.key}'); pmRender('${p.key}');"
               style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #0d2e00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
@@ -4285,8 +4285,8 @@ REQUIRE LOGIN: No (Public access enabled)
               <span style="font-weight:bold;color:${nameColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</span>
               <span style="color:${pidColor};font-size:9px;">${p.pid}</span>
               <span>
-                <span style="display:inline-block;width:34px;height:7px;border:1px solid #39dc00;background:#000;overflow:hidden;vertical-align:middle;">
-                  <span style="display:block;height:100%;width:${barW}%;background:#39dc00;"></span>
+                <span style="display:inline-block;width:34px;height:7px;border:1px solid rgba(57,220,0,0.4);background:#000;overflow:hidden;vertical-align:middle;">
+                  <span style="display:block;height:100%;width:${barW}%;background:${barW>75?'#c8a000':barW>45?'rgba(57,220,0,0.7)':'rgba(57,220,0,0.45)'};"></span>
                 </span>
               </span>
               <span style="color:${statusColor};font-size:9px;">RUNNING</span>
