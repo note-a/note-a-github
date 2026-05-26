@@ -4159,6 +4159,9 @@ REQUIRE LOGIN: No (Public access enabled)
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', async function() {
+      // 항상 GitHub 최신 데이터 사용 — 구버전 캐시 무조건 삭제
+      try { localStorage.removeItem('adminContents'); } catch(e) {}
+
       // IndexedDB 캐시 먼저 로드 (admin에서 저장한 대용량 데이터 읽기)
       await refreshArchiveCache();
 
@@ -4167,8 +4170,8 @@ REQUIRE LOGIN: No (Public access enabled)
       document.getElementById('popupClose').addEventListener('click', () => popupModal.classList.remove('active'));
       popupModal.addEventListener('click', (e) => { if (e.target === popupModal) popupModal.classList.remove('active'); });
 
-      // Load admin-edited contents from storage
-      loadAdminContentsFromStorage();
+      // Load admin-edited contents from storage (항상 비어있음 — GitHub fetch 전)
+      // loadAdminContentsFromStorage(); // 비활성화: GitHub 데이터가 우선
 
       // Setup all layouts first
       setupMenuItems();
