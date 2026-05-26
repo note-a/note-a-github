@@ -1847,9 +1847,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             // D object format — supports flat and nested (sub-sheet) entries
             const imgDir = (document.getElementById('csImgDir')?.value || '').trim();
             function parsePhotoEntry(n, d, dir) {
+              // 2025 파일은 R2에 .JPG(대문자), 2026+ 파일은 .jpg(소문자)로 저장됨
+              const yearMatch = dir && dir.match(/\/(\d{4})\//);
+              const ext = (yearMatch && parseInt(yearMatch[1]) >= 2026) ? '.jpg' : '.JPG';
               return {
                 id: 'DSCF' + n,
-                filename: dir ? dir + n + '.jpg' : n + '.jpg',
+                filename: dir ? dir + n + ext : n + ext,
                 verdict: d[0] || 'drop',
                 dir: d[1] || '',
                 reason: d[2] || ''
