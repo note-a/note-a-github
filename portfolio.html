@@ -33,7 +33,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   border-left: 2px solid #7fff4f;
   border-bottom: 2px solid #1a5500;
   border-right: 2px solid #1a5500;
-  box-shadow: 0 0 18px rgba(57,220,0,0.18), 0 0 30px rgba(190,230,0,0.04);
+  box-shadow: 0 0 18px rgba(57,220,0,0.18), 0 0 30px rgba(180,228,0,0.04);
   font-family: 'Courier New', monospace;
   opacity: 0;
   pointer-events: none;
@@ -1251,10 +1251,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
           <div id="caBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
             <canvas id="caCanvas" style="display:block;width:100%;flex:1;min-height:120px;"></canvas>
             <div style="padding:3px 6px;border-top:1px solid rgba(57,220,0,0.3);background:#000;display:flex;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:2px;">
-              <span id="caStat1" style="color:rgba(190,230,0,0.6);font-size:6px;font-family:'Courier New',monospace;">CELLS:0000</span>
-              <span id="caStat2" style="color:rgba(190,230,0,0.6);font-size:6px;font-family:'Courier New',monospace;">GEN:00000</span>
-              <span id="caStat3" style="color:rgba(190,230,0,0.6);font-size:6px;font-family:'Courier New',monospace;">DENSITY:0.0%</span>
-              <span id="caStat4" style="color:rgba(190,230,0,0.6);font-size:6px;font-family:'Courier New',monospace;">STABLE</span>
+              <span id="caStat1" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">CELLS:0000</span>
+              <span id="caStat2" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">GEN:00000</span>
+              <span id="caStat3" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">DENSITY:0.0%</span>
+              <span id="caStat4" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">STABLE</span>
             </div>
           </div>
         </div>
@@ -2195,7 +2195,7 @@ REQUIRE LOGIN: No (Public access enabled)
                     };
                     const catColor = categoryColors[(item.category||'').toUpperCase()] || '#39dc00';
                     const isPinned = !!item.pinned;
-                    const rowBg = isPinned ? 'background:rgba(190,230,0,0.07);border-bottom:1px solid rgba(190,230,0,0.4);' : 'border-bottom:1px dashed #39dc00;';
+                    const rowBg = isPinned ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);' : 'border-bottom:1px dashed #39dc00;';
                     const titleColor = isPinned ? '#ffb000' : '#e0e0e0';
                     const pinMark = isPinned ? '<span style="color:#ffb000;margin-right:5px;font-size:10px;">●</span>' : '';
                     return `
@@ -4056,7 +4056,7 @@ REQUIRE LOGIN: No (Public access enabled)
             // List format for rule and others
             const isPinnedM = !!item.pinned;
             const rowStyleM = isPinnedM
-              ? 'background:rgba(190,230,0,0.07);border-bottom:1px solid rgba(190,230,0,0.4);'
+              ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);'
               : 'background:#000;border-bottom:1px dashed #39dc00;';
             const titleColorM = isPinnedM ? '#ffb000' : '#39dc00';
             html += `
@@ -4395,14 +4395,14 @@ REQUIRE LOGIN: No (Public access enabled)
       cx.fillStyle = 'rgba(0,0,0,0.18)'; cx.fillRect(0, 0, cw, ch);
 
       // 그리드
-      cx.strokeStyle = 'rgba(190,230,0,0.04)'; cx.lineWidth = .3;
+      cx.strokeStyle = 'rgba(180,228,0,0.04)'; cx.lineWidth = .3;
       for (let i = 0; i <= W; i++) { cx.beginPath(); cx.moveTo(i*SZ,0); cx.lineTo(i*SZ,ch); cx.stroke(); }
       for (let j = 0; j <= H; j++) { cx.beginPath(); cx.moveTo(0,j*SZ); cx.lineTo(cw,j*SZ); cx.stroke(); }
 
       // 스캔라인
       for (let y = 0; y < ch; y += 3) { cx.fillStyle='rgba(0,0,0,0.06)'; cx.fillRect(0,y,cw,1); }
 
-      // 셀
+      // 셀 (young=yellow → old=green)
       let alive = 0;
       cx.font = `bold ${SZ}px 'Courier New'`;
       for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
@@ -4411,8 +4411,13 @@ REQUIRE LOGIN: No (Public access enabled)
         const a = age[i][j];
         const gi = Math.min(Math.floor(a/9), 5);
         const alpha = .25 + gi * .14;
-        if (a < 5) { cx.fillStyle='rgba(190,230,0,0.1)'; cx.fillRect(i*SZ-1,j*SZ-1,SZ+2,SZ+2); }
-        cx.fillStyle = `rgba(190,230,0,${alpha})`;
+        // t=0: 노랑(240,230,0) → t=1: 초록(57,220,0)
+        const t = gi / 5;
+        const r = Math.round(240 - t * 183);
+        const g2 = Math.round(230 - t * 10);
+        const b = Math.round(0);
+        if (a < 5) { cx.fillStyle=`rgba(${r},${g2},${b},0.1)`; cx.fillRect(i*SZ-1,j*SZ-1,SZ+2,SZ+2); }
+        cx.fillStyle = `rgba(${r},${g2},${b},${alpha})`;
         cx.fillText(GL[gi], i*SZ, j*SZ+SZ-1);
       }
 
@@ -4429,16 +4434,16 @@ REQUIRE LOGIN: No (Public access enabled)
         const a = f.life/f.max;
         const fw = cx.measureText(f.text).width;
         cx.fillStyle=`rgba(20,10,0,${a*.85})`; cx.fillRect(f.x-2,f.y-8,fw+4,10);
-        cx.strokeStyle=`rgba(190,230,0,${a*.4})`; cx.lineWidth=.4; cx.strokeRect(f.x-2,f.y-8,fw+4,10);
-        cx.fillStyle=`rgba(190,230,0,${a*.7})`; cx.fillText(f.text,f.x,f.y);
+        cx.strokeStyle=`rgba(180,228,0,${a*.4})`; cx.lineWidth=.4; cx.strokeRect(f.x-2,f.y-8,fw+4,10);
+        cx.fillStyle=`rgba(180,228,0,${a*.7})`; cx.fillText(f.text,f.x,f.y);
       });
       for (let i = flashes.length-1; i >= 0; i--) if (flashes[i].life <= 0) flashes.splice(i,1);
 
       // 밀도 바
       const density = alive / (W*H);
       const bx = cw-44, by = 3, bw = 40, bh = 4;
-      cx.strokeStyle='rgba(190,230,0,0.3)'; cx.lineWidth=.5; cx.strokeRect(bx,by,bw,bh);
-      cx.fillStyle='rgba(190,230,0,0.35)'; cx.fillRect(bx,by,bw*density,bh);
+      cx.strokeStyle='rgba(180,228,0,0.3)'; cx.lineWidth=.5; cx.strokeRect(bx,by,bw,bh);
+      cx.fillStyle='rgba(180,228,0,0.35)'; cx.fillRect(bx,by,bw*density,bh);
 
       // 통계
       document.getElementById('caStat1').textContent = `CELLS:${alive.toString().padStart(4,'0')}`;
