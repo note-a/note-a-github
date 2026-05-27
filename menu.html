@@ -189,7 +189,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     <div style="width:100%;max-width:700px;display:flex;flex-direction:column;gap:0;">
 
       <!-- 레이더 애니메이션 캔버스 -->
-      <canvas id="loadingCanvas" style="width:100%;height:140px;display:block;"></canvas>
+      <canvas id="loadingCanvas" style="width:100%;height:290px;display:block;"></canvas>
 
     <div class="folder-window">
       <div class="folder-titlebar">
@@ -283,16 +283,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         decLines = DEC_MSGS.map((_, i) => mkLine(i));
       }
 
+      const RADAR_H = 185;   // 상단 레이더 존 높이
+      const DECODE_Y = 190;  // 디코드 존 시작 y
+
       function resize() {
         const rect = canvas.getBoundingClientRect();
         W = canvas.width  = Math.floor(rect.width);
-        H = canvas.height = 140;
+        H = canvas.height = 290;
       }
 
-      // ── 레이더 그리기 (좌측 구획) ──
-      function drawRadar(SPLIT) {
-        const cx = SPLIT / 2, cy = H / 2;
-        const R  = Math.min(SPLIT / 2 - 8, H / 2 - 10);
+      // ── 레이더 그리기 (상단 우측) ──
+      function drawRadar() {
+        const RADAR_W = Math.floor(W * 0.46);   // 우측 46% 사용
+        const OX = W - RADAR_W;                 // 레이더 구획 시작 x
+        const cx = OX + RADAR_W / 2;
+        const cy = RADAR_H / 2;
+        const R  = Math.min(RADAR_W / 2 - 10, RADAR_H / 2 - 10);
         radarTick++;
 
         // 동심원
@@ -354,115 +360,107 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.textAlign = 'left';
         ctx.fillText('E', cx+R+3, cy+3); ctx.fillText('W', cx-R-9, cy+3);
 
-        // BRG/TGT
+        // BRG / TGT — 레이더 구획 우상단
         const brg = ((radarAngle*180/Math.PI)%360+360)%360;
         ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = '7px Courier New';
+        ctx.textAlign = 'right';
+        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, W-4, 10);
+        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`,  W-4, 20);
         ctx.textAlign = 'left';
-        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, 3, 11);
-        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`, 3, 21);
 
-        // 인터퍼런스 (레이더 구획만)
+        // 인터퍼런스
         if (Math.random() < 0.04) radarInterference = 6;
         if (radarInterference > 0) {
+          const OX2 = W - Math.floor(W*0.46);
           ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.25})`;
-          ctx.fillRect(0, Math.random()*H, SPLIT, 1);
+          ctx.fillRect(OX2, Math.random()*RADAR_H, W-OX2, 1);
           radarInterference--;
         }
 
         radarAngle += 0.035;
       }
 
-      // ── 디코드 그리기 (우측 구획) ──
-      function drawDecode(DX) {
+      // ── 디코드 그리기 (하단 전체 폭) ──
+      function drawDecode() {
         decTick++;
-        const PX = 8.8;
-        const numLines = decLines.length;
-        const lineH = (H - 20) / numLines;
+        const PX   = 8.8;
+        const DY   = DECODE_Y;           // 시작 y
+        const DH   = H - DY;             // 사용 가능 높이
+        const lineH = (DH - 14) / decLines.length;
 
         decLines.forEach((line, li) => {
           line.t++;
           if (line.t < line.startT) return;
           const elapsed = line.t - line.startT;
-          if (line.stage === 0 && elapsed > 18) {
-            line.stage = 1;
-            line.chars = Array.from({length: line.target.length}, rndNoise);
-          }
-          if (line.stage === 1 && elapsed > 40) line.stage = 2;
-          if (line.stage === 0 && decTick%2===0) {
-            line.chars[Math.floor(Math.random()*line.target.length)] = rndHex();
-          } else if (line.stage === 1 && decTick%2===0) {
-            line.chars[Math.floor(Math.random()*line.target.length)] = rndNoise();
-          } else if (line.stage === 2) {
-            const progress = (elapsed-40) / (line.target.length*3.5+20);
-            line.target.split('').forEach((ch, i) => {
-              if (line.chars[i] === ch) return;
-              if (i/line.target.length < progress)
-                line.chars[i] = line.corrupt && Math.random()<0.15 ? rndNoise() : ch;
-              else if (decTick%3===0) line.chars[i] = rndNoise();
+          if (line.stage===0 && elapsed>18) { line.stage=1; line.chars=Array.from({length:line.target.length},rndNoise); }
+          if (line.stage===1 && elapsed>40) line.stage=2;
+          if (line.stage===0 && decTick%2===0) line.chars[Math.floor(Math.random()*line.target.length)]=rndHex();
+          else if (line.stage===1 && decTick%2===0) line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise();
+          else if (line.stage===2) {
+            const progress = (elapsed-40)/(line.target.length*3.5+20);
+            line.target.split('').forEach((ch,i)=>{
+              if (line.chars[i]===ch) return;
+              if (i/line.target.length<progress) line.chars[i]=line.corrupt&&Math.random()<0.15?rndNoise():ch;
+              else if (decTick%3===0) line.chars[i]=rndNoise();
             });
-            if (progress > 1.2 && !line.done) { line.stage = 3; line.done = true; }
+            if (progress>1.2&&!line.done){line.stage=3;line.done=true;}
           }
-          if (Math.random()<(line.corrupt?0.04:0.008)) line.glitch = 3;
-          if (line.glitch>0) { line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise(); line.glitch--; }
-          if (line.done && elapsed > line.target.length*4+120) Object.assign(line, mkLine(li));
+          if (Math.random()<(line.corrupt?0.04:0.008)) line.glitch=3;
+          if (line.glitch>0){line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise();line.glitch--;}
+          if (line.done&&elapsed>line.target.length*4+120) Object.assign(line,mkLine(li));
 
-          const y = 14 + lineH*li + lineH*0.75;
+          const y = DY + 12 + lineH*li + lineH*0.7;
+          const prefix = line.done?(line.corrupt?'[ERR]':'[OK] '):`[${String(li).padStart(2,'0')}] `;
+          ctx.font='8px Courier New';
+          ctx.fillStyle=line.corrupt?'rgba(255,80,80,0.7)':line.done?'rgba(57,220,0,0.5)':'rgba(57,220,0,0.3)';
+          ctx.textAlign='left';
+          ctx.fillText(prefix, 8, y);
 
-          // prefix
-          const prefix = line.done ? (line.corrupt?'[ERR]':'[OK] ') : `[${String(li).padStart(2,'0')}] `;
-          ctx.font = '8px Courier New';
-          ctx.fillStyle = line.corrupt ? 'rgba(255,80,80,0.7)' : line.done ? 'rgba(57,220,0,0.5)' : 'rgba(57,220,0,0.3)';
-          ctx.textAlign = 'left';
-          ctx.fillText(prefix, DX, y);
-
-          // 글자
-          ctx.font = 'bold 9px Courier New';
-          line.chars.forEach((ch, i) => {
-            const isDone = ch === line.target[i];
+          ctx.font='bold 9px Courier New';
+          line.chars.forEach((ch,i)=>{
+            const isDone=ch===line.target[i];
             let color;
-            if (isDone && line.corrupt)  color = `rgba(255,100,100,${0.6+Math.random()*0.4})`;
-            else if (isDone)             color = `rgba(57,220,0,${0.8+Math.random()*0.2})`;
-            else if (line.stage===0)     color = `rgba(57,180,0,${0.3+Math.random()*0.3})`;
-            else                         color = `rgba(57,220,0,${0.2+Math.random()*0.3})`;
-            ctx.fillStyle = color;
-            ctx.fillText(line.stage===0 ? ch[0]||ch : ch, DX + 38 + i*PX, y);
+            if (isDone&&line.corrupt) color=`rgba(255,100,100,${0.6+Math.random()*0.4})`;
+            else if (isDone)          color=`rgba(57,220,0,${0.8+Math.random()*0.2})`;
+            else if (line.stage===0)  color=`rgba(57,180,0,${0.3+Math.random()*0.3})`;
+            else                      color=`rgba(57,220,0,${0.2+Math.random()*0.3})`;
+            ctx.fillStyle=color;
+            ctx.fillText(line.stage===0?ch[0]||ch:ch, 46+i*PX, y);
           });
 
-          // 커서
-          if (line.stage===2 && !line.done) {
-            const cur = line.chars.findIndex((c,i)=>c!==line.target[i]&&line.target[i]!==' ');
-            if (cur !== -1 && Math.floor(Date.now()/150)%2===0) {
-              ctx.fillStyle = line.corrupt ? '#ff6060' : '#fff';
-              ctx.fillRect(DX+38+cur*PX-1, y-9, 7, 10);
+          if (line.stage===2&&!line.done) {
+            const cur=line.chars.findIndex((c,i)=>c!==line.target[i]&&line.target[i]!==' ');
+            if (cur!==-1&&Math.floor(Date.now()/150)%2===0){
+              ctx.fillStyle=line.corrupt?'#ff6060':'#fff';
+              ctx.fillRect(46+cur*PX-1, y-9, 7, 10);
             }
           }
         });
 
-        // 헤더
-        ctx.fillStyle = 'rgba(57,220,0,0.4)'; ctx.font = '7px Courier New';
-        ctx.textAlign = 'left';
-        ctx.fillText(`DECRYPT v2.4`, DX, 9);
-        const done = decLines.filter(l=>l.done&&!l.corrupt).length;
-        ctx.textAlign = 'right';
-        ctx.fillText(`${done}/${decLines.length} OK`, W-4, 9);
-        ctx.textAlign = 'left';
+        // 디코드 헤더
+        ctx.fillStyle='rgba(57,220,0,0.35)'; ctx.font='7px Courier New';
+        ctx.textAlign='left';
+        ctx.fillText('DECRYPT v2.4', 8, DY+9);
+        const done=decLines.filter(l=>l.done&&!l.corrupt).length;
+        ctx.textAlign='right';
+        ctx.fillText(`${done}/${decLines.length} OK`, W-4, DY+9);
+        ctx.textAlign='left';
       }
 
       // ── 메인 드로우 ──
       function draw() {
-        const SPLIT = 160;
         ctx.fillStyle = 'rgba(0,0,0,0.14)';
         ctx.fillRect(0, 0, W, H);
 
-        // 구획 구분선
-        ctx.strokeStyle = 'rgba(57,220,0,0.18)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 4]);
-        ctx.beginPath(); ctx.moveTo(SPLIT, 4); ctx.lineTo(SPLIT, H-4); ctx.stroke();
-        ctx.setLineDash([]);
+        drawRadar();
+        drawDecode();
 
-        drawRadar(SPLIT);
-        drawDecode(SPLIT + 6);
+        // 레이더/디코드 경계 수평선
+        ctx.strokeStyle = 'rgba(57,220,0,0.15)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 5]);
+        ctx.beginPath(); ctx.moveTo(8, DECODE_Y); ctx.lineTo(W-8, DECODE_Y); ctx.stroke();
+        ctx.setLineDash([]);
 
         // 스캔라인
         for (let y = 0; y < H; y += 2) {
