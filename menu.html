@@ -29,16 +29,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .folder-window {
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border: 1px solid rgba(57,220,0,0.45);
   background: #000;
   width: 520px;
+  height: 400px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 24px rgba(57,220,0,0.12), inset 0 0 60px rgba(57,220,0,0.02);
 }
 
 .folder-titlebar {
@@ -103,20 +101,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   justify-content: center;
   padding: 20px 12px;
   cursor: pointer;
-  transition: all 0.1s;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  transition: all 0.15s;
+  border: 1px solid rgba(57,220,0,0.2);
   background: #000;
   text-align: center;
   min-height: 80px;
 }
 
 .menu-item:hover {
-  background: #39dc00;
-  color: #000;
-  border: 1px solid #39dc00;
+  background: rgba(57,220,0,0.08);
+  color: #39dc00;
+  border: 1px solid rgba(57,220,0,0.7);
+  box-shadow: inset 0 0 20px rgba(57,220,0,0.06), 0 0 12px rgba(57,220,0,0.12);
 }
 
 .menu-item-icon {
@@ -186,10 +182,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="menu-container">
-    <div style="display:flex;flex-direction:row;align-items:flex-start;gap:20px;width:100%;max-width:1160px;">
+    <div style="display:flex;flex-direction:row;align-items:center;gap:20px;width:100%;max-width:1240px;">
 
       <!-- 왼쪽 패널: ACCESS CARD -->
-      <canvas id="cardCanvas" style="width:200px;height:400px;flex-shrink:0;display:block;"></canvas>
+      <canvas id="cardCanvas" style="flex-shrink:0;display:block;"></canvas>
 
       <!-- 폴더 윈도우 (가운데) -->
       <div class="folder-window">
@@ -292,8 +288,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       const DECODE_Y = 225;  // 디코드 존 시작 y
 
       function resize() {
-        W = canvas.width  = 260;
-        H = canvas.height = 400;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = 260; H = 400;
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
 
       // ── 레이더 그리기 (상단 전폭) ──
@@ -481,12 +480,16 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     (function() {
       const canvas = document.getElementById('cardCanvas');
       const ctx = canvas.getContext('2d');
-      canvas.width = 200; canvas.height = 400;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const CW = 240, CH = 400;
+      canvas.width = CW * dpr; canvas.height = CH * dpr;
+      canvas.style.width = CW + 'px'; canvas.style.height = CH + 'px';
+      ctx.scale(dpr, dpr);
       const GA = (a) => `rgba(57,220,0,${a})`;
       let frame = 0;
 
       function draw() {
-        const cw = canvas.width, ch = canvas.height;
+        const cw = CW, ch = CH;
         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, cw, ch);
 
         const t = frame;
@@ -780,11 +783,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     function updateSelection() {
       items.forEach((item, idx) => {
         if (idx === selectedIndex) {
-          item.style.background = '#39dc00';
-          item.style.color = '#000';
-        } else {
-          item.style.background = 'transparent';
+          item.style.background = 'rgba(57,220,0,0.1)';
           item.style.color = '#39dc00';
+          item.style.border = '1px solid rgba(57,220,0,0.7)';
+          item.style.boxShadow = 'inset 0 0 20px rgba(57,220,0,0.06), 0 0 12px rgba(57,220,0,0.12)';
+        } else {
+          item.style.background = '';
+          item.style.color = '';
+          item.style.border = '';
+          item.style.boxShadow = '';
         }
       });
       items[selectedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
