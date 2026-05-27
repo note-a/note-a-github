@@ -34,9 +34,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   border-bottom: 2px solid #1a5500;
   border-right: 2px solid #1a5500;
   background: #000;
-  width: 100%;
-  max-width: 700px;
-  max-height: 90vh;
+  width: 340px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
@@ -190,7 +189,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     <div style="display:flex;flex-direction:row;align-items:flex-start;gap:20px;width:100%;max-width:940px;">
 
       <!-- 폴더 윈도우 (좌) -->
-      <div class="folder-window" style="flex:1;min-width:0;">
+      <div class="folder-window">
         <div class="folder-titlebar">
           SET WORLD DIRECTORY
           <div class="folder-icons">
@@ -286,12 +285,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         decLines = DEC_MSGS.map((_, i) => mkLine(i));
       }
 
-      const RADAR_H = 260;   // 레이더 존 높이
-      const DECODE_Y = 265;  // 디코드 존 시작 y
+      const RADAR_H = 220;   // 레이더 존 높이
+      const DECODE_Y = 225;  // 디코드 존 시작 y
 
       function resize() {
         W = canvas.width  = 260;
-        H = canvas.height = 500;
+        H = canvas.height = 400;
       }
 
       // ── 레이더 그리기 (상단 전폭) ──
