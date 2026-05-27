@@ -8,73 +8,98 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
-/* ── WARNING BANNER — HTTP 403 STYLE ── */
-.top-banner {
-  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #ff2222;
-  border-top: 4px solid #000;
-  border-bottom: 1px solid #cc0000;
-  z-index: 9999;
+/* ── UNREAD MESSAGE POPUP ── */
+#unreadPopup {
+  position: fixed; bottom: 48px; right: 20px;
+  width: 260px;
+  background: #000;
+  border-top: 2px solid #7fff4f;
+  border-left: 2px solid #7fff4f;
+  border-bottom: 2px solid #1a5500;
+  border-right: 2px solid #1a5500;
+  box-shadow: 0 0 24px rgba(57,220,0,0.18);
   font-family: 'Courier New', monospace;
-  overflow: hidden;
-  display: flex; align-items: center;
+  z-index: 9999;
+  transform: translateY(12px);
+  opacity: 0;
+  animation: up-enter 0.35s ease forwards;
+  animation-delay: 1.2s;
 }
-/* 하단 스캔 라인 */
-.top-banner::after {
-  content:''; position:absolute; bottom:0; left:0; height:1px;
-  background:rgba(0,0,0,0.3); opacity:0.8;
-  animation: tb-scan 3s linear infinite;
+@keyframes up-enter {
+  to { transform: translateY(0); opacity: 1; }
 }
-@keyframes tb-scan { 0%{width:0} 100%{width:100%} }
-/* 에러 코드 블록 */
-.top-banner-code {
-  font-size: 15px; font-weight: bold; color: #000;
-  padding: 0 14px; letter-spacing: -0.5px; line-height: 1;
-  border-right: 1px solid rgba(0,0,0,0.25); flex-shrink: 0;
-  animation: tb-num 5s steps(1) infinite;
+.up-titlebar {
+  background: #39dc00; color: #000;
+  font-size: 9px; font-weight: bold; letter-spacing: 1.5px;
+  padding: 4px 10px;
+  display: flex; justify-content: space-between; align-items: center;
 }
-@keyframes tb-num {
-  0%,100%{ color:#000; }
-  50%    { color:#1a0000; text-shadow:none; }
-  50.2%  { color:#000; }
+.up-tbtn {
+  width: 12px; height: 12px; background: #000; color: #39dc00;
+  font-size: 8px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; margin-left: 2px;
+  transition: background 0.1s;
 }
-/* 중앙 영역 */
-.top-banner-body {
-  flex:1; display:flex; align-items:center; justify-content:center; gap:10px;
-  padding:0 12px; overflow:hidden; position:relative;
+.up-tbtn:hover { background: #1a5500; }
+.up-subbar {
+  padding: 5px 10px 4px;
+  border-bottom: 1px solid #111;
+  display: flex; align-items: center; gap: 6px;
 }
-/* 배지 */
-.top-banner-left {
-  font-size: 9px; letter-spacing: 2px; color: #ff2222;
-  background: #000; border: 1px solid rgba(0,0,0,0.6);
-  padding: 2px 7px; flex-shrink: 0;
-  animation: tb-badge 2.4s steps(1) infinite;
+.up-dot {
+  width: 6px; height: 6px; background: #ffb000; border-radius: 50%;
+  box-shadow: 0 0 5px #ffb000;
+  animation: vlpulse 0.9s infinite;
 }
-@keyframes tb-badge {
-  0%,80%,100%{background:#000;color:#ff2222}
-  85%{background:#ff2222;color:#000;outline:1px solid #000}
-  86%{background:#000;color:#ff2222}
+.up-subtext { font-size: 9px; color: #555; letter-spacing: 0.5px; }
+.up-badge {
+  margin-left: auto;
+  font-size: 8px; font-weight: bold; color: #000;
+  background: #ffb000; padding: 1px 5px;
+  animation: up-badgeFlick 3s steps(1) infinite;
 }
-.top-banner-msg {
-  font-size: 11px; color: rgba(0,0,0,0.85);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+@keyframes up-badgeFlick {
+  0%,90%,100%{background:#ffb000;color:#000}
+  92%{background:#000;color:#ffb000;outline:1px solid #ffb000}
+  94%{background:#ffb000;color:#000}
 }
-/* 우측 시각/카운터 */
-.top-banner-right {
-  font-size: 9px; color: rgba(0,0,0,0.5); flex-shrink:0;
-  padding: 0 10px; text-align:right; line-height:1.6;
-  display:flex; flex-direction:column; align-items:flex-end;
-  border-left: 1px solid rgba(0,0,0,0.2);
+.up-list { padding: 4px 0; }
+.up-item {
+  display: flex; gap: 8px; padding: 6px 10px;
+  border-bottom: 1px solid #0a0a0a;
+  cursor: pointer; transition: background 0.12s;
+  animation: up-slideIn 0.3s ease both;
 }
-.top-banner-count { color:#000; font-size:9px; }
-/* 닫기 */
-.top-banner-close {
-  position:relative; right:auto; top:auto; bottom:auto; width:32px; height:32px;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; color:rgba(0,0,0,0.4); font-size:11px;
-  border-left:1px solid rgba(0,0,0,0.2); transition:background 0.15s; flex-shrink:0;
+.up-item:hover { background: rgba(57,220,0,0.04); }
+.up-item:last-child { border-bottom: none; }
+@keyframes up-slideIn { from{opacity:0;transform:translateX(6px)} to{opacity:1;transform:none} }
+.up-avatar {
+  width: 22px; height: 22px; background: #0d0d0d;
+  border: 1px solid #1e1e1e; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #39dc00;
 }
-.top-banner-close:hover { background:rgba(0,0,0,0.15); color:#000; }
+.up-content { flex: 1; min-width: 0; }
+.up-from { font-size: 9px; color: #39dc00; letter-spacing: 0.5px; margin-bottom: 2px; display: flex; justify-content: space-between; }
+.up-from-name { font-weight: bold; }
+.up-from-time { color: #333; font-size: 8px; }
+.up-preview { font-size: 9px; color: #444; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.2px; }
+.up-unread .up-from-name { color: #7fff4f; }
+.up-unread .up-preview  { color: #666; }
+.up-unread-dot {
+  width: 5px; height: 5px; background: #ffb000; border-radius: 50%;
+  flex-shrink: 0; margin-top: 8px;
+  box-shadow: 0 0 4px #ffb000;
+}
+.up-footer {
+  border-top: 1px solid #111;
+  padding: 5px 10px;
+  font-size: 8px; color: #333; letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; transition: color 0.12s;
+}
+.up-footer:hover { color: #39dc00; }
+.up-footer-blink { animation: pm-blink 1.2s infinite; color: #ffb000; }
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -143,8 +168,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: calc(100vh - 32px);
-  margin-top: 32px;
+  height: 100vh;
+  margin-top: 0;
   padding: 8px 20px 8px;
   gap: 0;
   position: relative;
@@ -1209,8 +1234,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #desktop-layout {
   display: flex;
   width: 100%;
-  height: calc(100vh - 32px);
-  margin-top: 32px;
+  height: 100vh;
+  margin-top: 0;
 }
   .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #39dc00; line-height: 1.7; padding: 0 16px; }
   .md-content h1,.md-content h2,.md-content h3 { color: #39dc00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #39dc00; padding-bottom: 4px; }
@@ -1253,84 +1278,58 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
     </defs>
   </svg>
 
-  <div class="top-banner" id="topBanner">
-    <span class="top-banner-code" id="tbCode">403</span>
-    <div class="top-banner-body">
-      <span class="top-banner-left" id="tbLabel">접근 거부</span>
-      <span class="top-banner-msg" id="tbMsg"></span>
+  <div id="unreadPopup">
+    <div class="up-titlebar">
+      <span>MAIL.EXE — INBOX</span>
+      <div>
+        <span class="up-tbtn">_</span>
+        <span class="up-tbtn">□</span>
+        <span class="up-tbtn" id="upClose">✕</span>
+      </div>
     </div>
-    <div class="top-banner-right">
-      <span id="tbTime">--:--:--</span>
-      <span class="top-banner-count" id="tbCount"></span>
+    <div class="up-subbar">
+      <span class="up-dot"></span>
+      <span class="up-subtext">읽지 않은 메시지</span>
+      <span class="up-badge" id="upBadge">3</span>
     </div>
-    <div class="top-banner-close" id="topBannerClose" title="닫기">✕</div>
+    <div class="up-list" id="upList"></div>
+    <div class="up-footer">
+      <span>받은 편지함 열기</span>
+      <span class="up-footer-blink">▶</span>
+    </div>
   </div>
   <script>
   (function(){
     const MSGS = [
-      '오류가 감지되었습니다 — 해당 요청이 차단되었습니다',
-      '비정상적인 접근이 탐지되었습니다 — 보안 시스템이 활성화되었습니다',
-      '오류가 발생했습니다 — 이 리소스에 대한 접근 권한이 없습니다',
-      '시스템 경고 · 허가되지 않은 접근 시도가 감지되었습니다',
-      '경고: 비정상적인 활동이 탐지되었습니다 — 세션이 모니터링 중입니다',
+      { from:'SET_SYSTEM', init:'S', time:'방금 전',  preview:'새 사진이 업로드되었습니다 — 확인해보세요', unread:true },
+      { from:'MEASURE',    init:'M', time:'12분 전',  preview:'관객의 검색 기록이 누적되었습니다', unread:true },
+      { from:'LOG.DLL',    init:'L', time:'1시간 전', preview:'SET:Inclusion 세션 로그가 갱신됨', unread:true },
+      { from:'REFERENCE',  init:'R', time:'3시간 전', preview:'새로운 레퍼런스 항목이 추가되었습니다', unread:false },
     ];
-    const CHARS = '!@#$%&?/|[]{}<>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-=_+';
-    const msgEl   = document.getElementById('tbMsg');
-    const timeEl  = document.getElementById('tbTime');
-    const countEl = document.getElementById('tbCount');
-    let mi = 0, attempts = Math.floor(Math.random()*30)+8, ivs = [], tms = [];
+    const list = document.getElementById('upList');
+    MSGS.forEach((m, i) => {
+      const item = document.createElement('div');
+      item.className = 'up-item' + (m.unread ? ' up-unread' : '');
+      item.style.animationDelay = (i * 80 + 1300) + 'ms';
+      item.innerHTML = `
+        <div class="up-avatar">${m.init}</div>
+        <div class="up-content">
+          <div class="up-from">
+            <span class="up-from-name">${m.from}</span>
+            <span class="up-from-time">${m.time}</span>
+          </div>
+          <div class="up-preview">${m.preview}</div>
+        </div>
+        ${m.unread ? '<div class="up-unread-dot"></div>' : ''}
+      `;
+      list.appendChild(item);
+    });
 
-    function rc() { return CHARS[Math.floor(Math.random()*CHARS.length)]; }
-
-    function decode(el, text, charDelay, startDelay, onDone) {
-      const len = text.length;
-      const locked = new Array(len).fill(false);
-      const buf = text.split('').map(c => /[\s·—\-]/.test(c) ? c : rc());
-      const iv = setInterval(() => {
-        for (let i = 0; i < len; i++)
-          if (!locked[i] && !/[\s·—\-]/.test(text[i])) buf[i] = rc();
-        el.textContent = buf.join('');
-      }, 40);
-      ivs.push(iv);
-      let pos = 0;
-      function lockNext() {
-        while (pos < len && /[\s·—\-]/.test(text[pos])) { locked[pos]=true; buf[pos]=text[pos]; pos++; }
-        if (pos >= len) { clearInterval(iv); el.textContent = text; onDone && onDone(); return; }
-        locked[pos]=true; buf[pos]=text[pos]; pos++;
-        tms.push(setTimeout(lockNext, charDelay + Math.random()*12));
-      }
-      tms.push(setTimeout(lockNext, startDelay));
-    }
-
-    function clearAll() { ivs.forEach(clearInterval); ivs=[]; tms.forEach(clearTimeout); tms=[]; }
-
-    function pad(n){ return String(n).padStart(2,'0'); }
-    function tickTime(){
-      const d=new Date();
-      timeEl.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-    }
-    tickTime(); setInterval(tickTime, 1000);
-
-    setInterval(()=>{
-      attempts += Math.random()<0.3 ? Math.ceil(Math.random()*3) : 1;
-      countEl.textContent = attempts+'회 시도';
-    }, 2000);
-    countEl.textContent = attempts+'회 시도';
-
-    function run() {
-      clearAll();
-      decode(msgEl, MSGS[mi], 28, 80, () => {
-        tms.push(setTimeout(() => { mi=(mi+1)%MSGS.length; run(); }, 3000));
-      });
-    }
-    tms.push(setTimeout(run, 200));
-
-    document.getElementById('topBannerClose').addEventListener('click', () => {
-      clearAll();
-      const b = document.getElementById('topBanner');
-      b.style.transition = 'opacity 0.2s, transform 0.2s';
-      b.style.opacity='0'; b.style.transform='translateY(-100%)';
-      setTimeout(()=>b.remove(), 220);
+    document.getElementById('upClose').addEventListener('click', () => {
+      const p = document.getElementById('unreadPopup');
+      p.style.transition = 'opacity 0.2s, transform 0.2s';
+      p.style.opacity = '0'; p.style.transform = 'translateY(10px)';
+      setTimeout(() => p.remove(), 220);
     });
   })();
   </script>
