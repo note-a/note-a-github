@@ -29,14 +29,43 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .folder-window {
-  border: 1px solid rgba(57,220,0,0.45);
+  border: 1px solid rgba(57,220,0,0.18);
   background: #000;
   width: 520px;
   height: 400px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 24px rgba(57,220,0,0.12), inset 0 0 60px rgba(57,220,0,0.02);
+  box-shadow: 0 0 20px rgba(57,220,0,0.12);
+  position: relative;
+}
+
+/* 카드 코너 브래킷 */
+.folder-window::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background:
+    linear-gradient(#39dc00,#39dc00) top    left  / 12px 1.5px no-repeat,
+    linear-gradient(#39dc00,#39dc00) top    left  / 1.5px 12px no-repeat,
+    linear-gradient(#39dc00,#39dc00) top    right / 12px 1.5px no-repeat,
+    linear-gradient(#39dc00,#39dc00) top    right / 1.5px 12px no-repeat,
+    linear-gradient(#39dc00,#39dc00) bottom left  / 12px 1.5px no-repeat,
+    linear-gradient(#39dc00,#39dc00) bottom left  / 1.5px 12px no-repeat,
+    linear-gradient(#39dc00,#39dc00) bottom right / 12px 1.5px no-repeat,
+    linear-gradient(#39dc00,#39dc00) bottom right / 1.5px 12px no-repeat;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 안쪽 점선 */
+.folder-window::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed rgba(57,220,0,0.1);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .folder-titlebar {
@@ -119,17 +148,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 20px 12px;
   cursor: pointer;
   transition: all 0.15s;
-  border: 1px solid rgba(57,220,0,0.2);
+  border: 1px solid rgba(57,220,0,0.18);
   background: #000;
   text-align: center;
   min-height: 80px;
 }
 
-.menu-item:hover {
-  background: rgba(57,220,0,0.08);
-  color: #39dc00;
-  border: 1px solid rgba(57,220,0,0.7);
-  box-shadow: inset 0 0 20px rgba(57,220,0,0.06), 0 0 12px rgba(57,220,0,0.12);
+.menu-item:hover,
+.menu-item.selected {
+  background: rgba(57,220,0,0.07);
+  border-color: rgba(57,220,0,0.5);
+  box-shadow: inset 0 0 20px rgba(57,220,0,0.04);
 }
 
 .menu-item-icon {
@@ -256,243 +285,142 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <script>
-    // ── 레이더 + 디코드 합성 애니메이션 ────────────────────────────
+    // ── FILE TREE (우측 패널) ────────────────────────────────────
     (function() {
       const canvas = document.getElementById('loadingCanvas');
       const ctx    = canvas.getContext('2d');
-      let W, H;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const W = 260, H = 400;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.scale(dpr, dpr);
 
-      // ── 레이더 상태 ──
-      let radarAngle = 0, radarTick = 0, radarInterference = 0;
-      let radarBlips = [];
-      function initBlips() {
-        radarBlips = [
-          { angle:0.52, dist:0.55, label:'TGT-01', locked:true,  life:0, maxLife:140, vx:0.002,  vy:0.001  },
-          { angle:1.80, dist:0.38, label:'TGT-02', locked:false, life:0, maxLife:110, vx:-0.001, vy:0.002  },
-          { angle:3.40, dist:0.70, label:'OBJ-A',  locked:false, life:0, maxLife:90,  vx:0.003,  vy:-0.001 },
-          { angle:4.90, dist:0.28, label:'TGT-03', locked:false, life:0, maxLife:120, vx:-0.002, vy:-0.002 },
-          { angle:5.60, dist:0.62, label:'UNK',    locked:false, life:0, maxLife:80,  vx:0.001,  vy:0.003  },
-          { angle:2.30, dist:0.82, label:'OBJ-B',  locked:false, life:0, maxLife:100, vx:-0.003, vy:0.001  },
-        ];
-      }
+      const GA = (a) => `rgba(57,220,0,${a})`;
+      let frame = 0;
 
-      // ── 디코드 상태 ──
-      const DEC_NOISE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*?/\\|<>!~^';
-      const DEC_HEX   = '0123456789ABCDEF';
-      const DEC_MSGS  = [
-        { text: 'SET WORLD DIRECTORY',      corrupt: false },
-        { text: 'ACCESSING FILES...',       corrupt: false },
-        { text: '>>> AUTH: RESTRICTED',     corrupt: false },
-        { text: 'C:\\WORLD\\SET\\',         corrupt: false },
-        { text: 'KERNEL INTEGRITY: OK',     corrupt: false },
-        { text: '%%% SECTOR FAULT',         corrupt: true  },
-        { text: 'DECRYPTING PAYLOAD...',    corrupt: false },
+      const TREE=[
+        {name:'C:\\WORLD\\SET\\', depth:0, type:'root',  size:'',        date:'2026-01-15'},
+        {name:'PROJECT\\',        depth:1, type:'dir',   size:'4 items', date:'2026-01-14'},
+        {name:'0928\\',           depth:2, type:'dir',   size:'87 img',  date:'2025-09-28'},
+        {name:'0112\\',           depth:2, type:'dir',   size:'64 img',  date:'2026-01-12'},
+        {name:'INCLUSION\\',      depth:1, type:'dir',   size:'3 items', date:'2026-01-10'},
+        {name:'ARCHIVE\\',        depth:1, type:'dir',   size:'112 img', date:'2025-08-01'},
+        {name:'index.html',       depth:1, type:'file',  size:'42 KB',   date:'2026-01-15'},
+        {name:'README.md',        depth:1, type:'file',  size:'2 KB',    date:'2026-01-14'},
       ];
-      let decLines = [], decTick = 0;
-      function rndHex() { return DEC_HEX[Math.floor(Math.random()*16)] + DEC_HEX[Math.floor(Math.random()*16)]; }
-      function rndNoise() { return DEC_NOISE[Math.floor(Math.random()*DEC_NOISE.length)]; }
-      function mkLine(li) {
-        const cfg = DEC_MSGS[li % DEC_MSGS.length];
-        return { target: cfg.text, corrupt: cfg.corrupt,
-          chars: Array.from({length: cfg.text.length}, rndHex),
-          stage: 0, t: 0, startT: li * 22, done: false, glitch: 0 };
-      }
-      function initDec() {
-        decTick = 0;
-        decLines = DEC_MSGS.map((_, i) => mkLine(i));
-      }
 
-      const RADAR_H = 220;   // 레이더 존 높이
-      const DECODE_Y = 225;  // 디코드 존 시작 y
+      let typeCmd='', typeCursor=0, typeTarget='';
+      const CMD_SEQS=['cd PROJECT\\','ls -la','cd ..','cd INCLUSION\\','cd ..','dir /w'];
+      let cmdIdx=0, cmdPhase=0, cmdTimer=0;
 
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        W = 260; H = 400;
-        canvas.width = W * dpr; canvas.height = H * dpr;
-        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      // ── 레이더 그리기 (상단 전폭) ──
-      function drawRadar() {
-        const cx = W / 2;
-        const cy = RADAR_H / 2;
-        const R  = Math.min(W / 2 - 30, RADAR_H / 2 - 30);
-        radarTick++;
-
-        // 동심원
-        [0.33, 0.66, 1].forEach((s, i) => {
-          ctx.strokeStyle = `rgba(57,220,0,${0.1 + i*0.06})`;
-          ctx.lineWidth = 0.7;
-          ctx.beginPath(); ctx.arc(cx, cy, R*s, 0, Math.PI*2); ctx.stroke();
-        });
-        // 십자선
-        ctx.strokeStyle = 'rgba(57,220,0,0.1)'; ctx.lineWidth = 0.5;
-        [0, Math.PI/4, Math.PI/2, Math.PI*3/4].forEach(a => {
-          ctx.beginPath();
-          ctx.moveTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
-          ctx.lineTo(cx-Math.cos(a)*R, cy-Math.sin(a)*R);
-          ctx.stroke();
-        });
-        // 스윕 꼬리
-        const TAIL = Math.PI / 3.5;
-        for (let i = 0; i < 40; i++) {
-          const a = radarAngle - (i/40)*TAIL;
-          ctx.strokeStyle = `rgba(57,220,0,${Math.pow(1-i/40,1.5)*0.5})`;
-          ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(cx, cy);
-          ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R); ctx.stroke();
-        }
-        ctx.strokeStyle = '#7fff7f'; ctx.lineWidth = 1.8;
-        ctx.beginPath(); ctx.moveTo(cx, cy);
-        ctx.lineTo(cx+Math.cos(radarAngle)*R, cy+Math.sin(radarAngle)*R); ctx.stroke();
-
-        // 블립
-        radarBlips.forEach(b => {
-          b.angle += b.vx; b.dist += b.vy;
-          if (b.dist < 0.1 || b.dist > 0.95) b.vy *= -1;
-          const da = ((radarAngle-b.angle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
-          if (da < 0.07 || da > Math.PI*2-0.07) b.life = b.maxLife;
-          if (b.life <= 0) return;
-          const alpha = b.life / b.maxLife;
-          const bx = cx + Math.cos(b.angle)*R*b.dist;
-          const by = cy + Math.sin(b.angle)*R*b.dist;
-          if (b.locked) {
-            const pulse = Math.sin(radarTick*0.15)*0.5+0.5;
-            ctx.strokeStyle = `rgba(100,255,100,${alpha*pulse})`; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(bx, by, 6+pulse*4, 0, Math.PI*2); ctx.stroke();
-            ctx.strokeStyle = `rgba(100,255,100,${alpha})`; ctx.lineWidth = 1.2;
-            const d = 4;
-            ctx.beginPath(); ctx.moveTo(bx,by-d); ctx.lineTo(bx+d,by);
-            ctx.lineTo(bx,by+d); ctx.lineTo(bx-d,by); ctx.closePath(); ctx.stroke();
-          } else {
-            ctx.fillStyle = `rgba(100,255,100,${alpha*0.85})`;
-            ctx.beginPath(); ctx.arc(bx, by, 2.5, 0, Math.PI*2); ctx.fill();
-          }
-          b.life--;
-        });
-
-        // NSEW
-        ctx.fillStyle = 'rgba(57,220,0,0.45)'; ctx.font = 'bold 7px Courier New';
-        ctx.textAlign = 'center';
-        ctx.fillText('N', cx, cy-R-3); ctx.fillText('S', cx, cy+R+10);
-        ctx.textAlign = 'left';
-        ctx.fillText('E', cx+R+3, cy+3); ctx.fillText('W', cx-R-9, cy+3);
-
-        // BRG / TGT
-        const brg = ((radarAngle*180/Math.PI)%360+360)%360;
-        ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = '7px Courier New';
-        ctx.textAlign = 'left';
-        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, 4, 10);
-        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`, 4, 20);
-
-        // 인터퍼런스
-        if (Math.random() < 0.04) radarInterference = 6;
-        if (radarInterference > 0) {
-          ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.25})`;
-          ctx.fillRect(0, Math.random()*RADAR_H, W, 1);
-          radarInterference--;
-        }
-
-        radarAngle += 0.035;
-      }
-
-      // ── 디코드 그리기 (하단 전체 폭) ──
-      function drawDecode() {
-        decTick++;
-        const PX   = 8.8;
-        const DY   = DECODE_Y;           // 시작 y
-        const DH   = H - DY;             // 사용 가능 높이
-        const lineH = 18;
-
-        decLines.forEach((line, li) => {
-          line.t++;
-          if (line.t < line.startT) return;
-          const elapsed = line.t - line.startT;
-          if (line.stage===0 && elapsed>18) { line.stage=1; line.chars=Array.from({length:line.target.length},rndNoise); }
-          if (line.stage===1 && elapsed>40) line.stage=2;
-          if (line.stage===0 && decTick%2===0) line.chars[Math.floor(Math.random()*line.target.length)]=rndHex();
-          else if (line.stage===1 && decTick%2===0) line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise();
-          else if (line.stage===2) {
-            const progress = (elapsed-40)/(line.target.length*3.5+20);
-            line.target.split('').forEach((ch,i)=>{
-              if (line.chars[i]===ch) return;
-              if (i/line.target.length<progress) line.chars[i]=line.corrupt&&Math.random()<0.15?rndNoise():ch;
-              else if (decTick%3===0) line.chars[i]=rndNoise();
-            });
-            if (progress>1.2&&!line.done){line.stage=3;line.done=true;}
-          }
-          if (Math.random()<(line.corrupt?0.04:0.008)) line.glitch=3;
-          if (line.glitch>0){line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise();line.glitch--;}
-          if (line.done&&elapsed>line.target.length*4+120) Object.assign(line,mkLine(li));
-
-          const y = DY + 12 + lineH*li + lineH*0.7;
-          const prefix = line.done?(line.corrupt?'[ERR]':'[OK] '):`[${String(li).padStart(2,'0')}] `;
-          ctx.font='8px Courier New';
-          ctx.fillStyle=line.corrupt?'rgba(255,80,80,0.7)':line.done?'rgba(57,220,0,0.5)':'rgba(57,220,0,0.3)';
-          ctx.textAlign='left';
-          ctx.fillText(prefix, 8, y);
-
-          ctx.font='bold 9px Courier New';
-          line.chars.forEach((ch,i)=>{
-            const isDone=ch===line.target[i];
-            let color;
-            if (isDone&&line.corrupt) color=`rgba(255,100,100,${0.6+Math.random()*0.4})`;
-            else if (isDone)          color=`rgba(57,220,0,${0.8+Math.random()*0.2})`;
-            else if (line.stage===0)  color=`rgba(57,180,0,${0.3+Math.random()*0.3})`;
-            else                      color=`rgba(57,220,0,${0.2+Math.random()*0.3})`;
-            ctx.fillStyle=color;
-            ctx.fillText(line.stage===0?ch[0]||ch:ch, 46+i*PX, y);
-          });
-
-          if (line.stage===2&&!line.done) {
-            const cur=line.chars.findIndex((c,i)=>c!==line.target[i]&&line.target[i]!==' ');
-            if (cur!==-1&&Math.floor(Date.now()/150)%2===0){
-              ctx.fillStyle=line.corrupt?'#ff6060':'#fff';
-              ctx.fillRect(46+cur*PX-1, y-9, 7, 10);
-            }
-          }
-        });
-
-        // 디코드 헤더
-        ctx.fillStyle='rgba(57,220,0,0.35)'; ctx.font='7px Courier New';
-        ctx.textAlign='left';
-        ctx.fillText('DECRYPT v2.4', 8, DY+9);
-        const done=decLines.filter(l=>l.done&&!l.corrupt).length;
-        ctx.textAlign='right';
-        ctx.fillText(`${done}/${decLines.length} OK`, W-4, DY+9);
-        ctx.textAlign='left';
-      }
-
-      // ── 메인 드로우 ──
       function draw() {
-        ctx.fillStyle = 'rgba(0,0,0,0.14)';
-        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
 
-        drawRadar();
-        drawDecode();
+        const fs=Math.max(9,Math.floor(H*0.027));
+        const lh=fs+7;
+        const cursor=Math.floor(frame/52)%TREE.length;
 
-        // 레이더/디코드 경계 수평선
-        ctx.strokeStyle = 'rgba(57,220,0,0.15)';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([3, 5]);
-        ctx.beginPath(); ctx.moveTo(8, DECODE_Y); ctx.lineTo(W-8, DECODE_Y); ctx.stroke();
-        ctx.setLineDash([]);
-
-        // 스캔라인
-        for (let y = 0; y < H; y += 2) {
-          ctx.fillStyle = 'rgba(0,0,0,0.07)';
-          ctx.fillRect(0, y, W, 1);
+        // Typing logic
+        cmdTimer++;
+        if(cmdPhase===0){
+          typeTarget=CMD_SEQS[cmdIdx%CMD_SEQS.length];
+          if(cmdTimer%4===0 && typeCursor<typeTarget.length){ typeCmd+=typeTarget[typeCursor++]; }
+          if(typeCursor>=typeTarget.length){ cmdPhase=1; cmdTimer=0; }
+        } else if(cmdPhase===1){
+          if(cmdTimer>40){ cmdPhase=2; cmdTimer=0; }
+        } else {
+          if(cmdTimer%3===0 && typeCmd.length>0){ typeCmd=typeCmd.slice(0,-1); }
+          if(typeCmd.length===0){ cmdPhase=0; typeCursor=0; cmdIdx++; cmdTimer=0; }
         }
+
+        let y=0;
+        ctx.textBaseline='top'; ctx.textAlign='left';
+
+        // Title bar
+        ctx.fillStyle=GA(0.07); ctx.fillRect(0,0,W,lh+4);
+        ctx.font=`bold ${fs}px monospace`; ctx.fillStyle='#39dc00';
+        ctx.fillText('[ ► FILE MANAGER ]', 4, 4);
+        const now=new Date();
+        ctx.fillStyle=GA(0.35); ctx.textAlign='right';
+        ctx.fillText(now.toTimeString().slice(0,5), W-4, 4);
+        ctx.textAlign='left'; y=lh+8;
+
+        // Path bar
+        ctx.font=`${fs-1}px monospace`; ctx.fillStyle=GA(0.38);
+        ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y); y+=lh;
+        ctx.fillStyle=GA(0.15); ctx.fillRect(0,y,W,1); y+=5;
+
+        // Column headers
+        ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle=GA(0.25);
+        ctx.fillText('NAME', 4, y);
+        ctx.textAlign='right'; ctx.fillText('SIZE    DATE', W-2, y); ctx.textAlign='left';
+        y+=fs+3;
+        ctx.fillStyle=GA(0.12); ctx.fillRect(0,y,W,1); y+=4;
+
+        // Tree items
+        ctx.font=`${fs}px monospace`;
+        const dw=Math.floor(W*0.05);
+        TREE.forEach((item,idx)=>{
+          const isSel=idx===cursor;
+          const indent=item.depth*dw;
+
+          if(isSel){
+            ctx.fillStyle=GA(0.125); ctx.fillRect(0,y-2,W,lh);
+            ctx.strokeStyle=GA(0.4); ctx.lineWidth=1;
+            ctx.strokeRect(0,y-2,W-1,lh);
+          }
+
+          // Tree connectors
+          for(let d=1;d<=item.depth;d++){
+            ctx.strokeStyle=GA(0.16); ctx.lineWidth=1;
+            const cx2=3+(d-1)*dw+dw*0.35;
+            ctx.beginPath();
+            if(d<item.depth){ ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+lh); }
+            else { ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+fs/2); ctx.lineTo(3+indent+1,y+fs/2); }
+            ctx.stroke();
+          }
+
+          const icon=item.type==='root'?'⊟':item.type==='dir'?(isSel?'▼':'▶'):'·';
+          ctx.fillStyle=isSel?'#39dc00':item.type==='file'?GA(0.38):'#39dc00';
+          const label=icon+' '+item.name;
+          ctx.fillText(label, 3+indent, y);
+
+          // Blinking block cursor
+          if(isSel && frame%28<18){
+            const tw=ctx.measureText(label).width;
+            ctx.fillStyle='#39dc00';
+            ctx.fillRect(3+indent+tw+1, y, Math.floor(W*0.038), fs+1);
+          }
+
+          // Right: size or date
+          ctx.font=`${Math.max(6,fs-2)}px monospace`;
+          ctx.fillStyle=isSel?GA(0.6):GA(0.21);
+          ctx.textAlign='right';
+          if(isSel) ctx.fillText(item.date, W-2, y);
+          else if(item.size) ctx.fillText(item.size, W-2, y);
+          ctx.textAlign='left';
+          ctx.font=`${fs}px monospace`;
+
+          y+=lh;
+        });
+
+        // Command line
+        ctx.fillStyle=GA(0.12); ctx.fillRect(0,H-lh*2-4,W,1);
+        ctx.font=`${fs-1}px monospace`; ctx.fillStyle=GA(0.44);
+        ctx.fillText('> '+typeCmd+(frame%24<14?'█':''), 4, H-lh*2+2);
+
+        // Status bar
+        ctx.fillStyle=GA(0.07); ctx.fillRect(0,H-lh,W,lh);
+        ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle=GA(0.32);
+        ctx.fillText(` ${TREE.length} items  [ENT]open  [ESC]back`, 2, H-lh+4);
+
+        frame++;
       }
 
-      initBlips();
-      initDec();
-      resize();
-      window.addEventListener('resize', () => { resize(); });
       setInterval(draw, 40);
     })();
     // ──────────────────────────────────────────────────────────────
+
 
     // ── ACCESS CARD (왼쪽 패널) ──────────────────────────────────
     (function() {
@@ -800,17 +728,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     function updateSelection() {
       items.forEach((item, idx) => {
-        if (idx === selectedIndex) {
-          item.style.background = 'rgba(57,220,0,0.1)';
-          item.style.color = '#39dc00';
-          item.style.border = '1px solid rgba(57,220,0,0.7)';
-          item.style.boxShadow = 'inset 0 0 20px rgba(57,220,0,0.06), 0 0 12px rgba(57,220,0,0.12)';
-        } else {
-          item.style.background = '';
-          item.style.color = '';
-          item.style.border = '';
-          item.style.boxShadow = '';
-        }
+        item.classList.toggle('selected', idx === selectedIndex);
       });
       items[selectedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
