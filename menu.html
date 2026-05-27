@@ -493,7 +493,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         const glitchOn = Math.sin(t * 0.063) > 0.82;
         const hardGlitch = glitchOn && Math.random() > 0.55;
         const fh = Math.max(8, Math.floor(cw * 0.046));
-        const mx = 8, my = 6;
+        const mx = 12, my = 10;
         const cw2 = cw - mx*2, ch2 = ch - my*2;
 
         // Card background
@@ -538,12 +538,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.textAlign = 'right'; ctx.fillText('LVL4',mx+cw2-6,my+8); ctx.textAlign = 'left';
 
         // Divider 1
-        const d1 = my+hdrH+2;
+        const d1 = my+hdrH+6;
         ctx.strokeStyle = GA(0.145); ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(mx,d1); ctx.lineTo(mx+cw2,d1); ctx.stroke();
 
         // PHOTO
-        const phX = mx+9, phY = d1+10;
+        const phX = mx+9, phY = d1+14;
         const phW = Math.floor(cw2*0.34), phH = Math.floor(ch2*0.28);
 
         ctx.fillStyle = GA(0.04); ctx.fillRect(phX,phY,phW,phH);
@@ -600,7 +600,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         });
 
         // CHIP
-        const chipY = phY+phH+18, chipX = phX;
+        const chipY = phY+phH+24, chipX = phX;
         const chipW = 26, chipH = 20;
         ctx.fillStyle = '#7a6015'; ctx.fillRect(chipX,chipY,chipW,chipH);
         const chipShine = ctx.createLinearGradient(chipX,chipY,chipX,chipY+chipH);
@@ -640,12 +640,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.restore();
 
         // Divider 2
-        const d2 = chipY+chipH+14;
+        const d2 = chipY+chipH+18;
         ctx.strokeStyle = GA(0.102); ctx.lineWidth = 1;
         ctx.beginPath(); ctx.moveTo(mx+4,d2); ctx.lineTo(mx+cw2-4,d2); ctx.stroke();
 
         // BARCODE
-        const bcPanY = d2+5, bcX = mx+5, bcW = cw2-10;
+        const bcPanY = d2+8, bcX = mx+5, bcW = cw2-10;
         const bcH = Math.floor(ch2*0.088);
         const bcPanH = bcH+30;
         ctx.fillStyle = '#010a02'; ctx.fillRect(bcX,bcPanY,bcW,bcPanH);
