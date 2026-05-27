@@ -25,6 +25,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   margin-top: 32px;
   padding: 20px;
   position: relative; z-index: 1;
+  overflow: hidden;
 }
 
 .folder-window {
@@ -186,53 +187,55 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="menu-container">
-    <div style="width:100%;max-width:700px;display:flex;flex-direction:column;gap:0;">
+    <div style="display:flex;flex-direction:row;align-items:flex-start;gap:0;width:100%;max-width:940px;">
 
-      <!-- 레이더 애니메이션 캔버스 -->
-      <canvas id="loadingCanvas" style="width:100%;height:290px;display:block;"></canvas>
+      <!-- 폴더 윈도우 (좌) -->
+      <div class="folder-window" style="flex:1;min-width:0;">
+        <div class="folder-titlebar">
+          SET WORLD DIRECTORY
+          <div class="folder-icons">
+            <div class="folder-icon">_</div>
+            <div class="folder-icon">□</div>
+            <div class="folder-icon">✕</div>
+          </div>
+        </div>
 
-    <div class="folder-window">
-      <div class="folder-titlebar">
-        SET WORLD DIRECTORY
-        <div class="folder-icons">
-          <div class="folder-icon">_</div>
-          <div class="folder-icon">□</div>
-          <div class="folder-icon">✕</div>
+        <div class="path-bar">
+          C:\WORLD\SET\
+        </div>
+
+        <div class="folder-content">
+          <div class="menu-items">
+            <div class="menu-item" onclick="navigate('portfolio.html?section=project')">
+              <div class="menu-item-name">SET</div>
+            </div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=inclusion')">
+              <div class="menu-item-name">SET Inclusion</div>
+            </div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
+              <div class="menu-item-name">entire</div>
+            </div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
+              <div class="menu-item-name">log</div>
+            </div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=reference')">
+              <div class="menu-item-name">reference</div>
+            </div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=archive')">
+              <div class="menu-item-name">Archive</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="status-bar">
+          <span>7 Files</span>
+          <span>ENTER to select • ESC to exit</span>
         </div>
       </div>
 
-      <div class="path-bar">
-        C:\WORLD\SET\
-      </div>
+      <!-- 캔버스: 레이더(위) + 디코드(아래) (우) -->
+      <canvas id="loadingCanvas" style="width:260px;flex-shrink:0;display:block;"></canvas>
 
-      <div class="folder-content">
-        <div class="menu-items">
-          <div class="menu-item" onclick="navigate('portfolio.html?section=project')">
-            <div class="menu-item-name">SET</div>
-          </div>
-          <div class="menu-item" onclick="navigate('portfolio.html?section=inclusion')">
-            <div class="menu-item-name">SET Inclusion</div>
-          </div>
-          <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
-            <div class="menu-item-name">entire</div>
-          </div>
-          <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
-            <div class="menu-item-name">log</div>
-          </div>
-          <div class="menu-item" onclick="navigate('portfolio.html?section=reference')">
-            <div class="menu-item-name">reference</div>
-          </div>
-          <div class="menu-item" onclick="navigate('portfolio.html?section=archive')">
-            <div class="menu-item-name">Archive</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="status-bar">
-        <span>7 Files</span>
-        <span>ENTER to select • ESC to exit</span>
-      </div>
-    </div>
     </div><!-- /wrapper -->
   </div>
 
@@ -283,22 +286,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         decLines = DEC_MSGS.map((_, i) => mkLine(i));
       }
 
-      const RADAR_H = 185;   // 상단 레이더 존 높이
-      const DECODE_Y = 190;  // 디코드 존 시작 y
+      const RADAR_H = 260;   // 레이더 존 높이
+      const DECODE_Y = 265;  // 디코드 존 시작 y
 
       function resize() {
-        const rect = canvas.getBoundingClientRect();
-        W = canvas.width  = Math.floor(rect.width);
-        H = canvas.height = 290;
+        W = canvas.width  = 260;
+        H = canvas.height = 500;
       }
 
-      // ── 레이더 그리기 (상단 우측) ──
+      // ── 레이더 그리기 (상단 전폭) ──
       function drawRadar() {
-        const RADAR_W = Math.floor(W * 0.46);   // 우측 46% 사용
-        const OX = W - RADAR_W;                 // 레이더 구획 시작 x
-        const cx = OX + RADAR_W / 2;
+        const cx = W / 2;
         const cy = RADAR_H / 2;
-        const R  = Math.min(RADAR_W / 2 - 10, RADAR_H / 2 - 10);
+        const R  = Math.min(W / 2 - 12, RADAR_H / 2 - 12);
         radarTick++;
 
         // 동심원
@@ -360,20 +360,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.textAlign = 'left';
         ctx.fillText('E', cx+R+3, cy+3); ctx.fillText('W', cx-R-9, cy+3);
 
-        // BRG / TGT — 레이더 구획 우상단
+        // BRG / TGT
         const brg = ((radarAngle*180/Math.PI)%360+360)%360;
         ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = '7px Courier New';
-        ctx.textAlign = 'right';
-        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, W-4, 10);
-        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`,  W-4, 20);
         ctx.textAlign = 'left';
+        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, 4, 10);
+        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`, 4, 20);
 
         // 인터퍼런스
         if (Math.random() < 0.04) radarInterference = 6;
         if (radarInterference > 0) {
-          const OX2 = W - Math.floor(W*0.46);
           ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.25})`;
-          ctx.fillRect(OX2, Math.random()*RADAR_H, W-OX2, 1);
+          ctx.fillRect(0, Math.random()*RADAR_H, W, 1);
           radarInterference--;
         }
 
