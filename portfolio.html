@@ -3635,12 +3635,12 @@ REQUIRE LOGIN: No (Public access enabled)
       ix.style.top  = top + 'px';
     }
 
-    // ── DECO PANEL ANIMATION (5-A 점멸 크기 차) ──
+    // ── DECO PANEL ANIMATION (4+5 혼합) ──
     (function(){
       const cv = document.getElementById('decoPanel');
       if (!cv) return;
       const G = '#39dc00';
-      let sparks = [], tick = 0;
+      let t = 0, sparks = [], tick = 0;
       function resize() {
         cv.height = cv.parentElement ? cv.parentElement.offsetHeight : window.innerHeight;
       }
@@ -3648,22 +3648,17 @@ REQUIRE LOGIN: No (Public access enabled)
       window.addEventListener('resize', resize);
       function draw() {
         const H = cv.height;
-        tick++;
-        if (tick % 8 === 0) {
-          const big = Math.random() < 0.2;
-          sparks.push({
-            y: Math.floor(Math.random() * (H - 10)),
-            h: big ? 12 : 2,
-            x: big ? 3 : 4,
-            w: big ? 12 : 10,
-            life: big ? 30 : 16
-          });
-        }
+        t += 0.013; tick++;
         const ctx = cv.getContext('2d');
         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 18, H);
+        const h = Math.abs(Math.sin(t)) * (H * 0.6);
         ctx.fillStyle = G;
+        ctx.fillRect(7, H/2 - h/2, 4, h);
+        if (tick % 10 === 0) sparks.push({ y: Math.floor(Math.random() * H), life: 14 });
         sparks = sparks.filter(s => {
-          ctx.fillRect(s.x, s.y, s.w, s.h);
+          ctx.fillStyle = G;
+          ctx.fillRect(3, s.y, 3, 2);
+          ctx.fillRect(12, s.y, 3, 2);
           return --s.life > 0;
         });
         requestAnimationFrame(draw);
