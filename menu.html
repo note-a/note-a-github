@@ -237,24 +237,50 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <script>
-    // ── 레이더 애니메이션 ───────────────────────────────────────────
+    // ── 레이더 + 디코드 합성 애니메이션 ────────────────────────────
     (function() {
       const canvas = document.getElementById('loadingCanvas');
       const ctx    = canvas.getContext('2d');
       let W, H;
+
+      // ── 레이더 상태 ──
       let radarAngle = 0, radarTick = 0, radarInterference = 0;
       let radarBlips = [];
-
       function initBlips() {
         radarBlips = [
-          { angle:0.52,  dist:0.55, label:'TGT-01', locked:true,  life:0, maxLife:140, vx:0.002,  vy:0.001  },
-          { angle:1.80,  dist:0.38, label:'TGT-02', locked:false, life:0, maxLife:110, vx:-0.001, vy:0.002  },
-          { angle:3.40,  dist:0.70, label:'OBJ-A',  locked:false, life:0, maxLife:90,  vx:0.003,  vy:-0.001 },
-          { angle:4.90,  dist:0.28, label:'TGT-03', locked:false, life:0, maxLife:120, vx:-0.002, vy:-0.002 },
-          { angle:5.60,  dist:0.62, label:'UNK',    locked:false, life:0, maxLife:80,  vx:0.001,  vy:0.003  },
-          { angle:2.30,  dist:0.82, label:'OBJ-B',  locked:false, life:0, maxLife:100, vx:-0.003, vy:0.001  },
-          { angle:0.90,  dist:0.15, label:'TGT-04', locked:false, life:0, maxLife:95,  vx:0.002,  vy:-0.003 },
+          { angle:0.52, dist:0.55, label:'TGT-01', locked:true,  life:0, maxLife:140, vx:0.002,  vy:0.001  },
+          { angle:1.80, dist:0.38, label:'TGT-02', locked:false, life:0, maxLife:110, vx:-0.001, vy:0.002  },
+          { angle:3.40, dist:0.70, label:'OBJ-A',  locked:false, life:0, maxLife:90,  vx:0.003,  vy:-0.001 },
+          { angle:4.90, dist:0.28, label:'TGT-03', locked:false, life:0, maxLife:120, vx:-0.002, vy:-0.002 },
+          { angle:5.60, dist:0.62, label:'UNK',    locked:false, life:0, maxLife:80,  vx:0.001,  vy:0.003  },
+          { angle:2.30, dist:0.82, label:'OBJ-B',  locked:false, life:0, maxLife:100, vx:-0.003, vy:0.001  },
         ];
+      }
+
+      // ── 디코드 상태 ──
+      const DEC_NOISE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*?/\\|<>!~^';
+      const DEC_HEX   = '0123456789ABCDEF';
+      const DEC_MSGS  = [
+        { text: 'SET WORLD DIRECTORY',      corrupt: false },
+        { text: 'ACCESSING FILES...',       corrupt: false },
+        { text: '>>> AUTH: RESTRICTED',     corrupt: false },
+        { text: 'C:\\WORLD\\SET\\',         corrupt: false },
+        { text: 'KERNEL INTEGRITY: OK',     corrupt: false },
+        { text: '%%% SECTOR FAULT',         corrupt: true  },
+        { text: 'DECRYPTING PAYLOAD...',    corrupt: false },
+      ];
+      let decLines = [], decTick = 0;
+      function rndHex() { return DEC_HEX[Math.floor(Math.random()*16)] + DEC_HEX[Math.floor(Math.random()*16)]; }
+      function rndNoise() { return DEC_NOISE[Math.floor(Math.random()*DEC_NOISE.length)]; }
+      function mkLine(li) {
+        const cfg = DEC_MSGS[li % DEC_MSGS.length];
+        return { target: cfg.text, corrupt: cfg.corrupt,
+          chars: Array.from({length: cfg.text.length}, rndHex),
+          stage: 0, t: 0, startT: li * 22, done: false, glitch: 0 };
+      }
+      function initDec() {
+        decTick = 0;
+        decLines = DEC_MSGS.map((_, i) => mkLine(i));
       }
 
       function resize() {
@@ -263,132 +289,190 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         H = canvas.height = 140;
       }
 
-      function draw() {
+      // ── 레이더 그리기 (좌측 구획) ──
+      function drawRadar(SPLIT) {
+        const cx = SPLIT / 2, cy = H / 2;
+        const R  = Math.min(SPLIT / 2 - 8, H / 2 - 10);
         radarTick++;
-        ctx.fillStyle = 'rgba(0,0,0,0.14)';
-        ctx.fillRect(0, 0, W, H);
 
-        const cx = W / 2, cy = H / 2;
-        const R  = Math.min(W / 2 - 10, H / 2 - 10);
-
-        // 동심원 + 거리 라벨
-        ctx.font = '7px Courier New';
+        // 동심원
         [0.33, 0.66, 1].forEach((s, i) => {
-          ctx.strokeStyle = `rgba(57,220,0,${0.12 + i*0.05})`;
+          ctx.strokeStyle = `rgba(57,220,0,${0.1 + i*0.06})`;
           ctx.lineWidth = 0.7;
           ctx.beginPath(); ctx.arc(cx, cy, R*s, 0, Math.PI*2); ctx.stroke();
-          ctx.fillStyle = 'rgba(57,220,0,0.3)';
-          ctx.fillText(`${Math.round(s*100)}km`, cx + R*s + 2, cy - 2);
         });
-
-        // 십자선 + 대각선
+        // 십자선
         ctx.strokeStyle = 'rgba(57,220,0,0.1)'; ctx.lineWidth = 0.5;
         [0, Math.PI/4, Math.PI/2, Math.PI*3/4].forEach(a => {
           ctx.beginPath();
-          ctx.moveTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
-          ctx.lineTo(cx - Math.cos(a)*R, cy - Math.sin(a)*R);
+          ctx.moveTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
+          ctx.lineTo(cx-Math.cos(a)*R, cy-Math.sin(a)*R);
           ctx.stroke();
         });
-
         // 스윕 꼬리
         const TAIL = Math.PI / 3.5;
         for (let i = 0; i < 40; i++) {
           const a = radarAngle - (i/40)*TAIL;
-          const alpha = Math.pow(1 - i/40, 1.5) * 0.5;
-          ctx.strokeStyle = `rgba(57,220,0,${alpha})`;
+          ctx.strokeStyle = `rgba(57,220,0,${Math.pow(1-i/40,1.5)*0.5})`;
           ctx.lineWidth = 1.2;
           ctx.beginPath(); ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
-          ctx.stroke();
+          ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R); ctx.stroke();
         }
-        // 스윕 헤드
         ctx.strokeStyle = '#7fff7f'; ctx.lineWidth = 1.8;
         ctx.beginPath(); ctx.moveTo(cx, cy);
-        ctx.lineTo(cx + Math.cos(radarAngle)*R, cy + Math.sin(radarAngle)*R);
-        ctx.stroke();
+        ctx.lineTo(cx+Math.cos(radarAngle)*R, cy+Math.sin(radarAngle)*R); ctx.stroke();
 
-        // 블립 업데이트 + 드로우
+        // 블립
         radarBlips.forEach(b => {
           b.angle += b.vx; b.dist += b.vy;
           if (b.dist < 0.1 || b.dist > 0.95) b.vy *= -1;
-          const da = ((radarAngle - b.angle) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
-          if (da < 0.07 || da > Math.PI*2 - 0.07) b.life = b.maxLife;
+          const da = ((radarAngle-b.angle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+          if (da < 0.07 || da > Math.PI*2-0.07) b.life = b.maxLife;
           if (b.life <= 0) return;
           const alpha = b.life / b.maxLife;
-          const bx = cx + Math.cos(b.angle) * R * b.dist;
-          const by = cy + Math.sin(b.angle) * R * b.dist;
+          const bx = cx + Math.cos(b.angle)*R*b.dist;
+          const by = cy + Math.sin(b.angle)*R*b.dist;
           if (b.locked) {
-            const pulse = Math.sin(radarTick * 0.15) * 0.5 + 0.5;
-            ctx.strokeStyle = `rgba(100,255,100,${alpha * pulse})`;
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.arc(bx, by, 6 + pulse*4, 0, Math.PI*2); ctx.stroke();
-            ctx.strokeStyle = `rgba(100,255,100,${alpha})`;
-            ctx.lineWidth = 1.2;
+            const pulse = Math.sin(radarTick*0.15)*0.5+0.5;
+            ctx.strokeStyle = `rgba(100,255,100,${alpha*pulse})`; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(bx, by, 6+pulse*4, 0, Math.PI*2); ctx.stroke();
+            ctx.strokeStyle = `rgba(100,255,100,${alpha})`; ctx.lineWidth = 1.2;
             const d = 4;
-            ctx.beginPath();
-            ctx.moveTo(bx, by-d); ctx.lineTo(bx+d, by);
-            ctx.lineTo(bx, by+d); ctx.lineTo(bx-d, by);
-            ctx.closePath(); ctx.stroke();
-            ctx.fillStyle = `rgba(57,220,0,${alpha * 0.8})`;
-            ctx.font = '7px Courier New';
-            ctx.fillText('⟨LOCKED⟩', bx+8, by-4);
-            ctx.fillText(b.label, bx+8, by+6);
+            ctx.beginPath(); ctx.moveTo(bx,by-d); ctx.lineTo(bx+d,by);
+            ctx.lineTo(bx,by+d); ctx.lineTo(bx-d,by); ctx.closePath(); ctx.stroke();
           } else {
-            ctx.fillStyle = `rgba(100,255,100,${alpha * 0.85})`;
+            ctx.fillStyle = `rgba(100,255,100,${alpha*0.85})`;
             ctx.beginPath(); ctx.arc(bx, by, 2.5, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = `rgba(57,220,0,${alpha * 0.5})`;
-            ctx.font = '7px Courier New';
-            ctx.fillText(b.label, bx+5, by-3);
           }
           b.life--;
         });
 
-        // 인터퍼런스
-        if (Math.random() < 0.04) radarInterference = 8;
-        if (radarInterference > 0) {
-          for (let i = 0; i < 3; i++) {
-            const iy = Math.random() * H;
-            ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.3})`;
-            ctx.fillRect(0, iy, W, 1);
-          }
-          radarInterference--;
-        }
-
-        // N S E W
-        ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = 'bold 8px Courier New';
+        // NSEW
+        ctx.fillStyle = 'rgba(57,220,0,0.45)'; ctx.font = 'bold 7px Courier New';
         ctx.textAlign = 'center';
-        ctx.fillText('N', cx, cy - R - 4);
-        ctx.fillText('S', cx, cy + R + 11);
+        ctx.fillText('N', cx, cy-R-3); ctx.fillText('S', cx, cy+R+10);
         ctx.textAlign = 'left';
-        ctx.fillText('E', cx + R + 4, cy + 3);
-        ctx.fillText('W', cx - R - 10, cy + 3);
+        ctx.fillText('E', cx+R+3, cy+3); ctx.fillText('W', cx-R-9, cy+3);
 
-        // 좌상단 데이터
-        const brg = ((radarAngle * 180 / Math.PI) % 360 + 360) % 360;
-        ctx.fillStyle = 'rgba(57,220,0,0.55)'; ctx.font = '8px Courier New';
+        // BRG/TGT
+        const brg = ((radarAngle*180/Math.PI)%360+360)%360;
+        ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = '7px Courier New';
         ctx.textAlign = 'left';
-        ctx.fillText(`BRG: ${brg.toFixed(1).padStart(6)}°`, 8, 14);
-        ctx.fillText(`RNG: ${(R*0.01).toFixed(1)}km`,        8, 24);
-        ctx.fillText(`TGT: ${radarBlips.filter(b=>b.life>0).length}`, 8, 34);
+        ctx.fillText(`BRG:${brg.toFixed(0).padStart(4)}°`, 3, 11);
+        ctx.fillText(`TGT:${radarBlips.filter(b=>b.life>0).length}`, 3, 21);
 
-        // 우상단 시계
-        const now = new Date();
-        const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        ctx.textAlign = 'right';
-        ctx.fillText(ts, W - 8, 14);
-        ctx.fillText('SYS ACTIVE', W - 8, 24);
-        ctx.textAlign = 'left';
-
-        // 스캔라인
-        for (let y = 0; y < H; y += 2) {
-          ctx.fillStyle = 'rgba(0,0,0,0.08)';
-          ctx.fillRect(0, y, W, 1);
+        // 인터퍼런스 (레이더 구획만)
+        if (Math.random() < 0.04) radarInterference = 6;
+        if (radarInterference > 0) {
+          ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.25})`;
+          ctx.fillRect(0, Math.random()*H, SPLIT, 1);
+          radarInterference--;
         }
 
         radarAngle += 0.035;
       }
 
+      // ── 디코드 그리기 (우측 구획) ──
+      function drawDecode(DX) {
+        decTick++;
+        const PX = 8.8;
+        const numLines = decLines.length;
+        const lineH = (H - 20) / numLines;
+
+        decLines.forEach((line, li) => {
+          line.t++;
+          if (line.t < line.startT) return;
+          const elapsed = line.t - line.startT;
+          if (line.stage === 0 && elapsed > 18) {
+            line.stage = 1;
+            line.chars = Array.from({length: line.target.length}, rndNoise);
+          }
+          if (line.stage === 1 && elapsed > 40) line.stage = 2;
+          if (line.stage === 0 && decTick%2===0) {
+            line.chars[Math.floor(Math.random()*line.target.length)] = rndHex();
+          } else if (line.stage === 1 && decTick%2===0) {
+            line.chars[Math.floor(Math.random()*line.target.length)] = rndNoise();
+          } else if (line.stage === 2) {
+            const progress = (elapsed-40) / (line.target.length*3.5+20);
+            line.target.split('').forEach((ch, i) => {
+              if (line.chars[i] === ch) return;
+              if (i/line.target.length < progress)
+                line.chars[i] = line.corrupt && Math.random()<0.15 ? rndNoise() : ch;
+              else if (decTick%3===0) line.chars[i] = rndNoise();
+            });
+            if (progress > 1.2 && !line.done) { line.stage = 3; line.done = true; }
+          }
+          if (Math.random()<(line.corrupt?0.04:0.008)) line.glitch = 3;
+          if (line.glitch>0) { line.chars[Math.floor(Math.random()*line.target.length)]=rndNoise(); line.glitch--; }
+          if (line.done && elapsed > line.target.length*4+120) Object.assign(line, mkLine(li));
+
+          const y = 14 + lineH*li + lineH*0.75;
+
+          // prefix
+          const prefix = line.done ? (line.corrupt?'[ERR]':'[OK] ') : `[${String(li).padStart(2,'0')}] `;
+          ctx.font = '8px Courier New';
+          ctx.fillStyle = line.corrupt ? 'rgba(255,80,80,0.7)' : line.done ? 'rgba(57,220,0,0.5)' : 'rgba(57,220,0,0.3)';
+          ctx.textAlign = 'left';
+          ctx.fillText(prefix, DX, y);
+
+          // 글자
+          ctx.font = 'bold 9px Courier New';
+          line.chars.forEach((ch, i) => {
+            const isDone = ch === line.target[i];
+            let color;
+            if (isDone && line.corrupt)  color = `rgba(255,100,100,${0.6+Math.random()*0.4})`;
+            else if (isDone)             color = `rgba(57,220,0,${0.8+Math.random()*0.2})`;
+            else if (line.stage===0)     color = `rgba(57,180,0,${0.3+Math.random()*0.3})`;
+            else                         color = `rgba(57,220,0,${0.2+Math.random()*0.3})`;
+            ctx.fillStyle = color;
+            ctx.fillText(line.stage===0 ? ch[0]||ch : ch, DX + 38 + i*PX, y);
+          });
+
+          // 커서
+          if (line.stage===2 && !line.done) {
+            const cur = line.chars.findIndex((c,i)=>c!==line.target[i]&&line.target[i]!==' ');
+            if (cur !== -1 && Math.floor(Date.now()/150)%2===0) {
+              ctx.fillStyle = line.corrupt ? '#ff6060' : '#fff';
+              ctx.fillRect(DX+38+cur*PX-1, y-9, 7, 10);
+            }
+          }
+        });
+
+        // 헤더
+        ctx.fillStyle = 'rgba(57,220,0,0.4)'; ctx.font = '7px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText(`DECRYPT v2.4`, DX, 9);
+        const done = decLines.filter(l=>l.done&&!l.corrupt).length;
+        ctx.textAlign = 'right';
+        ctx.fillText(`${done}/${decLines.length} OK`, W-4, 9);
+        ctx.textAlign = 'left';
+      }
+
+      // ── 메인 드로우 ──
+      function draw() {
+        const SPLIT = 160;
+        ctx.fillStyle = 'rgba(0,0,0,0.14)';
+        ctx.fillRect(0, 0, W, H);
+
+        // 구획 구분선
+        ctx.strokeStyle = 'rgba(57,220,0,0.18)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.moveTo(SPLIT, 4); ctx.lineTo(SPLIT, H-4); ctx.stroke();
+        ctx.setLineDash([]);
+
+        drawRadar(SPLIT);
+        drawDecode(SPLIT + 6);
+
+        // 스캔라인
+        for (let y = 0; y < H; y += 2) {
+          ctx.fillStyle = 'rgba(0,0,0,0.07)';
+          ctx.fillRect(0, y, W, 1);
+        }
+      }
+
       initBlips();
+      initDec();
       resize();
       window.addEventListener('resize', () => { resize(); });
       setInterval(draw, 40);
