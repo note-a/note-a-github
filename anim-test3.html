@@ -6,103 +6,35 @@
   <title>LEFT PANEL — A~E SAMPLES</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #050505;
-      color: #00ff00;
-      font-family: 'Courier New', monospace;
-      padding: 24px;
-    }
-    h1 {
-      color: #00ff00;
-      font-size: 15px;
-      margin-bottom: 20px;
-      text-shadow: 0 0 12px #00ff00;
-      letter-spacing: 3px;
-    }
-    .ctrl {
-      margin-bottom: 24px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
+    body { background: #040404; color: #00ff00; font-family: 'Courier New', monospace; padding: 24px; }
+    h1 { color: #00ff00; font-size: 13px; margin-bottom: 18px; letter-spacing: 3px; text-shadow: 0 0 10px #00ff00; }
+    .ctrl { margin-bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
     button {
-      background: #0a1a0a;
-      color: #00ff0099;
-      border: 1px solid #00ff0055;
-      padding: 8px 18px;
-      cursor: pointer;
-      font-family: 'Courier New', monospace;
-      font-size: 12px;
-      letter-spacing: 1px;
-      transition: all 0.15s;
+      background: #080f08; color: #00ff0077; border: 1px solid #00ff0033;
+      padding: 8px 18px; cursor: pointer; font-family: 'Courier New', monospace;
+      font-size: 11px; letter-spacing: 1px; transition: all 0.12s;
     }
     button:hover { border-color: #00ff00; color: #00ff00; }
-    button.active {
-      background: #00ff00;
-      color: #000;
-      border-color: #00ff00;
-      box-shadow: 0 0 14px #00ff00;
-      font-weight: bold;
-    }
+    button.active { background: #00ff00; color: #000; border-color: #00ff00; box-shadow: 0 0 16px #00ff00; font-weight: bold; }
     .section { display: none; }
     .section.active { display: block; }
-    .layout {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-    .preview-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .preview-label {
-      font-size: 11px;
-      color: #00ff0066;
-      letter-spacing: 2px;
-    }
-    canvas { display: block; background: #000; image-rendering: pixelated; }
-    .main-canvas { border: 1px solid #00ff0077; }
-    .mock-wrap {
-      display: flex;
-      gap: 0;
-      border: 1px dashed #00ff0033;
-      padding: 12px;
-      background: #020a02;
-    }
-    .mock-label {
-      font-size: 10px;
-      color: #00ff0044;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-    .mock-col { display: flex; flex-direction: column; }
+    .layout { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .preview-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .preview-label { font-size: 10px; color: #00ff0044; letter-spacing: 2px; }
+    canvas { display: block; background: #000; }
+    .main-canvas { border: 1px solid #00ff0066; }
+    .mock-wrap { display: flex; gap: 0; border: 1px dashed #00ff0022; padding: 10px; background: #010601; }
+    .mock-label { font-size: 10px; color: #00ff0033; letter-spacing: 1px; margin-bottom: 5px; }
     .mock-center-col {
-      width: 240px;
-      border: 1px solid #00ff0033;
-      background: #010801;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      color: #00ff0044;
-      letter-spacing: 2px;
-      text-align: center;
-      line-height: 2;
+      width: 220px; border: 1px solid #00ff0022; background: #010801;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #00ff0033; letter-spacing: 2px; text-align: center; line-height: 2.2;
     }
-    .info {
-      margin-top: 14px;
-      font-size: 11px;
-      color: #00ff0055;
-      letter-spacing: 1px;
-    }
+    .info { margin-top: 12px; font-size: 10px; color: #00ff0044; letter-spacing: 1px; }
   </style>
 </head>
 <body>
-
-<h1>► LEFT PANEL CANDIDATES (A–E)</h1>
-
+<h1>► LEFT PANEL CANDIDATES  A–E</h1>
 <div class="ctrl">
   <button id="btnA" class="active">A. ACCESS CARD</button>
   <button id="btnB">B. SYSTEM MONITOR</button>
@@ -111,124 +43,98 @@
   <button id="btnE">E. SIGNAL/BROADCAST</button>
 </div>
 
-<!-- A -->
 <div id="secA" class="section active">
   <div class="layout">
     <div class="preview-wrap">
-      <div class="preview-label">PREVIEW (200×380)</div>
+      <div class="preview-label">PREVIEW  200×380</div>
       <canvas id="cA" class="main-canvas" width="200" height="380"></canvas>
     </div>
     <div>
       <div class="mock-label">CONTEXT MOCK</div>
       <div class="mock-wrap">
-        <div class="mock-col">
-          <canvas id="mA" width="200" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
-        <div class="mock-center-col">FOLDER<br>WINDOW<br><span style="font-size:9px;color:#00ff0022;">520×400</span></div>
-        <div class="mock-col">
-          <canvas id="rA" width="220" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
+        <canvas id="mA" width="200" height="380" style="border:1px solid #00ff0022;"></canvas>
+        <div class="mock-center-col">FOLDER<br>WINDOW</div>
+        <canvas id="rA" width="220" height="380" style="border:1px solid #00ff0022;"></canvas>
       </div>
     </div>
   </div>
-  <div class="info">정적 ID 카드 레이아웃 — 프로젝트 코드, 접근 레벨, 바코드, LED 상태 + 간헐적 글리치 / RGB 분리</div>
+  <div class="info">ID 카드 레이아웃 · 홀로그램 shimmer · 바코드 · AUTHORIZED 점멸 · RGB 글리치 분리</div>
 </div>
 
-<!-- B -->
 <div id="secB" class="section">
   <div class="layout">
     <div class="preview-wrap">
-      <div class="preview-label">PREVIEW (200×380)</div>
+      <div class="preview-label">PREVIEW  200×380</div>
       <canvas id="cB" class="main-canvas" width="200" height="380"></canvas>
     </div>
     <div>
       <div class="mock-label">CONTEXT MOCK</div>
       <div class="mock-wrap">
-        <div class="mock-col">
-          <canvas id="mB" width="200" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
-        <div class="mock-center-col">FOLDER<br>WINDOW<br><span style="font-size:9px;color:#00ff0022;">520×400</span></div>
-        <div class="mock-col">
-          <canvas id="rB" width="220" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
+        <canvas id="mB" width="200" height="380" style="border:1px solid #00ff0022;"></canvas>
+        <div class="mock-center-col">FOLDER<br>WINDOW</div>
+        <canvas id="rB" width="220" height="380" style="border:1px solid #00ff0022;"></canvas>
       </div>
     </div>
   </div>
-  <div class="info">CPU 실시간 그래프 + MEM/DISK 게이지 + 프로세스 목록 (PID/CPU%/MEM) 실시간 변동</div>
+  <div class="info">CPU 파형 그래프 · 프로세스 스파크라인 · TEMP 경고 · 실시간 수치</div>
 </div>
 
-<!-- C -->
 <div id="secC" class="section">
   <div class="layout">
     <div class="preview-wrap">
-      <div class="preview-label">PREVIEW (200×380)</div>
+      <div class="preview-label">PREVIEW  200×380</div>
       <canvas id="cC" class="main-canvas" width="200" height="380"></canvas>
     </div>
     <div>
       <div class="mock-label">CONTEXT MOCK</div>
       <div class="mock-wrap">
-        <div class="mock-col">
-          <canvas id="mC" width="200" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
-        <div class="mock-center-col">FOLDER<br>WINDOW<br><span style="font-size:9px;color:#00ff0022;">520×400</span></div>
-        <div class="mock-col">
-          <canvas id="rC" width="220" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
+        <canvas id="mC" width="200" height="380" style="border:1px solid #00ff0022;"></canvas>
+        <div class="mock-center-col">FOLDER<br>WINDOW</div>
+        <canvas id="rC" width="220" height="380" style="border:1px solid #00ff0022;"></canvas>
       </div>
     </div>
   </div>
-  <div class="info">도트 매트릭스 "SET" — 펄싱 글로우 + 스캔라인 + 비네트 + 랜덤 글리치 픽셀</div>
+  <div class="info">도트 매트릭스 글로우 · 매트릭스 레인 배경 · 주기적 해체·재조합 · 색상 전환</div>
 </div>
 
-<!-- D -->
 <div id="secD" class="section">
   <div class="layout">
     <div class="preview-wrap">
-      <div class="preview-label">PREVIEW (200×380)</div>
+      <div class="preview-label">PREVIEW  200×380</div>
       <canvas id="cD" class="main-canvas" width="200" height="380"></canvas>
     </div>
     <div>
       <div class="mock-label">CONTEXT MOCK</div>
       <div class="mock-wrap">
-        <div class="mock-col">
-          <canvas id="mD" width="200" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
-        <div class="mock-center-col">FOLDER<br>WINDOW<br><span style="font-size:9px;color:#00ff0022;">520×400</span></div>
-        <div class="mock-col">
-          <canvas id="rD" width="220" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
+        <canvas id="mD" width="200" height="380" style="border:1px solid #00ff0022;"></canvas>
+        <div class="mock-center-col">FOLDER<br>WINDOW</div>
+        <canvas id="rD" width="220" height="380" style="border:1px solid #00ff0022;"></canvas>
       </div>
     </div>
   </div>
-  <div class="info">C:\WORLD\SET\ 탐색기 — 커서가 순서대로 이동, 깜빡이는 커서 + 상태바</div>
+  <div class="info">파일 트리 커서 탐색 · CD 명령 타이핑 · 파일 정보 사이드 패널 · 폴더 확장</div>
 </div>
 
-<!-- E -->
 <div id="secE" class="section">
   <div class="layout">
     <div class="preview-wrap">
-      <div class="preview-label">PREVIEW (200×380)</div>
+      <div class="preview-label">PREVIEW  200×380</div>
       <canvas id="cE" class="main-canvas" width="200" height="380"></canvas>
     </div>
     <div>
       <div class="mock-label">CONTEXT MOCK</div>
       <div class="mock-wrap">
-        <div class="mock-col">
-          <canvas id="mE" width="200" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
-        <div class="mock-center-col">FOLDER<br>WINDOW<br><span style="font-size:9px;color:#00ff0022;">520×400</span></div>
-        <div class="mock-col">
-          <canvas id="rE" width="220" height="380" style="border:1px solid #00ff0033;"></canvas>
-        </div>
+        <canvas id="mE" width="200" height="380" style="border:1px solid #00ff0022;"></canvas>
+        <div class="mock-center-col">FOLDER<br>WINDOW</div>
+        <canvas id="rE" width="220" height="380" style="border:1px solid #00ff0022;"></canvas>
       </div>
     </div>
   </div>
-  <div class="info">RF 신호 파형 + "SET IS THE WORLD" VHS 색번짐 + 신호 강도 바 + 수평 글리치 밴드</div>
+  <div class="info">RF 파형 · 텍스트 해독 효과 · 오실로스코프 원형 디스플레이 · VHS 색번짐</div>
 </div>
 
 <script>
 'use strict';
-
 let frame = 0;
 let currentSec = 'A';
 
@@ -236,186 +142,170 @@ let currentSec = 'A';
 // A. ACCESS CARD
 // ─────────────────────────────────────────────────────────────────────────────
 const renderAccessCard = (ctx, cw, ch) => {
-  ctx.clearRect(0, 0, cw, ch);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, cw, ch);
 
   const t = frame;
-  const glitchTrigger = Math.sin(t * 0.07) > 0.82 && Math.random() > 0.4;
-  const hardGlitch = glitchTrigger && Math.random() > 0.55;
+  const glitchWindow = Math.sin(t * 0.063) > 0.80;
+  const hardGlitch = glitchWindow && Math.random() > 0.52;
 
-  const mx = 10, my = 8;
-  const crd_w = cw - mx * 2;
-  const crd_h = ch - my * 2;
+  const mx = 9, my = 7;
+  const cw2 = cw - mx * 2, ch2 = ch - my * 2;
 
-  // Card background
-  ctx.fillStyle = '#060f06';
-  ctx.fillRect(mx, my, crd_w, crd_h);
+  // Card body
+  ctx.fillStyle = '#05100a';
+  ctx.fillRect(mx, my, cw2, ch2);
+
+  // Faint grid lines on card
+  ctx.strokeStyle = '#00ff000a';
+  ctx.lineWidth = 1;
+  for (let gx = mx; gx < mx + cw2; gx += 12) {
+    ctx.beginPath(); ctx.moveTo(gx, my); ctx.lineTo(gx, my + ch2); ctx.stroke();
+  }
+  for (let gy = my; gy < my + ch2; gy += 12) {
+    ctx.beginPath(); ctx.moveTo(mx, gy); ctx.lineTo(mx + cw2, gy); ctx.stroke();
+  }
+
+  // Hologram shimmer overlay
+  const holoOffset = (t * 1.8) % (ch + 60) - 30;
+  const holoGrad = ctx.createLinearGradient(0, holoOffset, cw, holoOffset + 40);
+  holoGrad.addColorStop(0,    'rgba(0,255,0,0)');
+  holoGrad.addColorStop(0.25, 'rgba(80,255,120,0.06)');
+  holoGrad.addColorStop(0.5,  'rgba(0,200,255,0.06)');
+  holoGrad.addColorStop(0.75, 'rgba(180,0,255,0.04)');
+  holoGrad.addColorStop(1,    'rgba(0,255,0,0)');
+  ctx.fillStyle = holoGrad;
+  ctx.fillRect(mx, my, cw2, ch2);
 
   // Header stripe
-  ctx.fillStyle = '#00ff0025';
-  ctx.fillRect(mx, my, crd_w, 26);
+  ctx.fillStyle = '#00ff0020';
+  ctx.fillRect(mx, my, cw2, 24);
 
-  // Outer glow border
+  // Glow border
   ctx.save();
-  ctx.shadowColor = '#00ff00';
-  ctx.shadowBlur = 10;
-  ctx.strokeStyle = glitchTrigger ? '#ff00ff' : '#00ff00';
+  ctx.shadowColor = glitchWindow ? '#ff00ff' : '#00ff00';
+  ctx.shadowBlur = 12;
+  ctx.strokeStyle = glitchWindow ? '#ff00ff' : '#00ff00';
   ctx.lineWidth = 1.5;
-  ctx.strokeRect(mx, my, crd_w, crd_h);
+  ctx.strokeRect(mx, my, cw2, ch2);
   ctx.restore();
 
-  // Inner border dashes
-  ctx.setLineDash([4, 3]);
-  ctx.strokeStyle = '#00ff0033';
+  // Inner dashed border
+  ctx.setLineDash([3,4]);
+  ctx.strokeStyle = '#00ff0028';
   ctx.lineWidth = 1;
-  ctx.strokeRect(mx + 4, my + 4, crd_w - 8, crd_h - 8);
+  ctx.strokeRect(mx+4, my+4, cw2-8, ch2-8);
   ctx.setLineDash([]);
 
-  // Header text
-  const fh = Math.max(9, Math.floor(cw * 0.055));
+  // Header
+  const fh = Math.max(8, Math.floor(cw * 0.048));
   ctx.font = `bold ${fh}px monospace`;
-  ctx.fillStyle = glitchTrigger ? '#ff00ff' : '#00ff00';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText('SYSTEM ACCESS CARD', mx + 7, my + 7);
-
-  // Level badge
-  ctx.font = `bold ${fh - 1}px monospace`;
-  ctx.fillStyle = '#ff3300';
+  ctx.fillStyle = glitchWindow ? '#ff00ff' : '#00ff00';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillText('SYSTEM ACCESS CARD', mx+6, my+6);
+  ctx.font = `bold ${fh-1}px monospace`;
+  ctx.fillStyle = '#ff2200';
   ctx.textAlign = 'right';
-  ctx.fillText('[LVL-4]', mx + crd_w - 6, my + 7);
+  ctx.fillText('[LVL-4]', mx+cw2-5, my+7);
   ctx.textAlign = 'left';
 
-  // Photo placeholder
-  const ph_x = mx + 10;
-  const ph_y = my + 36;
-  const ph_w = Math.floor(crd_w * 0.3);
-  const ph_h = Math.floor(crd_h * 0.38);
-
-  ctx.strokeStyle = '#00ff0066';
-  ctx.lineWidth = 1;
+  // Photo box
+  const ph_x=mx+9, ph_y=my+32, ph_w=Math.floor(cw2*0.3), ph_h=Math.floor(ch2*0.35);
+  ctx.strokeStyle = '#00ff0055'; ctx.lineWidth=1;
   ctx.strokeRect(ph_x, ph_y, ph_w, ph_h);
-  ctx.fillStyle = '#00ff0011';
-  ctx.fillRect(ph_x, ph_y, ph_w, ph_h);
 
-  // Silhouette
+  // Photo scanlines
+  for (let sl=ph_y; sl<ph_y+ph_h; sl+=3) {
+    const alpha = 0.04 + Math.random()*0.03;
+    ctx.fillStyle = `rgba(0,255,0,${alpha})`;
+    ctx.fillRect(ph_x, sl, ph_w, 1);
+  }
+
+  // Silhouette (head + body)
+  const hcx=ph_x+ph_w/2;
+  const hr=Math.floor(ph_w*0.17);
   ctx.fillStyle = '#00ff0055';
-  const hcx = ph_x + ph_w / 2;
-  const hr = Math.floor(ph_w * 0.18);
-  ctx.beginPath();
-  ctx.arc(hcx, ph_y + ph_h * 0.25, hr, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillRect(hcx - ph_w * 0.22, ph_y + ph_h * 0.43, ph_w * 0.44, ph_h * 0.42);
+  ctx.beginPath(); ctx.arc(hcx, ph_y+ph_h*0.27, hr, 0, Math.PI*2); ctx.fill();
+  ctx.fillRect(hcx-ph_w*0.22, ph_y+ph_h*0.44, ph_w*0.44, ph_h*0.38);
 
-  // PHOTO label
-  ctx.font = `${Math.max(7, fh - 3)}px monospace`;
+  // "PHOTO ID" caption
+  ctx.font = `${Math.max(6,fh-4)}px monospace`;
   ctx.fillStyle = '#00ff0044';
-  ctx.textAlign = 'center';
-  ctx.fillText('PHOTO', hcx, ph_y + ph_h + 6);
-  ctx.textAlign = 'left';
+  ctx.textAlign='center';
+  ctx.fillText('PHOTO ID', hcx, ph_y+ph_h+8);
+  ctx.textAlign='left';
 
   // Info fields
-  const info_x = ph_x + ph_w + 10;
-  const info_y = ph_y;
-  const inf = Math.max(8, Math.floor(cw * 0.042));
-  ctx.font = `${inf}px monospace`;
-
-  const fields = [
-    ['ID', 'NOTE-A'],
-    ['PROJ', 'SET v4.2'],
-    ['ROLE', 'ARTIST'],
-    ['CLR', 'ADMIN'],
-    ['ISS', '2026.01.15'],
-    ['EXP', '2027.01.15'],
-  ];
-
-  const lh = inf + 7;
-  fields.forEach(([label, val], i) => {
-    const fy = info_y + i * lh;
-    ctx.fillStyle = '#00ff0055';
-    ctx.fillText(label, info_x, fy);
-    ctx.fillStyle = '#00ff00';
-    ctx.fillText(val, info_x + Math.floor(cw * 0.17), fy);
+  const ix=ph_x+ph_w+10, iy=ph_y;
+  const inf=Math.max(7, Math.floor(cw*0.038));
+  ctx.font=`${inf}px monospace`;
+  const fields=[['ID','NOTE-A'],['PROJ','SET v4.2'],['ROLE','ARTIST'],['CLR','ADMIN'],['ISS','2026.01.15'],['EXP','2027.01.15']];
+  const flh=inf+7;
+  fields.forEach(([k,v],i)=>{
+    ctx.fillStyle='#00ff0050'; ctx.fillText(k, ix, iy+i*flh);
+    ctx.fillStyle='#00ff00';   ctx.fillText(v, ix+Math.floor(cw*0.15), iy+i*flh);
   });
 
-  // Divider
-  const div_y = ph_y + ph_h + 18;
-  ctx.strokeStyle = '#00ff0033';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.moveTo(mx + 8, div_y);
-  ctx.lineTo(mx + crd_w - 8, div_y);
-  ctx.stroke();
+  // Separator
+  const divY=ph_y+ph_h+20;
+  ctx.strokeStyle='#00ff0030'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(mx+8,divY); ctx.lineTo(mx+cw2-8,divY); ctx.stroke();
 
   // Barcode
-  const bc_y = div_y + 10;
-  const bc_x = mx + 10;
-  const bc_w = crd_w - 20;
-  const bc_h = Math.floor(crd_h * 0.11);
-  const pattern = [3,1,2,1,4,1,2,2,1,3,2,1,1,2,3,1,2,1,4,1,2,1,3,2,1];
-  const totalBits = pattern.reduce((s, v) => s + v, 0);
-  const scale = bc_w / totalBits;
-
-  let bx = bc_x;
-  pattern.forEach((w, i) => {
-    if (i % 2 === 0) {
-      const shift = hardGlitch ? (Math.random() - 0.5) * 3 : 0;
-      ctx.fillStyle = glitchTrigger ? `rgba(255,0,255,0.9)` : '#00ff00';
-      ctx.fillRect(bx, bc_y + shift, w * scale - 0.5, bc_h);
+  const bcY=divY+10, bcX=mx+9, bcW=cw2-18, bcH=Math.floor(ch2*0.095);
+  const pat=[3,1,2,1,4,1,2,2,1,3,2,1,1,2,3,1,2,1,4,1,2,1,3];
+  const total=pat.reduce((s,v)=>s+v,0), scl=bcW/total;
+  let bx2=bcX;
+  pat.forEach((w,i)=>{
+    if(i%2===0){
+      const sh=hardGlitch?(Math.random()-0.5)*3:0;
+      ctx.fillStyle=glitchWindow?'#ff00ff':'#00ff00';
+      ctx.fillRect(bx2, bcY+sh, w*scl-0.5, bcH);
     }
-    bx += w * scale;
+    bx2+=w*scl;
   });
+  ctx.font=`${Math.max(6,fh-4)}px monospace`;
+  ctx.fillStyle='#00ff0044';
+  ctx.fillText('4E·5C·A9·2D·7F·31', bcX, bcY+bcH+9);
 
-  // Barcode code text
-  ctx.font = `${Math.max(7, fh - 3)}px monospace`;
-  ctx.fillStyle = '#00ff0055';
-  ctx.fillText('4E-5C-A9-2D-7F-31-08', bc_x, bc_y + bc_h + 10);
+  // AUTHORIZED / DENIED blink
+  const authY=bcY+bcH+22;
+  const authPhase=Math.floor(t/40)%5;
+  if(authPhase<3){
+    ctx.font=`bold ${fh}px monospace`;
+    ctx.fillStyle= t%20<14 ? '#00ff00' : '#004400';
+    ctx.fillText('[ AUTHORIZED ]', mx+8, authY);
+  } else {
+    ctx.font=`bold ${fh}px monospace`;
+    ctx.fillStyle=t%10<6?'#ff2200':'#220000';
+    ctx.fillText('[ VERIFYING.. ]', mx+8, authY);
+  }
 
-  // Status LED
-  const led_x = mx + crd_w - 14;
-  const led_y = my + crd_h - 14;
-  const ledOn = t % 70 < 50;
+  // LED
+  const ledOn=t%70<48;
   ctx.save();
-  ctx.shadowColor = ledOn ? '#00ff00' : 'transparent';
-  ctx.shadowBlur = ledOn ? 8 : 0;
-  ctx.fillStyle = ledOn ? '#00ff00' : '#001800';
-  ctx.beginPath();
-  ctx.arc(led_x, led_y, 4, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.shadowColor='#00ff00'; ctx.shadowBlur=ledOn?10:0;
+  ctx.fillStyle=ledOn?'#00ff00':'#001500';
+  ctx.beginPath(); ctx.arc(mx+cw2-11, my+ch2-11, 4, 0, Math.PI*2); ctx.fill();
   ctx.restore();
-
-  ctx.font = `${Math.max(7, fh - 3)}px monospace`;
-  ctx.fillStyle = '#00ff0044';
-  ctx.fillText('STATUS', mx + 8, my + crd_h - 10);
+  ctx.font=`${Math.max(6,fh-4)}px monospace`;
+  ctx.fillStyle='#00ff0040';
+  ctx.fillText('STATUS', mx+7, my+ch2-10);
 
   // Scanning line
-  const scanY = ((t * 2.5) % (ch + 30)) - 15;
-  const sg = ctx.createLinearGradient(0, scanY - 6, 0, scanY + 6);
-  sg.addColorStop(0, 'transparent');
-  sg.addColorStop(0.5, 'rgba(0,255,0,0.12)');
-  sg.addColorStop(1, 'transparent');
-  ctx.fillStyle = sg;
-  ctx.fillRect(0, scanY - 6, cw, 12);
+  const scanY=((t*2.2)%(ch+40))-20;
+  const sg=ctx.createLinearGradient(0,scanY-7,0,scanY+7);
+  sg.addColorStop(0,'transparent'); sg.addColorStop(.5,'rgba(0,255,0,0.1)'); sg.addColorStop(1,'transparent');
+  ctx.fillStyle=sg; ctx.fillRect(0,scanY-7,cw,14);
 
-  // Hard glitch band
-  if (hardGlitch) {
-    const gy = Math.random() * ch;
-    const gh = 3 + Math.random() * 12;
-    if (gy + gh < ch) {
-      const d = ctx.getImageData(0, gy, cw, gh);
-      const shift2 = (Math.random() - 0.5) * 22;
-      ctx.putImageData(d, shift2, gy);
-    }
-    // RGB split
+  // Hard glitch
+  if(hardGlitch){
+    const gy=Math.random()*ch, gh2=3+Math.random()*14;
+    if(gy+gh2<ch){ const d=ctx.getImageData(0,gy,cw,gh2); ctx.putImageData(d,(Math.random()-.5)*24,gy); }
     ctx.save();
-    ctx.globalAlpha = 0.25;
-    ctx.globalCompositeOperation = 'screen';
-    const ry = Math.random() * ch;
-    ctx.fillStyle = '#ff0000';
-    ctx.fillRect(3, ry, cw, 2);
-    ctx.fillStyle = '#0000ff';
-    ctx.fillRect(-3, ry + 2, cw, 2);
+    ctx.globalAlpha=0.28; ctx.globalCompositeOperation='screen';
+    ctx.fillStyle='#ff0000'; ctx.fillRect(3,Math.random()*ch,cw,2);
+    ctx.fillStyle='#0000ff'; ctx.fillRect(-3,Math.random()*ch,cw,2);
     ctx.restore();
   }
 };
@@ -423,601 +313,612 @@ const renderAccessCard = (ctx, cw, ch) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // B. SYSTEM MONITOR
 // ─────────────────────────────────────────────────────────────────────────────
-let sB_cpu = 55, sB_mem = 62, sB_disk = 38;
-let sB_netIn = 140, sB_netOut = 55;
-let sB_uptime = 0;
-let cpuHist = new Array(50).fill(50);
-const procs = [
-  { pid: 1,  name: 'SET.EXE',  cpu: 32.1, mem: 512 },
-  { pid: 7,  name: 'KERNEL32', cpu: 11.4, mem: 256 },
-  { pid: 12, name: 'RENDER',   cpu: 8.2,  mem: 192 },
-  { pid: 18, name: 'ARCHIVE',  cpu: 3.5,  mem: 64  },
-  { pid: 23, name: 'NET.IO',   cpu: 1.2,  mem: 32  },
-  { pid: 31, name: 'GC.SYS',   cpu: 0.4,  mem: 16  },
+let sB={cpu:55,mem:62,disk:38,temp:48,netIn:140,netOut:55,uptime:0};
+let cpuHist=new Array(50).fill(55);
+const procs=[
+  {pid:1, name:'SET.EXE',  cpu:32,mem:512,hist:new Array(12).fill(32)},
+  {pid:7, name:'KERNEL32', cpu:11,mem:256,hist:new Array(12).fill(11)},
+  {pid:12,name:'RENDER',   cpu:8, mem:192,hist:new Array(12).fill(8)},
+  {pid:18,name:'ARCHIVE',  cpu:3, mem:64, hist:new Array(12).fill(3)},
+  {pid:23,name:'NET.IO',   cpu:1, mem:32, hist:new Array(12).fill(1)},
 ];
 
-const renderSystemMonitor = (ctx, cw, ch) => {
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
+const drawSparkline=(ctx,hist,x,y,w,h,col)=>{
+  const max=Math.max(...hist,1);
+  ctx.strokeStyle=col; ctx.lineWidth=1;
+  ctx.beginPath();
+  hist.forEach((v,i)=>{
+    const sx=x+i*(w/hist.length);
+    const sy=y+h-(v/max)*h;
+    i===0?ctx.moveTo(sx,sy):ctx.lineTo(sx,sy);
+  });
+  ctx.stroke();
+};
 
-  // update state every 3 frames
-  if (frame % 3 === 0) {
-    sB_uptime++;
-    sB_cpu  = Math.max(5,  Math.min(95, sB_cpu  + (Math.random() - 0.47) * 9));
-    sB_mem  = Math.max(30, Math.min(90, sB_mem  + (Math.random() - 0.5)  * 3));
-    sB_disk = Math.max(10, Math.min(80, sB_disk + (Math.random() - 0.5)  * 1.5));
-    sB_netIn  = Math.max(10,  Math.min(999, sB_netIn  + (Math.random() - 0.5) * 60));
-    sB_netOut = Math.max(5,   Math.min(500, sB_netOut + (Math.random() - 0.5) * 30));
-    cpuHist.push(sB_cpu); cpuHist.shift();
-    procs.forEach(p => {
-      p.cpu = Math.max(0, Math.min(99, p.cpu + (Math.random() - 0.5) * 4));
-      p.mem = Math.max(8, p.mem + Math.round((Math.random() - 0.5) * 16));
+const renderSystemMonitor=(ctx,cw,ch)=>{
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,cw,ch);
+
+  if(frame%3===0){
+    sB.uptime++;
+    sB.cpu=Math.max(5,Math.min(95,sB.cpu+(Math.random()-.47)*9));
+    sB.mem=Math.max(30,Math.min(90,sB.mem+(Math.random()-.5)*3));
+    sB.disk=Math.max(10,Math.min(80,sB.disk+(Math.random()-.5)*1.5));
+    sB.temp=Math.max(30,Math.min(95,sB.temp+(Math.random()-.48)*2));
+    sB.netIn=Math.max(10,Math.min(999,sB.netIn+(Math.random()-.5)*60));
+    sB.netOut=Math.max(5,Math.min(500,sB.netOut+(Math.random()-.5)*30));
+    cpuHist.push(sB.cpu); cpuHist.shift();
+    procs.forEach(p=>{
+      p.cpu=Math.max(0,Math.min(99,p.cpu+(Math.random()-.5)*4));
+      p.mem=Math.max(8,p.mem+Math.round((Math.random()-.5)*16));
+      p.hist.push(p.cpu); p.hist.shift();
     });
   }
 
-  const fs = Math.max(8, Math.floor(ch * 0.027));
-  const lh = fs + 6;
-  let y = 0;
-
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
+  const fs=Math.max(8,Math.floor(ch*0.026));
+  const lh=fs+6;
+  let y=0;
+  ctx.textBaseline='top'; ctx.textAlign='left';
 
   // Title bar
-  ctx.fillStyle = '#00ff00';
-  ctx.fillRect(0, 0, cw, lh + 4);
-  ctx.font = `bold ${fs}px monospace`;
-  ctx.fillStyle = '#000';
-  ctx.fillText(' SYS MONITOR', 2, 3);
-  const now = new Date();
-  ctx.textAlign = 'right';
-  ctx.fillText(now.toTimeString().slice(0, 8) + ' ', cw, 3);
-  ctx.textAlign = 'left';
-  y = lh + 8;
+  ctx.fillStyle='#00ff00'; ctx.fillRect(0,0,cw,lh+4);
+  ctx.font=`bold ${fs}px monospace`;
+  ctx.fillStyle='#000'; ctx.fillText(' SYSMON v2.4',2,3);
+  const now=new Date();
+  ctx.textAlign='right'; ctx.fillText(now.toTimeString().slice(0,8)+' ',cw,3);
+  ctx.textAlign='left'; y=lh+8;
 
-  // ── CPU ──
-  ctx.font = `${fs}px monospace`;
-  ctx.fillStyle = '#00ff0099';
-  ctx.fillText('CPU', 2, y);
-  const barW = cw - 48;
-  const cpuCol = sB_cpu > 80 ? '#ff3300' : sB_cpu > 60 ? '#ffbb00' : '#00ff00';
-  ctx.strokeStyle = '#00ff0033'; ctx.lineWidth = 1;
-  ctx.strokeRect(34, y, barW, lh - 2);
-  ctx.fillStyle = cpuCol;
-  ctx.fillRect(34, y, barW * sB_cpu / 100, lh - 2);
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'right';
-  ctx.fillText(sB_cpu.toFixed(1) + '%', cw - 1, y);
-  ctx.textAlign = 'left';
-  y += lh + 2;
+  // Hostname
+  ctx.font=`${fs-1}px monospace`; ctx.fillStyle='#00ff0055';
+  ctx.fillText('HOST: SET-NODE-01',2,y); y+=lh;
 
-  // CPU graph
-  const gh = Math.floor(ch * 0.1);
-  ctx.strokeStyle = '#00ff0022'; ctx.lineWidth = 1;
-  ctx.strokeRect(2, y, cw - 4, gh);
+  // CPU
+  ctx.font=`${fs}px monospace`; ctx.fillStyle='#00ff0088'; ctx.fillText('CPU',2,y);
+  const bw=cw-48;
+  const cpuCol=sB.cpu>80?'#ff2200':sB.cpu>60?'#ffaa00':'#00ff00';
+  ctx.strokeStyle='#00ff0025'; ctx.lineWidth=1; ctx.strokeRect(34,y,bw,lh-2);
+  ctx.fillStyle=cpuCol; ctx.fillRect(34,y,bw*sB.cpu/100,lh-2);
+  ctx.fillStyle='#fff'; ctx.textAlign='right'; ctx.fillText(sB.cpu.toFixed(1)+'%',cw-1,y);
+  ctx.textAlign='left'; y+=lh+2;
+
+  // CPU waveform graph
+  const gh=Math.floor(ch*0.095);
+  ctx.strokeStyle='#00ff0020'; ctx.lineWidth=1; ctx.strokeRect(2,y,cw-4,gh);
+  // fill area
   ctx.beginPath();
-  ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 1;
-  cpuHist.forEach((v, i) => {
-    const gx = 2 + i * (cw - 4) / cpuHist.length;
-    const gy = y + gh - (v / 100) * gh;
-    i === 0 ? ctx.moveTo(gx, gy) : ctx.lineTo(gx, gy);
-  });
-  ctx.stroke();
-  // grid lines in graph
-  [25, 50, 75].forEach(pct => {
-    const gy = y + gh - pct / 100 * gh;
-    ctx.strokeStyle = '#00ff0011'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(2, gy); ctx.lineTo(cw - 2, gy); ctx.stroke();
-  });
-  ctx.font = `${Math.max(6, fs - 2)}px monospace`;
-  ctx.fillStyle = '#00ff0033';
-  ctx.fillText('100%', cw - 26, y + 1);
-  ctx.fillText('50%', cw - 22, y + gh / 2);
-  y += gh + 6;
+  cpuHist.forEach((v,i)=>{ const gx=2+i*(cw-4)/cpuHist.length; const gy=y+gh-(v/100)*gh; i===0?ctx.moveTo(gx,gy):ctx.lineTo(gx,gy); });
+  ctx.lineTo(cw-2,y+gh); ctx.lineTo(2,y+gh); ctx.closePath();
+  ctx.fillStyle='rgba(0,255,0,0.06)'; ctx.fill();
+  ctx.beginPath();
+  cpuHist.forEach((v,i)=>{ const gx=2+i*(cw-4)/cpuHist.length; const gy=y+gh-(v/100)*gh; i===0?ctx.moveTo(gx,gy):ctx.lineTo(gx,gy); });
+  ctx.strokeStyle='#00ff00'; ctx.lineWidth=1.2; ctx.stroke();
+  [25,50,75].forEach(p=>{ const gy=y+gh-p/100*gh; ctx.strokeStyle='#00ff0012'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(2,gy); ctx.lineTo(cw-2,gy); ctx.stroke(); });
+  y+=gh+5;
 
-  // ── MEM ──
-  ctx.font = `${fs}px monospace`;
-  ctx.fillStyle = '#00ff0099';
-  ctx.fillText('MEM', 2, y);
-  ctx.strokeStyle = '#00ff0033'; ctx.strokeRect(34, y, barW, lh - 2);
-  const memCol = sB_mem > 80 ? '#ff3300' : '#00aaff';
-  ctx.fillStyle = memCol;
-  ctx.fillRect(34, y, barW * sB_mem / 100, lh - 2);
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'right';
-  ctx.fillText(sB_mem.toFixed(0) + '%', cw - 1, y);
-  ctx.textAlign = 'left';
-  y += lh + 2;
+  // MEM
+  ctx.font=`${fs}px monospace`; ctx.fillStyle='#00ff0088'; ctx.fillText('MEM',2,y);
+  ctx.strokeStyle='#00ff0025'; ctx.strokeRect(34,y,bw,lh-2);
+  ctx.fillStyle=sB.mem>80?'#ff2200':'#00aaff'; ctx.fillRect(34,y,bw*sB.mem/100,lh-2);
+  ctx.fillStyle='#fff'; ctx.textAlign='right'; ctx.fillText(sB.mem.toFixed(0)+'%',cw-1,y);
+  ctx.textAlign='left'; y+=lh+2;
 
-  // ── DISK ──
-  ctx.fillStyle = '#00ff0099';
-  ctx.fillText('DSK', 2, y);
-  ctx.strokeStyle = '#00ff0033'; ctx.strokeRect(34, y, barW, lh - 2);
-  ctx.fillStyle = '#aa00ff';
-  ctx.fillRect(34, y, barW * sB_disk / 100, lh - 2);
-  ctx.fillStyle = '#fff';
-  ctx.textAlign = 'right';
-  ctx.fillText(sB_disk.toFixed(0) + '%', cw - 1, y);
-  ctx.textAlign = 'left';
-  y += lh + 4;
+  // DISK
+  ctx.fillStyle='#00ff0088'; ctx.fillText('DSK',2,y);
+  ctx.strokeStyle='#00ff0025'; ctx.strokeRect(34,y,bw,lh-2);
+  ctx.fillStyle='#aa44ff'; ctx.fillRect(34,y,bw*sB.disk/100,lh-2);
+  ctx.fillStyle='#fff'; ctx.textAlign='right'; ctx.fillText(sB.disk.toFixed(0)+'%',cw-1,y);
+  ctx.textAlign='left'; y+=lh+2;
+
+  // TEMP
+  const tempCol=sB.temp>80?'#ff2200':sB.temp>65?'#ffaa00':'#00ff00';
+  ctx.fillStyle='#00ff0088'; ctx.fillText('TMP',2,y);
+  ctx.strokeStyle='#00ff0025'; ctx.strokeRect(34,y,bw,lh-2);
+  ctx.fillStyle=tempCol; ctx.fillRect(34,y,bw*sB.temp/100,lh-2);
+  ctx.fillStyle='#fff'; ctx.textAlign='right';
+  ctx.fillText(sB.temp.toFixed(0)+'°C',cw-1,y);
+  if(sB.temp>80){ ctx.fillStyle='#ff2200'; ctx.fillText(' !!',cw-1-30,y); }
+  ctx.textAlign='left'; y+=lh+3;
 
   // NET
-  ctx.font = `${fs - 1}px monospace`;
-  ctx.fillStyle = '#00ff0066';
-  ctx.fillText(`↑ ${sB_netOut.toFixed(0).padStart(3)}KB  ↓ ${sB_netIn.toFixed(0).padStart(3)}KB`, 2, y);
-  y += lh;
+  ctx.font=`${fs-1}px monospace`; ctx.fillStyle='#00ff0055';
+  ctx.fillText(`↑${sB.netOut.toFixed(0).padStart(3)}K  ↓${sB.netIn.toFixed(0).padStart(3)}K`,2,y);
+  y+=lh;
 
   // Separator
-  ctx.strokeStyle = '#00ff0033'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cw, y); ctx.stroke();
-  y += 5;
+  ctx.strokeStyle='#00ff0030'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cw,y); ctx.stroke(); y+=5;
 
-  // Process list header
-  ctx.font = `bold ${fs - 1}px monospace`;
-  ctx.fillStyle = '#00ff00';
-  ctx.fillText('PID', 2, y);
-  ctx.fillText('NAME    ', 24, y);
-  ctx.fillText('CPU', cw - 80, y);
-  ctx.fillText('MEM', cw - 44, y);
-  y += lh - 2;
+  // Process header
+  ctx.font=`bold ${fs-1}px monospace`; ctx.fillStyle='#00ff00';
+  ctx.fillText('PID',2,y); ctx.fillText('NAME',22,y);
+  ctx.fillText('CPU%',cw-90,y); ctx.fillText('MEM',cw-48,y);
+  y+=lh-2;
 
-  // Process rows
-  const sortedProcs = [...procs].sort((a, b) => b.cpu - a.cpu);
-  ctx.font = `${fs - 1}px monospace`;
-  for (const p of sortedProcs) {
-    if (y + lh > ch - lh - 2) break;
-    const hi = p.cpu > 20;
-    ctx.fillStyle = hi ? '#ffff44' : '#00ff00';
-    ctx.fillText(String(p.pid).padStart(3), 2, y);
-    ctx.fillText(p.name.slice(0, 8).padEnd(8), 24, y);
-    ctx.fillText(p.cpu.toFixed(1).padStart(5), cw - 80, y);
-    ctx.fillStyle = '#00aaff';
-    ctx.fillText((p.mem + 'M').padStart(5), cw - 44, y);
-    y += lh - 2;
+  // Process rows with sparklines
+  const spW=18, spH=lh-3;
+  const sortedProcs=[...procs].sort((a,b)=>b.cpu-a.cpu);
+  ctx.font=`${fs-1}px monospace`;
+  for(const p of sortedProcs){
+    if(y+lh>ch-lh-4) break;
+    const hi=p.cpu>18;
+    ctx.fillStyle=hi?'#ffff33':'#00ff00';
+    ctx.fillText(String(p.pid).padStart(2),2,y);
+    ctx.fillText(p.name.slice(0,7).padEnd(7),22,y);
+    ctx.fillText(p.cpu.toFixed(1).padStart(5),cw-90,y);
+    ctx.fillStyle='#44aaff';
+    ctx.fillText((p.mem+'M').padStart(5),cw-48,y);
+    // sparkline
+    drawSparkline(ctx,p.hist,cw-90-spW-2,y,spW,spH,hi?'#ffff3388':'#00ff0066');
+    y+=lh-2;
   }
 
-  // Bottom uptime
-  const us = sB_uptime, uh = Math.floor(us / 3600), um = Math.floor((us % 3600) / 60), usec = us % 60;
-  ctx.font = `${Math.max(7, fs - 2)}px monospace`;
-  ctx.fillStyle = '#00ff0044';
-  ctx.fillText(`UP ${String(uh).padStart(2,'0')}:${String(um).padStart(2,'0')}:${String(usec).padStart(2,'0')}`, 2, ch - 4);
+  // Uptime
+  const us=sB.uptime,uh=Math.floor(us/3600),um=Math.floor((us%3600)/60),usec=us%60;
+  ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle='#00ff0040';
+  ctx.fillText(`UP ${String(uh).padStart(2,'0')}:${String(um).padStart(2,'0')}:${String(usec).padStart(2,'0')}`,2,ch-4);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// C. ASCII SET — dot-matrix with glow
+// C. ASCII SET — dot-matrix + matrix rain bg + dissolve
 // ─────────────────────────────────────────────────────────────────────────────
-const DOT_S = [
-  [0,1,1,1,1,0],
-  [1,1,0,0,0,0],
-  [1,1,0,0,0,0],
-  [0,1,1,1,0,0],
-  [0,0,0,1,1,0],
-  [0,0,0,1,1,0],
-  [0,1,1,1,0,0],
-];
-const DOT_E = [
-  [1,1,1,1,1,0],
-  [1,1,0,0,0,0],
-  [1,1,0,0,0,0],
-  [1,1,1,1,0,0],
-  [1,1,0,0,0,0],
-  [1,1,0,0,0,0],
-  [1,1,1,1,1,0],
-];
-const DOT_T = [
-  [1,1,1,1,1,1],
-  [0,0,1,1,0,0],
-  [0,0,1,1,0,0],
-  [0,0,1,1,0,0],
-  [0,0,1,1,0,0],
-  [0,0,1,1,0,0],
-  [0,0,1,1,0,0],
-];
+const DOT_S=[[0,1,1,1,1,0],[1,1,0,0,0,0],[1,1,0,0,0,0],[0,1,1,1,0,0],[0,0,0,1,1,0],[0,0,0,1,1,0],[0,1,1,1,0,0]];
+const DOT_E=[[1,1,1,1,1,0],[1,1,0,0,0,0],[1,1,0,0,0,0],[1,1,1,1,0,0],[1,1,0,0,0,0],[1,1,0,0,0,0],[1,1,1,1,1,0]];
+const DOT_T=[[1,1,1,1,1,1],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0],[0,0,1,1,0,0]];
+const MATRIX_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&!?';
 
-const renderASCIISET = (ctx, cw, ch) => {
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
+// Matrix rain state
+let rainDrops=[];
+const initRain=(cw,ch)=>{
+  const cols=Math.floor(cw/8);
+  rainDrops=Array.from({length:cols},()=>({y:Math.random()*ch,speed:0.4+Math.random()*0.8,bright:Math.random()}));
+};
+let rainInited=false;
 
-  const ROWS = 7, COLS = 6;
-  const dotSz = Math.floor(Math.min(cw / (COLS * 3 + 4.5), ch * 0.48 / ROWS));
-  const gap = Math.max(1, Math.floor(dotSz * 0.4));
-  const step = dotSz + gap;
-  const letterW = COLS * step - gap;
-  const letterH = ROWS * step - gap;
-  const spacing = Math.floor(cw * 0.06);
-  const totalW = letterW * 3 + spacing * 2;
-  const startX = Math.floor((cw - totalW) / 2);
-  const startY = Math.floor((ch - letterH) / 2) - Math.floor(ch * 0.08);
-  const t = frame * 0.025;
+const renderASCIISET=(ctx,cw,ch)=>{
+  // Fade to black (trail)
+  ctx.fillStyle='rgba(0,0,0,0.18)';
+  ctx.fillRect(0,0,cw,ch);
 
-  const letters = [DOT_S, DOT_E, DOT_T];
+  if(!rainInited){ initRain(cw,ch); rainInited=true; }
 
-  letters.forEach((mat, li) => {
-    const lx = startX + li * (letterW + spacing);
-    mat.forEach((row, ri) => {
-      row.forEach((cell, ci) => {
-        const dx = lx + ci * step;
-        const dy = startY + ri * step;
-        if (!cell) {
-          // dim off-dots
-          ctx.fillStyle = '#001800';
-          ctx.fillRect(dx, dy, dotSz, dotSz);
+  // Matrix rain (very dim background)
+  const colW=8;
+  ctx.font=`${colW}px monospace`;
+  rainDrops.forEach((drop,i)=>{
+    const char=MATRIX_CHARS[Math.floor(Math.random()*MATRIX_CHARS.length)];
+    const alpha=0.08+drop.bright*0.07;
+    ctx.fillStyle=`rgba(0,255,0,${alpha})`;
+    ctx.fillText(char, i*colW, drop.y);
+    drop.y+=drop.speed;
+    if(drop.y>ch) drop.y=0;
+  });
+
+  const ROWS=7,COLS=6;
+  const dotSz=Math.floor(Math.min(cw/(COLS*3+5),ch*0.44/ROWS));
+  const gap=Math.max(1,Math.floor(dotSz*0.4));
+  const step=dotSz+gap;
+  const lw=COLS*step-gap, lh2=ROWS*step-gap;
+  const spc=Math.floor(cw*0.055);
+  const totalW=lw*3+spc*2;
+  const sx=Math.floor((cw-totalW)/2);
+  const sy=Math.floor((ch-lh2)/2)-Math.floor(ch*0.1);
+  const t=frame*0.028;
+
+  // Dissolve cycle: every 200 frames, dissolve for 30, reform for 30
+  const cycle=frame%200;
+  const dissolving=cycle<25;
+  const reforming=cycle>=25&&cycle<55;
+  const dissolveFrac=dissolving?cycle/25:reforming?(55-cycle)/30:0;
+
+  // Color mode: cyan flash every 150 frames
+  const isCyan=frame%150>120;
+
+  const letters=[DOT_S,DOT_E,DOT_T];
+  letters.forEach((mat,li)=>{
+    const lx=sx+li*(lw+spc);
+    mat.forEach((row,ri)=>{
+      row.forEach((cell,ci)=>{
+        const dx=lx+ci*step, dy=sy+ri*step;
+
+        if(!cell){
+          ctx.fillStyle='#001600';
+          ctx.fillRect(dx,dy,dotSz,dotSz);
           return;
         }
-        const wave = Math.sin(t * 1.8 + ri * 0.6 + li * 1.5 + ci * 0.3);
-        const pulse = 0.55 + wave * 0.35;
-        const r = Math.random();
-        let color;
-        if (r > 0.997) color = '#ffffff';
-        else if (r > 0.992) color = '#ff00ff';
-        else {
-          const g = Math.floor(pulse * 200 + 55);
-          color = `rgb(0,${g},0)`;
+
+        // Dissolve: randomize position slightly
+        let ox=0,oy=0;
+        if(dissolveFrac>0.01){
+          ox=(Math.random()-.5)*dotSz*12*dissolveFrac;
+          oy=(Math.random()-.5)*dotSz*12*dissolveFrac;
         }
+
+        const wave=Math.sin(t*1.9+ri*0.65+li*1.6+ci*0.35);
+        const pulse=0.55+wave*0.38;
+        const rnd=Math.random();
+
+        let color;
+        if(rnd>0.997) color='#ffffff';
+        else if(rnd>0.992) color='#ff00ff';
+        else if(isCyan) {
+          const b=Math.floor(pulse*200+55);
+          color=`rgb(0,${Math.floor(b*0.7)},${b})`;
+        } else {
+          const g=Math.floor(pulse*200+55);
+          color=`rgb(0,${g},0)`;
+        }
+
         ctx.save();
-        ctx.shadowColor = '#00ff00';
-        ctx.shadowBlur = dotSz * 2;
-        ctx.fillStyle = color;
-        ctx.fillRect(dx, dy, dotSz, dotSz);
+        ctx.shadowColor=isCyan?'#00aaff':'#00ff00';
+        ctx.shadowBlur=dotSz*2.2;
+        ctx.fillStyle=color;
+        ctx.fillRect(dx+ox, dy+oy, dotSz, dotSz);
         ctx.restore();
       });
     });
   });
 
   // Subtitle
-  const subY = startY + letterH + Math.floor(ch * 0.07);
-  ctx.font = `${Math.max(8, Math.floor(cw * 0.048))}px monospace`;
-  ctx.fillStyle = '#00ff0055';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText('// SET IS THE WORLD //', cw / 2, subY);
-
-  // Year counter
-  const yr = 2026;
-  ctx.font = `${Math.max(7, Math.floor(cw * 0.038))}px monospace`;
-  ctx.fillStyle = '#00ff0033';
-  ctx.fillText(String(yr), cw / 2, subY + Math.floor(ch * 0.07));
-  ctx.textAlign = 'left';
-
-  // Scanlines
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
-  for (let sy = 0; sy < ch; sy += 2) ctx.fillRect(0, sy, cw, 1);
+  const subY=sy+lh2+Math.floor(ch*0.065);
+  ctx.font=`${Math.max(8,Math.floor(cw*0.046))}px monospace`;
+  ctx.fillStyle='#00ff0055';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText('// SET IS THE WORLD //', cw/2, subY);
+  ctx.font=`${Math.max(7,Math.floor(cw*0.036))}px monospace`;
+  ctx.fillStyle='#00ff0030';
+  ctx.fillText('2026', cw/2, subY+Math.floor(ch*0.065));
+  ctx.textAlign='left';
 
   // Moving scanline glow
-  const scanY = (frame * 1.8) % (ch + 30) - 15;
-  const sg = ctx.createLinearGradient(0, scanY - 8, 0, scanY + 8);
-  sg.addColorStop(0, 'transparent');
-  sg.addColorStop(0.5, 'rgba(0,255,0,0.14)');
-  sg.addColorStop(1, 'transparent');
-  ctx.fillStyle = sg;
-  ctx.fillRect(0, scanY - 8, cw, 16);
+  const scanY=(frame*1.7)%(ch+40)-20;
+  const sg=ctx.createLinearGradient(0,scanY-9,0,scanY+9);
+  sg.addColorStop(0,'transparent'); sg.addColorStop(.5,'rgba(0,255,0,0.12)'); sg.addColorStop(1,'transparent');
+  ctx.fillStyle=sg; ctx.fillRect(0,scanY-9,cw,18);
 
   // Vignette
-  const vig = ctx.createRadialGradient(cw/2, ch/2, ch*0.15, cw/2, ch/2, ch*0.85);
-  vig.addColorStop(0, 'transparent');
-  vig.addColorStop(1, 'rgba(0,0,0,0.65)');
-  ctx.fillStyle = vig;
-  ctx.fillRect(0, 0, cw, ch);
+  const vig=ctx.createRadialGradient(cw/2,ch/2,ch*0.12,cw/2,ch/2,ch*0.85);
+  vig.addColorStop(0,'transparent'); vig.addColorStop(1,'rgba(0,0,0,0.7)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,cw,ch);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // D. FILE TREE
 // ─────────────────────────────────────────────────────────────────────────────
-const TREE = [
-  { name: 'C:\\WORLD\\SET\\', depth: 0, type: 'root' },
-  { name: 'PROJECT\\',       depth: 1, type: 'dir'  },
-  { name: '0928\\',          depth: 2, type: 'dir'  },
-  { name: '0112\\',          depth: 2, type: 'dir'  },
-  { name: 'INCLUSION\\',     depth: 1, type: 'dir'  },
-  { name: 'ARCHIVE\\',       depth: 1, type: 'dir'  },
-  { name: 'index.html',      depth: 1, type: 'file' },
-  { name: 'README.md',       depth: 1, type: 'file' },
+const TREE=[
+  {name:'C:\\WORLD\\SET\\', depth:0, type:'root',  size:'',       date:'2026-01-15'},
+  {name:'PROJECT\\',        depth:1, type:'dir',   size:'4 items',date:'2026-01-14'},
+  {name:'0928\\',           depth:2, type:'dir',   size:'87 img', date:'2025-09-28'},
+  {name:'0112\\',           depth:2, type:'dir',   size:'64 img', date:'2026-01-12'},
+  {name:'INCLUSION\\',      depth:1, type:'dir',   size:'3 items',date:'2026-01-10'},
+  {name:'ARCHIVE\\',        depth:1, type:'dir',   size:'112 img',date:'2025-08-01'},
+  {name:'index.html',       depth:1, type:'file',  size:'42 KB',  date:'2026-01-15'},
+  {name:'README.md',        depth:1, type:'file',  size:'2 KB',   date:'2026-01-14'},
 ];
 
-const renderFileTree = (ctx, cw, ch) => {
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
+// Typing effect state
+let typeCmd='', typeCursor=0, typeTarget='';
+const CMD_SEQS=[
+  'cd PROJECT\\','ls -la','cd ..','cd INCLUSION\\','cd ..','dir /w'
+];
+let cmdIdx=0, cmdPhase=0, cmdTimer=0;
 
-  const fs = Math.max(9, Math.floor(ch * 0.028));
-  const lh = fs + 7;
-  const cursor = Math.floor(frame / 55) % TREE.length;
-  let y = 0;
+const renderFileTree=(ctx,cw,ch)=>{
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,cw,ch);
 
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
+  const fs=Math.max(9,Math.floor(ch*0.027));
+  const lh=fs+7;
+  const cursor=Math.floor(frame/52)%TREE.length;
+
+  // Typing command logic
+  cmdTimer++;
+  if(cmdPhase===0){
+    typeTarget=CMD_SEQS[cmdIdx%CMD_SEQS.length];
+    if(cmdTimer%4===0 && typeCursor<typeTarget.length){ typeCmd+=typeTarget[typeCursor++]; }
+    if(typeCursor>=typeTarget.length){ cmdPhase=1; cmdTimer=0; }
+  } else if(cmdPhase===1){
+    if(cmdTimer>40){ cmdPhase=2; cmdTimer=0; }
+  } else {
+    if(cmdTimer%3===0 && typeCmd.length>0){ typeCmd=typeCmd.slice(0,-1); }
+    if(typeCmd.length===0){ cmdPhase=0; typeCursor=0; cmdIdx++; cmdTimer=0; }
+  }
+
+  let y=0;
+  ctx.textBaseline='top'; ctx.textAlign='left';
 
   // Title bar
-  ctx.fillStyle = '#00ff0022';
-  ctx.fillRect(0, 0, cw, lh + 4);
-  ctx.font = `bold ${fs}px monospace`;
-  ctx.fillStyle = '#00ff00';
+  ctx.fillStyle='#00ff0018'; ctx.fillRect(0,0,cw,lh+4);
+  ctx.font=`bold ${fs}px monospace`; ctx.fillStyle='#00ff00';
   ctx.fillText(' FILE MANAGER', 2, 3);
-  const now2 = new Date();
-  ctx.fillStyle = '#00ff0066';
-  ctx.textAlign = 'right';
-  ctx.fillText(now2.toTimeString().slice(0, 5) + ' ', cw, 3);
-  ctx.textAlign = 'left';
-  y = lh + 8;
+  const now3=new Date();
+  ctx.fillStyle='#00ff0055'; ctx.textAlign='right';
+  ctx.fillText(now3.toTimeString().slice(0,5)+' ', cw, 3);
+  ctx.textAlign='left'; y=lh+8;
 
-  // Path prompt
-  ctx.font = `${fs - 1}px monospace`;
-  ctx.fillStyle = '#00ff0066';
-  ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y);
-  y += lh;
+  // Path bar
+  ctx.font=`${fs-1}px monospace`; ctx.fillStyle='#00ff0060';
+  ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y); y+=lh;
+  ctx.fillStyle='#00ff0025'; ctx.fillRect(0,y,cw,1); y+=5;
 
-  // Separator
-  ctx.fillStyle = '#00ff0033';
-  ctx.fillRect(0, y, cw, 1);
-  y += 6;
+  // Column headers
+  ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle='#00ff0040';
+  ctx.fillText('NAME', 4, y);
+  ctx.textAlign='right'; ctx.fillText('SIZE    DATE', cw-2, y); ctx.textAlign='left';
+  y+=fs+3;
+  ctx.fillStyle='#00ff0020'; ctx.fillRect(0,y,cw,1); y+=4;
 
-  // Items
-  ctx.font = `${fs}px monospace`;
-  TREE.forEach((item, idx) => {
-    const isSel = idx === cursor;
-    const indent = item.depth * Math.floor(cw * 0.055);
+  // Tree items
+  ctx.font=`${fs}px monospace`;
+  const dw=Math.floor(cw*0.05);
+  TREE.forEach((item,idx)=>{
+    const isSel=idx===cursor;
+    const indent=item.depth*dw;
 
-    if (isSel) {
-      ctx.fillStyle = '#00ff0025';
-      ctx.fillRect(0, y - 2, cw, lh);
-      ctx.strokeStyle = '#00ff0077';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(0, y - 2, cw - 1, lh);
+    if(isSel){
+      ctx.fillStyle='#00ff0020'; ctx.fillRect(0,y-2,cw,lh);
+      ctx.strokeStyle='#00ff0066'; ctx.lineWidth=1;
+      ctx.strokeRect(0,y-2,cw-1,lh);
     }
 
-    // Tree connector
-    if (item.depth > 0) {
-      ctx.strokeStyle = '#00ff0033';
-      ctx.lineWidth = 1;
-      const cx = 4 + (item.depth - 1) * Math.floor(cw * 0.055) + Math.floor(cw * 0.018);
+    // Vertical tree connectors
+    for(let d=1;d<=item.depth;d++){
+      ctx.strokeStyle='#00ff0028'; ctx.lineWidth=1;
+      const cx2=3+(d-1)*dw+dw*0.35;
       ctx.beginPath();
-      ctx.moveTo(cx, y - 2);
-      ctx.lineTo(cx, y + fs / 2);
-      ctx.lineTo(cx + Math.floor(cw * 0.03), y + fs / 2);
+      if(d<item.depth){ ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+lh); }
+      else { ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+fs/2); ctx.lineTo(3+indent+1,y+fs/2); }
       ctx.stroke();
     }
 
-    const icon = item.type === 'root' ? '⊟' : item.type === 'dir' ? (isSel ? '▼' : '▶') : '·';
-    ctx.fillStyle = isSel ? '#00ff00' : item.type === 'file' ? '#00ff0066' : '#00ff00';
-    ctx.fillText(icon + ' ' + item.name, 4 + indent, y);
+    const icon=item.type==='root'?'⊟':item.type==='dir'?(isSel?'▼':'▶'):'·';
+    ctx.fillStyle=isSel?'#00ff00':item.type==='file'?'#00ff0060':'#00ff00';
+    const label=icon+' '+item.name;
+    ctx.fillText(label, 3+indent, y);
 
-    // Blinking cursor on selected
-    if (isSel && frame % 28 < 18) {
-      const tw = ctx.measureText(icon + ' ' + item.name).width;
-      ctx.fillStyle = '#00ff00';
-      ctx.fillRect(4 + indent + tw + 2, y - 1, Math.floor(cw * 0.04), fs + 1);
+    // Blinking block cursor
+    if(isSel && frame%28<18){
+      const tw=ctx.measureText(label).width;
+      ctx.fillStyle='#00ff00';
+      ctx.fillRect(3+indent+tw+1, y, Math.floor(cw*0.038), fs+1);
     }
 
-    y += lh;
+    // Right side: size & date (only when not selected or selected shows date)
+    ctx.font=`${Math.max(6,fs-2)}px monospace`;
+    ctx.fillStyle=isSel?'#00ff0099':'#00ff0035';
+    ctx.textAlign='right';
+    if(isSel) ctx.fillText(item.date, cw-2, y);
+    else if(item.size) ctx.fillText(item.size, cw-2, y);
+    ctx.textAlign='left';
+    ctx.font=`${fs}px monospace`;
+
+    y+=lh;
   });
 
+  // Typing command line
+  ctx.fillStyle='#00ff0020'; ctx.fillRect(0,ch-lh*2-4,cw,1);
+  ctx.font=`${fs-1}px monospace`;
+  ctx.fillStyle='#00ff0070';
+  ctx.fillText('> '+typeCmd+(frame%24<14?'█':''), 4, ch-lh*2+2);
+
   // Status bar
-  ctx.fillStyle = '#00ff0015';
-  ctx.fillRect(0, ch - lh, cw, lh);
-  ctx.font = `${Math.max(7, fs - 2)}px monospace`;
-  ctx.fillStyle = '#00ff0055';
-  ctx.fillText(` ${TREE.length} items  [ENT] open  [ESC] back`, 2, ch - lh + 4);
+  ctx.fillStyle='#00ff0012'; ctx.fillRect(0,ch-lh,cw,lh);
+  ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle='#00ff0050';
+  ctx.fillText(` ${TREE.length} items  [ENT]open  [ESC]back`, 2, ch-lh+4);
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // E. SIGNAL / BROADCAST
 // ─────────────────────────────────────────────────────────────────────────────
-const renderSignalBroadcast = (ctx, cw, ch) => {
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
+const NOISE_CHARS='!@#$%^&*<>?/\\|~XZQW0123456789';
+const TARGET_LINES=['SET IS THE','WORLD','note-a · 2026'];
 
-  const t = frame * 0.018;
-  const sigStr = (Math.sin(t * 0.9) + 1) / 2;   // 0..1
-  const isWeak = sigStr < 0.35;
-  const noise = 1 - sigStr;
+// Decode progress per line
+let decodeState=TARGET_LINES.map(l=>({progress:0,text:''}));
 
-  // RF Waveform zone
-  const wH = Math.floor(ch * 0.22);
-  const wY = 8;
+const decodeStep=()=>{
+  TARGET_LINES.forEach((target,li)=>{
+    const delay=li*80;
+    const rel=Math.max(0,frame-delay);
+    const progress=Math.min(1,rel/120);
+    decodeState[li].progress=progress;
+    decodeState[li].text=target.split('').map((ch,ci)=>{
+      const charProgress=Math.max(0,(progress*target.length-ci));
+      if(charProgress>=1) return ch;
+      if(charProgress>0) return NOISE_CHARS[Math.floor(Math.random()*NOISE_CHARS.length)];
+      return ' ';
+    }).join('');
+  });
+};
 
-  // Carrier wave
-  ctx.beginPath();
-  ctx.strokeStyle = `rgba(0,255,0,${0.15 + sigStr * 0.25})`;
-  ctx.lineWidth = 0.8;
-  for (let x = 0; x < cw; x++) {
-    const wy = wY + wH / 2 + Math.sin(x * 0.5 - t * 14) * wH * 0.35;
-    x === 0 ? ctx.moveTo(x, wy) : ctx.lineTo(x, wy);
+// Oscilloscope state
+let oscT=0;
+
+const renderSignalBroadcast=(ctx,cw,ch)=>{
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,cw,ch);
+
+  const t=frame*0.02;
+  const sigStr=(Math.sin(t*0.85)+1)/2;
+  const isWeak=sigStr<0.35;
+  const noise=1-sigStr;
+
+  // Decode (resets every 300 frames)
+  if(frame%300===0) decodeState=TARGET_LINES.map(l=>({progress:0,text:''}));
+  decodeStep();
+
+  // ── RF Waveform ──
+  const wH=Math.floor(ch*0.2), wY=8;
+  ctx.beginPath(); ctx.strokeStyle=`rgba(0,255,0,${0.12+sigStr*0.2})`; ctx.lineWidth=0.8;
+  for(let x=0;x<cw;x++){ const wy=wY+wH/2+Math.sin(x*0.52-t*14)*wH*0.34; x===0?ctx.moveTo(x,wy):ctx.lineTo(x,wy); }
+  ctx.stroke();
+  ctx.beginPath(); ctx.strokeStyle=`rgba(0,255,0,${0.3+sigStr*0.5})`; ctx.lineWidth=1.3;
+  for(let x=0;x<cw;x++){
+    const baseW=Math.sin(x*0.13-t*5)*wH*0.42*sigStr;
+    const nz=(Math.random()-.5)*wH*noise*0.9;
+    const car=Math.sin(x*0.44-t*10)*3*sigStr;
+    const wy=wY+wH/2+baseW+nz+car;
+    x===0?ctx.moveTo(x,wy):ctx.lineTo(x,wy);
   }
   ctx.stroke();
 
-  // Modulated signal wave
-  ctx.beginPath();
-  ctx.strokeStyle = `rgba(0,255,0,${0.35 + sigStr * 0.55})`;
-  ctx.lineWidth = 1.2;
-  for (let x = 0; x < cw; x++) {
-    const baseW = Math.sin(x * 0.14 - t * 5) * wH * 0.42 * sigStr;
-    const nz = (Math.random() - 0.5) * wH * noise * 0.9;
-    const car = Math.sin(x * 0.42 - t * 10) * 3 * sigStr;
-    const wy = wY + wH / 2 + baseW + nz + car;
-    x === 0 ? ctx.moveTo(x, wy) : ctx.lineTo(x, wy);
-  }
-  ctx.stroke();
-
-  // Frequency display
-  const freq = (88.5 + Math.sin(t * 0.4) * 0.8).toFixed(1);
-  ctx.font = `bold ${Math.max(10, Math.floor(cw * 0.06))}px monospace`;
-  ctx.fillStyle = `rgba(0,255,0,${0.4 + sigStr * 0.55})`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillText(freq + ' MHz', cw / 2, wY + wH + 6);
-
-  // Station ID
-  ctx.font = `${Math.max(7, Math.floor(cw * 0.038))}px monospace`;
-  ctx.fillStyle = `rgba(0,255,0,${0.3 + sigStr * 0.3})`;
-  ctx.fillText('STATION: SET-FM', cw / 2, wY + wH + 22);
+  // Freq display
+  const freq=(88.5+Math.sin(t*0.38)*.9).toFixed(1);
+  const freqFs=Math.max(9,Math.floor(cw*0.055));
+  ctx.font=`bold ${freqFs}px monospace`;
+  ctx.fillStyle=`rgba(0,255,0,${0.35+sigStr*0.6})`;
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(freq+' MHz', cw/2, wY+wH+5);
+  ctx.font=`${Math.max(7,Math.floor(cw*0.036))}px monospace`;
+  ctx.fillStyle=`rgba(0,255,0,${0.25+sigStr*0.28})`;
+  ctx.fillText('STATION: SET-FM', cw/2, wY+wH+18);
 
   // Divider
-  const divY = wY + wH + 38;
-  ctx.strokeStyle = '#00ff0033'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(10, divY); ctx.lineTo(cw - 10, divY); ctx.stroke();
+  const divY2=wY+wH+36;
+  ctx.strokeStyle='#00ff0030'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(10,divY2); ctx.lineTo(cw-10,divY2); ctx.stroke();
 
-  // Main broadcast text
-  const textAlpha = Math.max(0, Math.min(1, sigStr * 1.8 - 0.3));
-  const centerY = divY + (ch - divY) * 0.3;
+  // ── Decoded text with VHS aberration ──
+  const textStartY=divY2+14;
+  const lineSizes=[Math.max(12,Math.floor(cw*0.075)),Math.max(14,Math.floor(cw*0.092)),Math.max(8,Math.floor(cw*0.04))];
+  let ty=textStartY;
 
-  const lines = [
-    { text: 'SET IS THE', size: Math.max(11, Math.floor(cw * 0.075)) },
-    { text: 'WORLD',      size: Math.max(14, Math.floor(cw * 0.09))  },
-    { text: 'note-a  2026', size: Math.max(8, Math.floor(cw * 0.042)) },
-  ];
+  TARGET_LINES.forEach((target,li)=>{
+    const ds=decodeState[li];
+    const alpha=Math.min(1,ds.progress*1.5)*( (Math.sin(t*1.2)+1)/2*0.4+0.6 );
+    const shakeX=isWeak?(Math.random()-.5)*6:0;
+    const sz=lineSizes[li];
+    ctx.font=`bold ${sz}px monospace`;
 
-  let ty = centerY;
-  lines.forEach((ln, i) => {
-    const alpha = textAlpha * (1 - i * 0.12);
-    const shakeX = isWeak ? (Math.random() - 0.5) * 6 : 0;
-    const shakeY = isWeak ? (Math.random() - 0.5) * 3 : 0;
-    ctx.font = `bold ${ln.size}px monospace`;
-
-    // VHS chromatic aberration
-    if (alpha > 0.2) {
-      ctx.fillStyle = `rgba(255,0,0,${alpha * 0.35})`;
-      ctx.fillText(ln.text, cw / 2 + shakeX + 3, ty + shakeY);
-      ctx.fillStyle = `rgba(0,0,255,${alpha * 0.35})`;
-      ctx.fillText(ln.text, cw / 2 + shakeX - 3, ty + shakeY);
+    if(alpha>0.15){
+      ctx.fillStyle=`rgba(255,0,0,${alpha*0.35})`; ctx.fillText(ds.text,cw/2+shakeX+3,ty);
+      ctx.fillStyle=`rgba(0,0,255,${alpha*0.35})`; ctx.fillText(ds.text,cw/2+shakeX-3,ty);
     }
-    ctx.fillStyle = `rgba(0,255,0,${alpha})`;
-    ctx.fillText(ln.text, cw / 2 + shakeX, ty + shakeY);
-    ty += ln.size * 1.55;
+    ctx.fillStyle=`rgba(0,255,0,${alpha})`; ctx.fillText(ds.text,cw/2+shakeX,ty);
+    ty+=sz*1.55;
   });
 
-  // Signal strength bars
-  const barY = ch - 32;
-  const nBars = 10;
-  const barW = Math.floor((cw - 24) / nBars) - 2;
-  const barsX = 12;
-  ctx.font = `${Math.max(7, Math.floor(cw * 0.035))}px monospace`;
-  ctx.fillStyle = '#00ff0055';
-  ctx.textAlign = 'left';
-  ctx.fillText('SIG', 2, barY + 4);
-  ctx.textAlign = 'right';
-  ctx.fillText(Math.floor(sigStr * 100) + '%', cw - 2, barY + 4);
-  ctx.textAlign = 'center';
+  // ── Mini oscilloscope (Lissajous) ──
+  oscT+=0.04;
+  const oscR=Math.min(cw,ch)*0.09;
+  const oscCX=cw*0.5, oscCY=ty+oscR+10;
 
-  for (let i = 0; i < nBars; i++) {
-    const bh = 6 + i * 1.8;
-    const filled = i < sigStr * nBars;
-    const bx = barsX + i * (barW + 2);
-    if (filled) {
-      const g = Math.floor(150 + (i / nBars) * 105);
-      ctx.fillStyle = `rgb(0,${g},0)`;
-    } else {
-      ctx.fillStyle = '#002200';
-    }
-    ctx.fillRect(bx, barY + 20 - bh, barW, bh);
+  // Scope border
+  ctx.strokeStyle=`rgba(0,255,0,${0.25+sigStr*0.2})`; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(oscCX,oscCY,oscR,0,Math.PI*2); ctx.stroke();
+  ctx.strokeStyle='#00ff0015'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(oscCX-oscR,oscCY); ctx.lineTo(oscCX+oscR,oscCY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(oscCX,oscCY-oscR); ctx.lineTo(oscCX,oscCY+oscR); ctx.stroke();
+
+  // Lissajous curve (a=2,b=3)
+  ctx.beginPath();
+  const oscAlpha=0.4+sigStr*0.55;
+  ctx.strokeStyle=`rgba(0,255,0,${oscAlpha})`; ctx.lineWidth=1.2;
+  for(let i=0;i<=200;i++){
+    const ang=i/200*Math.PI*2;
+    const ox=oscCX+Math.sin(2*ang+oscT)*oscR*0.85*(0.5+sigStr*0.5);
+    const oy=oscCY+Math.sin(3*ang)*oscR*0.85*(0.5+sigStr*0.5);
+    const nox=ox+(Math.random()-.5)*noise*4;
+    const noy=oy+(Math.random()-.5)*noise*4;
+    i===0?ctx.moveTo(nox,noy):ctx.lineTo(nox,noy);
+  }
+  ctx.stroke();
+
+  // ── Signal strength bars ──
+  const barY2=ch-28;
+  const nBars=10, barW2=Math.floor((cw-24)/nBars)-2, barsX2=12;
+  ctx.font=`${Math.max(7,Math.floor(cw*0.033))}px monospace`;
+  ctx.textAlign='left'; ctx.fillStyle='#00ff0050'; ctx.fillText('SIG',2,barY2+3);
+  ctx.textAlign='right'; ctx.fillStyle='#00ff0050';
+  ctx.fillText(Math.floor(sigStr*100)+'%',cw-2,barY2+3);
+  ctx.textAlign='center';
+  for(let i=0;i<nBars;i++){
+    const bh=5+i*2, bx3=barsX2+i*(barW2+2);
+    if(i<sigStr*nBars){
+      const g=Math.floor(100+(i/nBars)*155);
+      ctx.fillStyle=`rgb(0,${g},0)`;
+    } else { ctx.fillStyle='#001800'; }
+    ctx.fillRect(bx3,barY2+20-bh,barW2,bh);
   }
 
-  // Horizontal glitch bands when weak
-  if (isWeak && Math.random() > 0.6) {
-    const nb = Math.floor(noise * 4) + 1;
-    for (let b = 0; b < nb; b++) {
-      const gy2 = Math.random() * ch;
-      const gh2 = 2 + Math.random() * 9;
-      if (gy2 + gh2 < ch) {
-        const d2 = ctx.getImageData(0, gy2, cw, gh2);
-        ctx.putImageData(d2, (Math.random() - 0.5) * cw * 0.35, gy2);
-      }
+  // Glitch bands
+  if(isWeak&&Math.random()>0.62){
+    const nb=Math.floor(noise*4)+1;
+    for(let b=0;b<nb;b++){
+      const gy3=Math.random()*ch, gh3=2+Math.random()*10;
+      if(gy3+gh3<ch){ const d3=ctx.getImageData(0,gy3,cw,gh3); ctx.putImageData(d3,(Math.random()-.5)*cw*0.35,gy3); }
     }
   }
 
-  // CRT scanline overlay
-  ctx.fillStyle = 'rgba(0,0,0,0.12)';
-  for (let sy = 0; sy < ch; sy += 2) ctx.fillRect(0, sy, cw, 1);
-
-  ctx.textAlign = 'left';
+  // CRT scanlines
+  ctx.fillStyle='rgba(0,0,0,0.1)';
+  for(let sy=0;sy<ch;sy+=2) ctx.fillRect(0,sy,cw,1);
+  ctx.textAlign='left';
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Radar placeholder for right panel mock
+// Radar mock for right panel
 // ─────────────────────────────────────────────────────────────────────────────
-const renderRadarMock = (ctx, cw, ch) => {
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, cw, ch);
-  const cx = cw / 2, cy = ch * 0.38, r = Math.min(cw, ch * 0.5) * 0.38;
-  const angle = frame * 0.025;
-
-  [1, 0.66, 0.33].forEach(scale => {
-    ctx.strokeStyle = '#00ff0022'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(cx, cy, r * scale, 0, Math.PI * 2); ctx.stroke();
-  });
-  ctx.strokeStyle = '#00ff0011'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.stroke();
-
-  // Sweep
-  const sg = ctx.createConicalGradient
-    ? ctx.createConicalGradient(cx, cy, angle - 0.8, angle)
-    : null;
-  if (!sg) {
-    ctx.strokeStyle = '#00ff0077'; ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
-    ctx.stroke();
+const renderRadarMock=(ctx,cw,ch)=>{
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,cw,ch);
+  const cx=cw/2, cy=ch*0.38, r=Math.min(cw,ch*0.5)*0.37;
+  const ang=frame*0.026;
+  [1,0.66,0.33].forEach(s=>{ ctx.strokeStyle='#00ff001a'; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(cx,cy,r*s,0,Math.PI*2); ctx.stroke(); });
+  ctx.strokeStyle='#00ff0012'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx,cy-r); ctx.lineTo(cx,cy+r); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx-r,cy); ctx.lineTo(cx+r,cy); ctx.stroke();
+  // Sweep line
+  ctx.save();
+  ctx.strokeStyle='#00ff0088'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(cx,cy);
+  ctx.lineTo(cx+Math.cos(ang)*r, cy+Math.sin(ang)*r); ctx.stroke();
+  // Sweep trail
+  const trailGrad=ctx.createConicalGradient?null:null;
+  ctx.globalAlpha=0.25; ctx.strokeStyle='#00ff0044'; ctx.lineWidth=1;
+  for(let da=0.1;da<0.7;da+=0.1){
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(ang-da)*r*(1-da*0.3), cy+Math.sin(ang-da)*r*(1-da*0.3)); ctx.stroke();
   }
-
-  // Decode text below
-  const fs2 = Math.max(7, Math.floor(cw * 0.044));
-  ctx.font = `${fs2}px monospace`;
-  ctx.fillStyle = '#00ff00';
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
-  const decLines = ['DECODING...', `F:${(frame % 9999).toString().padStart(4,'0')}`, 'SET-KERNEL'];
-  decLines.forEach((l, i) => {
-    ctx.fillStyle = i === 0 ? '#00ff00' : '#00ff0066';
-    ctx.fillText(l, 6, ch * 0.76 + i * (fs2 + 4));
-  });
+  ctx.restore();
+  // Decode text
+  const fs2=Math.max(7,Math.floor(cw*0.042));
+  ctx.font=`${fs2}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+  const dl=['DECODING...', `F:${(frame%9999).toString().padStart(4,'0')}`, `T:${(frame*0.016).toFixed(1)}s`, 'SET-NODE'];
+  dl.forEach((l,i)=>{ ctx.fillStyle=i===0?'#00ff00':'#00ff0055'; ctx.fillText(l,5,ch*0.77+i*(fs2+4)); });
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Canvas registry
+// Bootstrap
 // ─────────────────────────────────────────────────────────────────────────────
-const LETTERS = ['A','B','C','D','E'];
-const RENDERS = { A: renderAccessCard, B: renderSystemMonitor, C: renderASCIISET, D: renderFileTree, E: renderSignalBroadcast };
+const LETTERS=['A','B','C','D','E'];
+const RENDERS={A:renderAccessCard,B:renderSystemMonitor,C:renderASCIISET,D:renderFileTree,E:renderSignalBroadcast};
 
-const ctxMap = {};
-LETTERS.forEach(l => {
-  ctxMap[l] = {
-    main:  document.getElementById('c' + l).getContext('2d'),
-    mock:  document.getElementById('m' + l).getContext('2d'),
-    radar: document.getElementById('r' + l).getContext('2d'),
+const ctxMap={};
+LETTERS.forEach(l=>{
+  ctxMap[l]={
+    main: document.getElementById('c'+l).getContext('2d'),
+    mock: document.getElementById('m'+l).getContext('2d'),
+    radar:document.getElementById('r'+l).getContext('2d'),
   };
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Render loop — only active section
-// ─────────────────────────────────────────────────────────────────────────────
-const tick = () => {
+const tick=()=>{
   frame++;
-  const fn = RENDERS[currentSec];
-  const c  = ctxMap[currentSec];
-  const main = document.getElementById('c' + currentSec);
-  const mock = document.getElementById('m' + currentSec);
-  fn(c.main, main.width, main.height);
-  fn(c.mock, mock.width, mock.height);
-  renderRadarMock(c.radar, document.getElementById('r' + currentSec).width, document.getElementById('r' + currentSec).height);
+  const fn=RENDERS[currentSec];
+  const c=ctxMap[currentSec];
+  const main=document.getElementById('c'+currentSec);
+  const mock=document.getElementById('m'+currentSec);
+  fn(c.main,main.width,main.height);
+  fn(c.mock,mock.width,mock.height);
+  renderRadarMock(c.radar,document.getElementById('r'+currentSec).width,document.getElementById('r'+currentSec).height);
   requestAnimationFrame(tick);
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Button logic
-// ─────────────────────────────────────────────────────────────────────────────
-LETTERS.forEach(l => {
-  document.getElementById('btn' + l).addEventListener('click', () => {
-    LETTERS.forEach(x => {
-      document.getElementById('btn' + x).classList.remove('active');
-      document.getElementById('sec' + x).classList.remove('active');
-    });
-    document.getElementById('btn' + l).classList.add('active');
-    document.getElementById('sec' + l).classList.add('active');
-    currentSec = l;
-    frame = 0;
+LETTERS.forEach(l=>{
+  document.getElementById('btn'+l).addEventListener('click',()=>{
+    LETTERS.forEach(x=>{ document.getElementById('btn'+x).classList.remove('active'); document.getElementById('sec'+x).classList.remove('active'); });
+    document.getElementById('btn'+l).classList.add('active');
+    document.getElementById('sec'+l).classList.add('active');
+    currentSec=l; frame=0;
+    // reset E decode
+    if(l==='E') decodeState=TARGET_LINES.map(ln=>({progress:0,text:''}));
+    if(l==='C') rainInited=false;
   });
 });
 
