@@ -24,6 +24,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   width: 100%; height: calc(100vh - 32px);
   margin-top: 32px;
   padding: 20px;
+  position: relative; z-index: 1;
 }
 
 .folder-window {
@@ -185,6 +186,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="menu-container">
+    <div style="width:100%;max-width:700px;display:flex;flex-direction:column;gap:0;">
+
+      <!-- 로딩 애니메이션 캔버스 -->
+      <canvas id="loadingCanvas" style="width:100%;height:72px;display:block;"></canvas>
+
     <div class="folder-window">
       <div class="folder-titlebar">
         SET WORLD DIRECTORY
@@ -201,19 +207,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       <div class="folder-content">
         <div class="menu-items">
-          <div class="menu-item" onclick="navigate('portfolio.html')">
+          <div class="menu-item" onclick="navigate('portfolio.html?section=project')">
             <div class="menu-item-name">SET</div>
           </div>
-          <div class="menu-item" onclick="navigate('portfolio.html#section1')">
+          <div class="menu-item" onclick="navigate('portfolio.html?section=inclusion')">
             <div class="menu-item-name">SET Inclusion</div>
           </div>
-          <div class="menu-item" onclick="navigate('portfolio.html#section2')">
+          <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
             <div class="menu-item-name">entire</div>
           </div>
-          <div class="menu-item" onclick="navigate('portfolio.html#section3')">
+          <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
             <div class="menu-item-name">log</div>
           </div>
-          <div class="menu-item" onclick="navigate('portfolio.html#section4')">
+          <div class="menu-item" onclick="navigate('portfolio.html?section=reference')">
             <div class="menu-item-name">reference</div>
           </div>
           <div class="menu-item" onclick="navigate('portfolio.html?section=archive')">
@@ -227,9 +233,169 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <span>ENTER to select • ESC to exit</span>
       </div>
     </div>
+    </div><!-- /wrapper -->
   </div>
 
   <script>
+    // ── 매트릭스 + 달리는 고양이 ──────────────────────────────────
+    (function() {
+      const canvas = document.getElementById('loadingCanvas');
+      const ctx    = canvas.getContext('2d');
+      const CHARS  = 'MMNWABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*+=?/\\|<>[]{}ァアイウエオカキクケコ';
+      const FS = 11;
+      let W, H, cols, rows, grid;
+
+      // 고양이 상태
+      let catX = -60, catFrame = 0, tick = 0;
+      const CAT_SPD = 2.8;
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        W = canvas.width  = Math.floor(rect.width);
+        H = canvas.height = 72;
+        cols = Math.floor(W / (FS * 0.65));
+        rows = Math.floor(H / FS);
+        grid = Array.from({length: rows}, () =>
+          Array.from({length: cols}, () => ({ ch: rndChar(), b: Math.random() }))
+        );
+      }
+
+      function rndChar() { return CHARS[Math.floor(Math.random() * CHARS.length)]; }
+
+      // 고양이 그리기 (x, y = 왼쪽 상단 기준)
+      function drawCat(x, y, f) {
+        const bc = '#ccffcc';   // 몸 색
+        const lc = '#88ee88';   // 선 색
+
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // 꼬리 (흔들림)
+        const tw = [10, 4, -4, -10][f];
+        ctx.strokeStyle = bc; ctx.lineWidth = 3.5;
+        ctx.beginPath();
+        ctx.moveTo(x+35, y+14);
+        ctx.quadraticCurveTo(x+42, y+8+tw/2, x+46, y+2+tw);
+        ctx.stroke();
+        // 꼬리 끝 동그라미
+        ctx.fillStyle = bc;
+        ctx.beginPath();
+        ctx.arc(x+46, y+2+tw, 2.5, 0, Math.PI*2);
+        ctx.fill();
+
+        // 몸통
+        ctx.fillStyle = bc;
+        ctx.beginPath();
+        ctx.ellipse(x+20, y+16, 14, 9, 0, 0, Math.PI*2);
+        ctx.fill();
+
+        // 머리
+        ctx.beginPath();
+        ctx.arc(x+6, y+13, 10, 0, Math.PI*2);
+        ctx.fill();
+
+        // 귀 (왼)
+        ctx.beginPath();
+        ctx.moveTo(x+0, y+6); ctx.lineTo(x-2, y+0); ctx.lineTo(x+6, y+5);
+        ctx.closePath(); ctx.fill();
+        // 귀 안쪽
+        ctx.fillStyle = '#ff9999';
+        ctx.beginPath();
+        ctx.moveTo(x+1, y+6); ctx.lineTo(x+0, y+2); ctx.lineTo(x+5, y+5);
+        ctx.closePath(); ctx.fill();
+
+        // 귀 (오)
+        ctx.fillStyle = bc;
+        ctx.beginPath();
+        ctx.moveTo(x+8, y+5); ctx.lineTo(x+11, y+0); ctx.lineTo(x+14, y+5);
+        ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ff9999';
+        ctx.beginPath();
+        ctx.moveTo(x+9, y+5); ctx.lineTo(x+11, y+2); ctx.lineTo(x+13, y+5);
+        ctx.closePath(); ctx.fill();
+
+        // 눈
+        ctx.fillStyle = '#001800';
+        ctx.beginPath(); ctx.ellipse(x+4, y+13, 2, 2.5, -0.2, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x+9, y+13, 2, 2.5, 0.2, 0, Math.PI*2); ctx.fill();
+        // 눈 하이라이트
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath(); ctx.arc(x+5, y+12, 0.9, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x+10, y+12, 0.9, 0, Math.PI*2); ctx.fill();
+
+        // 코
+        ctx.fillStyle = '#ff9999';
+        ctx.beginPath(); ctx.arc(x+6, y+17, 1.2, 0, Math.PI*2); ctx.fill();
+
+        // 수염
+        ctx.strokeStyle = lc; ctx.lineWidth = 0.8;
+        [[-1,17,-8,15],[-1,18,-8,19],[13,17,20,15],[13,18,20,19]].forEach(([x1,y1,x2,y2]) => {
+          ctx.beginPath(); ctx.moveTo(x+x1, y+y1); ctx.lineTo(x+x2, y+y2); ctx.stroke();
+        });
+
+        // 다리 4개 — 프레임별 위치
+        const legs = [
+          [[x+12,y+24,x+8, y+33],[x+16,y+24,x+20,y+33],[x+22,y+24,x+18,y+33],[x+28,y+24,x+32,y+33]],
+          [[x+12,y+24,x+10,y+33],[x+16,y+24,x+18,y+33],[x+22,y+24,x+20,y+33],[x+28,y+24,x+30,y+33]],
+          [[x+12,y+24,x+16,y+33],[x+16,y+24,x+12,y+33],[x+22,y+24,x+26,y+33],[x+28,y+24,x+24,y+33]],
+          [[x+12,y+24,x+14,y+33],[x+16,y+24,x+14,y+33],[x+22,y+24,x+24,y+33],[x+28,y+24,x+26,y+33]],
+        ];
+        ctx.strokeStyle = bc; ctx.lineWidth = 3;
+        legs[f].forEach(([x1,y1,x2,y2]) => {
+          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+          // 발바닥
+          ctx.fillStyle = '#ffaaaa';
+          ctx.beginPath(); ctx.ellipse(x2, y2+1, 2.5, 1.5, 0, 0, Math.PI*2); ctx.fill();
+        });
+
+        ctx.restore();
+      }
+
+      function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.font = `${FS}px "Courier New", monospace`;
+
+        // 매트릭스 배경
+        const upd = Math.floor(cols * rows * 0.18);
+        for (let n = 0; n < upd; n++) {
+          const r = Math.floor(Math.random()*rows), c = Math.floor(Math.random()*cols);
+          grid[r][c].ch = rndChar(); grid[r][c].b = Math.random();
+        }
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const b = grid[r][c].b, a = 0.15 + b*0.85;
+            ctx.fillStyle = b>0.93 ? `rgba(220,255,220,${a})`
+                          : b>0.75 ? `rgba(57,220,0,${a})`
+                          : b>0.4  ? `rgba(30,160,0,${a})`
+                          :          `rgba(10,80,0,${a})`;
+            ctx.fillText(grid[r][c].ch, c*(FS*0.65), (r+1)*FS-1);
+          }
+        }
+
+        // 고양이
+        drawCat(catX, 3, catFrame);
+
+        // 고양이 이동 & 프레임
+        catX += CAT_SPD;
+        if (catX > W + 60) catX = -60;
+        if (tick % 5 === 0) catFrame = (catFrame + 1) % 4;
+
+        // 스캔라인
+        for (let y = 0; y < H; y += 2) {
+          ctx.fillStyle = 'rgba(0,0,0,0.15)';
+          ctx.fillRect(0, y, W, 1);
+        }
+        tick++;
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      setInterval(draw, 40);
+    })();
+    // ──────────────────────────────────────────────────────────────
+
     function navigate(path) {
       window.location.href = path;
     }
