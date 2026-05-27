@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANIM SAMPLE 2</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { background:#000; color:#39dc00; font-family:'Courier New',monospace; }
+.selector { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid #39dc00; overflow-x:auto; flex-wrap:wrap; }
+.sel-btn { background:#000; border:1px solid #39dc00; color:#39dc00; font-family:'Courier New',monospace; font-size:10px; padding:5px 12px; cursor:pointer; white-space:nowrap; letter-spacing:1px; transition:all 0.1s; }
+.sel-btn:hover,.sel-btn.active { background:#39dc00; color:#000; }
+.preview { width:100%; height:220px; border-bottom:1px solid #39dc00; }
+canvas { display:block; width:100%; height:100%; }
+.desc { padding:8px 16px; font-size:9px; color:#39dc0077; border-bottom:1px solid #39dc0022; letter-spacing:1px; }
+.mock-wrap { display:flex; justify-content:center; padding:24px 16px; gap:0; align-items:flex-start; }
+.mock-left { width:200px; flex-shrink:0; border:1px solid #39dc0033; }
+.mock-left canvas { width:200px !important; height:380px !important; display:block; }
+.mock-menu { width:400px; border-top:2px solid #7fff4f; border-left:2px solid #7fff4f; border-bottom:2px solid #1a5500; border-right:2px solid #1a5500; }
+.mock-title { background:#39dc00; color:#000; padding:5px 10px; font-size:11px; font-weight:bold; display:flex; justify-content:space-between; }
+.mock-path { padding:5px 10px; font-size:10px; border-bottom:1px solid #39dc00; }
+.mock-items { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:10px; }
+.mock-item { border-top:2px solid #7fff4f; border-left:2px solid #7fff4f; border-bottom:2px solid #1a5500; border-right:2px solid #1a5500; padding:14px; text-align:center; font-size:11px; }
+.mock-status { padding:5px 10px; border-top:1px solid #39dc00; font-size:9px; display:flex; justify-content:space-between; }
+.mock-right { width:220px; border:1px solid #39dc0033; }
+.mock-right canvas { width:220px !important; height:380px !important; display:block; }
+.mock-label { font-size:9px; color:#39dc0044; padding:4px 8px; letter-spacing:1px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="selector">
+  <button class="sel-btn active" id="btn-wire"     onclick="switchAnim('wire')">① 3D WIREFRAME</button>
+  <button class="sel-btn"        id="btn-rd"       onclick="switchAnim('rd')">② REACTION-DIFFUSION</button>
+  <button class="sel-btn"        id="btn-cctv"     onclick="switchAnim('cctv')">③ CCTV GLITCH</button>
+  <button class="sel-btn"        id="btn-liss"     onclick="switchAnim('liss')">④ LISSAJOUS</button>
+  <button class="sel-btn"        id="btn-particle" onclick="switchAnim('particle')">⑤ PARTICLE FIELD</button>
+</div>
+
+<div class="preview"><canvas id="animCanvas"></canvas></div>
+<div class="desc" id="animDesc">회전하는 정이십면체 와이어프레임 — 깊이에 따라 엣지 밝기 변화</div>
+
+<div style="padding:16px 16px 4px;font-size:9px;color:#39dc0044;letter-spacing:2px;text-align:center;">─── LEFT PANEL CONTEXT PREVIEW ───</div>
+<div class="mock-wrap">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+    <div class="mock-label">LEFT PANEL</div>
+    <div class="mock-left"><canvas id="mockCanvas"></canvas></div>
+  </div>
+  <div class="mock-menu">
+    <div class="mock-title">SET WORLD DIRECTORY <span>_ □ ✕</span></div>
+    <div class="mock-path">C:\WORLD\SET\</div>
+    <div class="mock-items">
+      <div class="mock-item">SET</div>
+      <div class="mock-item">SET Inclusion</div>
+      <div class="mock-item">entire</div>
+      <div class="mock-item">log</div>
+      <div class="mock-item">reference</div>
+      <div class="mock-item">Archive</div>
+    </div>
+    <div class="mock-status"><span>6 Files</span><span>ENTER to select</span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+    <div class="mock-label">RIGHT PANEL</div>
+    <div class="mock-right"><canvas id="radarCanvas"></canvas></div>
+  </div>
+</div>
+
+<script>
+// ── 공유 상태 ─────────────────────────────────────────────────────
+const mainCanvas = document.getElementById('animCanvas');
+const mainCtx    = mainCanvas.getContext('2d');
+const mockCanvas = document.getElementById('mockCanvas');
+const mockCtx    = mockCanvas.getContext('2d');
+
+let W = 0, H = 0;
+let animInterval = null;
+let currentAnim  = 'wire';
+
+const DESCS = {
+  wire:     '회전하는 정이십면체 와이어프레임 — 깊이에 따라 엣지 밝기 변화',
+  rd:       '반응-확산 (Gray-Scott) — 화학물질이 번지고 소멸하는 유기적 패턴',
+  cctv:     '감시카메라 글리치 피드 — 노이즈·좌표·REC 표시·수평 글리치',
+  liss:     '리사주 곡선 — 두 주파수가 충돌해 실시간으로 형태가 변하는 오실로스코프',
+  particle: '파티클 플로우 필드 — 벡터장을 따라 흐르는 입자들, 연기 같은 흔적',
+};
+
+function resizeMain() {
+  const rect = mainCanvas.getBoundingClientRect();
+  W = mainCanvas.width  = Math.floor(rect.width);
+  H = mainCanvas.height = 220;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ① 3D WIREFRAME (ICOSAHEDRON)
+// ─────────────────────────────────────────────────────────────────
+const PHI = (1 + Math.sqrt(5)) / 2;
+const ICO_RAW = [
+  [0,1,PHI],[0,-1,PHI],[0,1,-PHI],[0,-1,-PHI],
+  [1,PHI,0],[-1,PHI,0],[1,-PHI,0],[-1,-PHI,0],
+  [PHI,0,1],[-PHI,0,1],[PHI,0,-1],[-PHI,0,-1]
+];
+const ICO_VERTS = ICO_RAW.map(v => {
+  const l = Math.sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+  return [v[0]/l, v[1]/l, v[2]/l];
+});
+const ICO_EDGES = [
+  [0,1],[0,4],[0,5],[0,8],[0,9],
+  [1,6],[1,7],[1,8],[1,9],
+  [2,3],[2,4],[2,5],[2,10],[2,11],
+  [3,6],[3,7],[3,10],[3,11],
+  [4,5],[4,8],[4,10],
+  [5,9],[5,11],
+  [6,7],[6,8],[6,10],
+  [7,9],[7,11],
+  [8,10],[9,11]
+];
+let wireRx=0, wireRy=0, wireRz=0;
+
+function initWire() { wireRx=0; wireRy=0; wireRz=0; }
+
+function renderWire(ctx, cw, ch) {
+  ctx.fillStyle='rgba(0,0,0,0.18)'; ctx.fillRect(0,0,cw,ch);
+  wireRx+=0.007; wireRy+=0.011; wireRz+=0.004;
+
+  const cx=cw/2, cy=ch/2, sc=Math.min(cw,ch)*0.36, fov=3;
+  function rx([x,y,z]){return[x,y*Math.cos(wireRx)-z*Math.sin(wireRx),y*Math.sin(wireRx)+z*Math.cos(wireRx)];}
+  function ry([x,y,z]){return[x*Math.cos(wireRy)+z*Math.sin(wireRy),y,-x*Math.sin(wireRy)+z*Math.cos(wireRy)];}
+  function rz([x,y,z]){return[x*Math.cos(wireRz)-y*Math.sin(wireRz),x*Math.sin(wireRz)+y*Math.cos(wireRz),z];}
+  function proj([x,y,z]){const d=fov/(fov+z+1.5);return[cx+x*sc*d,cy+y*sc*d,z];}
+
+  const verts = ICO_VERTS.map(v=>proj(rz(ry(rx(v)))));
+
+  ICO_EDGES.forEach(([a,b])=>{
+    const va=verts[a], vb=verts[b];
+    const depth=(va[2]+vb[2])/2;
+    const alpha=Math.max(0.08, Math.min(1, 0.3+(depth+1)*0.38));
+    ctx.strokeStyle=`rgba(57,220,0,${alpha})`;
+    ctx.lineWidth=depth>0?1.4:0.7;
+    ctx.beginPath(); ctx.moveTo(va[0],va[1]); ctx.lineTo(vb[0],vb[1]); ctx.stroke();
+  });
+  verts.forEach(v=>{
+    const alpha=Math.max(0.1, Math.min(1, 0.4+(v[2]+1)*0.3));
+    ctx.fillStyle=`rgba(120,255,120,${alpha})`;
+    ctx.beginPath(); ctx.arc(v[0],v[1],1.8,0,Math.PI*2); ctx.fill();
+  });
+
+  ctx.fillStyle='rgba(57,220,0,0.4)'; ctx.font='8px Courier New';
+  ctx.textAlign='left'; ctx.fillText('WIREFRAME.ICO',6,13);
+  ctx.textAlign='right'; ctx.fillText(`RX:${wireRx.toFixed(1)} RY:${wireRy.toFixed(1)}`,cw-6,13);
+  ctx.textAlign='left';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ② REACTION-DIFFUSION (GRAY-SCOTT)
+// ─────────────────────────────────────────────────────────────────
+const RDW=150, RDH=100;
+let rdU, rdV, rdBU, rdBV, rdOff, rdOffCtx, rdImg;
+
+function initRD() {
+  rdU=new Float32Array(RDW*RDH).fill(1);
+  rdV=new Float32Array(RDW*RDH).fill(0);
+  rdBU=new Float32Array(RDW*RDH);
+  rdBV=new Float32Array(RDW*RDH);
+  for(let i=0;i<25;i++){
+    const sx=Math.floor(Math.random()*RDW), sy=Math.floor(Math.random()*RDH);
+    for(let dy=-4;dy<=4;dy++)for(let dx=-4;dx<=4;dx++){
+      const nx=(sx+dx+RDW)%RDW, ny=(sy+dy+RDH)%RDH;
+      rdV[ny*RDW+nx]=0.5+Math.random()*0.5;
+      rdU[ny*RDW+nx]=0.25;
+    }
+  }
+  rdOff=document.createElement('canvas'); rdOff.width=RDW; rdOff.height=RDH;
+  rdOffCtx=rdOff.getContext('2d');
+  rdImg=rdOffCtx.createImageData(RDW,RDH);
+}
+
+function stepRD(){
+  const Du=0.16,Dv=0.08,f=0.035,k=0.065;
+  for(let y=0;y<RDH;y++)for(let x=0;x<RDW;x++){
+    const i=y*RDW+x;
+    const u=rdU[i],v=rdV[i];
+    const xp=(x+1)%RDW,xm=(x-1+RDW)%RDW,yp=(y+1)%RDH,ym=(y-1+RDH)%RDH;
+    const lu=rdU[y*RDW+xp]+rdU[y*RDW+xm]+rdU[yp*RDW+x]+rdU[ym*RDW+x]-4*u;
+    const lv=rdV[y*RDW+xp]+rdV[y*RDW+xm]+rdV[yp*RDW+x]+rdV[ym*RDW+x]-4*v;
+    const uvv=u*v*v;
+    rdBU[i]=Math.max(0,Math.min(1, u+Du*lu-uvv+f*(1-u)));
+    rdBV[i]=Math.max(0,Math.min(1, v+Dv*lv+uvv-(f+k)*v));
+  }
+  let tmp=rdU;rdU=rdBU;rdBU=tmp;
+  tmp=rdV;rdV=rdBV;rdBV=tmp;
+}
+
+function renderRD(ctx, cw, ch) {
+  for(let s=0;s<4;s++) stepRD();
+  for(let i=0;i<RDW*RDH;i++){
+    const v=rdV[i];
+    rdImg.data[i*4]  =Math.floor(v*40);
+    rdImg.data[i*4+1]=Math.floor(v*220);
+    rdImg.data[i*4+2]=Math.floor(v*20);
+    rdImg.data[i*4+3]=255;
+  }
+  rdOffCtx.putImageData(rdImg,0,0);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(rdOff,0,0,cw,ch);
+  for(let y=0;y<ch;y+=2){ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,y,cw,1);}
+  ctx.fillStyle='rgba(57,220,0,0.5)'; ctx.font='8px Courier New';
+  ctx.textAlign='left'; ctx.fillText('REACTION-DIFFUSION',6,13);
+  ctx.textAlign='right'; ctx.fillText('f:0.035 k:0.065',cw-6,13);
+  ctx.textAlign='left';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ③ CCTV GLITCH
+// ─────────────────────────────────────────────────────────────────
+let cctvGlitch=0, cctvNoise;
+
+function initCCTV() { cctvGlitch=0; }
+
+function renderCCTV(ctx, cw, ch) {
+  // noise bg
+  if(!cctvNoise||cctvNoise.width!==cw||cctvNoise.height!==ch){
+    cctvNoise=ctx.createImageData(cw,ch);
+  }
+  for(let i=0;i<cctvNoise.data.length;i+=4){
+    const n=Math.floor(Math.random()*55)+5;
+    cctvNoise.data[i]=n*0.4; cctvNoise.data[i+1]=n*0.6; cctvNoise.data[i+2]=n*0.4; cctvNoise.data[i+3]=255;
+  }
+  ctx.putImageData(cctvNoise,0,0);
+
+  // glitch band
+  if(Math.random()<0.04) cctvGlitch=6;
+  if(cctvGlitch>0){
+    const gy=Math.floor(Math.random()*ch), gh=Math.floor(Math.random()*10)+3;
+    const shift=Math.floor(Math.random()*30)-15;
+    try{const strip=ctx.getImageData(0,gy,cw,gh);ctx.putImageData(strip,shift,gy);}catch(e){}
+    ctx.fillStyle=`rgba(57,220,0,${Math.random()*0.4})`;
+    ctx.fillRect(0,gy,cw,1);
+    cctvGlitch--;
+  }
+
+  // frame corners
+  const pad=10, cl=18;
+  ctx.strokeStyle='rgba(57,220,0,0.65)'; ctx.lineWidth=1.5;
+  [[pad,pad],[cw-pad,pad],[pad,ch-pad],[cw-pad,ch-pad]].forEach(([x,y],i)=>{
+    const sx=i%2===0?1:-1, sy=i<2?1:-1;
+    ctx.beginPath();
+    ctx.moveTo(x,y+sy*cl); ctx.lineTo(x,y); ctx.lineTo(x+sx*cl,y); ctx.stroke();
+  });
+
+  // REC
+  if(Math.floor(Date.now()/600)%2===0){
+    ctx.fillStyle='#ff2222';
+    ctx.beginPath(); ctx.arc(cw-28,14,4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,60,60,0.85)'; ctx.font='bold 8px Courier New';
+    ctx.textAlign='left'; ctx.fillText('REC',cw-20,18);
+  }
+
+  // overlays
+  const now=new Date();
+  const ts=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  ctx.fillStyle='rgba(57,220,0,0.8)'; ctx.font='8px Courier New';
+  ctx.textAlign='left';
+  ctx.fillText('CAM-01 // SEC-NODE-A',pad,20);
+  ctx.fillText(ts, pad, ch-pad);
+  ctx.fillText(`37°33'N 126°58'E`, pad, ch-pad-14);
+  ctx.textAlign='right';
+  ctx.fillText(`SIGNAL:${(85+Math.floor(Math.random()*10))}%`,cw-pad,ch-pad);
+  ctx.textAlign='left';
+
+  // scanlines
+  for(let y=0;y<ch;y+=2){ctx.fillStyle='rgba(0,0,0,0.22)';ctx.fillRect(0,y,cw,1);}
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ④ LISSAJOUS
+// ─────────────────────────────────────────────────────────────────
+let lissT=0, lissA=1, lissB=2, lissDelta=0, lissPhase=0;
+
+function initLiss(){ lissT=0; lissA=1; lissB=2; lissDelta=0; lissPhase=0; }
+
+function renderLiss(ctx, cw, ch) {
+  ctx.fillStyle='rgba(0,0,0,0.04)'; ctx.fillRect(0,0,cw,ch);
+
+  const cx=cw/2, cy=ch/2;
+  const rx=cw*0.42, ry=ch*0.42;
+
+  // morph a/b ratio slowly
+  lissPhase += 0.0008;
+  const ratios=[[1,1],[1,2],[1,3],[2,3],[3,4],[3,5],[4,5]];
+  const ri=Math.floor(lissPhase)%ratios.length;
+  const rn=(ri+1)%ratios.length;
+  const t=lissPhase-Math.floor(lissPhase);
+  lissA=ratios[ri][0]+(ratios[rn][0]-ratios[ri][0])*t;
+  lissB=ratios[ri][1]+(ratios[rn][1]-ratios[ri][1])*t;
+  lissDelta+=0.004;
+
+  // draw trace
+  const steps=400;
+  ctx.beginPath();
+  for(let i=0;i<=steps;i++){
+    const angle=i/steps*Math.PI*2;
+    const x=cx+rx*Math.sin(lissA*angle+lissDelta);
+    const y=cy+ry*Math.sin(lissB*angle);
+    const progress=i/steps;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  const grad=ctx.createLinearGradient(cx-rx,cy,cx+rx,cy);
+  grad.addColorStop(0,'rgba(57,220,0,0.05)');
+  grad.addColorStop(0.5,'rgba(100,255,100,0.7)');
+  grad.addColorStop(1,'rgba(57,220,0,0.05)');
+  ctx.strokeStyle=grad;
+  ctx.lineWidth=1.2; ctx.stroke();
+
+  // moving dot
+  lissT+=0.04;
+  const dx=cx+rx*Math.sin(lissA*lissT+lissDelta);
+  const dy=cy+ry*Math.sin(lissB*lissT);
+  ctx.fillStyle='rgba(150,255,150,0.9)';
+  ctx.beginPath(); ctx.arc(dx,dy,3,0,Math.PI*2); ctx.fill();
+
+  // label
+  const ra=`${ratios[ri][0]}:${ratios[ri][1]}`;
+  const rb=`${ratios[rn][0]}:${ratios[rn][1]}`;
+  ctx.fillStyle='rgba(57,220,0,0.45)'; ctx.font='8px Courier New';
+  ctx.textAlign='left'; ctx.fillText(`LISSAJOUS  a:${lissA.toFixed(2)} b:${lissB.toFixed(2)}`,6,13);
+  ctx.textAlign='right'; ctx.fillText(`${ra} → ${rb}`,cw-6,13);
+  ctx.textAlign='left';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ⑤ PARTICLE FLOW FIELD
+// ─────────────────────────────────────────────────────────────────
+let particles=[], ptTime=0;
+
+function initParticle(){
+  particles=Array.from({length:180},()=>({
+    x:Math.random()*800, y:Math.random()*220,
+    speed:0.6+Math.random()*1.2,
+    life:Math.random()*200,
+    maxLife:80+Math.random()*160,
+  }));
+  ptTime=0;
+}
+
+function flowAngle(x,y,t){
+  return (
+    Math.sin(x*0.011+t*0.35)*Math.cos(y*0.013+t*0.28)+
+    Math.sin(x*0.019-y*0.011+t*0.18)*0.6
+  )*Math.PI*1.8;
+}
+
+function renderParticle(ctx, cw, ch) {
+  ctx.fillStyle='rgba(0,0,0,0.07)'; ctx.fillRect(0,0,cw,ch);
+  ptTime+=0.016;
+
+  particles.forEach(p=>{
+    p.life++;
+    if(p.life>p.maxLife){
+      p.x=Math.random()*cw; p.y=Math.random()*ch;
+      p.life=0; p.maxLife=80+Math.random()*160;
+      p.speed=0.6+Math.random()*1.2;
+    }
+    const angle=flowAngle(p.x,p.y,ptTime);
+    const nx=p.x+Math.cos(angle)*p.speed;
+    const ny=p.y+Math.sin(angle)*p.speed;
+    const alpha=(1-p.life/p.maxLife)*0.55;
+    ctx.strokeStyle=`rgba(57,220,0,${alpha})`;
+    ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(nx,ny); ctx.stroke();
+    p.x=((nx%cw)+cw)%cw;
+    p.y=((ny%ch)+ch)%ch;
+  });
+
+  // occasional bright sparks
+  if(Math.random()<0.06){
+    const sp=particles[Math.floor(Math.random()*particles.length)];
+    ctx.fillStyle='rgba(150,255,150,0.8)';
+    ctx.beginPath(); ctx.arc(sp.x,sp.y,1.5,0,Math.PI*2); ctx.fill();
+  }
+
+  ctx.fillStyle='rgba(57,220,0,0.4)'; ctx.font='8px Courier New';
+  ctx.textAlign='left'; ctx.fillText(`FLOW FIELD  N:${particles.length}`,6,13);
+  ctx.textAlign='right'; ctx.fillText(`t:${ptTime.toFixed(1)}`,cw-6,13);
+  ctx.textAlign='left';
+}
+
+// ─────────────────────────────────────────────────────────────────
+// 오른쪽 패널 (기존 레이더 + 디코드 미리보기)
+// ─────────────────────────────────────────────────────────────────
+const radarCanvas = document.getElementById('radarCanvas');
+const radarCtx    = radarCanvas.getContext('2d');
+radarCanvas.width  = 220; radarCanvas.height = 380;
+let rAngle=0, rTick=0;
+const rBlips=[
+  {angle:0.52,dist:0.5,locked:true, life:0,maxLife:120,vx:0.002,vy:0.001},
+  {angle:2.1, dist:0.35,locked:false,life:0,maxLife:90, vx:-0.001,vy:0.002},
+  {angle:4.2, dist:0.65,locked:false,life:0,maxLife:100,vx:0.003,vy:-0.001},
+  {angle:5.5, dist:0.25,locked:false,life:0,maxLife:80, vx:-0.002,vy:-0.002},
+];
+function drawRightPanel(){
+  const RW=220,RH=380,RZONE=210;
+  radarCtx.fillStyle='rgba(0,0,0,0.14)'; radarCtx.fillRect(0,0,RW,RH);
+  rTick++;
+  const cx=RW/2,cy=RZONE/2,R=Math.min(RW/2-14,RZONE/2-14);
+  [0.33,0.66,1].forEach((s,i)=>{
+    radarCtx.strokeStyle=`rgba(57,220,0,${0.1+i*0.06})`; radarCtx.lineWidth=0.7;
+    radarCtx.beginPath(); radarCtx.arc(cx,cy,R*s,0,Math.PI*2); radarCtx.stroke();
+  });
+  radarCtx.strokeStyle='rgba(57,220,0,0.08)'; radarCtx.lineWidth=0.5;
+  [0,Math.PI/4,Math.PI/2,Math.PI*3/4].forEach(a=>{
+    radarCtx.beginPath();
+    radarCtx.moveTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+    radarCtx.lineTo(cx-Math.cos(a)*R,cy-Math.sin(a)*R); radarCtx.stroke();
+  });
+  for(let i=0;i<40;i++){
+    const a=rAngle-(i/40)*Math.PI/3.5;
+    radarCtx.strokeStyle=`rgba(57,220,0,${Math.pow(1-i/40,1.5)*0.5})`;
+    radarCtx.lineWidth=1.2;
+    radarCtx.beginPath(); radarCtx.moveTo(cx,cy);
+    radarCtx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R); radarCtx.stroke();
+  }
+  radarCtx.strokeStyle='#7fff7f'; radarCtx.lineWidth=1.8;
+  radarCtx.beginPath(); radarCtx.moveTo(cx,cy);
+  radarCtx.lineTo(cx+Math.cos(rAngle)*R,cy+Math.sin(rAngle)*R); radarCtx.stroke();
+  rBlips.forEach(b=>{
+    b.angle+=b.vx; b.dist+=b.vy;
+    if(b.dist<0.1||b.dist>0.9)b.vy*=-1;
+    const da=((rAngle-b.angle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+    if(da<0.07||da>Math.PI*2-0.07)b.life=b.maxLife;
+    if(b.life<=0)return;
+    const alpha=b.life/b.maxLife;
+    const bx=cx+Math.cos(b.angle)*R*b.dist,by=cy+Math.sin(b.angle)*R*b.dist;
+    if(b.locked){
+      const pulse=Math.sin(rTick*0.15)*0.5+0.5;
+      radarCtx.strokeStyle=`rgba(100,255,100,${alpha*pulse})`; radarCtx.lineWidth=1;
+      radarCtx.beginPath(); radarCtx.arc(bx,by,5+pulse*3,0,Math.PI*2); radarCtx.stroke();
+    } else {
+      radarCtx.fillStyle=`rgba(100,255,100,${alpha*0.85})`;
+      radarCtx.beginPath(); radarCtx.arc(bx,by,2.5,0,Math.PI*2); radarCtx.fill();
+    }
+    b.life--;
+  });
+  radarCtx.fillStyle='rgba(57,220,0,0.45)'; radarCtx.font='bold 7px Courier New';
+  radarCtx.textAlign='center';
+  radarCtx.fillText('N',cx,cy-R-3); radarCtx.fillText('S',cx,cy+R+10);
+  radarCtx.textAlign='left';
+  radarCtx.fillText('E',cx+R+3,cy+3); radarCtx.fillText('W',cx-R-9,cy+3);
+  radarCtx.fillStyle='rgba(57,220,0,0.45)'; radarCtx.font='7px Courier New';
+  radarCtx.fillText(`BRG:${(((rAngle*180/Math.PI)%360+360)%360).toFixed(0).padStart(4)}°`,3,10);
+  radarCtx.fillText(`TGT:${rBlips.filter(b=>b.life>0).length}`,3,20);
+
+  // 구분선
+  radarCtx.strokeStyle='rgba(57,220,0,0.15)'; radarCtx.lineWidth=1;
+  radarCtx.setLineDash([3,5]);
+  radarCtx.beginPath(); radarCtx.moveTo(8,RZONE+3); radarCtx.lineTo(RW-8,RZONE+3); radarCtx.stroke();
+  radarCtx.setLineDash([]);
+
+  // 디코드 미니
+  radarCtx.fillStyle='rgba(57,220,0,0.35)'; radarCtx.font='7px Courier New'; radarCtx.textAlign='left';
+  radarCtx.fillText('DECRYPT v2.4', 6, RZONE+14);
+  const msgs=['SET WORLD DIRECTORY','ACCESSING FILES...','>>> AUTH: RESTRICTED','KERNEL: OK'];
+  msgs.forEach((m,i)=>{
+    const y=RZONE+28+i*19;
+    radarCtx.fillStyle=`rgba(57,220,0,${0.15+Math.random()*0.2})`;
+    radarCtx.font='7px Courier New';
+    radarCtx.fillText(`[0${i}] `,6,y);
+    radarCtx.fillStyle=`rgba(57,220,0,${0.5+Math.random()*0.4})`;
+    radarCtx.font='bold 8px Courier New';
+    const partial=m.slice(0,Math.floor(m.length*(0.5+Math.random()*0.5)));
+    radarCtx.fillText(partial,32,y);
+  });
+
+  rAngle+=0.035;
+  for(let y=0;y<RH;y+=2){radarCtx.fillStyle='rgba(0,0,0,0.07)';radarCtx.fillRect(0,y,RW,1);}
+}
+setInterval(drawRightPanel, 40);
+
+// ─────────────────────────────────────────────────────────────────
+// 메인 + 목 공유 드로우
+// ─────────────────────────────────────────────────────────────────
+const RENDERS = {
+  wire:     renderWire,
+  rd:       renderRD,
+  cctv:     renderCCTV,
+  liss:     renderLiss,
+  particle: renderParticle,
+};
+const INITS = {
+  wire:     initWire,
+  rd:       initRD,
+  cctv:     initCCTV,
+  liss:     initLiss,
+  particle: initParticle,
+};
+
+function tick() {
+  // main preview
+  RENDERS[currentAnim](mainCtx, W, H);
+  // mock left panel (220×380)
+  RENDERS[currentAnim](mockCtx, 200, 380);
+}
+
+function switchAnim(name) {
+  currentAnim = name;
+  document.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+name).classList.add('active');
+  document.getElementById('animDesc').textContent = DESCS[name];
+  INITS[name]();
+  // clear canvases
+  mainCtx.clearRect(0,0,W,H);
+  mockCtx.clearRect(0,0,200,380);
+}
+
+function init() {
+  resizeMain();
+  mockCanvas.width=200; mockCanvas.height=380;
+  window.addEventListener('resize', ()=>{resizeMain();});
+  // init all
+  Object.values(INITS).forEach(f=>f());
+  setInterval(tick, 40);
+}
+
+init();
+</script>
+</body>
+</html>
