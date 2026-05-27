@@ -2760,6 +2760,30 @@ REQUIRE LOGIN: No (Public access enabled)
         currentLevelTitle = levelTitle;
         updateTitle(levelTitle);
 
+        // ── 스캔 애니메이션 ──
+        (function() {
+          if (!document.getElementById('csScanStyle')) {
+            const st = document.createElement('style');
+            st.id = 'csScanStyle';
+            st.textContent = [
+              '@keyframes csScanLine{0%{top:-2px}100%{top:calc(100% + 2px)}}',
+              '@keyframes csScanTrail{0%{height:0%}100%{height:100%}}'
+            ].join('');
+            document.head.appendChild(st);
+          }
+          const par = container.parentElement;
+          par.querySelector('#csScanOverlay')?.remove();
+          const ov = document.createElement('div');
+          ov.id = 'csScanOverlay';
+          ov.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:50;pointer-events:none;overflow:hidden;';
+          ov.innerHTML =
+            '<div style="position:absolute;left:0;width:100%;height:2px;background:#39dc00;box-shadow:0 0 10px #39dc00,0 0 30px rgba(57,220,0,0.4);animation:csScanLine 0.35s linear forwards;"></div>' +
+            '<div style="position:absolute;top:0;left:0;width:100%;background:linear-gradient(to bottom,rgba(57,220,0,0.07),rgba(57,220,0,0.01));animation:csScanTrail 0.35s linear forwards;"></div>';
+          if (getComputedStyle(par).position === 'static') par.style.position = 'relative';
+          par.appendChild(ov);
+          setTimeout(function(){ ov.remove(); }, 500);
+        })();
+
         // 페이드 트랜지션
         container.style.transition = 'opacity 0.25s ease';
         container.style.opacity = '0';
