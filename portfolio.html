@@ -2562,6 +2562,7 @@ REQUIRE LOGIN: No (Public access enabled)
           ">✕</button>
         </div>
         <div id="csOverlayBody" style="flex:1;overflow:hidden;min-height:0;"></div>
+        <div id="csWaveformBot" style="flex-shrink:0;background:#000;border-top:1px solid #39dc00;padding:1px 0;font-family:monospace;font-size:${isMobileOverlay ? '8px' : '11px'};color:rgba(57,220,0,0.5);letter-spacing:1px;overflow:hidden;white-space:nowrap;text-align:center;"></div>
       `;
 
       document.body.appendChild(overlay);
@@ -2570,18 +2571,23 @@ REQUIRE LOGIN: No (Public access enabled)
       // 파형 애니메이션
       const BARS = ['▁','▂','▃','▄','▅','▆','▇','█'];
       const BAR_COUNT = 80;
-      let waveOffset = 0;
+      let waveOffset = 0, waveOffsetBot = Math.PI;
       function renderWave() {
         const el = document.getElementById('csWaveform');
-        if (!el) return;
-        let s = '';
+        const elBot = document.getElementById('csWaveformBot');
+        let s = '', sBot = '';
         for (let i = 0; i < BAR_COUNT; i++) {
           const val = Math.sin((i + waveOffset) * 0.45) * 0.5 + Math.sin((i + waveOffset) * 0.9) * 0.3 + Math.sin((i + waveOffset * 1.3) * 0.3) * 0.2;
           const idx = Math.round((val + 1) / 2 * (BARS.length - 1));
           s += BARS[Math.max(0, Math.min(BARS.length - 1, idx))];
+          const valB = Math.sin((i + waveOffsetBot) * 0.6) * 0.4 + Math.sin((i + waveOffsetBot) * 1.1) * 0.35 + Math.sin((i + waveOffsetBot * 0.8) * 0.25) * 0.25;
+          const idxB = Math.round((valB + 1) / 2 * (BARS.length - 1));
+          sBot += BARS[Math.max(0, Math.min(BARS.length - 1, idxB))];
         }
-        el.textContent = s;
+        if (el) el.textContent = s;
+        if (elBot) elBot.textContent = sBot;
         waveOffset += 0.4;
+        waveOffsetBot += 0.3;
       }
       const waveTimer = setInterval(renderWave, 60);
       overlay.addEventListener('remove', () => clearInterval(waveTimer));
