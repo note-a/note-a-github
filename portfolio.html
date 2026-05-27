@@ -1261,9 +1261,6 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <span style="color:#b0b0b0;">SELECT FILE</span>
       </div>
     </div>
-    <!-- DECO PANEL -->
-    <canvas id="decoPanel" width="18" style="display:block;flex-shrink:0;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:1px solid #1a5500;"></canvas>
-
     <!-- RIGHT: TERMINAL SECTION -->
     <div class="terminal-section">
       <div class="terminal-titlebar">
@@ -3632,37 +3629,6 @@ REQUIRE LOGIN: No (Public access enabled)
       ix.style.left = left + 'px';
       ix.style.top  = top + 'px';
     }
-
-    // ── DECO PANEL ANIMATION (4+5 혼합) ──
-    (function(){
-      const cv = document.getElementById('decoPanel');
-      if (!cv) return;
-      const G = '#39dc00';
-      let t = 0, sparks = [], tick = 0;
-      function resize() {
-        cv.height = cv.parentElement ? cv.parentElement.offsetHeight : window.innerHeight;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-      function draw() {
-        const H = cv.height;
-        t += 0.013; tick++;
-        const ctx = cv.getContext('2d');
-        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 18, H);
-        const h = Math.abs(Math.sin(t)) * (H * 0.6);
-        ctx.fillStyle = G;
-        ctx.fillRect(7, H/2 - h/2, 4, h);
-        if (tick % 10 === 0) sparks.push({ y: Math.floor(Math.random() * H), life: 14 });
-        sparks = sparks.filter(s => {
-          ctx.fillStyle = G;
-          ctx.fillRect(3, s.y, 3, 2);
-          ctx.fillRect(12, s.y, 3, 2);
-          return --s.life > 0;
-        });
-        requestAnimationFrame(draw);
-      }
-      draw();
-    })();
 
     document.addEventListener('DOMContentLoaded', function() {
       const closeBtn = document.getElementById('ixCloseBtn');
