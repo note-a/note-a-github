@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LEFT PANEL ANIMATION SAMPLES (A–E)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #00ff00;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 { color: #00ff00; margin-bottom: 30px; text-shadow: 0 0 10px #00ff00; }
+
+    .ctrl-panel {
+      margin-bottom: 20px;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      background: rgba(0, 255, 0, 0.05);
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      background: #1a3a1a;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+    button:hover { background: #00ff00; color: #000; text-shadow: none; }
+    button.active { background: #00ff00; color: #000; box-shadow: 0 0 10px #00ff00; }
+
+    .preview-section {
+      margin-bottom: 40px;
+      border: 1px solid #00ff0055;
+      padding: 15px;
+      background: rgba(0, 255, 0, 0.02);
+    }
+    .preview-title {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #00ff00;
+      text-shadow: 0 0 5px #00ff00;
+    }
+    .preview-row {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .main-preview {
+      flex: 1;
+      min-width: 300px;
+    }
+    .main-preview canvas {
+      width: 100%;
+      height: auto;
+      border: 1px solid #00ff00;
+      background: #000;
+      display: block;
+    }
+    .mock-layout {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      border: 1px dashed #00ff0055;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+    .mock-left {
+      width: 200px;
+      height: 380px;
+      border: 1px solid #00ff0055;
+      background: #000;
+    }
+    .mock-left canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .mock-center {
+      width: 300px;
+      text-align: center;
+      color: #00ff0077;
+      font-size: 11px;
+      padding: 20px 10px;
+      border: 1px solid #00ff0055;
+      background: #000;
+    }
+    .mock-right {
+      width: 220px;
+      height: 380px;
+      border: 1px solid #00ff0055;
+      background: #000;
+    }
+    .mock-right canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .info {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #00ff0088;
+    }
+  </style>
+</head>
+<body>
+
+<h1>► LEFT PANEL ANIMATION SAMPLES (A–E)</h1>
+
+<div class="ctrl-panel">
+  <div class="btn-group">
+    <button id="btnA" class="active">A. ACCESS CARD</button>
+    <button id="btnB">B. SYSTEM MONITOR</button>
+    <button id="btnC">C. ASCII SET</button>
+    <button id="btnD">D. FILE TREE</button>
+    <button id="btnE">E. SIGNAL/BROADCAST</button>
+  </div>
+</div>
+
+<div id="previewA" class="preview-section">
+  <div class="preview-title">A. ACCESS CARD — ID 카드 느낌, 가끔 글리치</div>
+  <div class="preview-row">
+    <div class="main-preview">
+      <canvas id="mainCanvasA" width="380" height="220"></canvas>
+    </div>
+    <div class="mock-layout">
+      <div class="mock-left"><canvas id="mockCanvasA" width="200" height="380"></canvas></div>
+      <div class="mock-center">FOLDER<br>WINDOW</div>
+      <div class="mock-right"><canvas id="mockRadarA" width="220" height="380"></canvas></div>
+    </div>
+  </div>
+  <div class="info">프로젝트 코드, 접근 레벨, 발급일, 바코드 라인 + 가끔 글리치 깜빡임</div>
+</div>
+
+<div id="previewB" class="preview-section" style="display:none;">
+  <div class="preview-title">B. SYSTEM MONITOR — CPU/MEM/DISK 게이지 + 프로세스</div>
+  <div class="preview-row">
+    <div class="main-preview">
+      <canvas id="mainCanvasB" width="380" height="220"></canvas>
+    </div>
+    <div class="mock-layout">
+      <div class="mock-left"><canvas id="mockCanvasB" width="200" height="380"></canvas></div>
+      <div class="mock-center">FOLDER<br>WINDOW</div>
+      <div class="mock-right"><canvas id="mockRadarB" width="220" height="380"></canvas></div>
+    </div>
+  </div>
+  <div class="info">실시간 숫자 변동하는 게이지, SET.EXE, KERNEL, RENDER 등 프로세스 목록</div>
+</div>
+
+<div id="previewC" class="preview-section" style="display:none;">
+  <div class="preview-title">C. ASCII SET — 큰 ASCII 글자 + 스캔라인 / 노이즈</div>
+  <div class="preview-row">
+    <div class="main-preview">
+      <canvas id="mainCanvasC" width="380" height="220"></canvas>
+    </div>
+    <div class="mock-layout">
+      <div class="mock-left"><canvas id="mockCanvasC" width="200" height="380"></canvas></div>
+      <div class="mock-center">FOLDER<br>WINDOW</div>
+      <div class="mock-right"><canvas id="mockRadarC" width="220" height="380"></canvas></div>
+    </div>
+  </div>
+  <div class="info">큰 ASCII 아트 "SET" 텍스트, 스캔라인 및 노이즈 효과</div>
+</div>
+
+<div id="previewD" class="preview-section" style="display:none;">
+  <div class="preview-title">D. FILE TREE — 커서 탐색 애니메이션</div>
+  <div class="preview-row">
+    <div class="main-preview">
+      <canvas id="mainCanvasD" width="380" height="220"></canvas>
+    </div>
+    <div class="mock-layout">
+      <div class="mock-left"><canvas id="mockCanvasD" width="200" height="380"></canvas></div>
+      <div class="mock-center">FOLDER<br>WINDOW</div>
+      <div class="mock-right"><canvas id="mockRadarD" width="220" height="380"></canvas></div>
+    </div>
+  </div>
+  <div class="info">C:\WORLD\SET\ 폴더 트리, 커서가 천천히 항목들을 탐색</div>
+</div>
+
+<div id="previewE" class="preview-section" style="display:none;">
+  <div class="preview-title">E. SIGNAL/BROADCAST — 전파 신호 효과</div>
+  <div class="preview-row">
+    <div class="main-preview">
+      <canvas id="mainCanvasE" width="380" height="220"></canvas>
+    </div>
+    <div class="mock-layout">
+      <div class="mock-left"><canvas id="mockCanvasE" width="200" height="380"></canvas></div>
+      <div class="mock-center">FOLDER<br>WINDOW</div>
+      <div class="mock-right"><canvas id="mockRadarE" width="220" height="380"></canvas></div>
+    </div>
+  </div>
+  <div class="info">"SET IS THE WORLD" 텍스트가 노이즈 섞이며 나타났다 사라짐</div>
+</div>
+
+<script>
+  const W = 380, H = 220;
+  const MOCK_W = 200, MOCK_H = 380;
+  const RADAR_W = 220, RADAR_H = 380;
+
+  let currentAnim = 'A';
+  let frame = 0;
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // A. ACCESS CARD
+  // ═══════════════════════════════════════════════════════════════════════════
+  let cardGlitchPhase = 0;
+  const initAccessCard = () => { cardGlitchPhase = 0; };
+  const renderAccessCard = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+
+    const glitch = Math.sin(frame * 0.05) > 0.7 && Math.random() > 0.6;
+
+    // Card border
+    ctx.strokeStyle = glitch ? '#ff00ff' : '#00ff00';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(10, 10, cw - 20, ch - 20);
+
+    ctx.fillStyle = glitch ? '#ff00ff66' : '#00ff0022';
+    ctx.fillRect(10, 10, cw - 20, ch - 20);
+
+    ctx.font = 'bold 12px monospace';
+    ctx.fillStyle = glitch ? '#ff00ff' : '#00ff00';
+    ctx.fillText('ACCESS CARD', 20, 35);
+
+    ctx.font = '10px monospace';
+    ctx.fillStyle = '#00ff00';
+    let y = 60;
+    ctx.fillText('PROJECT CODE: SETv4.2', 20, y); y += 20;
+    ctx.fillText('LEVEL: ADMIN', 20, y); y += 20;
+    ctx.fillText('ISSUED: 2026-01-15', 20, y); y += 20;
+    ctx.fillText('ARTIST: note-a', 20, y); y += 30;
+
+    // Barcode lines
+    ctx.strokeStyle = glitch ? '#ff00ff' : '#00ff00';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 6; i++) {
+      const bx = 20 + i * 8;
+      const by1 = 150 + Math.sin(frame * 0.08 + i) * 3;
+      const by2 = by1 + 20;
+      ctx.beginPath();
+      ctx.moveTo(bx, by1);
+      ctx.lineTo(bx, by2);
+      ctx.stroke();
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // B. SYSTEM MONITOR
+  // ═══════════════════════════════════════════════════════════════════════════
+  let sysMonCPU = 50, sysMonMEM = 60, sysMonDISK = 40;
+  const initSystemMonitor = () => { sysMonCPU = 50; sysMonMEM = 60; sysMonDISK = 40; };
+  const renderSystemMonitor = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Animate gauges
+    sysMonCPU += (Math.random() - 0.5) * 5;
+    sysMonMEM += (Math.random() - 0.5) * 4;
+    sysMonDISK += (Math.random() - 0.5) * 3;
+    sysMonCPU = Math.max(20, Math.min(90, sysMonCPU));
+    sysMonMEM = Math.max(30, Math.min(85, sysMonMEM));
+    sysMonDISK = Math.max(10, Math.min(75, sysMonDISK));
+
+    ctx.font = 'bold 11px monospace';
+    ctx.fillStyle = '#00ff00';
+    let y = 20;
+    ctx.fillText('SYSTEM MONITOR', 10, y);
+
+    y += 25;
+    ctx.font = '9px monospace';
+
+    // CPU
+    ctx.fillText('CPU', 10, y);
+    ctx.fillText(sysMonCPU.toFixed(0) + '%', cw - 40, y);
+    ctx.strokeStyle = '#00ff0044';
+    ctx.strokeRect(10, y + 5, cw - 20, 10);
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(10, y + 5, (cw - 20) * sysMonCPU / 100, 10);
+    y += 22;
+
+    // MEM
+    ctx.fillStyle = '#00ff00';
+    ctx.fillText('MEM', 10, y);
+    ctx.fillText(sysMonMEM.toFixed(0) + '%', cw - 40, y);
+    ctx.strokeStyle = '#00ff0044';
+    ctx.strokeRect(10, y + 5, cw - 20, 10);
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(10, y + 5, (cw - 20) * sysMonMEM / 100, 10);
+    y += 22;
+
+    // DISK
+    ctx.fillStyle = '#00ff00';
+    ctx.fillText('DISK', 10, y);
+    ctx.fillText(sysMonDISK.toFixed(0) + '%', cw - 40, y);
+    ctx.strokeStyle = '#00ff0044';
+    ctx.strokeRect(10, y + 5, cw - 20, 10);
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(10, y + 5, (cw - 20) * sysMonDISK / 100, 10);
+    y += 30;
+
+    // Process list
+    ctx.font = '8px monospace';
+    ctx.fillStyle = '#00ff0088';
+    ctx.fillText('PROCESS', 10, y);
+    y += 12;
+
+    const processes = [
+      { name: 'SET.EXE', mem: 45 },
+      { name: 'KERNEL', mem: 28 },
+      { name: 'RENDER', mem: 18 }
+    ];
+    processes.forEach(p => {
+      p.mem += (Math.random() - 0.5) * 3;
+      p.mem = Math.max(5, Math.min(50, p.mem));
+      ctx.fillStyle = '#00ff00';
+      ctx.fillText(p.name + ': ' + p.mem.toFixed(0) + 'M', 10, y);
+      y += 12;
+    });
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // C. ASCII SET
+  // ═══════════════════════════════════════════════════════════════════════════
+  const asciiS = [
+    ' ███████ ',
+    '██      ',
+    '███████ ',
+    '      ██',
+    '███████ '
+  ];
+  const asciiE = [
+    '████████',
+    '██      ',
+    '██████  ',
+    '██      ',
+    '████████'
+  ];
+  const asciiT = [
+    '████████',
+    '   ██   ',
+    '   ██   ',
+    '   ██   ',
+    '   ██   '
+  ];
+
+  const initASCIISET = () => {};
+  const renderASCIISET = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+
+    ctx.font = '7px monospace';
+    ctx.fillStyle = '#00ff00';
+
+    let x = 20;
+    const ascii = [asciiS, asciiE, asciiT];
+    const spacing = (cw - 60) / 3;
+
+    ascii.forEach((chars, idx) => {
+      const px = x + idx * spacing;
+      chars.forEach((line, lineIdx) => {
+        ctx.fillText(line, px, 30 + lineIdx * 8);
+      });
+    });
+
+    // Scanlines
+    ctx.strokeStyle = '#00ff0033';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < ch; i += 3) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(cw, i);
+      ctx.stroke();
+    }
+
+    // Random noise glitch
+    if (Math.random() > 0.85) {
+      ctx.fillStyle = '#ff00ff';
+      const nx = Math.random() * cw;
+      const ny = Math.random() * ch;
+      ctx.fillRect(nx, ny, 20, 15);
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // D. FILE TREE
+  // ═══════════════════════════════════════════════════════════════════════════
+  let treeSelection = 0;
+  const treeItems = [
+    { name: 'C:\\WORLD\\SET\\', level: 0 },
+    { name: 'PROJECT\\', level: 1 },
+    { name: '0928\\', level: 2 },
+    { name: '0112\\', level: 2 },
+    { name: 'INCLUSION\\', level: 1 },
+    { name: 'ARCHIVE\\', level: 1 }
+  ];
+  const initFileTree = () => { treeSelection = 0; };
+  const renderFileTree = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+
+    treeSelection = (frame / 30) % treeItems.length;
+
+    ctx.font = '11px monospace';
+    ctx.fillStyle = '#00ff00';
+
+    let y = 30;
+    treeItems.forEach((item, idx) => {
+      const isSelected = Math.abs(treeSelection - idx) < 1;
+      ctx.fillStyle = isSelected ? '#00ff00' : '#00ff0066';
+
+      const indent = '  '.repeat(item.level);
+      const prefix = item.level > 0 ? '├─ ' : '';
+      ctx.fillText(prefix + item.name, 15, y);
+
+      if (isSelected) {
+        ctx.strokeStyle = '#00ff00';
+        ctx.strokeRect(10, y - 12, cw - 20, 14);
+      }
+
+      y += 20;
+    });
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // E. SIGNAL / BROADCAST
+  // ═══════════════════════════════════════════════════════════════════════════
+  const initSignalBroadcast = () => {};
+  const renderSignalBroadcast = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+
+    const signalStrength = (Math.sin(frame * 0.03) + 1) / 2;
+    const textAlpha = Math.sin(frame * 0.04) * 0.5 + 0.5;
+    const noiseAmount = (1 - signalStrength) * 0.7;
+
+    ctx.font = 'bold 18px monospace';
+    ctx.fillStyle = `rgba(0, 255, 0, ${textAlpha})`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const text = 'SET IS THE';
+    ctx.fillText(text, cw / 2, ch / 2 - 20);
+
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText('WORLD', cw / 2, ch / 2 + 20);
+
+    // Signal strength bars
+    ctx.font = '9px monospace';
+    ctx.fillStyle = '#00ff0066';
+    ctx.fillText('[', cw / 2 - 60, ch / 2 + 60);
+    for (let i = 0; i < 5; i++) {
+      if (i < signalStrength * 5) {
+        ctx.fillStyle = '#00ff00';
+        ctx.fillRect(cw / 2 - 55 + i * 8, ch / 2 + 50, 6, 10);
+      } else {
+        ctx.strokeStyle = '#00ff0044';
+        ctx.strokeRect(cw / 2 - 55 + i * 8, ch / 2 + 50, 6, 10);
+      }
+    }
+    ctx.fillStyle = '#00ff0066';
+    ctx.fillText(']', cw / 2 + 50, ch / 2 + 60);
+
+    // Noise overlay
+    if (noiseAmount > 0.1) {
+      const imgData = ctx.getImageData(0, 0, cw, ch);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        if (Math.random() < noiseAmount * 0.5) {
+          data[i + 1] += Math.random() * 100 - 50;
+        }
+      }
+      ctx.putImageData(imgData, 0, 0);
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // RENDER SETUP
+  // ═══════════════════════════════════════════════════════════════════════════
+  const RENDERS = {
+    'A': renderAccessCard,
+    'B': renderSystemMonitor,
+    'C': renderASCIISET,
+    'D': renderFileTree,
+    'E': renderSignalBroadcast
+  };
+
+  const INITS = {
+    'A': initAccessCard,
+    'B': initSystemMonitor,
+    'C': initASCIISET,
+    'D': initFileTree,
+    'E': initSignalBroadcast
+  };
+
+  // Dummy radar render for right panel
+  const renderRadar = (ctx, cw, ch) => {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.strokeStyle = '#00ff0033';
+    ctx.beginPath();
+    ctx.arc(cw / 2, ch / 2, 50, 0, Math.PI * 2);
+    ctx.stroke();
+  };
+
+  const canvasPairs = [
+    { main: 'mainCanvasA', mock: 'mockCanvasA', radar: 'mockRadarA' },
+    { main: 'mainCanvasB', mock: 'mockCanvasB', radar: 'mockRadarB' },
+    { main: 'mainCanvasC', mock: 'mockCanvasC', radar: 'mockRadarC' },
+    { main: 'mainCanvasD', mock: 'mockCanvasD', radar: 'mockRadarD' },
+    { main: 'mainCanvasE', mock: 'mockCanvasE', radar: 'mockRadarE' }
+  ];
+
+  const contexts = {};
+  canvasPairs.forEach(pair => {
+    contexts[pair.main] = document.getElementById(pair.main).getContext('2d');
+    contexts[pair.mock] = document.getElementById(pair.mock).getContext('2d');
+    contexts[pair.radar] = document.getElementById(pair.radar).getContext('2d');
+  });
+
+  const render = () => {
+    frame++;
+
+    canvasPairs.forEach((pair, idx) => {
+      const letter = String.fromCharCode(65 + idx); // A, B, C, D, E
+      const renderFn = RENDERS[letter];
+
+      // Main canvas
+      renderFn(contexts[pair.main], W, H);
+
+      // Mock canvases
+      renderFn(contexts[pair.mock], MOCK_W, MOCK_H);
+      renderRadar(contexts[pair.radar], RADAR_W, RADAR_H);
+    });
+
+    requestAnimationFrame(render);
+  };
+
+  // Button controls
+  document.getElementById('btnA').addEventListener('click', () => switchAnim('A'));
+  document.getElementById('btnB').addEventListener('click', () => switchAnim('B'));
+  document.getElementById('btnC').addEventListener('click', () => switchAnim('C'));
+  document.getElementById('btnD').addEventListener('click', () => switchAnim('D'));
+  document.getElementById('btnE').addEventListener('click', () => switchAnim('E'));
+
+  const switchAnim = (name) => {
+    currentAnim = name;
+    INITS[name]();
+    frame = 0;
+
+    // Hide all sections, show selected
+    ['A', 'B', 'C', 'D', 'E'].forEach(letter => {
+      document.getElementById('preview' + letter).style.display = 'none';
+    });
+    document.getElementById('preview' + name).style.display = 'block';
+
+    // Update button states
+    ['A', 'B', 'C', 'D', 'E'].forEach(letter => {
+      document.getElementById('btn' + letter).classList.remove('active');
+    });
+    document.getElementById('btn' + name).classList.add('active');
+  };
+
+  render();
+</script>
+
+</body>
+</html>
