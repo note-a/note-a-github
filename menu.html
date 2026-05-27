@@ -29,41 +29,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .folder-window {
-  border: 1px solid rgba(57,220,0,0.18);
+  border: 1.5px solid #39dc00;
   background: #000;
   width: 520px;
   height: 400px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(57,220,0,0.12);
+  box-shadow: 0 0 14px rgba(57,220,0,0.65), 0 0 32px rgba(57,220,0,0.2);
   position: relative;
 }
 
-/* 카드 코너 브래킷 */
-.folder-window::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  background:
-    linear-gradient(#39dc00,#39dc00) top    left  / 12px 1.5px no-repeat,
-    linear-gradient(#39dc00,#39dc00) top    left  / 1.5px 12px no-repeat,
-    linear-gradient(#39dc00,#39dc00) top    right / 12px 1.5px no-repeat,
-    linear-gradient(#39dc00,#39dc00) top    right / 1.5px 12px no-repeat,
-    linear-gradient(#39dc00,#39dc00) bottom left  / 12px 1.5px no-repeat,
-    linear-gradient(#39dc00,#39dc00) bottom left  / 1.5px 12px no-repeat,
-    linear-gradient(#39dc00,#39dc00) bottom right / 12px 1.5px no-repeat,
-    linear-gradient(#39dc00,#39dc00) bottom right / 1.5px 12px no-repeat;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* 안쪽 점선 */
+/* 안쪽 점선 (카드와 동일) */
 .folder-window::after {
   content: '';
   position: absolute;
   inset: 4px;
-  border: 1px dashed rgba(57,220,0,0.1);
+  border: 1px dashed rgba(57,220,0,0.15);
   pointer-events: none;
   z-index: 2;
 }
@@ -206,6 +188,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   justify-content: space-between;
   text-align: center;
+}
+
+#loadingCanvas {
+  border: 1.5px solid #39dc00;
+  box-shadow: 0 0 14px rgba(57,220,0,0.65), 0 0 32px rgba(57,220,0,0.2);
 }
 
 @media (max-width: 768px) {
