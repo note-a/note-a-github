@@ -8,6 +8,54 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
+/* ── WARNING POPUP ── */
+#warnPopup {
+  position: fixed; bottom: 20px; left: 20px;
+  width: 260px; z-index: 9999;
+  border: 1px solid #ff2222;
+  background: #000;
+  font-family: 'Courier New', monospace;
+  transform: translateY(10px); opacity: 0;
+  animation: wp-enter 0.3s ease 0.8s forwards;
+}
+@keyframes wp-enter { to { transform: translateY(0); opacity: 1; } }
+#warnPopup .wp-top {
+  padding: 5px 10px; background: #ff2222;
+  display: flex; justify-content: space-between; align-items: center;
+}
+#warnPopup .wp-top .wp-left { display: flex; align-items: center; gap: 7px; }
+#warnPopup .wp-dot { width: 4px; height: 4px; background: #fff; animation: wp-blink 1s step-end infinite; }
+@keyframes wp-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+#warnPopup .wp-title { font-size: 10px; color: #fff; letter-spacing: 1px; }
+#warnPopup .wp-x { font-size: 11px; color: rgba(255,255,255,0.5); cursor: pointer; padding: 0 2px; }
+#warnPopup .wp-x:hover { color: #fff; }
+#warnPopup .wp-body {
+  padding: 10px 12px 8px; font-size: 11px;
+  color: #39dc00; line-height: 1.7;
+  transition: opacity 0.3s ease;
+}
+#warnPopup .wp-log {
+  border-top: 1px solid rgba(57,220,0,0.08);
+  padding: 4px 10px; height: 36px; overflow: hidden;
+}
+#warnPopup .wp-log-line {
+  font-size: 9px; color: rgba(57,220,0,0.35);
+  line-height: 1.9; white-space: nowrap;
+}
+#warnPopup .wp-bar-wrap { margin: 4px 10px 0; height: 2px; background: rgba(57,220,0,0.1); }
+#warnPopup .wp-bar-fill { height: 2px; background: #ff2222; width: 100%; }
+#warnPopup .wp-bot {
+  padding: 5px 10px; border-top: 1px solid rgba(255,34,34,0.13);
+  display: flex; justify-content: space-between; align-items: center; margin-top: 4px;
+}
+#warnPopup .wp-timer { font-size: 9px; color: rgba(255,34,34,0.4); }
+#warnPopup .wp-btn {
+  font-size: 9px; font-family: 'Courier New', monospace;
+  background: #000; border: none; color: rgba(57,220,0,0.2);
+  cursor: pointer; letter-spacing: 1px;
+}
+#warnPopup .wp-btn:hover { color: #39dc00; }
+
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
 .pm-blink { animation: pm-blink 1s infinite; }
@@ -4447,6 +4495,81 @@ REQUIRE LOGIN: No (Public access enabled)
     // 사이드바 렌더링 후 초기화
     setTimeout(() => { init(); draw(); }, 500);
     window.addEventListener('resize', () => { init(); });
+  })();
+  </script>
+
+  <!-- WARNING POPUP -->
+  <div id="warnPopup">
+    <div class="wp-top">
+      <div class="wp-left"><div class="wp-dot"></div><span class="wp-title">SYSTEM ALERT</span></div>
+      <span class="wp-x" id="wpClose">✕</span>
+    </div>
+    <div class="wp-body" id="wpText">! 비정상적인 접근이 감지되었습니다<br>— 세션이 기록됩니다</div>
+    <div class="wp-log" id="wpLog"></div>
+    <div class="wp-bar-wrap"><div class="wp-bar-fill" id="wpBar"></div></div>
+    <div class="wp-bot">
+      <span class="wp-timer" id="wpTimer">자동 닫힘 10s</span>
+      <button class="wp-btn" id="wpDismiss">DISMISS →</button>
+    </div>
+  </div>
+  <script>
+  (function(){
+    const warnings = [
+      '! 비정상적인 접근이 감지되었습니다<br>— 세션이 기록됩니다',
+      '! [ERR_0x4F3A] 허가되지 않은<br>접근 시도가 감지되었습니다',
+      '! 경고: 이 시스템은<br>현재 모니터링 중입니다',
+      '! 알 수 없는 오류가 감지되었습니다<br>— 즉시 연결을 종료하십시오',
+    ];
+    const logs = [
+      '[SYS] 세션 초기화 완료',
+      '[WARN] 비인가 접근 감지',
+      '[LOG] IP 기록 중...',
+      '[SYS] 모니터링 활성화',
+      '[WARN] 데이터 수집 시작',
+      '[LOG] 관리자 알림 발송',
+      '[SYS] 연결 추적 중...',
+    ];
+
+    const warnEl = document.getElementById('wpText');
+    let wCur = 0;
+    setInterval(() => {
+      wCur = (wCur + 1) % warnings.length;
+      warnEl.style.opacity = '0';
+      setTimeout(() => { warnEl.innerHTML = warnings[wCur]; warnEl.style.opacity = '1'; }, 150);
+    }, 2800);
+
+    const logBox = document.getElementById('wpLog');
+    let li = 0;
+    function addLog() {
+      const d = document.createElement('div');
+      d.className = 'wp-log-line';
+      d.textContent = logs[li % logs.length];
+      logBox.appendChild(d);
+      if (logBox.children.length > 2) logBox.removeChild(logBox.firstChild);
+      li++;
+    }
+    addLog(); setInterval(addLog, 1400);
+
+    let secs = 10;
+    const bar = document.getElementById('wpBar');
+    const timerEl = document.getElementById('wpTimer');
+    bar.style.transition = 'width 10s linear';
+    setTimeout(() => { bar.style.width = '0%'; }, 50);
+    const iv = setInterval(() => {
+      secs--;
+      timerEl.textContent = secs > 0 ? `자동 닫힘 ${secs}s` : '닫힘';
+      if (secs <= 0) { clearInterval(iv); close(); }
+    }, 1000);
+
+    function close() {
+      const p = document.getElementById('warnPopup');
+      if (!p) return;
+      p.style.transition = 'opacity 0.2s, transform 0.2s';
+      p.style.opacity = '0'; p.style.transform = 'translateY(10px)';
+      setTimeout(() => p.remove(), 220);
+    }
+    document.getElementById('wpClose').addEventListener('click', close);
+    document.getElementById('wpDismiss').addEventListener('click', close);
   })();
   </script>
 </body>
