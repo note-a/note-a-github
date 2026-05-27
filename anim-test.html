@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANIM TEST</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { background:#000; color:#39dc00; font-family:'Courier New',monospace; height:100%; }
+
+.selector {
+  display:flex; gap:8px; padding:12px 16px;
+  border-bottom:1px solid #39dc00;
+  overflow-x:auto;
+}
+.sel-btn {
+  background:#000; border:1px solid #39dc00; color:#39dc00;
+  font-family:'Courier New',monospace; font-size:10px;
+  padding:5px 12px; cursor:pointer; white-space:nowrap;
+  letter-spacing:1px; transition:all 0.1s;
+}
+.sel-btn:hover, .sel-btn.active {
+  background:#39dc00; color:#000;
+}
+
+.preview {
+  width:100%; height:90px;
+  border-bottom:1px solid #39dc00;
+}
+canvas { display:block; width:100%; height:100%; }
+
+.menu-mock {
+  max-width:700px; margin:20px auto;
+  border-top:2px solid #7fff4f;
+  border-left:2px solid #7fff4f;
+  border-bottom:2px solid #1a5500;
+  border-right:2px solid #1a5500;
+}
+.mock-title {
+  background:#39dc00; color:#000;
+  padding:6px 12px; font-size:12px; font-weight:bold;
+  display:flex; justify-content:space-between;
+}
+.mock-path { padding:6px 12px; font-size:11px; border-bottom:1px solid #39dc00; }
+.mock-items {
+  display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px;
+}
+.mock-item {
+  border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
+  border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
+  padding:16px; text-align:center; font-size:12px;
+}
+.mock-status {
+  padding:6px 12px; border-top:1px solid #39dc00;
+  font-size:10px; display:flex; justify-content:space-between;
+}
+</style>
+</head>
+<body>
+
+<div class="selector">
+  <button class="sel-btn active" onclick="switchAnim('life')">A. GAME OF LIFE</button>
+  <button class="sel-btn" onclick="switchAnim('radar')">B. RADAR</button>
+  <button class="sel-btn" onclick="switchAnim('warp')">C. WARP</button>
+  <button class="sel-btn" onclick="switchAnim('snake')">D. SNAKE</button>
+  <button class="sel-btn" onclick="switchAnim('osc')">E. OSCILLOSCOPE</button>
+  <button class="sel-btn" onclick="switchAnim('decode')">F. DECODE</button>
+</div>
+
+<div class="preview">
+  <canvas id="animCanvas"></canvas>
+</div>
+
+<div class="menu-mock">
+  <div class="mock-title">SET WORLD DIRECTORY <span>_ □ ✕</span></div>
+  <div class="mock-path">C:\WORLD\SET\</div>
+  <div class="mock-items">
+    <div class="mock-item">SET</div>
+    <div class="mock-item">SET Inclusion</div>
+    <div class="mock-item">entire</div>
+    <div class="mock-item">log</div>
+    <div class="mock-item">reference</div>
+    <div class="mock-item">Archive</div>
+  </div>
+  <div class="mock-status"><span>6 Files</span><span>ENTER to select</span></div>
+</div>
+
+<script>
+const canvas = document.getElementById('animCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, currentAnim = 'life', animInterval = null;
+
+function resize() {
+  const rect = canvas.getBoundingClientRect();
+  W = canvas.width  = Math.floor(rect.width);
+  H = canvas.height = Math.floor(rect.height);
+}
+resize();
+window.addEventListener('resize', () => { resize(); initAnim(currentAnim); });
+
+// ─────────────────────────────────────────────────────────────
+// A. CONWAY'S GAME OF LIFE
+// ─────────────────────────────────────────────────────────────
+let lifeGrid, lifeCols, lifeRows;
+const CELL = 7;
+
+function initLife() {
+  lifeCols = Math.floor(W / CELL);
+  lifeRows = Math.floor(H / CELL);
+  lifeGrid = Array.from({length: lifeRows}, () =>
+    Array.from({length: lifeCols}, () => Math.random() > 0.72 ? 1 : 0)
+  );
+}
+
+function stepLife() {
+  const next = Array.from({length: lifeRows}, () => new Array(lifeCols).fill(0));
+  for (let r = 0; r < lifeRows; r++) {
+    for (let c = 0; c < lifeCols; c++) {
+      let n = 0;
+      for (let dr = -1; dr <= 1; dr++)
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr===0 && dc===0) continue;
+          const nr = (r+dr+lifeRows)%lifeRows, nc = (c+dc+lifeCols)%lifeCols;
+          n += lifeGrid[nr][nc];
+        }
+      const alive = lifeGrid[r][c];
+      next[r][c] = (alive && (n===2||n===3)) || (!alive && n===3) ? 1 : 0;
+    }
+  }
+  lifeGrid = next;
+}
+
+let lifeAge = [];
+function drawLife() {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+  stepLife();
+  for (let r = 0; r < lifeRows; r++) {
+    for (let c = 0; c < lifeCols; c++) {
+      if (lifeGrid[r][c]) {
+        const bright = 0.4 + Math.random() * 0.6;
+        ctx.fillStyle = `rgba(57,220,0,${bright})`;
+        ctx.fillRect(c*CELL+1, r*CELL+1, CELL-2, CELL-2);
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// B. RADAR
+// ─────────────────────────────────────────────────────────────
+let radarAngle = 0;
+let radarBlips = [];
+
+function initRadar() {
+  radarBlips = Array.from({length: 14}, () => ({
+    angle: Math.random() * Math.PI * 2,
+    dist:  0.15 + Math.random() * 0.82,
+    life:  0,
+    maxLife: 60 + Math.floor(Math.random() * 80),
+  }));
+}
+
+function drawRadar() {
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.fillRect(0, 0, W, H);
+
+  const cx = W/2, cy = H/2;
+  const R  = Math.min(W, H) * 0.42;
+
+  // 동심원
+  ctx.strokeStyle = 'rgba(57,220,0,0.2)';
+  ctx.lineWidth = 0.8;
+  [0.33, 0.66, 1].forEach(s => {
+    ctx.beginPath(); ctx.arc(cx, cy, R*s, 0, Math.PI*2); ctx.stroke();
+  });
+
+  // 십자선
+  ctx.strokeStyle = 'rgba(57,220,0,0.15)';
+  ctx.beginPath(); ctx.moveTo(cx-R, cy); ctx.lineTo(cx+R, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy-R); ctx.lineTo(cx, cy+R); ctx.stroke();
+
+  // 스윕 그라디언트 (30도 꼬리)
+  const sweep = ctx.createConicalGradient
+    ? null // 표준 미지원, 수동으로
+    : null;
+
+  // 꼬리: 현재 각도에서 뒤로 40도
+  const TAIL = Math.PI / 4.5;
+  for (let i = 0; i < 30; i++) {
+    const a = radarAngle - (i / 30) * TAIL;
+    const alpha = (1 - i/30) * 0.45;
+    ctx.strokeStyle = `rgba(57,220,0,${alpha})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
+    ctx.stroke();
+  }
+
+  // 스윕 선
+  ctx.strokeStyle = '#39dc00';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + Math.cos(radarAngle)*R, cy + Math.sin(radarAngle)*R);
+  ctx.stroke();
+
+  // 블립 (스캔 통과 시 등장)
+  radarBlips.forEach(b => {
+    const da = ((b.angle - radarAngle) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
+    if (da < 0.08) b.life = b.maxLife;
+    if (b.life > 0) {
+      const alpha = (b.life / b.maxLife) * 0.9;
+      const bx = cx + Math.cos(b.angle) * R * b.dist;
+      const by = cy + Math.sin(b.angle) * R * b.dist;
+      ctx.fillStyle = `rgba(100,255,100,${alpha})`;
+      ctx.beginPath(); ctx.arc(bx, by, 2.5, 0, Math.PI*2); ctx.fill();
+      b.life--;
+    }
+  });
+
+  // 좌표 텍스트
+  ctx.fillStyle = 'rgba(57,220,0,0.4)';
+  ctx.font = '8px Courier New';
+  ctx.fillText('N', cx-3, cy-R-4);
+  ctx.fillText('S', cx-3, cy+R+11);
+  ctx.fillText('E', cx+R+4, cy+3);
+  ctx.fillText('W', cx-R-10, cy+3);
+
+  radarAngle += 0.04;
+}
+
+// ─────────────────────────────────────────────────────────────
+// C. STARFIELD WARP
+// ─────────────────────────────────────────────────────────────
+let stars = [];
+function initWarp() {
+  stars = Array.from({length: 180}, () => newStar());
+}
+function newStar() {
+  return {
+    x: (Math.random()-0.5)*2, y: (Math.random()-0.5)*2,
+    z: Math.random(), pz: 0,
+  };
+}
+function drawWarp() {
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.fillRect(0, 0, W, H);
+  const cx = W/2, cy = H/2;
+  stars.forEach(s => {
+    s.pz = s.z;
+    s.z -= 0.018;
+    if (s.z <= 0) { Object.assign(s, newStar()); s.z = 1; s.pz = 1; return; }
+    const sx  = (s.x  / s.z)  * W/2 + cx;
+    const sy  = (s.y  / s.z)  * H/2 + cy;
+    const psx = (s.x  / s.pz) * W/2 + cx;
+    const psy = (s.y  / s.pz) * H/2 + cy;
+    const size   = Math.max(0.5, (1 - s.z) * 2.5);
+    const bright = 1 - s.z;
+    ctx.strokeStyle = `rgba(57,220,0,${bright})`;
+    ctx.lineWidth = size;
+    ctx.beginPath(); ctx.moveTo(psx, psy); ctx.lineTo(sx, sy); ctx.stroke();
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// D. AUTO SNAKE
+// ─────────────────────────────────────────────────────────────
+const SZ = 8;
+let snake, snakeDir, food, snakeTick;
+
+function initSnake() {
+  const cols = Math.floor(W/SZ), rows = Math.floor(H/SZ);
+  snake = [{x:Math.floor(cols/2), y:Math.floor(rows/2)}];
+  snakeDir = {x:1, y:0};
+  food = {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*rows)};
+  snakeTick = 0;
+}
+
+function stepSnake() {
+  const cols = Math.floor(W/SZ), rows = Math.floor(H/SZ);
+  const head = snake[0];
+  // 간단 AI: 음식 방향으로 이동, 벽·몸 회피
+  const dx = food.x - head.x, dy = food.y - head.y;
+  const options = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]
+    .filter(d => !(d.x===-snakeDir.x && d.y===-snakeDir.y)) // 역방향 제외
+    .map(d => {
+      const nx = (head.x+d.x+cols)%cols, ny = (head.y+d.y+rows)%rows;
+      const hit = snake.some(s => s.x===nx && s.y===ny);
+      const score = (d.x===Math.sign(dx)?2:0) + (d.y===Math.sign(dy)?2:0) - (hit?99:0);
+      return {...d, score, nx, ny};
+    })
+    .sort((a,b) => b.score - a.score);
+
+  if (options.length) snakeDir = options[0];
+
+  const newHead = {x:(head.x+snakeDir.x+cols)%cols, y:(head.y+snakeDir.y+rows)%rows};
+  snake.unshift(newHead);
+
+  if (newHead.x===food.x && newHead.y===food.y) {
+    food = {x:Math.floor(Math.random()*cols), y:Math.floor(Math.random()*rows)};
+  } else {
+    snake.pop();
+  }
+  if (snake.length > 28) snake.pop(); // 최대 길이
+}
+
+function drawSnake() {
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+  // 그리드 (희미하게)
+  ctx.strokeStyle = 'rgba(57,220,0,0.06)';
+  ctx.lineWidth = 0.5;
+  const cols = Math.floor(W/SZ), rows = Math.floor(H/SZ);
+  for (let c=0;c<=cols;c++){ctx.beginPath();ctx.moveTo(c*SZ,0);ctx.lineTo(c*SZ,H);ctx.stroke();}
+  for (let r=0;r<=rows;r++){ctx.beginPath();ctx.moveTo(0,r*SZ);ctx.lineTo(W,r*SZ);ctx.stroke();}
+
+  snakeTick++;
+  if (snakeTick % 3 === 0) stepSnake();
+
+  // 뱀 몸통
+  snake.forEach((s,i) => {
+    const a = 1 - i/snake.length * 0.7;
+    ctx.fillStyle = i===0 ? '#ffffff' : `rgba(57,220,0,${a})`;
+    ctx.fillRect(s.x*SZ+1, s.y*SZ+1, SZ-2, SZ-2);
+    if (i===0) {
+      ctx.fillStyle = '#000';
+      ctx.fillRect(s.x*SZ+2, s.y*SZ+2, 2, 2); // 눈
+      ctx.fillRect(s.x*SZ+SZ-4, s.y*SZ+2, 2, 2);
+    }
+  });
+  // 먹이
+  ctx.fillStyle = '#ff4444';
+  ctx.fillRect(food.x*SZ+2, food.y*SZ+2, SZ-4, SZ-4);
+  // 먹이 깜빡임
+  if (Math.floor(Date.now()/300)%2===0) {
+    ctx.fillStyle = '#ffaaaa';
+    ctx.fillRect(food.x*SZ+3, food.y*SZ+3, SZ-6, SZ-6);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// E. OSCILLOSCOPE
+// ─────────────────────────────────────────────────────────────
+let oscT = 0;
+function initOsc() { oscT = 0; }
+
+function drawOsc() {
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.fillRect(0, 0, W, H);
+
+  // 그리드
+  ctx.strokeStyle = 'rgba(57,220,0,0.1)';
+  ctx.lineWidth = 0.5;
+  for (let x=0;x<W;x+=W/8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for (let y=0;y<H;y+=H/4){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // 채널 A — 복합 파형 (주파수 혼합)
+  const drawWave = (freqs, color, yOff) => {
+    ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+    ctx.shadowColor = color; ctx.shadowBlur = 4;
+    ctx.beginPath();
+    for (let x=0; x<W; x++) {
+      const t = oscT + x * 0.025;
+      let y = 0;
+      freqs.forEach(([f,a,p]) => y += Math.sin(t*f+p)*a);
+      const py = H/2 + yOff + y * (H*0.18);
+      x===0 ? ctx.moveTo(x, py) : ctx.lineTo(x, py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+  };
+
+  drawWave([[1,0.7,0],[2.3,0.3,1.2],[0.5,0.4,2.4]], '#39dc00', -H*0.2);
+  drawWave([[1.7,0.6,0.5],[3.1,0.25,2],[0.8,0.35,4]], 'rgba(57,220,0,0.5)', H*0.2);
+
+  // 트리거 라인
+  ctx.strokeStyle = 'rgba(255,80,80,0.4)';
+  ctx.setLineDash([4,4]); ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 스크린 라벨
+  ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = '8px Courier New';
+  ctx.fillText('CH1  1V/div', 8, 12);
+  ctx.fillText('CH2  1V/div', 8, 22);
+  ctx.fillStyle = 'rgba(57,220,0,0.3)';
+  ctx.fillText('10ms/div', W-60, 12);
+  ctx.fillText(`${(oscT*5).toFixed(1)}ms`, W-50, H-6);
+
+  oscT += 0.04;
+}
+
+// ─────────────────────────────────────────────────────────────
+// F. DECODE
+// ─────────────────────────────────────────────────────────────
+const NOISE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*?/\\|<>!~^';
+const MESSAGES = [
+  'SET WORLD DIRECTORY',
+  'ACCESSING FILES...',
+  'SYSTEM READY',
+  'C:\\WORLD\\SET\\',
+  'INITIALIZING...',
+];
+let decLines = [];
+
+function initDecode() {
+  decLines = MESSAGES.map(msg => ({
+    target: msg,
+    current: Array.from({length: msg.length}, () => NOISE[Math.floor(Math.random()*NOISE.length)]),
+    resolved: Array(msg.length).fill(false),
+    delay: 0,
+    speed: Math.floor(Math.random()*3)+2,
+    t: 0,
+  }));
+}
+
+function stepDecode() {
+  decLines.forEach((line, li) => {
+    line.t++;
+    if (line.t < li * 18) return; // 줄마다 딜레이
+    line.target.split('').forEach((ch, i) => {
+      if (line.resolved[i]) return;
+      if (line.t % line.speed === 0) {
+        line.current[i] = NOISE[Math.floor(Math.random()*NOISE.length)];
+      }
+      // 점진적으로 해독
+      const progress = (line.t - li*18) / (line.target.length * 5 + 30);
+      if (Math.random() < progress * 0.15) {
+        line.current[i] = ch;
+        line.resolved[i] = true;
+      }
+    });
+    // 다 해독되면 리셋
+    if (line.resolved.every(Boolean)) {
+      setTimeout(() => {
+        line.resolved = Array(line.target.length).fill(false);
+        line.current = Array.from({length:line.target.length}, () => NOISE[Math.floor(Math.random()*NOISE.length)]);
+        line.t = 0;
+      }, 1200);
+    }
+  });
+}
+
+function drawDecode() {
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillRect(0, 0, W, H);
+  stepDecode();
+
+  const lineH = H / (decLines.length + 1);
+  ctx.font = 'bold 13px Courier New';
+
+  decLines.forEach((line, li) => {
+    const y = lineH * (li + 1);
+    const x = 20;
+    line.current.forEach((ch, i) => {
+      const resolved = line.resolved[i];
+      ctx.fillStyle = resolved ? '#39dc00'
+        : `rgba(57,220,0,${0.25 + Math.random()*0.35})`;
+      ctx.fillText(ch, x + i*11, y);
+    });
+    // 커서
+    const lastUnresolved = line.resolved.indexOf(false);
+    if (lastUnresolved !== -1 && Math.floor(Date.now()/200)%2===0) {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(x + lastUnresolved*11, y-11, 7, 12);
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// 전환 로직
+// ─────────────────────────────────────────────────────────────
+const ANIMS = {
+  life:   { init: initLife,   draw: drawLife   },
+  radar:  { init: initRadar,  draw: drawRadar  },
+  warp:   { init: initWarp,   draw: drawWarp   },
+  snake:  { init: initSnake,  draw: drawSnake  },
+  osc:    { init: initOsc,    draw: drawOsc    },
+  decode: { init: initDecode, draw: drawDecode },
+};
+
+function initAnim(name) {
+  if (animInterval) clearInterval(animInterval);
+  currentAnim = name;
+  ANIMS[name].init();
+  animInterval = setInterval(ANIMS[name].draw, 40);
+}
+
+function switchAnim(name) {
+  document.querySelectorAll('.sel-btn').forEach((b,i) => {
+    b.classList.toggle('active', Object.keys(ANIMS)[i] === name);
+  });
+  initAnim(name);
+}
+
+initAnim('life');
+</script>
+</body>
+</html>
