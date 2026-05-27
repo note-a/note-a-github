@@ -188,8 +188,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   <div class="menu-container">
     <div style="width:100%;max-width:700px;display:flex;flex-direction:column;gap:0;">
 
-      <!-- 로딩 애니메이션 캔버스 -->
-      <canvas id="loadingCanvas" style="width:100%;height:72px;display:block;"></canvas>
+      <!-- 레이더 애니메이션 캔버스 -->
+      <canvas id="loadingCanvas" style="width:100%;height:140px;display:block;"></canvas>
 
     <div class="folder-window">
       <div class="folder-titlebar">
@@ -237,161 +237,160 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   </div>
 
   <script>
-    // ── 매트릭스 + 달리는 고양이 ──────────────────────────────────
+    // ── 레이더 애니메이션 ───────────────────────────────────────────
     (function() {
       const canvas = document.getElementById('loadingCanvas');
       const ctx    = canvas.getContext('2d');
-      const CHARS  = 'MMNWABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*+=?/\\|<>[]{}ァアイウエオカキクケコ';
-      const FS = 11;
-      let W, H, cols, rows, grid;
+      let W, H;
+      let radarAngle = 0, radarTick = 0, radarInterference = 0;
+      let radarBlips = [];
 
-      // 고양이 상태
-      let catX = -60, catFrame = 0, tick = 0;
-      const CAT_SPD = 2.8;
+      function initBlips() {
+        radarBlips = [
+          { angle:0.52,  dist:0.55, label:'TGT-01', locked:true,  life:0, maxLife:140, vx:0.002,  vy:0.001  },
+          { angle:1.80,  dist:0.38, label:'TGT-02', locked:false, life:0, maxLife:110, vx:-0.001, vy:0.002  },
+          { angle:3.40,  dist:0.70, label:'OBJ-A',  locked:false, life:0, maxLife:90,  vx:0.003,  vy:-0.001 },
+          { angle:4.90,  dist:0.28, label:'TGT-03', locked:false, life:0, maxLife:120, vx:-0.002, vy:-0.002 },
+          { angle:5.60,  dist:0.62, label:'UNK',    locked:false, life:0, maxLife:80,  vx:0.001,  vy:0.003  },
+          { angle:2.30,  dist:0.82, label:'OBJ-B',  locked:false, life:0, maxLife:100, vx:-0.003, vy:0.001  },
+          { angle:0.90,  dist:0.15, label:'TGT-04', locked:false, life:0, maxLife:95,  vx:0.002,  vy:-0.003 },
+        ];
+      }
 
       function resize() {
         const rect = canvas.getBoundingClientRect();
         W = canvas.width  = Math.floor(rect.width);
-        H = canvas.height = 72;
-        cols = Math.floor(W / (FS * 0.65));
-        rows = Math.floor(H / FS);
-        grid = Array.from({length: rows}, () =>
-          Array.from({length: cols}, () => ({ ch: rndChar(), b: Math.random() }))
-        );
-      }
-
-      function rndChar() { return CHARS[Math.floor(Math.random() * CHARS.length)]; }
-
-      // 고양이 그리기 (x, y = 왼쪽 상단 기준)
-      function drawCat(x, y, f) {
-        const bc = '#ccffcc';   // 몸 색
-        const lc = '#88ee88';   // 선 색
-
-        ctx.save();
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-
-        // 꼬리 (흔들림)
-        const tw = [10, 4, -4, -10][f];
-        ctx.strokeStyle = bc; ctx.lineWidth = 3.5;
-        ctx.beginPath();
-        ctx.moveTo(x+35, y+14);
-        ctx.quadraticCurveTo(x+42, y+8+tw/2, x+46, y+2+tw);
-        ctx.stroke();
-        // 꼬리 끝 동그라미
-        ctx.fillStyle = bc;
-        ctx.beginPath();
-        ctx.arc(x+46, y+2+tw, 2.5, 0, Math.PI*2);
-        ctx.fill();
-
-        // 몸통
-        ctx.fillStyle = bc;
-        ctx.beginPath();
-        ctx.ellipse(x+20, y+16, 14, 9, 0, 0, Math.PI*2);
-        ctx.fill();
-
-        // 머리
-        ctx.beginPath();
-        ctx.arc(x+6, y+13, 10, 0, Math.PI*2);
-        ctx.fill();
-
-        // 귀 (왼)
-        ctx.beginPath();
-        ctx.moveTo(x+0, y+6); ctx.lineTo(x-2, y+0); ctx.lineTo(x+6, y+5);
-        ctx.closePath(); ctx.fill();
-        // 귀 안쪽
-        ctx.fillStyle = '#ff9999';
-        ctx.beginPath();
-        ctx.moveTo(x+1, y+6); ctx.lineTo(x+0, y+2); ctx.lineTo(x+5, y+5);
-        ctx.closePath(); ctx.fill();
-
-        // 귀 (오)
-        ctx.fillStyle = bc;
-        ctx.beginPath();
-        ctx.moveTo(x+8, y+5); ctx.lineTo(x+11, y+0); ctx.lineTo(x+14, y+5);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#ff9999';
-        ctx.beginPath();
-        ctx.moveTo(x+9, y+5); ctx.lineTo(x+11, y+2); ctx.lineTo(x+13, y+5);
-        ctx.closePath(); ctx.fill();
-
-        // 눈
-        ctx.fillStyle = '#001800';
-        ctx.beginPath(); ctx.ellipse(x+4, y+13, 2, 2.5, -0.2, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.ellipse(x+9, y+13, 2, 2.5, 0.2, 0, Math.PI*2); ctx.fill();
-        // 눈 하이라이트
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath(); ctx.arc(x+5, y+12, 0.9, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(x+10, y+12, 0.9, 0, Math.PI*2); ctx.fill();
-
-        // 코
-        ctx.fillStyle = '#ff9999';
-        ctx.beginPath(); ctx.arc(x+6, y+17, 1.2, 0, Math.PI*2); ctx.fill();
-
-        // 수염
-        ctx.strokeStyle = lc; ctx.lineWidth = 0.8;
-        [[-1,17,-8,15],[-1,18,-8,19],[13,17,20,15],[13,18,20,19]].forEach(([x1,y1,x2,y2]) => {
-          ctx.beginPath(); ctx.moveTo(x+x1, y+y1); ctx.lineTo(x+x2, y+y2); ctx.stroke();
-        });
-
-        // 다리 4개 — 프레임별 위치
-        const legs = [
-          [[x+12,y+24,x+8, y+33],[x+16,y+24,x+20,y+33],[x+22,y+24,x+18,y+33],[x+28,y+24,x+32,y+33]],
-          [[x+12,y+24,x+10,y+33],[x+16,y+24,x+18,y+33],[x+22,y+24,x+20,y+33],[x+28,y+24,x+30,y+33]],
-          [[x+12,y+24,x+16,y+33],[x+16,y+24,x+12,y+33],[x+22,y+24,x+26,y+33],[x+28,y+24,x+24,y+33]],
-          [[x+12,y+24,x+14,y+33],[x+16,y+24,x+14,y+33],[x+22,y+24,x+24,y+33],[x+28,y+24,x+26,y+33]],
-        ];
-        ctx.strokeStyle = bc; ctx.lineWidth = 3;
-        legs[f].forEach(([x1,y1,x2,y2]) => {
-          ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
-          // 발바닥
-          ctx.fillStyle = '#ffaaaa';
-          ctx.beginPath(); ctx.ellipse(x2, y2+1, 2.5, 1.5, 0, 0, Math.PI*2); ctx.fill();
-        });
-
-        ctx.restore();
+        H = canvas.height = 140;
       }
 
       function draw() {
-        ctx.fillStyle = '#000';
+        radarTick++;
+        ctx.fillStyle = 'rgba(0,0,0,0.14)';
         ctx.fillRect(0, 0, W, H);
-        ctx.font = `${FS}px "Courier New", monospace`;
 
-        // 매트릭스 배경
-        const upd = Math.floor(cols * rows * 0.18);
-        for (let n = 0; n < upd; n++) {
-          const r = Math.floor(Math.random()*rows), c = Math.floor(Math.random()*cols);
-          grid[r][c].ch = rndChar(); grid[r][c].b = Math.random();
+        const cx = W / 2, cy = H / 2;
+        const R  = Math.min(W / 2 - 10, H / 2 - 10);
+
+        // 동심원 + 거리 라벨
+        ctx.font = '7px Courier New';
+        [0.33, 0.66, 1].forEach((s, i) => {
+          ctx.strokeStyle = `rgba(57,220,0,${0.12 + i*0.05})`;
+          ctx.lineWidth = 0.7;
+          ctx.beginPath(); ctx.arc(cx, cy, R*s, 0, Math.PI*2); ctx.stroke();
+          ctx.fillStyle = 'rgba(57,220,0,0.3)';
+          ctx.fillText(`${Math.round(s*100)}km`, cx + R*s + 2, cy - 2);
+        });
+
+        // 십자선 + 대각선
+        ctx.strokeStyle = 'rgba(57,220,0,0.1)'; ctx.lineWidth = 0.5;
+        [0, Math.PI/4, Math.PI/2, Math.PI*3/4].forEach(a => {
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
+          ctx.lineTo(cx - Math.cos(a)*R, cy - Math.sin(a)*R);
+          ctx.stroke();
+        });
+
+        // 스윕 꼬리
+        const TAIL = Math.PI / 3.5;
+        for (let i = 0; i < 40; i++) {
+          const a = radarAngle - (i/40)*TAIL;
+          const alpha = Math.pow(1 - i/40, 1.5) * 0.5;
+          ctx.strokeStyle = `rgba(57,220,0,${alpha})`;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
+          ctx.stroke();
         }
-        for (let r = 0; r < rows; r++) {
-          for (let c = 0; c < cols; c++) {
-            const b = grid[r][c].b, a = 0.15 + b*0.85;
-            ctx.fillStyle = b>0.93 ? `rgba(220,255,220,${a})`
-                          : b>0.75 ? `rgba(57,220,0,${a})`
-                          : b>0.4  ? `rgba(30,160,0,${a})`
-                          :          `rgba(10,80,0,${a})`;
-            ctx.fillText(grid[r][c].ch, c*(FS*0.65), (r+1)*FS-1);
+        // 스윕 헤드
+        ctx.strokeStyle = '#7fff7f'; ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(radarAngle)*R, cy + Math.sin(radarAngle)*R);
+        ctx.stroke();
+
+        // 블립 업데이트 + 드로우
+        radarBlips.forEach(b => {
+          b.angle += b.vx; b.dist += b.vy;
+          if (b.dist < 0.1 || b.dist > 0.95) b.vy *= -1;
+          const da = ((radarAngle - b.angle) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
+          if (da < 0.07 || da > Math.PI*2 - 0.07) b.life = b.maxLife;
+          if (b.life <= 0) return;
+          const alpha = b.life / b.maxLife;
+          const bx = cx + Math.cos(b.angle) * R * b.dist;
+          const by = cy + Math.sin(b.angle) * R * b.dist;
+          if (b.locked) {
+            const pulse = Math.sin(radarTick * 0.15) * 0.5 + 0.5;
+            ctx.strokeStyle = `rgba(100,255,100,${alpha * pulse})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.arc(bx, by, 6 + pulse*4, 0, Math.PI*2); ctx.stroke();
+            ctx.strokeStyle = `rgba(100,255,100,${alpha})`;
+            ctx.lineWidth = 1.2;
+            const d = 4;
+            ctx.beginPath();
+            ctx.moveTo(bx, by-d); ctx.lineTo(bx+d, by);
+            ctx.lineTo(bx, by+d); ctx.lineTo(bx-d, by);
+            ctx.closePath(); ctx.stroke();
+            ctx.fillStyle = `rgba(57,220,0,${alpha * 0.8})`;
+            ctx.font = '7px Courier New';
+            ctx.fillText('⟨LOCKED⟩', bx+8, by-4);
+            ctx.fillText(b.label, bx+8, by+6);
+          } else {
+            ctx.fillStyle = `rgba(100,255,100,${alpha * 0.85})`;
+            ctx.beginPath(); ctx.arc(bx, by, 2.5, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = `rgba(57,220,0,${alpha * 0.5})`;
+            ctx.font = '7px Courier New';
+            ctx.fillText(b.label, bx+5, by-3);
           }
+          b.life--;
+        });
+
+        // 인터퍼런스
+        if (Math.random() < 0.04) radarInterference = 8;
+        if (radarInterference > 0) {
+          for (let i = 0; i < 3; i++) {
+            const iy = Math.random() * H;
+            ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.3})`;
+            ctx.fillRect(0, iy, W, 1);
+          }
+          radarInterference--;
         }
 
-        // 고양이
-        drawCat(catX, 3, catFrame);
+        // N S E W
+        ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = 'bold 8px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('N', cx, cy - R - 4);
+        ctx.fillText('S', cx, cy + R + 11);
+        ctx.textAlign = 'left';
+        ctx.fillText('E', cx + R + 4, cy + 3);
+        ctx.fillText('W', cx - R - 10, cy + 3);
 
-        // 고양이 이동 & 프레임
-        catX += CAT_SPD;
-        if (catX > W + 60) catX = -60;
-        if (tick % 5 === 0) catFrame = (catFrame + 1) % 4;
+        // 좌상단 데이터
+        const brg = ((radarAngle * 180 / Math.PI) % 360 + 360) % 360;
+        ctx.fillStyle = 'rgba(57,220,0,0.55)'; ctx.font = '8px Courier New';
+        ctx.textAlign = 'left';
+        ctx.fillText(`BRG: ${brg.toFixed(1).padStart(6)}°`, 8, 14);
+        ctx.fillText(`RNG: ${(R*0.01).toFixed(1)}km`,        8, 24);
+        ctx.fillText(`TGT: ${radarBlips.filter(b=>b.life>0).length}`, 8, 34);
+
+        // 우상단 시계
+        const now = new Date();
+        const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        ctx.textAlign = 'right';
+        ctx.fillText(ts, W - 8, 14);
+        ctx.fillText('SYS ACTIVE', W - 8, 24);
+        ctx.textAlign = 'left';
 
         // 스캔라인
         for (let y = 0; y < H; y += 2) {
-          ctx.fillStyle = 'rgba(0,0,0,0.15)';
+          ctx.fillStyle = 'rgba(0,0,0,0.08)';
           ctx.fillRect(0, y, W, 1);
         }
-        tick++;
+
+        radarAngle += 0.035;
       }
 
+      initBlips();
       resize();
-      window.addEventListener('resize', resize);
+      window.addEventListener('resize', () => { resize(); });
       setInterval(draw, 40);
     })();
     // ──────────────────────────────────────────────────────────────
