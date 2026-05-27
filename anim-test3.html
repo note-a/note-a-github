@@ -141,27 +141,6 @@ let currentSec = 'A';
 // ─────────────────────────────────────────────────────────────────────────────
 // A. ACCESS CARD
 // ─────────────────────────────────────────────────────────────────────────────
-// Pixel-art face map (14 cols × 18 rows)
-const FACE_MAP = [
-  [0,0,0,1,1,1,1,1,1,1,0,0,0,0],
-  [0,0,1,1,1,1,1,1,1,1,1,0,0,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,0,0],
-  [0,1,1,2,1,1,1,1,2,1,1,1,0,0],  // eyes (2=dark)
-  [0,1,1,2,1,1,1,1,2,1,1,1,0,0],
-  [0,1,1,1,1,1,1,1,1,1,1,1,0,0],
-  [0,1,1,1,1,3,1,3,1,1,1,1,0,0],  // nose (3=shadow)
-  [0,1,1,1,1,1,1,1,1,1,1,1,0,0],
-  [0,1,1,2,1,1,1,1,1,2,1,1,0,0],  // mouth corners
-  [0,1,1,1,2,2,2,2,2,1,1,1,0,0],  // lips
-  [0,1,1,1,1,1,1,1,1,1,1,1,0,0],
-  [0,0,1,1,1,1,1,1,1,1,1,0,0,0],
-  [0,0,0,1,1,1,1,1,1,1,0,0,0,0],
-  [0,0,1,1,1,1,1,1,1,1,1,0,0,0],  // neck
-  [0,1,1,1,1,1,1,1,1,1,1,1,0,0],  // shoulders
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-  [1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-];
 
 const renderAccessCard = (ctx, cw, ch) => {
   ctx.fillStyle = '#000';
@@ -248,27 +227,96 @@ const renderAccessCard = (ctx, cw, ch) => {
     ctx.beginPath(); ctx.moveTo(bx+sx*bk,by); ctx.lineTo(bx,by); ctx.lineTo(bx,by+sy*bk); ctx.stroke();
   });
 
-  // Pixel face
-  const FCOLS=14, FROWS=FACE_MAP.length;
-  const dw=Math.floor(phW/FCOLS), dh=Math.floor(phH/FROWS);
-  const foxX=phX+Math.floor((phW-FCOLS*dw)/2);
-  const foxY=phY+Math.floor((phH-FROWS*dh)/2);
-  const pulse=Math.sin(t*0.025)*0.18+0.78;
-  FACE_MAP.forEach((row,ri)=>{
-    row.forEach((cell,ci)=>{
-      if(!cell) return;
-      let alpha, g;
-      if(cell===2){ alpha=0.95; g=30; }           // eyes/mouth (dark)
-      else if(cell===3){ alpha=0.7; g=120; }       // nose shadow
-      else { alpha=0.8*pulse; g=Math.floor(180*pulse+40); }
-      ctx.fillStyle=`rgba(0,${g},0,${alpha})`;
-      ctx.fillRect(foxX+ci*dw, foxY+ri*dh, Math.max(1,dw-1), Math.max(1,dh-1));
-    });
-  });
+  // ── SECURITY PHOTO (CCTV style, not pixel art)
+  // Static noise background
+  const imgD = ctx.createImageData(phW, phH);
+  for (let i=0; i<imgD.data.length; i+=4) {
+    const v = Math.floor(Math.random()*18);
+    imgD.data[i]=0; imgD.data[i+1]=v; imgD.data[i+2]=0; imgD.data[i+3]=255;
+  }
+  ctx.putImageData(imgD, phX, phY);
 
-  // Photo scanlines
-  ctx.fillStyle='rgba(0,0,0,0.22)';
-  for(let sl=phY;sl<phY+phH;sl+=2) ctx.fillRect(phX,sl,phW,1);
+  const hcx=phX+phW/2, hcy=phY+phH*0.33;
+  const hW=phW*0.54, hH=phH*0.36;
+
+  // Hair block (dark, flat top)
+  ctx.fillStyle='rgba(0,60,0,0.9)';
+  ctx.fillRect(hcx-hW*0.44, hcy-hH*0.52, hW*0.88, hH*0.22);
+
+  // Head (angular — more rectangle than oval)
+  ctx.fillStyle='rgba(0,130,0,0.8)';
+  ctx.beginPath();
+  ctx.moveTo(hcx-hW*0.44, hcy-hH*0.3);
+  ctx.lineTo(hcx-hW*0.46, hcy+hH*0.42);
+  ctx.bezierCurveTo(hcx-hW*0.4, hcy+hH*0.52, hcx+hW*0.4, hcy+hH*0.52, hcx+hW*0.46, hcy+hH*0.42);
+  ctx.lineTo(hcx+hW*0.44, hcy-hH*0.3);
+  ctx.closePath();
+  ctx.fill();
+
+  // Eyes — two flat rectangles, no expression
+  const eyeY = hcy - hH*0.04;
+  ctx.fillStyle='rgba(0,8,0,1)';
+  ctx.fillRect(hcx-hW*0.33, eyeY-1, hW*0.2, 3);
+  ctx.fillRect(hcx+hW*0.13, eyeY-1, hW*0.2, 3);
+
+  // Nose — two tiny shadow dots, barely visible
+  ctx.fillStyle='rgba(0,50,0,0.9)';
+  ctx.fillRect(hcx-3, hcy+hH*0.14, 2, 2);
+  ctx.fillRect(hcx+1,  hcy+hH*0.14, 2, 2);
+
+  // Mouth — dead straight line
+  ctx.fillStyle='rgba(0,15,0,1)';
+  ctx.fillRect(hcx-hW*0.18, hcy+hH*0.29, hW*0.36, 2);
+
+  // Shoulders (blocky)
+  ctx.fillStyle='rgba(0,90,0,0.75)';
+  ctx.beginPath();
+  ctx.moveTo(phX, phY+phH);
+  ctx.lineTo(phX, phY+phH*0.72);
+  ctx.lineTo(hcx-hW*0.46, hcy+hH*0.42);
+  ctx.lineTo(hcx+hW*0.46, hcy+hH*0.42);
+  ctx.lineTo(phX+phW, phY+phH*0.72);
+  ctx.lineTo(phX+phW, phY+phH);
+  ctx.closePath();
+  ctx.fill();
+
+  // Neck
+  ctx.fillStyle='rgba(0,110,0,0.7)';
+  ctx.fillRect(hcx-hW*0.16, hcy+hH*0.42, hW*0.32, phH*0.14);
+
+  // Face recognition bounding box (dashed)
+  ctx.save();
+  ctx.setLineDash([2,3]);
+  ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=0.8;
+  const fbX=hcx-hW*0.56, fbY=hcy-hH*0.58, fbW=hW*1.12, fbH=hH*1.12;
+  ctx.strokeRect(fbX, fbY, fbW, fbH);
+  ctx.setLineDash([]);
+  // Corner ticks
+  ctx.strokeStyle='#00ff00'; ctx.lineWidth=1.5;
+  const tk=5;
+  [[fbX,fbY],[fbX+fbW,fbY],[fbX,fbY+fbH],[fbX+fbW,fbY+fbH]].forEach(([bx,by],i)=>{
+    const sx=i%2===0?1:-1, sy=i<2?1:-1;
+    ctx.beginPath(); ctx.moveTo(bx+sx*tk,by); ctx.lineTo(bx,by); ctx.lineTo(bx,by+sy*tk); ctx.stroke();
+  });
+  // Eye crosshair markers
+  [[hcx-hW*0.23, eyeY+1],[hcx+hW*0.23, eyeY+1]].forEach(([ex,ey])=>{
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=0.8;
+    ctx.beginPath(); ctx.moveTo(ex-5,ey); ctx.lineTo(ex+5,ey); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ex,ey-5); ctx.lineTo(ex,ey+5); ctx.stroke();
+  });
+  ctx.restore();
+
+  // Scanlines over photo
+  ctx.fillStyle='rgba(0,0,0,0.28)';
+  for(let sl=phY; sl<phY+phH; sl+=2) ctx.fillRect(phX,sl,phW,1);
+
+  // SCAN status (bottom of photo)
+  ctx.font=`${Math.max(5,fh-5)}px monospace`;
+  ctx.fillStyle=frame%30<20?'#00ff00':'#003300';
+  ctx.textAlign='left'; ctx.fillText('SCAN:OK', phX+2, phY+phH-3);
+  ctx.fillStyle='#00ff0066';
+  ctx.textAlign='right'; ctx.fillText('99.7%', phX+phW-2, phY+phH-3);
+  ctx.textAlign='left';
 
   // PHOTO ID label
   ctx.font=`${Math.max(6,fh-4)}px monospace`; ctx.fillStyle='#00ff0050';
