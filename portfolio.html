@@ -92,6 +92,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   gap: 12px;
   overflow: hidden;
 }
+.sidebar-wrap {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  gap: 0;
+}
 
 /* ===== MENU SECTION (LEFT) ===== */
 .menu-section {
@@ -1211,6 +1217,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
     <div class="portfolio-container">
       <div class="portfolio-window">
+      <div class="sidebar-wrap">
+      <!-- DECO PANEL -->
+      <canvas id="decoPanel" width="18" style="display:block;"></canvas>
       <!-- LEFT: MENU SECTION -->
       <div class="menu-section" id="menuSection">
       <div class="menu-titlebar">
@@ -1255,9 +1264,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <span style="color:#b0b0b0;">SELECT FILE</span>
       </div>
     </div>
-
-    <!-- DECO PANEL -->
-    <canvas id="decoPanel" width="18" style="flex-shrink:0;display:block;border-right:1px solid rgba(57,220,0,0.15);"></canvas>
+    </div><!-- /sidebar-wrap -->
 
     <!-- RIGHT: TERMINAL SECTION -->
     <div class="terminal-section">
