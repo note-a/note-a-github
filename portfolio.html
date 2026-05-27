@@ -2647,7 +2647,49 @@ REQUIRE LOGIN: No (Public access enabled)
         statusEl.textContent = `✓ ${files.length}장`;
       });
 
-      renderContactSheet(content, document.getElementById('csOverlayBody'), document.getElementById('csOverlayTitle'), overlay);
+      // ── ASCII 스플래시 ──────────────────────────────────────────
+      const SET_ASCII =
+`##############################################################
+##                                                          ##
+##    _______________________________                       ##
+##   /   _____/\\_   _____/\\__    ___/                       ##
+##   \\_____  \\  |    __)_   |    |                          ##
+##   /        \\ |        \\  |    |                          ##
+##  /_______  //_______  /  |____|                          ##
+##          \\/         \\/                                   ##
+##                                                          ##
+##  .___              .__               .__                 ##
+##  |   | ____   ____ |  |  __ __  _____|__| ____   ____    ##
+##  |   |/    \\_/ ___\\|  | |  |  \\/  ___/  |/  _ \\ /    \\   ##
+##  |   |   |  \\  \\___|  |_|  |  /\\___ \\|  (  <_> )   |  \\  ##
+##  |___|___|  /\\___  >____/____//____  >__|\\____/|___|  /  ##
+##           \\/     \\/                \\/               \\/   ##
+##                                                          ##
+##############################################################`;
+
+      const body = document.getElementById('csOverlayBody');
+
+      const splash = document.createElement('div');
+      splash.style.cssText = `
+        position:absolute;inset:0;background:#000;z-index:10;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        transition:opacity 0.4s ease;
+      `;
+      splash.innerHTML = `
+        <pre style="
+          font-family:'Courier New',monospace;font-size:clamp(8px,1.3vw,15px);
+          line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;
+          user-select:none;
+        ">${SET_ASCII}</pre>
+        <div style="
+          margin-top:26px;font-family:'Courier New',monospace;font-size:13px;
+          color:#39dc00;letter-spacing:5px;
+        ">— COMING SOON —</div>
+      `;
+      body.style.position = 'relative';
+      body.appendChild(splash);
+      // 갤러리 비활성화 중 — renderContactSheet 호출 안 함
+      // ────────────────────────────────────────────────────────────
     }
 
     // 프레임 번호 기반 가상 사진 느낌의 그라디언트 생성
