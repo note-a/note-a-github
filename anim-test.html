@@ -24,7 +24,7 @@ html, body { background:#000; color:#39dc00; font-family:'Courier New',monospace
 }
 
 .preview {
-  width:100%; height:90px;
+  width:100%; height:160px;
   border-bottom:1px solid #39dc00;
 }
 canvas { display:block; width:100%; height:100%; }
@@ -147,88 +147,144 @@ function drawLife() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// B. RADAR
+// B. RADAR (ENHANCED)
 // ─────────────────────────────────────────────────────────────
-let radarAngle = 0;
-let radarBlips = [];
+let radarAngle = 0, radarTick = 0;
+let radarBlips = [], radarInterference = 0;
 
 function initRadar() {
-  radarBlips = Array.from({length: 14}, () => ({
-    angle: Math.random() * Math.PI * 2,
-    dist:  0.15 + Math.random() * 0.82,
-    life:  0,
-    maxLife: 60 + Math.floor(Math.random() * 80),
-  }));
+  radarAngle = 0; radarTick = 0; radarInterference = 0;
+  radarBlips = [
+    { angle:0.52,  dist:0.55, label:'TGT-01', locked:true,  life:0, maxLife:140, vx:0.002,  vy:0.001  },
+    { angle:1.80,  dist:0.38, label:'TGT-02', locked:false, life:0, maxLife:110, vx:-0.001, vy:0.002  },
+    { angle:3.40,  dist:0.70, label:'OBJ-A',  locked:false, life:0, maxLife:90,  vx:0.003,  vy:-0.001 },
+    { angle:4.90,  dist:0.28, label:'TGT-03', locked:false, life:0, maxLife:120, vx:-0.002, vy:-0.002 },
+    { angle:5.60,  dist:0.62, label:'UNK',    locked:false, life:0, maxLife:80,  vx:0.001,  vy:0.003  },
+    { angle:2.30,  dist:0.82, label:'OBJ-B',  locked:false, life:0, maxLife:100, vx:-0.003, vy:0.001  },
+    { angle:0.90,  dist:0.15, label:'TGT-04', locked:false, life:0, maxLife:95,  vx:0.002,  vy:-0.003 },
+  ];
 }
 
 function drawRadar() {
-  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  radarTick++;
+  ctx.fillStyle = 'rgba(0,0,0,0.14)';
   ctx.fillRect(0, 0, W, H);
 
   const cx = W/2, cy = H/2;
-  const R  = Math.min(W, H) * 0.42;
+  const R  = Math.min(W, H) * 0.40;
 
-  // 동심원
-  ctx.strokeStyle = 'rgba(57,220,0,0.2)';
-  ctx.lineWidth = 0.8;
-  [0.33, 0.66, 1].forEach(s => {
+  // 동심원 + 거리 라벨
+  ctx.font = '7px Courier New';
+  [0.33, 0.66, 1].forEach((s, i) => {
+    ctx.strokeStyle = `rgba(57,220,0,${0.12 + i*0.04})`;
+    ctx.lineWidth = 0.7;
     ctx.beginPath(); ctx.arc(cx, cy, R*s, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = 'rgba(57,220,0,0.35)';
+    ctx.fillText(`${Math.round(s*100)}km`, cx+R*s+2, cy-2);
   });
 
-  // 십자선
-  ctx.strokeStyle = 'rgba(57,220,0,0.15)';
-  ctx.beginPath(); ctx.moveTo(cx-R, cy); ctx.lineTo(cx+R, cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx, cy-R); ctx.lineTo(cx, cy+R); ctx.stroke();
-
-  // 스윕 그라디언트 (30도 꼬리)
-  const sweep = ctx.createConicalGradient
-    ? null // 표준 미지원, 수동으로
-    : null;
-
-  // 꼬리: 현재 각도에서 뒤로 40도
-  const TAIL = Math.PI / 4.5;
-  for (let i = 0; i < 30; i++) {
-    const a = radarAngle - (i / 30) * TAIL;
-    const alpha = (1 - i/30) * 0.45;
-    ctx.strokeStyle = `rgba(57,220,0,${alpha})`;
-    ctx.lineWidth = 1.5;
+  // 십자선 + 대각선
+  ctx.strokeStyle = 'rgba(57,220,0,0.1)'; ctx.lineWidth = 0.5;
+  [0, Math.PI/4, Math.PI/2, Math.PI*3/4].forEach(a => {
     ctx.beginPath();
-    ctx.moveTo(cx, cy);
+    ctx.moveTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
+    ctx.lineTo(cx - Math.cos(a)*R, cy - Math.sin(a)*R);
+    ctx.stroke();
+  });
+
+  // 스윕 꼬리
+  const TAIL = Math.PI / 3.5;
+  for (let i = 0; i < 40; i++) {
+    const a = radarAngle - (i/40)*TAIL;
+    const alpha = Math.pow(1 - i/40, 1.5) * 0.5;
+    ctx.strokeStyle = `rgba(57,220,0,${alpha})`;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
     ctx.lineTo(cx + Math.cos(a)*R, cy + Math.sin(a)*R);
     ctx.stroke();
   }
-
-  // 스윕 선
-  ctx.strokeStyle = '#39dc00';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
+  // 스윕 헤드
+  ctx.strokeStyle = '#7fff7f'; ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.moveTo(cx, cy);
   ctx.lineTo(cx + Math.cos(radarAngle)*R, cy + Math.sin(radarAngle)*R);
   ctx.stroke();
 
-  // 블립 (스캔 통과 시 등장)
+  // 블립 업데이트 + 드로우
   radarBlips.forEach(b => {
-    const da = ((b.angle - radarAngle) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
-    if (da < 0.08) b.life = b.maxLife;
-    if (b.life > 0) {
-      const alpha = (b.life / b.maxLife) * 0.9;
-      const bx = cx + Math.cos(b.angle) * R * b.dist;
-      const by = cy + Math.sin(b.angle) * R * b.dist;
-      ctx.fillStyle = `rgba(100,255,100,${alpha})`;
+    // 느리게 이동
+    b.angle += b.vx; b.dist += b.vy;
+    if (b.dist < 0.1 || b.dist > 0.95) b.vy *= -1;
+
+    // 스윕 감지
+    const da = ((radarAngle - b.angle) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
+    if (da < 0.07 || da > Math.PI*2 - 0.07) b.life = b.maxLife;
+
+    if (b.life <= 0) return;
+    const alpha = b.life / b.maxLife;
+    const bx = cx + Math.cos(b.angle) * R * b.dist;
+    const by = cy + Math.sin(b.angle) * R * b.dist;
+
+    if (b.locked) {
+      // 락온: 깜빡이는 다이아몬드 + 펄스링
+      const pulse = Math.sin(radarTick * 0.15) * 0.5 + 0.5;
+      ctx.strokeStyle = `rgba(100,255,100,${alpha * pulse})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(bx, by, 6 + pulse*4, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = `rgba(100,255,100,${alpha})`;
+      ctx.lineWidth = 1.2;
+      const d = 4;
+      ctx.beginPath();
+      ctx.moveTo(bx, by-d); ctx.lineTo(bx+d, by);
+      ctx.lineTo(bx, by+d); ctx.lineTo(bx-d, by);
+      ctx.closePath(); ctx.stroke();
+      ctx.fillStyle = `rgba(57,220,0,${alpha * 0.8})`;
+      ctx.font = '7px Courier New';
+      ctx.fillText('⟨LOCKED⟩', bx+8, by-4);
+      ctx.fillText(b.label, bx+8, by+6);
+    } else {
+      ctx.fillStyle = `rgba(100,255,100,${alpha * 0.85})`;
       ctx.beginPath(); ctx.arc(bx, by, 2.5, 0, Math.PI*2); ctx.fill();
-      b.life--;
+      ctx.fillStyle = `rgba(57,220,0,${alpha * 0.5})`;
+      ctx.font = '7px Courier New';
+      ctx.fillText(b.label, bx+5, by-3);
     }
+    b.life--;
   });
 
-  // 좌표 텍스트
-  ctx.fillStyle = 'rgba(57,220,0,0.4)';
-  ctx.font = '8px Courier New';
-  ctx.fillText('N', cx-3, cy-R-4);
-  ctx.fillText('S', cx-3, cy+R+11);
-  ctx.fillText('E', cx+R+4, cy+3);
-  ctx.fillText('W', cx-R-10, cy+3);
+  // 인터퍼런스 (가끔 노이즈 선)
+  if (Math.random() < 0.04) radarInterference = 8;
+  if (radarInterference > 0) {
+    for (let i = 0; i < 3; i++) {
+      const iy = Math.random() * H;
+      ctx.fillStyle = `rgba(57,220,0,${Math.random()*0.3})`;
+      ctx.fillRect(0, iy, W, 1);
+    }
+    radarInterference--;
+  }
 
-  radarAngle += 0.04;
+  // NSEW
+  ctx.fillStyle = 'rgba(57,220,0,0.5)'; ctx.font = 'bold 8px Courier New';
+  ctx.fillText('N', cx-3, cy-R-5);
+  ctx.fillText('S', cx-3, cy+R+12);
+  ctx.fillText('E', cx+R+5, cy+3);
+  ctx.fillText('W', cx-R-11, cy+3);
+
+  // 좌측 상단 데이터 패널
+  const brg = ((radarAngle * 180 / Math.PI) % 360 + 360) % 360;
+  ctx.fillStyle = 'rgba(57,220,0,0.6)'; ctx.font = '8px Courier New';
+  ctx.fillText(`BRG: ${brg.toFixed(1).padStart(6)}°`, 8, 16);
+  ctx.fillText(`RNG: ${(R*0.01).toFixed(1)}km`, 8, 27);
+  ctx.fillText(`TGT: ${radarBlips.filter(b=>b.life>0).length}`, 8, 38);
+
+  // 우측 상단
+  const now = new Date();
+  const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+  ctx.textAlign = 'right';
+  ctx.fillText(ts, W-8, 16);
+  ctx.fillText('SYS ACTIVE', W-8, 27);
+  ctx.textAlign = 'left';
+
+  radarAngle += 0.035;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -393,80 +449,172 @@ function drawOsc() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// F. DECODE
+// F. DECODE (ENHANCED)
 // ─────────────────────────────────────────────────────────────
-const NOISE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*?/\\|<>!~^';
-const MESSAGES = [
-  'SET WORLD DIRECTORY',
-  'ACCESSING FILES...',
-  'SYSTEM READY',
-  'C:\\WORLD\\SET\\',
-  'INITIALIZING...',
+const DEC_NOISE   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&*?/\\|<>!~^';
+const DEC_HEX     = '0123456789ABCDEF';
+const DEC_MSGS = [
+  { text: 'SET WORLD DIRECTORY', corrupt: false },
+  { text: 'ACCESSING FILES...', corrupt: false },
+  { text: '>>> AUTH LEVEL: RESTRICTED', corrupt: false },
+  { text: 'C:\\WORLD\\SET\\INCLUSION\\', corrupt: false },
+  { text: 'KERNEL INTEGRITY: OK', corrupt: false },
+  { text: '%%% SECTOR FAULT — RETRY', corrupt: true  },
+  { text: 'DECRYPTING PAYLOAD...', corrupt: false },
 ];
-let decLines = [];
+let decLines2 = [], decTick2 = 0;
+
+// stage: 0=hex noise, 1=ascii noise, 2=partial decode, 3=done
+function mkLine(li) {
+  const cfg = DEC_MSGS[li % DEC_MSGS.length];
+  return {
+    target:  cfg.text,
+    corrupt: cfg.corrupt,
+    chars:   Array.from({length: cfg.text.length}, () => rndHex2()),
+    stage:   0,
+    t:       0,
+    startT:  li * 22,
+    done:    false,
+    glitch:  0,
+  };
+}
+function rndHex2() {
+  return DEC_HEX[Math.floor(Math.random()*16)] + DEC_HEX[Math.floor(Math.random()*16)];
+}
+function rndNoise() { return DEC_NOISE[Math.floor(Math.random()*DEC_NOISE.length)]; }
 
 function initDecode() {
-  decLines = MESSAGES.map(msg => ({
-    target: msg,
-    current: Array.from({length: msg.length}, () => NOISE[Math.floor(Math.random()*NOISE.length)]),
-    resolved: Array(msg.length).fill(false),
-    delay: 0,
-    speed: Math.floor(Math.random()*3)+2,
-    t: 0,
-  }));
+  decTick2 = 0;
+  decLines2 = DEC_MSGS.map((_, i) => mkLine(i));
 }
 
 function stepDecode() {
-  decLines.forEach((line, li) => {
+  decTick2++;
+  decLines2.forEach((line, li) => {
     line.t++;
-    if (line.t < li * 18) return; // 줄마다 딜레이
-    line.target.split('').forEach((ch, i) => {
-      if (line.resolved[i]) return;
-      if (line.t % line.speed === 0) {
-        line.current[i] = NOISE[Math.floor(Math.random()*NOISE.length)];
+    if (line.t < line.startT) return;
+    const elapsed = line.t - line.startT;
+
+    // stage 0 → 1: hex→ascii noise (40틱)
+    if (line.stage === 0 && elapsed > 18) {
+      line.stage = 1;
+      line.chars = Array.from({length: line.target.length}, () => rndNoise());
+    }
+    // stage 1 → 2: 글자 하나씩 해독 시작 (60틱부터)
+    if (line.stage === 1 && elapsed > 40) line.stage = 2;
+
+    if (line.stage === 0) {
+      // 헥스 노이즈 업데이트
+      if (decTick2 % 2 === 0) {
+        const idx = Math.floor(Math.random() * line.target.length);
+        line.chars[idx] = rndHex2();
       }
-      // 점진적으로 해독
-      const progress = (line.t - li*18) / (line.target.length * 5 + 30);
-      if (Math.random() < progress * 0.15) {
-        line.current[i] = ch;
-        line.resolved[i] = true;
+    } else if (line.stage === 1) {
+      // ascii 노이즈 업데이트
+      if (decTick2 % 2 === 0) {
+        const idx = Math.floor(Math.random() * line.target.length);
+        line.chars[idx] = rndNoise();
       }
-    });
-    // 다 해독되면 리셋
-    if (line.resolved.every(Boolean)) {
-      setTimeout(() => {
-        line.resolved = Array(line.target.length).fill(false);
-        line.current = Array.from({length:line.target.length}, () => NOISE[Math.floor(Math.random()*NOISE.length)]);
-        line.t = 0;
-      }, 1200);
+    } else if (line.stage === 2) {
+      // 왼쪽부터 순차 해독
+      const progress = (elapsed - 40) / (line.target.length * 3.5 + 20);
+      line.target.split('').forEach((ch, i) => {
+        if (line.chars[i] === ch) return;
+        if (i / line.target.length < progress) {
+          line.chars[i] = line.corrupt && Math.random() < 0.15 ? rndNoise() : ch;
+        } else if (decTick2 % 3 === 0) {
+          line.chars[i] = rndNoise();
+        }
+      });
+      if (line.chars.every((c,i) => c === line.target[i] || (line.corrupt && c !== line.target[i]))) {
+        if (!line.corrupt) { line.stage = 3; line.done = true; }
+      }
+      if (progress > 1.2 && !line.done) { line.stage = 3; line.done = true; }
+    }
+
+    // 가끔 글리치 (corrupt 라인은 더 자주)
+    if (Math.random() < (line.corrupt ? 0.04 : 0.008)) line.glitch = 4;
+    if (line.glitch > 0) {
+      const gi = Math.floor(Math.random() * line.target.length);
+      line.chars[gi] = rndNoise(); line.glitch--;
+    }
+
+    // 완료 후 리셋
+    if (line.done && elapsed > line.target.length * 4 + 120) {
+      Object.assign(line, mkLine(li));
     }
   });
 }
 
 function drawDecode() {
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
   ctx.fillRect(0, 0, W, H);
   stepDecode();
 
-  const lineH = H / (decLines.length + 1);
-  ctx.font = 'bold 13px Courier New';
+  const PX = 9.2; // 글자 폭
+  const lineH = (H - 24) / decLines2.length;
 
-  decLines.forEach((line, li) => {
-    const y = lineH * (li + 1);
-    const x = 20;
-    line.current.forEach((ch, i) => {
-      const resolved = line.resolved[i];
-      ctx.fillStyle = resolved ? '#39dc00'
-        : `rgba(57,220,0,${0.25 + Math.random()*0.35})`;
-      ctx.fillText(ch, x + i*11, y);
+  decLines2.forEach((line, li) => {
+    const y = 18 + lineH * li + lineH * 0.7;
+    const x = 56; // prefix 뒤
+    if (line.t < line.startT) return;
+
+    // 라인 번호 / 상태 prefix
+    const prefix = line.done
+      ? (line.corrupt ? '[ERR]' : '[OK] ')
+      : `[${String(li).padStart(2,'0')}] `;
+    ctx.font = '9px Courier New';
+    ctx.fillStyle = line.corrupt ? 'rgba(255,80,80,0.7)'
+                  : line.done    ? 'rgba(57,220,0,0.5)'
+                  :                'rgba(57,220,0,0.3)';
+    ctx.fillText(prefix, 8, y);
+
+    // 진행바 (오른쪽 끝)
+    const progress = Math.min(1, line.stage >= 3 ? 1 :
+      line.stage === 2 ? ((line.t - line.startT - 40) / (line.target.length * 3.5 + 20)) :
+      line.stage === 1 ? 0.3 : 0.1);
+    const barW = 30, barX = W - barW - 6;
+    ctx.fillStyle = 'rgba(57,220,0,0.15)';
+    ctx.fillRect(barX, y-8, barW, 7);
+    ctx.fillStyle = line.corrupt ? 'rgba(255,80,80,0.6)' : `rgba(57,220,0,${0.4 + progress*0.5})`;
+    ctx.fillRect(barX, y-8, barW * progress, 7);
+
+    // 글자 그리기
+    ctx.font = 'bold 10px Courier New';
+    line.chars.forEach((ch, i) => {
+      const isDone = ch === line.target[i];
+      const isSpace = line.target[i] === ' ';
+      if (isSpace && !isDone) { return; }
+
+      let color;
+      if (isDone && line.corrupt)    color = `rgba(255,100,100,${0.6 + Math.random()*0.4})`;
+      else if (isDone)               color = `rgba(57,220,0,${0.8 + Math.random()*0.2})`;
+      else if (line.stage === 0)     color = `rgba(57,180,0,${0.3 + Math.random()*0.3})`;
+      else                           color = `rgba(57,220,0,${0.2 + Math.random()*0.3})`;
+
+      ctx.fillStyle = color;
+      // stage 0: 두 자리 hex를 한 칸에
+      const drawCh = line.stage === 0 ? (ch.length === 2 ? ch[0] : ch) : ch;
+      ctx.fillText(drawCh, x + i * PX, y);
     });
-    // 커서
-    const lastUnresolved = line.resolved.indexOf(false);
-    if (lastUnresolved !== -1 && Math.floor(Date.now()/200)%2===0) {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(x + lastUnresolved*11, y-11, 7, 12);
+
+    // 커서 (현재 해독 위치)
+    if (line.stage === 2 && !line.done) {
+      const cur = line.chars.findIndex((c,i) => c !== line.target[i] && line.target[i] !== ' ');
+      if (cur !== -1 && Math.floor(Date.now()/150) % 2 === 0) {
+        ctx.fillStyle = line.corrupt ? '#ff6060' : '#ffffff';
+        ctx.fillRect(x + cur*PX - 1, y - 10, 8, 11);
+      }
     }
   });
+
+  // 상단 헤더
+  ctx.fillStyle = 'rgba(57,220,0,0.4)'; ctx.font = '8px Courier New';
+  ctx.fillText(`DECRYPT ENGINE v2.4 — TICK:${decTick2.toString().padStart(5,'0')}`, 8, 10);
+  const done = decLines2.filter(l => l.done && !l.corrupt).length;
+  ctx.textAlign = 'right';
+  ctx.fillText(`${done}/${decLines2.length} OK`, W-8, 10);
+  ctx.textAlign = 'left';
 }
 
 // ─────────────────────────────────────────────────────────────
