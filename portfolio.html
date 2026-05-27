@@ -4219,8 +4219,11 @@ REQUIRE LOGIN: No (Public access enabled)
         const activeMenuItem = document.querySelector('[data-section].active') || document.querySelector('.mobile-menu-item.active');
         if (activeMenuItem) {
           const section = activeMenuItem.getAttribute('data-section') || 'about';
-          loadContent(section);
-          loadContentToMobile(section);
+          const isCS = contents[section] && contents[section].isContactSheet;
+          if (!isCS) {
+            loadContent(section);
+            loadContentToMobile(section);
+          }
         }
       }
     });
@@ -4262,13 +4265,19 @@ REQUIRE LOGIN: No (Public access enabled)
           // nav 스택 초기화 플래그 (renderContactSheet가 체크)
           window._csNavReset = true;
 
-          // Re-render current section
+          // Re-render current section (단, contact sheet 섹션은 자동 재호출 금지)
           const isMobile = window.innerWidth <= 768;
           const activeSection = isMobile
             ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'about')
             : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'about');
-          if (isMobile) loadContentToMobile(activeSection);
-          else loadContent(activeSection);
+          const isContactSheetSection = contents[activeSection] && contents[activeSection].isContactSheet;
+          if (isContactSheetSection) {
+            // 오버레이가 이미 열려있으면 그냥 데이터만 업데이트하고 재호출 안 함
+          } else if (isMobile) {
+            loadContentToMobile(activeSection);
+          } else {
+            loadContent(activeSection);
+          }
         })
         .catch(() => {
           loadAdminContentsFromStorage();
