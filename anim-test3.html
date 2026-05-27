@@ -392,30 +392,103 @@ const renderAccessCard = (ctx, cw, ch) => {
   ctx.strokeStyle='#00ff001a'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(mx+4,d2); ctx.lineTo(mx+cw2-4,d2); ctx.stroke();
 
-  // ── BARCODE
-  const bcY=d2+8, bcX=mx+7, bcW=cw2-14, bcH=Math.floor(ch2*0.075);
-  const pat=[2,1,3,1,2,1,4,1,1,2,3,1,2,1,1,3,2,1,4,1,2,1,3,1,2];
-  const tot=pat.reduce((s,v)=>s+v,0), sc=bcW/tot;
-  let bxp=bcX;
-  // Guard bars (thicker at edges)
-  ctx.fillStyle=glitchOn?'#ff00ff':'#00ff00';
-  ctx.fillRect(bcX,bcY,2,bcH); ctx.fillRect(bcX+bcW-2,bcY,2,bcH);
-  pat.forEach((w,i)=>{
-    if(i%2===0){
-      const sh=hardGlitch?(Math.random()-.5)*3:0;
-      ctx.fillStyle=glitchOn?'#ff00ff':'#00ff00';
-      ctx.fillRect(bxp,bcY+sh,w*sc-0.5,bcH);
-    }
-    bxp+=w*sc;
-  });
-  // Card number (embossed 4-digit groups)
-  ctx.font=`${Math.max(7,fh-3)}px monospace`; ctx.fillStyle='#00ff0055';
-  ctx.textAlign='center';
-  ctx.fillText('4E5C  A92D  7F31  0842', mx+cw2/2, bcY+bcH+11);
+  // ── BARCODE (Code 128 style)
+  const bcPanY=d2+5, bcX=mx+5, bcW=cw2-10;
+  const bcH=Math.floor(ch2*0.088);
+  const bcPanH=bcH+30;
+
+  // Panel background
+  ctx.fillStyle='#010a02';
+  ctx.fillRect(bcX, bcPanY, bcW, bcPanH);
+  ctx.strokeStyle='#00ff0018'; ctx.lineWidth=1;
+  ctx.strokeRect(bcX, bcPanY, bcW, bcPanH);
+
+  // Top-left: barcode type label
+  ctx.font=`${Math.max(5,fh-5)}px monospace`;
+  ctx.fillStyle='#00ff0040'; ctx.textAlign='left';
+  ctx.fillText('CODE-128-B', bcX+3, bcPanY+4);
+  // Top-right: checksum
+  ctx.textAlign='right';
+  ctx.fillText('CHK:C4', bcX+bcW-3, bcPanY+4);
   ctx.textAlign='left';
 
+  const barY=bcPanY+13;
+
+  // Code 128 structure: START(B) + 12 data symbols + CHECK + STOP
+  // Each symbol = 6 elements (3 bars + 3 spaces), 11 modules total
+  const C128_START =[2,1,1,4,1,2];
+  const C128_STOP  =[2,3,3,1,1,1,2];
+  const C128_DATA  =[
+    [2,2,2,1,1,2],[1,1,2,1,3,2],[1,1,2,3,1,2],[1,3,2,1,1,2],
+    [1,1,2,2,2,2],[2,1,1,2,3,1],[1,2,3,1,1,2],[2,1,2,1,3,1],
+    [1,2,1,3,2,1],[2,3,1,2,1,1],[2,1,3,2,1,1],[1,2,1,1,3,2],
+  ];
+  const C128_CHECK =[1,2,3,1,2,1];
+
+  const allPat=[...C128_START, ...C128_DATA.flat(), ...C128_CHECK, ...C128_STOP];
+  const totW=allPat.reduce((s,v)=>s+v,0);
+  const scl=(bcW-10)/totW;
+
+  // Draw bars
+  let bxp2=bcX+5;
+  allPat.forEach((w,i)=>{
+    if(i%2===0){
+      const sh=hardGlitch?(Math.random()-.5)*2:0;
+      ctx.fillStyle=glitchOn?'#ff00ff':'#00ff00';
+      ctx.fillRect(bxp2, barY+sh, w*scl-0.2, bcH);
+    }
+    bxp2+=w*scl;
+  });
+
+  // Extended guard extensions (small caps above + below bars)
+  const sgW=C128_START.reduce((s,v)=>s+v,0)*scl;
+  const egW=C128_STOP.reduce((s,v)=>s+v,0)*scl;
+  ctx.fillStyle=glitchOn?'rgba(255,0,255,0.6)':'rgba(0,255,0,0.6)';
+  ctx.fillRect(bcX+5,       barY-4, sgW,  3);   // start cap
+  ctx.fillRect(bcX+5,       barY+bcH+1, sgW,  3); // start bottom cap
+  ctx.fillRect(bcX+5+totW*scl-egW, barY-4, egW, 3);  // stop cap
+  ctx.fillRect(bcX+5+totW*scl-egW, barY+bcH+1, egW, 3);
+
+  // Quiet zone markers
+  ctx.font=`${Math.max(5,fh-4)}px monospace`;
+  ctx.fillStyle='#00ff0044';
+  ctx.fillText('◁', bcX+2, barY+bcH*0.55);
+  ctx.textAlign='right';
+  ctx.fillText('▷', bcX+bcW-2, barY+bcH*0.55);
+  ctx.textAlign='left';
+
+  // Animated scan line (bounces up and down)
+  const scanProgress=((t*0.038)%2);
+  const scanFrac=scanProgress<1?scanProgress:2-scanProgress;
+  const scanLY=barY+scanFrac*bcH;
+  const scanG2=ctx.createLinearGradient(bcX,0,bcX+bcW,0);
+  scanG2.addColorStop(0,'rgba(0,255,0,0)');
+  scanG2.addColorStop(0.08,'rgba(0,255,0,0.7)');
+  scanG2.addColorStop(0.92,'rgba(0,255,0,0.7)');
+  scanG2.addColorStop(1,'rgba(0,255,0,0)');
+  ctx.fillStyle=scanG2;
+  ctx.fillRect(bcX+3, scanLY-1, bcW-6, 2);
+  // glow trail behind scan
+  const trailG=ctx.createLinearGradient(0,scanLY-6,0,scanLY);
+  trailG.addColorStop(0,'rgba(0,255,0,0)');
+  trailG.addColorStop(1,'rgba(0,255,0,0.12)');
+  ctx.fillStyle=trailG;
+  ctx.fillRect(bcX+3, scanLY-6, bcW-6, 6);
+
+  // Human-readable number (grouped below bars)
+  ctx.font=`${Math.max(7,fh-3)}px monospace`;
+  ctx.fillStyle='#00ff0058';
+  ctx.textAlign='center';
+  ctx.fillText('4E5C  A92D  7F31  0842', bcX+bcW/2, barY+bcH+12);
+  ctx.textAlign='left';
+
+  // Bottom-left: issuer string
+  ctx.font=`${Math.max(5,fh-5)}px monospace`;
+  ctx.fillStyle='#00ff0028';
+  ctx.fillText('NOTE-A · SET PROJECT · 2026', bcX+3, bcPanY+bcPanH-3);
+
   // Divider 3
-  const d3=bcY+bcH+24;
+  const d3=bcPanY+bcPanH+6;
   ctx.strokeStyle='#00ff0015'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(mx+4,d3); ctx.lineTo(mx+cw2-4,d3); ctx.stroke();
 
