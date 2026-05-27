@@ -2765,7 +2765,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   </div>` : ''}
                   ${p.category ? `<div style="border-top:1px solid #39dc00;"></div>` : ''}
                   <div style="font-size:9px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
-                  <div style="font-size:${isMobLb ? '11px' : '12px'};color:#ccc;line-height:1.9;">${p.reason || '—'}</div>
+                  <div style="font-size:${isMobLb ? '11px' : '12px'};color:#ccc;line-height:1.9;white-space:pre-wrap;">${(p.reason || '—').replace(/\n-----\n/g, '\n<span style="display:block;border-top:1px solid #39dc0044;margin:8px 0;"></span>\n')}</div>
                 </div>
               </div>
             </div>
