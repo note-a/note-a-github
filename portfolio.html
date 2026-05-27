@@ -2594,20 +2594,6 @@ REQUIRE LOGIN: No (Public access enabled)
       }
       const waveTimer = setInterval(renderWave, 60);
 
-      function updateBotStats() {
-        const total = currentPhotos ? currentPhotos.filter(p => p.type !== 'sheet').length : 0;
-        const loaded = document.querySelectorAll('#csCells .cs-cell[data-type="photo"]').length;
-        const estMem = (loaded * 42 / 1024).toFixed(1);
-        const pad = n => String(n).padStart(3, '0');
-        const s1 = document.getElementById('csStat1');
-        const s2 = document.getElementById('csStat2');
-        const s3 = document.getElementById('csStat3');
-        const s4 = document.getElementById('csStat4');
-        if (s1) s1.textContent = `TOTAL: ${pad(total)} FILES`;
-        if (s2) s2.textContent = `LOADED: ${pad(loaded)}`;
-        if (s3) s3.textContent = `MEM: ${estMem}MB`;
-        if (s4) s4.textContent = currentLevelTitle ? currentLevelTitle.toUpperCase() : '';
-      }
       overlay.addEventListener('remove', () => clearInterval(waveTimer));
 
       // 닫기
@@ -2777,6 +2763,21 @@ REQUIRE LOGIN: No (Public access enabled)
           ? csNavStack.map(l => l.title).join(' › ') + ' › ' + levelTitle
           : levelTitle;
         titleEl.textContent = path;
+      }
+
+      function updateBotStats() {
+        const total = currentPhotos ? currentPhotos.filter(p => p.type !== 'sheet').length : 0;
+        const loaded = document.querySelectorAll('#csCells .cs-cell[data-type="photo"]').length;
+        const estMem = (loaded * 42 / 1024).toFixed(1);
+        const pad = n => String(n).padStart(3, '0');
+        const s1 = document.getElementById('csStat1');
+        const s2 = document.getElementById('csStat2');
+        const s3 = document.getElementById('csStat3');
+        const s4 = document.getElementById('csStat4');
+        if (s1) s1.textContent = `TOTAL: ${pad(total)} FILES`;
+        if (s2) s2.textContent = `LOADED: ${pad(loaded)}`;
+        if (s3) s3.textContent = `MEM: ${estMem}MB`;
+        if (s4) s4.textContent = currentLevelTitle ? currentLevelTitle.toUpperCase() : '';
       }
 
       function renderLevel(photos, levelTitle) {
