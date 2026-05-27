@@ -2594,7 +2594,7 @@ REQUIRE LOGIN: No (Public access enabled)
       }
       const waveTimer = setInterval(renderWave, 60);
 
-      overlay.addEventListener('remove', () => clearInterval(waveTimer));
+      overlay.addEventListener('remove', () => { clearInterval(waveTimer); clearInterval(statsTimer); });
 
       // 닫기
       function closeOverlay() {
@@ -2765,20 +2765,22 @@ REQUIRE LOGIN: No (Public access enabled)
         titleEl.textContent = path;
       }
 
-      function updateBotStats() {
+      const statsTimer = setInterval(function() {
         const total = currentPhotos ? currentPhotos.filter(p => p.type !== 'sheet').length : 0;
-        const loaded = document.querySelectorAll('#csCells .cs-cell[data-type="photo"]').length;
-        const estMem = (loaded * 42 / 1024).toFixed(1);
+        const cells = document.querySelectorAll('#csCells .cs-cell[data-type="photo"]');
+        const rendered = cells.length;
+        const imgLoaded = Array.from(cells).filter(c => { const img = c.querySelector('img'); return img && img.complete && img.naturalWidth > 0; }).length;
+        const estMem = (imgLoaded * 42 / 1024).toFixed(1);
         const pad = n => String(n).padStart(3, '0');
         const s1 = document.getElementById('csStat1');
         const s2 = document.getElementById('csStat2');
         const s3 = document.getElementById('csStat3');
         const s4 = document.getElementById('csStat4');
         if (s1) s1.textContent = `TOTAL: ${pad(total)} FILES`;
-        if (s2) s2.textContent = `LOADED: ${pad(loaded)}`;
+        if (s2) s2.textContent = `LOADED: ${pad(imgLoaded)}/${pad(rendered)}`;
         if (s3) s3.textContent = `MEM: ${estMem}MB`;
         if (s4) s4.textContent = currentLevelTitle ? currentLevelTitle.toUpperCase() : '';
-      }
+      }, 400);
 
       function renderLevel(photos, levelTitle) {
         currentPhotos = photos;
@@ -2894,7 +2896,7 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>`;
 
-        setTimeout(function() { container.style.opacity = '1'; updateBotStats(); }, 20);
+        setTimeout(function() { container.style.opacity = '1'; }, 20);
         }, 250);
 
       }
@@ -2924,7 +2926,7 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>`;
           }).join('');
           const cellsEl = document.getElementById('csCells');
-          if (cellsEl) { cellsEl.insertAdjacentHTML('beforeend', moreCells); updateBotStats(); }
+          if (cellsEl) cellsEl.insertAdjacentHTML('beforeend', moreCells);
           const newLoaded = loaded + PAGE;
           const remaining = currentPhotos.length - newLoaded;
           if (remaining <= 0) btn.parentElement.remove();
