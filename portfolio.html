@@ -2516,6 +2516,13 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     function openContactSheetOverlay(content) {
+      // 사용자가 명시적으로 클릭했을 때만 열림 — 자동 호출 차단
+      if (!window._userOpenContactSheet) {
+        console.log('[csOverlay] blocked — not user-initiated');
+        return;
+      }
+      window._userOpenContactSheet = false;
+
       // 기존 오버레이 제거
       const existing = document.getElementById('csOverlay');
       if (existing) existing.remove();
@@ -3437,6 +3444,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
           // Load content
           const section = this.getAttribute('data-section');
+          if (section === 'inclusion') window._userOpenContactSheet = true;
           loadContent(section);
 
           // Close menu on mobile
@@ -3871,6 +3879,7 @@ REQUIRE LOGIN: No (Public access enabled)
         mobileTitle.textContent = item.textContent;
 
         // Load content to mobile terminal
+        if (section === 'inclusion') window._userOpenContactSheet = true;
         loadContentToMobile(section);
 
         // Close menu drawer
@@ -4402,7 +4411,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const statusColor = isActive ? '#39dc00' : 'rgba(57,220,0,0.28)';
           const pidColor = '#666';
           return `
-            <div onclick="loadContent('${p.key}'); pmRender('${p.key}');"
+            <div onclick="${p.key==='inclusion'?'window._userOpenContactSheet=true;':''}loadContent('${p.key}'); pmRender('${p.key}');"
               style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #0d2e00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
               onmouseover="this.style.background='rgba(57,220,0,0.08)'"
               onmouseout="this.style.background='${isActive?'rgba(57,220,0,0.12)':'transparent'}'">
