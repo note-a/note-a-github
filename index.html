@@ -239,6 +239,22 @@ body {
 
   .ln { font-size: 8px; }
 }
+
+/* CRT 전환 효과 */
+@keyframes crt-on {
+  0%   { clip-path: inset(50% 50% 50% 50%); filter: brightness(6); }
+  20%  { clip-path: inset(48% 0% 48% 0%);   filter: brightness(3); }
+  55%  { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1.6); }
+  100% { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1); }
+}
+@keyframes crt-off {
+  0%   { clip-path: inset(0% 0% 0% 0%);         filter: brightness(1); }
+  40%  { clip-path: inset(48% 0% 48% 0%);       filter: brightness(3); }
+  72%  { clip-path: inset(49.5% 12% 49.5% 12%); filter: brightness(5); }
+  100% { clip-path: inset(50% 50% 50% 50%);     filter: brightness(0); }
+}
+body { animation: crt-on 0.55s ease-out forwards; }
+body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
   </style>
 </head>
 <body>
@@ -325,12 +341,17 @@ document.addEventListener('keydown', e => {
 });
 render();
 
+function navigate(url) {
+  document.body.classList.add('leaving');
+  setTimeout(() => { window.location.href = url; }, 450);
+}
+
 let _confirmDest = '';
 function showConfirm(url, cmd, dest) {
   _confirmDest = url;
   document.getElementById('cfCmd').textContent = cmd;
   document.getElementById('cfDest').textContent = dest;
-  document.getElementById('cfOk').onclick = () => { window.location.href = url; };
+  document.getElementById('cfOk').onclick = () => { hideConfirm(); navigate(url); };
   const ov = document.getElementById('confirmOverlay');
   ov.style.display = 'flex';
 }

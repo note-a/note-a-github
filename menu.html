@@ -4,9 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET - MENU</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
+html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'DotGothic16', monospace; height: 100%; overflow: hidden;
+  text-shadow: 1px 0.5px rgba(255,0,0,0.25), -1px -0.5px rgba(0,255,255,0.2); }
+
+/* 메뉴 아이템 — 강한 효과 */
+.menu-item-name, .menu-item-icon, .menu-title, h1, h2, h3 {
+  text-shadow: 2px 1px rgba(255,0,0,0.45), -2px -1px rgba(0,255,255,0.38);
+}
 
 .top-banner {
   display: none;
@@ -14,7 +21,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
   padding: 6px 0; z-index: 999; overflow: hidden;
   animation: marquee 12s linear infinite;
-  font-size: 12px;
+  font-size: 7px;
 }
 
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
@@ -29,14 +36,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .folder-window {
-  border: 1.5px solid #39dc00;
+  border: 1.5px solid #00ff00;
   background: #000;
   width: 520px;
   height: 400px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 14px rgba(57,220,0,0.65), 0 0 32px rgba(57,220,0,0.2);
+  box-shadow: 0 0 14px rgba(0,255,0,0.65), 0 0 32px rgba(0,255,0,0.2);
   position: relative;
 }
 
@@ -45,29 +52,29 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   content: '';
   position: absolute;
   inset: 4px;
-  border: 1px dashed rgba(57,220,0,0.15);
+  border: 1px dashed rgba(0,255,0,0.15);
   pointer-events: none;
   z-index: 2;
 }
 
 .folder-titlebar {
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   padding: 5px 8px;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 7px;
   letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(57,220,0,0.25);
+  border-bottom: 1px solid rgba(0,255,0,0.25);
   gap: 0;
 }
 
 .titlebar-fill {
   flex: 1;
   overflow: hidden;
-  color: rgba(57,220,0,0.2);
-  font-size: 10px;
+  color: rgba(0,255,0,0.2);
+  font-size: 6px;
   letter-spacing: 1px;
   padding: 0 4px;
   white-space: nowrap;
@@ -84,16 +91,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 9px;
-  font-family: 'Courier New', monospace;
-  color: rgba(57,220,0,0.45);
+  font-size: 6px;
+  color: rgba(0,255,0,0.45);
   padding: 1px 2px;
   letter-spacing: 0;
   transition: color 0.1s;
 }
 
 .folder-icon:hover {
-  color: #39dc00;
+  color: #00ff00;
 }
 
 .folder-content {
@@ -101,19 +107,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 12px;
   overflow-y: auto;
   background: #000;
-  color: #39dc00;
-  font-size: 12px;
+  color: #00ff00;
+  font-size: 7px;
   line-height: 1.8;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
 }
 
 .path-bar {
   padding: 8px 12px;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
   background: #000;
-  color: #39dc00;
-  font-size: 11px;
-  border-top: 1px solid #39dc00;
+  color: #00ff00;
+  font-size: 7px;
+  border-top: 1px solid #00ff00;
 }
 
 .menu-items {
@@ -130,7 +136,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 20px 12px;
   cursor: pointer;
   transition: all 0.15s;
-  border: 1px solid rgba(57,220,0,0.18);
+  border: 1px solid rgba(0,255,0,0.18);
   background: #000;
   text-align: center;
   min-height: 80px;
@@ -138,22 +144,22 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .menu-item:hover,
 .menu-item.selected {
-  background: rgba(57,220,0,0.07);
-  border-color: rgba(57,220,0,0.5);
-  box-shadow: inset 0 0 20px rgba(57,220,0,0.04);
+  background: rgba(0,255,0,0.07);
+  border-color: rgba(0,255,0,0.5);
+  box-shadow: inset 0 0 20px rgba(0,255,0,0.04);
 }
 
 .menu-item-icon {
   margin-bottom: 8px;
   width: 100%;
   text-align: center;
-  font-size: 20px;
+  font-size: 11px;
 }
 
 .menu-item-name {
   flex: 1;
   word-break: break-all;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: bold;
   text-align: center;
   display: flex;
@@ -168,11 +174,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 ::-webkit-scrollbar-track {
   background: #000;
-  border-left: 1px solid #39dc00;
+  border-left: 1px solid #00ff00;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #39dc00;
+  background: #00ff00;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -181,18 +187,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .status-bar {
   padding: 8px 12px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   background: #000;
-  color: #39dc00;
-  font-size: 11px;
+  color: #00ff00;
+  font-size: 7px;
   display: flex;
   justify-content: space-between;
   text-align: center;
 }
 
 #loadingCanvas {
-  border: 1.5px solid #39dc00;
-  box-shadow: 0 0 14px rgba(57,220,0,0.65), 0 0 32px rgba(57,220,0,0.2);
+  /* no CSS border — radar panel is borderless */
 }
 
 @media (max-width: 768px) {
@@ -201,21 +206,52 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   }
 
   .folder-content {
-    font-size: 11px;
-  }
+    font-size: 7px;
+}
 
   .menu-item {
     padding: 6px 10px;
   }
 }
 
+/* CRT 전환 효과 */
+@keyframes crt-on {
+  0%   { clip-path: inset(50% 50% 50% 50%); filter: brightness(6); }
+  20%  { clip-path: inset(48% 0% 48% 0%);   filter: brightness(3); }
+  55%  { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1.6); }
+  100% { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1); }
+}
+@keyframes crt-off {
+  0%   { clip-path: inset(0% 0% 0% 0%);         filter: brightness(1); }
+  40%  { clip-path: inset(48% 0% 48% 0%);       filter: brightness(3); }
+  72%  { clip-path: inset(49.5% 12% 49.5% 12%); filter: brightness(5); }
+  100% { clip-path: inset(50% 50% 50% 50%);     filter: brightness(0); }
+}
+body { animation: crt-on 0.55s ease-out forwards; }
+body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
   </style>
 </head>
 <body>
   <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
 
   <div class="menu-container">
-    <div style="display:flex;flex-direction:row;align-items:center;gap:20px;width:100%;max-width:1240px;">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;max-width:1240px;">
+
+      <!-- 상단 패널: Signal Intercept 타이틀 바 포함 -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;margin-left:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#00ff00;color:#000;padding:3px 12px;font-weight:bold;font-size:10px;letter-spacing:1.5px;gap:8px;width:calc(100% + 0px);">
+          <span>SIGNAL INTERCEPT VIEWER</span>
+          <div style="display:flex;gap:3px;flex-shrink:0;">
+            <button style="width:15px;height:15px;background:#00ff00;border:1px solid #000;cursor:pointer;font-size:8px;font-weight:bold;padding:0;">−</button>
+            <button style="width:15px;height:15px;background:#00ff00;border:1px solid #000;cursor:pointer;font-size:8px;font-weight:bold;padding:0;">□</button>
+            <button style="width:15px;height:15px;background:#00ff00;border:1px solid #000;cursor:pointer;font-size:8px;font-weight:bold;padding:0;">✕</button>
+          </div>
+        </div>
+        <canvas id="interceptCanvas" style="display:block;flex-shrink:0;"></canvas>
+      </div>
+
+      <!-- 하단 3패널 -->
+      <div style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;">
 
       <!-- 왼쪽 패널: ACCESS CARD -->
       <canvas id="cardCanvas" style="flex-shrink:0;display:block;"></canvas>
@@ -244,17 +280,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
             <div class="menu-item" onclick="navigate('portfolio.html?section=inclusion')">
               <div class="menu-item-name">SET Inclusion</div>
             </div>
-            <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
-              <div class="menu-item-name">entire</div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=about')">
+              <div class="menu-item-name">About</div>
             </div>
-            <div class="menu-item" onclick="navigate('portfolio.html?section=rule')">
-              <div class="menu-item-name">log</div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=log')">
+              <div class="menu-item-name">Log</div>
             </div>
             <div class="menu-item" onclick="navigate('portfolio.html?section=reference')">
               <div class="menu-item-name">reference</div>
             </div>
-            <div class="menu-item" onclick="navigate('portfolio.html?section=archive')">
-              <div class="menu-item-name">Archive</div>
+            <div class="menu-item" onclick="navigate('portfolio.html?section=measure')">
+              <div class="menu-item-name">Measure</div>
             </div>
           </div>
         </div>
@@ -266,25 +302,320 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       </div>
 
       <!-- 캔버스: 레이더(위) + 디코드(아래) (우) -->
-      <canvas id="loadingCanvas" style="width:260px;flex-shrink:0;display:block;"></canvas>
+      <canvas id="loadingCanvas" style="width:260px;flex-shrink:0;display:block;margin-left:10px;"></canvas>
 
-    </div><!-- /wrapper -->
+      </div><!-- /3-panel row -->
+    </div><!-- /column wrapper -->
   </div>
 
   <script>
-    // ── FILE TREE (우측 패널) ────────────────────────────────────
+    // ── RADAR + FILE TREE (우측 패널) ───────────────────────────
     (function() {
       const canvas = document.getElementById('loadingCanvas');
       const ctx    = canvas.getContext('2d');
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const W = 260, H = 400;
+      const W = 260, H = 403;
       canvas.width = W * dpr; canvas.height = H * dpr;
       canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
       ctx.scale(dpr, dpr);
 
-      const GA = (a) => `rgba(57,220,0,${a})`;
+      const GA = (a) => `rgba(0,255,0,${a})`;
       let frame = 0;
 
+      // ─── RADAR state ───
+      const RADAR_H = 196;
+      const FILE_Y  = 202;
+      let radarAngle = 0;
+      let radarTick  = 0;
+      let radarInterference = 0;
+      const radarBlips = [
+        { angle: 0.7,  dist: 0.52, locked: true,  life: 999, pulse: 0 },
+        { angle: 2.1,  dist: 0.35, locked: false, life: 999, pulse: 0 },
+        { angle: 3.8,  dist: 0.68, locked: true,  life: 999, pulse: 0 },
+        { angle: 4.5,  dist: 0.22, locked: false, life: 999, pulse: 0 },
+        { angle: 5.2,  dist: 0.80, locked: false, life: 999, pulse: 0 },
+        { angle: 1.3,  dist: 0.44, locked: true,  life: 999, pulse: 0 },
+      ];
+
+      function drawRadar() {
+        const cx = W / 2, cy = RADAR_H * 0.5;
+        const r  = Math.min(W * 0.5, RADAR_H * 0.5) * 0.88;
+
+        // Fade trail (preserve ghost sweep)
+        ctx.fillStyle = 'rgba(0,0,0,0.13)';
+        ctx.fillRect(0, 0, W, RADAR_H);
+
+        // ── Background radial glow (center pulse)
+        const pulseR = r * (0.15 + 0.06 * Math.sin(radarTick * 0.04));
+        const bgGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        bgGlow.addColorStop(0,   GA(0.06));
+        bgGlow.addColorStop(0.3, GA(0.025));
+        bgGlow.addColorStop(1,   GA(0));
+        ctx.fillStyle = bgGlow; ctx.fillRect(0, 0, W, RADAR_H);
+
+        // ── Interference noise
+        radarInterference = Math.max(0, radarInterference - 1);
+        if (Math.random() < 0.035) radarInterference = 8 + Math.floor(Math.random() * 12);
+        if (radarInterference > 0) {
+          for (let n = 0; n < 18; n++) {
+            ctx.fillStyle = GA(Math.random() * 0.18);
+            ctx.fillRect(Math.random() * W, Math.random() * RADAR_H, 1 + Math.random() * 3, 1);
+          }
+        }
+
+        // ── Degree tick marks around outer ring
+        ctx.save();
+        for (let deg = 0; deg < 360; deg += 10) {
+          const rad  = deg * Math.PI / 180;
+          const major = deg % 30 === 0;
+          const len  = major ? 6 : 3;
+          const a    = major ? 0.35 : 0.15;
+          ctx.strokeStyle = GA(a); ctx.lineWidth = major ? 1 : 0.5;
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(rad) * r,       cy + Math.sin(rad) * r);
+          ctx.lineTo(cx + Math.cos(rad) * (r - len), cy + Math.sin(rad) * (r - len));
+          ctx.stroke();
+          // Degree labels every 90°
+          if (deg % 90 === 0 && deg !== 0) {
+            ctx.font = '6px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.fillStyle = GA(0.22);
+            ctx.fillText(deg + '°', cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12));
+          }
+        }
+        ctx.restore();
+
+        // ── Concentric rings with glow
+        ctx.save();
+        [1, 0.66, 0.33].forEach((s, i) => {
+          ctx.shadowColor = '#00ff00';
+          ctx.shadowBlur  = [8, 4, 2][i];
+          ctx.strokeStyle = GA([0.22, 0.14, 0.09][i]); ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(cx, cy, r * s, 0, Math.PI * 2); ctx.stroke();
+        });
+        ctx.restore();
+
+        // ── Range labels on rings
+        ctx.font = '6px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        [[0.33,'25%'],[0.66,'50%'],[1.0,'MAX']].forEach(([s, label]) => {
+          ctx.fillStyle = GA(0.18);
+          ctx.fillText(label, cx + 2, cy - r * s - 1);
+        });
+
+        // ── Crosshairs (dashed)
+        ctx.strokeStyle = GA(0.10); ctx.lineWidth = 1;
+        ctx.setLineDash([2, 4]);
+        ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // ── Diagonal secondary crosshairs (45°)
+        ctx.strokeStyle = GA(0.055); ctx.lineWidth = 0.5;
+        ctx.setLineDash([2, 6]);
+        [45, 135].forEach(deg => {
+          const rad = deg * Math.PI / 180;
+          ctx.beginPath();
+          ctx.moveTo(cx - Math.cos(rad) * r, cy - Math.sin(rad) * r);
+          ctx.lineTo(cx + Math.cos(rad) * r, cy + Math.sin(rad) * r);
+          ctx.stroke();
+        });
+        ctx.setLineDash([]);
+
+        // ── Sweep sector fill
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, radarAngle - Math.PI * 0.52, radarAngle);
+        ctx.closePath();
+        const sweepFill = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        sweepFill.addColorStop(0,   GA(0.18));
+        sweepFill.addColorStop(0.6, GA(0.06));
+        sweepFill.addColorStop(1,   GA(0));
+        ctx.fillStyle = sweepFill;
+        ctx.fill();
+        ctx.restore();
+
+        // ── Sweep tail lines
+        for (let i = 0; i < 40; i++) {
+          const da   = (i / 40) * (Math.PI * 0.52);
+          const a    = radarAngle - da;
+          const frac = 1 - i / 40;
+          ctx.strokeStyle = GA(frac * 0.28);
+          ctx.lineWidth   = 1.5 * frac + 0.5;
+          ctx.beginPath(); ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+          ctx.stroke();
+        }
+
+        // ── Sweep head with glow
+        ctx.save();
+        ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 12;
+        ctx.strokeStyle = GA(0.9); ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(radarAngle) * r, cy + Math.sin(radarAngle) * r);
+        ctx.stroke();
+        ctx.restore();
+
+        // ── Center dot (pulsing)
+        ctx.save();
+        ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 6 + 4 * Math.abs(Math.sin(radarTick * 0.05));
+        ctx.fillStyle = GA(0.8);
+        ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+
+        // ── Expanding pulse ring (periodic)
+        const pulsePhase = (radarTick % 120) / 120;
+        if (pulsePhase < 0.6) {
+          const pr = pulsePhase / 0.6 * r;
+          ctx.save();
+          ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 4;
+          ctx.strokeStyle = GA((1 - pulsePhase / 0.6) * 0.25);
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+
+        // ── Blips
+        radarBlips.forEach(b => {
+          b.pulse = (b.pulse + 1) % 80;
+          const bx = cx + Math.cos(b.angle) * r * b.dist;
+          const by = cy + Math.sin(b.angle) * r * b.dist;
+          const da = ((radarAngle - b.angle) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+          const alpha = da < 0.25 ? 1.0 : Math.max(0, 1.0 - (da - 0.25) / (Math.PI * 0.9));
+
+          if (alpha > 0.03) {
+            ctx.save();
+            if (b.locked) {
+              // Diamond + crosshair + pulse ring
+              ctx.shadowColor = '#00ff00'; ctx.shadowBlur = alpha * 10;
+              ctx.strokeStyle = GA(alpha * 0.9); ctx.lineWidth = 1;
+              const ds = 4;
+              ctx.beginPath();
+              ctx.moveTo(bx, by - ds); ctx.lineTo(bx + ds, by);
+              ctx.lineTo(bx, by + ds); ctx.lineTo(bx - ds, by);
+              ctx.closePath(); ctx.stroke();
+              // Mini crosshair inside diamond
+              ctx.strokeStyle = GA(alpha * 0.4); ctx.lineWidth = 0.5;
+              ctx.beginPath(); ctx.moveTo(bx - 2, by); ctx.lineTo(bx + 2, by); ctx.stroke();
+              ctx.beginPath(); ctx.moveTo(bx, by - 2); ctx.lineTo(bx, by + 2); ctx.stroke();
+              // Pulse ring
+              if (b.pulse < 40) {
+                const pr2 = (b.pulse / 40) * 14;
+                ctx.strokeStyle = GA(alpha * (1 - b.pulse / 40) * 0.5);
+                ctx.beginPath(); ctx.arc(bx, by, pr2, 0, Math.PI * 2); ctx.stroke();
+              }
+            } else {
+              // Dot with faint halo
+              ctx.shadowColor = '#00ff00'; ctx.shadowBlur = alpha * 6;
+              ctx.fillStyle = GA(alpha * 0.85);
+              ctx.beginPath(); ctx.arc(bx, by, 2, 0, Math.PI * 2); ctx.fill();
+              ctx.strokeStyle = GA(alpha * 0.2); ctx.lineWidth = 1;
+              ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI * 2); ctx.stroke();
+            }
+            ctx.restore();
+          }
+        });
+
+        // ── NSEW labels with tick
+        ctx.font = 'bold 7px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        [['N', cx,     cy-r-8], ['S', cx,     cy+r+8],
+         ['E', cx+r+8, cy    ], ['W', cx-r-8, cy    ]].forEach(([l, lx, ly]) => {
+          ctx.fillStyle = GA(0.5);
+          ctx.fillText(l, lx, ly);
+        });
+        ctx.textAlign = 'left';
+
+        // ── Corner brackets (all 4 corners)
+        const bk = 8;
+        ctx.strokeStyle = GA(0.35); ctx.lineWidth = 1;
+        [[0,0,1,1],[W,0,-1,1],[0,RADAR_H,1,-1],[W,RADAR_H,-1,-1]].forEach(([x,y,sx,sy]) => {
+          ctx.beginPath();
+          ctx.moveTo(x+sx*bk, y); ctx.lineTo(x, y); ctx.lineTo(x, y+sy*bk);
+          ctx.stroke();
+        });
+
+        // ── Left side: vertical signal strength bars
+        const barX = 3, barBotY = cy + r * 0.65, barH = r * 1.2;
+        const barCount = 6;
+        ctx.font = '5px monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+        for (let i = 0; i < barCount; i++) {
+          const bh = (0.3 + 0.7 * Math.abs(Math.sin(radarTick * 0.03 + i * 0.9))) * (barH / barCount * 0.7);
+          const by2 = barBotY - i * (barH / barCount);
+          const alpha = 0.08 + 0.14 * Math.abs(Math.sin(radarTick * 0.03 + i * 0.9));
+          ctx.fillStyle = GA(alpha);
+          ctx.fillRect(barX, by2 - bh, 3, bh);
+        }
+        ctx.fillStyle = GA(0.18); ctx.textBaseline = 'top';
+        ctx.fillText('SIG', barX, cy - r * 0.65 - 8);
+
+        // ── Right side: mini frequency waveform
+        const wvX = W - 16, wvY = cy - r * 0.3, wvH = r * 0.6, wvLen = 12;
+        ctx.strokeStyle = GA(0.18); ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        for (let i = 0; i <= wvLen; i++) {
+          const wy = wvY + wvH / 2 + Math.sin((i / wvLen) * Math.PI * 3 + radarTick * 0.07) * wvH * 0.4
+                   + Math.sin((i / wvLen) * Math.PI * 7 + radarTick * 0.11) * wvH * 0.15;
+          i === 0 ? ctx.moveTo(wvX, wy) : ctx.lineTo(wvX, wy + i * 0); // vertical waveform
+          ctx.lineTo(wvX, wy);
+        }
+        ctx.stroke();
+        // vertical waveform (redraw properly)
+        ctx.beginPath();
+        for (let i = 0; i <= wvLen; i++) {
+          const wy = wvY + i * (wvH / wvLen);
+          const wx = wvX + Math.sin((i / wvLen) * Math.PI * 3 + radarTick * 0.07) * 5
+                         + Math.sin((i / wvLen) * Math.PI * 6 + radarTick * 0.12) * 2;
+          i === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
+        }
+        ctx.stroke();
+        ctx.fillStyle = GA(0.18); ctx.textBaseline = 'top'; ctx.textAlign = 'right';
+        ctx.fillText('FRQ', W - 3, cy - r * 0.3 - 8);
+
+        // ── Top-left corner data
+        ctx.font = '6px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        ctx.fillStyle = GA(0.28);
+        const brg = Math.floor(((radarAngle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2) * 180 / Math.PI);
+        ctx.fillText(`BRG ${String(brg).padStart(3,'0')}°`, 3, 10);
+        ctx.fillStyle = GA(0.18);
+        ctx.fillText(`MODE:SCN`, 3, 18);
+
+        // ── Top-right corner data
+        const lockedBlip = radarBlips.find(b => b.locked);
+        const tgtBrg = lockedBlip
+          ? Math.floor(((lockedBlip.angle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2) * 180 / Math.PI)
+          : '---';
+        const tgtRng = lockedBlip ? Math.round(lockedBlip.dist * 100) : '---';
+        ctx.textAlign = 'right'; ctx.fillStyle = GA(0.28);
+        ctx.fillText(`TGT ${String(tgtBrg).padStart(3,'0')}°`, W - 3, 10);
+        ctx.fillStyle = GA(0.18);
+        ctx.fillText(`RNG:${tgtRng}%`, W - 3, 18);
+
+        // ── Bottom-left corner
+        ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillStyle = GA(0.25);
+        ctx.fillText(`LOCK ${radarBlips.filter(b=>b.locked).length}/${radarBlips.length}`, 3, RADAR_H - 10);
+        ctx.fillStyle = GA(0.15);
+        ctx.fillText(`${(radarAngle/(Math.PI*2)*100).toFixed(0)}% SCN`, 3, RADAR_H - 3);
+
+        // ── Bottom-right corner: tiny rolling signal history
+        const histX = W - 20, histY = RADAR_H - 14, histW = 16, histH = 10;
+        ctx.strokeStyle = GA(0.14); ctx.lineWidth = 0.5;
+        ctx.strokeRect(histX, histY, histW, histH);
+        ctx.strokeStyle = GA(0.28); ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        for (let i = 0; i < histW; i++) {
+          const hv = histY + histH - (0.3 + 0.7 * Math.abs(Math.sin((radarTick - i) * 0.08))) * histH;
+          i === 0 ? ctx.moveTo(histX + i, hv) : ctx.lineTo(histX + i, hv);
+        }
+        ctx.stroke();
+        ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = GA(0.15);
+        ctx.fillText('HST', W - 3, RADAR_H - 3);
+        ctx.textAlign = 'left';
+
+        radarAngle += 0.026;
+        if (radarAngle > Math.PI * 2) radarAngle -= Math.PI * 2;
+        radarTick++;
+      }
+
+      // ─── FILE TREE state ───
       const TREE=[
         {name:'C:\\WORLD\\SET\\', depth:0, type:'root',  size:'',        date:'2026-01-15'},
         {name:'PROJECT\\',        depth:1, type:'dir',   size:'4 items', date:'2026-01-14'},
@@ -295,111 +626,163 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         {name:'index.html',       depth:1, type:'file',  size:'42 KB',   date:'2026-01-15'},
         {name:'README.md',        depth:1, type:'file',  size:'2 KB',    date:'2026-01-14'},
       ];
+      const FH = H - FILE_Y;  // height available for file tree section
 
       let typeCmd='', typeCursor=0, typeTarget='';
       const CMD_SEQS=['cd PROJECT\\','ls -la','cd ..','cd INCLUSION\\','cd ..','dir /w'];
       let cmdIdx=0, cmdPhase=0, cmdTimer=0;
 
-      function draw() {
-        ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+      function drawFileTree() {
+        // Hard-clear the file tree section
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, FILE_Y, W, FH);
 
-        const fs=Math.max(9,Math.floor(H*0.027));
-        const lh=fs+7;
-        const cursor=Math.floor(frame/52)%TREE.length;
+        const fs = Math.max(7, Math.floor(FH * 0.047));
+        const lh = fs + 5;
+        const cursor = Math.floor(frame / 52) % TREE.length;
 
         // Typing logic
         cmdTimer++;
-        if(cmdPhase===0){
-          typeTarget=CMD_SEQS[cmdIdx%CMD_SEQS.length];
-          if(cmdTimer%4===0 && typeCursor<typeTarget.length){ typeCmd+=typeTarget[typeCursor++]; }
-          if(typeCursor>=typeTarget.length){ cmdPhase=1; cmdTimer=0; }
-        } else if(cmdPhase===1){
-          if(cmdTimer>40){ cmdPhase=2; cmdTimer=0; }
+        if (cmdPhase === 0) {
+          typeTarget = CMD_SEQS[cmdIdx % CMD_SEQS.length];
+          if (cmdTimer % 4 === 0 && typeCursor < typeTarget.length) { typeCmd += typeTarget[typeCursor++]; }
+          if (typeCursor >= typeTarget.length) { cmdPhase = 1; cmdTimer = 0; }
+        } else if (cmdPhase === 1) {
+          if (cmdTimer > 40) { cmdPhase = 2; cmdTimer = 0; }
         } else {
-          if(cmdTimer%3===0 && typeCmd.length>0){ typeCmd=typeCmd.slice(0,-1); }
-          if(typeCmd.length===0){ cmdPhase=0; typeCursor=0; cmdIdx++; cmdTimer=0; }
+          if (cmdTimer % 3 === 0 && typeCmd.length > 0) { typeCmd = typeCmd.slice(0, -1); }
+          if (typeCmd.length === 0) { cmdPhase = 0; typeCursor = 0; cmdIdx++; cmdTimer = 0; }
         }
 
-        let y=0;
-        ctx.textBaseline='top'; ctx.textAlign='left';
+        ctx.save();
+        ctx.translate(0, FILE_Y);
+
+        let y = 0;
+        ctx.textBaseline = 'top'; ctx.textAlign = 'left';
 
         // Title bar
-        ctx.fillStyle=GA(0.07); ctx.fillRect(0,0,W,lh+4);
-        ctx.font=`bold ${fs}px monospace`; ctx.fillStyle='#39dc00';
-        ctx.fillText('[ ► FILE MANAGER ]', 4, 4);
-        const now=new Date();
-        ctx.fillStyle=GA(0.35); ctx.textAlign='right';
-        ctx.fillText(now.toTimeString().slice(0,5), W-4, 4);
-        ctx.textAlign='left'; y=lh+8;
+        ctx.fillStyle = GA(0.07); ctx.fillRect(0, 0, W, lh + 4);
+        ctx.fillStyle = 'rgba(255,0,255,0.6)'; ctx.fillRect(0, 0, 3, lh + 4); // magenta left stripe
+        ctx.font = `bold ${fs}px monospace`;
+        ctx.fillStyle = GA(0.7); ctx.fillText('[ ', 4, 3);
+        ctx.fillStyle = '#ff00ff'; ctx.fillText('►', 4 + ctx.measureText('[ ').width, 3);
+        ctx.fillStyle = '#00ff00'; ctx.fillText(' FILE MANAGER ]', 4 + ctx.measureText('[ ► ').width, 3);
+        const now = new Date();
+        ctx.fillStyle = GA(0.35); ctx.textAlign = 'right';
+        ctx.fillText(now.toTimeString().slice(0, 5), W - 4, 3);
+        ctx.textAlign = 'left'; y = lh + 6;
 
         // Path bar
-        ctx.font=`${fs-1}px monospace`; ctx.fillStyle=GA(0.38);
-        ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y); y+=lh;
-        ctx.fillStyle=GA(0.15); ctx.fillRect(0,y,W,1); y+=5;
+        ctx.font = `${fs - 1}px monospace`; ctx.fillStyle = GA(0.38);
+        ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y); y += lh;
+        ctx.fillStyle = GA(0.15); ctx.fillRect(0, y, W, 1); y += 4;
 
         // Column headers
-        ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle=GA(0.25);
+        ctx.font = `${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.25);
         ctx.fillText('NAME', 4, y);
-        ctx.textAlign='right'; ctx.fillText('SIZE    DATE', W-2, y); ctx.textAlign='left';
-        y+=fs+3;
-        ctx.fillStyle=GA(0.12); ctx.fillRect(0,y,W,1); y+=4;
+        ctx.textAlign = 'right'; ctx.fillText('SIZE  DATE', W - 2, y); ctx.textAlign = 'left';
+        y += fs + 2;
+        ctx.fillStyle = GA(0.12); ctx.fillRect(0, y, W, 1); y += 3;
 
         // Tree items
-        ctx.font=`${fs}px monospace`;
-        const dw=Math.floor(W*0.05);
-        TREE.forEach((item,idx)=>{
-          const isSel=idx===cursor;
-          const indent=item.depth*dw;
+        ctx.font = `${fs}px monospace`;
+        const dw = Math.floor(W * 0.05);
+        const cmdLineH = lh + 2;
+        const statusH  = lh;
+        const itemsBottom = FH - cmdLineH - statusH - 2;
 
-          if(isSel){
-            ctx.fillStyle=GA(0.125); ctx.fillRect(0,y-2,W,lh);
-            ctx.strokeStyle=GA(0.4); ctx.lineWidth=1;
-            ctx.strokeRect(0,y-2,W-1,lh);
+        TREE.forEach((item, idx) => {
+          if (y >= itemsBottom) return;
+          const isSel = idx === cursor;
+          const indent = item.depth * dw;
+
+          if (isSel) {
+            ctx.fillStyle = 'rgba(255,0,255,0.07)'; ctx.fillRect(0, y - 1, W, lh);
+            ctx.strokeStyle = 'rgba(255,0,255,0.45)'; ctx.lineWidth = 1;
+            ctx.strokeRect(0, y - 1, W - 1, lh);
+            ctx.fillStyle = '#ff00ff'; ctx.fillRect(0, y - 1, 2, lh); // magenta left accent
           }
 
           // Tree connectors
-          for(let d=1;d<=item.depth;d++){
-            ctx.strokeStyle=GA(0.16); ctx.lineWidth=1;
-            const cx2=3+(d-1)*dw+dw*0.35;
+          for (let d = 1; d <= item.depth; d++) {
+            ctx.strokeStyle = GA(0.16); ctx.lineWidth = 1;
+            const cx2 = 3 + (d - 1) * dw + dw * 0.35;
             ctx.beginPath();
-            if(d<item.depth){ ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+lh); }
-            else { ctx.moveTo(cx2,y-2); ctx.lineTo(cx2,y+fs/2); ctx.lineTo(3+indent+1,y+fs/2); }
+            if (d < item.depth) { ctx.moveTo(cx2, y - 1); ctx.lineTo(cx2, y + lh); }
+            else { ctx.moveTo(cx2, y - 1); ctx.lineTo(cx2, y + fs / 2); ctx.lineTo(3 + indent + 1, y + fs / 2); }
             ctx.stroke();
           }
 
-          const icon=item.type==='root'?'⊟':item.type==='dir'?(isSel?'▼':'▶'):'·';
-          ctx.fillStyle=isSel?'#39dc00':item.type==='file'?GA(0.38):'#39dc00';
-          const label=icon+' '+item.name;
-          ctx.fillText(label, 3+indent, y);
+          const icon = item.type === 'root' ? '⊟' : item.type === 'dir' ? (isSel ? '▼' : '▶') : '·';
+          ctx.fillStyle = isSel ? '#00ff00' : item.type === 'file' ? GA(0.38) : '#00ff00';
+          const label = icon + ' ' + item.name;
+          ctx.fillText(label, 3 + indent, y);
 
-          // Blinking block cursor
-          if(isSel && frame%28<18){
-            const tw=ctx.measureText(label).width;
-            ctx.fillStyle='#39dc00';
-            ctx.fillRect(3+indent+tw+1, y, Math.floor(W*0.038), fs+1);
+          // Blinking cursor
+          if (isSel && frame % 28 < 18) {
+            const tw = ctx.measureText(label).width;
+            ctx.fillStyle = '#ff00ff';
+            ctx.fillRect(3 + indent + tw + 1, y, Math.floor(W * 0.038), fs + 1);
           }
 
           // Right: size or date
-          ctx.font=`${Math.max(6,fs-2)}px monospace`;
-          ctx.fillStyle=isSel?GA(0.6):GA(0.21);
-          ctx.textAlign='right';
-          if(isSel) ctx.fillText(item.date, W-2, y);
-          else if(item.size) ctx.fillText(item.size, W-2, y);
-          ctx.textAlign='left';
-          ctx.font=`${fs}px monospace`;
-
-          y+=lh;
+          ctx.font = `${Math.max(6, fs - 2)}px monospace`;
+          ctx.fillStyle = isSel ? GA(0.6) : GA(0.21);
+          ctx.textAlign = 'right';
+          if (isSel) ctx.fillText(item.date, W - 2, y);
+          else if (item.size) ctx.fillText(item.size, W - 2, y);
+          ctx.textAlign = 'left';
+          ctx.font = `${fs}px monospace`;
+          y += lh;
         });
 
         // Command line
-        ctx.fillStyle=GA(0.12); ctx.fillRect(0,H-lh*2-4,W,1);
-        ctx.font=`${fs-1}px monospace`; ctx.fillStyle=GA(0.44);
-        ctx.fillText('> '+typeCmd+(frame%24<14?'█':''), 4, H-lh*2+2);
+        const cmdY = FH - cmdLineH - statusH;
+        ctx.fillStyle = GA(0.12); ctx.fillRect(0, cmdY - 2, W, 1);
+        ctx.font = `${fs - 1}px monospace`;
+        ctx.fillStyle = '#ff00ff'; ctx.fillText('>', 4, cmdY + 1);
+        ctx.fillStyle = GA(0.50); ctx.fillText(' ' + typeCmd + (frame % 24 < 14 ? '█' : ''), 4 + ctx.measureText('>').width, cmdY + 1);
 
         // Status bar
-        ctx.fillStyle=GA(0.07); ctx.fillRect(0,H-lh,W,lh);
-        ctx.font=`${Math.max(7,fs-2)}px monospace`; ctx.fillStyle=GA(0.32);
-        ctx.fillText(` ${TREE.length} items  [ENT]open  [ESC]back`, 2, H-lh+4);
+        const stY = FH - statusH;
+        ctx.fillStyle = GA(0.07); ctx.fillRect(0, stY, W, statusH);
+        ctx.font = `${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.32);
+        ctx.fillText(` ${TREE.length} items  [ENT]open  [ESC]back`, 2, stY + 3);
+
+        ctx.restore();
+      }
+
+      function draw() {
+        // Separator line between radar and file tree
+        ctx.fillStyle = GA(0.18); ctx.fillRect(0, RADAR_H, W, 1);
+        ctx.fillStyle = GA(0.06); ctx.fillRect(0, RADAR_H + 1, W, FILE_Y - RADAR_H - 1);
+
+        drawRadar();
+        drawFileTree();
+
+        // File manager border (same style as card / menu)
+        ctx.save();
+        ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 14;
+        ctx.strokeStyle = '#00ff00';
+        // top: thin
+        ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(0, FILE_Y); ctx.lineTo(W, FILE_Y); ctx.stroke();
+        // left / right / bottom: 1.5px
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(0.75, FILE_Y); ctx.lineTo(0.75, H); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W - 0.75, FILE_Y); ctx.lineTo(W - 0.75, H); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, H - 0.75); ctx.lineTo(W, H - 0.75); ctx.stroke();
+        ctx.restore();
+        ctx.setLineDash([3, 5]);
+        ctx.strokeStyle = 'rgba(0,255,0,0.15)'; ctx.lineWidth = 1;
+        ctx.strokeRect(4, FILE_Y + 4, W - 8, H - FILE_Y - 8);
+        ctx.setLineDash([]);
+
+        // Scanlines over whole panel
+        if (frame % 3 === 0) {
+          ctx.fillStyle = 'rgba(0,0,0,0.04)';
+          for (let sy = 0; sy < H; sy += 3) ctx.fillRect(0, sy, W, 1);
+        }
 
         frame++;
       }
@@ -414,11 +797,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
       const canvas = document.getElementById('cardCanvas');
       const ctx = canvas.getContext('2d');
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const CW = 240, CH = 400;
+      const CW = 280, CH = 420;
       canvas.width = CW * dpr; canvas.height = CH * dpr;
       canvas.style.width = CW + 'px'; canvas.style.height = CH + 'px';
       ctx.scale(dpr, dpr);
-      const GA = (a) => `rgba(57,220,0,${a})`;
+      const GA = (a) => `rgba(0,255,0,${a})`;
       let frame = 0;
 
       function draw() {
@@ -431,6 +814,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         const fh = Math.max(8, Math.floor(cw * 0.046));
         const mx = 12, my = 10;
         const cw2 = cw - mx*2, ch2 = ch - my*2;
+        const cp = 6, px = mx+cp, py = my+cp, pw = cw2-cp*2, ph = ch2-cp*2;
 
         // Card background
         const cardG = ctx.createLinearGradient(mx, my, mx, my+ch2);
@@ -452,40 +836,40 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
         // HEADER
         const hdrH = 30;
-        ctx.fillStyle = GA(0.102); ctx.fillRect(mx, my, cw2, hdrH);
-        ctx.fillStyle = '#39dc00'; ctx.fillRect(mx, my, 3, hdrH);
+        ctx.fillStyle = GA(0.102); ctx.fillRect(px, py, pw, hdrH);
+        ctx.fillStyle = '#00ff00'; ctx.fillRect(px, py, 3, hdrH);
 
-        const ldx = mx+13, ldy = my+hdrH/2;
-        ctx.save(); ctx.shadowColor = '#39dc00'; ctx.shadowBlur = 8;
-        ctx.fillStyle = glitchOn ? '#ff00ff' : '#39dc00';
+        const ldx = px+13, ldy = py+hdrH/2;
+        ctx.save(); ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 8;
+        ctx.fillStyle = glitchOn ? '#ff00ff' : '#00ff00';
         ctx.beginPath(); ctx.moveTo(ldx,ldy-5); ctx.lineTo(ldx+5,ldy); ctx.lineTo(ldx,ldy+5); ctx.lineTo(ldx-5,ldy); ctx.closePath(); ctx.fill();
         ctx.restore();
 
         ctx.textAlign = 'left'; ctx.textBaseline = 'top';
         ctx.font = `bold ${fh}px monospace`;
-        ctx.fillStyle = glitchOn ? '#ff00ff' : '#39dc00';
-        ctx.fillText('SYSTEM ACCESS', mx+22, my+5);
+        ctx.fillStyle = glitchOn ? '#ff00ff' : '#00ff00';
+        ctx.fillText('SYSTEM ACCESS', px+22, py+5);
         ctx.font = `${Math.max(6,fh-2)}px monospace`; ctx.fillStyle = GA(0.4);
-        ctx.fillText('NOTE-A CREATIVE DIV', mx+22, my+16);
+        ctx.fillText('NOTE-A CREATIVE DIV', px+22, py+16);
 
-        ctx.fillStyle = '#ff220018'; ctx.fillRect(mx+cw2-38,my+7,33,14);
-        ctx.strokeStyle = '#ff2200'; ctx.lineWidth = 1; ctx.strokeRect(mx+cw2-38,my+7,33,14);
+        ctx.fillStyle = '#ff220018'; ctx.fillRect(px+pw-38,py+7,33,14);
+        ctx.strokeStyle = '#ff2200'; ctx.lineWidth = 1; ctx.strokeRect(px+pw-38,py+7,33,14);
         ctx.font = `bold ${fh-1}px monospace`; ctx.fillStyle = '#ff2200';
-        ctx.textAlign = 'right'; ctx.fillText('LVL4',mx+cw2-6,my+8); ctx.textAlign = 'left';
+        ctx.textAlign = 'right'; ctx.fillText('LVL4',px+pw-6,py+8); ctx.textAlign = 'left';
 
         // Divider 1
-        const d1 = my+hdrH+6;
+        const d1 = py+hdrH+6;
         ctx.strokeStyle = GA(0.145); ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(mx,d1); ctx.lineTo(mx+cw2,d1); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px,d1); ctx.lineTo(px+pw,d1); ctx.stroke();
 
         // PHOTO
-        const phX = mx+9, phY = d1+14;
+        const phX = px+9, phY = d1+14;
         const phW = Math.floor(cw2*0.34), phH = Math.floor(ch2*0.28);
 
         ctx.fillStyle = GA(0.04); ctx.fillRect(phX,phY,phW,phH);
         ctx.strokeStyle = GA(0.33); ctx.lineWidth = 1; ctx.strokeRect(phX,phY,phW,phH);
         const bk = 5;
-        ctx.strokeStyle = '#39dc00'; ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 1.5;
         [[phX,phY],[phX+phW,phY],[phX,phY+phH],[phX+phW,phY+phH]].forEach(([bx,by],i) => {
           const sx = i%2===0?1:-1, sy = i<2?1:-1;
           ctx.beginPath(); ctx.moveTo(bx+sx*bk,by); ctx.lineTo(bx,by); ctx.lineTo(bx,by+sy*bk); ctx.stroke();
@@ -518,7 +902,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         for (let sl = phY; sl < phY+phH; sl+=2) ctx.fillRect(phX,sl,phW,1);
 
         ctx.font = `${Math.max(5,fh-5)}px monospace`;
-        ctx.fillStyle = frame%30<20 ? '#39dc00' : '#003300';
+        ctx.fillStyle = frame%30<20 ? '#00ff00' : '#003300';
         ctx.textAlign = 'left'; ctx.fillText('SCAN:OK',phX+2,phY+phH-3);
         ctx.fillStyle = GA(0.33); ctx.textAlign = 'right'; ctx.fillText('99.7%',phX+phW-2,phY+phH-3); ctx.textAlign = 'left';
 
@@ -532,7 +916,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.font = `${inf}px monospace`;
         [['NAME','note-a'],['ID','NA-2026-042'],['ROLE','ARTIST'],['CLR','ADMIN'],['DEPT','WORLD-01'],['ISS','2026.01'],['EXP','2027.01']].forEach(([k,v],i) => {
           ctx.fillStyle = GA(0.26); ctx.fillText(k+':',ix,iy+i*flh);
-          ctx.fillStyle = '#39dc00'; ctx.fillText(v,ix+Math.floor(cw*0.19),iy+i*flh);
+          ctx.fillStyle = '#00ff00'; ctx.fillText(v,ix+Math.floor(cw*0.19),iy+i*flh);
         });
 
         // CHIP
@@ -561,7 +945,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.fillText('RFID',rfX+8,rfY-3);
 
         // HOLOGRAM STAMP
-        const holoSX = mx+cw2-20, holoSY = chipY+chipH/2;
+        const holoSX = px+pw-20, holoSY = chipY+chipH/2;
         const hShift = (t*0.035)%1;
         ctx.save();
         const hc = ctx.createRadialGradient(holoSX,holoSY,0,holoSX,holoSY,13);
@@ -578,10 +962,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         // Divider 2
         const d2 = chipY+chipH+18;
         ctx.strokeStyle = GA(0.102); ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(mx+4,d2); ctx.lineTo(mx+cw2-4,d2); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px+4,d2); ctx.lineTo(px+pw-4,d2); ctx.stroke();
 
         // BARCODE
-        const bcPanY = d2+8, bcX = mx+5, bcW = cw2-10;
+        const bcPanY = d2+8, bcX = px+5, bcW = pw-10;
         const bcH = Math.floor(ch2*0.088);
         const bcPanH = bcH+30;
         ctx.fillStyle = '#010a02'; ctx.fillRect(bcX,bcPanY,bcW,bcPanH);
@@ -600,7 +984,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
         let bxp2=bcX+5;
         allPat.forEach((w,i)=>{
-          if(i%2===0){ const sh=hardGlitch?(Math.random()-.5)*2:0; ctx.fillStyle=glitchOn?'#ff00ff':'#39dc00'; ctx.fillRect(bxp2,barY+sh,w*scl-0.2,bcH); }
+          if(i%2===0){ const sh=hardGlitch?(Math.random()-.5)*2:0; ctx.fillStyle=glitchOn?'#ff00ff':'#00ff00'; ctx.fillRect(bxp2,barY+sh,w*scl-0.2,bcH); }
           bxp2+=w*scl;
         });
 
@@ -609,7 +993,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         ctx.fillRect(bcX+5,barY-4,sgW,3); ctx.fillRect(bcX+5,barY+bcH+1,sgW,3);
         ctx.fillRect(bcX+5+totW*scl-egW,barY-4,egW,3); ctx.fillRect(bcX+5+totW*scl-egW,barY+bcH+1,egW,3);
 
-        ctx.font=`${Math.max(5,fh-4)}px monospace`; ctx.fillStyle=GA(0.27);
+        ctx.font = `${Math.max(5,fh-4)}px monospace`; ctx.fillStyle=GA(0.27);
         ctx.fillText('◁',bcX+2,barY+bcH*0.55); ctx.textAlign='right'; ctx.fillText('▷',bcX+bcW-2,barY+bcH*0.55); ctx.textAlign='left';
 
         const scanProgress=((t*0.038)%2);
@@ -622,42 +1006,42 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         trailG.addColorStop(0,GA(0)); trailG.addColorStop(1,GA(0.12));
         ctx.fillStyle=trailG; ctx.fillRect(bcX+3,scanLY-6,bcW-6,6);
 
-        ctx.font=`${Math.max(7,fh-3)}px monospace`; ctx.fillStyle=GA(0.345); ctx.textAlign='center';
+        ctx.font = `${Math.max(7,fh-3)}px monospace`; ctx.fillStyle=GA(0.345); ctx.textAlign='center';
         ctx.fillText('4E5C  A92D  7F31  0842',bcX+bcW/2,barY+bcH+12); ctx.textAlign='left';
-        ctx.font=`${Math.max(5,fh-5)}px monospace`; ctx.fillStyle=GA(0.157);
+        ctx.font = `${Math.max(5,fh-5)}px monospace`; ctx.fillStyle=GA(0.157);
         ctx.fillText('NOTE-A · SET PROJECT · 2026',bcX+3,bcPanY+bcPanH-3);
 
         // Divider 3
         const d3=bcPanY+bcPanH+6;
         ctx.strokeStyle=GA(0.083); ctx.lineWidth=1;
-        ctx.beginPath(); ctx.moveTo(mx+4,d3); ctx.lineTo(mx+cw2-4,d3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px+4,d3); ctx.lineTo(px+pw-4,d3); ctx.stroke();
 
         // STATUS BAR
         const stY=d3+7;
         const authPhase=Math.floor(t/50)%7;
         if(authPhase<5){
           const blink=t%24<16;
-          ctx.fillStyle=blink?GA(0.125):GA(0.047); ctx.fillRect(mx+7,stY-2,cw2-14,19);
-          ctx.strokeStyle=blink?GA(0.376):GA(0.188); ctx.lineWidth=1; ctx.strokeRect(mx+7,stY-2,cw2-14,19);
-          ctx.save(); ctx.shadowColor='#39dc00'; ctx.shadowBlur=blink?6:0;
-          ctx.font=`bold ${fh}px monospace`; ctx.fillStyle=blink?'#39dc00':GA(0.33);
-          ctx.fillText('◆ AUTHORIZED',mx+13,stY); ctx.restore();
+          ctx.fillStyle=blink?GA(0.125):GA(0.047); ctx.fillRect(px+7,stY-2,pw-14,19);
+          ctx.strokeStyle=blink?GA(0.376):GA(0.188); ctx.lineWidth=1; ctx.strokeRect(px+7,stY-2,pw-14,19);
+          ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=blink?6:0;
+          ctx.font = `bold ${fh}px monospace`; ctx.fillStyle=blink?'#00ff00':GA(0.33);
+          ctx.fillText('◆ AUTHORIZED',px+13,stY); ctx.restore();
         } else {
           const dots='.'.repeat(Math.floor(t/10)%4);
-          ctx.fillStyle='#ff220018'; ctx.fillRect(mx+7,stY-2,cw2-14,19);
-          ctx.strokeStyle='#ff220055'; ctx.lineWidth=1; ctx.strokeRect(mx+7,stY-2,cw2-14,19);
-          ctx.font=`bold ${fh}px monospace`; ctx.fillStyle='#ff4400';
-          ctx.fillText('◇ VERIFYING'+dots,mx+13,stY);
+          ctx.fillStyle='#ff220018'; ctx.fillRect(px+7,stY-2,pw-14,19);
+          ctx.strokeStyle='#ff220055'; ctx.lineWidth=1; ctx.strokeRect(px+7,stY-2,pw-14,19);
+          ctx.font = `bold ${fh}px monospace`; ctx.fillStyle='#ff4400';
+          ctx.fillText('◇ VERIFYING'+dots,px+13,stY);
         }
 
         const ledOn=t%60<42;
-        ctx.save(); ctx.shadowColor='#39dc00'; ctx.shadowBlur=ledOn?14:0;
-        ctx.fillStyle=ledOn?'#39dc00':'#001800';
-        ctx.beginPath(); ctx.arc(mx+cw2-10,stY+8,4,0,Math.PI*2); ctx.fill(); ctx.restore();
+        ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=ledOn?14:0;
+        ctx.fillStyle=ledOn?'#00ff00':'#001800';
+        ctx.beginPath(); ctx.arc(px+pw-10,stY+8,4,0,Math.PI*2); ctx.fill(); ctx.restore();
 
         // OUTER GLOW BORDER
-        ctx.save(); ctx.shadowColor=glitchOn?'#ff00ff':'#39dc00'; ctx.shadowBlur=14;
-        ctx.strokeStyle=glitchOn?'#ff00ff':'#39dc00'; ctx.lineWidth=1.5; ctx.strokeRect(mx,my,cw2,ch2); ctx.restore();
+        ctx.save(); ctx.shadowColor=glitchOn?'#ff00ff':'#00ff00'; ctx.shadowBlur=14;
+        ctx.strokeStyle=glitchOn?'#ff00ff':'#00ff00'; ctx.lineWidth=1.5; ctx.strokeRect(mx,my,cw2,ch2); ctx.restore();
         ctx.setLineDash([3,5]); ctx.strokeStyle=GA(0.118); ctx.lineWidth=1;
         ctx.strokeRect(mx+3,my+3,cw2-6,ch2-6); ctx.setLineDash([]);
 
@@ -681,21 +1065,156 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
       setInterval(draw, 40);
     })();
+    // ── SIGNAL INTERCEPT (상단 패널) ────────────────────────────────
+    (function() {
+      const canvas = document.getElementById('interceptCanvas');
+      const ctx = canvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const H = 48;
+      // 카드 테두리(mx=12)와 좌측 정렬, 레이더 우측 엣지와 우측 정렬
+      const bottomRow = document.getElementById('cardCanvas').parentElement;
+      const W = Math.round(bottomRow.getBoundingClientRect().width) - 12;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.scale(dpr, dpr);
+
+      const GA = (a) => `rgba(0,255,0,${a})`;
+      const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}|:/_.=+?';
+      const MSGS = [
+        'SET WORLD NODE AUTHENTICATED',
+        'DIRECTORY ACCESS GRANTED',
+        'SCANNING SET PROJECT ARCHIVE',
+        'SIGNAL INTERCEPT ACTIVE',
+        'KR-NODE-2026 ONLINE',
+        'COORDINATE LOCK: 37.5665N 126.9780E',
+        'TRANSMISSION ENCRYPTED AES-256',
+        'UPLINK ESTABLISHED - SECTOR 9',
+        'PACKET STREAM SYNCHRONIZED',
+      ];
+
+      const CX = 0, CW_MID = W;
+      const MY = 0, MH = H;
+
+      const CW_CHAR = 9, CH_CHAR = 10;
+      const COLS = Math.floor(CW_MID / CW_CHAR);
+      const ROWS = Math.floor(MH / CH_CHAR);
+      const cells = Array.from({length: ROWS * COLS}, () => ({
+        char: CHARSET[Math.floor(Math.random() * CHARSET.length)],
+        alpha: Math.random() * 0.2,
+        speed: 1 + Math.floor(Math.random() * 3),
+        phase: Math.random() * 80,
+      }));
+
+      let decMsg = '', decTarget = MSGS[0], decCur = 0, decTimer = 0, decIdx = 0;
+      let history = [];
+      let tick = 0;
+
+      function draw() {
+        tick++;
+
+        // clear
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = 'rgba(0,0,0,0.28)';
+        ctx.fillRect(CX, MY, CW_MID, MH);
+
+        // char stream
+        ctx.font = `${CH_CHAR - 2}px monospace`;
+        ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        cells.forEach((cell, idx) => {
+          const col = idx % COLS, row = Math.floor(idx / COLS);
+          if (tick % cell.speed === 0) {
+            cell.char = CHARSET[Math.floor(Math.random() * CHARSET.length)];
+            cell.alpha = 0.04 + Math.abs(Math.sin(tick * 0.035 + cell.phase)) * 0.17;
+          }
+          ctx.fillStyle = GA(cell.alpha);
+          ctx.fillText(cell.char, CX + col * CW_CHAR + 1, MY + row * CH_CHAR + 1);
+        });
+
+        // scan lines
+        const s1y = ((tick * 0.7) % (H + 16)) - 8;
+        const sg1 = ctx.createLinearGradient(0, s1y - 5, 0, s1y + 5);
+        sg1.addColorStop(0, GA(0)); sg1.addColorStop(0.5, GA(0.12)); sg1.addColorStop(1, GA(0));
+        ctx.fillStyle = sg1; ctx.fillRect(CX, Math.max(MY, s1y - 5), CW_MID, 10);
+        const s2y = ((tick * 2.5 + 50) % (H + 16)) - 8;
+        const sg2 = ctx.createLinearGradient(0, s2y - 2, 0, s2y + 2);
+        sg2.addColorStop(0, GA(0)); sg2.addColorStop(0.5, GA(0.06)); sg2.addColorStop(1, GA(0));
+        ctx.fillStyle = sg2; ctx.fillRect(CX, Math.max(MY, s2y - 2), CW_MID, 4);
+
+        // decode animation
+        decTimer++;
+        if (decTimer % 2 === 0 && decCur < decTarget.length) decMsg += decTarget[decCur++];
+        if (decCur >= decTarget.length && decTimer > 60) {
+          if (decMsg) { history.unshift({text: decMsg, a: 0.38}); if (history.length > 2) history.pop(); }
+          decMsg = ''; decCur = 0; decTimer = 0;
+          decIdx = (decIdx + 1) % MSGS.length;
+          decTarget = MSGS[decIdx];
+        }
+        history.forEach(m => { m.a = Math.max(0, m.a - 0.0015); });
+
+        const cy = MY + MH / 2;
+        ctx.font = '8px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        history.forEach((m, i) => {
+          const hy = cy - 13 - i * 10;
+          if (hy < MY + 1) return;
+          ctx.fillStyle = GA(m.a);
+          ctx.fillText(m.text, CX + CW_MID / 2, hy);
+        });
+
+        if (decMsg || decCur > 0) {
+          ctx.save();
+          ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 20;
+          ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+          ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillStyle = '#00ff00';
+          ctx.fillText(decMsg + (tick % 16 < 11 ? '█' : ''), CX + CW_MID / 2, cy);
+          // 추가 글로우 레이어
+          ctx.shadowBlur = 6; ctx.shadowColor = 'rgba(0,255,0,0.5)';
+          ctx.fillText(decMsg + (tick % 16 < 11 ? '█' : ''), CX + CW_MID / 2, cy);
+          ctx.restore();
+          // progress bar
+          const prog = decCur / Math.max(1, decTarget.length);
+          const pbW = Math.min(200, CW_MID * 0.36), pbX = CX + CW_MID / 2 - pbW / 2, pbY = cy + 10;
+          ctx.fillStyle = GA(0.1); ctx.fillRect(pbX, pbY, pbW, 3);
+          ctx.fillStyle = GA(0.7); ctx.fillRect(pbX, pbY, pbW * prog, 3);
+          ctx.fillStyle = GA(0.25);
+          for (let t2 = 1; t2 < 4; t2++) ctx.fillRect(pbX + pbW * (t2 / 4) - 0.5, pbY - 1, 1, 5);
+        }
+
+
+        // corner brackets
+        const bs = 10; ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 1.5;
+        [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([bx,by,dx,dy]) => {
+          ctx.beginPath(); ctx.moveTo(bx+dx*bs,by); ctx.lineTo(bx,by); ctx.lineTo(bx,by+dy*bs); ctx.stroke();
+        });
+
+        // outer border
+        ctx.strokeStyle = GA(0.8); ctx.lineWidth = 1.5;
+        ctx.strokeRect(0.75, 0.75, W - 1.5, H - 1.5);
+        ctx.setLineDash([3, 6]);
+        ctx.strokeStyle = GA(0.1); ctx.lineWidth = 1;
+        ctx.strokeRect(4, 4, W - 8, H - 8);
+        ctx.setLineDash([]);
+      }
+
+      setInterval(draw, 40);
+    })();
     // ──────────────────────────────────────────────────────────────
 
     function navigate(path) {
-      window.location.href = path;
+      document.body.classList.add('leaving');
+      setTimeout(() => { window.location.href = path; }, 450);
     }
 
     // ESC 키로 나가기
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
-        window.location.href = 'index.html';
+        navigate('index.html');
       }
     });
 
     // 엔터 키로 선택된 항목 실행
-    let selectedIndex = 0;
+    let selectedIndex = 2;
     const items = document.querySelectorAll('.menu-item');
 
     document.addEventListener('keydown', function(e) {

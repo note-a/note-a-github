@@ -1282,6 +1282,22 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'D
   font-family: 'Press Start 2P', monospace !important;
 }
 
+/* CRT 전환 효과 */
+@keyframes crt-on {
+  0%   { clip-path: inset(50% 50% 50% 50%); filter: brightness(6); }
+  20%  { clip-path: inset(48% 0% 48% 0%);   filter: brightness(3); }
+  55%  { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1.6); }
+  100% { clip-path: inset(0% 0% 0% 0%);     filter: brightness(1); }
+}
+@keyframes crt-off {
+  0%   { clip-path: inset(0% 0% 0% 0%);         filter: brightness(1); }
+  40%  { clip-path: inset(48% 0% 48% 0%);       filter: brightness(3); }
+  72%  { clip-path: inset(49.5% 12% 49.5% 12%); filter: brightness(5); }
+  100% { clip-path: inset(50% 50% 50% 50%);     filter: brightness(0); }
+}
+body { animation: crt-on 0.55s ease-out forwards; }
+body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
+
   </style>
   <script src="./marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
@@ -3772,8 +3788,8 @@ REQUIRE LOGIN: No (Public access enabled)
       // X button to return to menu
       if (closeBtn) {
         closeBtn.addEventListener('click', function() {
-          // Navigate to menu page
-          window.location.href = 'menu.html';
+          document.body.classList.add('leaving');
+          setTimeout(() => { window.location.href = 'menu.html'; }, 450);
         });
       }
 
@@ -4984,5 +5000,6 @@ REQUIRE LOGIN: No (Public access enabled)
     document.getElementById('wpDismiss').addEventListener('click', close);
   })();
   </script>
+
 </body>
 </html>
