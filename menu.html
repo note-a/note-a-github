@@ -791,7 +791,9 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         frame++;
       }
 
-      setInterval(draw, 40);
+      document.fonts.ready.then(() => {
+        setInterval(draw, 40);
+      });
     })();
     // ──────────────────────────────────────────────────────────────
 
@@ -1067,7 +1069,9 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         frame++;
       }
 
-      setInterval(draw, 40);
+      document.fonts.ready.then(() => {
+        setInterval(draw, 40);
+      });
     })();
     // ── SIGNAL INTERCEPT (상단 패널) ────────────────────────────────
     (function() {
@@ -1201,7 +1205,9 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.setLineDash([]);
       }
 
-      setInterval(draw, 40);
+      document.fonts.ready.then(() => {
+        setInterval(draw, 40);
+      });
     })();
     // ──────────────────────────────────────────────────────────────
 
