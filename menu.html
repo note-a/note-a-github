@@ -918,7 +918,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
 
         // INFO FIELDS
         const ix = phX+phW+9, iy = phY;
-        const inf = Math.max(7, Math.floor(cw*0.036));
+        const inf = Math.max(6, Math.floor(cw*0.028));
         const flh = inf+7;
         ctx.font = `${inf}px 'Press Start 2P', monospace`;
         [['NAME','note-a'],['ID','NA-2026-042'],['ROLE','ARTIST'],['CLR','ADMIN'],['DEPT','WORLD-01'],['ISS','2026.01'],['EXP','2027.01']].forEach(([k,v],i) => {
@@ -1163,7 +1163,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         history.forEach(m => { m.a = Math.max(0, m.a - 0.0015); });
 
         const cy = MY + MH / 2;
-        ctx.font = "8px 'Press Start 2P', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = "6px 'Press Start 2P', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         history.forEach((m, i) => {
           const hy = cy - 13 - i * 10;
           if (hy < MY + 1) return;
@@ -1175,7 +1175,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           ctx.save();
           ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 20;
           ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-          ctx.font = "bold 11px 'Press Start 2P', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.font = "bold 9px 'Press Start 2P', monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillStyle = '#00ff00';
           ctx.fillText(decMsg + (tick % 16 < 11 ? '█' : ''), CX + CW_MID / 2, cy);
           // 추가 글로우 레이어
