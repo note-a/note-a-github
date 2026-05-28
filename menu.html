@@ -381,7 +381,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           ctx.stroke();
           // Degree labels every 90°
           if (deg % 90 === 0 && deg !== 0) {
-            ctx.font = '6px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+            ctx.font = "'Press Start 2P', 6px monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
             ctx.fillStyle = GA(0.22);
             ctx.fillText(deg + '°', cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12));
           }
@@ -399,7 +399,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.restore();
 
         // ── Range labels on rings
-        ctx.font = '6px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        ctx.font = "'Press Start 2P', 6px monospace"; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
         [[0.33,'25%'],[0.66,'50%'],[1.0,'MAX']].forEach(([s, label]) => {
           ctx.fillStyle = GA(0.18);
           ctx.fillText(label, cx + 2, cy - r * s - 1);
@@ -520,7 +520,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         });
 
         // ── NSEW labels with tick
-        ctx.font = 'bold 7px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = "'Press Start 2P', bold 7px monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         [['N', cx,     cy-r-8], ['S', cx,     cy+r+8],
          ['E', cx+r+8, cy    ], ['W', cx-r-8, cy    ]].forEach(([l, lx, ly]) => {
           ctx.fillStyle = GA(0.5);
@@ -540,7 +540,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         // ── Left side: vertical signal strength bars
         const barX = 3, barBotY = cy + r * 0.65, barH = r * 1.2;
         const barCount = 6;
-        ctx.font = '5px monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+        ctx.font = "'Press Start 2P', 5px monospace"; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
         for (let i = 0; i < barCount; i++) {
           const bh = (0.3 + 0.7 * Math.abs(Math.sin(radarTick * 0.03 + i * 0.9))) * (barH / barCount * 0.7);
           const by2 = barBotY - i * (barH / barCount);
@@ -575,7 +575,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.fillText('FRQ', W - 3, cy - r * 0.3 - 8);
 
         // ── Top-left corner data
-        ctx.font = '6px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+        ctx.font = "'Press Start 2P', 6px monospace"; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
         ctx.fillStyle = GA(0.28);
         const brg = Math.floor(((radarAngle % (Math.PI*2)) + Math.PI*2) % (Math.PI*2) * 180 / Math.PI);
         ctx.fillText(`BRG ${String(brg).padStart(3,'0')}°`, 3, 10);
@@ -667,7 +667,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         // Title bar
         ctx.fillStyle = GA(0.07); ctx.fillRect(0, 0, W, lh + 4);
         ctx.fillStyle = 'rgba(255,0,255,0.6)'; ctx.fillRect(0, 0, 3, lh + 4); // magenta left stripe
-        ctx.font = `bold ${fs}px monospace`;
+        ctx.font = `'Press Start 2P', bold ${fs}px monospace`;
         ctx.fillStyle = GA(0.7); ctx.fillText('[ ', 4, 3);
         ctx.fillStyle = '#ff00ff'; ctx.fillText('►', 4 + ctx.measureText('[ ').width, 3);
         ctx.fillStyle = '#00ff00'; ctx.fillText(' FILE MANAGER ]', 4 + ctx.measureText('[ ► ').width, 3);
@@ -677,19 +677,19 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.textAlign = 'left'; y = lh + 6;
 
         // Path bar
-        ctx.font = `${fs - 1}px monospace`; ctx.fillStyle = GA(0.38);
+        ctx.font = `'Press Start 2P', ${fs - 1}px monospace`; ctx.fillStyle = GA(0.38);
         ctx.fillText('PATH> C:\\WORLD\\SET\\', 4, y); y += lh;
         ctx.fillStyle = GA(0.15); ctx.fillRect(0, y, W, 1); y += 4;
 
         // Column headers
-        ctx.font = `${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.25);
+        ctx.font = `'Press Start 2P', ${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.25);
         ctx.fillText('NAME', 4, y);
         ctx.textAlign = 'right'; ctx.fillText('SIZE  DATE', W - 2, y); ctx.textAlign = 'left';
         y += fs + 2;
         ctx.fillStyle = GA(0.12); ctx.fillRect(0, y, W, 1); y += 3;
 
         // Tree items
-        ctx.font = `${fs}px monospace`;
+        ctx.font = `'Press Start 2P', ${fs}px monospace`;
         const dw = Math.floor(W * 0.05);
         const cmdLineH = lh + 2;
         const statusH  = lh;
@@ -730,27 +730,27 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           }
 
           // Right: size or date
-          ctx.font = `${Math.max(6, fs - 2)}px monospace`;
+          ctx.font = `'Press Start 2P', ${Math.max(6, fs - 2)}px monospace`;
           ctx.fillStyle = isSel ? GA(0.6) : GA(0.21);
           ctx.textAlign = 'right';
           if (isSel) ctx.fillText(item.date, W - 2, y);
           else if (item.size) ctx.fillText(item.size, W - 2, y);
           ctx.textAlign = 'left';
-          ctx.font = `${fs}px monospace`;
+          ctx.font = `'Press Start 2P', ${fs}px monospace`;
           y += lh;
         });
 
         // Command line
         const cmdY = FH - cmdLineH - statusH;
         ctx.fillStyle = GA(0.12); ctx.fillRect(0, cmdY - 2, W, 1);
-        ctx.font = `${fs - 1}px monospace`;
+        ctx.font = `'Press Start 2P', ${fs - 1}px monospace`;
         ctx.fillStyle = '#ff00ff'; ctx.fillText('>', 4, cmdY + 1);
         ctx.fillStyle = GA(0.50); ctx.fillText(' ' + typeCmd + (frame % 24 < 14 ? '█' : ''), 4 + ctx.measureText('>').width, cmdY + 1);
 
         // Status bar
         const stY = FH - statusH;
         ctx.fillStyle = GA(0.07); ctx.fillRect(0, stY, W, statusH);
-        ctx.font = `${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.32);
+        ctx.font = `'Press Start 2P', ${Math.max(6, fs - 2)}px monospace`; ctx.fillStyle = GA(0.32);
         ctx.fillText(` ${TREE.length} items  [ENT]open  [ESC]back`, 2, stY + 3);
 
         ctx.restore();
@@ -850,15 +850,15 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.restore();
 
         ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        ctx.font = `bold ${fh}px monospace`;
+        ctx.font = `'Press Start 2P', bold ${fh}px monospace`;
         ctx.fillStyle = glitchOn ? '#ff00ff' : '#00ff00';
         ctx.fillText('SYSTEM ACCESS', px+22, py+5);
-        ctx.font = `${Math.max(6,fh-2)}px monospace`; ctx.fillStyle = GA(0.4);
+        ctx.font = `'Press Start 2P', ${Math.max(6,fh-2)}px monospace`; ctx.fillStyle = GA(0.4);
         ctx.fillText('NOTE-A CREATIVE DIV', px+22, py+16);
 
         ctx.fillStyle = '#ff220018'; ctx.fillRect(px+pw-38,py+7,33,14);
         ctx.strokeStyle = '#ff2200'; ctx.lineWidth = 1; ctx.strokeRect(px+pw-38,py+7,33,14);
-        ctx.font = `bold ${fh-1}px monospace`; ctx.fillStyle = '#ff2200';
+        ctx.font = `'Press Start 2P', bold ${fh-1}px monospace`; ctx.fillStyle = '#ff2200';
         ctx.textAlign = 'right'; ctx.fillText('LVL4',px+pw-6,py+8); ctx.textAlign = 'left';
 
         // Divider 1
@@ -905,19 +905,19 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.fillStyle = 'rgba(0,0,0,0.25)';
         for (let sl = phY; sl < phY+phH; sl+=2) ctx.fillRect(phX,sl,phW,1);
 
-        ctx.font = `${Math.max(5,fh-5)}px monospace`;
+        ctx.font = `'Press Start 2P', ${Math.max(5,fh-5)}px monospace`;
         ctx.fillStyle = frame%30<20 ? '#00ff00' : '#003300';
         ctx.textAlign = 'left'; ctx.fillText('SCAN:OK',phX+2,phY+phH-3);
         ctx.fillStyle = GA(0.33); ctx.textAlign = 'right'; ctx.fillText('99.7%',phX+phW-2,phY+phH-3); ctx.textAlign = 'left';
 
-        ctx.font = `${Math.max(6,fh-4)}px monospace`; ctx.fillStyle = GA(0.31);
+        ctx.font = `'Press Start 2P', ${Math.max(6,fh-4)}px monospace`; ctx.fillStyle = GA(0.31);
         ctx.textAlign = 'center'; ctx.fillText('PHOTO ID',phX+phW/2,phY+phH+7); ctx.textAlign = 'left';
 
         // INFO FIELDS
         const ix = phX+phW+9, iy = phY;
         const inf = Math.max(7, Math.floor(cw*0.036));
         const flh = inf+7;
-        ctx.font = `${inf}px monospace`;
+        ctx.font = `'Press Start 2P', ${inf}px monospace`;
         [['NAME','note-a'],['ID','NA-2026-042'],['ROLE','ARTIST'],['CLR','ADMIN'],['DEPT','WORLD-01'],['ISS','2026.01'],['EXP','2027.01']].forEach(([k,v],i) => {
           ctx.fillStyle = GA(0.26); ctx.fillText(k+':',ix,iy+i*flh);
           ctx.fillStyle = '#00ff00'; ctx.fillText(v,ix+Math.floor(cw*0.19),iy+i*flh);
@@ -945,7 +945,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           ctx.strokeStyle = GA(a); ctx.lineWidth = 1.3;
           ctx.beginPath(); ctx.arc(rfX,rfY,ar*26,-Math.PI*0.5,Math.PI*0.5); ctx.stroke();
         });
-        ctx.font = `${Math.max(6,fh-4)}px monospace`; ctx.fillStyle = GA(0.27);
+        ctx.font = `'Press Start 2P', ${Math.max(6,fh-4)}px monospace`; ctx.fillStyle = GA(0.27);
         ctx.fillText('RFID',rfX+8,rfY-3);
 
         // HOLOGRAM STAMP
@@ -975,7 +975,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.fillStyle = '#010a02'; ctx.fillRect(bcX,bcPanY,bcW,bcPanH);
         ctx.strokeStyle = GA(0.094); ctx.lineWidth = 1; ctx.strokeRect(bcX,bcPanY,bcW,bcPanH);
 
-        ctx.font = `${Math.max(5,fh-5)}px monospace`; ctx.fillStyle = GA(0.25); ctx.textAlign = 'left';
+        ctx.font = `'Press Start 2P', ${Math.max(5,fh-5)}px monospace`; ctx.fillStyle = GA(0.25); ctx.textAlign = 'left';
         ctx.fillText('CODE-128-B',bcX+3,bcPanY+4); ctx.textAlign = 'right';
         ctx.fillText('CHK:C4',bcX+bcW-3,bcPanY+4); ctx.textAlign = 'left';
 
@@ -997,7 +997,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.fillRect(bcX+5,barY-4,sgW,3); ctx.fillRect(bcX+5,barY+bcH+1,sgW,3);
         ctx.fillRect(bcX+5+totW*scl-egW,barY-4,egW,3); ctx.fillRect(bcX+5+totW*scl-egW,barY+bcH+1,egW,3);
 
-        ctx.font = `${Math.max(5,fh-4)}px monospace`; ctx.fillStyle=GA(0.27);
+        ctx.font = `'Press Start 2P', ${Math.max(5,fh-4)}px monospace`; ctx.fillStyle=GA(0.27);
         ctx.fillText('◁',bcX+2,barY+bcH*0.55); ctx.textAlign='right'; ctx.fillText('▷',bcX+bcW-2,barY+bcH*0.55); ctx.textAlign='left';
 
         const scanProgress=((t*0.038)%2);
@@ -1010,9 +1010,9 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         trailG.addColorStop(0,GA(0)); trailG.addColorStop(1,GA(0.12));
         ctx.fillStyle=trailG; ctx.fillRect(bcX+3,scanLY-6,bcW-6,6);
 
-        ctx.font = `${Math.max(7,fh-3)}px monospace`; ctx.fillStyle=GA(0.345); ctx.textAlign='center';
+        ctx.font = `'Press Start 2P', ${Math.max(7,fh-3)}px monospace`; ctx.fillStyle=GA(0.345); ctx.textAlign='center';
         ctx.fillText('4E5C  A92D  7F31  0842',bcX+bcW/2,barY+bcH+12); ctx.textAlign='left';
-        ctx.font = `${Math.max(5,fh-5)}px monospace`; ctx.fillStyle=GA(0.157);
+        ctx.font = `'Press Start 2P', ${Math.max(5,fh-5)}px monospace`; ctx.fillStyle=GA(0.157);
         ctx.fillText('NOTE-A · SET PROJECT · 2026',bcX+3,bcPanY+bcPanH-3);
 
         // Divider 3
@@ -1028,13 +1028,13 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           ctx.fillStyle=blink?GA(0.125):GA(0.047); ctx.fillRect(px+7,stY-2,pw-14,19);
           ctx.strokeStyle=blink?GA(0.376):GA(0.188); ctx.lineWidth=1; ctx.strokeRect(px+7,stY-2,pw-14,19);
           ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=blink?6:0;
-          ctx.font = `bold ${fh}px monospace`; ctx.fillStyle=blink?'#00ff00':GA(0.33);
+          ctx.font = `'Press Start 2P', bold ${fh}px monospace`; ctx.fillStyle=blink?'#00ff00':GA(0.33);
           ctx.fillText('◆ AUTHORIZED',px+13,stY); ctx.restore();
         } else {
           const dots='.'.repeat(Math.floor(t/10)%4);
           ctx.fillStyle='#ff220018'; ctx.fillRect(px+7,stY-2,pw-14,19);
           ctx.strokeStyle='#ff220055'; ctx.lineWidth=1; ctx.strokeRect(px+7,stY-2,pw-14,19);
-          ctx.font = `bold ${fh}px monospace`; ctx.fillStyle='#ff4400';
+          ctx.font = `'Press Start 2P', bold ${fh}px monospace`; ctx.fillStyle='#ff4400';
           ctx.fillText('◇ VERIFYING'+dots,px+13,stY);
         }
 
@@ -1123,7 +1123,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.fillRect(CX, MY, CW_MID, MH);
 
         // char stream
-        ctx.font = `${CH_CHAR - 2}px monospace`;
+        ctx.font = `'Press Start 2P', ${CH_CHAR - 2}px monospace`;
         ctx.textBaseline = 'top'; ctx.textAlign = 'left';
         cells.forEach((cell, idx) => {
           const col = idx % COLS, row = Math.floor(idx / COLS);
@@ -1157,7 +1157,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         history.forEach(m => { m.a = Math.max(0, m.a - 0.0015); });
 
         const cy = MY + MH / 2;
-        ctx.font = '8px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.font = "'Press Start 2P', 8px monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         history.forEach((m, i) => {
           const hy = cy - 13 - i * 10;
           if (hy < MY + 1) return;
@@ -1169,7 +1169,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
           ctx.save();
           ctx.shadowColor = '#00ff00'; ctx.shadowBlur = 20;
           ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-          ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.font = "'Press Start 2P', bold 11px monospace"; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillStyle = '#00ff00';
           ctx.fillText(decMsg + (tick % 16 < 11 ? '█' : ''), CX + CW_MID / 2, cy);
           // 추가 글로우 레이어
