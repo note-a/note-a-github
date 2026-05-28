@@ -73,11 +73,17 @@ body {
 .btns {
   display: flex;
   font-size: 14px;
-  border: 2px solid #00ff00;
+  border: 1px solid #00aa00;
   border-top: none;
+  outline: 2px solid #00ff00;
+  outline-offset: -3px;
   box-shadow:
-    inset 3px -3px 0 rgba(180,255,130,0.6),
-    inset -3px 3px 0 rgba(0,30,0,1);
+    /* 외부 베벨 */
+    2px 0 0 rgba(180,255,130,0.8),
+    -2px 2px 0 rgba(0,20,0,0.9),
+    /* 내부 베벨 */
+    inset 2px -2px 0 rgba(180,255,130,0.5),
+    inset -2px 2px 0 rgba(0,40,0,1);
 }
 .btns button {
   flex: 1;
@@ -93,13 +99,18 @@ body {
 .btns button:hover { background: #7fff00; }
 
 .frame {
-  border: 2px solid #00ff00;
+  border: 1px solid #00aa00;
   position: relative;
+  outline: 2px solid #00ff00;
+  outline-offset: -4px;
   box-shadow:
-    inset 3px 3px 0 rgba(180,255,130,0.6),
-    inset -3px -3px 0 rgba(0,30,0,1),
-    inset 6px 6px 0 rgba(150,255,100,0.4),
-    inset -6px -6px 0 rgba(0,0,0,0.8),
+    /* 외부 베벨 - 밝음 */
+    2px 2px 0 rgba(180,255,130,0.8),
+    -2px -2px 0 rgba(0,20,0,0.9),
+    /* 내부 베벨 - 어두움 */
+    inset 2px 2px 0 rgba(180,255,130,0.5),
+    inset -2px -2px 0 rgba(0,40,0,1),
+    /* 글로우 */
     0 0 12px rgba(0,255,0,0.8),
     0 0 30px rgba(0,255,0,0.45),
     0 0 60px rgba(0,255,0,0.2);
