@@ -818,7 +818,7 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         const t = frame;
         const glitchOn = Math.sin(t * 0.063) > 0.82;
         const hardGlitch = glitchOn && Math.random() > 0.55;
-        const fh = Math.max(8, Math.floor(cw * 0.035));
+        const fh = Math.max(8, Math.floor(cw * 0.028));
         const mx = 12, my = 10;
         const cw2 = cw - mx*2, ch2 = ch - my*2;
         const cp = 6, px = mx+cp, py = my+cp, pw = cw2-cp*2, ph = ch2-cp*2;
