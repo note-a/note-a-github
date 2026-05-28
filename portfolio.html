@@ -6,13 +6,13 @@
   <title>SET IS THE WORLD - PORTFOLIO</title>
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #000; color: #39dc00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
+html, body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
 
 /* ── WARNING POPUP ── */
 #warnPopup {
   position: fixed; bottom: 0; left: 20px;
   width: 220px; z-index: 9999;
-  border: 1px solid #e70f00;
+  border: 1px solid #7a0800;
   background: #000;
   font-family: 'Courier New', monospace;
   transform: translateY(10px); opacity: 0;
@@ -20,7 +20,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 @keyframes wp-enter { to { transform: translateY(0); opacity: 1; } }
 #warnPopup .wp-top {
-  padding: 5px 10px; background: #e70f00;
+  padding: 5px 10px; background: #7a0800;
   display: flex; justify-content: space-between; align-items: center;
 }
 #warnPopup .wp-top .wp-left { display: flex; align-items: center; gap: 7px; }
@@ -31,30 +31,30 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #warnPopup .wp-x:hover { color: #fff; }
 #warnPopup .wp-body {
   padding: 7px 12px 6px; font-size: 11px;
-  color: #39dc00; line-height: 1.6;
+  color: #00ff00; line-height: 1.6;
   transition: opacity 0.3s ease;
 }
 #warnPopup .wp-log {
-  border-top: 1px solid rgba(57,220,0,0.08);
+  border-top: 1px solid rgba(0,255,0,0.08);
   padding: 3px 10px; height: 28px; overflow: hidden;
 }
 #warnPopup .wp-log-line {
-  font-size: 9px; color: rgba(57,220,0,0.35);
+  font-size: 9px; color: rgba(0,255,0,0.35);
   line-height: 1.7; white-space: nowrap;
 }
-#warnPopup .wp-bar-wrap { margin: 3px 10px 0; height: 2px; background: rgba(57,220,0,0.1); }
-#warnPopup .wp-bar-fill { height: 2px; background: #e70f00; width: 100%; }
+#warnPopup .wp-bar-wrap { margin: 3px 10px 0; height: 2px; background: rgba(0,255,0,0.1); }
+#warnPopup .wp-bar-fill { height: 2px; background: #7a0800; width: 100%; }
 #warnPopup .wp-bot {
-  padding: 4px 10px; border-top: 1px solid rgba(231,15,0,0.13);
+  padding: 4px 10px; border-top: 1px solid rgba(122,8,0,0.13);
   display: flex; justify-content: space-between; align-items: center; margin-top: 3px;
 }
-#warnPopup .wp-timer { font-size: 9px; color: rgba(231,15,0,0.4); }
+#warnPopup .wp-timer { font-size: 9px; color: rgba(122,8,0,0.4); }
 #warnPopup .wp-btn {
   font-size: 9px; font-family: 'Courier New', monospace;
-  background: #000; border: none; color: rgba(57,220,0,0.2);
+  background: #000; border: none; color: rgba(0,255,0,0.2);
   cursor: pointer; letter-spacing: 1px;
 }
-#warnPopup .wp-btn:hover { color: #39dc00; }
+#warnPopup .wp-btn:hover { color: #00ff00; }
 
 @keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
 @keyframes pm-blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
@@ -68,11 +68,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   z-index: 3100;
   width: 160px;
   background: #000;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
-  box-shadow: 0 0 18px rgba(57,220,0,0.18), 0 0 30px rgba(180,228,0,0.04);
+  border-top: 2px solid #80ff80;
+  border-left: 2px solid #80ff80;
+  border-bottom: 2px solid #003300;
+  border-right: 2px solid #003300;
+  box-shadow: 0 0 18px rgba(0,255,0,0.18), 0 0 30px rgba(180,228,0,0.04);
   font-family: 'Courier New', monospace;
   opacity: 0;
   pointer-events: none;
@@ -85,12 +85,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   transform: translateX(0);
 }
 #ixFloat .ix-titlebar {
-  background: #39dc00; color: #000;
+  background: #00ff00; color: #000;
   padding: 4px 8px; font-size: 9px; font-weight: bold;
   letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;
 }
 #ixFloat .ix-btn {
-  width: 11px; height: 11px; background: #39dc00; border: 1px solid #000;
+  width: 11px; height: 11px; background: #00ff00; border: 1px solid #000;
   color: #000; font-size: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer;
 }
 #ixFloat .ix-body { padding: 7px; }
@@ -112,12 +112,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #ixFloat .ix-tag-label { font-size: 7px; color: #333; margin-bottom: 3px; letter-spacing: 0.5px; }
 #ixFloat .ix-tags { display: flex; flex-wrap: wrap; gap: 3px; padding: 2px 0 4px; }
 #ixFloat .ix-tag { color: #ffb000; border: 1px solid #5a3800; font-size: 7px; padding: 1px 5px; letter-spacing: 0.5px; }
-#ixFloat .ix-progress { height: 2px; background: #0d2e00; }
-#ixFloat .ix-progress-fill { height: 100%; background: #39dc00; width: 0%; transition: width 0.1s linear; }
+#ixFloat .ix-progress { height: 2px; background: #001a00; }
+#ixFloat .ix-progress-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s linear; }
 #ixFloat .ix-statusbar {
-  border-top: 1px solid #0d2e00; padding: 3px 8px; font-size: 7px;
+  border-top: 1px solid #001a00; padding: 3px 8px; font-size: 7px;
   display: flex; justify-content: space-between; color: #1e5500;
 }
+
 
 .portfolio-container {
   display: flex;
@@ -135,7 +136,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .portfolio-window {
   display: flex;
   width: 100%;
-  max-width: calc(100vw - 40px);
+  max-width: 1100px;
   height: calc(100vh - 240px);
   gap: 12px;
   overflow: hidden;
@@ -153,17 +154,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border-top: 2px solid #80ff80;
+  border-left: 2px solid #80ff80;
+  border-bottom: 2px solid #003300;
+  border-right: 2px solid #003300;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
   position: relative;
 }
 
 .menu-titlebar {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
@@ -181,7 +182,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .menu-icon {
   width: 16px;
   height: 16px;
-  background: #39dc00;
+  background: #00ff00;
   border: 1px solid #000;
   cursor: pointer;
   font-size: 10px;
@@ -202,12 +203,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .menu-item {
   padding: 12px;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border-top: 2px solid #80ff80;
+  border-left: 2px solid #80ff80;
+  border-bottom: 2px solid #003300;
+  border-right: 2px solid #003300;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   cursor: pointer;
   text-align: center;
   font-size: 12px;
@@ -217,20 +218,20 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .menu-item:hover {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
 .menu-item.active {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
 .menu-statusbar {
   padding: 8px 12px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   background: rgba(0, 0, 0, 0.85);
-  color: #39dc00;
+  color: #00ff00;
   font-size: 10px;
   display: flex;
   justify-content: space-between;
@@ -241,17 +242,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
+  border-top: 2px solid #80ff80;
+  border-left: 2px solid #80ff80;
+  border-bottom: 2px solid #006600;
+  border-right: 3px solid #006600;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
   position: relative;
 }
 
 .terminal-titlebar {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
@@ -269,7 +270,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .terminal-icon {
   width: 16px;
   height: 16px;
-  background: #39dc00;
+  background: #00ff00;
   border: 1px solid #000;
   cursor: pointer;
   font-size: 10px;
@@ -284,10 +285,10 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   padding: 12px 20px;
   overflow-y: auto;
   background: rgba(0, 0, 0, 0.85);
-  color: #39dc00;
+  color: #00ff00;
   font-size: 12px;
   line-height: 1.6;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   min-height: 0;
   position: relative;
 }
@@ -301,9 +302,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .terminal-statusbar {
   padding: 8px 12px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 10px;
   display: flex;
   justify-content: space-between;
@@ -316,11 +317,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 ::-webkit-scrollbar-track {
   background: #000;
-  border-left: 1px solid #39dc00;
+  border-left: 1px solid #00ff00;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #39dc00;
+  background: #00ff00;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -339,8 +340,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   top: 40px;
   right: 16px;
   z-index: 1000;
-  background: #39dc00;
-  border: 2px solid #39dc00;
+  background: #00ff00;
+  border: 2px solid #00ff00;
   color: #000;
   width: 40px;
   height: 40px;
@@ -369,16 +370,16 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 11px;
 }
 
 .new-post-btn {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
-  border: 1px solid #39dc00;
+  border: 1px solid #00ff00;
   padding: 4px 8px;
   font-size: 10px;
   font-weight: bold;
@@ -422,15 +423,15 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #itemPreviewModal.active { display: flex; }
 #itemPreviewModal .popup-box {
   background: #000;
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   width: 520px;
   max-width: 92vw;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
   font-family: 'Courier New', monospace;
-  color: #39dc00;
-  box-shadow: 0 0 20px rgba(57,220,0,0.4);
+  color: #00ff00;
+  box-shadow: 0 0 20px rgba(0,255,0,0.4);
   position: relative;
   margin-top: 26px;
   border-top-left-radius: 0;
@@ -443,12 +444,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   height: 28px;
   padding: 0 18px;
   background: #000;
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   border-bottom: 2px solid #000;
   font-family: 'Courier New', monospace;
   font-size: 9px;
   font-weight: bold;
-  color: #39dc00;
+  color: #00ff00;
   letter-spacing: 3px;
   display: flex;
   align-items: center;
@@ -464,26 +465,26 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 #itemPreviewModal .popup-header {
   display: flex; justify-content: space-between; align-items: flex-start;
   padding: 12px 16px 10px 20px;
-  border-bottom: 1px solid #39dc00;
-  border-left: 3px solid rgba(57,220,0,0.25);
-  background: linear-gradient(180deg, rgba(57,220,0,0.04) 0%, transparent 100%);
+  border-bottom: 1px solid #00ff00;
+  border-left: 3px solid rgba(0,255,0,0.25);
+  background: linear-gradient(180deg, rgba(0,255,0,0.04) 0%, transparent 100%);
 }
 #itemPreviewModal .popup-header-meta {
   font-size: 8px;
-  color: rgba(57,220,0,0.4);
+  color: rgba(0,255,0,0.4);
   letter-spacing: 1px;
   margin-bottom: 6px;
 }
 #itemPreviewModal .popup-title { font-size: 14px; font-weight: bold; }
 #itemPreviewModal .popup-close {
   cursor: pointer; font-size: 16px; line-height: 1;
-  background: none; border: none; color: #39dc00; padding: 0;
+  background: none; border: none; color: #00ff00; padding: 0;
 }
 #itemPreviewModal .popup-category {
-  font-size: 11px; color: #39dc00; opacity: 0.7;
+  font-size: 11px; color: #00ff00; opacity: 0.7;
   padding: 6px 16px 6px 20px;
-  border-bottom: 1px solid #39dc00;
-  border-left: 3px solid rgba(57,220,0,0.25);
+  border-bottom: 1px solid #00ff00;
+  border-left: 3px solid rgba(0,255,0,0.25);
   display: flex; align-items: center; gap: 8px;
 }
 #itemPreviewModal .popup-category::before {
@@ -497,18 +498,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   line-height: 1.7;
   max-height: 60vh;
   overflow-y: auto;
-  border-left: 3px solid rgba(57,220,0,0.1);
+  border-left: 3px solid rgba(0,255,0,0.1);
 }
 
 .modal-content {
   background: #000;
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   padding: 20px;
   width: 90%;
   max-width: 500px;
-  color: #39dc00;
+  color: #00ff00;
   font-family: 'Courier New', monospace;
-  box-shadow: 0 0 20px rgba(57, 220, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
 }
 
 .modal-title {
@@ -516,7 +517,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   font-weight: bold;
   margin-bottom: 15px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
 }
 
 .form-group {
@@ -535,8 +536,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .form-group input,
 .form-group textarea {
   background: #000;
-  border: 1px solid #39dc00;
-  color: #39dc00;
+  border: 1px solid #00ff00;
+  color: #00ff00;
   padding: 6px 8px;
   font-family: 'Courier New', monospace;
   font-size: 10px;
@@ -545,7 +546,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .form-group input:focus,
 .form-group textarea:focus {
-  box-shadow: 0 0 10px rgba(57, 220, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
 .form-group textarea {
@@ -559,13 +560,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   justify-content: flex-end;
   margin-top: 15px;
   padding-top: 10px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
 }
 
 .modal-btn {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
-  border: 1px solid #39dc00;
+  border: 1px solid #00ff00;
   padding: 6px 12px;
   font-size: 10px;
   font-weight: bold;
@@ -580,23 +581,23 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .modal-btn.cancel {
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
 }
 
 .modal-btn.cancel:hover {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
 .board-item {
   position: absolute;
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   background: #000;
   padding: 0;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 9px;
   cursor: pointer;
-  box-shadow: 0 0 15px rgba(57, 220, 0, 0.2);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
   width: 200px;
   height: 160px;
   overflow: hidden;
@@ -607,18 +608,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .board-item:hover {
-  box-shadow: 0 0 25px rgba(57, 220, 0, 0.5);
+  box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
   transform: scale(1.02);
 }
 
 .board-item-header {
-  background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%);
+  background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%);
   color: #000;
   padding: 6px 8px;
   font-weight: bold;
   font-size: 9px;
   flex-shrink: 0;
-  border-bottom: 3px solid #1a6600;
+  border-bottom: 3px solid #005500;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
               0 4px 6px rgba(0, 0, 0, 0.4);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -631,19 +632,19 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .board-item-info {
   padding: 6px 8px;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
   flex-shrink: 0;
   font-size: 9px;
 }
 
 .board-item-from {
-  color: #39dc00;
+  color: #00ff00;
   font-weight: bold;
   margin-bottom: 2px;
 }
 
 .board-item-meta-row {
-  color: #39dc00;
+  color: #00ff00;
   opacity: 0.8;
   font-size: 9px;
   margin-bottom: 1px;
@@ -652,7 +653,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .board-item-message {
   padding: 6px 8px;
   flex: 1;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -661,7 +662,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .board-item-label {
   font-weight: bold;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 8px;
   margin-bottom: 3px;
   text-transform: uppercase;
@@ -685,18 +686,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .board-item-action {
-  color: #39dc00;
+  color: #00ff00;
   cursor: pointer;
   font-size: 8px;
   font-weight: bold;
   text-transform: uppercase;
   padding: 2px 4px;
-  border: 1px solid #39dc00;
+  border: 1px solid #00ff00;
   transition: all 0.2s;
 }
 
 .board-item-action:hover {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
@@ -710,28 +711,28 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .detail-header {
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   border-bottom: none;
   background: #000;
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 11px;
   font-weight: bold;
 }
 
 .detail-time {
-  color: #39dc00;
+  color: #00ff00;
   font-size: 9px;
   margin-bottom: 8px;
 }
 
 .detail-content {
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   padding: 12px;
   overflow-y: auto;
   flex: 1;
@@ -742,13 +743,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .detail-info-table {
   margin-bottom: 12px;
-  border: 1px dashed #39dc00;
+  border: 1px dashed #00ff00;
   width: 100%;
 }
 
 .detail-info-row {
   display: flex;
-  border-bottom: 1px dashed #39dc00;
+  border-bottom: 1px dashed #00ff00;
 }
 
 .detail-info-row:last-child {
@@ -758,26 +759,26 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .detail-info-label {
   width: 120px;
   padding: 4px 8px;
-  border-right: 1px dashed #39dc00;
+  border-right: 1px dashed #00ff00;
   font-weight: bold;
-  color: #39dc00;
+  color: #00ff00;
 }
 
 .detail-info-value {
   flex: 1;
   padding: 4px 8px;
-  color: #39dc00;
+  color: #00ff00;
 }
 
 .detail-divider {
   height: 1px;
-  background: repeating-linear-gradient(90deg, #39dc00 0px, #39dc00 2px, transparent 2px, transparent 4px);
+  background: repeating-linear-gradient(90deg, #00ff00 0px, #00ff00 2px, transparent 2px, transparent 4px);
   margin: 12px 0;
 }
 
 .detail-preview {
-  background: rgba(57, 220, 0, 0.05);
-  border: 1px solid #39dc00;
+  background: rgba(0, 255, 0, 0.05);
+  border: 1px solid #00ff00;
   padding: 8px;
   margin: 8px 0;
   white-space: pre-wrap;
@@ -785,11 +786,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .detail-footer {
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   border-top: none;
   background: #000;
   padding: 6px 12px;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 9px;
   display: flex;
   justify-content: space-between;
@@ -807,8 +808,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .archive-search-input {
   flex: 1;
   background: #000;
-  border: 1px solid #39dc00;
-  color: #39dc00;
+  border: 1px solid #00ff00;
+  color: #00ff00;
   padding: 10px 12px;
   font-family: 'Courier New', monospace;
   font-size: 12px;
@@ -818,13 +819,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .archive-search-input:focus {
-  box-shadow: 0 0 10px rgba(57, 220, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
 .archive-search-btn {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
-  border: 1px solid #39dc00;
+  border: 1px solid #00ff00;
   padding: 10px 16px;
   font-size: 11px;
   font-weight: bold;
@@ -857,7 +858,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .photo-item {
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   background: #000;
   cursor: pointer;
   transition: all 0.2s;
@@ -867,8 +868,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .photo-item:hover {
-  box-shadow: 0 0 15px rgba(57, 220, 0, 0.5);
-  background: rgba(57, 220, 0, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  background: rgba(0, 255, 0, 0.1);
 }
 
 .photo-item-image {
@@ -877,8 +878,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #39dc00;
-  color: #39dc00;
+  border-bottom: 1px solid #00ff00;
+  color: #00ff00;
   font-size: 11px;
   overflow: hidden;
 }
@@ -896,12 +897,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .photo-item-title {
   font-weight: bold;
-  color: #39dc00;
+  color: #00ff00;
   margin-bottom: 2px;
 }
 
 .photo-item-keywords {
-  color: #39dc00;
+  color: #00ff00;
   opacity: 0.7;
   font-size: 8px;
   word-break: break-word;
@@ -910,7 +911,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 .no-results {
   padding: 20px;
   text-align: center;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 11px;
 }
 
@@ -934,18 +935,18 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .photo-detail-content {
   background: #000;
-  border: 2px solid #39dc00;
+  border: 2px solid #00ff00;
   padding: 0;
   max-width: 600px;
   width: 90%;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 30px rgba(57, 220, 0, 0.3);
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
 }
 
 .photo-detail-header {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   padding: 8px 12px;
   font-weight: bold;
@@ -979,9 +980,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .photo-detail-info {
   padding: 12px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   overflow-y: auto;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 10px;
 }
 
@@ -997,7 +998,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .photo-detail-keywords {
-  border-top: 1px dashed #39dc00;
+  border-top: 1px dashed #00ff00;
   padding-top: 8px;
   font-size: 9px;
 }
@@ -1014,8 +1015,8 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .photo-keyword-tag {
-  background: rgba(57, 220, 0, 0.2);
-  border: 1px solid #39dc00;
+  background: rgba(0, 255, 0, 0.2);
+  border: 1px solid #00ff00;
   padding: 2px 6px;
   font-size: 8px;
 }
@@ -1036,13 +1037,13 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   padding: 8px 12px;
   font-weight: bold;
   font-size: 14px;
   height: 48px;
-  border-bottom: 2px solid #39dc00;
+  border-bottom: 2px solid #00ff00;
 }
 
 .mobile-header-left {
@@ -1052,7 +1053,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .mobile-menu-toggle {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   border: none;
   width: 44px;
@@ -1078,11 +1079,11 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  border-top: 2px solid #80ff80;
+  border-left: 2px solid #80ff80;
+  border-bottom: 2px solid #003300;
+  border-right: 2px solid #003300;
+  box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
   background: #000;
   overflow: hidden;
   min-height: 0;
@@ -1090,7 +1091,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .mobile-terminal-titlebar {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
@@ -1098,7 +1099,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
 }
 
 .mobile-terminal-content {
@@ -1107,7 +1108,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   overflow-y: auto;
   overflow-x: hidden;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 12px;
   line-height: 1.8;
   min-height: 0;
@@ -1124,9 +1125,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .mobile-terminal-statusbar {
   padding: 8px 12px;
-  border-top: 1px solid #39dc00;
+  border-top: 1px solid #00ff00;
   background: #000;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 10px;
   display: flex;
   justify-content: space-between;
@@ -1156,7 +1157,7 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   max-width: 280px;
   height: 100%;
   background: #000;
-  border-right: 2px solid #39dc00;
+  border-right: 2px solid #00ff00;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -1164,9 +1165,9 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 
 .mobile-menu-item {
   padding: 16px 8px;
-  border-bottom: 1px solid #39dc00;
+  border-bottom: 1px solid #00ff00;
   cursor: pointer;
-  color: #39dc00;
+  color: #00ff00;
   font-size: 12px;
   background: #000;
   text-align: center;
@@ -1183,12 +1184,12 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
 }
 
 .mobile-menu-item:hover {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
 .mobile-menu-item.active {
-  background: #39dc00;
+  background: #00ff00;
   color: #000;
 }
 
@@ -1199,24 +1200,24 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
   height: 100vh;
   margin-top: 0;
 }
-  .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #39dc00; line-height: 1.7; padding: 0 16px; }
-  .md-content h1,.md-content h2,.md-content h3 { color: #39dc00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #39dc00; padding-bottom: 4px; }
+  .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #00ff00; line-height: 1.7; padding: 0 16px; }
+  .md-content h1,.md-content h2,.md-content h3 { color: #00ff00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #00ff00; padding-bottom: 4px; }
   .md-content p { margin: 6px 0; }
   .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 11px; }
-  .md-content th, .md-content td { border: 1px solid #39dc00; padding: 4px 8px; text-align: left; }
-  .md-content th { background: #39dc00; color: #000; font-weight: bold; }
-  .md-content img { max-width: 100%; border: 1px solid #39dc00; margin: 8px 0; display: block; }
+  .md-content th, .md-content td { border: 1px solid #00ff00; padding: 4px 8px; text-align: left; }
+  .md-content th { background: #00ff00; color: #000; font-weight: bold; }
+  .md-content img { max-width: 100%; border: 1px solid #00ff00; margin: 8px 0; display: block; }
   .md-content ul, .md-content ol { margin: 6px 0 6px 16px; }
   .md-content li { margin: 2px 0; }
-  .md-content code { background: #1a1a1a; border: 1px solid #39dc00; padding: 1px 4px; font-size: 10px; }
-  .md-content pre { background: #1a1a1a; border: 1px solid #39dc00; padding: 8px; margin: 8px 0; overflow-x: auto; }
-  .md-content blockquote { border-left: 2px solid #39dc00; margin: 8px 0; padding-left: 10px; opacity: 0.8; }
-  .md-content a { color: #39dc00; }
-  hr { border: none; border-top: 1px solid #39dc00 !important; margin: 10px 0; }
-  .md-content hr { border: none; border-top: 1px solid #39dc00; margin: 10px 0; }
+  .md-content code { background: #1a1a1a; border: 1px solid #00ff00; padding: 1px 4px; font-size: 10px; }
+  .md-content pre { background: #1a1a1a; border: 1px solid #00ff00; padding: 8px; margin: 8px 0; overflow-x: auto; }
+  .md-content blockquote { border-left: 2px solid #00ff00; margin: 8px 0; padding-left: 10px; opacity: 0.8; }
+  .md-content a { color: #00ff00; }
+  hr { border: none; border-top: 1px solid #00ff00 !important; margin: 10px 0; }
+  .md-content hr { border: none; border-top: 1px solid #00ff00; margin: 10px 0; }
   .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 11px; }
-  .md-content th, .md-content td { border: 1px solid #39dc00 !important; padding: 4px 8px; text-align: left; }
-  .md-content th { background: #39dc00; color: #000; font-weight: bold; }
+  .md-content th, .md-content td { border: 1px solid #00ff00 !important; padding: 4px 8px; text-align: left; }
+  .md-content th { background: #00ff00; color: #000; font-weight: bold; }
 
 
   </style>
@@ -1284,17 +1285,17 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <div class="menu-item" data-section="archive">Measure</div>
         <div class="menu-item active" data-section="about">About</div>
         <!-- CELL AUTOMATA -->
-        <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid rgba(57,220,0,0.2);margin-top:4px;">
-          <div id="caTitle" style="background:#39dc00;color:#000;padding:3px 6px;font-size:7px;font-weight:bold;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;cursor:pointer;" onclick="const b=document.getElementById('caBody');b.style.display=b.style.display==='none'?'flex':'flex';">
+        <div style="flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid rgba(0,255,0,0.2);margin-top:4px;">
+          <div id="caTitle" style="background:#00ff00;color:#000;padding:3px 6px;font-size:7px;font-weight:bold;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;cursor:pointer;" onclick="const b=document.getElementById('caBody');b.style.display=b.style.display==='none'?'flex':'flex';">
             <span>CELL_AUTOMATA.EXE</span>
             <div style="display:flex;gap:2px;">
-              <div style="width:10px;height:10px;background:#000;color:#39dc00;font-size:7px;display:flex;align-items:center;justify-content:center;">−</div>
-              <div style="width:10px;height:10px;background:#000;color:#39dc00;font-size:7px;display:flex;align-items:center;justify-content:center;">✕</div>
+              <div style="width:10px;height:10px;background:#000;color:#00ff00;font-size:7px;display:flex;align-items:center;justify-content:center;">−</div>
+              <div style="width:10px;height:10px;background:#000;color:#00ff00;font-size:7px;display:flex;align-items:center;justify-content:center;">✕</div>
             </div>
           </div>
           <div id="caBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
             <canvas id="caCanvas" style="display:block;width:100%;flex:1;min-height:120px;"></canvas>
-            <div style="padding:3px 6px;border-top:1px solid rgba(57,220,0,0.3);background:#000;display:flex;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:2px;">
+            <div style="padding:3px 6px;border-top:1px solid rgba(0,255,0,0.3);background:#000;display:flex;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:2px;">
               <span id="caStat1" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">CELLS:0000</span>
               <span id="caStat2" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">GEN:00000</span>
               <span id="caStat3" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">DENSITY:0.0%</span>
@@ -1336,28 +1337,28 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <!-- TASK MANAGER -->
         <div id="pmWindow" style="
           background:#000;
-          border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
-          border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
-          box-shadow:0 0 20px rgba(57,220,0,0.2);
+          border-top:2px solid #80ff80; border-left:2px solid #80ff80;
+          border-bottom:2px solid #003300; border-right:2px solid #003300;
+          box-shadow:0 0 20px rgba(0,255,0,0.2);
           font-family:'Courier New',monospace;
           display:flex; flex-direction:column;
         ">
-          <div style="background:#39dc00;color:#000;padding:5px 10px;font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
             <span>TASK MANAGER — SET.EXE</span>
             <div style="display:flex;gap:3px;">
-              <div onclick="const b=document.getElementById('pmBody');b.style.display=b.style.display==='none'?'flex':'none';" style="width:14px;height:14px;background:#39dc00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
-              <div style="width:14px;height:14px;background:#39dc00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;">□</div>
+              <div onclick="const b=document.getElementById('pmBody');b.style.display=b.style.display==='none'?'flex':'none';" style="width:14px;height:14px;background:#00ff00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
+              <div style="width:14px;height:14px;background:#00ff00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;">□</div>
             </div>
           </div>
-          <div style="border-bottom:1px solid #39dc00;padding:3px 10px;font-size:10px;display:flex;gap:12px;color:#39dc00;opacity:0.7;flex-shrink:0;">
+          <div style="border-bottom:1px solid #00ff00;padding:3px 10px;font-size:10px;display:flex;gap:12px;color:#00ff00;opacity:0.7;flex-shrink:0;">
             <span>File</span><span>Options</span><span>View</span><span>Help</span>
           </div>
           <div id="pmBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
-            <div style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;padding:3px 10px;font-size:9px;color:#39dc00;border-bottom:1px solid #1a5500;opacity:0.55;flex-shrink:0;">
+            <div style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;padding:3px 10px;font-size:9px;color:#00ff00;border-bottom:1px solid #003300;opacity:0.55;flex-shrink:0;">
               <span>Process</span><span>PID</span><span>CPU</span><span>Status</span>
             </div>
             <div id="pmRows" style="flex:1;overflow:hidden;"></div>
-            <div style="border-top:1px solid #39dc00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#555;flex-shrink:0;">
+            <div style="border-top:1px solid #00ff00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#555;flex-shrink:0;">
               <span>Processes: <span style="color:#ffb000;">6</span></span>
               <span>CPU: <span id="pmTotalCpu" style="color:#ffb000;">--</span>%</span>
               <span>MEM: <span style="color:#ffb000;">64MB</span> <span class="pm-blink" style="color:#ffb000;">█</span></span>
@@ -1368,14 +1369,14 @@ html, body { background: #000; color: #39dc00; font-family: 'Courier New', monos
         <!-- VIEWER LOG -->
         <div id="vlWindow" style="
           background:#000;
-          border-top:2px solid #7fff4f; border-left:2px solid #7fff4f;
-          border-bottom:2px solid #1a5500; border-right:2px solid #1a5500;
-          box-shadow:0 0 20px rgba(57,220,0,0.15);
+          border-top:2px solid #80ff80; border-left:2px solid #80ff80;
+          border-bottom:2px solid #003300; border-right:2px solid #003300;
+          box-shadow:0 0 20px rgba(0,255,0,0.15);
           font-family:'Courier New',monospace;
         ">
-          <div style="background:#39dc00;color:#000;padding:5px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
             <span>VIEWER_LOG.EXE</span>
-            <div onclick="const b=document.getElementById('vlBody');b.style.display=b.style.display==='none'?'block':'none';" style="width:13px;height:13px;background:#39dc00;border:1px solid #000;color:#000;font-size:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
+            <div onclick="const b=document.getElementById('vlBody');b.style.display=b.style.display==='none'?'block':'none';" style="width:13px;height:13px;background:#00ff00;border:1px solid #000;color:#000;font-size:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
           </div>
           <div id="vlBody">
             <div style="border-bottom:1px solid #1a1a1a;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;align-items:center;">
@@ -2050,7 +2051,7 @@ REQUIRE LOGIN: No (Public access enabled)
             <pre style="font-family:'Courier New',monospace;font-size:clamp(7px,1.1vw,13px);
               line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;user-select:none;">${SET_ASCII}</pre>
             <div style="margin-top:26px;font-family:'Courier New',monospace;font-size:13px;
-              color:#39dc00;letter-spacing:5px;">— COMING SOON —</div>`;
+              color:#00ff00;letter-spacing:5px;">— COMING SOON —</div>`;
         } else if (content.isGrammarCodes) {
           loadGrammarCodes(content);
         } else if (content.isSlideshow) {
@@ -2073,7 +2074,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <img src="images/big-brother.jpg?v=3"
                     style="max-width:100%;max-height:270px;object-fit:contain;display:block;"
                     onerror="this.style.display='none'">
-                  <div style="text-align:center;color:#39dc00;font-size:15px;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;font-weight:bold;">
+                  <div style="text-align:center;color:#00ff00;font-size:15px;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;font-weight:bold;">
                     Enter your instructions
                   </div>
                 </div>
@@ -2141,22 +2142,22 @@ REQUIRE LOGIN: No (Public access enabled)
           // Terminal palette — CRT green + amber phosphor
           // Near-black spines, vivid marks — exact from library_bookshelf.html shelf3
           const grayThemes = [
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
             { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-            { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+            { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           ];
           const baseWidths  = [24, 28, 25, 32, 22, 27, 31, 24, 28, 25, 27, 22, 28, 32, 24, 27];
           const baseHeights = [221, 242, 229, 259, 214, 238, 234, 251, 225, 240, 214, 232, 238, 223, 253, 229];
@@ -2199,11 +2200,11 @@ REQUIRE LOGIN: No (Public access enabled)
               }
               .bk3d::after{content:none;}
               .bk-side{position:absolute;right:-5px;top:-5px;width:5px;bottom:0;transform:skewY(-45deg);transform-origin:top left;z-index:5;}
-              .bk3d-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00cc00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
+              .bk3d-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00ff00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
               .bk3d-bend::after{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:3px;background:linear-gradient(90deg,#222 0%,#333 40%,#222 100%);border-radius:2px;}
             </style>
             <div style="display:flex;flex-direction:column;height:100%;margin:-12px;background:#000;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;overflow:hidden;">
-              <div style="padding:7px 12px;border-bottom:1px solid #39dc00;font-size:10px;font-weight:bold;flex-shrink:0;color:#39dc00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="padding:7px 12px;border-bottom:1px solid #00ff00;font-size:10px;font-weight:bold;flex-shrink:0;color:#00ff00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
                 <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
                 <span style="opacity:.4;font-weight:normal;font-size:9px;">← scroll →</span>
               </div>
@@ -2220,7 +2221,7 @@ REQUIRE LOGIN: No (Public access enabled)
                 <div style="flex-shrink:0;height:1px;background:#00ff00;"></div>
               </div>
 
-              <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(57,220,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:2px solid #00ff00;">
+              <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(0,255,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:2px solid #00ff00;">
                 <span>click to open</span>
               </div>
             </div>
@@ -2245,15 +2246,15 @@ REQUIRE LOGIN: No (Public access enabled)
 
             // List format with table style - no header or footer
             const noticeHTML = content.notice ? `
-              <div style="padding: 12px; background: linear-gradient(180deg, rgba(57,220,0,0.1) 0%, rgba(0,0,0,0.5) 100%); border-bottom: 2px solid #39dc00; flex-shrink: 0; border-left: 3px solid #ffb000;">
-                <div style="color: #39dc00; font-size: 11px; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${content.notice}</div>
+              <div style="padding: 12px; background: linear-gradient(180deg, rgba(0,255,0,0.1) 0%, rgba(0,0,0,0.5) 100%); border-bottom: 2px solid #00ff00; flex-shrink: 0; border-left: 3px solid #ffb000;">
+                <div style="color: #00ff00; font-size: 11px; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${content.notice}</div>
               </div>
             ` : '';
             const listHTML = `
               <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
                 ${noticeHTML}
-                <div style="padding: 8px 0; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; flex-shrink: 0; display: flex;">
-                  <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #39dc00;">title</div>
+                <div style="padding: 8px 0; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; flex-shrink: 0; display: flex;">
+                  <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #00ff00;">title</div>
                   <div style="width: 150px; padding: 0 12px; font-weight: bold;">CATEGORY</div>
                 </div>
                 <div style="flex: 1; overflow-y: auto; background: #000; min-height: 0;">
@@ -2263,14 +2264,14 @@ REQUIRE LOGIN: No (Public access enabled)
                       'GRAMMAR': '#3333ff',
                       'SVA': '#ffff00'
                     };
-                    const catColor = categoryColors[(item.category||'').toUpperCase()] || '#39dc00';
+                    const catColor = categoryColors[(item.category||'').toUpperCase()] || '#00ff00';
                     const isPinned = !!item.pinned;
-                    const rowBg = isPinned ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);' : 'border-bottom:1px dashed #39dc00;';
+                    const rowBg = isPinned ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);' : 'border-bottom:1px dashed #00ff00;';
                     const titleColor = isPinned ? '#ffb000' : '#e0e0e0';
                     const pinMark = isPinned ? '<span style="color:#ffb000;margin-right:5px;font-size:10px;">●</span>' : '';
                     return `
                     <div class="list-item" data-index="${idx}" style="cursor:pointer;display:flex;${rowBg}transition:background 0.2s;padding:0;">
-                      <div style="flex:1;padding:6px 12px;color:${titleColor};font-size:11px;border-right:1px solid #39dc00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      <div style="flex:1;padding:6px 12px;color:${titleColor};font-size:11px;border-right:1px solid #00ff00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                         ${pinMark}${item.title || item.id}
                       </div>
                       <div style="width:150px;padding:6px 12px;color:${catColor};font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
@@ -2299,19 +2300,19 @@ REQUIRE LOGIN: No (Public access enabled)
               <div class="board-container">
                 ${allBoardItems.map((item, idx) => `
                   <div class="board-item" data-index="${idx}">
-                    <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 4px 8px; font-size: 8px; border-bottom: 2px solid #1a6600; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                    <div style="background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%); color: #000; padding: 4px 8px; font-size: 8px; border-bottom: 2px solid #005500; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
                       <span style="opacity: 0.7; letter-spacing: 1px;">${item.category || 'REF'}</span>
                       <span style="cursor: pointer; font-size: 12px;">×</span>
                     </div>
-                    <div style="padding: 7px 9px 4px; flex-shrink: 0; border-bottom: 1px dashed rgba(57,220,0,0.35);">
-                      <div style="font-weight: bold; font-size: 10px; color: #39dc00; word-break: break-word; line-height: 1.3; max-height: 2.6em; overflow: hidden;">${item.title}</div>
+                    <div style="padding: 7px 9px 4px; flex-shrink: 0; border-bottom: 1px dashed rgba(0,255,0,0.35);">
+                      <div style="font-weight: bold; font-size: 10px; color: #00ff00; word-break: break-word; line-height: 1.3; max-height: 2.6em; overflow: hidden;">${item.title}</div>
                       <div style="font-size: 9px; color: #ffb000; margin-top: 2px; opacity: 0.9;">${[item.author, item.year].filter(Boolean).join(' · ') || ''}</div>
                     </div>
                     <div style="padding: 5px 9px; flex: 1; overflow: hidden;">
-                      <div style="font-size: 9px; color: rgba(57,220,0,0.65); line-height: 1.45; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">${item.preview || ''}</div>
+                      <div style="font-size: 9px; color: rgba(0,255,0,0.65); line-height: 1.45; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">${item.preview || ''}</div>
                     </div>
-                    <div style="padding: 3px 9px 5px; flex-shrink: 0; border-top: 1px dashed rgba(57,220,0,0.25); display: flex; justify-content: flex-end;">
-                      <span style="font-size: 8px; color: rgba(57,220,0,0.45); letter-spacing: 1px;">READ MORE ›</span>
+                    <div style="padding: 3px 9px 5px; flex-shrink: 0; border-top: 1px dashed rgba(0,255,0,0.25); display: flex; justify-content: flex-end;">
+                      <span style="font-size: 8px; color: rgba(0,255,0,0.45); letter-spacing: 1px;">READ MORE ›</span>
                     </div>
                   </div>
                 `).join('')}
@@ -2328,11 +2329,11 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isFigmaBoard) {
           // Figma board format with embedded iframe + published posts below
           const postsHTML = publishedPosts.length > 0 ? `
-            <div style="flex-shrink: 0; padding: 12px; border-top: 1px solid #39dc00; background: #000;">
-              <div style="font-size: 11px; font-weight: bold; color: #39dc00; margin-bottom: 8px;">POSTS</div>
+            <div style="flex-shrink: 0; padding: 12px; border-top: 1px solid #00ff00; background: #000;">
+              <div style="font-size: 11px; font-weight: bold; color: #00ff00; margin-bottom: 8px;">POSTS</div>
               <div style="display: flex; flex-direction: column; gap: 6px;">
                 ${publishedPosts.map(p => `
-                  <div style="border: 1px solid #39dc00; padding: 8px; font-size: 10px; color: #39dc00; cursor: pointer;" onclick="openItemPreviewPopup(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                  <div style="border: 1px solid #00ff00; padding: 8px; font-size: 10px; color: #00ff00; cursor: pointer;" onclick="openItemPreviewPopup(${JSON.stringify(p).replace(/"/g, '&quot;')})">
                     <div style="font-weight: bold;">${p.title || ''}</div>
                     <div style="opacity: 0.7; font-size: 9px;">${p.author || ''} ${p.year ? '· ' + p.year : ''}</div>
                     ${p.preview ? `<div style="margin-top: 4px; opacity: 0.8;">${(p.preview || '').substring(0, 80)}${(p.preview||'').length > 80 ? '...' : ''}</div>` : ''}
@@ -2343,11 +2344,11 @@ REQUIRE LOGIN: No (Public access enabled)
           ` : '';
           const figmaHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; background: #000;">
-              <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; font-weight: bold;">
+              <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; font-weight: bold;">
                 TIMELINE
               </div>
               <div style="flex: 1; padding: 12px; overflow: auto; background: #000; min-height: 0;">
-                <iframe style="width: 100%; height: 100%; border: 1px solid #39dc00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
+                <iframe style="width: 100%; height: 100%; border: 1px solid #00ff00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
               </div>
               ${postsHTML}
             </div>
@@ -2359,7 +2360,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const displayText = mdText || '<span style="opacity:0.5">[어드민에서 내용을 입력하세요]</span>';
           const hasStatement = !!(content.artistStatement);
           const statementBtnHTML = hasStatement
-            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:6px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#39dc00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#39dc00';">[ ARTIST STATEMENT → ]</button>`
+            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
             : '';
           let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;"><div class="md-content" id="contentText">${displayText}</div>${statementBtnHTML}</div>`;
           terminalContent.innerHTML = textHTML;
@@ -2375,9 +2376,9 @@ REQUIRE LOGIN: No (Public access enabled)
       const displayStmt = stmt || '<span style="opacity:0.5">[어드민에서 아티스트 스테이트먼트를 입력하세요]</span>';
       terminalContent.innerHTML = `
         <div style="padding:12px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #39dc00;">
-            <button onclick="loadContent('about')" style="background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:4px 12px;font-family:'Courier New',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#39dc00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#39dc00';">[ ← BACK ]</button>
-            <span style="color:#39dc00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #00ff00;">
+            <button onclick="loadContent('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:4px 12px;font-family:'Courier New',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ← BACK ]</button>
+            <span style="color:#00ff00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
           </div>
           <div class="md-content">${displayStmt}</div>
         </div>
@@ -2389,12 +2390,12 @@ REQUIRE LOGIN: No (Public access enabled)
       const mobileContent = document.getElementById('mobileContentText');
       if (!mobileContent) return;
       const stmt = contents.about.artistStatement || '';
-      const displayStmt = stmt || '<div style="padding:20px;color:#39dc00;opacity:0.5;font-size:11px;">[어드민에서 아티스트 스테이트먼트를 입력하세요]</div>';
+      const displayStmt = stmt || '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:11px;">[어드민에서 아티스트 스테이트먼트를 입력하세요]</div>';
       mobileContent.innerHTML = `
         <div style="padding:12px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #39dc00;">
-            <button onclick="loadContentToMobile('about')" style="background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:5px 12px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ← BACK ]</button>
-            <span style="color:#39dc00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #00ff00;">
+            <button onclick="loadContentToMobile('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:5px 12px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ← BACK ]</button>
+            <span style="color:#00ff00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
           </div>
           <div class="md-content">${displayStmt}</div>
         </div>
@@ -2412,7 +2413,7 @@ REQUIRE LOGIN: No (Public access enabled)
       const itemWidth = 200;
       const itemHeight = 160;
       const padding = 12; // Space between items
-      const columns = 3;
+      const columns = Math.max(1, Math.floor((containerWidth - 20) / (itemWidth + padding)));
 
       // Calculate grid dimensions
       const gridX = 20; // Left margin
@@ -2561,11 +2562,11 @@ REQUIRE LOGIN: No (Public access enabled)
         background: #000; z-index: 9000;
         display: flex; flex-direction: column;
         font-family: monospace;
-        border-top: 2px solid #7fff4f;
-        border-left: 2px solid #7fff4f;
-        border-bottom: 2px solid #1a5500;
-        border-right: 2px solid #1a5500;
-        box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+        border-top: 2px solid #80ff80;
+        border-left: 2px solid #80ff80;
+        border-bottom: 2px solid #003300;
+        border-right: 2px solid #003300;
+        box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
         opacity: 0; transition: opacity 0.15s ease;
       `;
 
@@ -2573,8 +2574,8 @@ REQUIRE LOGIN: No (Public access enabled)
       overlay.innerHTML = `
         <div id="csOverlayHeader" style="
           display: flex; align-items: center; gap: ${isMobileOverlay ? '6px' : '12px'};
-          padding: ${isMobileOverlay ? '8px 10px' : '7px 14px'}; border-bottom: 1px solid #39dc00;
-          flex-shrink: 0; background: #39dc00;
+          padding: ${isMobileOverlay ? '8px 10px' : '7px 14px'}; border-bottom: 1px solid #00ff00;
+          flex-shrink: 0; background: #00ff00;
         ">
           <span id="csOverlayTitle" style="color:#000;font-size:11px;letter-spacing:2px;font-family:monospace;font-weight:bold;flex-shrink:0;">${content.title || 'ARCHIVE'}</span>
           <span id="csWaveform" style="flex:1;font-family:monospace;font-size:${isMobileOverlay ? '8px' : '11px'};color:rgba(0,0,0,0.4);letter-spacing:1px;overflow:hidden;white-space:nowrap;text-align:center;"></span>
@@ -2589,14 +2590,14 @@ REQUIRE LOGIN: No (Public access enabled)
           ">✕</button>
         </div>
         <div id="csOverlayBody" style="flex:1;overflow:hidden;min-height:0;"></div>
-        <div id="csBotStats" style="flex-shrink:0;background:#000;border-top:1px solid #39dc00;padding:6px 14px;display:flex;gap:16px;align-items:center;">
-          <span id="csStat1" style="font-size:9px;font-family:monospace;color:#39dc00;letter-spacing:1px;"></span>
-          <span style="font-size:9px;font-family:monospace;color:rgba(57,220,0,0.3);">·</span>
-          <span id="csStat2" style="font-size:9px;font-family:monospace;color:#39dc00;letter-spacing:1px;"></span>
-          <span style="font-size:9px;font-family:monospace;color:rgba(57,220,0,0.3);">·</span>
-          <span id="csStat3" style="font-size:9px;font-family:monospace;color:#39dc00;letter-spacing:1px;"></span>
+        <div id="csBotStats" style="flex-shrink:0;background:#000;border-top:1px solid #00ff00;padding:6px 14px;display:flex;gap:16px;align-items:center;">
+          <span id="csStat1" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
+          <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.3);">·</span>
+          <span id="csStat2" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
+          <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.3);">·</span>
+          <span id="csStat3" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
           <span style="flex:1;"></span>
-          <span id="csStat4" style="font-size:9px;font-family:monospace;color:rgba(57,220,0,0.4);letter-spacing:1px;"></span>
+          <span id="csStat4" style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.4);letter-spacing:1px;"></span>
         </div>
       `;
 
@@ -2700,7 +2701,7 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     function renderContactSheet(content, container, titleEl, overlayEl) {
-      const COLORS = { core:'#39dc00', support:'#ffb000', drop:'#1a3a0a' };
+      const COLORS = { core:'#00ff00', support:'#ffb000', drop:'#1a3a0a' };
       const LABELS = { core:'CORE', support:'SUP', drop:'DROP' };
       const SHOW_BORDER = ['core','support'];
 
@@ -2732,42 +2733,42 @@ REQUIRE LOGIN: No (Public access enabled)
           lb.style.cssText = 'position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:monospace;';
           const isMobLb = window.innerWidth < 768;
           lb.innerHTML = `
-            <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid #39dc00;flex-shrink:0;background:#000;">
-              <button id="lbBackBtn" style="font-size:9px;padding:2px 8px;border:1px solid rgba(57,220,0,0.5);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;letter-spacing:1px;">↩ GRID</button>
-              <span style="font-size:10px;color:#39dc00;flex:1;letter-spacing:1px;">${p.id || ''}</span>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid #00ff00;flex-shrink:0;background:#000;">
+              <button id="lbBackBtn" style="font-size:9px;padding:2px 8px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;letter-spacing:1px;">↩ GRID</button>
+              <span style="font-size:10px;color:#00ff00;flex:1;letter-spacing:1px;">${p.id || ''}</span>
               <span style="font-size:9px;color:#444;font-family:monospace;">${idx + 1} / ${leafPhotos.length}</span>
-              <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">←</button>
-              <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(57,220,0,0.3);background:transparent;color:rgba(57,220,0,0.7);cursor:pointer;font-family:monospace;">→</button>
+              <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;">←</button>
+              <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;">→</button>
             </div>
             <div style="flex:1;display:flex;flex-direction:${isMobLb ? 'column' : 'row'};gap:${isMobLb ? '0' : '14px'};padding:${isMobLb ? '8px' : '14px'};background:#000;min-height:0;overflow-y:${isMobLb ? 'auto' : 'hidden'};">
               <div style="flex:${isMobLb ? '0 0 auto' : '1'};height:${isMobLb ? '200px' : 'auto'};display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:${isMobLb ? '8px' : '24px 20px'};overflow:hidden;">
-                <img src="${imgSrc}" data-fname="${fname}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;border:1px solid #39dc00;padding:${isMobLb ? '12px' : '32px'};box-shadow:0 0 12px rgba(57,220,0,0.15);" loading="lazy">
+                <img src="${imgSrc}" data-fname="${fname}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;border:1px solid #00ff00;padding:${isMobLb ? '12px' : '32px'};box-shadow:0 0 12px rgba(0,255,0,0.15);" loading="lazy">
               </div>
               <div style="${isMobLb ? 'width:100%;padding:8px;' : 'width:320px;flex-shrink:0;padding-right:52px;'}display:flex;flex-direction:column;justify-content:${isMobLb ? 'flex-start' : 'center'};gap:${isMobLb ? '10px' : '28px'};font-family:monospace;">
-                <div style="border:1px solid #39dc00;padding:10px 14px;display:flex;flex-direction:column;gap:8px;${isMobLb ? 'width:100%;' : 'width:180px;align-self:flex-end;'}min-height:80px;justify-content:space-between;">
+                <div style="border:1px solid #00ff00;padding:10px 14px;display:flex;flex-direction:column;gap:8px;${isMobLb ? 'width:100%;' : 'width:180px;align-self:flex-end;'}min-height:80px;justify-content:space-between;">
                   <div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">VERDICT</span>
                     <span style="font-size:11px;padding:2px 9px;border:1px solid ${color};color:${color};letter-spacing:1px;">${LABELS[v]||v}</span>
                   </div>
                   <div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">FRAME</span>
-                    <span style="font-size:12px;color:#39dc00;">${p.id || ''}</span>
+                    <span style="font-size:12px;color:#00ff00;">${p.id || ''}</span>
                   </div>
                   ${p.dir ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">DIR</span>
                     <span style="font-size:11px;color:#ffe94d;letter-spacing:1px;">${p.dir}</span>
                   </div>` : ''}
                 </div>
-                <div style="border:1px solid #39dc00;padding:14px;display:flex;flex-direction:column;gap:10px;${isMobLb ? 'width:100%;min-height:80px;' : 'min-height:200px;width:280px;'}">
+                <div style="border:1px solid #00ff00;padding:14px;display:flex;flex-direction:column;gap:10px;${isMobLb ? 'width:100%;min-height:80px;' : 'min-height:200px;width:280px;'}">
                   ${p.category ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">CATEGORY</span>
-                    <span style="font-size:11px;color:#39dc00;letter-spacing:1px;">${p.category}</span>
+                    <span style="font-size:11px;color:#00ff00;letter-spacing:1px;">${p.category}</span>
                   </div>` : ''}
-                  ${p.category ? `<div style="border-top:1px solid #39dc00;"></div>` : ''}
+                  ${p.category ? `<div style="border-top:1px solid #00ff00;"></div>` : ''}
                   <div style="font-size:9px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
                   <div style="font-size:${isMobLb ? '11px' : '12px'};color:#ccc;line-height:1.9;">${
                     (p.reason || '—').split('\n-----\n').map((part, i) =>
-                      (i > 0 ? '<div style="border-top:1px solid #39dc0055;margin:6px 0;"></div>' : '') +
+                      (i > 0 ? '<div style="border-top:1px solid #00ff0055;margin:6px 0;"></div>' : '') +
                       '<div style="white-space:pre-wrap;">' + part + '</div>'
                     ).join('')
                   }</div>
@@ -2817,6 +2818,175 @@ REQUIRE LOGIN: No (Public access enabled)
         if (s4) s4.textContent = currentLevelTitle ? currentLevelTitle.toUpperCase() : '';
       }, 400);
 
+      // ── 폴더 호버 프리뷰 helpers ──
+      let _fpCell = null, _fpShowTimer = null, _fpHideTimer = null;
+
+      function fpGetPhotos(node, max) {
+        if (!node) return [];
+        if (node.type !== 'sheet') return [node];
+        const r = [];
+        for (const c of (node.children || [])) {
+          if (r.length >= max) break;
+          r.push(...fpGetPhotos(c, max - r.length));
+        }
+        return r;
+      }
+
+      function fpCountStats(node) {
+        if (!node) return { core:0, sup:0, drop:0, total:0 };
+        if (node.type !== 'sheet') {
+          const v = node.verdict || '';
+          return { core:v==='core'?1:0, sup:v==='support'?1:0, drop:(v==='drop'||v==='hold'||!v)?1:0, total:1 };
+        }
+        const r = { core:0, sup:0, drop:0, total:0 };
+        for (const c of (node.children || [])) {
+          const s = fpCountStats(c);
+          r.core+=s.core; r.sup+=s.sup; r.drop+=s.drop; r.total+=s.total;
+        }
+        return r;
+      }
+
+      function showFolderPreview(folder) {
+        const fpPhotos = document.getElementById('fpPhotos');
+        const fpInfo   = document.getElementById('fpInfo');
+        const fpEmpty  = document.getElementById('fpEmpty');
+        if (!fpPhotos || !fpInfo) return;
+
+        const photos     = fpGetPhotos(folder, 8);
+        const statsLeaves = fpGetPhotos(folder, 200); // DIR·피드용
+        const { core, sup, drop, total } = fpCountStats(folder);
+
+        const subs = (folder.children || []).filter(c => c.type === 'sheet');
+        let dateRange = '';
+        if (subs.length > 0) {
+          const f = subs[0].id || '', l = subs[subs.length-1].id || '';
+          dateRange = f === l ? f : `${f} – ${l}`;
+        }
+
+        const title = (folder.title || folder.id || '').toUpperCase().replace(/\./g, '/');
+        const pC = total ? +(core/total*100).toFixed(0) : 0;
+        const pS = total ? +(sup /total*100).toFixed(0) : 0;
+        const pD = total ? +(drop/total*100).toFixed(0) : 0;
+
+        // B. DIR 빈도
+        const dirCounts = {};
+        statsLeaves.forEach(p => { if (p.dir) dirCounts[p.dir] = (dirCounts[p.dir]||0)+1; });
+        const topDirs = Object.entries(dirCounts).sort((a,b)=>b[1]-a[1]).slice(0,14);
+        const maxDir  = topDirs[0] ? topDirs[0][1] : 1;
+
+        // C. 선정 피드 (core/support)
+        const feed = statsLeaves.filter(p => p.verdict==='core'||p.verdict==='support').slice(0,8);
+
+        function imgDiv(p, style, border) {
+          const url   = p ? (p.filename || p.url || '') : '';
+          const thumb = url.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg');
+          return `<div style="${style}overflow:hidden;background:#0d0d0d;${border !== undefined ? border : 'border:1px solid #00ff00;'}">${
+            url ? `<img src="${thumb}" data-full="${url}"
+              style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);"
+              onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}" alt="">` : ''
+          }</div>`;
+        }
+
+        const main   = photos[0];
+        const thumbs = photos.slice(1, 6);
+        const THUMB_H = 56, THUMB_W = Math.round(THUMB_H * 3/2), THUMB_GAP = 4;
+        const FRAME_PAD = 3, FRAME_BORDER = 1;
+        const stripW = thumbs.length * THUMB_W + (thumbs.length - 1) * THUMB_GAP + 2 * (FRAME_PAD + FRAME_BORDER);
+
+        fpPhotos.innerHTML = `
+          <div style="height:100%;display:flex;flex-direction:column;gap:4px;width:${stripW}px;flex-shrink:0;">
+            ${imgDiv(main, `flex:1;width:100%;`)}
+            <div style="height:${THUMB_H}px;flex-shrink:0;display:flex;gap:${THUMB_GAP}px;border:1px solid #00ff00;padding:3px;">
+              ${thumbs.map(p => imgDiv(p, `width:${THUMB_W}px;height:100%;flex-shrink:0;`, '')).join('')}
+            </div>
+          </div>`;
+
+        const batchInfo = subs.map(s => {
+          const sc = fpCountStats(s);
+          return `<div style="display:flex;align-items:center;gap:6px;font-size:8px;">
+            <span style="color:rgba(0,255,0,0.5);width:36px;flex-shrink:0;">${s.id||''}</span>
+            <div style="flex:1;height:2px;background:#0a0a0a;position:relative;">
+              <div style="position:absolute;left:0;top:0;height:100%;width:${sc.total?+(sc.core/sc.total*100).toFixed(0):0}%;background:#00ff00;"></div>
+            </div>
+            <span style="color:rgba(0,255,0,0.3);font-size:7px;">${sc.total}</span>
+          </div>`;
+        }).join('');
+
+        fpInfo.innerHTML = `
+          <!-- 헤더 -->
+          <div style="padding-bottom:6px;border-bottom:1px solid rgba(0,255,0,0.2);margin-bottom:8px;">
+            <div style="font-size:9px;letter-spacing:2px;color:#00ff00;">${title}</div>
+            ${dateRange ? `<div style="font-size:7px;color:rgba(0,255,0,0.35);letter-spacing:1px;margin-top:2px;">${dateRange} · ${subs.length} BATCH${subs.length>1?'ES':''}</div>` : ''}
+          </div>
+
+          <!-- A. VERDICT -->
+          <div style="margin-bottom:9px;">
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">A  VERDICT</div>
+            ${[['CORE',core,'#00ff00',pC],['SUP',sup,'#ffb000',pS],['DROP',drop,'rgba(0,255,0,0.25)',pD]].map(([lbl,cnt,clr,pct])=>`
+            <div style="display:flex;align-items:center;gap:5px;font-size:8px;margin-bottom:3px;">
+              <span style="width:28px;color:${clr};letter-spacing:0.5px;">${lbl}</span>
+              <div style="flex:1;height:5px;background:#0a0a0a;border:1px solid #001a00;">
+                <div style="width:${pct}%;height:100%;background:${clr};"></div>
+              </div>
+              <span style="width:22px;text-align:right;color:${clr};">${cnt}</span>
+              <span style="width:28px;text-align:right;color:rgba(0,255,0,0.2);font-size:7px;">${pct}%</span>
+            </div>`).join('')}
+            <div style="font-size:7px;color:rgba(0,255,0,0.18);text-align:right;margin-top:1px;">TOTAL ${total}</div>
+          </div>
+
+          <!-- BATCH -->
+          ${subs.length ? `
+          <div style="margin-bottom:9px;">
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">BATCHES</div>
+            <div style="display:flex;flex-direction:column;gap:2px;">${batchInfo}</div>
+          </div>` : ''}
+
+          <!-- B. DIR -->
+          ${topDirs.length ? `
+          <div style="margin-bottom:9px;">
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">B  DIR FREQUENCY</div>
+            <div style="display:flex;flex-wrap:wrap;gap:3px;">
+              ${topDirs.map(([dir,cnt]) => {
+                const r = cnt/maxDir;
+                const op = (0.3 + r*0.7).toFixed(2);
+                const fs = 8 + Math.round(r*3);
+                return `<span style="font-size:${fs}px;border:1px solid rgba(0,255,0,${op});color:rgba(0,255,0,${op});padding:1px 4px;letter-spacing:0.5px;white-space:nowrap;">${dir}<span style="font-size:7px;opacity:0.5;"> ${cnt}</span></span>`;
+              }).join('')}
+            </div>
+          </div>` : ''}
+
+          <!-- C. FEED -->
+          ${feed.length ? `
+          <div>
+            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">C  SELECTIONS</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              ${feed.map(p => {
+                const clr = p.verdict==='core' ? '#00ff00' : '#ffb000';
+                const vid = p.verdict==='core' ? 'CORE' : 'SUP';
+                return `<div style="display:flex;align-items:baseline;gap:4px;font-size:8px;line-height:1.4;">
+                  <div style="width:5px;height:5px;border-radius:50%;background:${clr};flex-shrink:0;margin-top:4px;"></div>
+                  <span style="color:${clr};width:28px;flex-shrink:0;font-size:7px;">${vid}</span>
+                  <span style="color:rgba(0,255,0,0.5);flex-shrink:0;">${(p.id||'').toUpperCase()}</span>
+                  ${p.dir ? `<span style="color:#ffb000;flex-shrink:0;font-size:7px;"> ${p.dir}</span>` : ''}
+                  ${p.reason ? `<span style="color:rgba(255,255,255,0.25);font-size:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"> ${p.reason}</span>` : ''}
+                </div>`;
+              }).join('')}
+            </div>
+          </div>` : ''}`;
+
+        if (fpEmpty) fpEmpty.style.display = 'none';
+      }
+
+      function hideFolderPreview() {
+        const fpPhotos = document.getElementById('fpPhotos');
+        const fpInfo   = document.getElementById('fpInfo');
+        const fpEmpty  = document.getElementById('fpEmpty');
+        if (fpPhotos) fpPhotos.innerHTML = '';
+        if (fpInfo)   fpInfo.innerHTML   = '';
+        if (fpEmpty)  fpEmpty.style.display = 'flex';
+        _fpCell = null;
+      }
+
       function renderLevel(photos, levelTitle) {
         currentPhotos = photos;
         currentLevelTitle = levelTitle;
@@ -2831,7 +3001,7 @@ REQUIRE LOGIN: No (Public access enabled)
         if (!photos || photos.length === 0) {
           container.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;opacity:0.5;">
-              <div style="font-size:11px;font-family:monospace;color:#39dc00;">[ NO PHOTOS ]</div>
+              <div style="font-size:11px;font-family:monospace;color:#00ff00;">[ NO PHOTOS ]</div>
               <div style="font-size:9px;font-family:monospace;color:#666;text-align:center;line-height:1.8;">
                 어드민 → 포트폴리오 편집 → INTRO 탭에서<br>사진 데이터를 입력하고 SAVE 하세요.
               </div>
@@ -2848,7 +3018,7 @@ REQUIRE LOGIN: No (Public access enabled)
           ? ['all', ...Object.keys(counts)].map(v => {
               const label = v === 'all' ? `ALL (${leafPhotos.length})` : `${LABELS[v]||v} (${counts[v]})`;
               const active = v === 'all';
-              const color = v === 'all' ? '#39dc00' : (COLORS[v]||'#666');
+              const color = v === 'all' ? '#00ff00' : (COLORS[v]||'#666');
               return `<button class="cs-fb" data-f="${v}" style="font-size:9px;padding:2px 8px;border:1px solid ${color};background:${active?color:'transparent'};color:${active?'#000':color};cursor:pointer;font-family:monospace;letter-spacing:1px;">${label}</button>`;
             }).join('')
           : '';
@@ -2867,13 +3037,13 @@ REQUIRE LOGIN: No (Public access enabled)
             const previewSrc = _pFull ? _pFull.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
             return `<div class="cs-cell cs-folder" data-idx="${i}" data-type="sheet"
               style="cursor:pointer;display:flex;flex-direction:column;gap:4px;">
-              <div style="aspect-ratio:3/2;background:#0d0d0d;overflow:hidden;flex-shrink:0;border:1px solid #39dc00;">
-                <img src="${previewSrc}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.38) saturate(0) sepia(1) hue-rotate(90deg);" loading="eager" decoding="async">
+              <div style="aspect-ratio:3/2;background:#0d0d0d;overflow:hidden;flex-shrink:0;border:1px solid #00ff00;">
+                <img src="${previewSrc}" data-full="${_pFull}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               </div>
               <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:0 2px;">
-                <span style="font-size:5px;font-family:monospace;color:rgba(57,220,0,0.5);letter-spacing:0.5px;">[SYS]</span>
-                <span style="font-size:6px;font-family:monospace;color:#39dc00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
-                <span style="font-size:5px;font-family:monospace;color:rgba(57,220,0,0.4);">(${childCount})</span>
+                <span style="font-size:5px;font-family:monospace;color:rgba(0,255,0,0.5);letter-spacing:0.5px;">[SYS]</span>
+                <span style="font-size:6px;font-family:monospace;color:#00ff00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
+                <span style="font-size:5px;font-family:monospace;color:rgba(0,255,0,0.4);">(${childCount})</span>
               </div>
             </div>`;
           } else {
@@ -2890,7 +3060,7 @@ REQUIRE LOGIN: No (Public access enabled)
             const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
             const imgSrc = blobSrc || thumbSrc || fullSrc;
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
-              style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;${fakeStyle}${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.38) saturate(0) sepia(1) hue-rotate(90deg);`}">
+              style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;background:#0d0d0d;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);`}">
               ${imgSrc ? `<img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
               ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
@@ -2900,11 +3070,11 @@ REQUIRE LOGIN: No (Public access enabled)
         container.innerHTML = `
           <div style="display:flex;flex-direction:column;height:100%;">
             ${csNavStack.length > 0 ? `
-            <div style="padding:5px 10px;border-bottom:1px dashed rgba(57,220,0,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(57,220,0,0.03);">
-              <button id="csBackBtn" style="font-size:9px;font-family:monospace;padding:2px 8px;border:1px solid #39dc00;background:transparent;color:#39dc00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
-              <span style="font-size:8px;color:rgba(57,220,0,0.45);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
+            <div style="padding:5px 10px;border-bottom:1px dashed rgba(0,255,0,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(0,255,0,0.03);">
+              <button id="csBackBtn" style="font-size:9px;font-family:monospace;padding:2px 8px;border:1px solid #00ff00;background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
+              <span style="font-size:8px;color:rgba(0,255,0,0.45);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
             </div>` : ''}
-            <div style="padding:7px 12px;border-bottom:1px solid #39dc00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;">
+            <div style="padding:7px 12px;border-bottom:1px solid #00ff00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;">
               ${filterBtns}
             </div>
             <div id="csGrid" style="flex:1;overflow-y:auto;padding:40px 48px;min-height:0;">
@@ -2912,24 +3082,69 @@ REQUIRE LOGIN: No (Public access enabled)
                 ${cells}
               </div>
               ${photos.length > PAGE ? `<div style="text-align:center;padding:16px 0;">
-                <button id="csLoadMore" data-loaded="${PAGE}" style="font-family:monospace;font-size:9px;padding:5px 18px;border:1px solid rgba(57,220,0,0.5);background:transparent;color:#39dc00;cursor:pointer;letter-spacing:1px;">
+                <button id="csLoadMore" data-loaded="${PAGE}" style="font-family:monospace;font-size:9px;padding:5px 18px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;">
                   더 보기 (${photos.length - PAGE}장 남음)
                 </button>
               </div>` : ''}
             </div>
-            <div id="csDetail" style="display:none;border-top:1px solid #39dc00;flex-shrink:0;">
+            ${csNavStack.length < 2 ? `
+            <div id="fpPanel" style="
+              flex-shrink:0;height:340px;background:#000;
+              width:fit-content;
+              border:1px solid #00ff00;
+              margin:12px 48px 40px;
+              position:relative;
+            ">
+              <div id="fpInner" style="display:flex;height:100%;padding:16px 18px;">
+                <div id="fpPhotos" style="flex:1;min-width:0;display:flex;overflow:hidden;"></div>
+                <div id="fpInfo" style="width:280px;flex-shrink:0;border-left:1px solid rgba(0,255,0,0.15);padding:12px 16px;display:flex;flex-direction:column;overflow-y:auto;"></div>
+              </div>
+              <div id="fpEmpty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+                <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.18);letter-spacing:3px;">— HOVER A FOLDER TO PREVIEW —</span>
+              </div>
+            </div>` : ''}
+            <div id="csDetail" style="display:none;border-top:1px solid #00ff00;flex-shrink:0;">
               <div style="display:flex;gap:0;">
-                <div id="csDetImg" style="width:110px;flex-shrink:0;aspect-ratio:4/3;background:#111;border-right:1px solid #39dc00;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                <div id="csDetImg" style="width:110px;flex-shrink:0;aspect-ratio:4/3;background:#111;border-right:1px solid #00ff00;display:flex;align-items:center;justify-content:center;overflow:hidden;">
                   <span style="font-size:9px;color:#444;font-family:monospace;">no img</span>
                 </div>
                 <div style="padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;">
-                  <div id="csDetName" style="font-size:11px;font-weight:bold;font-family:monospace;color:#39dc00;"></div>
+                  <div id="csDetName" style="font-size:11px;font-weight:bold;font-family:monospace;color:#00ff00;"></div>
                   <div id="csDetTags" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
                 </div>
               </div>
-              <div id="csDetReason" style="padding:7px 12px;font-size:10px;line-height:1.6;color:#aaa;border-top:1px dashed rgba(57,220,0,0.25);word-break:break-word;"></div>
+              <div id="csDetReason" style="padding:7px 12px;font-size:10px;line-height:1.6;color:#aaa;border-top:1px dashed rgba(0,255,0,0.25);word-break:break-word;"></div>
             </div>
           </div>`;
+
+        // 폴더 셀에 직접 mouseenter/leave 리스너 부착
+        if (csNavStack.length < 2) {
+          const firstFolder = currentPhotos.find(p => p.type === 'sheet');
+          if (firstFolder) showFolderPreview(firstFolder); // 기본: 첫 번째 폴더
+
+          container.querySelectorAll('.cs-folder').forEach(function(cell) {
+            cell.addEventListener('mouseenter', function() {
+              clearTimeout(_fpHideTimer);
+              if (cell === _fpCell) return;
+              _fpCell = cell;
+              clearTimeout(_fpShowTimer);
+              const idx = parseInt(cell.getAttribute('data-idx'));
+              const folder = currentPhotos[idx];
+              if (!folder || folder.type !== 'sheet') return;
+              _fpShowTimer = setTimeout(function() { showFolderPreview(folder); }, 60);
+            });
+            cell.addEventListener('mouseleave', function() {
+              if (cell !== _fpCell) return;
+              clearTimeout(_fpShowTimer);
+              _fpCell = null;
+              // 커서 벗어나면 첫 번째 폴더로 복귀
+              _fpHideTimer = setTimeout(function() {
+                const first = currentPhotos.find(p => p.type === 'sheet');
+                if (first) showFolderPreview(first);
+              }, 150);
+            });
+          });
+        }
 
         setTimeout(function() { container.style.opacity = '1'; }, 20);
         }, 250);
@@ -2986,7 +3201,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const f = fb.getAttribute('data-f');
           container.querySelectorAll('.cs-fb').forEach(b => {
             const bv = b.getAttribute('data-f');
-            const bc = bv === 'all' ? '#39dc00' : (COLORS[bv] || '#666');
+            const bc = bv === 'all' ? '#00ff00' : (COLORS[bv] || '#666');
             b.style.background = b === fb ? bc : 'transparent';
             b.style.color = b === fb ? '#000' : bc;
           });
@@ -3023,6 +3238,14 @@ REQUIRE LOGIN: No (Public access enabled)
         const leafIdx = leafPhotos.indexOf(p);
         if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
       });
+
+      // 폴더 클릭 시 프리뷰 초기화
+      container.addEventListener('click', function(e) {
+        if (e.target.closest('.cs-folder')) {
+          clearTimeout(_fpShowTimer); clearTimeout(_fpHideTimer);
+          hideFolderPreview();
+        }
+      }, true);
 
       renderLevel(content.photos || [], content.title || 'ARCHIVE');
     }
@@ -3227,7 +3450,7 @@ REQUIRE LOGIN: No (Public access enabled)
           // 그리기
           ctx.globalAlpha = p.opacity;
           ctx.font = `${p.size}px 'Courier New', monospace`;
-          ctx.fillStyle = p.bright ? '#ffffff' : '#39dc00';
+          ctx.fillStyle = p.bright ? '#ffffff' : '#00ff00';
           ctx.letterSpacing = '1px';
           ctx.fillText(p.text, p.x, p.y);
         });
@@ -3264,7 +3487,7 @@ REQUIRE LOGIN: No (Public access enabled)
           p.opacity+=diff*0.008;
           ctx.globalAlpha=p.opacity;
           ctx.font=`${p.size}px 'Courier New',monospace`;
-          ctx.fillStyle=p.bright?'#ffffff':'#39dc00';
+          ctx.fillStyle=p.bright?'#ffffff':'#00ff00';
           ctx.fillText(p.text,p.x,p.y);
         });
         ctx.globalAlpha=1;
@@ -3282,22 +3505,22 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // 슬라이드 없으면 빈 상태 표시
       if (currentSlides.length === 0) {
-        terminalContent.innerHTML = `<div style="padding:20px;color:#39dc00;font-size:11px;opacity:0.6;">[About 내용이 없습니다. 어드민에서 슬라이드를 추가하세요.]</div>`;
+        terminalContent.innerHTML = `<div style="padding:20px;color:#00ff00;font-size:11px;opacity:0.6;">[About 내용이 없습니다. 어드민에서 슬라이드를 추가하세요.]</div>`;
         return;
       }
       const slideshowHTML = `
         <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px;">
           <div class="slideshow-content" style="flex: 1; padding: 16px 20px; background: #000; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
             <div class="slide-header" style="margin-bottom: 16px; padding: 0 24px 12px 24px; flex-shrink: 0;">
-              <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #39dc00; margin-bottom: 8px;"></div>
+              <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #00ff00; margin-bottom: 8px;"></div>
               <div class="slide-meta" style="font-size: 10px; color: #ffdd00; opacity: 0.7;"></div>
             </div>
             <div class="slide-text" style="flex: 1; overflow-y: auto; min-height: 0;"></div>
           </div>
-          <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid #39dc00; background: #000; flex-shrink: 0;">
-            <button class="slide-prev" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">← PREV</button>
-            <span class="slide-counter" style="color: #39dc00; font-size: 10px; font-weight: bold; font-family: 'Courier New', monospace;">1/4</span>
-            <button class="slide-next" style="background: #39dc00; color: #000; border: 1px solid #39dc00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">NEXT →</button>
+          <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid #00ff00; background: #000; flex-shrink: 0;">
+            <button class="slide-prev" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">← PREV</button>
+            <span class="slide-counter" style="color: #00ff00; font-size: 10px; font-weight: bold; font-family: 'Courier New', monospace;">1/4</span>
+            <button class="slide-next" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">NEXT →</button>
           </div>
         </div>
       `;
@@ -3332,8 +3555,8 @@ REQUIRE LOGIN: No (Public access enabled)
       });
 
       prevBtn.addEventListener('mouseout', () => {
-        prevBtn.style.background = '#39dc00';
-        prevBtn.style.borderColor = '#39dc00';
+        prevBtn.style.background = '#00ff00';
+        prevBtn.style.borderColor = '#00ff00';
       });
 
       nextBtn.addEventListener('click', () => {
@@ -3347,8 +3570,8 @@ REQUIRE LOGIN: No (Public access enabled)
       });
 
       nextBtn.addEventListener('mouseout', () => {
-        nextBtn.style.background = '#39dc00';
-        nextBtn.style.borderColor = '#39dc00';
+        nextBtn.style.background = '#00ff00';
+        nextBtn.style.borderColor = '#00ff00';
       });
     }
 
@@ -3507,8 +3730,8 @@ REQUIRE LOGIN: No (Public access enabled)
       const galleryHTML = `
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%;">
           ${filtered.map(photo => `
-            <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid #39dc00; padding: 12px; cursor: pointer; transition: all 0.1s;">
-              <div class="photo-item-image" style="width: 100%; height: 100px; background: #000; border: 1px dashed #39dc00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid #00ff00; padding: 12px; cursor: pointer; transition: all 0.1s;">
+              <div class="photo-item-image" style="width: 100%; height: 100px; background: #000; border: 1px dashed #00ff00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <img src="${resolvePhotoUrl(photo.filename)}" alt="${photo.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
               </div>
               <div class="photo-item-info" style="font-size: 11px;">
@@ -3532,7 +3755,7 @@ REQUIRE LOGIN: No (Public access enabled)
           }
         });
         item.addEventListener('mouseover', () => {
-          item.style.background = 'rgba(57, 220, 0, 0.1)';
+          item.style.background = 'rgba(0, 255, 0, 0.1)';
         });
         item.addEventListener('mouseout', () => {
           item.style.background = 'transparent';
@@ -3555,7 +3778,7 @@ REQUIRE LOGIN: No (Public access enabled)
             <img src="images/big-brother.jpg?v=3"
               style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
               onerror="this.style.display='none'">
-            <div style="text-align: center; color: #39dc00; font-size: 15px; font-family: 'Courier New', monospace; font-weight: bold;">
+            <div style="text-align: center; color: #00ff00; font-size: 15px; font-family: 'Courier New', monospace; font-weight: bold;">
               Enter your instructions
             </div>
           </div>
@@ -3806,10 +4029,10 @@ REQUIRE LOGIN: No (Public access enabled)
       const preview = item.preview || '';
 
       const detailHTML = `
-        <div style="padding: 12px; background: #000; color: #39dc00;">
+        <div style="padding: 12px; background: #000; color: #00ff00;">
           <div style="margin-bottom: 12px;">
             <div style="font-size: 11px; color: #888; margin-bottom: 8px;">
-              <button class="back-btn" style="background: none; border: none; color: #39dc00; cursor: pointer; font-size: 11px; text-decoration: underline;">&lt; BACK</button>
+              <button class="back-btn" style="background: none; border: none; color: #00ff00; cursor: pointer; font-size: 11px; text-decoration: underline;">&lt; BACK</button>
             </div>
             <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px; word-break: break-all;">
               ${itemId}
@@ -3819,7 +4042,7 @@ REQUIRE LOGIN: No (Public access enabled)
               <div>${author}</div>
             </div>
           </div>
-          <div class="md-content" style="border-top: 1px solid #39dc00; padding-top: 12px; max-height: 400px; overflow-y: auto; font-size: 11px;">
+          <div class="md-content" style="border-top: 1px solid #00ff00; padding-top: 12px; max-height: 400px; overflow-y: auto; font-size: 11px;">
             ${(typeof marked !== 'undefined') ? marked.parse(preview) : preview}
           </div>
         </div>
@@ -3915,7 +4138,7 @@ REQUIRE LOGIN: No (Public access enabled)
           <pre style="font-family:'Courier New',monospace;font-size:clamp(6px,2.5vw,11px);
             line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;user-select:none;white-space:pre;">SET : Inclusion</pre>
           <div style="margin-top:20px;font-family:'Courier New',monospace;font-size:12px;
-            color:#39dc00;letter-spacing:4px;">— COMING SOON —</div>`;
+            color:#00ff00;letter-spacing:4px;">— COMING SOON —</div>`;
         return;
       } else if (content.isGrammarCodes) {
         mobileContent.style.whiteSpace = 'normal';
@@ -3939,9 +4162,9 @@ REQUIRE LOGIN: No (Public access enabled)
               <img src="images/big-brother.jpg?v=3"
                 style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
                 onerror="this.style.display='none'">
-              <div style="text-align: center; color: #39dc00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
+              <div style="text-align: center; color: #00ff00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
               <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
-                style="width: 100%; background: #000; border: 1px solid #39dc00; color: #39dc00; padding: 6px; font-size: 10px; font-family: monospace; box-sizing: border-box;">
+                style="width: 100%; background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 6px; font-size: 10px; font-family: monospace; box-sizing: border-box;">
             </div>
             <div id="mobilePhotoGallery" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; padding: 0 12px; display: none;">
             </div>
@@ -3952,17 +4175,17 @@ REQUIRE LOGIN: No (Public access enabled)
         const renderPhotos = (photos) => {
           const gallery = document.getElementById('mobilePhotoGallery');
           if (photos.length === 0) {
-            gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #39dc00; font-size: 11px;">No results found</div>`;
+            gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #00ff00; font-size: 11px;">No results found</div>`;
             gallery.style.display = 'flex';
           } else {
             gallery.innerHTML = photos.map(p => `
-              <div style="border: 1px solid #39dc00; overflow: hidden; background: #111;">
+              <div style="border: 1px solid #00ff00; overflow: hidden; background: #111;">
                 <div style="width: 100%; height: 150px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                   <img src="${resolvePhotoUrl(p.filename)}" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="${p.title}" onerror="this.style.display='none'">
                 </div>
-                <div style="padding: 8px; background: #000; border-top: 1px solid #39dc00;">
-                  <div style="color: #39dc00; font-size: 11px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
-                  <div style="color: #39dc00; font-size: 9px; margin-bottom: 4px;">${p.keywords.join(' • ')}</div>
+                <div style="padding: 8px; background: #000; border-top: 1px solid #00ff00;">
+                  <div style="color: #00ff00; font-size: 11px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
+                  <div style="color: #00ff00; font-size: 9px; margin-bottom: 4px;">${p.keywords.join(' • ')}</div>
                   <div style="color: #888; font-size: 9px;">${p.description}</div>
                 </div>
               </div>
@@ -4004,8 +4227,8 @@ REQUIRE LOGIN: No (Public access enabled)
         let html = `<div style="padding: 12px;"><strong>${content.title} (${slides.length} slides)</strong><br><br>`;
 
         slides.forEach((slide, idx) => {
-          html += `<div style="border: 1px solid #39dc00; padding: 8px; margin-bottom: 8px;">
-            <div style="color: #39dc00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${escHtml(slide.title)}</div>
+          html += `<div style="border: 1px solid #00ff00; padding: 8px; margin-bottom: 8px;">
+            <div style="color: #00ff00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${escHtml(slide.title)}</div>
             <div style="color: #888; font-size: 11px; margin-bottom: 6px;">
               ${escHtml(slide.category)} | ${escHtml(slide.author)} | ${escHtml(slide.year)}
             </div>
@@ -4020,22 +4243,22 @@ REQUIRE LOGIN: No (Public access enabled)
         const allBookItems = [...(content.items || []), ...getPublishedPosts(section)];
         // library_bookshelf.html shelf3 colors — matches desktop
         const bookPalette = [
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#888888', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
           { bg: '#000000', band: '#aaaa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
-          { bg: '#000000', band: '#00aa00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
+          { bg: '#000000', band: '#00ff00', side: '#8a8a8a', tc: '#aaaaaa', mark: '#8a8a8a', line: true },
         ];
         const mWidths  = [24, 28, 25, 32, 22, 27, 31, 24, 28, 25, 27, 22, 28, 32, 24, 27];
         const mHeights = [187, 204, 194, 219, 182, 201, 197, 212, 190, 202, 182, 195, 201, 189, 214, 194];
@@ -4077,10 +4300,10 @@ REQUIRE LOGIN: No (Public access enabled)
             }
             .bk3d-m::after{content:none;}
             .bk-side{position:absolute;right:-5px;top:-5px;width:5px;bottom:0;transform:skewY(-45deg);transform-origin:top left;z-index:5;}
-            .bk3d-m-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00cc00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
+            .bk3d-m-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00ff00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
           </style>
           <div style="display:flex;flex-direction:column;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;background:#000;">
-            <div style="padding:7px 12px;border-bottom:1px solid #39dc00;font-size:10px;font-weight:bold;flex-shrink:0;color:#39dc00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="padding:7px 12px;border-bottom:1px solid #00ff00;font-size:10px;font-weight:bold;flex-shrink:0;color:#00ff00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
               <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
               <span style="opacity:0.4;font-weight:normal;font-size:9px;">← scroll →</span>
             </div>
@@ -4091,8 +4314,8 @@ REQUIRE LOGIN: No (Public access enabled)
                 <div class="bk3d-m-bend" style="height:36px;"></div>
               </div>
             </div>
-            <div style="flex-shrink:0;height:44px;background:linear-gradient(180deg,rgba(57,220,0,0.16) 0%,rgba(57,220,0,0.05) 55%,rgba(0,0,0,0) 100%);"></div>
-            <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(57,220,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:1px solid rgba(57,220,0,0.12);">
+            <div style="flex-shrink:0;height:44px;background:linear-gradient(180deg,rgba(0,255,0,0.16) 0%,rgba(0,255,0,0.05) 55%,rgba(0,0,0,0) 100%);"></div>
+            <div style="flex-shrink:0;padding:5px 12px;font-size:9px;color:rgba(0,255,0,0.35);display:flex;justify-content:flex-end;align-items:center;border-top:1px solid rgba(0,255,0,0.12);">
               <span>tap to open</span>
             </div>
           </div>
@@ -4109,11 +4332,11 @@ REQUIRE LOGIN: No (Public access enabled)
         // Figma board format
         mobileContent.innerHTML = `
           <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-            <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; color: #39dc00; font-size: 11px; font-weight: bold;">
+            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; font-weight: bold;">
               TIMELINE
             </div>
             <div style="flex: 1; padding: 12px; overflow: auto; background: #000;">
-              <iframe style="width: 100%; height: 100%; border: 1px solid #39dc00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
+              <iframe style="width: 100%; height: 100%; border: 1px solid #00ff00; background: #000;" src="https://www.figma.com/embed?embed_host=share&url=https://www.figma.com/board/S1HsBejKWRbZPxZ3fSMaDG/제목-없음?node-id=85-238&t=jdjagi0bvYpFCvgx-0" allowfullscreen allow="fullscreen" scrolling="auto"></iframe>
             </div>
           </div>
         `;
@@ -4121,10 +4344,10 @@ REQUIRE LOGIN: No (Public access enabled)
         // Text format (텍스트가 빈 문자열이어도 표시)
         const mobileMainText = content.text
           ? content.text
-          : '<div style="padding:20px;color:#39dc00;opacity:0.5;font-size:11px;">[어드민에서 내용을 입력하세요]</div>';
+          : '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:11px;">[어드민에서 내용을 입력하세요]</div>';
         const hasMobileStatement = !!(content.artistStatement);
         const mobileStmtBtn = hasMobileStatement
-          ? `<button onclick="loadAboutStatementMobile()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #7fff4f;border-left:2px solid #7fff4f;border-bottom:2px solid #1a5500;border-right:2px solid #1a5500;color:#39dc00;padding:7px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ARTIST STATEMENT → ]</button>`
+          ? `<button onclick="loadAboutStatementMobile()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:7px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ARTIST STATEMENT → ]</button>`
           : '';
         mobileContent.innerHTML = `<div style="padding:12px;position:relative;min-height:100%;box-sizing:border-box;">${mobileMainText}${mobileStmtBtn}</div>`;
       } else if (content.items) {
@@ -4143,8 +4366,8 @@ REQUIRE LOGIN: No (Public access enabled)
         const isCardFormat = section === 'reference';
 
         let html = `
-          <div style="padding: 0; border-top: 1px solid #39dc00;">
-            <div style="padding: 12px; border-bottom: 1px solid #39dc00; background: #000; font-weight: bold; color: #39dc00; font-size: 11px;">
+          <div style="padding: 0; border-top: 1px solid #00ff00;">
+            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; font-weight: bold; color: #00ff00; font-size: 11px;">
               ${content.title.toUpperCase()} (${allItems.length} items)
             </div>
             <div style="padding: ${isCardFormat ? '8px' : '0'};">
@@ -4161,13 +4384,13 @@ REQUIRE LOGIN: No (Public access enabled)
           if (isCardFormat) {
             // Board format for reference (matching desktop)
             html += `
-              <div style="cursor: pointer; border: 1px solid #39dc00; margin-bottom: 12px; background: #000; transition: all 0.2s; display: flex; flex-direction: column; height: 160px; overflow: hidden;" class="mobile-list-item mobile-board-item" data-index="${idx}">
-                <div style="background: linear-gradient(180deg, #50ff00 0%, #39dc00 100%); color: #000; padding: 3px 8px; font-weight: bold; font-size: 10px; border-bottom: 1px solid #39dc00; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;">
+              <div style="cursor: pointer; border: 1px solid #00ff00; margin-bottom: 12px; background: #000; transition: all 0.2s; display: flex; flex-direction: column; height: 160px; overflow: hidden;" class="mobile-list-item mobile-board-item" data-index="${idx}">
+                <div style="background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%); color: #000; padding: 3px 8px; font-weight: bold; font-size: 10px; border-bottom: 1px solid #00ff00; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;">
                   <span style="flex-shrink: 0;">×</span>
                 </div>
-                <div style="padding: 8px 10px; color: #39dc00; font-size: 11px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
-                  <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #39dc00; font-weight: bold; flex-shrink: 0;">${item.title}</div>
-                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #39dc00; color: #ffc800; flex-shrink: 0;">${category}</div>
+                <div style="padding: 8px 10px; color: #00ff00; font-size: 11px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
+                  <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #00ff00; font-weight: bold; flex-shrink: 0;">${item.title}</div>
+                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #00ff00; color: #ffc800; flex-shrink: 0;">${category}</div>
                   <div style="padding-top: 5px; font-size: 10px; color: #aaa; overflow: hidden; line-height: 1.5; word-break: break-word;">${item.preview || ''}</div>
                 </div>
               </div>
@@ -4177,14 +4400,14 @@ REQUIRE LOGIN: No (Public access enabled)
             const isPinnedM = !!item.pinned;
             const rowStyleM = isPinnedM
               ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);'
-              : 'background:#000;border-bottom:1px dashed #39dc00;';
-            const titleColorM = isPinnedM ? '#ffb000' : '#39dc00';
+              : 'background:#000;border-bottom:1px dashed #00ff00;';
+            const titleColorM = isPinnedM ? '#ffb000' : '#00ff00';
             html += `
               <div style="cursor:pointer;display:block;${rowStyleM}padding:10px 12px;transition:background 0.2s;" class="mobile-list-item" data-index="${idx}">
                 <div style="color:${titleColorM};font-size:12px;margin-bottom:5px;font-weight:bold;word-break:break-all;">
                   ${isPinnedM ? '<span style="font-size:10px;margin-right:4px;">●</span>' : ''}${item.title || itemId}
                 </div>
-                <div style="color:#39dc00;font-size:11px;display:flex;justify-content:space-between;gap:8px;">
+                <div style="color:#00ff00;font-size:11px;display:flex;justify-content:space-between;gap:8px;">
                   <span>${category}</span>
                   <span style="color:#ffb000;">${status}</span>
                 </div>
@@ -4402,23 +4625,23 @@ REQUIRE LOGIN: No (Public access enabled)
         if (!container) return;
         container.innerHTML = pmProcesses.map(p => {
           const isActive = p.key === activeKey;
-          const rowBg = isActive ? 'rgba(57,220,0,0.12)' : 'transparent';
+          const rowBg = isActive ? 'rgba(0,255,0,0.12)' : 'transparent';
           const barW = Math.max(2, Math.min(99, p.cpu + (Math.random()-0.5)*10));
           p._curCpu = barW;
           // active=green, inactive=dim; high cpu=amber tint
-          const nameColor = isActive ? '#39dc00' : '#909090';
-          const statusColor = isActive ? '#39dc00' : 'rgba(57,220,0,0.28)';
+          const nameColor = isActive ? '#00ff00' : '#909090';
+          const statusColor = isActive ? '#00ff00' : 'rgba(0,255,0,0.28)';
           const pidColor = '#666';
           return `
             <div onclick="loadContent('${p.key}'); pmRender('${p.key}');"
-              style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #0d2e00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
-              onmouseover="this.style.background='rgba(57,220,0,0.08)'"
-              onmouseout="this.style.background='${isActive?'rgba(57,220,0,0.12)':'transparent'}'">
+              style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #001a00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
+              onmouseover="this.style.background='rgba(0,255,0,0.08)'"
+              onmouseout="this.style.background='${isActive?'rgba(0,255,0,0.12)':'transparent'}'">
               <span style="font-weight:bold;color:${nameColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</span>
               <span style="color:${pidColor};font-size:9px;">${p.pid}</span>
               <span>
-                <span style="display:inline-block;width:34px;height:7px;border:1px solid rgba(57,220,0,0.4);background:#000;overflow:hidden;vertical-align:middle;">
-                  <span style="display:block;height:100%;width:${barW}%;background:${barW>75?'#c8a000':barW>45?'rgba(57,220,0,0.7)':'rgba(57,220,0,0.45)'};"></span>
+                <span style="display:inline-block;width:34px;height:7px;border:1px solid rgba(0,255,0,0.4);background:#000;overflow:hidden;vertical-align:middle;">
+                  <span style="display:block;height:100%;width:${barW}%;background:${barW>75?'#c8a000':barW>45?'rgba(0,255,0,0.7)':'rgba(0,255,0,0.45)'};"></span>
                 </span>
               </span>
               <span style="color:${statusColor};font-size:9px;">RUNNING</span>
