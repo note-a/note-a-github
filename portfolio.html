@@ -4,9 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET IS THE WORLD - PORTFOLIO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { background: #000; color: #00ff00; font-family: 'Courier New', monospace; height: 100%; overflow: hidden; }
+html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'DotGothic16', monospace; height: 100%; overflow: hidden;
+  text-shadow: 0.8px 0.4px rgba(255,0,0,0.18), -0.8px -0.4px rgba(0,255,255,0.15); }
+
+/* 큰 텍스트 — 강한 효과 */
+.menu-item, .menu-title, .section-title, #csOverlayTitle, #csOverlayHeader span {
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
+}
+/* 극소 텍스트(6~8px) — 아주 약한 효과 */
+.cs-cell, .folder-label, #csStat1, #csStat2, #csStat3, #csStat4 {
+  text-shadow: 0.5px 0.3px rgba(255,0,0,0.12), -0.5px -0.3px rgba(0,255,255,0.1);
+}
 
 /* ── WARNING POPUP ── */
 #warnPopup {
@@ -14,7 +25,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   width: 220px; z-index: 9999;
   border: 1px solid #7a0800;
   background: #000;
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   transform: translateY(10px); opacity: 0;
   animation: wp-enter 0.3s ease 0.8s forwards;
 }
@@ -26,11 +37,13 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 #warnPopup .wp-top .wp-left { display: flex; align-items: center; gap: 7px; }
 #warnPopup .wp-dot { width: 4px; height: 4px; background: #fff; animation: wp-blink 1s step-end infinite; }
 @keyframes wp-blink { 0%,100%{opacity:1} 50%{opacity:0} }
-#warnPopup .wp-title { font-size: 10px; color: #fff; letter-spacing: 1px; }
-#warnPopup .wp-x { font-size: 11px; color: rgba(255,255,255,0.5); cursor: pointer; padding: 0 2px; }
+#warnPopup .wp-title { font-size: 6px; color: #fff; letter-spacing: 1px;
+}
+#warnPopup .wp-x { font-size: 7px; color: rgba(255,255,255,0.5); cursor: pointer; padding: 0 2px;
+}
 #warnPopup .wp-x:hover { color: #fff; }
 #warnPopup .wp-body {
-  padding: 7px 12px 6px; font-size: 11px;
+  padding: 7px 12px 6px; font-size: 7px;
   color: #00ff00; line-height: 1.6;
   transition: opacity 0.3s ease;
 }
@@ -39,7 +52,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   padding: 3px 10px; height: 28px; overflow: hidden;
 }
 #warnPopup .wp-log-line {
-  font-size: 9px; color: rgba(0,255,0,0.35);
+  font-size: 6px; color: rgba(0,255,0,0.35);
   line-height: 1.7; white-space: nowrap;
 }
 #warnPopup .wp-bar-wrap { margin: 3px 10px 0; height: 2px; background: rgba(0,255,0,0.1); }
@@ -48,9 +61,10 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   padding: 4px 10px; border-top: 1px solid rgba(122,8,0,0.13);
   display: flex; justify-content: space-between; align-items: center; margin-top: 3px;
 }
-#warnPopup .wp-timer { font-size: 9px; color: rgba(122,8,0,0.4); }
+#warnPopup .wp-timer { font-size: 6px; color: rgba(122,8,0,0.4);
+}
 #warnPopup .wp-btn {
-  font-size: 9px; font-family: 'Courier New', monospace;
+  font-size: 6px;
   background: #000; border: none; color: rgba(0,255,0,0.2);
   cursor: pointer; letter-spacing: 1px;
 }
@@ -73,7 +87,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-bottom: 2px solid #003300;
   border-right: 2px solid #003300;
   box-shadow: 0 0 18px rgba(0,255,0,0.18), 0 0 30px rgba(180,228,0,0.04);
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   opacity: 0;
   pointer-events: none;
   transform: translateX(-8px);
@@ -86,7 +100,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 }
 #ixFloat .ix-titlebar {
   background: #00ff00; color: #000;
-  padding: 4px 8px; font-size: 9px; font-weight: bold;
+  padding: 4px 8px; font-size: 6px; font-weight: bold;
   letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;
 }
 #ixFloat .ix-btn {
@@ -109,9 +123,11 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   position: absolute; bottom: 0; left: 0; right: 0;
   background: rgba(0,0,0,0.82); color: #ffb000; font-size: 7px; padding: 3px 5px;
 }
-#ixFloat .ix-tag-label { font-size: 7px; color: #333; margin-bottom: 3px; letter-spacing: 0.5px; }
+#ixFloat .ix-tag-label { font-size: 7px; color: #333; margin-bottom: 3px; letter-spacing: 0.5px;
+}
 #ixFloat .ix-tags { display: flex; flex-wrap: wrap; gap: 3px; padding: 2px 0 4px; }
-#ixFloat .ix-tag { color: #ffb000; border: 1px solid #5a3800; font-size: 7px; padding: 1px 5px; letter-spacing: 0.5px; }
+#ixFloat .ix-tag { color: #ffb000; border: 1px solid #5a3800; font-size: 7px; padding: 1px 5px; letter-spacing: 0.5px;
+}
 #ixFloat .ix-progress { height: 2px; background: #001a00; }
 #ixFloat .ix-progress-fill { height: 100%; background: #00ff00; width: 0%; transition: width 0.1s linear; }
 #ixFloat .ix-statusbar {
@@ -127,7 +143,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   width: 100%;
   height: 100vh;
   margin-top: 0;
-  padding: 8px 20px 8px;
+  padding: 8px 12px;
   gap: 0;
   position: relative;
   z-index: 10;
@@ -159,7 +175,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-bottom: 2px solid #003300;
   border-right: 2px solid #003300;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.35), 0 0 60px rgba(0,255,0,0.15),
+              inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5);
   position: relative;
 }
 
@@ -168,7 +185,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 9px;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -185,7 +203,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: #00ff00;
   border: 1px solid #000;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -211,7 +229,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #00ff00;
   cursor: pointer;
   text-align: center;
-  font-size: 12px;
+  font-size: 9px;
   font-weight: bold;
   transition: all 0.1s;
   user-select: none;
@@ -232,7 +250,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-top: 1px solid #00ff00;
   background: rgba(0, 0, 0, 0.85);
   color: #00ff00;
-  font-size: 10px;
+  font-size: 6px;
   display: flex;
   justify-content: space-between;
 }
@@ -247,7 +265,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-bottom: 2px solid #006600;
   border-right: 3px solid #006600;
   background: rgba(0, 0, 0, 0.75);
-  box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+  box-shadow: 0 0 10px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.35), 0 0 60px rgba(0,255,0,0.15),
+              inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5);
   position: relative;
 }
 
@@ -256,7 +275,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 9px;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -273,7 +293,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: #00ff00;
   border: 1px solid #000;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -286,16 +306,17 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   overflow-y: auto;
   background: rgba(0, 0, 0, 0.85);
   color: #00ff00;
-  font-size: 12px;
+  font-size: 7px;
   line-height: 1.6;
   border-top: 1px solid #00ff00;
   min-height: 0;
   position: relative;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
 }
 
 .terminal-content-text {
   margin: 0;
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
@@ -305,7 +326,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-top: 1px solid #00ff00;
   background: #000;
   color: #00ff00;
-  font-size: 10px;
+  font-size: 6px;
   display: flex;
   justify-content: space-between;
 }
@@ -314,6 +335,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 ::-webkit-scrollbar {
   width: 10px;
 }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 
 ::-webkit-scrollbar-track {
   background: #000;
@@ -346,7 +369,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   width: 40px;
   height: 40px;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 14px;
   padding: 0;
   align-items: center;
   justify-content: center;
@@ -373,7 +396,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-bottom: 1px solid #00ff00;
   background: #000;
   color: #00ff00;
-  font-size: 11px;
+  font-size: 7px;
 }
 
 .new-post-btn {
@@ -381,7 +404,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   border: 1px solid #00ff00;
   padding: 4px 8px;
-  font-size: 10px;
+  font-size: 6px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -429,7 +452,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   color: #00ff00;
   box-shadow: 0 0 20px rgba(0,255,0,0.4);
   position: relative;
@@ -446,8 +469,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: #000;
   border: 2px solid #00ff00;
   border-bottom: 2px solid #000;
-  font-family: 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 6px;
   font-weight: bold;
   color: #00ff00;
   letter-spacing: 3px;
@@ -459,7 +481,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 }
 #itemPreviewModal .popup-file-tab::before {
   content: '▤';
-  font-size: 11px;
+  font-size: 7px;
   opacity: 0.8;
 }
 #itemPreviewModal .popup-header {
@@ -470,18 +492,19 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: linear-gradient(180deg, rgba(0,255,0,0.04) 0%, transparent 100%);
 }
 #itemPreviewModal .popup-header-meta {
-  font-size: 8px;
+  font-size: 12px;
   color: rgba(0,255,0,0.4);
   letter-spacing: 1px;
   margin-bottom: 6px;
 }
-#itemPreviewModal .popup-title { font-size: 14px; font-weight: bold; }
+#itemPreviewModal .popup-title { font-size: 12px; font-weight: bold;
+}
 #itemPreviewModal .popup-close {
-  cursor: pointer; font-size: 16px; line-height: 1;
+  cursor: pointer; font-size: 12px; line-height: 1;
   background: none; border: none; color: #00ff00; padding: 0;
 }
 #itemPreviewModal .popup-category {
-  font-size: 11px; color: #00ff00; opacity: 0.7;
+  font-size: 12px; color: #00ff00; opacity: 0.7;
   padding: 6px 16px 6px 20px;
   border-bottom: 1px solid #00ff00;
   border-left: 3px solid rgba(0,255,0,0.25);
@@ -490,11 +513,11 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 #itemPreviewModal .popup-category::before {
   content: '──';
   opacity: 0.4;
-  font-size: 9px;
+  font-size: 6px;
 }
 #itemPreviewModal .popup-body {
   padding: 14px 16px 12px 20px;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.7;
   max-height: 60vh;
   overflow-y: auto;
@@ -508,12 +531,12 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   width: 90%;
   max-width: 500px;
   color: #00ff00;
-  font-family: 'Courier New', monospace;
+  font-family: 'Press Start 2P', 'DotGothic16', monospace;
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
 }
 
 .modal-title {
-  font-size: 12px;
+  font-size: 7px;
   font-weight: bold;
   margin-bottom: 15px;
   padding-bottom: 10px;
@@ -527,7 +550,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 }
 
 .form-group label {
-  font-size: 10px;
+  font-size: 6px;
   font-weight: bold;
   margin-bottom: 4px;
   text-transform: uppercase;
@@ -539,8 +562,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border: 1px solid #00ff00;
   color: #00ff00;
   padding: 6px 8px;
-  font-family: 'Courier New', monospace;
-  font-size: 10px;
+  font-size: 6px;
   outline: none;
 }
 
@@ -568,7 +590,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   border: 1px solid #00ff00;
   padding: 6px 12px;
-  font-size: 10px;
+  font-size: 6px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -595,7 +617,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: #000;
   padding: 0;
   color: #00ff00;
-  font-size: 9px;
+  font-size: 6px;
   cursor: pointer;
   box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
   width: 200px;
@@ -617,7 +639,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   padding: 6px 8px;
   font-weight: bold;
-  font-size: 9px;
+  font-size: 6px;
   flex-shrink: 0;
   border-bottom: 3px solid #005500;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
@@ -634,7 +656,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   padding: 6px 8px;
   border-bottom: 1px solid #00ff00;
   flex-shrink: 0;
-  font-size: 9px;
+  font-size: 6px;
 }
 
 .board-item-from {
@@ -646,7 +668,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 .board-item-meta-row {
   color: #00ff00;
   opacity: 0.8;
-  font-size: 9px;
+  font-size: 6px;
   margin-bottom: 1px;
 }
 
@@ -663,13 +685,13 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 .board-item-label {
   font-weight: bold;
   color: #00ff00;
-  font-size: 8px;
+  font-size: 7px;
   margin-bottom: 3px;
   text-transform: uppercase;
 }
 
 .board-item-preview {
-  font-size: 9px;
+  font-size: 6px;
   line-height: 1.3;
   opacity: 0.8;
   word-wrap: break-word;
@@ -688,7 +710,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 .board-item-action {
   color: #00ff00;
   cursor: pointer;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: bold;
   text-transform: uppercase;
   padding: 2px 4px;
@@ -719,13 +741,13 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   justify-content: space-between;
   align-items: center;
   color: #00ff00;
-  font-size: 11px;
+  font-size: 7px;
   font-weight: bold;
 }
 
 .detail-time {
   color: #00ff00;
-  font-size: 9px;
+  font-size: 6px;
   margin-bottom: 8px;
 }
 
@@ -736,9 +758,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   padding: 12px;
   overflow-y: auto;
   flex: 1;
-  font-size: 10px;
+  font-size: 6px;
   line-height: 1.6;
-  font-family: 'Courier New', monospace;
 }
 
 .detail-info-table {
@@ -791,7 +812,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: #000;
   padding: 6px 12px;
   color: #00ff00;
-  font-size: 9px;
+  font-size: 6px;
   display: flex;
   justify-content: space-between;
 }
@@ -811,8 +832,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border: 1px solid #00ff00;
   color: #00ff00;
   padding: 10px 12px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-size: 7px;
   outline: none;
   min-height: 44px;
   box-sizing: border-box;
@@ -827,7 +847,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   border: 1px solid #00ff00;
   padding: 10px 16px;
-  font-size: 11px;
+  font-size: 7px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.2s;
@@ -880,7 +900,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   justify-content: center;
   border-bottom: 1px solid #00ff00;
   color: #00ff00;
-  font-size: 11px;
+  font-size: 7px;
   overflow: hidden;
 }
 
@@ -892,7 +912,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 
 .photo-item-info {
   padding: 6px 8px;
-  font-size: 9px;
+  font-size: 6px;
 }
 
 .photo-item-title {
@@ -904,7 +924,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 .photo-item-keywords {
   color: #00ff00;
   opacity: 0.7;
-  font-size: 8px;
+  font-size: 7px;
   word-break: break-word;
 }
 
@@ -912,7 +932,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   padding: 20px;
   text-align: center;
   color: #00ff00;
-  font-size: 11px;
+  font-size: 7px;
 }
 
 /* Photo Detail Modal */
@@ -953,13 +973,13 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 7px;
 }
 
 .photo-detail-close {
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 9px;
 }
 
 .photo-detail-image-container {
@@ -983,12 +1003,12 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-top: 1px solid #00ff00;
   overflow-y: auto;
   color: #00ff00;
-  font-size: 10px;
+  font-size: 6px;
 }
 
 .photo-detail-title {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 7px;
   margin-bottom: 8px;
 }
 
@@ -1000,7 +1020,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
 .photo-detail-keywords {
   border-top: 1px dashed #00ff00;
   padding-top: 8px;
-  font-size: 9px;
+  font-size: 6px;
 }
 
 .photo-detail-keywords-label {
@@ -1018,7 +1038,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   background: rgba(0, 255, 0, 0.2);
   border: 1px solid #00ff00;
   padding: 2px 6px;
-  font-size: 8px;
+  font-size: 7px;
 }
 
 /* ===== MOBILE LAYOUT STYLES ===== */
@@ -1041,9 +1061,11 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   padding: 8px 12px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 10px;
   height: 48px;
   border-bottom: 2px solid #00ff00;
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
 }
 
 .mobile-header-left {
@@ -1058,21 +1080,24 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border: none;
   width: 44px;
   height: 44px;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
 }
 
 .mobile-header-title {
-  font-size: 12px;
+  font-size: 9px;
   font-weight: bold;
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
   max-width: 70vw;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
 }
 
 .mobile-terminal {
@@ -1095,7 +1120,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   color: #000;
   padding: 6px 10px;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1109,7 +1134,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   overflow-x: hidden;
   background: #000;
   color: #00ff00;
-  font-size: 12px;
+  font-size: 7px;
   line-height: 1.8;
   min-height: 0;
   position: relative;
@@ -1128,7 +1153,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-top: 1px solid #00ff00;
   background: #000;
   color: #00ff00;
-  font-size: 10px;
+  font-size: 6px;
   display: flex;
   justify-content: space-between;
 }
@@ -1168,7 +1193,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   border-bottom: 1px solid #00ff00;
   cursor: pointer;
   color: #00ff00;
-  font-size: 12px;
+  font-size: 9px;
   background: #000;
   text-align: center;
   font-weight: bold;
@@ -1181,6 +1206,8 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
+  font-family: 'Press Start 2P', monospace;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
 }
 
 .mobile-menu-item:hover {
@@ -1200,25 +1227,60 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
   height: 100vh;
   margin-top: 0;
 }
-  .md-content { font-family: 'Courier New', monospace; font-size: 11px; color: #00ff00; line-height: 1.7; padding: 0 16px; }
-  .md-content h1,.md-content h2,.md-content h3 { color: #00ff00; margin: 12px 0 6px; font-size: 13px; border-bottom: 1px solid #00ff00; padding-bottom: 4px; }
+  .md-content { font-family: 'Press Start 2P', 'DotGothic16', monospace; font-size: 12px; color: #00ff00; line-height: 1.7; padding: 0 16px; }
+  .md-content h1,.md-content h2,.md-content h3 { color: #00ff00; margin: 12px 0 6px; font-size: 12px; border-bottom: 1px solid #00ff00; padding-bottom: 4px;
+}
   .md-content p { margin: 6px 0; }
-  .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 11px; }
+  .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px;
+}
   .md-content th, .md-content td { border: 1px solid #00ff00; padding: 4px 8px; text-align: left; }
   .md-content th { background: #00ff00; color: #000; font-weight: bold; }
   .md-content img { max-width: 100%; border: 1px solid #00ff00; margin: 8px 0; display: block; }
   .md-content ul, .md-content ol { margin: 6px 0 6px 16px; }
   .md-content li { margin: 2px 0; }
-  .md-content code { background: #1a1a1a; border: 1px solid #00ff00; padding: 1px 4px; font-size: 10px; }
+  .md-content code { background: #1a1a1a; border: 1px solid #00ff00; padding: 1px 4px; font-size: 12px;
+}
   .md-content pre { background: #1a1a1a; border: 1px solid #00ff00; padding: 8px; margin: 8px 0; overflow-x: auto; }
   .md-content blockquote { border-left: 2px solid #00ff00; margin: 8px 0; padding-left: 10px; opacity: 0.8; }
   .md-content a { color: #00ff00; }
   hr { border: none; border-top: 1px solid #00ff00 !important; margin: 10px 0; }
   .md-content hr { border: none; border-top: 1px solid #00ff00; margin: 10px 0; }
-  .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 11px; }
+  .md-content table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 12px;
+}
   .md-content th, .md-content td { border: 1px solid #00ff00 !important; padding: 4px 8px; text-align: left; }
   .md-content th { background: #00ff00; color: #000; font-weight: bold; }
 
+
+
+/* ── Contact Sheet Gallery: DotGothic16 ── */
+#terminalContent.with-overlay, #terminalContent.with-overlay * {
+  font-family: 'DotGothic16', monospace !important;
+}
+
+/* ── Item Preview Modal: DotGothic16 ── */
+#itemPreviewModal, #itemPreviewModal * {
+  font-family: 'DotGothic16', monospace !important;
+}
+
+/* ── Terminal content: DotGothic16 전용 ── */
+#terminalContent, #terminalContent * {
+  font-family: 'DotGothic16', monospace !important;
+}
+
+/* ── Photo Gallery (SET): DotGothic16 강제 ── */
+#photoGallery, #photoGallery *, #csLightbox, #csLightbox *,
+#csOverlay, #csOverlay *,
+.cs-cell, .cs-cell *, .cs-folder, .cs-folder *,
+#csGrid, #csGrid *, #csCells, #csCells *,
+#csDetail, #csDetail *, #csDetImg, #csDetName, #csDetReason,
+#fpPhotos, #fpInfo, #fpPanel, #fpEmpty,
+#csBackBtn, .cs-fb, #csLoadMore {
+  font-family: 'DotGothic16', monospace !important;
+}
+/* ── 갤러리 헤더 타이틀만 Press Start 2P ── */
+#csOverlayTitle {
+  font-family: 'Press Start 2P', monospace !important;
+}
 
   </style>
   <script src="./marked.min.js"></script>
@@ -1296,10 +1358,10 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
           <div id="caBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
             <canvas id="caCanvas" style="display:block;width:100%;flex:1;min-height:120px;"></canvas>
             <div style="padding:3px 6px;border-top:1px solid rgba(0,255,0,0.3);background:#000;display:flex;justify-content:space-between;flex-shrink:0;flex-wrap:wrap;gap:2px;">
-              <span id="caStat1" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">CELLS:0000</span>
-              <span id="caStat2" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">GEN:00000</span>
-              <span id="caStat3" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">DENSITY:0.0%</span>
-              <span id="caStat4" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Courier New',monospace;">STABLE</span>
+              <span id="caStat1" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Press Start 2P', 'DotGothic16', monospace;">CELLS:0000</span>
+              <span id="caStat2" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Press Start 2P', 'DotGothic16', monospace;">GEN:00000</span>
+              <span id="caStat3" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Press Start 2P', 'DotGothic16', monospace;">DENSITY:0.0%</span>
+              <span id="caStat4" style="color:rgba(180,228,0,0.6);font-size:6px;font-family:'Press Start 2P', 'DotGothic16', monospace;">STABLE</span>
             </div>
           </div>
         </div>
@@ -1340,25 +1402,25 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
           border-top:2px solid #80ff80; border-left:2px solid #80ff80;
           border-bottom:2px solid #003300; border-right:2px solid #003300;
           box-shadow:0 0 20px rgba(0,255,0,0.2);
-          font-family:'Courier New',monospace;
+          font-family:'Press Start 2P', 'DotGothic16', monospace;
           display:flex; flex-direction:column;
         ">
-          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:11px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
+          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:8px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;">
             <span>TASK MANAGER — SET.EXE</span>
             <div style="display:flex;gap:3px;">
               <div onclick="const b=document.getElementById('pmBody');b.style.display=b.style.display==='none'?'flex':'none';" style="width:14px;height:14px;background:#00ff00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
               <div style="width:14px;height:14px;background:#00ff00;border:1px solid #000;color:#000;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:bold;">□</div>
             </div>
           </div>
-          <div style="border-bottom:1px solid #00ff00;padding:3px 10px;font-size:10px;display:flex;gap:12px;color:#00ff00;opacity:0.7;flex-shrink:0;">
+          <div style="border-bottom:1px solid #00ff00;padding:3px 10px;font-size:8px;display:flex;gap:12px;color:#00ff00;opacity:0.7;flex-shrink:0;">
             <span>File</span><span>Options</span><span>View</span><span>Help</span>
           </div>
           <div id="pmBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
-            <div style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;padding:3px 10px;font-size:9px;color:#00ff00;border-bottom:1px solid #003300;opacity:0.55;flex-shrink:0;">
+            <div style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;padding:3px 10px;font-size:8px;color:#00ff00;border-bottom:1px solid #003300;opacity:0.55;flex-shrink:0;">
               <span>Process</span><span>PID</span><span>CPU</span><span>Status</span>
             </div>
             <div id="pmRows" style="flex:1;overflow:hidden;"></div>
-            <div style="border-top:1px solid #00ff00;padding:4px 10px;font-size:9px;display:flex;justify-content:space-between;color:#555;flex-shrink:0;">
+            <div style="border-top:1px solid #00ff00;padding:4px 10px;font-size:8px;display:flex;justify-content:space-between;color:#555;flex-shrink:0;">
               <span>Processes: <span style="color:#ffb000;">6</span></span>
               <span>CPU: <span id="pmTotalCpu" style="color:#ffb000;">--</span>%</span>
               <span>MEM: <span style="color:#ffb000;">64MB</span> <span class="pm-blink" style="color:#ffb000;">█</span></span>
@@ -1372,9 +1434,9 @@ html, body { background: #000; color: #00ff00; font-family: 'Courier New', monos
           border-top:2px solid #80ff80; border-left:2px solid #80ff80;
           border-bottom:2px solid #003300; border-right:2px solid #003300;
           box-shadow:0 0 20px rgba(0,255,0,0.15);
-          font-family:'Courier New',monospace;
+          font-family:'Press Start 2P', 'DotGothic16', monospace;
         ">
-          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:10px;font-weight:bold;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:8px;font-weight:bold;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
             <span>VIEWER_LOG.EXE</span>
             <div onclick="const b=document.getElementById('vlBody');b.style.display=b.style.display==='none'?'block':'none';" style="width:13px;height:13px;background:#00ff00;border:1px solid #000;color:#000;font-size:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:bold;">_</div>
           </div>
@@ -2048,9 +2110,9 @@ REQUIRE LOGIN: No (Public access enabled)
           terminalContent.style.alignItems = 'center';
           terminalContent.style.justifyContent = 'center';
           terminalContent.innerHTML = `
-            <pre style="font-family:'Courier New',monospace;font-size:clamp(7px,1.1vw,13px);
+            <pre style="font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:clamp(7px,1.1vw,13px);
               line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;user-select:none;">${SET_ASCII}</pre>
-            <div style="margin-top:26px;font-family:'Courier New',monospace;font-size:13px;
+            <div style="margin-top:26px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:13px;
               color:#00ff00;letter-spacing:5px;">— COMING SOON —</div>`;
         } else if (content.isGrammarCodes) {
           loadGrammarCodes(content);
@@ -2074,7 +2136,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <img src="images/big-brother.jpg?v=3"
                     style="max-width:100%;max-height:270px;object-fit:contain;display:block;"
                     onerror="this.style.display='none'">
-                  <div style="text-align:center;color:#00ff00;font-size:15px;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;font-weight:bold;">
+                  <div style="text-align:center;color:#00ff00;font-size:15px;font-family:'DotGothic16', monospace;font-weight:bold;">
                     Enter your instructions
                   </div>
                 </div>
@@ -2203,7 +2265,7 @@ REQUIRE LOGIN: No (Public access enabled)
               .bk3d-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00ff00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
               .bk3d-bend::after{content:'';position:absolute;top:-2px;left:-2px;right:-2px;height:3px;background:linear-gradient(90deg,#222 0%,#333 40%,#222 100%);border-radius:2px;}
             </style>
-            <div style="display:flex;flex-direction:column;height:100%;margin:-12px;background:#000;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;overflow:hidden;">
+            <div style="display:flex;flex-direction:column;height:100%;margin:-12px;background:#000;font-family:'Press Start 2P', 'DotGothic16', monospace;overflow:hidden;">
               <div style="padding:7px 12px;border-bottom:1px solid #00ff00;font-size:10px;font-weight:bold;flex-shrink:0;color:#00ff00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
                 <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
                 <span style="opacity:.4;font-weight:normal;font-size:9px;">← scroll →</span>
@@ -2247,13 +2309,13 @@ REQUIRE LOGIN: No (Public access enabled)
             // List format with table style - no header or footer
             const noticeHTML = content.notice ? `
               <div style="padding: 12px; background: linear-gradient(180deg, rgba(0,255,0,0.1) 0%, rgba(0,0,0,0.5) 100%); border-bottom: 2px solid #00ff00; flex-shrink: 0; border-left: 3px solid #ffb000;">
-                <div style="color: #00ff00; font-size: 11px; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${content.notice}</div>
+                <div style="color: #00ff00; font-size: 12px; white-space: pre-wrap; word-break: break-word; line-height: 1.4;">${content.notice}</div>
               </div>
             ` : '';
             const listHTML = `
               <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
                 ${noticeHTML}
-                <div style="padding: 8px 0; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; flex-shrink: 0; display: flex;">
+                <div style="padding: 8px 0; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 12px; flex-shrink: 0; display: flex;">
                   <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #00ff00;">title</div>
                   <div style="width: 150px; padding: 0 12px; font-weight: bold;">CATEGORY</div>
                 </div>
@@ -2271,10 +2333,10 @@ REQUIRE LOGIN: No (Public access enabled)
                     const pinMark = isPinned ? '<span style="color:#ffb000;margin-right:5px;font-size:10px;">●</span>' : '';
                     return `
                     <div class="list-item" data-index="${idx}" style="cursor:pointer;display:flex;${rowBg}transition:background 0.2s;padding:0;">
-                      <div style="flex:1;padding:6px 12px;color:${titleColor};font-size:11px;border-right:1px solid #00ff00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      <div style="flex:1;padding:6px 12px;color:${titleColor};font-size:12px;border-right:1px solid #00ff00;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                         ${pinMark}${item.title || item.id}
                       </div>
-                      <div style="width:150px;padding:6px 12px;color:${catColor};font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                      <div style="width:150px;padding:6px 12px;color:${catColor};font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                         ${item.category||''}
                       </div>
                     </div>
@@ -2302,7 +2364,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <div class="board-item" data-index="${idx}">
                     <div style="background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%); color: #000; padding: 4px 8px; font-size: 8px; border-bottom: 2px solid #005500; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
                       <span style="opacity: 0.7; letter-spacing: 1px;">${item.category || 'REF'}</span>
-                      <span style="cursor: pointer; font-size: 12px;">×</span>
+                      <span style="cursor: pointer; font-size: 8px;">×</span>
                     </div>
                     <div style="padding: 7px 9px 4px; flex-shrink: 0; border-bottom: 1px dashed rgba(0,255,0,0.35);">
                       <div style="font-weight: bold; font-size: 10px; color: #00ff00; word-break: break-word; line-height: 1.3; max-height: 2.6em; overflow: hidden;">${item.title}</div>
@@ -2330,7 +2392,7 @@ REQUIRE LOGIN: No (Public access enabled)
           // Figma board format with embedded iframe + published posts below
           const postsHTML = publishedPosts.length > 0 ? `
             <div style="flex-shrink: 0; padding: 12px; border-top: 1px solid #00ff00; background: #000;">
-              <div style="font-size: 11px; font-weight: bold; color: #00ff00; margin-bottom: 8px;">POSTS</div>
+              <div style="font-size: 8px; font-weight: bold; color: #00ff00; margin-bottom: 8px;">POSTS</div>
               <div style="display: flex; flex-direction: column; gap: 6px;">
                 ${publishedPosts.map(p => `
                   <div style="border: 1px solid #00ff00; padding: 8px; font-size: 10px; color: #00ff00; cursor: pointer;" onclick="openItemPreviewPopup(${JSON.stringify(p).replace(/"/g, '&quot;')})">
@@ -2344,7 +2406,7 @@ REQUIRE LOGIN: No (Public access enabled)
           ` : '';
           const figmaHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px; background: #000;">
-              <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; font-weight: bold;">
+              <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 8px; font-weight: bold;">
                 TIMELINE
               </div>
               <div style="flex: 1; padding: 12px; overflow: auto; background: #000; min-height: 0;">
@@ -2360,7 +2422,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const displayText = mdText || '<span style="opacity:0.5">[어드민에서 내용을 입력하세요]</span>';
           const hasStatement = !!(content.artistStatement);
           const statementBtnHTML = hasStatement
-            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
+            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
             : '';
           let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;"><div class="md-content" id="contentText">${displayText}</div>${statementBtnHTML}</div>`;
           terminalContent.innerHTML = textHTML;
@@ -2377,7 +2439,7 @@ REQUIRE LOGIN: No (Public access enabled)
       terminalContent.innerHTML = `
         <div style="padding:12px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #00ff00;">
-            <button onclick="loadContent('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:4px 12px;font-family:'Courier New',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ← BACK ]</button>
+            <button onclick="loadContent('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:4px 12px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ← BACK ]</button>
             <span style="color:#00ff00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
           </div>
           <div class="md-content">${displayStmt}</div>
@@ -2390,11 +2452,11 @@ REQUIRE LOGIN: No (Public access enabled)
       const mobileContent = document.getElementById('mobileContentText');
       if (!mobileContent) return;
       const stmt = contents.about.artistStatement || '';
-      const displayStmt = stmt || '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:11px;">[어드민에서 아티스트 스테이트먼트를 입력하세요]</div>';
+      const displayStmt = stmt || '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:8px;">[어드민에서 아티스트 스테이트먼트를 입력하세요]</div>';
       mobileContent.innerHTML = `
         <div style="padding:12px;">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px dashed #00ff00;">
-            <button onclick="loadContentToMobile('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:5px 12px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ← BACK ]</button>
+            <button onclick="loadContentToMobile('about')" style="background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:5px 12px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ← BACK ]</button>
             <span style="color:#00ff00;font-size:10px;font-weight:bold;letter-spacing:2px;opacity:0.8;">ARTIST_STATEMENT.TXT</span>
           </div>
           <div class="md-content">${displayStmt}</div>
@@ -2548,9 +2610,29 @@ REQUIRE LOGIN: No (Public access enabled)
       const existing = document.getElementById('csOverlay');
       if (existing) existing.remove();
 
-      // photos가 계층구조가 아니면 항상 데모 데이터 사용
+      // photos가 아직 없으면 로딩 화면 표시 후 재시도
       if (!content.photos || !content.photos.length || !content.photos.some(p => p.type === 'sheet')) {
-        content = Object.assign({}, content, { photos: buildDemoContactSheet() });
+        // 로딩 오버레이 표시
+        const loadOverlay = document.createElement('div');
+        loadOverlay.id = 'csOverlay';
+        loadOverlay.style.cssText = 'position:fixed;inset:10vh 23vw;background:#000;z-index:9000;display:flex;align-items:center;justify-content:center;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;';
+        loadOverlay.innerHTML = '<div style="color:#00ff00;font-family:\'Press Start 2P\',monospace;font-size:10px;letter-spacing:3px;text-align:center;"><div style="margin-bottom:16px;">PROJECT SET</div><div style="font-size:8px;opacity:0.6;animation:bl .7s infinite">LOADING...</div></div>';
+        document.body.appendChild(loadOverlay);
+        // 500ms 간격으로 최대 10초 대기
+        let tries = 0;
+        const waitForData = setInterval(() => {
+          tries++;
+          const updated = contents.project;
+          if ((updated.photos && updated.photos.some(p => p.type === 'sheet')) || tries > 20) {
+            clearInterval(waitForData);
+            const ov = document.getElementById('csOverlay');
+            if (ov) ov.remove();
+            if (updated.photos && updated.photos.some(p => p.type === 'sheet')) {
+              openContactSheetOverlay(updated);
+            }
+          }
+        }, 500);
+        return;
       }
 
       const overlay = document.createElement('div');
@@ -2561,12 +2643,12 @@ REQUIRE LOGIN: No (Public access enabled)
         position: fixed; inset: ${overlayInset};
         background: #000; z-index: 9000;
         display: flex; flex-direction: column;
-        font-family: monospace;
+        font-family: 'Press Start 2P', 'DotGothic16', monospace;
         border-top: 2px solid #80ff80;
         border-left: 2px solid #80ff80;
         border-bottom: 2px solid #003300;
         border-right: 2px solid #003300;
-        box-shadow: 0 0 20px rgba(0,255,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+        box-shadow: 0 0 10px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.35), 0 0 60px rgba(0,255,0,0.15), inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5);
         opacity: 0; transition: opacity 0.15s ease;
       `;
 
@@ -2577,27 +2659,27 @@ REQUIRE LOGIN: No (Public access enabled)
           padding: ${isMobileOverlay ? '8px 10px' : '7px 14px'}; border-bottom: 1px solid #00ff00;
           flex-shrink: 0; background: #00ff00;
         ">
-          <span id="csOverlayTitle" style="color:#000;font-size:11px;letter-spacing:2px;font-family:monospace;font-weight:bold;flex-shrink:0;">${content.title || 'ARCHIVE'}</span>
-          <span id="csWaveform" style="flex:1;font-family:monospace;font-size:${isMobileOverlay ? '8px' : '11px'};color:rgba(0,0,0,0.4);letter-spacing:1px;overflow:hidden;white-space:nowrap;text-align:center;"></span>
+          <span id="csOverlayTitle" style="color:#000;font-size:9px;letter-spacing:2px;font-family: 'Press Start 2P', monospace;font-weight:bold;flex-shrink:0;">${content.title || 'ARCHIVE'}</span>
+          <span id="csWaveform" style="flex:1;font-family: 'Press Start 2P', 'DotGothic16', monospace;font-size:${isMobileOverlay ? '8px' : '11px'};color:rgba(0,0,0,0.4);letter-spacing:1px;overflow:hidden;white-space:nowrap;text-align:center;"></span>
           ${isMobileOverlay ? '' : `<label style="cursor:pointer;display:flex;align-items:center;gap:5px;flex-shrink:0;">
             <input type="file" id="csLocalFolder" multiple accept="image/*" style="display:none;">
-            <span id="csLoadBtn" style="font-family:monospace;font-size:10px;padding:3px 10px;border:1px solid rgba(0,0,0,0.4);color:rgba(0,0,0,0.7);white-space:nowrap;cursor:pointer;">📁 사진 폴더 선택</span>
+            <span id="csLoadBtn" style="font-family: 'Press Start 2P', 'DotGothic16', monospace;font-size:10px;padding:3px 10px;border:1px solid rgba(0,0,0,0.4);color:rgba(0,0,0,0.7);white-space:nowrap;cursor:pointer;">📁 사진 폴더 선택</span>
           </label>
-          <span id="csLoadStatus" style="font-size:9px;color:#666;font-family:monospace;flex-shrink:0;"></span>`}
+          <span id="csLoadStatus" style="font-size:9px;color:#666;font-family: 'Press Start 2P', 'DotGothic16', monospace;flex-shrink:0;"></span>`}
           <button id="csOverlayClose" style="
             background: transparent; border: 1px solid rgba(0,0,0,0.4); color: #000;
-            font-family: monospace; font-size: 11px; padding: 3px 10px; cursor: pointer; flex-shrink:0;
+            font-family: 'Press Start 2P', 'DotGothic16', monospace; font-size: 8px; padding: 3px 10px; cursor: pointer; flex-shrink:0;
           ">✕</button>
         </div>
         <div id="csOverlayBody" style="flex:1;overflow:hidden;min-height:0;"></div>
         <div id="csBotStats" style="flex-shrink:0;background:#000;border-top:1px solid #00ff00;padding:6px 14px;display:flex;gap:16px;align-items:center;">
-          <span id="csStat1" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
-          <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.3);">·</span>
-          <span id="csStat2" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
-          <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.3);">·</span>
-          <span id="csStat3" style="font-size:9px;font-family:monospace;color:#00ff00;letter-spacing:1px;"></span>
+          <span id="csStat1" style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;letter-spacing:1px;"></span>
+          <span style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.3);">·</span>
+          <span id="csStat2" style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;letter-spacing:1px;"></span>
+          <span style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.3);">·</span>
+          <span id="csStat3" style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;letter-spacing:1px;"></span>
           <span style="flex:1;"></span>
-          <span id="csStat4" style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.4);letter-spacing:1px;"></span>
+          <span id="csStat4" style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.4);letter-spacing:1px;"></span>
         </div>
       `;
 
@@ -2730,25 +2812,25 @@ REQUIRE LOGIN: No (Public access enabled)
           const imgSrc = blobSrc || p.filename || p.url || '';
           const lb = document.createElement('div');
           lb.id = 'csLightbox';
-          lb.style.cssText = 'position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:monospace;';
+          lb.style.cssText = "position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family: 'DotGothic16', monospace;";
           const isMobLb = window.innerWidth < 768;
           lb.innerHTML = `
             <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid #00ff00;flex-shrink:0;background:#000;">
-              <button id="lbBackBtn" style="font-size:9px;padding:2px 8px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;letter-spacing:1px;">↩ GRID</button>
+              <button id="lbBackBtn" style="font-size:9px;padding:2px 8px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family: 'DotGothic16', monospace;letter-spacing:1px;">↩ GRID</button>
               <span style="font-size:10px;color:#00ff00;flex:1;letter-spacing:1px;">${p.id || ''}</span>
-              <span style="font-size:9px;color:#444;font-family:monospace;">${idx + 1} / ${leafPhotos.length}</span>
-              <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;">←</button>
-              <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family:monospace;">→</button>
+              <span style="font-size:9px;color:#444;font-family: 'DotGothic16', monospace;">${idx + 1} / ${leafPhotos.length}</span>
+              <button id="lbPrevBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family: 'DotGothic16', monospace;">←</button>
+              <button id="lbNextBtn" style="font-size:13px;padding:2px 10px;border:1px solid rgba(0,255,0,0.3);background:transparent;color:rgba(0,255,0,0.7);cursor:pointer;font-family: 'DotGothic16', monospace;">→</button>
             </div>
             <div style="flex:1;display:flex;flex-direction:${isMobLb ? 'column' : 'row'};gap:${isMobLb ? '0' : '14px'};padding:${isMobLb ? '8px' : '14px'};background:#000;min-height:0;overflow-y:${isMobLb ? 'auto' : 'hidden'};">
               <div style="flex:${isMobLb ? '0 0 auto' : '1'};height:${isMobLb ? '200px' : 'auto'};display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:${isMobLb ? '8px' : '24px 20px'};overflow:hidden;">
                 <img src="${imgSrc}" data-fname="${fname}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;border:1px solid #00ff00;padding:${isMobLb ? '12px' : '32px'};box-shadow:0 0 12px rgba(0,255,0,0.15);" loading="lazy">
               </div>
-              <div style="${isMobLb ? 'width:100%;padding:8px;' : 'width:320px;flex-shrink:0;padding-right:52px;'}display:flex;flex-direction:column;justify-content:${isMobLb ? 'flex-start' : 'center'};gap:${isMobLb ? '10px' : '28px'};font-family:monospace;">
+              <div style="${isMobLb ? 'width:100%;padding:8px;' : 'width:320px;flex-shrink:0;padding-right:52px;'}display:flex;flex-direction:column;justify-content:${isMobLb ? 'flex-start' : 'center'};gap:${isMobLb ? '10px' : '28px'};font-family: 'DotGothic16', monospace;">
                 <div style="border:1px solid #00ff00;padding:10px 14px;display:flex;flex-direction:column;gap:8px;${isMobLb ? 'width:100%;' : 'width:180px;align-self:flex-end;'}min-height:80px;justify-content:space-between;">
                   <div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">VERDICT</span>
-                    <span style="font-size:11px;padding:2px 9px;border:1px solid ${color};color:${color};letter-spacing:1px;">${LABELS[v]||v}</span>
+                    <span style="font-size:8px;padding:2px 9px;border:1px solid ${color};color:${color};letter-spacing:1px;">${LABELS[v]||v}</span>
                   </div>
                   <div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">FRAME</span>
@@ -2756,13 +2838,13 @@ REQUIRE LOGIN: No (Public access enabled)
                   </div>
                   ${p.dir ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">DIR</span>
-                    <span style="font-size:11px;color:#ffe94d;letter-spacing:1px;">${p.dir}</span>
+                    <span style="font-size:8px;color:#ffe94d;letter-spacing:1px;">${p.dir}</span>
                   </div>` : ''}
                 </div>
                 <div style="border:1px solid #00ff00;padding:14px;display:flex;flex-direction:column;gap:10px;${isMobLb ? 'width:100%;min-height:80px;' : 'min-height:200px;width:280px;'}">
                   ${p.category ? `<div style="display:flex;align-items:center;justify-content:space-between;">
                     <span style="font-size:9px;color:#777;letter-spacing:2px;">CATEGORY</span>
-                    <span style="font-size:11px;color:#00ff00;letter-spacing:1px;">${p.category}</span>
+                    <span style="font-size:8px;color:#00ff00;letter-spacing:1px;">${p.category}</span>
                   </div>` : ''}
                   ${p.category ? `<div style="border-top:1px solid #00ff00;"></div>` : ''}
                   <div style="font-size:9px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
@@ -3001,8 +3083,8 @@ REQUIRE LOGIN: No (Public access enabled)
         if (!photos || photos.length === 0) {
           container.innerHTML = `
             <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;opacity:0.5;">
-              <div style="font-size:11px;font-family:monospace;color:#00ff00;">[ NO PHOTOS ]</div>
-              <div style="font-size:9px;font-family:monospace;color:#666;text-align:center;line-height:1.8;">
+              <div style="font-size:8px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;">[ NO PHOTOS ]</div>
+              <div style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#666;text-align:center;line-height:1.8;">
                 어드민 → 포트폴리오 편집 → INTRO 탭에서<br>사진 데이터를 입력하고 SAVE 하세요.
               </div>
             </div>`;
@@ -3019,7 +3101,7 @@ REQUIRE LOGIN: No (Public access enabled)
               const label = v === 'all' ? `ALL (${leafPhotos.length})` : `${LABELS[v]||v} (${counts[v]})`;
               const active = v === 'all';
               const color = v === 'all' ? '#00ff00' : (COLORS[v]||'#666');
-              return `<button class="cs-fb" data-f="${v}" style="font-size:9px;padding:2px 8px;border:1px solid ${color};background:${active?color:'transparent'};color:${active?'#000':color};cursor:pointer;font-family:monospace;letter-spacing:1px;">${label}</button>`;
+              return `<button class="cs-fb" data-f="${v}" style="font-size:9px;padding:2px 8px;border:1px solid ${color};background:${active?color:'transparent'};color:${active?'#000':color};cursor:pointer;font-family: 'Press Start 2P', 'DotGothic16', monospace;letter-spacing:1px;">${label}</button>`;
             }).join('')
           : '';
 
@@ -3041,9 +3123,9 @@ REQUIRE LOGIN: No (Public access enabled)
                 <img src="${previewSrc}" data-full="${_pFull}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               </div>
               <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:0 2px;">
-                <span style="font-size:5px;font-family:monospace;color:rgba(0,255,0,0.5);letter-spacing:0.5px;">[SYS]</span>
-                <span style="font-size:6px;font-family:monospace;color:#00ff00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
-                <span style="font-size:5px;font-family:monospace;color:rgba(0,255,0,0.4);">(${childCount})</span>
+                <span style="font-size:5px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.5);letter-spacing:0.5px;">[SYS]</span>
+                <span style="font-size:6px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
+                <span style="font-size:5px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.4);">(${childCount})</span>
               </div>
             </div>`;
           } else {
@@ -3062,37 +3144,37 @@ REQUIRE LOGIN: No (Public access enabled)
             return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;background:#0d0d0d;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);`}">
               ${imgSrc ? `<img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
-              ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
+              ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family: 'Press Start 2P', 'DotGothic16', monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
           }
         }).join('');
 
         container.innerHTML = `
-          <div style="display:flex;flex-direction:column;height:100%;">
+          <div class="no-scrollbar" style="display:flex;flex-direction:column;height:100%;overflow-y:auto;">
             ${csNavStack.length > 0 ? `
-            <div style="padding:5px 10px;border-bottom:1px dashed rgba(0,255,0,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(0,255,0,0.03);">
-              <button id="csBackBtn" style="font-size:9px;font-family:monospace;padding:2px 8px;border:1px solid #00ff00;background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
-              <span style="font-size:8px;color:rgba(0,255,0,0.45);font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
+            <div style="padding:5px 10px;border-bottom:1px dashed rgba(0,255,0,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(0,255,0,0.03);position:sticky;top:0;z-index:1;background:#000;">
+              <button id="csBackBtn" style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;padding:2px 8px;border:1px solid #00ff00;background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
+              <span style="font-size:8px;color:rgba(0,255,0,0.45);font-family: 'Press Start 2P', 'DotGothic16', monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
             </div>` : ''}
-            <div style="padding:7px 12px;border-bottom:1px solid #00ff00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;">
+            <div style="padding:7px 12px;border-bottom:1px solid #00ff00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;position:sticky;top:${csNavStack.length > 0 ? '28' : '0'}px;z-index:1;background:#000;">
               ${filterBtns}
             </div>
-            <div id="csGrid" style="flex:1;overflow-y:auto;padding:40px 48px;min-height:0;">
+            <div id="csGrid" style="flex-shrink:0;padding:40px 48px 20px;">
               <div id="csCells" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:5px;content-visibility:auto;">
                 ${cells}
               </div>
               ${photos.length > PAGE ? `<div style="text-align:center;padding:16px 0;">
-                <button id="csLoadMore" data-loaded="${PAGE}" style="font-family:monospace;font-size:9px;padding:5px 18px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;">
+                <button id="csLoadMore" data-loaded="${PAGE}" style="font-family: 'Press Start 2P', 'DotGothic16', monospace;font-size:9px;padding:5px 18px;border:1px solid rgba(0,255,0,0.5);background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;">
                   더 보기 (${photos.length - PAGE}장 남음)
                 </button>
               </div>` : ''}
             </div>
-            ${csNavStack.length < 2 ? `
+            ${csNavStack.length < 2 && window.innerWidth > 768 ? `
             <div id="fpPanel" style="
               flex-shrink:0;height:340px;background:#000;
               width:fit-content;
               border:1px solid #00ff00;
-              margin:12px 48px 40px;
+              margin:0px 48px 40px;
               position:relative;
             ">
               <div id="fpInner" style="display:flex;height:100%;padding:16px 18px;">
@@ -3100,16 +3182,16 @@ REQUIRE LOGIN: No (Public access enabled)
                 <div id="fpInfo" style="width:280px;flex-shrink:0;border-left:1px solid rgba(0,255,0,0.15);padding:12px 16px;display:flex;flex-direction:column;overflow-y:auto;"></div>
               </div>
               <div id="fpEmpty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
-                <span style="font-size:9px;font-family:monospace;color:rgba(0,255,0,0.18);letter-spacing:3px;">— HOVER A FOLDER TO PREVIEW —</span>
+                <span style="font-size:9px;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:rgba(0,255,0,0.18);letter-spacing:3px;">— HOVER A FOLDER TO PREVIEW —</span>
               </div>
             </div>` : ''}
             <div id="csDetail" style="display:none;border-top:1px solid #00ff00;flex-shrink:0;">
               <div style="display:flex;gap:0;">
                 <div id="csDetImg" style="width:110px;flex-shrink:0;aspect-ratio:4/3;background:#111;border-right:1px solid #00ff00;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                  <span style="font-size:9px;color:#444;font-family:monospace;">no img</span>
+                  <span style="font-size:9px;color:#444;font-family: 'Press Start 2P', 'DotGothic16', monospace;">no img</span>
                 </div>
                 <div style="padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;">
-                  <div id="csDetName" style="font-size:11px;font-weight:bold;font-family:monospace;color:#00ff00;"></div>
+                  <div id="csDetName" style="font-size:8px;font-weight:bold;font-family: 'Press Start 2P', 'DotGothic16', monospace;color:#00ff00;"></div>
                   <div id="csDetTags" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
                 </div>
               </div>
@@ -3117,12 +3199,15 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>`;
 
-        // 폴더 셀에 직접 mouseenter/leave 리스너 부착
+        // 폴더 셀에 직접 mouseenter/leave 리스너 부착 (모바일 제외)
+        const isMobileGallery = window.innerWidth <= 768;
         if (csNavStack.length < 2) {
-          const firstFolder = currentPhotos.find(p => p.type === 'sheet');
-          if (firstFolder) showFolderPreview(firstFolder); // 기본: 첫 번째 폴더
+          if (!isMobileGallery) {
+            const firstFolder = currentPhotos.find(p => p.type === 'sheet');
+            if (firstFolder) showFolderPreview(firstFolder); // 기본: 첫 번째 폴더
+          }
 
-          container.querySelectorAll('.cs-folder').forEach(function(cell) {
+          if (!isMobileGallery) container.querySelectorAll('.cs-folder').forEach(function(cell) {
             cell.addEventListener('mouseenter', function() {
               clearTimeout(_fpHideTimer);
               if (cell === _fpCell) return;
@@ -3173,7 +3258,7 @@ REQUIRE LOGIN: No (Public access enabled)
             return `<div class="cs-cell" data-idx="${loaded + i}" data-v="${v}" data-type="photo"
               style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;${fakeStyle2}${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.38) saturate(0) sepia(1) hue-rotate(90deg);`}">
               ${imgSrc ? `<img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
-              ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family:monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
+              ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:5px;font-family: 'Press Start 2P', 'DotGothic16', monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
             </div>`;
           }).join('');
           const cellsEl = document.getElementById('csCells');
@@ -3449,7 +3534,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
           // 그리기
           ctx.globalAlpha = p.opacity;
-          ctx.font = `${p.size}px 'Courier New', monospace`;
+          ctx.font = `${p.size}px 'Press Start 2P', 'DotGothic16', monospace`;
           ctx.fillStyle = p.bright ? '#ffffff' : '#00ff00';
           ctx.letterSpacing = '1px';
           ctx.fillText(p.text, p.x, p.y);
@@ -3486,7 +3571,7 @@ REQUIRE LOGIN: No (Public access enabled)
           if(Math.abs(diff)<0.005) p.targetOpacity=Math.random()*0.75+0.05;
           p.opacity+=diff*0.008;
           ctx.globalAlpha=p.opacity;
-          ctx.font=`${p.size}px 'Courier New',monospace`;
+          ctx.font=`${p.size}px 'Press Start 2P', 'DotGothic16', monospace`;
           ctx.fillStyle=p.bright?'#ffffff':'#00ff00';
           ctx.fillText(p.text,p.x,p.y);
         });
@@ -3505,22 +3590,22 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // 슬라이드 없으면 빈 상태 표시
       if (currentSlides.length === 0) {
-        terminalContent.innerHTML = `<div style="padding:20px;color:#00ff00;font-size:11px;opacity:0.6;">[About 내용이 없습니다. 어드민에서 슬라이드를 추가하세요.]</div>`;
+        terminalContent.innerHTML = `<div style="padding:20px;color:#00ff00;font-size:8px;opacity:0.6;">[About 내용이 없습니다. 어드민에서 슬라이드를 추가하세요.]</div>`;
         return;
       }
       const slideshowHTML = `
         <div class="slideshow-container" style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px;">
           <div class="slideshow-content" style="flex: 1; padding: 16px 20px; background: #000; display: flex; flex-direction: column; min-height: 0; overflow: hidden;">
             <div class="slide-header" style="margin-bottom: 16px; padding: 0 24px 12px 24px; flex-shrink: 0;">
-              <div class="slide-title" style="font-size: 16px; font-weight: bold; color: #00ff00; margin-bottom: 8px;"></div>
+              <div class="slide-title" style="font-size: 10px; font-weight: bold; color: #00ff00; margin-bottom: 8px;"></div>
               <div class="slide-meta" style="font-size: 10px; color: #ffdd00; opacity: 0.7;"></div>
             </div>
             <div class="slide-text" style="flex: 1; overflow-y: auto; min-height: 0;"></div>
           </div>
           <div class="slideshow-controls" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid #00ff00; background: #000; flex-shrink: 0;">
-            <button class="slide-prev" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">← PREV</button>
-            <span class="slide-counter" style="color: #00ff00; font-size: 10px; font-weight: bold; font-family: 'Courier New', monospace;">1/4</span>
-            <button class="slide-next" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Courier New', monospace;">NEXT →</button>
+            <button class="slide-prev" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Press Start 2P', 'DotGothic16', monospace;">← PREV</button>
+            <span class="slide-counter" style="color: #00ff00; font-size: 10px; font-weight: bold; font-family: 'Press Start 2P', 'DotGothic16', monospace;">1/4</span>
+            <button class="slide-next" style="background: #00ff00; color: #000; border: 1px solid #00ff00; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 10px; transition: all 0.2s; font-family: 'Press Start 2P', 'DotGothic16', monospace;">NEXT →</button>
           </div>
         </div>
       `;
@@ -3535,7 +3620,7 @@ REQUIRE LOGIN: No (Public access enabled)
       const slide = currentSlides[slideIndex];
       document.querySelector('.slide-title').textContent = slide.title;
       document.querySelector('.slide-meta').textContent = `${slide.category}`;
-      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 0 24px; color: #e0e0e0; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.8;">${slide.text}</pre>`;
+      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 0 24px; color: #e0e0e0; font-family: 'Press Start 2P', 'DotGothic16', monospace; font-size: 8px; line-height: 1.8;">${slide.text}</pre>`;
       document.querySelector('.slide-counter').textContent = `${slideIndex + 1}/${currentSlides.length}`;
     }
 
@@ -3734,7 +3819,7 @@ REQUIRE LOGIN: No (Public access enabled)
               <div class="photo-item-image" style="width: 100%; height: 100px; background: #000; border: 1px dashed #00ff00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <img src="${resolvePhotoUrl(photo.filename)}" alt="${photo.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
               </div>
-              <div class="photo-item-info" style="font-size: 11px;">
+              <div class="photo-item-info" style="font-size: 8px;">
                 <div class="photo-item-title" style="font-weight: bold; margin-bottom: 4px;">${photo.title}</div>
                 <div class="photo-item-keywords" style="font-size: 9px; opacity: 0.8;">${photo.keywords.join(' • ')}</div>
               </div>
@@ -3778,7 +3863,7 @@ REQUIRE LOGIN: No (Public access enabled)
             <img src="images/big-brother.jpg?v=3"
               style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
               onerror="this.style.display='none'">
-            <div style="text-align: center; color: #00ff00; font-size: 15px; font-family: 'Courier New', monospace; font-weight: bold;">
+            <div style="text-align: center; color: #00ff00; font-size: 10px; font-family: 'Press Start 2P', 'DotGothic16', monospace; font-weight: bold;">
               Enter your instructions
             </div>
           </div>
@@ -4028,21 +4113,24 @@ REQUIRE LOGIN: No (Public access enabled)
       const year = item.year || 'N/A';
       const preview = item.preview || '';
 
+      const useGothic = (section === 'rule' || section === 'reference');
+      const gFont = useGothic ? "font-family:'DotGothic16',monospace;" : '';
+
       const detailHTML = `
-        <div style="padding: 12px; background: #000; color: #00ff00;">
-          <div style="margin-bottom: 12px;">
-            <div style="font-size: 11px; color: #888; margin-bottom: 8px;">
-              <button class="back-btn" style="background: none; border: none; color: #00ff00; cursor: pointer; font-size: 11px; text-decoration: underline;">&lt; BACK</button>
+        <div style="margin:-12px;width:calc(100% + 24px);padding:14px 16px;background:#000;color:#00ff00;box-sizing:border-box;${gFont}">
+          <div style="margin-bottom:14px;">
+            <div style="margin-bottom:10px;">
+              <button class="back-btn" style="background:none;border:none;color:#00ff00;cursor:pointer;font-size:13px;text-decoration:underline;${gFont}">&lt; BACK</button>
             </div>
-            <div style="font-weight: bold; font-size: 12px; margin-bottom: 8px; word-break: break-all;">
-              ${itemId}
+            <div style="font-weight:bold;font-size:15px;margin-bottom:10px;word-break:break-word;line-height:1.5;${gFont}">
+              ${item.title || itemId}
             </div>
-            <div style="font-size: 9px; color: #888; margin-bottom: 8px;">
+            <div style="font-size:13px;color:#888;line-height:1.6;${gFont}">
               <div>${category} | ${year} | ${status}</div>
               <div>${author}</div>
             </div>
           </div>
-          <div class="md-content" style="border-top: 1px solid #00ff00; padding-top: 12px; max-height: 400px; overflow-y: auto; font-size: 11px;">
+          <div class="md-content" style="border-top:1px solid #00ff00;padding-top:14px;overflow-y:auto;font-size:13px;line-height:1.8;${gFont}">
             ${(typeof marked !== 'undefined') ? marked.parse(preview) : preview}
           </div>
         </div>
@@ -4135,9 +4223,9 @@ REQUIRE LOGIN: No (Public access enabled)
         mobileContent.style.alignItems = 'center';
         mobileContent.style.justifyContent = 'center';
         mobileContent.innerHTML = `
-          <pre style="font-family:'Courier New',monospace;font-size:clamp(6px,2.5vw,11px);
+          <pre style="font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:clamp(6px,2.5vw,11px);
             line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;user-select:none;white-space:pre;">SET : Inclusion</pre>
-          <div style="margin-top:20px;font-family:'Courier New',monospace;font-size:12px;
+          <div style="margin-top:20px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:12px;
             color:#00ff00;letter-spacing:4px;">— COMING SOON —</div>`;
         return;
       } else if (content.isGrammarCodes) {
@@ -4162,9 +4250,9 @@ REQUIRE LOGIN: No (Public access enabled)
               <img src="images/big-brother.jpg?v=3"
                 style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
                 onerror="this.style.display='none'">
-              <div style="text-align: center; color: #00ff00; font-size: 11px; font-family: monospace;">Enter your instructions</div>
+              <div style="text-align: center; color: #00ff00; font-size: 8px; font-family: 'DotGothic16', monospace;">Enter your instructions</div>
               <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
-                style="width: 100%; background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 6px; font-size: 10px; font-family: monospace; box-sizing: border-box;">
+                style="width: 100%; background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 6px; font-size: 10px; font-family: 'DotGothic16', monospace; box-sizing: border-box;">
             </div>
             <div id="mobilePhotoGallery" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; padding: 0 12px; display: none;">
             </div>
@@ -4175,7 +4263,7 @@ REQUIRE LOGIN: No (Public access enabled)
         const renderPhotos = (photos) => {
           const gallery = document.getElementById('mobilePhotoGallery');
           if (photos.length === 0) {
-            gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #00ff00; font-size: 11px;">No results found</div>`;
+            gallery.innerHTML = `<div style="padding: 20px; text-align: center; color: #00ff00; font-size: 8px;">No results found</div>`;
             gallery.style.display = 'flex';
           } else {
             gallery.innerHTML = photos.map(p => `
@@ -4184,7 +4272,7 @@ REQUIRE LOGIN: No (Public access enabled)
                   <img src="${resolvePhotoUrl(p.filename)}" style="max-width: 100%; max-height: 100%; object-fit: cover;" alt="${p.title}" onerror="this.style.display='none'">
                 </div>
                 <div style="padding: 8px; background: #000; border-top: 1px solid #00ff00;">
-                  <div style="color: #00ff00; font-size: 11px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
+                  <div style="color: #00ff00; font-size: 8px; font-weight: bold; margin-bottom: 4px;">${p.title}</div>
                   <div style="color: #00ff00; font-size: 9px; margin-bottom: 4px;">${p.keywords.join(' • ')}</div>
                   <div style="color: #888; font-size: 9px;">${p.description}</div>
                 </div>
@@ -4229,10 +4317,10 @@ REQUIRE LOGIN: No (Public access enabled)
         slides.forEach((slide, idx) => {
           html += `<div style="border: 1px solid #00ff00; padding: 8px; margin-bottom: 8px;">
             <div style="color: #00ff00; font-weight: bold; margin-bottom: 4px;">[SLIDE ${idx + 1}] ${escHtml(slide.title)}</div>
-            <div style="color: #888; font-size: 11px; margin-bottom: 6px;">
+            <div style="color: #888; font-size: 8px; margin-bottom: 6px;">
               ${escHtml(slide.category)} | ${escHtml(slide.author)} | ${escHtml(slide.year)}
             </div>
-            <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${escHtml(slide.text)}</div>
+            <div style="font-size: 8px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">${escHtml(slide.text)}</div>
           </div>`;
         });
         html += '</div>';
@@ -4302,7 +4390,7 @@ REQUIRE LOGIN: No (Public access enabled)
             .bk-side{position:absolute;right:-5px;top:-5px;width:5px;bottom:0;transform:skewY(-45deg);transform-origin:top left;z-index:5;}
             .bk3d-m-bend{width:12px;flex-shrink:0;background:linear-gradient(180deg,#00ff00 0%,#00ff00 100%);border-radius:2px 2px 0 0;position:relative;z-index:2;box-shadow:2px 0 5px rgba(0,0,0,.7);}
           </style>
-          <div style="display:flex;flex-direction:column;font-family:'Monaco','Menlo','Consolas','Courier New',monospace;background:#000;">
+          <div style="display:flex;flex-direction:column;font-family:'Press Start 2P', 'DotGothic16', monospace;background:#000;">
             <div style="padding:7px 12px;border-bottom:1px solid #00ff00;font-size:10px;font-weight:bold;flex-shrink:0;color:#00ff00;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
               <span>REFERENCE — ${allBookItems.length} ENTRIES</span>
               <span style="opacity:0.4;font-weight:normal;font-size:9px;">← scroll →</span>
@@ -4332,7 +4420,7 @@ REQUIRE LOGIN: No (Public access enabled)
         // Figma board format
         mobileContent.innerHTML = `
           <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 11px; font-weight: bold;">
+            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 8px; font-weight: bold;">
               TIMELINE
             </div>
             <div style="flex: 1; padding: 12px; overflow: auto; background: #000;">
@@ -4344,12 +4432,12 @@ REQUIRE LOGIN: No (Public access enabled)
         // Text format (텍스트가 빈 문자열이어도 표시)
         const mobileMainText = content.text
           ? content.text
-          : '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:11px;">[어드민에서 내용을 입력하세요]</div>';
+          : '<div style="padding:20px;color:#00ff00;opacity:0.5;font-size:8px;">[어드민에서 내용을 입력하세요]</div>';
         const hasMobileStatement = !!(content.artistStatement);
         const mobileStmtBtn = hasMobileStatement
-          ? `<button onclick="loadAboutStatementMobile()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:7px 14px;font-family:'Courier New',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ARTIST STATEMENT → ]</button>`
+          ? `<button onclick="loadAboutStatementMobile()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:7px 14px;font-family:'Press Start 2P', 'DotGothic16', monospace;font-size:10px;cursor:pointer;letter-spacing:1px;font-weight:bold;">[ ARTIST STATEMENT → ]</button>`
           : '';
-        mobileContent.innerHTML = `<div style="padding:12px;position:relative;min-height:100%;box-sizing:border-box;">${mobileMainText}${mobileStmtBtn}</div>`;
+        mobileContent.innerHTML = `<div style="padding:12px;position:relative;min-height:100%;box-sizing:border-box;font-family:'DotGothic16',monospace;">${mobileMainText}${mobileStmtBtn}</div>`;
       } else if (content.items) {
         // List/Board format - Match desktop table layout
         mobileContent.innerHTML = '';
@@ -4365,9 +4453,10 @@ REQUIRE LOGIN: No (Public access enabled)
         // Use card format for reference section, list format for others
         const isCardFormat = section === 'reference';
 
+        const isRuleFont = section === 'rule';
         let html = `
-          <div style="padding: 0; border-top: 1px solid #00ff00;">
-            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; font-weight: bold; color: #00ff00; font-size: 11px;">
+          <div style="padding: 0; border-top: 1px solid #00ff00; margin: -12px; width: calc(100% + 24px);">
+            <div style="padding: 12px; border-bottom: 1px solid #00ff00; background: #000; font-weight: bold; color: #00ff00; font-size: ${isRuleFont ? '13px' : '8px'};${isRuleFont ? "font-family:'DotGothic16',monospace;" : ''}">
               ${content.title.toUpperCase()} (${allItems.length} items)
             </div>
             <div style="padding: ${isCardFormat ? '8px' : '0'};">
@@ -4388,7 +4477,7 @@ REQUIRE LOGIN: No (Public access enabled)
                 <div style="background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%); color: #000; padding: 3px 8px; font-weight: bold; font-size: 10px; border-bottom: 1px solid #00ff00; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;">
                   <span style="flex-shrink: 0;">×</span>
                 </div>
-                <div style="padding: 8px 10px; color: #00ff00; font-size: 11px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
+                <div style="padding: 8px 10px; color: #00ff00; font-size: 8px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
                   <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #00ff00; font-weight: bold; flex-shrink: 0;">${item.title}</div>
                   <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #00ff00; color: #ffc800; flex-shrink: 0;">${category}</div>
                   <div style="padding-top: 5px; font-size: 10px; color: #aaa; overflow: hidden; line-height: 1.5; word-break: break-word;">${item.preview || ''}</div>
@@ -4402,12 +4491,14 @@ REQUIRE LOGIN: No (Public access enabled)
               ? 'background:rgba(180,228,0,0.07);border-bottom:1px solid rgba(180,228,0,0.4);'
               : 'background:#000;border-bottom:1px dashed #00ff00;';
             const titleColorM = isPinnedM ? '#ffb000' : '#00ff00';
+            const isRuleSection = section === 'rule';
+            const ruleFontStyle = isRuleSection ? "font-family:'DotGothic16',monospace;" : '';
             html += `
-              <div style="cursor:pointer;display:block;${rowStyleM}padding:10px 12px;transition:background 0.2s;" class="mobile-list-item" data-index="${idx}">
-                <div style="color:${titleColorM};font-size:12px;margin-bottom:5px;font-weight:bold;word-break:break-all;">
+              <div style="cursor:pointer;display:block;${rowStyleM}padding:10px 12px;transition:background 0.2s;${ruleFontStyle}" class="mobile-list-item" data-index="${idx}">
+                <div style="color:${titleColorM};font-size:${isRuleSection ? '14px' : '12px'};margin-bottom:5px;font-weight:bold;word-break:break-all;${ruleFontStyle}">
                   ${isPinnedM ? '<span style="font-size:10px;margin-right:4px;">●</span>' : ''}${item.title || itemId}
                 </div>
-                <div style="color:#00ff00;font-size:11px;display:flex;justify-content:space-between;gap:8px;">
+                <div style="color:#00ff00;font-size:${isRuleSection ? '12px' : '8px'};display:flex;justify-content:space-between;gap:8px;${ruleFontStyle}">
                   <span>${category}</span>
                   <span style="color:#ffb000;">${status}</span>
                 </div>
@@ -4462,8 +4553,13 @@ REQUIRE LOGIN: No (Public access enabled)
       const ts = Date.now();
       const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
 
+      // admin-contents.json: raw.githubusercontent 실패시 같은 서버(./admin-contents.json)에서 fallback
+      const fetchAdminContents = fetch(base + 'admin-contents.json?t=' + ts)
+        .then(r => r.ok ? r.json() : Promise.reject('not ok'))
+        .catch(() => fetch('./admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}));
+
       Promise.all([
-        fetch(base + 'admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}),
+        fetchAdminContents,
         fetch(base + 'published-posts.json?t=' + ts).then(r => r.ok ? r.json() : []).catch(() => [])
       ])
         .then(([data, publishedPosts]) => {
@@ -4495,14 +4591,18 @@ REQUIRE LOGIN: No (Public access enabled)
           window._csNavReset = true;
 
           // Re-render current section
-          // isContactSheet(오버레이 갤러리) / isComingSoon 섹션은 자동 재호출 안 함
           const isMobile = window.innerWidth <= 768;
           const activeSection = isMobile
             ? (document.querySelector('.mobile-menu-item.active')?.getAttribute('data-section') || 'about')
             : (document.querySelector('[data-section].active')?.getAttribute('data-section') || 'about');
           const activeContent = contents[activeSection];
-          const skipReload = activeContent && (activeContent.isContactSheet || activeContent.isComingSoon);
-          if (!skipReload) {
+          const skipReload = activeContent && activeContent.isComingSoon;
+          // 갤러리가 열려있으면 실제 데이터로 갱신
+          const openOverlay = document.getElementById('csOverlay');
+          if (activeContent && activeContent.isContactSheet && openOverlay) {
+            openOverlay.remove();
+            openContactSheetOverlay(contents[activeSection]);
+          } else if (!skipReload) {
             if (isMobile) {
               loadContentToMobile(activeSection);
             } else {
@@ -4544,7 +4644,7 @@ REQUIRE LOGIN: No (Public access enabled)
         if (ts - lastTime < FPS_INTERVAL) return;
         lastTime = ts;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '15px "Courier New", monospace';
+        ctx.font = "15px 'Press Start 2P', 'DotGothic16', monospace";
         cells.forEach(cell => {
           if (cell.state === 'idle') {
             if (++cell.timer >= cell.interval) { cell.timer = 0; cell.interval = Math.floor(Math.random() * 30) + 15; cell.nextCode = codes[Math.floor(Math.random() * codes.length)]; cell.state = 'fadeout'; }
@@ -4634,17 +4734,17 @@ REQUIRE LOGIN: No (Public access enabled)
           const pidColor = '#666';
           return `
             <div onclick="loadContent('${p.key}'); pmRender('${p.key}');"
-              style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:10px;border-bottom:1px dashed #001a00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
+              style="display:grid;grid-template-columns:2fr 0.8fr 1fr 1fr;align-items:center;padding:5px 10px;font-size:8px;border-bottom:1px dashed #001a00;cursor:pointer;background:${rowBg};transition:background 0.1s;"
               onmouseover="this.style.background='rgba(0,255,0,0.08)'"
               onmouseout="this.style.background='${isActive?'rgba(0,255,0,0.12)':'transparent'}'">
               <span style="font-weight:bold;color:${nameColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</span>
-              <span style="color:${pidColor};font-size:9px;">${p.pid}</span>
+              <span style="color:${pidColor};font-size:8px;">${p.pid}</span>
               <span>
                 <span style="display:inline-block;width:34px;height:7px;border:1px solid rgba(0,255,0,0.4);background:#000;overflow:hidden;vertical-align:middle;">
                   <span style="display:block;height:100%;width:${barW}%;background:${barW>75?'#c8a000':barW>45?'rgba(0,255,0,0.7)':'rgba(0,255,0,0.45)'};"></span>
                 </span>
               </span>
-              <span style="color:${statusColor};font-size:9px;">RUNNING</span>
+              <span style="color:${statusColor};font-size:8px;">RUNNING</span>
             </div>`;
         }).join('');
       }
@@ -4759,7 +4859,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // 셀
       let alive = 0;
-      cx.font = `bold ${SZ}px 'Courier New'`;
+      cx.font = `bold ${SZ}px 'VT323'`;
       for (let i = 0; i < W; i++) for (let j = 0; j < H; j++) {
         if (!g[i][j]) continue;
         alive++;
@@ -4778,7 +4878,7 @@ REQUIRE LOGIN: No (Public access enabled)
           x: 4+Math.random()*(cw-80), y: 10+Math.random()*(ch-14), life:50, max:50 });
         flashTimer = 0;
       }
-      cx.font = '6px Courier New';
+      cx.font = '6px VT323';
       flashes.forEach(f => {
         f.life--;
         const a = f.life/f.max;

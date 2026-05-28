@@ -3,331 +3,343 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SET IS THE WORLD - INTRO</title>
+  <title>SET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { height: 100vh; }
-body { background: #000; color: #39dc00; font-family: monospace; height: 100vh; scroll-behavior: smooth; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-.top-banner {
-  display: none;
-  position: fixed; top: 0; left: 0; width: 100%; height: 32px;
-  background: #000; border-bottom: 2px dashed #ff3333; color: #ff3333;
-  padding: 6px 0; z-index: 999; overflow: hidden;
-  animation: marquee 12s linear infinite;
+html {
+  height: 100%;
 }
-@keyframes marquee { 0% { text-indent: 100vw; } 100% { text-indent: -150vw; } }
-::-webkit-scrollbar { width: 10px; height: 10px; background: #000; }
-::-webkit-scrollbar-track { background: rgba(57,220,0,0.05); }
-::-webkit-scrollbar-thumb { background: #1e7400; border-radius: 5px; }
-::-webkit-scrollbar-thumb:hover { background: #39dc00; box-shadow: 0 0 8px rgba(57,220,0,0.5); }
-
-.intro-container {
-  display: flex; flex-direction: column; width: 400px;
-  height: 500px; max-height: 500px; min-height: 500px;
-  margin: 0; padding: 0; gap: 0; overflow: hidden;
-  flex-shrink: 0;
+body {
+  background: #000;
+  font-family: 'Press Start 2P', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  position: relative;
 }
 
-.intro-terminal {
-  flex: 1; display: flex; flex-direction: column;
-  padding: 8px; gap: 8px; overflow: hidden; min-height: 0;
+.t {
+  font-size: 14px;
+  line-height: 1.25;
+  color: #00ff00;
+  width: 832px;
+  zoom: 0.82;
+}
+.ln { display: block; white-space: pre; text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28); }
+.i  { background: #00ff00; color: #000; text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+.ib { display: inline-block; background: #00ff00; color: #000; text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+
+/* status bars */
+.sbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: pre;
+  font-size: 11px;
+  overflow: hidden;
+}
+.sbar .label { background: #00ff00; color: #000; padding: 0 4px; text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+.sbar .fill  { background: #00ff00; color: #000; flex: 1; padding: 0 4px; text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+
+/* text block */
+.textblock {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 20px;
+  padding: 8px 10px;
+}
+.textbody {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #00ff00;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
+}
+.textbody p { margin-bottom: 0; }
+.attr {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #00ff00;
+  text-align: right;
+  white-space: nowrap;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
 }
 
-.m-monitor {
-  border-top: 2px solid #7fff4f;
-  border-left: 2px solid #7fff4f;
-  border-bottom: 2px solid #1a5500;
-  border-right: 2px solid #1a5500;
-  background: #000; padding: 0;
-  color: #39dc00; width: 100%; flex: 1; min-height: 0;
-  display: flex; flex-direction: column;
-  box-shadow: 0 0 20px rgba(57,220,0,0.2), inset 1px 1px 0 rgba(150,255,80,0.12), inset -1px -1px 0 rgba(0,0,0,0.5);
+/* buttons */
+.btns {
+  display: flex;
+  font-size: 14px;
+  border: 5px solid #00ff00;
+  border-top: none;
+}
+.btns button {
+  flex: 1;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  background: #00ff00;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.btns button:hover { background: #7fff00; }
+
+.frame {
+  border: 5px solid #00ff00;
+  position: relative;
+  box-shadow:
+    inset 3px 3px 0 rgba(180,255,130,0.35),
+    inset -3px -3px 0 rgba(0,60,0,0.7),
+    0 0 12px rgba(0,255,0,0.8),
+    0 0 30px rgba(0,255,0,0.45),
+    0 0 60px rgba(0,255,0,0.2);
+}
+.frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,255,0,0.07) 3px,
+    rgba(0,255,0,0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
 }
 
-.m-monitor > div:first-child {
-  background: #39dc00; color: #000; padding: 6px 10px;
-  font-weight: bold; font-size: 11px; flex-shrink: 0;
+.table-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  width: 100%;
+}
+.table-left {
+  flex: 1;
+  font-size: 15px;
+  padding-top: 10px;
+}
+.logpanel {
+  background: #00ff00;
+  flex: 0 0 152px;
+  min-width: 0;
+  height: 260px;
+  align-self: center;
+  margin-right: 0;
+  overflow: hidden;
+}
+.log-row {
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+  color: #00ff00;
+  line-height: 1.3;
+  font-family: 'Press Start 2P', monospace;
+}
+.log-loc  { min-width: 90px; opacity: 0.6; }
+.log-date { min-width: 70px; opacity: 0.8; }
+.log-desc { flex: 1; }
+.log-stat { opacity: 0.5; }
+
+.log-item {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: #000;
+  line-height: 1.45;
+  padding: 0 8px;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+}
+.log-item.active {
+  background: #000;
+  color: #00ff00;
 }
 
-.m-monitor > div:nth-child(2) {
-  flex: 1; padding: 10px; overflow: hidden; min-height: 0;
-  background: #000; color: #39dc00; font-size: 12px;
-  line-height: 1.5; position: relative;
+.cur {
+  display: inline-block;
+  background: #00ff00;
+  width: 8px;
+  animation: bl .7s infinite;
 }
-
-.m-monitor > div:last-child {
-  background: #000; border-top: 1px solid #39dc00;
-  padding: 6px 10px; font-size: 10px; color: #39dc00; flex-shrink: 0;
-}
-
-#terminal-text { margin: 0; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; }
-#cursor { animation: blink 0.7s infinite; }
-
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-.m-loading-wrap {
-  display: flex; align-items: center; width: 100%;
-  padding: 8px 10px; border: 1px dashed #39dc00; background: #000;
-}
-
-.load-txt {
-  color: #39dc00; font-size: 12px; margin-right: 10px;
-  animation: blink 1.2s infinite; font-weight: bold;
-}
-
-.m-loading-bar {
-  flex-grow: 1; height: 10px; border: 1px solid #39dc00; background: #000;
-  position: relative; overflow: hidden;
-}
-
-.m-loading-bar::before {
-  content: ""; position: absolute; top: 0; left: 0; height: 100%;
-  width: 30%; background: #39dc00;
-  animation: pulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes pulse { 0% { width: 5%; } 100% { width: 70%; } }
-
-.intro-search {
-  display: flex; gap: 8px; width: 100%; flex-shrink: 0;
-}
-
-.intro-search input {
-  flex: 1; background: #000; border: 1px solid #39dc00;
-  color: #39dc00; padding: 6px 8px; font-family: monospace;
-  font-size: 11px; outline: none;
-}
-
-.intro-search button {
-  background: #39dc00; color: #000; border: 1px solid #39dc00;
-  padding: 6px 12px; font-family: monospace; font-size: 11px;
-  font-weight: bold; cursor: pointer; min-height: 36px;
-}
-
-#error-page {
-  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  background: #000; color: #ff9900; padding: 20px; text-align: center;
-  overflow-y: auto; font-family: monospace; font-size: 12px; line-height: 1.8;
-  z-index: 100;
-}
+@keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
 
 @keyframes glitch {
-  0%, 100% { color: #39dc00; opacity: 1; text-shadow: 0 0 0 transparent; }
-  20% { color: #ff3333; opacity: 0.8; text-shadow: 2px 2px #39dc00, -2px -2px #ffb000; }
-  40% { color: #39dc00; opacity: 0.95; text-shadow: -1px 1px #ff3333; }
-  60% { color: #ffb000; opacity: 0.85; text-shadow: 1px -1px #39dc00, -1px 1px #ff3333; }
-  80% { color: #39dc00; opacity: 0.9; text-shadow: 0 0 0 transparent; }
+  0%, 85%, 100% { transform: none; text-shadow: none; opacity: 1; }
+  86%  { transform: translateX(-3px); text-shadow: 3px 0 #ff0000, -3px 0 #00ffff; opacity: 0.9; }
+  87%  { transform: translateX(3px);  text-shadow: -3px 0 #ff0000, 3px 0 #00ffff; }
+  88%  { transform: translateX(-1px); text-shadow: 2px 0 #ff0000; opacity: 1; }
+  89%  { transform: none; text-shadow: none; }
+  90%  { transform: translateX(4px);  text-shadow: -4px 0 #00ffff; opacity: 0.8; }
+  91%  { transform: none; text-shadow: none; opacity: 1; }
 }
 
-@keyframes screenFlicker {
-  0%, 100% { background: #000; opacity: 1; }
-  25% { background: rgba(255, 51, 51, 0.1); opacity: 0.95; }
-  50% { background: rgba(0, 0, 0, 0.9); opacity: 0.98; }
-  75% { background: rgba(255, 200, 0, 0.05); opacity: 0.92; }
+/* ── TABLET ── */
+@media (max-width: 750px) {
+  body { align-items: flex-start; padding: 10px; }
+  .t { width: 100%; zoom: 0.72; }
 }
 
-.glitch-mode {
-  animation: glitch 0.1s infinite, screenFlicker 0.15s infinite;
-}
+/* ── MOBILE ── */
+@media (max-width: 520px) {
+  body { align-items: flex-start; padding: 8px; }
 
-/* 모바일 반응형 */
-@media (max-width: 480px) {
-  .intro-container {
+  .t { width: 100%; zoom: 1; font-size: 8px; }
+
+  .sbar { font-size: 7px; }
+
+  /* 테이블+로그패널 세로 스택 */
+  .table-row { flex-direction: column; gap: 0; width: 100%; }
+
+  /* ASCII 테이블 가로 스크롤 */
+  .table-left {
+    font-size: 8px;
+    padding-top: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  /* 로그패널 가로 줄지어 */
+  .logpanel {
+    flex: none;
     width: 100%;
-  }
-
-  .intro-terminal {
-    padding: 6px;
-    gap: 6px;
-  }
-
-  .m-monitor {
     height: auto;
-    min-height: 250px;
+    min-height: 28px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-self: auto;
+    padding: 3px 4px;
+    gap: 2px;
+  }
+  .log-item {
+    font-size: 8px;
+    padding: 2px 5px;
+    white-space: nowrap;
+    display: inline-block;
   }
 
-  #terminal-text {
-    font-size: 10px;
+  /* 텍스트블록 1열 */
+  .textblock {
+    grid-template-columns: 1fr;
+    gap: 10px 0;
+    padding: 8px;
   }
+  .textbody { font-size: 8px; line-height: 1.6; }
+  .attr { font-size: 8px; text-align: left; }
 
-  .intro-search input {
-    font-size: 10px;
-    padding: 4px 6px;
-    min-height: 32px;
-  }
+  /* 버튼 */
+  .btns button { font-size: 8px; padding: 8px 2px; }
 
-  .intro-search button {
-    font-size: 9px;
-    min-height: 32px;
-    padding: 4px 8px;
-  }
+  .ln { font-size: 8px; }
 }
-
   </style>
 </head>
 <body>
-  <div class="top-banner">&gt;&gt;&gt; FATAL_BREACH_DETECTED : SYSTEM KERNEL COMPROMISED. DO NOT DISCONNECT. TRACING... &lt;&lt;&lt;</div>
+<div class="t">
+<div class="frame">
+<div class="sbar"><span class="label"> INDEX </span><span class="fill">   ***   PAGE 1 READY   ***                         </span></div>
+<div class="sbar"><span class="label">COMMAND</span><span class="fill"> EXTRACT FROM : SET WORLD — ACCUMULATION LOG            </span></div>
+<div class="table-row">
+<div class="table-left">
+<span class="ln">                  REGISTER CONTROL</span>
+<span class="ln">+-----+----------+-------------------+------+</span>
+<span class="ln">|<span class="i"> REG </span>|<span class="i"> ADDRESS  </span>|<span class="i"> TYPE              </span>|<span class="i"> STAT </span>|</span>
+<span class="ln">+-----+----------+-------------------+------+</span>
+<span class="ln">|  A  | SET_WORLD| SYSTEM/MEASUREMENT|ACTIVE|</span>
+<span class="ln">|  B  | VIS+LANG | FRAMEWORK         |OPEN  |</span>
+<span class="ln">|  C  | OBSERVER | PROTOCOL          |INCOMP|</span>
+<span class="ln">|  D  | PERIMTR  | MEASUREMENT       |ONGOIN|</span>
+<span class="ln">|  E  | CONDITN  | RECURRENCE        |REPEAT|</span>
+<span class="ln">|  F  | RECORD   | ACCUMULATION LOG  |ACTIVE|</span>
+<span class="ln">+-----+----------+-------------------+------+</span>
+</div>
+<div class="logpanel" id="logpanel"></div>
+</div>
+<div class="sbar"><span class="label"> STATUS </span><span class="fill">  [=========================]   RECORDING   </span></div>
+<div class="textblock">
+  <div class="textbody">
+    <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+    <p>This is one answer to that question. It took years. It is still going. Some conditions repeat. Not because they are chosen, but because the world keeps producing them.</p>
+    <p>Someone noticed. Wrote them down. Went looking.</p>
+    <p>The record has been accumulating since 2022. It does not know when it will stop. Neither does the person keeping it.</p>
+    <p>What you measure, you enter.</p>
+  </div>
+  <div class="attr">
+    SET WORLD<br>
+    2022—
+  </div>
+</div>
+<span class="ln">| INPUT : <span class="cur"> </span>                                        |</span>
+</div>
+<div class="btns">
+  <button onclick="showConfirm('menu.html','ENTER','SET_WORLD/MENU')">  [ -&gt; ENTER ]  </button><button onclick="showConfirm('portfolio.html','BROWSE','SET_WORLD/PORTFOLIO')">  [ BROWSE -&gt; ]  </button>
+</div>
 
-  <div class="intro-container">
-    <div class="intro-terminal">
-      <div class="m-monitor" style="position:relative;">
-        <div>TERMINAL CHAT SYSTEM V.2.1</div>
-        <div style="flex:1;padding:10px;overflow:hidden;background:#000;color:#39dc00;font-size:12px;line-height:1.5;position:relative;">
-          <pre id="terminal-text" style="margin:0;font-family:monospace;white-space:pre-wrap;word-wrap:break-word;"></pre><span id="cursor">█</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;">
-          <span style="opacity:0.6;">STATUS: ONLINE</span>
-          <span style="opacity:0.6;">█ ████░ 50%</span>
-        </div>
-        <div id="error-page">
-          <div style="margin-top:40px;">
-            <div style="font-size:20px;font-weight:bold;margin-bottom:40px;">Error</div>
-            <div style="margin-bottom:40px;line-height:2;font-size:11px;">
-              <div>A fatal exception UE has occurred at 0021:C457F1B2 in UXD ctncl9x(05)</div>
-              <div>00001563. The current application will be terminated.</div>
-              <div style="margin-top:30px;">* Press any key to terminate the current application.</div>
-              <div>* Press your hot keys again to restart your computer. You will</div>
-              <div>lose any unsaved information in all applications.</div>
-              <div style="margin-top:40px;">Press any key continue</div>
-            </div>
-          </div>
-        </div>
-      </div>
+</div>
 
-      <div class="m-loading-wrap">
-        <div class="load-txt">LOADING...</div>
-        <div class="m-loading-bar"></div>
-      </div>
-
-      <div class="intro-search">
-        <input type="text" id="search-input" placeholder="search_archive --query" />
-        <button>ENTER</button>
-      </div>
+<!-- Confirm Modal -->
+<div id="confirmOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9999;display:none;align-items:center;justify-content:center;">
+  <div style="
+    border:5px solid #00ff00;
+    background:#000;
+    padding:28px 32px;
+    width:340px;
+    max-width:90vw;
+    font-family:'Press Start 2P',monospace;
+    color:#00ff00;
+    box-shadow:0 0 8px rgba(0,255,0,0.5),0 0 20px rgba(0,255,0,0.22),0 0 40px rgba(0,255,0,0.1);
+    position:relative;
+  ">
+    <div style="font-size:9px;line-height:2;text-shadow:1.5px 0.8px rgba(255,0,0,0.35),-1.5px -0.8px rgba(0,255,255,0.28);">
+      <div id="cfLine1" style="opacity:0.5;">&gt; COMMAND: <span id="cfCmd"></span></div>
+      <div id="cfLine2" style="opacity:0.5;">&gt; DESTINATION: <span id="cfDest"></span></div>
+      <div id="cfLine3" style="opacity:0.5;">&gt; STATUS: READY</div>
+      <div style="margin-top:14px;font-size:12px;font-family:'DotGothic16',monospace;">확인되었습니다.<span class="cur"> </span></div>
+      <div style="font-size:8px;margin-top:4px;opacity:0.6;">ACCESS GRANTED — PROCEED?</div>
+    </div>
+    <div style="display:flex;gap:0;margin-top:22px;border:3px solid #00ff00;">
+      <button id="cfOk" style="flex:1;font-family:'Press Start 2P',monospace;font-size:9px;background:#00ff00;color:#000;border:none;padding:10px 4px;cursor:pointer;text-shadow:1.5px 0.8px rgba(255,0,0,0.38),-1.5px -0.8px rgba(0,255,255,0.3);" onmouseover="this.style.background='#7fff00'" onmouseout="this.style.background='#00ff00'">[ OK ]</button>
+      <button onclick="hideConfirm()" style="flex:1;font-family:'Press Start 2P',monospace;font-size:9px;background:#000;color:#00ff00;border:none;border-left:3px solid #00ff00;padding:10px 4px;cursor:pointer;text-shadow:1.5px 0.8px rgba(255,0,0,0.35),-1.5px -0.8px rgba(0,255,255,0.28);" onmouseover="this.style.background='#001a00'" onmouseout="this.style.background='#000'">[ CANCEL ]</button>
     </div>
   </div>
+</div>
 
-  <script>
-    function typeWriter(elementId, text, speed = 50, callback, cursorId = 'cursor') {
-      const element = document.getElementById(elementId);
-      const cursor = document.getElementById(cursorId);
-      const container = element.parentElement;
-      let index = 0;
+<script>
+const items = ['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx = 0;
+function render() {
+  document.getElementById('logpanel').innerHTML = items.map((item, i) =>
+    `<div class="log-item${i===idx?' active':''}">${i===idx?'>> ':' '}${item}${i===idx?' <<':''}</div>`
+  ).join('');
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowUp')   { idx=Math.max(0,idx-1); render(); e.preventDefault(); }
+  if (e.key==='ArrowDown') { idx=Math.min(items.length-1,idx+1); render(); e.preventDefault(); }
+});
+render();
 
-      function type() {
-        if (index < text.length) {
-          if (text[index] === '\n') {
-            element.textContent += '\n';
-          } else {
-            element.textContent += text[index];
-          }
-          index++;
-          // 자동 스크롤: 컨테이너를 최하단으로
-          if (container) {
-            setTimeout(() => {
-              container.scrollTop = container.scrollHeight;
-            }, 0);
-          }
-          setTimeout(type, speed);
-        } else {
-          if (cursor) cursor.style.animation = 'blink 0.7s infinite';
-          if (callback) callback();
-        }
-      }
-      type();
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      // 검색 입력 처리
-      const searchInput = document.getElementById('search-input');
-      const searchButton = document.querySelector('.intro-search button');
-
-      function checkSearch(e) {
-        if (e) e.preventDefault();
-        const value = searchInput.value.toLowerCase().trim();
-        console.log('Search value:', value);
-        if (value === 'set') {
-          console.log('Redirecting to menu.html');
-          window.location.href = 'menu.html';
-          return;
-        }
-      }
-
-      if (searchButton) {
-        searchButton.addEventListener('click', function(e) {
-          e.preventDefault();
-          checkSearch(e);
-        });
-      }
-
-      searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          checkSearch(e);
-        }
-      });
-
-      const mainText = `Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.
-
-Set is the world. I'm measuring the perimeter of the set.
-But the scale I hold is already contaminated by the world itself.`;
-
-      const hackingText = `
-
-[00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)
-[00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS
-[00:00:01.201] >>> ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...
-[00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.
-[00:00:01.890] INITIALIZING PERIMETER_SCAN.EXE --TARGET="SET"
-[00:00:02.100] SCANNING SPATIAL COORDINATES... 12%... 45%... 94.2%...
-[00:00:02.405] [FATAL] BOUNDARY_COLLISION AT SECTOR 4. OVERLAP DETECTED.
-[00:00:02.550] DIAGNOSTIC LOG: SCALE_CONTAMINATED.
-[00:00:02.601] THE RULER USED FOR MEASUREMENT IS ALREADY PART OF THE SET'S LOGIC.
-[00:00:03.000] >>> RE-CALIBRATING OBSERVER PROTOCOL...
-[00:00:03.112] STATUS: WE ARE NOT THE OBSERVER. WE ARE THE OBSERVED.
-[00:00:03.500] ENGAGING SENSORY_OVERRIDE_MODULE...
-[00:00:03.650] [OK] BODY_STATE ENFORCED: COERCED_MODE ACTIVE.
-[00:00:03.700] [OK] VISUAL_RECEPTORS TUNED: GAZE_SUSPENDED.
-[00:00:04.102] EXECUTING MULTI-THREAD: VOICE_MERGE_PROTOCOL
-[00:00:04.220] PORT_01 (AI) : SYSTEMATIC / INDIFFERENT -> CONNECTED.
-[00:00:04.340] PORT_02 (HUMAN) : WANDERING / AFFECTIVE -> CONNECTED.
-[00:00:04.800] >>> SYNCING PORTS... CAUTION: HIGH INTERFERENCE DETECTED.
-[00:00:05.105] DATA CORRUPTION: TEXTUAL SUPERIMPOSITION CAUSING SEMANTIC DISSOLUTION.
-[00:00:05.400] [LOG] WORDS ARE TRANSFORMING INTO PURE NOISE.
-[00:00:05.800] [LOG] WHAT CANNOT BE FULLY READ BECOMES THE ESSENCE OF THE WORK ITSELF.
-[00:00:06.002] ATTEMPTING FINAL RENDER: VISION + LANGUAGE...
-[00:00:06.505] [CRITICAL ERROR] SYSTEM HALTED: FAILURE_TO_CLOSE.
-[00:00:06.880] 〈SET〉 MEASURES THROUGH VISION; TEXTS MEASURE THROUGH LANGUAGE.
-[00:00:07.100] BOTH REMAIN INCOMPLETE. THIS INCOMPLETENESS IS PRECISELY THE WORLD.
-[00:00:07.500] SYSTEM REMAINS OPEN. DO NOT DISCONNECT.
-[00:00:07.999] █`;
-
-      typeWriter('terminal-text', mainText, 25, function() {
-        setTimeout(function() {
-          document.getElementById('terminal-text').textContent = '';
-          setTimeout(function() {
-            typeWriter('terminal-text', hackingText, 3, function() {
-              setTimeout(function() {
-                const monitor = document.querySelector('.m-monitor');
-                const terminalText = document.getElementById('terminal-text');
-                monitor.classList.add('glitch-mode');
-                terminalText.classList.add('glitch-mode');
-
-                setTimeout(function() {
-                  monitor.classList.remove('glitch-mode');
-                  terminalText.classList.remove('glitch-mode');
-                  document.getElementById('error-page').style.display = 'block';
-
-                  document.addEventListener('keydown', function closeError() {
-                    document.getElementById('error-page').style.display = 'none';
-                    document.removeEventListener('keydown', closeError);
-                  });
-                }, 3000);
-              }, 800);
-            });
-          }, 500);
-        }, 1200);
-      });
-    });
-  </script>
+let _confirmDest = '';
+function showConfirm(url, cmd, dest) {
+  _confirmDest = url;
+  document.getElementById('cfCmd').textContent = cmd;
+  document.getElementById('cfDest').textContent = dest;
+  document.getElementById('cfOk').onclick = () => { window.location.href = url; };
+  const ov = document.getElementById('confirmOverlay');
+  ov.style.display = 'flex';
+}
+function hideConfirm() {
+  document.getElementById('confirmOverlay').style.display = 'none';
+}
+document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+  if (e.target === this) hideConfirm();
+});
+</script>
 </body>
 </html>
