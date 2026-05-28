@@ -791,9 +791,10 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         frame++;
       }
 
-      document.fonts.ready.then(() => {
+      // 로컬 파일에서 document.fonts.ready가 작동하지 않으므로 타임아웃 사용
+      setTimeout(() => {
         setInterval(draw, 40);
-      });
+      }, 500);
     })();
     // ──────────────────────────────────────────────────────────────
 
@@ -1069,9 +1070,10 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         frame++;
       }
 
-      document.fonts.ready.then(() => {
+      // 로컬 파일에서 document.fonts.ready가 작동하지 않으므로 타임아웃 사용
+      setTimeout(() => {
         setInterval(draw, 40);
-      });
+      }, 500);
     })();
     // ── SIGNAL INTERCEPT (상단 패널) ────────────────────────────────
     (function() {
@@ -1205,9 +1207,10 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         ctx.setLineDash([]);
       }
 
-      document.fonts.ready.then(() => {
+      // 로컬 파일에서 document.fonts.ready가 작동하지 않으므로 타임아웃 사용
+      setTimeout(() => {
         setInterval(draw, 40);
-      });
+      }, 500);
     })();
     // ──────────────────────────────────────────────────────────────
 
