@@ -2183,6 +2183,9 @@ REQUIRE LOGIN: No (Public access enabled)
         if (adminContents.inclusionPhotos && Array.isArray(adminContents.inclusionPhotos.photos)) {
           _inclusionPhotos = adminContents.inclusionPhotos.photos;
         }
+        // measure 검색용 평면 배열 빌드
+        const _mp = flattenMeasurePhotos(adminContents);
+        if (_mp.length > 0) window._measurePhotos = _mp;
 
         // archiveData.reference 직접 저장 항목 (구버전 호환) — reference에만 병합
         // published posts(publishedSection 기반)는 renderSection의 getPublishedPosts()가 처리하므로
@@ -2298,7 +2301,7 @@ REQUIRE LOGIN: No (Public access enabled)
             keywords: [p.category, p.title].filter(Boolean).concat((p.preview || '').split(/\s+/).slice(0, 5)),
             description: p.preview || p.text || ''
           }));
-          setupPhotoSearch([...content.photos, ...extraPhotos]);
+          setupPhotoSearch([...(window._measurePhotos || []), ...content.photos, ...extraPhotos]);
         } else if (content.isContactSheet) {
           // 풀스크린 오버레이로 열기
           openContactSheetOverlay(content);
@@ -3897,6 +3900,35 @@ REQUIRE LOGIN: No (Public access enabled)
       });
     }
 
+    // admin-contents.json 중첩 트리 → 검색용 평면 배열 (verdict≠drop + dir 있는 것)
+    function flattenMeasurePhotos(data) {
+      const results = [];
+      function walk(node) {
+        if (!node) return;
+        if (Array.isArray(node)) { node.forEach(walk); return; }
+        if (typeof node !== 'object') return;
+        if (node.filename && !node.type) {
+          if (node.verdict !== 'drop' && node.dir) {
+            const keywords = node.dir.split(/[\s\/]+/).map(k => k.trim()).filter(k => k.length > 1 && /^[A-Za-z0-9가-힣(]/.test(k));
+            results.push({
+              id: node.id || '',
+              title: node.id || node.filename.split('/').pop().replace(/\.[^.]+$/, ''),
+              filename: node.filename,
+              verdict: node.verdict || '',
+              dir: node.dir || '',
+              keywords,
+              description: node.dir || ''
+            });
+          }
+        } else {
+          Object.values(node).forEach(v => { if (v && typeof v === 'object') walk(v); });
+        }
+      }
+      if (data && data.project && data.project.photos) walk(data.project.photos);
+      return results;
+    }
+    window._measurePhotos = [];
+
     // 파일명 → URL 정규화 (images/ 접두어 처리)
     function resolvePhotoUrl(filename) {
       if (!filename) return '';
@@ -3916,17 +3948,21 @@ REQUIRE LOGIN: No (Public access enabled)
         gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
         return;
       }
+      // 결과 수 표시 (60장 이상이면 상단에 표기)
+      const countNote = filtered.length >= 60 ? `<div style="padding:4px 8px;font-size:6px;color:rgba(0,255,0,0.4);">─ ${filtered.length}+ results (showing 60) ─</div>` : `<div style="padding:4px 8px;font-size:6px;color:rgba(0,255,0,0.4);">─ ${filtered.length} results ─</div>`;
 
-      const galleryHTML = `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%;">
+      const verdictColor = v => v === 'core' ? '#00ff00' : v === 'support' ? '#88ff88' : v === 'hold' ? '#ffcc00' : '#555';
+      const galleryHTML = countNote + `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; padding: 4px;">
           ${filtered.map(photo => `
-            <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid #00ff00; padding: 12px; cursor: pointer; transition: all 0.1s;">
-              <div class="photo-item-image" style="width: 100%; height: 100px; background: #000; border: 1px dashed #00ff00; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                <img src="${resolvePhotoUrl(photo.filename)}" alt="${photo.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.textContent='[IMAGE]';">
+            <div class="photo-item" data-photo-id="${photo.id}" style="border: 1px solid rgba(0,255,0,0.3); cursor: pointer; transition: border-color 0.1s;" onmouseover="this.style.borderColor='#00ff00'" onmouseout="this.style.borderColor='rgba(0,255,0,0.3)'">
+              <div style="width:100%;height:90px;background:#050505;overflow:hidden;position:relative;">
+                <img src="${resolvePhotoUrl(photo.filename)}" alt="${photo.title}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(0,255,0,0.2);font-size:7px;">[NO IMG]</div>
               </div>
-              <div class="photo-item-info" style="font-size: 8px;">
-                <div class="photo-item-title" style="font-weight: bold; margin-bottom: 4px;">${photo.title}</div>
-                <div class="photo-item-keywords" style="font-size: 9px; opacity: 0.8;">${photo.keywords.join(' • ')}</div>
+              <div style="padding:4px 5px;">
+                <div style="font-size:6px;color:rgba(0,255,0,0.5);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${photo.dir || photo.keywords.join(' ')}</div>
+                <div style="font-size:5px;color:${verdictColor(photo.verdict)};opacity:0.7;">${photo.verdict || ''} · ${photo.title}</div>
               </div>
             </div>
           `).join('')}
@@ -3939,7 +3975,7 @@ REQUIRE LOGIN: No (Public access enabled)
       document.querySelectorAll('.photo-item').forEach(item => {
         item.addEventListener('click', () => {
           const photoId = item.getAttribute('data-photo-id');
-          const photo = photos.find(p => p.id === photoId);
+          const photo = filtered.find(p => p.id === photoId) || photos.find(p => p.id === photoId);
           if (photo) {
             showPhotoDetail(photo);
           }
@@ -4134,16 +4170,13 @@ REQUIRE LOGIN: No (Public access enabled)
         // VIEWER LOG 기록
         if (typeof vlAddEntry === 'function') vlAddEntry(query);
 
-        // Search in keywords and title
+        // Search in keywords / dir / title
         const filtered = allPhotos.filter(photo => {
-          const keywordMatch = photo.keywords.some(kw =>
-            kw.toLowerCase().includes(query)
-          );
-          const titleMatch = photo.title.toLowerCase().includes(query);
-          const descMatch = photo.description.toLowerCase().includes(query);
-
-          return keywordMatch || titleMatch || descMatch;
-        });
+          const kwMatch = (photo.keywords || []).some(kw => kw.toLowerCase().includes(query));
+          const dirMatch = (photo.dir || '').toLowerCase().includes(query);
+          const titleMatch = (photo.title || '').toLowerCase().includes(query);
+          return kwMatch || dirMatch || titleMatch;
+        }).slice(0, 60); // 최대 60장
 
         displayPhotoGallery(allPhotos, filtered, true);
       }
@@ -4794,6 +4827,9 @@ REQUIRE LOGIN: No (Public access enabled)
             if (data.inclusionPhotos && Array.isArray(data.inclusionPhotos.photos)) {
               _inclusionPhotos = data.inclusionPhotos.photos;
             }
+            // measure 검색용 평면 배열 빌드 (GitHub 최신 데이터로 갱신)
+            const _mp = flattenMeasurePhotos(data);
+            if (_mp.length > 0) window._measurePhotos = _mp;
           }
 
           // published-posts.json 적용 (모바일 등 다른 기기에서 글 보이도록)
