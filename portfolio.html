@@ -2275,33 +2275,12 @@ REQUIRE LOGIN: No (Public access enabled)
           }));
           loadSlideshow({ ...content, slides: [...content.slides, ...extraSlides] });
         } else if (content.isArchivePhotos) {
-          // Archive Photos format with search
-          const archiveHTML = `
-            <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px; position: relative;">
-              <div class="photo-gallery" id="photoGallery" style="padding: 0; margin: 0; flex: 1; overflow: hidden;">
-                <div id="archiveInitialView" style="padding:0;margin:0;width:100%;">
-                  <canvas id="measureBannerCanvas" style="display:block;width:100%;"></canvas>
-                </div>
-              </div>
-              <div class="search-sim">
-                <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search: crash / floating / shadow...">
-                <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
-              </div>
+          // measure-combined.html을 iframe으로 임베드
+          terminalContent.innerHTML = `
+            <div style="height:100%;margin:-12px -20px;">
+              <iframe src="measure-combined.html" style="width:100%;height:100%;border:none;display:block;" allowtransparency="true"></iframe>
             </div>
           `;
-          terminalContent.innerHTML = archiveHTML;
-          setTimeout(() => initMeasureBanner('measureBannerCanvas'), 100);
-          const gallery = document.getElementById('photoGallery');
-
-          // Setup search functionality — merge published posts as photo entries
-          const extraPhotos = publishedPosts.map(p => ({
-            id: p.id || (p.title || '').toUpperCase().replace(/\s+/g, '_'),
-            title: p.title || '',
-            filename: p.filename || '',
-            keywords: [p.category, p.title].filter(Boolean).concat((p.preview || '').split(/\s+/).slice(0, 5)),
-            description: p.preview || p.text || ''
-          }));
-          setupPhotoSearch([...(window._measurePhotos || []), ...content.photos, ...extraPhotos]);
         } else if (content.isContactSheet) {
           // 풀스크린 오버레이로 열기
           openContactSheetOverlay(content);

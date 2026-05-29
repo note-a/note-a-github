@@ -2,214 +2,275 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Measure Banner Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEASURE</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background:#0a0a0a; color:#00ff00;
-      font-family:'Press Start 2P',monospace;
-      padding:40px 24px;
-      display:flex; flex-direction:column; align-items:center; gap:32px;
-    }
-    h1 { font-size:8px; letter-spacing:2px; text-shadow:0 0 10px #00ff00; }
-    .subtitle { font-size:5px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
+    html, body { height:100%; background:#000; color:#00ff00; font-family:'Press Start 2P',monospace; overflow:hidden; }
+    body { display:flex; flex-direction:column; }
 
-    .panel-sim {
-      width: 600px;
-      background: #000;
-      border: none;
-    }
-    .banner-area {
-      display: flex; flex-direction: column; align-items: center;
-      padding: 0;
-      gap: 0;
-    }
+    #canvasWrap { flex-shrink:0; }
+    #canvasWrap canvas { display:block; width:100%; height:auto; }
+
     .search-sim {
-      display: flex; border-top: 1px solid #00ff00;
-      padding: 6px 0 12px 0; gap: 6px;
+      display:flex; border-top:1px solid #00ff00;
+      padding:6px; gap:4px; flex-shrink:0;
     }
     .search-sim input {
-      flex: 1; background: #000; border: 1px solid #00cc00;
-      color: #00ff00; padding: 4px 8px;
-      font-family: 'Press Start 2P', monospace; font-size: 9px; outline: none;
-      letter-spacing: 1px;
+      flex:1; background:#000; border:1px solid #00cc00;
+      color:#00ff00; padding:4px 8px;
+      font-family:'Press Start 2P',monospace; font-size:9px; outline:none;
+      letter-spacing:0.5px;
     }
-    .search-sim input::placeholder { color: rgba(0,255,0,0.45); }
+    .search-sim input::placeholder { color:rgba(0,255,0,0.45); }
     .search-sim button {
-      background: #004d00; border: 1px solid #00ff00;
-      color: #00ff00; padding: 4px 10px;
-      font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer;
-      text-shadow: 0 0 8px #00ff00;
-      letter-spacing: 1px;
+      background:#004d00; border:1px solid #00ff00; color:#00ff00;
+      padding:3px 10px; font-family:'Press Start 2P',monospace; font-size:9px;
+      cursor:pointer; letter-spacing:0.5px;
     }
-    .search-sim button:hover { background: #006600; }
-    canvas { display: block; }
+    .search-sim button:hover { background:#006600; }
+
+    #photoGallery {
+      flex:1; overflow-y:auto; min-height:0;
+    }
+    .no-results {
+      padding:20px; font-size:7px; color:rgba(0,255,0,0.4); text-align:center;
+    }
   </style>
 </head>
 <body>
 
-<h1>▶ SEARCHLIGHT + TERMINAL</h1>
-<div class="subtitle">MEASURE SECTION BANNER PREVIEW</div>
-
-<div class="panel-sim">
-  <div class="banner-area">
-    <canvas id="cLight"></canvas>
-  </div>
-  <div class="search-sim">
-    <input placeholder="Search: crash / floating / shadow..." readonly>
-    <button>SEARCH</button>
-  </div>
+<div id="canvasWrap">
+  <canvas id="measureCanvas"></canvas>
 </div>
 
+<div class="search-sim">
+  <input type="text" id="searchInput" placeholder="Search: crash / floating / shadow...">
+  <button id="searchBtn">SEARCH</button>
+</div>
+
+<div id="photoGallery"></div>
+
 <script>
-setTimeout(()=>{
+// ── 사진 데이터 ──────────────────────────────────────────────
+let _photos = [];
 
-const dpr = window.devicePixelRatio || 1;
+function flattenPhotos(data) {
+  const results = [];
+  function walk(node) {
+    if (!node) return;
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (typeof node !== 'object') return;
+    if (node.filename && !node.type) {
+      if (node.verdict !== 'drop' && node.dir) {
+        const keywords = node.dir.split(/[\s\/]+/).map(k => k.trim()).filter(k => k.length > 1 && /^[A-Za-z0-9가-힣(]/.test(k));
+        results.push({
+          id: node.id || '',
+          title: node.id || node.filename.split('/').pop().replace(/\.[^.]+$/, ''),
+          filename: node.filename,
+          verdict: node.verdict || '',
+          dir: node.dir || '',
+          keywords,
+        });
+      }
+    } else {
+      Object.values(node).forEach(v => { if (v && typeof v === 'object') walk(v); });
+    }
+  }
+  if (data && data.project && data.project.photos) walk(data.project.photos);
+  return results;
+}
 
-// ════════════════════════════════════
-// 위 캔버스 — PC통신 스타일 채팅
-// ════════════════════════════════════
-(function(){
-  const c = document.getElementById('cLight');
+// admin-contents.json fetch
+(function() {
+  const ts = Date.now();
+  const ghBase = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+  fetch(ghBase + 'admin-contents.json?t=' + ts)
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .catch(() => fetch('./admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}))
+    .then(data => {
+      if (data && data.project) {
+        _photos = flattenPhotos(data);
+      }
+    })
+    .catch(() => {});
+})();
+
+// ── 검색 ─────────────────────────────────────────────────────
+const verdictColor = v => v === 'core' ? '#00ff00' : v === 'support' ? '#88ff88' : v === 'hold' ? '#ffcc00' : '#555';
+
+function showResults(filtered) {
+  const gallery = document.getElementById('photoGallery');
+  if (!gallery) return;
+
+  if (filtered.length === 0) {
+    gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+    return;
+  }
+
+  const note = `<div style="padding:4px 8px;font-size:6px;color:rgba(0,255,0,0.4);">─ ${filtered.length}${filtered.length >= 60 ? '+ (showing 60)' : ''} results ─</div>`;
+  const grid = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:4px;">
+    ${filtered.map(p => `
+      <div data-id="${p.id}" style="border:1px solid rgba(0,255,0,0.3);cursor:pointer;"
+        onmouseover="this.style.borderColor='#00ff00'" onmouseout="this.style.borderColor='rgba(0,255,0,0.3)'">
+        <div style="width:100%;height:90px;background:#050505;overflow:hidden;position:relative;">
+          <img src="${p.filename}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(0,255,0,0.2);font-size:7px;">[NO IMG]</div>
+        </div>
+        <div style="padding:4px 5px;">
+          <div style="font-size:6px;color:rgba(0,255,0,0.5);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
+          <div style="font-size:5px;color:${verdictColor(p.verdict)};opacity:0.7;">${p.verdict} · ${p.title}</div>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+
+  gallery.innerHTML = note + grid;
+
+  // 클릭 → 풀스크린 오버레이
+  gallery.querySelectorAll('[data-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const photo = filtered.find(p => p.id === el.getAttribute('data-id'));
+      if (photo) showOverlay(photo);
+    });
+  });
+}
+
+function performSearch() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const gallery = document.getElementById('photoGallery');
+  if (!query) { gallery.innerHTML = ''; return; }
+
+  const filtered = _photos.filter(p =>
+    (p.dir || '').toLowerCase().includes(query) ||
+    (p.keywords || []).some(k => k.toLowerCase().includes(query)) ||
+    (p.title || '').toLowerCase().includes(query)
+  ).slice(0, 60);
+
+  showResults(filtered);
+}
+
+document.getElementById('searchBtn').addEventListener('click', performSearch);
+document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+document.getElementById('searchInput').addEventListener('input', e => {
+  if (!e.target.value.trim()) document.getElementById('photoGallery').innerHTML = '';
+});
+
+// ── 풀스크린 오버레이 ─────────────────────────────────────────
+function showOverlay(photo) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;cursor:pointer;';
+  ov.innerHTML = `
+    <div style="font-size:6px;color:rgba(0,255,0,0.5);letter-spacing:1px;">${photo.dir}</div>
+    <img src="${photo.filename}" style="max-width:100%;max-height:70vh;object-fit:contain;border:1px solid rgba(0,255,0,0.3);">
+    <div style="font-size:5px;color:${verdictColor(photo.verdict)};">${photo.verdict} · ${photo.title}</div>
+    <div style="font-size:5px;color:rgba(0,255,0,0.3);">[ click to close ]</div>
+  `;
+  ov.addEventListener('click', () => ov.remove());
+  document.body.appendChild(ov);
+}
+
+// ── 캔버스 애니메이션 ─────────────────────────────────────────
+setTimeout(() => {
+  const c = document.getElementById('measureCanvas');
   const ctx = c.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
   const LW = 610, LH = 380;
-  c.width  = LW * dpr; c.height = LH * dpr;
-  c.style.width = LW+'px'; c.style.height = LH+'px';
+  c.width = LW * dpr; c.height = LH * dpr;
+  c.style.width = LW + 'px'; c.style.height = LH + 'px';
   ctx.scale(dpr, dpr);
-  const W=LW, H=LH;
-  let tick=0;
+  const W = LW, H = LH;
+  let tick = 0;
 
-  // ── PC통신 색상 팔레트 (밝은 초록색) ──
   const C = {
-    bg:      '#000000',
-    topBar:  '#004400',
-    botBar:  '#003300',
-    divider: '#00ff00',
-    dim:     '#00dd00',
-    yellow:  '#aaff00',
-    cyan:    '#00ffaa',
-    green:   '#00ff00',
-    white:   '#00ff00',
+    bg:'#000000', topBar:'#004400', botBar:'#003300',
+    divider:'#00ff00', dim:'#00dd00', yellow:'#aaff00',
+    cyan:'#00ffaa', green:'#00ff00', white:'#00ff00',
   };
 
-  // ── 메시지 ──
   const MSGS = [
-    { en:'how have you been.',
-      kr:'어떻게 지냈어?',                                     sys:false, wait:47, typing:22 },
-    { en:'the word you kept biting down on — it was in a photograph',
-      kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.',           sys:false, wait:36, typing:29 },
-    { en:'taken before you had the name for it.',
-      kr:'네가 그 단어의 이름을 알기 전에 찍힌 사진 말이야.',         sys:false, wait:27, typing:27 },
-    { en:'they started keeping count.',
-      kr:'그들은 세기 시작했어.',                               sys:false, wait:45, typing:22 },
-    { en:'not from fixation, but from a theory:',
-      kr:'집착 때문이 아니라, 하나의 이론에서.',                   sys:false, wait:25, typing:24 },
-    { en:'that what recurs without reason',
-      kr:'이유 없이 반복되는 것은',                              sys:false, wait:22, typing:20 },
-    { en:'is evidence of a reason not yet named.',
-      kr:'아직 이름 붙일 수 없는 어떤 이유의 증거라는 이론에서.',      sys:false, wait:47, typing:29 },
-    { en:'the record reaches back, but experience does not accumulate.',
-      kr:'기록은 거슬러 올라가지만, 경험은 축적되지 않아.',           sys:false, wait:27, typing:27 },
-    { en:'it does not know when it will stop.',
-      kr:'언제 멈출지 알지 못해.',                              sys:false, wait:22, typing:20 },
-    { en:'what you swallowed without naming — bring it here.',
-      kr:'네가 이름 붙이지 않고 삼킨 것, 여기로 가져와.',            sys:false, wait:50, typing:27 },
-    { en:'the record will tell you how many times',
-      kr:'기록은 네가 찾기 시작하기 전에 그것이 몇 번이나',           sys:false, wait:25, typing:29 },
-    { en:'it had already arrived before you began to look.',
-      kr:'왔는지 알려줄 거야.',                                 sys:false, wait:22, typing:20 },
-    { en:'search for anything.',
-      kr:'무엇이든 찾아봐.',                                   sys:true,  wait:68, typing:22 },
+    { en:'how have you been.',                                          kr:'어떻게 지냈어?',                                     sys:false, wait:47, typing:22 },
+    { en:'the word you kept biting down on — it was in a photograph',   kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.',           sys:false, wait:36, typing:29 },
+    { en:'taken before you had the name for it.',                       kr:'네가 그 단어의 이름을 알기 전에 찍힌 사진 말이야.',         sys:false, wait:27, typing:27 },
+    { en:'they started keeping count.',                                 kr:'그들은 세기 시작했어.',                               sys:false, wait:45, typing:22 },
+    { en:'not from fixation, but from a theory:',                      kr:'집착 때문이 아니라, 하나의 이론에서.',                   sys:false, wait:25, typing:24 },
+    { en:'that what recurs without reason',                             kr:'이유 없이 반복되는 것은',                              sys:false, wait:22, typing:20 },
+    { en:'is evidence of a reason not yet named.',                      kr:'아직 이름 붙일 수 없는 어떤 이유의 증거라는 이론에서.',      sys:false, wait:47, typing:29 },
+    { en:'the record reaches back, but experience does not accumulate.',kr:'기록은 거슬러 올라가지만, 경험은 축적되지 않아.',           sys:false, wait:27, typing:27 },
+    { en:'it does not know when it will stop.',                         kr:'언제 멈출지 알지 못해.',                              sys:false, wait:22, typing:20 },
+    { en:'what you swallowed without naming — bring it here.',          kr:'네가 이름 붙이지 않고 삼킨 것, 여기로 가져와.',            sys:false, wait:50, typing:27 },
+    { en:'the record will tell you how many times',                     kr:'기록은 네가 찾기 시작하기 전에 그것이 몇 번이나',           sys:false, wait:25, typing:29 },
+    { en:'it had already arrived before you began to look.',            kr:'왔는지 알려줄 거야.',                                 sys:false, wait:22, typing:20 },
+    { en:'search for anything.',                                        kr:'무엇이든 찾아봐.',                                   sys:true,  wait:68, typing:22 },
   ];
 
-  // ── 레이아웃 상수 ──
-  const TOP_H  = 26;
-  const BOT_H  = 30;
-  const HDR_H  = 20;
-  const EN_FS  = 12;
-  const KR_FS  = 11;
-  const EN_ROW = EN_FS + 5;   // 17px
-  const MSG_GAP= 6;
-  const USER_X = 8;
-  const EN_X   = 90;
-  const SPLIT_X= 430;
-  const PANEL_W= W - SPLIT_X;
-  const EN_MAX_W = SPLIT_X - EN_X - 8;  // 최대 영문 너비 (패널 침범 방지)
+  const TOP_H=26, BOT_H=30, HDR_H=20, EN_FS=12, KR_FS=11, EN_ROW=17, MSG_GAP=6;
+  const USER_X=8, EN_X=90, SPLIT_X=430, EN_MAX_W=SPLIT_X-EN_X-8;
 
-  // ── 상태 ──
-  let revealed = 0, phase = 'intro', phaseT = 0, doneT = 0, dotCount = 0, dotT = 0;
+  let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
+  const USERS=['나(익명)','관찰자_01','수집가','방문자_09','익명의_이'];
 
-  const USERS = ['나(익명)', '관찰자_01', '수집가', '방문자_09', '익명의_이'];
-
-  // 영문 줄바꿈 계산 (SPLIT_X 안에만)
-  function wrapEN(text){
+  function wrapEN(text) {
     ctx.font=`${EN_FS}px monospace`;
     const words=text.split(' '), lines=[];
     let cur='';
-    for(const w of words){
-      const t=cur?cur+' '+w:w;
-      if(ctx.measureText(t).width>EN_MAX_W && cur){ lines.push(cur); cur=w; }
+    for (const w of words) {
+      const t = cur ? cur+' '+w : w;
+      if (ctx.measureText(t).width > EN_MAX_W && cur) { lines.push(cur); cur=w; }
       else cur=t;
     }
-    if(cur) lines.push(cur);
+    if (cur) lines.push(cur);
     return lines;
   }
 
-  // 메시지별 줄 캐싱 (canvas 준비 후)
   ctx.font=`${EN_FS}px monospace`;
-  const MSG_DATA = MSGS.map(m=>({ ...m, enLines: wrapEN(m.en) }));
-
-  function msgH(m){ return m.enLines.length * EN_ROW + MSG_GAP; }
+  const MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
+  function msgH(m) { return m.enLines.length * EN_ROW + MSG_GAP; }
 
   const startMs = Date.now();
-  function timeStr(){
+  function timeStr() {
     const d=new Date(startMs+tick*33), p=n=>String(n).padStart(2,'0');
     return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
   }
 
-  function draw(){
-    // ── intro 팝업 ──
-    if(phase==='intro'){
+  function draw() {
+    if (phase === 'intro') {
       ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-      const bw=320, bh=100, bx=(W-bw)/2, by=(H-bh)/2;
+      const bw=320,bh=100,bx=(W-bw)/2,by=(H-bh)/2;
       ctx.fillStyle='#001400'; ctx.fillRect(bx,by,bw,bh);
       ctx.strokeStyle='#00ff00'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
       ctx.fillStyle='#003300'; ctx.fillRect(bx,by,bw,18);
       ctx.fillStyle='#00ff00'; ctx.font='bold 9px monospace';
       ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('★  시스템 공지  ★', W/2, by+9);
+      ctx.fillText('★  시스템 공지  ★',W/2,by+9);
       ctx.font='11px monospace'; ctx.fillStyle='#00ff00';
-      ctx.fillText('채팅방에 입장하셨습니다.', W/2, by+44);
+      ctx.fillText('채팅방에 입장하셨습니다.',W/2,by+44);
       ctx.font='8px monospace'; ctx.fillStyle='#00cc00';
-      ctx.fillText('MEASURE.DB 검색 채팅방', W/2, by+64);
-      if(Math.floor(tick/18)%2===0){
+      ctx.fillText('MEASURE.DB 검색 채팅방',W/2,by+64);
+      if (Math.floor(tick/18)%2===0) {
         ctx.fillStyle='rgba(0,220,0,0.55)'; ctx.font='7px monospace';
-        ctx.fillText('[ 연결 중... ]', W/2, by+85);
+        ctx.fillText('[ 연결 중... ]',W/2,by+85);
       }
       phaseT++; tick++;
-      if(phaseT>=95){ phase='pause'; phaseT=0; }
+      if (phaseT >= 95) { phase='pause'; phaseT=0; }
       return;
     }
 
     ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#00ff00'; ctx.lineWidth=2; ctx.strokeRect(0,0,W,H);
 
-    // 테두리
-    ctx.strokeStyle='#00ff00'; ctx.lineWidth=2;
-    ctx.strokeRect(0,0,W,H);
-
-    // 희미한 가로선
     ctx.strokeStyle='rgba(0,220,80,0.10)'; ctx.lineWidth=0.5;
-    for(let y=TOP_H+HDR_H;y<H-BOT_H;y+=EN_ROW+2){
+    for (let y=TOP_H+HDR_H; y<H-BOT_H; y+=EN_ROW+2) {
       ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke();
     }
 
-    // ── 상단 메뉴바 ──
     ctx.fillStyle=C.topBar; ctx.fillRect(0,0,W,TOP_H);
     ctx.font=`bold ${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
     const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티'];
     let mx=6;
-    menu.forEach((item,i)=>{
+    menu.forEach((item,i) => {
       ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)';
       ctx.fillText(item,mx,TOP_H/2);
       mx+=ctx.measureText(item).width+14;
@@ -217,26 +278,22 @@ const dpr = window.devicePixelRatio || 1;
     ctx.fillStyle=C.dim; ctx.textAlign='right';
     ctx.fillText(timeStr(),W-6,TOP_H/2);
 
-    // ── 채팅방 제목 ──
     ctx.fillStyle='rgba(0,120,40,0.95)'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
     ctx.fillStyle=C.cyan; ctx.font=`bold ${EN_FS}px monospace`;
     ctx.textBaseline='middle'; ctx.textAlign='left';
     ctx.fillText('<MEASURE.DB>  데이터베이스 검색 채팅방',6,TOP_H+HDR_H/2);
 
-    // ── 우측 패널 제목 ──
-    ctx.fillStyle='rgba(0,140,50,0.95)'; ctx.fillRect(SPLIT_X,TOP_H,PANEL_W,HDR_H);
+    ctx.fillStyle='rgba(0,140,50,0.95)'; ctx.fillRect(SPLIT_X,TOP_H,W-SPLIT_X,HDR_H);
     ctx.fillStyle=C.yellow; ctx.font=`bold ${KR_FS}px monospace`;
     ctx.textBaseline='middle';
     ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
 
-    // ── 구분선 ──
     ctx.strokeStyle=C.divider; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,TOP_H+HDR_H); ctx.lineTo(W,TOP_H+HDR_H); ctx.stroke();
 
-    // ── 우측 참여자 ──
     ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
-    USERS.forEach((u,i)=>{
+    USERS.forEach((u,i) => {
       ctx.fillStyle=i===0?C.cyan:C.dim;
       ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));
     });
@@ -247,58 +304,44 @@ const dpr = window.devicePixelRatio || 1;
     ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);
     ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
 
-    // ── 상태 업데이트 ──
     phaseT++;
     const mi=Math.min(revealed,MSGS.length-1);
-    if(phase==='pause'){
-      if(phaseT>=55){ phase='wait'; phaseT=0; }
-    } else if(phase==='wait'){
-      if(phaseT>=MSGS[mi].wait){ phase='typing'; phaseT=0; dotCount=0; dotT=0; }
-    } else if(phase==='typing'){
-      dotT++; if(dotT%7===0) dotCount=(dotCount+1)%4;
-      if(phaseT>=MSGS[mi].typing){
-        if(revealed<MSGS.length) revealed++;
+    if (phase==='pause') { if (phaseT>=55) { phase='wait'; phaseT=0; } }
+    else if (phase==='wait') { if (phaseT>=MSGS[mi].wait) { phase='typing'; phaseT=0; dotCount=0; dotT=0; } }
+    else if (phase==='typing') {
+      dotT++; if (dotT%7===0) dotCount=(dotCount+1)%4;
+      if (phaseT>=MSGS[mi].typing) {
+        if (revealed<MSGS.length) revealed++;
         phase=revealed>=MSGS.length?'done':'wait'; phaseT=0;
       }
     } else {
       doneT++;
-      if(doneT>220){ revealed=0; phase='intro'; phaseT=0; doneT=0; }
+      if (doneT>220) { revealed=0; phase='intro'; phaseT=0; doneT=0; }
     }
     const showTyping=phase==='typing'&&revealed<MSGS.length;
 
-    // ── 채팅 렌더링 (클립: 패널 침범 방지) ──
-    const CTOP  = TOP_H+HDR_H+4;
-    const CAVAIL= H-BOT_H-CTOP;
-    const vis   = MSG_DATA.slice(0,revealed);
-
-    // 총 높이 계산 → 스크롤 기준점
-    const typH  = showTyping ? EN_ROW+MSG_GAP : 0;
-    const totalH= vis.reduce((s,m)=>s+msgH(m),0)+typH;
-    let curY    = totalH>CAVAIL ? CTOP+CAVAIL-totalH : CTOP;
+    const CTOP=TOP_H+HDR_H+4, CAVAIL=H-BOT_H-CTOP;
+    const vis=MSG_DATA.slice(0,revealed);
+    const typH=showTyping?EN_ROW+MSG_GAP:0;
+    const totalH=vis.reduce((s,m)=>s+msgH(m),0)+typH;
+    let curY=totalH>CAVAIL?CTOP+CAVAIL-totalH:CTOP;
 
     ctx.save();
     ctx.beginPath(); ctx.rect(0,CTOP,SPLIT_X,CAVAIL); ctx.clip();
     ctx.textBaseline='top'; ctx.textAlign='left';
-
-    vis.forEach(msg=>{
+    vis.forEach(msg => {
       const lh=msgH(msg);
-      if(curY+lh>CTOP && curY<CTOP+CAVAIL){
-        // 발신자
+      if (curY+lh>CTOP && curY<CTOP+CAVAIL) {
         ctx.font=`bold ${EN_FS}px monospace`;
         ctx.fillStyle=msg.sys?C.green:C.yellow;
         ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);
-        // 영문 (줄바꿈)
         ctx.font=`${EN_FS}px monospace`;
         ctx.fillStyle=msg.sys?C.green:C.white;
-        msg.enLines.forEach((line,li)=>{
-          ctx.fillText(line,EN_X,curY+li*EN_ROW);
-        });
+        msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
       }
       curY+=lh;
     });
-
-    // 타이핑 인디케이터
-    if(showTyping && curY<CTOP+CAVAIL){
+    if (showTyping && curY<CTOP+CAVAIL) {
       ctx.font=`bold ${EN_FS}px monospace`; ctx.fillStyle=C.yellow;
       ctx.fillText('MEASURE :',USER_X,curY);
       ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(180,255,80,0.5)';
@@ -306,23 +349,16 @@ const dpr = window.devicePixelRatio || 1;
     }
     ctx.restore();
 
-    // ── 하단 입력바 ──
     ctx.fillStyle=C.botBar; ctx.fillRect(0,H-BOT_H,W,BOT_H);
     ctx.strokeStyle=C.divider; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(0,H-BOT_H); ctx.lineTo(W,H-BOT_H); ctx.stroke();
-
-    // >> 커서
     ctx.font=`bold ${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
     ctx.fillStyle=C.yellow; ctx.fillText('>>',6,H-BOT_H/2);
-    if(Math.floor(tick/15)%2===0){
-      ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1);
-    }
-
-    // >> 옆 한글 번역 (현재 메시지와 동기화) / 메시지 없을 때 우측 도움말
-    if(revealed>0){
-      ctx.font=`bold 11px monospace`; ctx.textBaseline='middle';
+    if (Math.floor(tick/15)%2===0) { ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1); }
+    if (revealed>0) {
+      ctx.font='bold 11px monospace'; ctx.textBaseline='middle';
       ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;
-      ctx.fillText(MSGS[Math.max(0,revealed-1)].kr, 42, H-BOT_H/2);
+      ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,42,H-BOT_H/2);
     } else {
       ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;
       ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
@@ -330,12 +366,9 @@ const dpr = window.devicePixelRatio || 1;
 
     tick++;
   }
+
   setInterval(draw, 42);
-})();
-
-
-
-}, 500);
+}, 300);
 </script>
 </body>
 </html>
