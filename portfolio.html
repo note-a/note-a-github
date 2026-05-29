@@ -274,7 +274,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   background: rgba(0, 0, 0, 0.75);
   box-shadow: 0 0 10px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.35), 0 0 60px rgba(0,255,0,0.15),
               inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5),
-              4px 0 8px rgba(0,255,0,0.2);
+              3px 0 6px rgba(0,255,0,0.1);
   position: relative;
 }
 
@@ -2464,7 +2464,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const displayText = mdText || '<span style="opacity:0.5">[어드민에서 내용을 입력하세요]</span>';
           const hasStatement = !!(content.artistStatement);
           const statementBtnHTML = hasStatement
-            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Press Start 2P', monospace;font-size:6px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
+            ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Press Start 2P', monospace;font-size:9px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
             : '';
           let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;"><div class="md-content" id="contentText" style="flex:1;overflow-y:auto;${hasStatement ? 'padding-bottom:48px;' : ''}">${displayText}</div>${statementBtnHTML}</div>`;
           terminalContent.innerHTML = textHTML;
