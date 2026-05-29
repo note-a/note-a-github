@@ -62,6 +62,13 @@ window.addEventListener('message', e => {
     _photos = e.data.photos;
   }
 });
+// 부모에게 준비됐다고 알림 (로드 직후 + 약간 딜레이 후 재시도)
+function notifyReady() {
+  try { window.parent.postMessage({ type: 'measureReady' }, '*'); } catch(e) {}
+}
+notifyReady();
+setTimeout(notifyReady, 800);
+setTimeout(notifyReady, 2000);
 
 function flattenPhotos(data) {
   const results = [];
@@ -149,6 +156,12 @@ function performSearch() {
   const query = document.getElementById('searchInput').value.toLowerCase().trim();
   const gallery = document.getElementById('photoGallery');
   if (!query) { gallery.innerHTML = ''; return; }
+
+  if (_photos.length === 0) {
+    gallery.innerHTML = '<div class="no-results">데이터 로딩 중... 잠시 후 다시 시도해주세요.</div>';
+    notifyReady(); // 부모에게 데이터 재요청
+    return;
+  }
 
   const filtered = _photos.filter(p =>
     (p.dir || '').toLowerCase().includes(query) ||

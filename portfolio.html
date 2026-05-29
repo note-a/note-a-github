@@ -2279,14 +2279,19 @@ REQUIRE LOGIN: No (Public access enabled)
           terminalContent.innerHTML = `
             <iframe id="measureIframe" src="measure-combined.html" style="display:block;width:calc(100% + 40px);height:calc(100% + 24px);margin:-12px -20px;border:none;"></iframe>
           `;
-          // iframe 로드 후 사진 데이터 전달
-          const mf = document.getElementById('measureIframe');
-          mf.addEventListener('load', () => {
+          // iframe이 ready 신호 보내면 즉시 데이터 전달
+          function sendToMeasure() {
+            const mf = document.getElementById('measureIframe');
             const photos = window._measurePhotos || [];
-            if (photos.length > 0) {
+            if (mf && mf.contentWindow && photos.length > 0) {
               mf.contentWindow.postMessage({ type: 'measurePhotos', photos }, '*');
             }
+          }
+          window.addEventListener('message', function onMeasureReady(e) {
+            if (e.data && e.data.type === 'measureReady') sendToMeasure();
           });
+          // load 이벤트로도 한 번 더 시도
+          document.getElementById('measureIframe').addEventListener('load', sendToMeasure);
         } else if (content.isContactSheet) {
           // 풀스크린 오버레이로 열기
           openContactSheetOverlay(content);
