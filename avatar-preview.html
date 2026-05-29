@@ -38,7 +38,7 @@
 <h1>▶ AVATAR STYLE PREVIEW</h1>
 
 <div class="grid">
-  <div class="cell"><div class="tag">① PIXEL ART</div><div class="name">8-BIT BUST</div><canvas id="c1" width="220" height="140"></canvas></div>
+  <div class="cell"><div class="tag">① PIXEL ART</div><div class="name">개밤티</div><canvas id="c1" width="220" height="140"></canvas></div>
   <div class="cell"><div class="tag">② LOW-POLY</div><div class="name">GEO BUST</div><canvas id="c2" width="220" height="140"></canvas></div>
   <div class="cell"><div class="tag">③ WIREFRAME</div><div class="name">3D HEAD SCAN</div><canvas id="c3" width="220" height="140"></canvas></div>
   <div class="cell"><div class="tag">④ ASCII</div><div class="name">CHAR RENDER</div><canvas id="c4" width="220" height="140"></canvas></div>
@@ -104,8 +104,8 @@ setTimeout(()=>{
     [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
       ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
     });
-    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
-    ctx.fillText('PIXEL-ID-001',W/2,H-4);
+    ctx.font="bold 9px monospace"; ctx.fillStyle='rgba(0,255,0,0.55)'; ctx.textAlign='center';
+    ctx.fillText('개밤티',W/2,H-4);
     tick++;
   }
   setInterval(draw,50);
