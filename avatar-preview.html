@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avatar Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#000; color:#00ff00;
+      font-family:'Press Start 2P',monospace;
+      padding:36px 24px;
+      display:flex; flex-direction:column; align-items:center; gap:40px;
+    }
+    h1 { font-size:9px; letter-spacing:2px;
+      text-shadow:1px 0.5px rgba(255,0,0,0.4),-1px -0.5px rgba(0,255,255,0.35); }
+    .grid {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:24px;
+      width:100%; max-width:960px;
+    }
+    .cell { display:flex; flex-direction:column; gap:8px; align-items:center; }
+    .tag  { font-size:5.5px; color:rgba(0,255,0,0.35); letter-spacing:1px; }
+    .name { font-size:7px; color:#00ff00; }
+    canvas {
+      display:block;
+      border-top:2px solid #80ff80;
+      border-left:2px solid #80ff80;
+      border-bottom:2px solid #003300;
+      border-right:2px solid #003300;
+      box-shadow:0 0 10px rgba(0,255,0,0.5),0 0 28px rgba(0,255,0,0.15);
+    }
+  </style>
+</head>
+<body>
+<h1>▶ AVATAR STYLE PREVIEW</h1>
+
+<div class="grid">
+
+  <div class="cell">
+    <div class="tag">① PIXEL ART</div>
+    <div class="name">8-BIT FACE</div>
+    <canvas id="c1" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">② LOW-POLY</div>
+    <div class="name">GEOMETRIC FACE</div>
+    <canvas id="c2" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">③ WIREFRAME</div>
+    <div class="name">3D HEAD SCAN</div>
+    <canvas id="c3" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">④ ASCII</div>
+    <div class="name">CHAR RENDER</div>
+    <canvas id="c4" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">⑤ GLITCH</div>
+    <div class="name">CORRUPTED ID</div>
+    <canvas id="c5" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">⑥ SILHOUETTE</div>
+    <div class="name">SHADOW PROFILE</div>
+    <canvas id="c6" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">⑦ MATRIX</div>
+    <div class="name">DATA STREAM</div>
+    <canvas id="c7" width="180" height="200"></canvas>
+  </div>
+
+  <div class="cell">
+    <div class="tag">⑧ HOLOGRAM</div>
+    <div class="name">HOLO BUST</div>
+    <canvas id="c8" width="180" height="200"></canvas>
+  </div>
+
+</div>
+
+<script>
+setTimeout(() => {
+
+// ════════════════════════════════════
+// ① 픽셀 아트 (8비트 얼굴)
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c1');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+
+  // 16x18 픽셀 맵 (0=배경 1=피부 2=눈 3=머리카락 4=입 5=하이라이트)
+  const MAP=[
+    '0000011111100000',
+    '0000111111110000',
+    '0001111111111000',
+    '0011133113331100',
+    '0011133113331100',
+    '0011111111111100',
+    '0011114444111100',
+    '0011111441111100',
+    '0001111111111000',
+    '0000011111100000',
+    '0000111111110000',
+    '0001100000011000',
+    '0011000000001100',
+    '0011000000001100',
+    '0001100000011000',
+    '0000111111110000',
+    '0000011111100000',
+    '0000001111000000',
+  ];
+
+  const COLOR={
+    '0':'transparent',
+    '1':'#004400',
+    '2':'#000000',
+    '3':'#001a00',
+    '4':'#00ff44',
+    '5':'#80ff80',
+  };
+
+  const PS=10;
+  const offX=Math.floor((W-16*PS)/2);
+  const offY=Math.floor((H-18*PS)/2);
+
+  function draw(){
+    ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+
+    // 노이즈 배경
+    for(let i=0;i<30;i++){
+      ctx.fillStyle=`rgba(0,80,0,${Math.random()*0.06})`;
+      ctx.fillRect(Math.random()*W,Math.random()*H,2,1);
+    }
+
+    // 픽셀 그리기
+    MAP.forEach((row,ry)=>{
+      [...row].forEach((cell,rx)=>{
+        if(cell==='0') return;
+        const flicker=(cell==='1'||cell==='5')&&Math.random()>0.97;
+        let col=COLOR[cell];
+        if(flicker) col='#80ff80';
+        ctx.fillStyle=col;
+        ctx.fillRect(offX+rx*PS, offY+ry*PS, PS-1, PS-1);
+      });
+    });
+
+    // 스캔라인
+    const sy=(tick*1.5)%(H+10)-5;
+    const sg=ctx.createLinearGradient(0,sy-6,0,sy+6);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,0.15)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,sy-6,W,12);
+
+    // CRT 스캔
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    // 모서리 브라켓
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    // ID 텍스트
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('PIXEL-ID-001',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,50);
+})();
+
+
+// ════════════════════════════════════
+// ② 로우폴리 기하학 얼굴
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c2');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+
+  const cx=W/2, cy=H/2-10;
+
+  // 얼굴 폴리곤 정의 (삼각형 메쉬)
+  const tris=[
+    // 얼굴 윤곽 (좌표, 밝기)
+    {pts:[[cx,cy-70],[cx-45,cy-20],[cx,cy-30]], shade:0.6},
+    {pts:[[cx,cy-70],[cx+45,cy-20],[cx,cy-30]], shade:0.7},
+    {pts:[[cx-45,cy-20],[cx-50,cy+30],[cx,cy+10]], shade:0.5},
+    {pts:[[cx+45,cy-20],[cx+50,cy+30],[cx,cy+10]], shade:0.6},
+    {pts:[[cx-50,cy+30],[cx,cy+60],[cx,cy+10]], shade:0.45},
+    {pts:[[cx+50,cy+30],[cx,cy+60],[cx,cy+10]], shade:0.55},
+    {pts:[[cx-45,cy-20],[cx,cy-30],[cx,cy+10]], shade:0.4},
+    {pts:[[cx+45,cy-20],[cx,cy-30],[cx,cy+10]], shade:0.5},
+    // 눈
+    {pts:[[cx-28,cy-18],[cx-18,cy-22],[cx-22,cy-10]], shade:0.15, isEye:true},
+    {pts:[[cx+28,cy-18],[cx+18,cy-22],[cx+22,cy-10]], shade:0.15, isEye:true},
+    // 코
+    {pts:[[cx-6,cy+5],[cx+6,cy+5],[cx,cy+18]], shade:0.35},
+    // 입
+    {pts:[[cx-18,cy+32],[cx+18,cy+32],[cx,cy+42]], shade:0.8, isMouth:true},
+    // 이마
+    {pts:[[cx-45,cy-20],[cx,cy-70],[cx-20,cy-50]], shade:0.3},
+    {pts:[[cx+45,cy-20],[cx,cy-70],[cx+20,cy-50]], shade:0.4},
+  ];
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    // 노이즈
+    for(let i=0;i<20;i++){
+      ctx.fillStyle=`rgba(0,60,0,${Math.random()*0.05})`;
+      ctx.fillRect(Math.random()*W,Math.random()*H,2,1);
+    }
+
+    const pulse=0.85+Math.sin(tick*0.04)*0.15;
+
+    tris.forEach(tri=>{
+      ctx.beginPath();
+      ctx.moveTo(tri.pts[0][0],tri.pts[0][1]);
+      ctx.lineTo(tri.pts[1][0],tri.pts[1][1]);
+      ctx.lineTo(tri.pts[2][0],tri.pts[2][1]);
+      ctx.closePath();
+      const shade=tri.shade*pulse;
+      if(tri.isEye) ctx.fillStyle=`rgba(0,${Math.floor(shade*60)},0,0.95)`;
+      else if(tri.isMouth) ctx.fillStyle=`rgba(0,${Math.floor(255*shade)},${Math.floor(40*shade)},0.9)`;
+      else ctx.fillStyle=`rgba(0,${Math.floor(180*shade)},0,0.85)`;
+      ctx.fill();
+      ctx.strokeStyle='rgba(0,255,0,0.3)'; ctx.lineWidth=0.8;
+      ctx.stroke();
+    });
+
+    // 눈 글로우
+    [[cx-23,cy-16],[cx+23,cy-16]].forEach(([ex,ey])=>{
+      ctx.save();
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=8+Math.sin(tick*0.05)*4;
+      ctx.fillStyle='rgba(0,255,100,0.9)';
+      ctx.beginPath(); ctx.arc(ex,ey,4,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    // 브라켓
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('POLY-ID-002',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+
+// ════════════════════════════════════
+// ③ 와이어프레임 3D 두상
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c3');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+  const cx=W/2,cy=H/2;
+
+  // 구 형태 와이어프레임
+  const RINGS=8, SEGS=12;
+  function getSphere(rx,ry,rz){
+    const pts=[];
+    for(let i=0;i<=RINGS;i++){
+      const phi=(i/RINGS)*Math.PI;
+      for(let j=0;j<SEGS;j++){
+        const theta=(j/SEGS)*Math.PI*2;
+        // 타원형 (두상 비율)
+        let x=Math.sin(phi)*Math.cos(theta)*55;
+        let y=-Math.cos(phi)*72+10;
+        let z=Math.sin(phi)*Math.sin(theta)*50;
+
+        // Y축 회전
+        const nx=x*Math.cos(ry)+z*Math.sin(ry);
+        const nz=-x*Math.sin(ry)+z*Math.cos(ry);
+        x=nx; z=nz;
+        // X축 회전
+        const ny2=y*Math.cos(rx)-z*Math.sin(rx);
+        const nz2=y*Math.sin(rx)+z*Math.cos(rx);
+        y=ny2; z=nz2;
+
+        const fov=280/(z+200);
+        pts.push([x*fov+cx, y*fov+cy, z]);
+      }
+    }
+    return pts;
+  }
+
+  const off=document.createElement('canvas');
+  off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+  function draw(){
+    octx.fillStyle='rgba(0,0,0,0.2)'; octx.fillRect(0,0,W,H);
+
+    const ry=tick*0.015;
+    const rx=Math.sin(tick*0.007)*0.3;
+    const pts=getSphere(rx,ry,0);
+
+    // 가로선 (위도)
+    for(let i=0;i<=RINGS;i++){
+      octx.beginPath();
+      const startAlpha=Math.max(0.1,Math.min(0.7,(pts[i*SEGS][2]+100)/200));
+      for(let j=0;j<SEGS;j++){
+        const p=pts[i*SEGS+j];
+        const np=pts[i*SEGS+(j+1)%SEGS];
+        const a=Math.max(0.08,(p[2]+100)/200*0.7);
+        octx.strokeStyle=`rgba(0,255,80,${a})`;
+        octx.lineWidth=1.5;
+        octx.beginPath();
+        octx.moveTo(p[0],p[1]); octx.lineTo(np[0],np[1]);
+        octx.stroke();
+      }
+    }
+
+    // 세로선 (경도)
+    for(let j=0;j<SEGS;j++){
+      for(let i=0;i<RINGS;i++){
+        const p=pts[i*SEGS+j];
+        const np=pts[(i+1)*SEGS+j];
+        const a=Math.max(0.08,(p[2]+100)/200*0.7);
+        octx.strokeStyle=`rgba(0,255,80,${a})`;
+        octx.lineWidth=1.5;
+        octx.beginPath();
+        octx.moveTo(p[0],p[1]); octx.lineTo(np[0],np[1]);
+        octx.stroke();
+      }
+    }
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+
+    // 스캔 효과
+    const scanY=(tick*2)%(H+20)-10;
+    const sg=ctx.createLinearGradient(0,scanY-8,0,scanY+8);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,0.12)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,scanY-8,W,16);
+
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('WIRE-ID-003',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ════════════════════════════════════
+// ④ ASCII 아바타
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c4');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+
+  const FACE=[
+    '    .-------.    ',
+    '   /  o   o  \\   ',
+    '  | .-------. |  ',
+    '  | |  ===  | |  ',
+    '  | |  ===  | |  ',
+    '  | `-------` |  ',
+    '  |    ___    |  ',
+    '  |   /   \\   |  ',
+    '  |  | \\_/ |  |  ',
+    '  |   \\___/   |  ',
+    '   \\  .   .  /   ',
+    '    `-------`    ',
+    '        |        ',
+    '    .---+---.    ',
+    '    |       |    ',
+    '    |  SET  |    ',
+    '    |       |    ',
+    '    `-------`    ',
+  ];
+
+  // 글리치 문자
+  const GLITCH='!@#$%^&*<>[]{}|?/\\~`';
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    const FS=9, LH=10;
+    const startY=Math.floor((H-FACE.length*LH)/2)+LH;
+    ctx.font=`${FS}px 'Press Start 2P',monospace`;
+    ctx.textAlign='center';
+
+    FACE.forEach((line,i)=>{
+      const y=startY+i*LH;
+      [...line].forEach((ch,j)=>{
+        const x=(W/2-line.length*5.4/2)+j*5.4+2.7;
+        // 랜덤 글리치
+        const isGlitch=Math.random()>0.995;
+        const dispCh=isGlitch&&ch!==' '?GLITCH[Math.floor(Math.random()*GLITCH.length)]:ch;
+        // 깊이감
+        const dist=Math.abs(j-line.length/2);
+        const alpha=Math.max(0.3,1-dist*0.04);
+        if(ch===' '){return;}
+        if(ch==='o'||ch==='='){ // 눈/강조
+          ctx.save();
+          ctx.shadowColor='#00ff00'; ctx.shadowBlur=8;
+          ctx.fillStyle=`rgba(0,255,80,${alpha})`;
+          ctx.fillText(dispCh,x,y);
+          ctx.restore();
+        } else {
+          ctx.fillStyle=`rgba(0,${Math.floor(180+Math.random()*40)},0,${alpha*0.85})`;
+          ctx.fillText(dispCh,x,y);
+        }
+      });
+    });
+
+    // 스캔라인
+    const scanY=(tick*1.2)%(H+10)-5;
+    const sg=ctx.createLinearGradient(0,scanY-5,0,scanY+5);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,0.2)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,scanY-5,W,10);
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillText('ASCII-ID-004',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,60);
+})();
+
+
+// ════════════════════════════════════
+// ⑤ 글리치 아바타
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c5');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+
+  // 픽셀 맵 (① 기반)
+  const MAP=[
+    '0000011111100000',
+    '0000111111110000',
+    '0001111111111000',
+    '0011133113331100',
+    '0011133113331100',
+    '0011111111111100',
+    '0011114444111100',
+    '0011111441111100',
+    '0001111111111000',
+    '0000011111100000',
+    '0000111111110000',
+    '0001100000011000',
+    '0011000000001100',
+    '0011000000001100',
+    '0001100000011000',
+    '0000111111110000',
+    '0000011111100000',
+    '0000001111000000',
+  ];
+  const COLOR={'1':'#005500','3':'#002a00','4':'#00ff44','5':'#80ff80'};
+  const PS=9;
+  const offX=Math.floor((W-16*PS)/2);
+  const offY=Math.floor((H-18*PS)/2);
+
+  // 오프스크린 정상 버퍼
+  const base=document.createElement('canvas');
+  base.width=W; base.height=H;
+  const bctx=base.getContext('2d');
+  bctx.fillStyle='#000'; bctx.fillRect(0,0,W,H);
+  MAP.forEach((row,ry)=>{
+    [...row].forEach((cell,rx)=>{
+      if(cell==='0') return;
+      bctx.fillStyle=COLOR[cell]||'#003300';
+      bctx.fillRect(offX+rx*PS, offY+ry*PS, PS-1, PS-1);
+    });
+  });
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(base,0,0);
+
+    // 글리치 슬라이스
+    const numSlices=Math.random()>0.7?Math.floor(Math.random()*6)+2:0;
+    for(let i=0;i<numSlices;i++){
+      const sy=Math.random()*H;
+      const sh=2+Math.random()*12;
+      const dx=(Math.random()-0.5)*30;
+      const imgD=ctx.getImageData(0,sy,W,sh);
+      ctx.putImageData(imgD,dx,sy);
+      // 색수차
+      const caDx=Math.random()*6-3;
+      ctx.save();
+      ctx.globalAlpha=0.5;
+      ctx.globalCompositeOperation='screen';
+      ctx.drawImage(base,caDx,0);
+      ctx.restore();
+    }
+
+    // RGB 색수차 상시
+    if(Math.sin(tick*0.1)>0.7){
+      ctx.save();
+      ctx.globalAlpha=0.15;
+      ctx.globalCompositeOperation='screen';
+      ctx.fillStyle='#ff0000';
+      ctx.drawImage(base,-2,0);
+      ctx.fillStyle='#0000ff';
+      ctx.drawImage(base,2,0);
+      ctx.restore();
+    }
+
+    // 수평 노이즈 줄
+    if(Math.random()>0.85){
+      const ny=Math.random()*H;
+      ctx.fillStyle=`rgba(0,${Math.floor(Math.random()*255)},0,0.3)`;
+      ctx.fillRect(0,ny,W,1+Math.random()*2);
+    }
+
+    // 블록 노이즈
+    if(Math.random()>0.9){
+      for(let b=0;b<3;b++){
+        const bx=Math.random()*W, by=Math.random()*H;
+        const bw=10+Math.random()*40, bh=2+Math.random()*8;
+        const imgD=ctx.getImageData(bx,by,bw,bh);
+        ctx.putImageData(imgD,bx+(Math.random()-0.5)*20,by);
+      }
+    }
+
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('ERR-ID-005',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+
+// ════════════════════════════════════
+// ⑥ 실루엣 + 파티클
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c6');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+  const cx=W/2;
+
+  // 파티클
+  const NP=80;
+  const particles=Array.from({length:NP},()=>({
+    r:40+Math.random()*50,
+    a:Math.random()*Math.PI*2,
+    spd:(Math.random()-0.5)*0.015,
+    size:1+Math.random()*2,
+    life:Math.random(),
+  }));
+
+  function drawSilhouette(pulse){
+    const cy=H*0.44;
+    const s=pulse;
+    ctx.save();
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=20*pulse;
+
+    // 몸통
+    ctx.fillStyle='rgba(0,80,0,0.9)';
+    ctx.beginPath();
+    ctx.ellipse(cx,cy+90*s,28*s,45*s,0,0,Math.PI*2);
+    ctx.fill();
+
+    // 어깨
+    ctx.beginPath();
+    ctx.ellipse(cx-32*s,cy+62*s,16*s,18*s,-0.3,0,Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(cx+32*s,cy+62*s,16*s,18*s,0.3,0,Math.PI*2);
+    ctx.fill();
+
+    // 목
+    ctx.beginPath();
+    ctx.ellipse(cx,cy+30*s,10*s,15*s,0,0,Math.PI*2);
+    ctx.fill();
+
+    // 머리
+    ctx.fillStyle='rgba(0,100,0,0.95)';
+    ctx.beginPath();
+    ctx.ellipse(cx,cy-10*s,36*s,44*s,0,0,Math.PI*2);
+    ctx.fill();
+
+    // 눈 (글로우)
+    ctx.shadowBlur=12;
+    ctx.fillStyle='rgba(0,255,80,0.9)';
+    ctx.beginPath(); ctx.ellipse(cx-14*s,cy-12*s,5*s,4*s,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx+14*s,cy-12*s,5*s,4*s,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // 테두리 글로우
+    ctx.save();
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=15;
+    ctx.strokeStyle='rgba(0,255,0,0.5)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy-10*s,36*s,44*s,0,0,Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,W,H);
+
+    const pulse=0.9+Math.sin(tick*0.03)*0.1;
+
+    // 파티클
+    particles.forEach(p=>{
+      p.a+=p.spd;
+      p.life=(p.life+0.008)%1;
+      const px=cx+Math.cos(p.a)*p.r;
+      const py=H*0.42+Math.sin(p.a)*p.r*0.6;
+      const alpha=Math.sin(p.life*Math.PI)*0.8;
+      ctx.save();
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=4;
+      ctx.fillStyle=`rgba(0,255,80,${alpha})`;
+      ctx.beginPath(); ctx.arc(px,py,p.size,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    });
+
+    // 연결선
+    ctx.strokeStyle='rgba(0,255,0,0.06)'; ctx.lineWidth=0.5;
+    particles.slice(0,20).forEach((p,i)=>{
+      const px=cx+Math.cos(p.a)*p.r;
+      const py=H*0.42+Math.sin(p.a)*p.r*0.6;
+      ctx.beginPath(); ctx.moveTo(cx,H*0.42); ctx.lineTo(px,py); ctx.stroke();
+    });
+
+    drawSilhouette(pulse);
+
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('SHDW-ID-006',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+
+// ════════════════════════════════════
+// ⑦ 매트릭스 데이터 스트림 아바타
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c7');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+
+  const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&';
+  const CS=8, COLS=Math.floor(W/CS), ROWS=Math.floor(H/CS);
+
+  // 실루엣 마스크 (0=배경 1=얼굴)
+  function inFace(col,row){
+    const x=(col/COLS-0.5)*2;
+    const y=(row/ROWS-0.5)*2;
+    // 머리 타원
+    if(x*x/(0.62*0.62)+((y+0.1)*(y+0.1))/(0.82*0.82)<1) return 'face';
+    // 몸통
+    if(Math.abs(x)<0.3 && y>0.5 && y<1.0) return 'body';
+    // 어깨
+    if(Math.abs(x)<0.55 && y>0.65 && y<0.85) return 'body';
+    return null;
+  }
+
+  // 각 셀 상태
+  const cells=Array.from({length:ROWS},(_,r)=>
+    Array.from({length:COLS},(_,c2)=>({
+      ch:CHARS[Math.floor(Math.random()*CHARS.length)],
+      timer:Math.random()*30,
+      speed:2+Math.floor(Math.random()*4),
+      bright:Math.random(),
+    }))
+  );
+
+  // 스트림 (세로로 흐르는 밝은 줄)
+  const streams=Array.from({length:Math.floor(COLS/2)},()=>({
+    col:Math.floor(Math.random()*COLS),
+    head:Math.random()*ROWS,
+    speed:0.2+Math.random()*0.4,
+    len:5+Math.floor(Math.random()*10),
+  }));
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.3)'; ctx.fillRect(0,0,W,H);
+    ctx.font=`${CS-1}px 'Press Start 2P',monospace`;
+    ctx.textAlign='center'; ctx.textBaseline='top';
+
+    // 스트림 업데이트
+    streams.forEach(s=>{
+      s.head+=s.speed;
+      if(s.head>ROWS+s.len){s.head=0; s.col=Math.floor(Math.random()*COLS);}
+    });
+
+    cells.forEach((row,r)=>{
+      row.forEach((cell,col)=>{
+        cell.timer++;
+        if(cell.timer>=cell.speed){
+          cell.ch=CHARS[Math.floor(Math.random()*CHARS.length)];
+          cell.timer=0;
+        }
+        const zone=inFace(col,r);
+        const x=col*CS+CS/2, y=r*CS;
+
+        // 스트림 영향
+        let streamAlpha=0;
+        streams.forEach(s=>{
+          if(s.col===col){
+            const dist=Math.abs(r-s.head);
+            if(dist<s.len) streamAlpha=Math.max(streamAlpha,1-dist/s.len);
+          }
+        });
+
+        if(zone==='face'){
+          if(streamAlpha>0.5){
+            ctx.fillStyle=`rgba(200,255,200,${streamAlpha})`;
+          } else {
+            ctx.fillStyle=`rgba(0,${150+Math.floor(cell.bright*80)},0,0.9)`;
+          }
+        } else if(zone==='body'){
+          ctx.fillStyle=`rgba(0,${80+Math.floor(cell.bright*60)},0,0.7)`;
+        } else {
+          if(streamAlpha>0.3){
+            ctx.fillStyle=`rgba(0,${Math.floor(streamAlpha*200)},0,${streamAlpha*0.6})`;
+          } else {
+            ctx.fillStyle=`rgba(0,${Math.floor(cell.bright*30)},0,${cell.bright*0.3})`;
+          }
+        }
+        ctx.fillText(cell.ch, x, y);
+      });
+    });
+
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    ctx.fillText('MTRX-ID-007',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,50);
+})();
+
+
+// ════════════════════════════════════
+// ⑧ 홀로그램 버스트
+// ════════════════════════════════════
+(function(){
+  const c=document.getElementById('c8');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+  const cx=W/2,cy=H*0.42;
+
+  const off=document.createElement('canvas');
+  off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+
+  // 홀로그램 링들
+  const RINGS=Array.from({length:6},(_,i)=>({
+    r:20+i*15,
+    speed:(i%2===0?1:-1)*(0.004+i*0.002),
+    a:Math.random()*Math.PI*2,
+    dots:8+i*3,
+  }));
+
+  function draw(){
+    octx.fillStyle='rgba(0,0,0,0.15)'; octx.fillRect(0,0,W,H);
+
+    const pulse=0.85+Math.sin(tick*0.04)*0.15;
+
+    // 홀로그램 링
+    RINGS.forEach((ring,ri)=>{
+      ring.a+=ring.speed;
+      // 링 자체
+      octx.save();
+      octx.strokeStyle=`rgba(0,255,120,${0.1+ri*0.04})`;
+      octx.lineWidth=1;
+      octx.shadowColor='#00ff88'; octx.shadowBlur=4;
+      octx.beginPath(); octx.arc(cx,cy,ring.r*pulse,0,Math.PI*2); octx.stroke();
+      octx.restore();
+
+      // 점
+      for(let d=0;d<ring.dots;d++){
+        const da=(d/ring.dots)*Math.PI*2+ring.a;
+        const px=cx+Math.cos(da)*ring.r*pulse;
+        const py=cy+Math.sin(da)*ring.r*pulse*0.55; // 투영
+        const alpha=0.5+Math.sin(da*3+tick*0.05)*0.4;
+        octx.save();
+        octx.shadowColor='#00ff00'; octx.shadowBlur=8;
+        octx.fillStyle=`rgba(0,255,80,${alpha})`;
+        octx.beginPath(); octx.arc(px,py,1.5,0,Math.PI*2); octx.fill();
+        octx.restore();
+      }
+    });
+
+    // 중앙 얼굴 (간단한 선 드로잉)
+    const s=pulse;
+    octx.save();
+    octx.strokeStyle='rgba(0,255,100,0.85)'; octx.lineWidth=2;
+    octx.shadowColor='#00ff00'; octx.shadowBlur=10;
+    // 얼굴 윤곽
+    octx.beginPath();
+    octx.ellipse(cx,cy,32*s,42*s,0,0,Math.PI*2);
+    octx.stroke();
+    // 눈
+    [[cx-12*s,cy-10*s],[cx+12*s,cy-10*s]].forEach(([ex,ey])=>{
+      octx.beginPath(); octx.ellipse(ex,ey,5*s,4*s,0,0,Math.PI*2); octx.stroke();
+    });
+    // 코
+    octx.beginPath();
+    octx.moveTo(cx,cy-2*s); octx.lineTo(cx-5*s,cy+12*s); octx.lineTo(cx+5*s,cy+12*s);
+    octx.stroke();
+    // 입
+    octx.beginPath();
+    octx.arc(cx,cy+22*s,10*s,0.15,Math.PI-0.15); octx.stroke();
+    octx.restore();
+
+    // 수직 스캔
+    const scanX=(tick*2)%(W+20)-10;
+    octx.save();
+    octx.globalAlpha=0.15;
+    const sg=octx.createLinearGradient(scanX-8,0,scanX+8,0);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,1)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    octx.fillStyle=sg; octx.fillRect(scanX-8,0,16,H);
+    octx.restore();
+
+    // 데이터 포인트들 (얼굴 주변)
+    const N=12;
+    for(let i=0;i<N;i++){
+      const angle=(i/N)*Math.PI*2+tick*0.01;
+      const r=75+Math.sin(tick*0.02+i)*8;
+      const px=cx+Math.cos(angle)*r;
+      const py=cy+Math.sin(angle)*r*0.5;
+      octx.save();
+      octx.shadowColor='#00ff00'; octx.shadowBlur=6;
+      octx.fillStyle='rgba(0,255,80,0.7)';
+      octx.beginPath(); octx.arc(px,py,1.5,0,Math.PI*2); octx.fill();
+      octx.restore();
+      // 연결선 (중심까지)
+      if(i%3===0){
+        octx.strokeStyle='rgba(0,255,0,0.12)'; octx.lineWidth=0.8;
+        octx.beginPath(); octx.moveTo(px,py); octx.lineTo(cx,cy); octx.stroke();
+      }
+    }
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+
+    // 홀로그램 색상 시프트
+    ctx.save();
+    ctx.globalAlpha=0.06;
+    ctx.globalCompositeOperation='screen';
+    ctx.fillStyle='#00ffff';
+    ctx.drawImage(off,-1,0);
+    ctx.fillStyle='#ff00ff';
+    ctx.drawImage(off,1,0);
+    ctx.restore();
+
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.5)'; ctx.textAlign='center';
+    ctx.fillText('HOLO-ID-008',W/2,H-6);
+
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+},600);
+</script>
+</body>
+</html>
