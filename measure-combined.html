@@ -16,45 +16,43 @@
     .subtitle { font-size:5px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
 
     .panel-sim {
-      width:540px;
-      background:#000;
-      border:1px solid #003300;
+      width: 540px;
+      background: #000;
+      border: 1px solid #003300;
     }
     .banner-area {
-      display:flex; flex-direction:column; align-items:center;
-      gap:10px; padding:20px 20px 14px;
-    }
-    .hint-text {
-      font-size:9px; color:#00ff00; text-align:center;
-      letter-spacing:1px; text-shadow:0 0 8px rgba(0,255,0,0.6);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 20px 0;
+      gap: 0;
     }
     .search-sim {
-      display:flex; border-top:1px solid #003300;
-      padding:12px 16px; gap:10px;
+      display: flex; border-top: 1px solid #003300;
+      padding: 12px 16px; gap: 10px;
     }
     .search-sim input {
-      flex:1; background:#000; border:1px solid #004400;
-      color:#00ff00; padding:8px 10px;
-      font-family:'Press Start 2P',monospace; font-size:7px; outline:none;
+      flex: 1; background: #000; border: 1px solid #004400;
+      color: #00ff00; padding: 8px 10px;
+      font-family: 'Press Start 2P', monospace; font-size: 7px; outline: none;
     }
     .search-sim button {
-      background:#003800; border:1px solid #00ff00;
-      color:#00ff00; padding:8px 14px;
-      font-family:'Press Start 2P',monospace; font-size:7px; cursor:pointer;
+      background: #003800; border: 1px solid #00ff00;
+      color: #00ff00; padding: 8px 14px;
+      font-family: 'Press Start 2P', monospace; font-size: 7px; cursor: pointer;
     }
-    /* canvas는 style로 크기 지정 — 실제 픽셀은 DPR 배수 */
-    #c { display:block; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
 
-<h1>▶ SEARCHLIGHT SWEEP</h1>
-<div class="subtitle">MEASURE SECTION BANNER — SEARCHLIGHT CONCEPT</div>
+<h1>▶ SEARCHLIGHT + TERMINAL</h1>
+<div class="subtitle">MEASURE SECTION BANNER PREVIEW</div>
 
 <div class="panel-sim">
   <div class="banner-area">
-    <canvas id="c"></canvas>
-    <div class="hint-text">WHAT ARE YOU LOOKING FOR</div>
+    <!-- 위: 서치라이트 -->
+    <canvas id="cLight"></canvas>
+    <!-- 아래: 터미널 -->
+    <canvas id="cTerm"></canvas>
   </div>
   <div class="search-sim">
     <input placeholder="Search: crash / floating / shadow..." readonly>
@@ -65,168 +63,224 @@
 <script>
 setTimeout(()=>{
 
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
-
-// ── HiDPI 화질 개선 ──
 const dpr = window.devicePixelRatio || 1;
-const LW = 495, LH = 315;           // 논리적 크기 (CSS px)
-c.width  = LW * dpr;
-c.height = LH * dpr;
-c.style.width  = LW + 'px';
-c.style.height = LH + 'px';
-ctx.scale(dpr, dpr);
-const W = LW, H = LH;
 
-let tick = 0;
+// ════════════════════════════════════
+// 위 캔버스 — SEARCHLIGHT SWEEP
+// ════════════════════════════════════
+(function(){
+  const c = document.getElementById('cLight');
+  const ctx = c.getContext('2d');
+  const LW = 495, LH = 240;
+  c.width  = LW * dpr; c.height = LH * dpr;
+  c.style.width = LW+'px'; c.style.height = LH+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=LH;
+  let tick=0;
 
-// ── 이미지 블록 (원래 × 1.5) ──
-const OBJECTS = [
-  { x:90,  y:30,  w:62, h:82,  label:'#031' },
-  { x:172, y:22,  w:55, h:105, label:'#047' },
-  { x:248, y:35,  w:68, h:75,  label:'#023' },
-  { x:332, y:26,  w:50, h:90,  label:'#088' },
-  { x:400, y:30,  w:70, h:66,  label:'#012' },
-  { x:18,  y:140, w:78, h:62,  label:'#055' },
-  { x:120, y:148, w:62, h:57,  label:'#064' },
-  { x:210, y:142, w:70, h:65,  label:'#019' },
-  { x:300, y:145, w:58, h:60,  label:'#033' },
-  { x:382, y:140, w:78, h:62,  label:'#071' },
-];
+  const OBJECTS=[
+    { x:70,  y:22,  w:62, h:72,  label:'#031' },
+    { x:150, y:16,  w:55, h:88,  label:'#047' },
+    { x:220, y:24,  w:68, h:65,  label:'#023' },
+    { x:304, y:18,  w:52, h:80,  label:'#088' },
+    { x:370, y:22,  w:70, h:62,  label:'#012' },
+    { x:18,  y:120, w:75, h:58,  label:'#055' },
+    { x:110, y:115, w:60, h:60,  label:'#064' },
+    { x:192, y:112, w:70, h:64,  label:'#019' },
+    { x:282, y:118, w:58, h:58,  label:'#033' },
+    { x:358, y:114, w:78, h:60,  label:'#071' },
+  ];
 
-// ── 탐조등 ──
-const LX = W / 2;          // 탐조등 원점 X
-const LY = H + 65;         // 탐조등 원점 Y (화면 밖 아래)
-const SPREAD = 0.20;
-
-function getAngle(){ return Math.sin(tick * 0.016) * 0.88; }
-
-function isLit(obj, angle){
-  const bx = obj.x + obj.w/2, by = obj.y + obj.h/2;
-  const dx = bx - LX, dy = by - LY;
-  const oa = Math.atan2(dy, dx) - (-Math.PI/2);
-  return Math.abs(oa - angle) < SPREAD + 0.08;
-}
-
-// ── 오프스크린 트레일 버퍼 ──
-const off = document.createElement('canvas');
-off.width = c.width; off.height = c.height;
-const octx = off.getContext('2d');
-octx.scale(dpr, dpr);
-octx.fillStyle = '#000'; octx.fillRect(0,0,W,H);
-
-function draw(){
-  // 트레일 페이드
-  octx.fillStyle = 'rgba(0,0,0,0.13)'; octx.fillRect(0,0,W,H);
-
-  const angle = getAngle();
-
-  // ── 빔 그라디언트 ──
-  const tipX = LX + Math.sin(angle) * 900;
-  const tipY = LY - Math.cos(angle) * 900;
-  const beamG = octx.createRadialGradient(LX, LY, 0, tipX, tipY, W * 0.85);
-  beamG.addColorStop(0,   'rgba(0,255,80,0.24)');
-  beamG.addColorStop(0.28,'rgba(0,255,60,0.10)');
-  beamG.addColorStop(1,   'rgba(0,0,0,0)');
-  octx.save();
-  octx.beginPath(); octx.moveTo(LX, LY);
-  for(let a = angle - SPREAD; a <= angle + SPREAD; a += 0.008){
-    octx.lineTo(LX + Math.sin(a)*900, LY - Math.cos(a)*900);
+  const LX = W/2, LY = H + 55, SPREAD = 0.20;
+  function getAngle(){ return Math.sin(tick*0.016)*0.88; }
+  function isLit(o, angle){
+    const dx=o.x+o.w/2-LX, dy=o.y+o.h/2-LY;
+    return Math.abs(Math.atan2(dy,dx)-(-Math.PI/2)-angle) < SPREAD+0.08;
   }
-  octx.closePath(); octx.fillStyle = beamG; octx.fill();
-  octx.restore();
 
-  // ── 빔 중심선 (밝은 코어) ──
-  octx.save();
-  octx.shadowColor = '#00ff80'; octx.shadowBlur = 22;
-  octx.strokeStyle = 'rgba(0,255,100,0.18)'; octx.lineWidth = 6;
-  octx.beginPath();
-  octx.moveTo(LX, LY);
-  octx.lineTo(LX + Math.sin(angle)*700, LY - Math.cos(angle)*700);
-  octx.stroke();
-  octx.restore();
+  const off=document.createElement('canvas');
+  off.width=c.width; off.height=c.height;
+  const octx=off.getContext('2d');
+  octx.scale(dpr,dpr);
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
 
-  // ── 이미지 블록 ──
-  OBJECTS.forEach(obj => {
-    const lit = isLit(obj, angle);
-    if(lit){
-      octx.save();
-      octx.shadowColor = '#00ff00'; octx.shadowBlur = 18;
-      octx.strokeStyle = 'rgba(0,255,70,0.92)'; octx.lineWidth = 2;
-      octx.strokeRect(obj.x, obj.y, obj.w, obj.h);
-      octx.fillStyle = 'rgba(0,70,25,0.38)';
-      octx.fillRect(obj.x+1, obj.y+1, obj.w-2, obj.h-2);
-      // 십자 마커
-      const mx = obj.x + obj.w/2, my = obj.y + obj.h/2;
-      octx.strokeStyle = 'rgba(0,255,80,0.6)'; octx.lineWidth = 1;
-      octx.beginPath(); octx.moveTo(mx-8,my); octx.lineTo(mx+8,my); octx.stroke();
-      octx.beginPath(); octx.moveTo(mx,my-8); octx.lineTo(mx,my+8); octx.stroke();
-      // ID 라벨
-      octx.font = "7px 'Press Start 2P',monospace";
-      octx.fillStyle = 'rgba(0,255,80,0.95)'; octx.textAlign = 'center';
-      octx.fillText(obj.label, mx, my + 4);
-      octx.restore();
-    } else {
-      // 어두운 상태
-      octx.strokeStyle = 'rgba(0,40,0,0.55)'; octx.lineWidth = 1;
-      octx.strokeRect(obj.x, obj.y, obj.w, obj.h);
-      // 매우 어두운 라벨
-      octx.font = "5px 'Press Start 2P',monospace";
-      octx.fillStyle = 'rgba(0,60,0,0.5)'; octx.textAlign = 'center';
-      octx.fillText(obj.label, obj.x+obj.w/2, obj.y+obj.h/2+2);
-    }
-  });
+  function draw(){
+    octx.fillStyle='rgba(0,0,0,0.13)'; octx.fillRect(0,0,W,H);
+    const angle=getAngle();
 
-  // ── 탐조등 장치 (하단) ──
-  const headX = LX + Math.sin(angle) * 24;
-  const headY = H - 22;
-  octx.save();
-  octx.shadowColor = '#00ff00'; octx.shadowBlur = 20;
-  // 기둥
-  octx.strokeStyle = 'rgba(0,220,0,0.7)'; octx.lineWidth = 4;
-  octx.beginPath(); octx.moveTo(LX-8,H); octx.lineTo(LX-8,H-18); octx.stroke();
-  octx.beginPath(); octx.moveTo(LX+8,H); octx.lineTo(LX+8,H-18); octx.stroke();
-  // 받침대
-  octx.strokeStyle = 'rgba(0,200,0,0.5)'; octx.lineWidth = 3;
-  octx.beginPath(); octx.moveTo(LX-20,H); octx.lineTo(LX+20,H); octx.stroke();
-  // 회전 머리
-  octx.fillStyle = 'rgba(0,210,70,0.9)';
-  octx.beginPath(); octx.ellipse(headX, headY, 20, 12, angle*0.5, 0, Math.PI*2);
-  octx.fill();
-  // 렌즈
-  octx.shadowBlur = 30;
-  octx.fillStyle = 'rgba(0,255,120,0.85)';
-  octx.beginPath(); octx.ellipse(headX + Math.sin(angle)*6, headY, 7, 5, angle*0.5, 0, Math.PI*2);
-  octx.fill();
-  octx.restore();
+    // 빔
+    const tipX=LX+Math.sin(angle)*800, tipY=LY-Math.cos(angle)*800;
+    const beamG=octx.createRadialGradient(LX,LY,0,tipX,tipY,W*0.9);
+    beamG.addColorStop(0,'rgba(0,255,80,0.22)');
+    beamG.addColorStop(0.28,'rgba(0,255,60,0.09)');
+    beamG.addColorStop(1,'rgba(0,0,0,0)');
+    octx.save();
+    octx.beginPath(); octx.moveTo(LX,LY);
+    for(let a=angle-SPREAD;a<=angle+SPREAD;a+=0.008)
+      octx.lineTo(LX+Math.sin(a)*800, LY-Math.cos(a)*800);
+    octx.closePath(); octx.fillStyle=beamG; octx.fill();
+    octx.restore();
 
-  // ── 메인 캔버스로 합성 ──
-  ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
-  ctx.drawImage(off, 0,0, W,H, 0,0, W,H);
+    // 빔 코어
+    octx.save(); octx.shadowColor='#00ff80'; octx.shadowBlur=20;
+    octx.strokeStyle='rgba(0,255,100,0.16)'; octx.lineWidth=5;
+    octx.beginPath(); octx.moveTo(LX,LY);
+    octx.lineTo(LX+Math.sin(angle)*700, LY-Math.cos(angle)*700);
+    octx.stroke(); octx.restore();
 
-  // ── 상단 HUD ──
-  const litCount = OBJECTS.filter(o => isLit(o, angle)).length;
-  ctx.font = "6px 'Press Start 2P',monospace";
-  ctx.fillStyle = 'rgba(0,255,0,0.32)'; ctx.textAlign = 'left';
-  ctx.fillText(`FOUND: ${litCount} / ${OBJECTS.length}`, 10, 14);
-  ctx.textAlign = 'right';
-  ctx.fillText(`SWEEP ${(angle*57.3).toFixed(1)}°`, W-10, 14);
+    // 블록
+    OBJECTS.forEach(o=>{
+      const lit=isLit(o,angle);
+      if(lit){
+        octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=16;
+        octx.strokeStyle='rgba(0,255,70,0.92)'; octx.lineWidth=2;
+        octx.strokeRect(o.x,o.y,o.w,o.h);
+        octx.fillStyle='rgba(0,70,25,0.35)'; octx.fillRect(o.x+1,o.y+1,o.w-2,o.h-2);
+        const mx=o.x+o.w/2, my=o.y+o.h/2;
+        octx.strokeStyle='rgba(0,255,80,0.55)'; octx.lineWidth=1;
+        octx.beginPath(); octx.moveTo(mx-7,my); octx.lineTo(mx+7,my); octx.stroke();
+        octx.beginPath(); octx.moveTo(mx,my-7); octx.lineTo(mx,my+7); octx.stroke();
+        octx.font="7px 'Press Start 2P',monospace";
+        octx.fillStyle='rgba(0,255,80,0.95)'; octx.textAlign='center';
+        octx.fillText(o.label,mx,my+3); octx.restore();
+      } else {
+        octx.strokeStyle='rgba(0,38,0,0.5)'; octx.lineWidth=1;
+        octx.strokeRect(o.x,o.y,o.w,o.h);
+        octx.font="5px 'Press Start 2P',monospace";
+        octx.fillStyle='rgba(0,55,0,0.45)'; octx.textAlign='center';
+        octx.fillText(o.label,o.x+o.w/2,o.y+o.h/2+2);
+      }
+    });
 
-  // ── CRT 스캔라인 ──
-  ctx.fillStyle = 'rgba(0,0,0,0.08)';
-  for(let y=0; y<H; y+=2) ctx.fillRect(0,y,W,1);
+    // 탐조등 장치
+    const headX=LX+Math.sin(angle)*22, headY=H-20;
+    octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=18;
+    octx.strokeStyle='rgba(0,210,0,0.65)'; octx.lineWidth=4;
+    octx.beginPath(); octx.moveTo(LX-7,H); octx.lineTo(LX-7,H-16); octx.stroke();
+    octx.beginPath(); octx.moveTo(LX+7,H); octx.lineTo(LX+7,H-16); octx.stroke();
+    octx.strokeStyle='rgba(0,180,0,0.5)'; octx.lineWidth=3;
+    octx.beginPath(); octx.moveTo(LX-18,H); octx.lineTo(LX+18,H); octx.stroke();
+    octx.fillStyle='rgba(0,210,70,0.88)';
+    octx.beginPath(); octx.ellipse(headX,headY,18,11,angle*0.5,0,Math.PI*2); octx.fill();
+    octx.shadowBlur=28; octx.fillStyle='rgba(0,255,120,0.85)';
+    octx.beginPath(); octx.ellipse(headX+Math.sin(angle)*5,headY,6,4,angle*0.5,0,Math.PI*2); octx.fill();
+    octx.restore();
 
-  // ── 코너 브라켓 ──
-  const bk = 14;
-  ctx.strokeStyle = 'rgba(0,255,0,0.5)'; ctx.lineWidth = 1.5;
-  [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
-    ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
-  });
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0,W,H,0,0,W,H);
 
-  tick++;
-}
+    // HUD
+    const litN=OBJECTS.filter(o=>isLit(o,angle)).length;
+    ctx.font="6px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.3)'; ctx.textAlign='left';
+    ctx.fillText(`FOUND: ${litN} / ${OBJECTS.length}`,10,13);
+    ctx.textAlign='right';
+    ctx.fillText(`SWEEP ${(angle*57.3).toFixed(1)}°`,W-10,13);
 
-setInterval(draw, 33);
+    // CRT
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+
+    // 브라켓 (위 3개 면만 — 아래는 터미널과 붙어있음)
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    // 왼쪽 위
+    ctx.beginPath(); ctx.moveTo(0,bk); ctx.lineTo(0,0); ctx.lineTo(bk,0); ctx.stroke();
+    // 오른쪽 위
+    ctx.beginPath(); ctx.moveTo(W-bk,0); ctx.lineTo(W,0); ctx.lineTo(W,bk); ctx.stroke();
+    // 왼쪽 아래 (없음 — 터미널과 연결)
+    // 오른쪽 아래 (없음)
+
+    tick++;
+  }
+  setInterval(draw, 33);
+})();
+
+
+// ════════════════════════════════════
+// 아래 캔버스 — TERMINAL PROMPT
+// ════════════════════════════════════
+(function(){
+  const c = document.getElementById('cTerm');
+  const ctx = c.getContext('2d');
+  const LW = 495, LH = 105;
+  c.width  = LW * dpr; c.height = LH * dpr;
+  c.style.width = LW+'px'; c.style.height = LH+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=LH;
+  let tick=0;
+
+  const FS=7, LHt=16;
+  const LINES=[
+    { prefix:'SYS>  ', text:'MEASURE.DB  [2847 FILES READY]', delay:0   },
+    { prefix:'SCAN> ', text:'INDEXING KEYWORDS...',           delay:45  },
+    { prefix:'Q>    ', text:'ENTER KEYWORD TO SEARCH',        delay:100 },
+    { prefix:'TIP>  ', text:'crash / shadow / float / scale', delay:170 },
+    { prefix:'TIP>  ', text:'yellow / border / distance',     delay:240 },
+    { prefix:'_     ', text:'',                               delay:310, isCursor:true },
+  ];
+  let typeState=0;
+  const TOTAL=LINES.reduce((s,l)=>s+l.prefix.length+l.text.length,0);
+
+  function draw(){
+    // 배경
+    ctx.fillStyle='rgba(0,3,0,0.96)'; ctx.fillRect(0,0,W,H);
+
+    // 가로 그리드 (희미)
+    ctx.strokeStyle='rgba(0,30,0,0.4)'; ctx.lineWidth=0.5;
+    for(let y=0;y<H;y+=LHt){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // 타이핑
+    if(typeState < TOTAL+80) typeState += 0.88;
+    else typeState = 0;
+
+    LINES.forEach((line,li)=>{
+      if(typeState < line.delay) return;
+      const y = 14 + li*LHt;
+      if(y > H-4) return;
+      const full = line.prefix + line.text;
+      const typed = Math.min(full.length, Math.floor(typeState - line.delay));
+      const display = full.slice(0, typed);
+
+      ctx.font=`${FS}px 'Press Start 2P',monospace`; ctx.textAlign='left';
+
+      // prefix
+      ctx.fillStyle='rgba(0,180,0,0.55)';
+      ctx.fillText(display.slice(0, line.prefix.length), 12, y);
+      // body
+      ctx.fillStyle = line.isCursor ? 'rgba(0,255,0,0.9)' : 'rgba(0,255,80,0.82)';
+      ctx.fillText(display.slice(line.prefix.length), 12 + line.prefix.length*FS*0.62, y);
+
+      // 타이핑 중 커서
+      if(!line.isCursor && typed < full.length && typed > 0){
+        const cx2 = 12 + Math.min(typed,line.prefix.length)*FS*0.62
+                       + Math.max(0,typed-line.prefix.length)*FS*0.62;
+        if(Math.floor(tick/9)%2===0){ ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(cx2,y-FS+2,4,FS); }
+      }
+      // 마지막 줄 깜빡이는 커서
+      if(line.isCursor && typed>0 && Math.floor(tick/16)%2===0){
+        ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(12,y-FS+2,FS*0.62,FS);
+      }
+    });
+
+    // 왼쪽 세로 포인터 라인
+    ctx.fillStyle='rgba(0,255,0,0.18)'; ctx.fillRect(8,0,1,H);
+
+    // CRT
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+
+    // 브라켓 (아래 3개 면만 — 위는 서치라이트와 붙어있음)
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,H-bk); ctx.lineTo(0,H); ctx.lineTo(bk,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-bk,H); ctx.lineTo(W,H); ctx.lineTo(W,H-bk); ctx.stroke();
+    // 왼쪽, 오른쪽 세로선 전체 연결
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W,H); ctx.stroke();
+
+    tick++;
+  }
+  setInterval(draw, 40);
+})();
 
 }, 500);
 </script>
