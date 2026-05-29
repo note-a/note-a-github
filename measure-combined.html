@@ -10,8 +10,8 @@
     html, body { height:100%; background:#000; color:#00ff00; font-family:'Press Start 2P',monospace; overflow:hidden; }
     body { display:flex; flex-direction:column; }
 
-    #canvasWrap { flex-shrink:0; }
-    #canvasWrap canvas { display:block; width:100%; height:auto; }
+    #canvasWrap { flex:1; overflow:hidden; position:relative; }
+    #canvasWrap canvas { display:block; width:100%; height:100%; }
 
     .search-sim {
       display:flex; border-top:1px solid #00ff00;
@@ -31,9 +31,13 @@
     }
     .search-sim button:hover { background:#006600; }
 
+    /* 결과는 캔버스 위 오버레이 */
     #photoGallery {
-      flex:1; overflow-y:auto; min-height:0;
+      display:none;
+      position:absolute; top:0; left:0; right:0; bottom:0;
+      background:#000; overflow-y:auto; z-index:10;
     }
+    #photoGallery.visible { display:block; }
     .no-results {
       padding:20px; font-size:7px; color:rgba(0,255,0,0.4); text-align:center;
     }
@@ -43,14 +47,13 @@
 
 <div id="canvasWrap">
   <canvas id="measureCanvas"></canvas>
+  <div id="photoGallery"></div>
 </div>
 
 <div class="search-sim">
   <input type="text" id="searchInput" placeholder="Search: crash / floating / shadow...">
   <button id="searchBtn">SEARCH</button>
 </div>
-
-<div id="photoGallery"></div>
 
 <script>
 // ── 사진 데이터 ──────────────────────────────────────────────
@@ -117,6 +120,7 @@ const verdictColor = v => v === 'core' ? '#00ff00' : v === 'support' ? '#88ff88'
 function showResults(filtered) {
   const gallery = document.getElementById('photoGallery');
   if (!gallery) return;
+  gallery.classList.add('visible');
 
   if (filtered.length === 0) {
     gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
@@ -158,8 +162,9 @@ function performSearch() {
   if (!query) { gallery.innerHTML = ''; return; }
 
   if (_photos.length === 0) {
-    gallery.innerHTML = '<div class="no-results">데이터 로딩 중... 잠시 후 다시 시도해주세요.</div>';
-    notifyReady(); // 부모에게 데이터 재요청
+    gallery.classList.add('visible');
+    gallery.innerHTML = '<div class="no-results">데이터 로딩 중...<br>잠시 후 다시 시도해주세요.</div>';
+    notifyReady();
     return;
   }
 
@@ -175,7 +180,10 @@ function performSearch() {
 document.getElementById('searchBtn').addEventListener('click', performSearch);
 document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
 document.getElementById('searchInput').addEventListener('input', e => {
-  if (!e.target.value.trim()) document.getElementById('photoGallery').innerHTML = '';
+  if (!e.target.value.trim()) {
+    const g = document.getElementById('photoGallery');
+    g.innerHTML = ''; g.classList.remove('visible');
+  }
 });
 
 // ── 풀스크린 오버레이 ─────────────────────────────────────────
