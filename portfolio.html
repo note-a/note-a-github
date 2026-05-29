@@ -9,20 +9,20 @@
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Press Start 2P', monospace !important; }
 html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', monospace !important; height: 100%; overflow: hidden;
-  text-shadow: 0.8px 0.4px rgba(255,0,0,0.35), -0.8px -0.4px rgba(0,255,255,0.28); }
+  text-shadow: 0.7px 0.35px rgba(255,0,0,0.30), -0.7px -0.35px rgba(0,255,255,0.24); }
 
 /* 메뉴 아이템 */
 .menu-item, .menu-title, .section-title {
-  text-shadow: 1.2px 0.6px rgba(255,0,0,0.4), -1.2px -0.6px rgba(0,255,255,0.32);
+  text-shadow: 1.0px 0.5px rgba(255,0,0,0.34), -1.0px -0.5px rgba(0,255,255,0.27);
 }
 
 /* 타이틀바 / 상태바 */
 .terminal-titlebar, .terminal-statusbar, .menu-statusbar {
-  text-shadow: 1px 0.5px rgba(255,0,0,0.38), -1px -0.5px rgba(0,255,255,0.3);
+  text-shadow: 0.85px 0.42px rgba(255,0,0,0.32), -0.85px -0.42px rgba(0,255,255,0.25);
 }
 /* 극소 텍스트(6~8px) — 아주 약한 효과 */
 .cs-cell, .folder-label, #csStat1, #csStat2, #csStat3, #csStat4 {
-  text-shadow: 0.5px 0.3px rgba(255,0,0,0.12), -0.5px -0.3px rgba(0,255,255,0.1);
+  text-shadow: 0.5px 0.25px rgba(255,0,0,0.10), -0.5px -0.25px rgba(0,255,255,0.08);
 }
 
 /* ── WARNING POPUP ── */
@@ -1129,7 +1129,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   height: 48px;
   border-bottom: 2px solid #00ff00;
   font-family: 'Press Start 2P', monospace;
-  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  text-shadow: 1.2px 0.6px rgba(255,0,0,0.32), -1.2px -0.6px rgba(0,255,255,0.25);
 }
 
 .mobile-header-left {
@@ -1151,7 +1151,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
   font-family: 'Press Start 2P', monospace;
-  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  text-shadow: 1.2px 0.6px rgba(255,0,0,0.32), -1.2px -0.6px rgba(0,255,255,0.25);
 }
 
 .mobile-header-title {
@@ -1161,7 +1161,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   overflow-wrap: break-word;
   word-break: break-word;
   max-width: 70vw;
-  text-shadow: 1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  text-shadow: 1.2px 0.6px rgba(255,0,0,0.32), -1.2px -0.6px rgba(0,255,255,0.25);
 }
 
 .mobile-terminal {
@@ -1271,7 +1271,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   overflow-wrap: break-word;
   word-break: break-word;
   font-family: 'Press Start 2P', monospace;
-  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
+  text-shadow: 1.2px 0.6px rgba(255,0,0,0.30), -1.2px -0.6px rgba(0,255,255,0.23);
 }
 
 .mobile-menu-item:hover {
@@ -3910,6 +3910,8 @@ REQUIRE LOGIN: No (Public access enabled)
     function displayPhotoGallery(photos, filtered, isSearchResult = false) {
       const gallery = document.getElementById('photoGallery');
 
+      gallery.style.overflow = 'auto';
+
       if (filtered.length === 0) {
         gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
         return;
@@ -4052,8 +4054,7 @@ REQUIRE LOGIN: No (Public access enabled)
         ctx.fillStyle=C2.yellow;ctx.fillText('>>',6,H-BOT_H/2);
         if(Math.floor(tick/15)%2===0){ctx.fillStyle=C2.white;ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1);}
         if(revealed>0){ctx.font='bold 11px monospace';ctx.textBaseline='middle';ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,42,H-BOT_H/2);}
-        ctx.fillStyle=C2.dim;ctx.textAlign='right';ctx.font=`${KR_FS}px monospace`;
-        ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
+        else{ctx.fillStyle=C2.dim;ctx.textAlign='right';ctx.font=`${KR_FS}px monospace`;ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);}
         tick++;
       }
       let lastT=0;
@@ -4075,6 +4076,7 @@ REQUIRE LOGIN: No (Public access enabled)
 
       // Display initial photos with placeholder
       function displayInitialPhotos() {
+        gallery.style.overflow = 'visible';
         gallery.innerHTML = `
           <div style="padding:0;margin:0;width:100%;">
             <canvas id="measureBannerCanvas" style="display:block;width:100%;"></canvas>
@@ -4160,6 +4162,7 @@ REQUIRE LOGIN: No (Public access enabled)
           displayInitialPhotos();
         } else {
           // While typing, show hint message
+          gallery.style.overflow = 'visible';
           gallery.innerHTML = '<div class="no-results">검색하고 엔터를 누르세요</div>';
         }
       });

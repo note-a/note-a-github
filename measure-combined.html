@@ -318,16 +318,15 @@ const dpr = window.devicePixelRatio || 1;
       ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1);
     }
 
-    // >> 옆 한글 번역 (현재 메시지와 동기화)
+    // >> 옆 한글 번역 (현재 메시지와 동기화) / 메시지 없을 때 우측 도움말
     if(revealed>0){
       ctx.font=`bold 11px monospace`; ctx.textBaseline='middle';
       ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;
       ctx.fillText(MSGS[Math.max(0,revealed-1)].kr, 42, H-BOT_H/2);
+    } else {
+      ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;
+      ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
     }
-
-    // 우측 도움말
-    ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;
-    ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
 
     tick++;
   }
