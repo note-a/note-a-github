@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ID Card Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #00ff00;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      gap: 16px;
+      min-height: 100vh;
+    }
+    h1 { font-size: 9px; color: #00ff00; margin-bottom: 24px; letter-spacing: 2px;
+         text-shadow: 1px 0.5px rgba(255,0,0,0.4), -1px -0.5px rgba(0,255,255,0.35); }
+    .row { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+    .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .label { font-size: 6px; color: rgba(0,255,0,0.35); letter-spacing: 1px; }
+
+    /* ── 공통 카드 ── */
+    .card {
+      width: 168px;
+      background: #000;
+      border-top: 2px solid #80ff80;
+      border-left: 2px solid #80ff80;
+      border-bottom: 2px solid #003300;
+      border-right: 2px solid #003300;
+      box-shadow: 0 0 10px rgba(0,255,0,0.55), 0 0 30px rgba(0,255,0,0.2),
+                  inset 0 0 30px rgba(0,255,0,0.03);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 3px,
+        rgba(0,255,0,0.025) 3px, rgba(0,255,0,0.025) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+    .card-titlebar {
+      background: #00ff00;
+      color: #000;
+      font-size: 6px;
+      padding: 4px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .tb-right { display: flex; gap: 4px; align-items: center; }
+    .card-dot { width: 5px; height: 5px; background: #000; border-radius: 50%; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .card-body { padding: 8px 8px 10px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+    /* divider */
+    .div { height: 1px; background: rgba(0,255,0,0.15); margin: 3px 0; }
+
+    /* info row */
+    .irow {
+      display: flex; justify-content: space-between;
+      font-size: 5.5px; color: rgba(0,255,0,0.5);
+      padding: 2px 0;
+      border-bottom: 1px solid rgba(0,255,0,0.07);
+    }
+    .irow .v { color: #00ff00; }
+    .irow .g { color: #00ff88; }
+    .irow .r { color: #ff4444; }
+    .irow .y { color: #ffff00; }
+
+    /* section label */
+    .slabel {
+      font-size: 5px; color: rgba(0,255,0,0.3);
+      letter-spacing: 1px; margin-bottom: 2px;
+    }
+
+    /* status badge */
+    .badge {
+      display: inline-block; font-size: 5px;
+      padding: 2px 5px; border: 1px solid;
+      letter-spacing: 0.5px;
+    }
+    .badge-ok  { color: #00ff88; border-color: #00ff88; background: rgba(0,255,136,0.08); }
+    .badge-warn{ color: #ffff00; border-color: #ffff00; background: rgba(255,255,0,0.08); }
+    .badge-err { color: #ff4444; border-color: #ff4444; background: rgba(255,68,68,0.08); }
+
+    /* progress bar */
+    .pbar-wrap {
+      height: 5px; background: rgba(0,255,0,0.08);
+      border: 1px solid rgba(0,255,0,0.2); margin: 1px 0;
+    }
+    .pbar-fill { height: 100%; }
+
+    /* blinking cursor */
+    .cursor { animation: blink 0.7s step-end infinite; }
+
+    /* scrolling text */
+    @keyframes scrollx { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* bottom strip */
+    .card-footer {
+      background: rgba(0,255,0,0.05);
+      border-top: 1px solid rgba(0,255,0,0.15);
+      padding: 4px 8px;
+      font-size: 5px;
+      color: rgba(0,255,0,0.35);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<h1>▶ VISITOR ID CARD — DESIGN PREVIEW</h1>
+
+<div class="row">
+
+  <!-- ════════════════════════════════════════
+       ① VISITOR BADGE
+  ════════════════════════════════════════ -->
+  <div class="col">
+    <div class="label">① VISITOR BADGE</div>
+    <div class="card">
+      <div class="card-titlebar">
+        <span>[ VISITOR.ID ]</span>
+        <div class="tb-right">
+          <span style="font-size:5px">LVL1</span>
+          <div class="card-dot"></div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- 아바타 -->
+        <canvas id="c1" width="152" height="80" style="width:100%;display:block;border:1px solid rgba(0,255,0,0.2)"></canvas>
+
+        <div class="div"></div>
+
+        <!-- 기본 정보 -->
+        <div class="slabel">── IDENTITY ──────────────</div>
+        <div class="irow"><span>NAME</span><span class="v">UNKNOWN</span></div>
+        <div class="irow"><span>ID</span><span class="v">VIS-2026-###</span></div>
+        <div class="irow"><span>ROLE</span><span class="v">OBSERVER</span></div>
+        <div class="irow"><span>CLEARANCE</span><span class="g">GUEST</span></div>
+
+        <div class="div"></div>
+
+        <!-- 접속 정보 -->
+        <div class="slabel">── ACCESS LOG ────────────</div>
+        <div class="irow"><span>ENTRY</span><span class="v" id="v-entry">--:--:--</span></div>
+        <div class="irow"><span>SESSION</span><span class="y" id="v-sess">00:00:00</span></div>
+        <div class="irow"><span>STATUS</span><span class="g">● ACTIVE</span></div>
+        <div class="irow"><span>DEPT</span><span class="v">WORLD-01</span></div>
+
+        <div class="div"></div>
+
+        <!-- 바코드 -->
+        <div class="slabel">── CODE-128-B ─────────────</div>
+        <canvas id="bc1" width="152" height="24" style="width:100%;display:block"></canvas>
+        <div style="font-size:5px;color:rgba(0,255,0,0.3);text-align:center;margin-top:2px">4E5C · A92D · VIS · 2026</div>
+
+        <div class="div"></div>
+
+        <!-- 홀로그램 스탬프 -->
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="badge badge-ok">● AUTHORIZED</span>
+          <canvas id="holo1" width="28" height="28"></canvas>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <span>NOTE-A · SET PROJECT</span>
+        <span id="v-now">2026.01.01</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       ② NEURAL SCAN
+  ════════════════════════════════════════ -->
+  <div class="col">
+    <div class="label">② NEURAL SCAN</div>
+    <div class="card">
+      <div class="card-titlebar">
+        <span>[ NEURAL.LINK.EXE ]</span>
+        <div class="tb-right">
+          <div class="card-dot" style="animation-delay:0.3s"></div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- 뇌파 멀티채널 -->
+        <div class="slabel">── BRAINWAVE MONITOR ──────</div>
+        <canvas id="c2" width="152" height="70" style="width:100%;display:block;border:1px solid rgba(0,255,0,0.15)"></canvas>
+
+        <div class="div"></div>
+
+        <!-- 스캔 결과 -->
+        <div class="slabel">── SCAN RESULT ────────────</div>
+        <div class="irow"><span>SUBJECT</span><span class="v">VISITOR</span></div>
+        <div class="irow"><span>TYPE</span><span class="v">OBSERVER</span></div>
+        <div class="irow"><span>ANOMALY</span><span class="g">NONE</span></div>
+        <div class="irow"><span>INTEGRITY</span><span class="g">98.7%</span></div>
+
+        <div class="div"></div>
+
+        <!-- 위협 레벨 -->
+        <div class="slabel">── THREAT LEVEL ───────────</div>
+        <div class="irow"><span>AGGRESSION</span><span class="g">LOW</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:12%;background:#00ff88"></div></div>
+        <div class="irow"><span>DECEPTION</span><span class="y">MED</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:38%;background:#ffff00"></div></div>
+        <div class="irow"><span>RESISTANCE</span><span class="g">LOW</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" style="width:8%;background:#00ff88"></div></div>
+
+        <div class="div"></div>
+
+        <!-- 분석 -->
+        <div class="slabel">── ANALYSIS ───────────────</div>
+        <div class="irow"><span>ALPHA</span><span class="v" id="n-alpha">--Hz</span></div>
+        <div class="irow"><span>BETA</span><span class="v" id="n-beta">--Hz</span></div>
+        <div class="irow"><span>GAMMA</span><span class="v" id="n-gamma">--Hz</span></div>
+
+        <div class="div"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="badge badge-ok">SCAN: OK</span>
+          <span class="badge badge-warn">MODE: PASSIVE</span>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <span>NEURO-SYS v2.1</span>
+        <span id="n-tick">SYNC: 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       ③ LOCATION TRACE
+  ════════════════════════════════════════ -->
+  <div class="col">
+    <div class="label">③ LOCATION TRACE</div>
+    <div class="card">
+      <div class="card-titlebar">
+        <span>[ TRACE.EXE ]</span>
+        <div class="tb-right">
+          <span style="font-size:5px;color:#ff6600;animation:blink 0.6s step-end infinite">▶REC</span>
+          <div class="card-dot" style="background:#ff6600;animation-delay:0.6s"></div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- 레이더 -->
+        <div class="slabel">── SIGNAL RADAR ───────────</div>
+        <canvas id="c3" width="152" height="100" style="width:100%;display:block"></canvas>
+
+        <div class="div"></div>
+
+        <!-- 좌표 -->
+        <div class="slabel">── COORDINATES ────────────</div>
+        <div class="irow"><span>LAT</span><span class="v" id="t-lat">37.5665°N</span></div>
+        <div class="irow"><span>LON</span><span class="v" id="t-lon">126.9780°E</span></div>
+        <div class="irow"><span>ALT</span><span class="v">38m</span></div>
+        <div class="irow"><span>SECTOR</span><span class="v">KR-09</span></div>
+
+        <div class="div"></div>
+
+        <!-- 네트워크 -->
+        <div class="slabel">── NETWORK ────────────────</div>
+        <div class="irow"><span>IP</span><span class="v" id="t-ip">...</span></div>
+        <div class="irow"><span>PING</span><span class="v" id="t-ping">--ms</span></div>
+        <div class="irow"><span>PKT LOSS</span><span class="g">0.0%</span></div>
+        <div class="irow"><span>PROTOCOL</span><span class="v">AES-256</span></div>
+
+        <div class="div"></div>
+
+        <!-- 신호 강도 -->
+        <div class="slabel">── SIGNAL STRENGTH ────────</div>
+        <div style="display:flex;gap:2px;align-items:flex-end;height:16px;padding:0 2px" id="sig-bars"></div>
+
+        <div class="div"></div>
+        <div style="font-size:6px;color:#ff6600;animation:blink 0.6s step-end infinite">▶ TRACKING ACTIVE...</div>
+
+      </div>
+      <div class="card-footer">
+        <span>TRACE-NET v3.4</span>
+        <span id="t-lock">LOCK: 3/6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       ④ PROCESS CARD
+  ════════════════════════════════════════ -->
+  <div class="col">
+    <div class="label">④ PROCESS CARD</div>
+    <div class="card">
+      <div class="card-titlebar">
+        <span>[ VIEWER.EXE ]</span>
+        <div class="tb-right">
+          <span style="font-size:5px">PID:4A2F</span>
+          <div class="card-dot" style="animation-delay:0.9s"></div>
+        </div>
+      </div>
+      <div class="card-body">
+
+        <!-- CPU 그래프 -->
+        <div class="slabel">── CPU MONITOR ────────────</div>
+        <canvas id="c4" width="152" height="50" style="width:100%;display:block;border:1px solid rgba(0,255,0,0.15)"></canvas>
+
+        <div class="div"></div>
+
+        <!-- 리소스 -->
+        <div class="slabel">── RESOURCES ──────────────</div>
+        <div class="irow"><span>CPU</span><span class="v" id="p-cpu">--%</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" id="p-cbar" style="background:linear-gradient(to right,#00ff00,#ffff00)"></div></div>
+        <div class="irow"><span>MEM</span><span class="v" id="p-mem">-- MB</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" id="p-mbar" style="background:#00ff88"></div></div>
+        <div class="irow"><span>DISK I/O</span><span class="v" id="p-disk">-- KB/s</span></div>
+        <div class="pbar-wrap"><div class="pbar-fill" id="p-dbar" style="background:#80aaff"></div></div>
+
+        <div class="div"></div>
+
+        <!-- 프로세스 정보 -->
+        <div class="slabel">── PROCESS INFO ───────────</div>
+        <div class="irow"><span>PID</span><span class="v">0x4A2F</span></div>
+        <div class="irow"><span>PARENT</span><span class="v">0x0001</span></div>
+        <div class="irow"><span>THREADS</span><span class="v" id="p-thr">--</span></div>
+        <div class="irow"><span>PRIORITY</span><span class="v">NORMAL</span></div>
+        <div class="irow"><span>USER</span><span class="v">VISITOR</span></div>
+
+        <div class="div"></div>
+
+        <!-- 접근 경로 -->
+        <div class="slabel">── FILE ACCESS LOG ────────</div>
+        <div style="overflow:hidden;height:12px;border:1px solid rgba(0,255,0,0.1);padding:2px 4px">
+          <div style="font-size:5px;color:rgba(0,255,0,0.6);white-space:nowrap;animation:scrollx 8s linear infinite">
+            /SET/PROJECT &nbsp;&nbsp; /SET/INCLUSION &nbsp;&nbsp; /SET/ABOUT &nbsp;&nbsp; /SET/LOG &nbsp;&nbsp; /SET/PROJECT &nbsp;&nbsp; /SET/INCLUSION &nbsp;&nbsp;
+          </div>
+        </div>
+
+        <div class="div"></div>
+
+        <!-- 실행 시간 -->
+        <div style="text-align:center">
+          <div class="slabel" style="margin-bottom:4px">UPTIME</div>
+          <div style="font-size:9px;color:#ffff00;letter-spacing:2px" id="p-timer">00:00:00</div>
+        </div>
+
+        <div class="div"></div>
+        <div style="display:flex;justify-content:space-between">
+          <span class="badge badge-ok">RUNNING</span>
+          <span class="badge badge-warn" id="p-status">CPU: --%</span>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <span>SET-OS v1.0</span>
+        <span>KERNEL: 4.19</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /row -->
+
+<script>
+setTimeout(() => {
+
+// ─────────────────────────────────────────
+// ① VISITOR BADGE
+// ─────────────────────────────────────────
+(function(){
+  const c = document.getElementById('c1');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let tick = 0;
+
+  // 픽셀 실루엣
+  const PAT = [
+    '00011100',
+    '00111110',
+    '00111110',
+    '00011100',
+    '00011100',
+    '00111110',
+    '01111111',
+    '11111111',
+    '11111111',
+    '01111110',
+    '00111100',
+    '00011000',
+  ];
+  const PS = 5, gx = Math.floor((W - 8*PS)/2), gy = 6;
+
+  // 바코드 캔버스
+  const bc = document.getElementById('bc1');
+  const bctx = bc.getContext('2d');
+  const BW = bc.width, BH = bc.height;
+  const bars = Array.from({length: 55}, () => ({
+    w: Math.random() > 0.55 ? 2 : 1,
+    h: BH * (0.5 + Math.random()*0.5)
+  }));
+
+  // 홀로그램
+  const holo = document.getElementById('holo1');
+  const hctx = holo.getContext('2d');
+  const HS = holo.width;
+
+  function drawBarcode(t) {
+    bctx.fillStyle = '#000'; bctx.fillRect(0,0,BW,BH);
+    let x = 2;
+    bars.forEach(b => {
+      const flicker = Math.random() > 0.97;
+      bctx.fillStyle = flicker ? '#80ff80' : '#00ff00';
+      bctx.fillRect(x, (BH-b.h)/2, b.w, b.h);
+      x += b.w + 1;
+    });
+    // 스캔 라인
+    const sp = ((t * 0.7) % (BW + 10)) - 5;
+    const sg = bctx.createLinearGradient(sp-4,0,sp+4,0);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,0.6)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    bctx.fillStyle = sg;
+    bctx.fillRect(sp-4, 0, 8, BH);
+  }
+
+  function drawHolo(t) {
+    hctx.clearRect(0,0,HS,HS);
+    const cx = HS/2, cy = HS/2, r = HS/2 - 2;
+    const shift = (t * 0.02) % 1;
+    const g = hctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    g.addColorStop((0+shift)%1,'rgba(57,220,120,0.6)');
+    g.addColorStop((0.33+shift)%1,'rgba(80,120,255,0.5)');
+    g.addColorStop((0.66+shift)%1,'rgba(200,0,255,0.5)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    hctx.fillStyle = g;
+    hctx.beginPath(); hctx.arc(cx,cy,r,0,Math.PI*2); hctx.fill();
+    hctx.strokeStyle = 'rgba(57,220,120,0.5)'; hctx.lineWidth = 0.8;
+    hctx.beginPath(); hctx.arc(cx,cy,r,0,Math.PI*2); hctx.stroke();
+    for(let a=0; a<Math.PI; a+=Math.PI/3){
+      hctx.strokeStyle='rgba(255,255,255,0.25)'; hctx.lineWidth=0.5;
+      hctx.beginPath();
+      hctx.moveTo(cx+Math.cos(a+shift*2)*4, cy+Math.sin(a+shift*2)*4);
+      hctx.lineTo(cx+Math.cos(a+Math.PI+shift*2)*4, cy+Math.sin(a+Math.PI+shift*2)*4);
+      hctx.stroke();
+    }
+  }
+
+  function draw() {
+    ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
+
+    // 노이즈
+    for(let i=0;i<20;i++){
+      ctx.fillStyle = `rgba(0,255,0,${Math.random()*0.04})`;
+      ctx.fillRect(Math.random()*W, Math.random()*H, 2, 1);
+    }
+
+    // 마이크로 그리드
+    ctx.strokeStyle='rgba(0,255,0,0.04)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=8){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    // 아바타 픽셀
+    PAT.forEach((row,ry)=>{
+      for(let rx=0;rx<row.length;rx++){
+        if(row[rx]==='1'){
+          const f = Math.random()>0.97;
+          ctx.fillStyle = f ? '#c0ffc0' : '#00cc00';
+          ctx.fillRect(gx+rx*PS, gy+ry*PS, PS-1, PS-1);
+        }
+      }
+    });
+
+    // 모서리 브라켓
+    const bk=8;
+    ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath();
+      ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk);
+      ctx.stroke();
+    });
+
+    // SCAN OK + 스캔라인
+    const sy = (tick*1.8)%(H+10)-5;
+    const sg = ctx.createLinearGradient(0,sy-5,0,sy+5);
+    sg.addColorStop(0,'rgba(0,255,0,0)');
+    sg.addColorStop(0.5,'rgba(0,255,0,0.18)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(0,sy-5,W,10);
+
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle = tick%30<20 ? '#00ff00':'#003300';
+    ctx.textAlign='left'; ctx.fillText('SCAN:OK',4,H-4);
+    ctx.fillStyle='rgba(0,255,0,0.5)';
+    ctx.textAlign='right'; ctx.fillText('99.7%',W-4,H-4);
+
+    drawBarcode(tick);
+    drawHolo(tick);
+    tick++;
+  }
+
+  // 시간 표시
+  const now = new Date();
+  document.getElementById('v-entry').textContent =
+    now.toTimeString().slice(0,8);
+  document.getElementById('v-now').textContent =
+    `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+
+  let sec=0;
+  setInterval(()=>{
+    sec++;
+    const h=String(Math.floor(sec/3600)).padStart(2,'0');
+    const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+    const s=String(sec%60).padStart(2,'0');
+    document.getElementById('v-sess').textContent=`${h}:${m}:${s}`;
+  },1000);
+
+  setInterval(draw,40);
+})();
+
+// ─────────────────────────────────────────
+// ② NEURAL SCAN
+// ─────────────────────────────────────────
+(function(){
+  const c = document.getElementById('c2');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0, syncN=0;
+
+  const CHANNELS = [
+    {label:'α',color:'#00ff88',amp:8,freq:3,speed:0.018},
+    {label:'β',color:'#00ccff',amp:5,freq:8,speed:0.032},
+    {label:'γ',color:'#ff88ff',amp:3,freq:16,speed:0.055},
+  ];
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(0,0,W,H);
+
+    // 격자
+    ctx.strokeStyle='rgba(0,255,0,0.06)'; ctx.lineWidth=0.5;
+    for(let gx=0;gx<W;gx+=16){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();}
+    for(let gy=0;gy<H;gy+=10){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();}
+
+    // 채널별 파형
+    CHANNELS.forEach((ch,ci)=>{
+      const cy = (H/(CHANNELS.length+1))*(ci+1);
+      ctx.strokeStyle=ch.color; ctx.lineWidth=1.2;
+      ctx.shadowColor=ch.color; ctx.shadowBlur=4;
+      ctx.beginPath();
+      for(let x=0;x<W;x++){
+        const t=(x+tick*ch.speed*60)/W;
+        const y = cy
+          + Math.sin(t*Math.PI*2*ch.freq)*ch.amp
+          + Math.sin(t*Math.PI*2*ch.freq*2.3+0.5)*(ch.amp*0.4);
+        x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur=0;
+
+      // 레이블
+      ctx.font="5px 'Press Start 2P',monospace";
+      ctx.fillStyle=ch.color; ctx.textAlign='left';
+      ctx.fillText(ch.label, 2, cy-2);
+    });
+
+    // 이상 스파이크 (가끔)
+    if(tick%120<3){
+      ctx.strokeStyle='rgba(255,255,0,0.7)'; ctx.lineWidth=1;
+      const sx=Math.random()*W;
+      ctx.beginPath(); ctx.moveTo(sx,0); ctx.lineTo(sx,H); ctx.stroke();
+    }
+
+    tick++;
+    if(tick%60===0) syncN++;
+    document.getElementById('n-tick').textContent=`SYNC: ${syncN}`;
+  }
+
+  // 뇌파 데이터 업데이트
+  setInterval(()=>{
+    document.getElementById('n-alpha').textContent=(8+Math.random()*4).toFixed(1)+'Hz';
+    document.getElementById('n-beta').textContent=(13+Math.random()*8).toFixed(1)+'Hz';
+    document.getElementById('n-gamma').textContent=(30+Math.random()*20).toFixed(1)+'Hz';
+  },800);
+
+  setInterval(draw,40);
+})();
+
+// ─────────────────────────────────────────
+// ③ LOCATION TRACE
+// ─────────────────────────────────────────
+(function(){
+  const c = document.getElementById('c3');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  const cx=W/2, cy=H/2, r=Math.min(W,H)*0.44;
+  let angle=0, tick=0;
+
+  const blips=[
+    {a:0.8,d:0.55,locked:true,pulse:0},
+    {a:2.3,d:0.35,locked:false,pulse:20},
+    {a:4.1,d:0.7,locked:true,pulse:40},
+    {a:5.5,d:0.25,locked:false,pulse:10},
+  ];
+
+  // 신호 강도 바
+  const sigWrap = document.getElementById('sig-bars');
+  for(let i=0;i<12;i++){
+    const s=document.createElement('div');
+    s.style.cssText=`width:6px;height:${4+i*1}px;background:rgba(0,255,0,0.2);border:none;`;
+    s.id=`sig-${i}`;
+    sigWrap.appendChild(s);
+  }
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.14)'; ctx.fillRect(0,0,W,H);
+
+    // 간섭 노이즈
+    if(Math.random()<0.03){
+      for(let n=0;n<10;n++){
+        ctx.fillStyle=`rgba(0,255,0,${Math.random()*0.15})`;
+        ctx.fillRect(Math.random()*W,Math.random()*H,2+Math.random()*3,1);
+      }
+    }
+
+    // 동심원
+    [1,0.67,0.33].forEach((s,i)=>{
+      ctx.strokeStyle=`rgba(0,255,0,${[0.2,0.13,0.08][i]})`;
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(cx,cy,r*s,0,Math.PI*2); ctx.stroke();
+      // 링 레이블
+      ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle=`rgba(0,255,0,${[0.2,0.13,0.08][i]})`;
+      ctx.textAlign='left';
+      ctx.fillText(['MAX','50%','25%'][i], cx+2, cy-r*s-1);
+    });
+
+    // 십자선
+    ctx.strokeStyle='rgba(0,255,0,0.08)'; ctx.lineWidth=0.5; ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(cx,cy-r); ctx.lineTo(cx,cy+r); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx-r,cy); ctx.lineTo(cx+r,cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 틱 마크
+    for(let deg=0;deg<360;deg+=10){
+      const rad=deg*Math.PI/180;
+      const major=deg%30===0;
+      ctx.strokeStyle=`rgba(0,255,0,${major?0.3:0.1})`; ctx.lineWidth=major?1:0.5;
+      ctx.beginPath();
+      ctx.moveTo(cx+Math.cos(rad)*r, cy+Math.sin(rad)*r);
+      ctx.lineTo(cx+Math.cos(rad)*(r-(major?5:3)), cy+Math.sin(rad)*(r-(major?5:3)));
+      ctx.stroke();
+    }
+
+    // NSEW
+    ctx.font="bold 6px 'Press Start 2P',monospace"; ctx.textAlign='center'; ctx.textBaseline='middle';
+    [['N',cx,cy-r-7],['S',cx,cy+r+7],['E',cx+r+7,cy],['W',cx-r-7,cy]].forEach(([l,lx,ly])=>{
+      ctx.fillStyle='rgba(0,255,0,0.45)'; ctx.fillText(l,lx,ly);
+    });
+    ctx.textBaseline='alphabetic';
+
+    // 스윕
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,angle-Math.PI*0.5,angle); ctx.closePath();
+    const sg=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    sg.addColorStop(0,'rgba(0,255,0,0.18)');
+    sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fill(); ctx.restore();
+
+    // 스윕 라인
+    ctx.strokeStyle='rgba(0,255,0,0.85)'; ctx.lineWidth=1.2;
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*r, cy+Math.sin(angle)*r); ctx.stroke();
+    ctx.shadowBlur=0;
+
+    // 블립
+    blips.forEach(b=>{
+      b.pulse=(b.pulse+1)%80;
+      const bx=cx+Math.cos(b.a)*r*b.d, by=cy+Math.sin(b.a)*r*b.d;
+      const da=((angle-b.a)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+      const alpha=da<0.25?1:Math.max(0,1-(da-0.25)/(Math.PI*0.85));
+      if(alpha>0.04){
+        ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=alpha*10;
+        if(b.locked){
+          ctx.strokeStyle=`rgba(0,255,0,${alpha*0.9})`; ctx.lineWidth=1;
+          const ds=4;
+          ctx.beginPath();
+          ctx.moveTo(bx,by-ds); ctx.lineTo(bx+ds,by);
+          ctx.lineTo(bx,by+ds); ctx.lineTo(bx-ds,by);
+          ctx.closePath(); ctx.stroke();
+          if(b.pulse<40){
+            ctx.strokeStyle=`rgba(0,255,0,${alpha*(1-b.pulse/40)*0.5})`;
+            ctx.beginPath(); ctx.arc(bx,by,(b.pulse/40)*12,0,Math.PI*2); ctx.stroke();
+          }
+        } else {
+          ctx.fillStyle=`rgba(0,255,0,${alpha*0.85})`;
+          ctx.beginPath(); ctx.arc(bx,by,2,0,Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+    });
+
+    // 중심
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=6;
+    ctx.fillStyle='rgba(0,255,0,0.8)';
+    ctx.beginPath(); ctx.arc(cx,cy,2,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+
+    // BRG 표시
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.4)'; ctx.textAlign='left'; ctx.textBaseline='top';
+    const brg=Math.floor(((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2)*180/Math.PI);
+    ctx.fillText(`BRG ${String(brg).padStart(3,'0')}°`,2,2);
+    ctx.textAlign='right';
+    ctx.fillText(`LOCK ${blips.filter(b=>b.locked).length}/4`,W-2,2);
+    ctx.textBaseline='alphabetic';
+
+    // 신호 강도 바 업데이트
+    for(let i=0;i<12;i++){
+      const el=document.getElementById(`sig-${i}`);
+      const active = i < Math.floor(7+Math.sin(tick*0.05+i)*3);
+      el.style.background = active?'#00ff00':'rgba(0,255,0,0.15)';
+    }
+
+    angle+=0.025;
+    if(angle>Math.PI*2) angle-=Math.PI*2;
+    tick++;
+  }
+
+  // IP 애니메이션
+  let ipR=0; const fullIP='172.16.254.1';
+  const ipEl=document.getElementById('t-ip');
+  setInterval(()=>{
+    if(ipR<fullIP.length){ipR++;ipEl.textContent=fullIP.slice(0,ipR)+(ipR<fullIP.length?'_':'');}
+  },150);
+
+  // PING 업데이트
+  setInterval(()=>{
+    document.getElementById('t-ping').textContent=(12+Math.floor(Math.random()*30))+'ms';
+    const locked=blips.filter(b=>b.locked).length;
+    document.getElementById('t-lock').textContent=`LOCK: ${locked}/4`;
+  },1200);
+
+  // LAT/LON 미세 변동
+  let lat=37.5665, lon=126.9780;
+  setInterval(()=>{
+    lat+=(Math.random()-0.5)*0.0001;
+    lon+=(Math.random()-0.5)*0.0001;
+    document.getElementById('t-lat').textContent=lat.toFixed(4)+'°N';
+    document.getElementById('t-lon').textContent=lon.toFixed(4)+'°E';
+  },2000);
+
+  setInterval(draw,40);
+})();
+
+// ─────────────────────────────────────────
+// ④ PROCESS CARD
+// ─────────────────────────────────────────
+(function(){
+  const c=document.getElementById('c4');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  let tick=0;
+  const history=Array(W).fill(50);
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    // 격자
+    ctx.strokeStyle='rgba(0,255,0,0.07)'; ctx.lineWidth=0.5;
+    [0.25,0.5,0.75].forEach(y=>{
+      ctx.beginPath(); ctx.moveTo(0,H*y); ctx.lineTo(W,H*y); ctx.stroke();
+    });
+    for(let x=0;x<W;x+=20){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+
+    // 히스토리 추가
+    const cpu=45+Math.sin(tick*0.05)*20+Math.random()*10;
+    history.push(cpu); history.shift();
+
+    // CPU 그래프 그리기
+    ctx.strokeStyle='#00ff00'; ctx.lineWidth=1.5;
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=6;
+    ctx.beginPath();
+    history.forEach((v,i)=>{
+      const x=i, y=H-(v/100)*H;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+    ctx.shadowBlur=0;
+
+    // 면적 채우기
+    ctx.fillStyle='rgba(0,255,0,0.06)';
+    ctx.beginPath();
+    history.forEach((v,i)=>{
+      const x=i, y=H-(v/100)*H;
+      i===0?ctx.moveTo(x,H):ctx.lineTo(x,y);
+    });
+    ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
+
+    // 현재값 라인
+    const curY=H-(cpu/100)*H;
+    ctx.strokeStyle='rgba(255,255,0,0.6)'; ctx.lineWidth=0.8; ctx.setLineDash([2,3]);
+    ctx.beginPath(); ctx.moveTo(0,curY); ctx.lineTo(W,curY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 현재값 텍스트
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='#ffff00'; ctx.textAlign='right';
+    ctx.fillText(cpu.toFixed(0)+'%',W-2,curY-2);
+
+    tick++;
+
+    // UI 업데이트
+    const cpuV=cpu.toFixed(0);
+    document.getElementById('p-cpu').textContent=cpuV+'%';
+    document.getElementById('p-cbar').style.width=cpuV+'%';
+    document.getElementById('p-status').textContent=`CPU: ${cpuV}%`;
+
+    const mem=128+Math.floor(Math.random()*20);
+    document.getElementById('p-mem').textContent=mem+' MB';
+    document.getElementById('p-mbar').style.width=(mem/512*100)+'%';
+
+    const disk=Math.floor(Math.random()*800);
+    document.getElementById('p-disk').textContent=disk+' KB/s';
+    document.getElementById('p-dbar').style.width=(disk/1024*100)+'%';
+
+    document.getElementById('p-thr').textContent=8+Math.floor(Math.random()*4);
+  }
+
+  let sec=0;
+  setInterval(()=>{
+    sec++;
+    const h=String(Math.floor(sec/3600)).padStart(2,'0');
+    const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+    const s=String(sec%60).padStart(2,'0');
+    document.getElementById('p-timer').textContent=`${h}:${m}:${s}`;
+  },1000);
+
+  setInterval(draw,40);
+})();
+
+},500); // 폰트 로드 대기
+</script>
+
+</body>
+</html>
