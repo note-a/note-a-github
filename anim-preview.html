@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#000; color:#00ff00;
+      font-family:'Press Start 2P',monospace;
+      padding:32px 20px; display:flex;
+      flex-direction:column; align-items:center; gap:40px;
+    }
+    h1 { font-size:9px; letter-spacing:2px;
+      text-shadow:1px 0.5px rgba(255,0,0,0.4),-1px -0.5px rgba(0,255,255,0.35); }
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap:28px;
+      width:100%;
+      max-width:1100px;
+    }
+    .cell { display:flex; flex-direction:column; gap:8px; }
+    .tag { font-size:6px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
+    .title { font-size:7px; color:#00ff00; }
+    canvas {
+      display:block; width:100%;
+      border-top:2px solid #80ff80;
+      border-left:2px solid #80ff80;
+      border-bottom:2px solid #003300;
+      border-right:2px solid #003300;
+      box-shadow:0 0 10px rgba(0,255,0,0.5),0 0 28px rgba(0,255,0,0.15);
+    }
+    .desc { font-size:5px; color:rgba(0,255,0,0.35); line-height:1.8; }
+  </style>
+</head>
+<body>
+
+<h1>▶ ANIMATION SAMPLE — 7 TYPES</h1>
+
+<div class="grid">
+
+  <!-- ① 반응-확산 -->
+  <div class="cell">
+    <div class="tag">① REACTION-DIFFUSION</div>
+    <div class="title">Gray-Scott Model</div>
+    <canvas id="c1" width="160" height="160"></canvas>
+    <div class="desc">화학 반응 패턴 · 살아있는 세포막</div>
+  </div>
+
+  <!-- ② 보로노이 -->
+  <div class="cell">
+    <div class="tag">② VORONOI DIAGRAM</div>
+    <div class="title">Cell Division</div>
+    <canvas id="c2" width="320" height="160"></canvas>
+    <div class="desc">공간 분열 · 크리스탈 균열</div>
+  </div>
+
+  <!-- ③ 벡터 필드 -->
+  <div class="cell">
+    <div class="tag">③ FLOW FIELD</div>
+    <div class="title">Vector Particle Stream</div>
+    <canvas id="c3" width="320" height="160"></canvas>
+    <div class="desc">파티클 흐름 · 바람/연기</div>
+  </div>
+
+  <!-- ④ 리사주 -->
+  <div class="cell">
+    <div class="tag">④ LISSAJOUS CURVE</div>
+    <div class="title">Oscilloscope Pattern</div>
+    <canvas id="c4" width="320" height="160"></canvas>
+    <div class="desc">두 주파수 교차 · 기하학 패턴</div>
+  </div>
+
+  <!-- ⑤ 3D 와이어프레임 -->
+  <div class="cell">
+    <div class="tag">⑤ 3D WIREFRAME</div>
+    <div class="title">Hologram Object</div>
+    <canvas id="c5" width="320" height="160"></canvas>
+    <div class="desc">3D 회전 오브젝트 · 홀로그램</div>
+  </div>
+
+  <!-- ⑥ 파동 간섭 -->
+  <div class="cell">
+    <div class="tag">⑥ WAVE INTERFERENCE</div>
+    <div class="title">Multi-Source Ripple</div>
+    <canvas id="c6" width="320" height="160"></canvas>
+    <div class="desc">다중 파원 간섭 · 위상 패턴</div>
+  </div>
+
+  <!-- ⑦ L-시스템 -->
+  <div class="cell">
+    <div class="tag">⑦ L-SYSTEM</div>
+    <div class="title">Circuit Growth</div>
+    <canvas id="c7" width="320" height="160"></canvas>
+    <div class="desc">프랙탈 회로 성장 · 분기</div>
+  </div>
+
+</div>
+
+<script>
+setTimeout(() => {
+
+// ═══════════════════════════════════════════════
+// ① 반응-확산 시스템 (Gray-Scott)
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c1');
+  // 저해상도로 연산 후 스케일
+  const RES = 80;
+  c.width = RES; c.height = RES;
+  c.style.imageRendering = 'pixelated';
+
+  const ctx = c.getContext('2d');
+  const N = RES;
+  let A = new Float32Array(N*N).fill(1);
+  let B = new Float32Array(N*N).fill(0);
+  let nA = new Float32Array(N*N);
+  let nB = new Float32Array(N*N);
+
+  // Gray-Scott 파라미터 (산호 패턴)
+  const dA=1.0, dB=0.5, feed=0.055, kill=0.062;
+  const dt=1.0;
+
+  // 씨드 (중앙 여러 점)
+  const seeds=[[N/2,N/2],[N/3,N/3],[2*N/3,N/3],[N/3,2*N/3],[2*N/3,2*N/3]];
+  seeds.forEach(([sx,sy])=>{
+    for(let y=sy-3;y<sy+3;y++) for(let x=sx-3;x<sx+3;x++){
+      if(x>=0&&x<N&&y>=0&&y<N){
+        B[y*N+x]=1; A[y*N+x]=0;
+      }
+    }
+  });
+
+  const img = ctx.createImageData(N,N);
+
+  function step(){
+    for(let y=0;y<N;y++){
+      for(let x=0;x<N;x++){
+        const i=y*N+x;
+        const xm=(x-1+N)%N, xp=(x+1)%N;
+        const ym=(y-1+N)%N, yp=(y+1)%N;
+        const lapA = A[y*N+xm]+A[y*N+xp]+A[ym*N+x]+A[yp*N+x]-4*A[i];
+        const lapB = B[y*N+xm]+B[y*N+xp]+B[ym*N+x]+B[yp*N+x]-4*B[i];
+        const a=A[i], b=B[i], ab2=a*b*b;
+        nA[i]=Math.max(0,Math.min(1, a+dt*(dA*lapA - ab2 + feed*(1-a))));
+        nB[i]=Math.max(0,Math.min(1, b+dt*(dB*lapB + ab2 - (kill+feed)*b)));
+      }
+    }
+    [A,nA]=[nA,A]; [B,nB]=[nB,B];
+  }
+
+  function draw(){
+    for(let i=0;i<N*N;i++){
+      const v=Math.max(0,Math.min(1,A[i]-B[i]));
+      const r=Math.floor(v*0);
+      const g=Math.floor(v*255);
+      const b2=Math.floor(v*30);
+      img.data[i*4]=r; img.data[i*4+1]=g; img.data[i*4+2]=b2; img.data[i*4+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+  }
+
+  let t=0;
+  function loop(){
+    for(let s=0;s<8;s++) step();
+    draw();
+    // 가끔 새 씨드
+    if(t%300===0){
+      const sx=Math.floor(Math.random()*N), sy=Math.floor(Math.random()*N);
+      for(let dy=-2;dy<2;dy++) for(let dx=-2;dx<2;dx++){
+        const nx=(sx+dx+N)%N, ny=(sy+dy+N)%N;
+        B[ny*N+nx]=1; A[ny*N+nx]=0;
+      }
+    }
+    t++;
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+
+// ═══════════════════════════════════════════════
+// ② 보로노이 다이어그램
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c2');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  const N=14;
+  let sites=Array.from({length:N},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    vx:(Math.random()-0.5)*0.4,
+    vy:(Math.random()-0.5)*0.4,
+  }));
+
+  // 저해상도 보로노이 맵
+  const RES=2;
+  const GW=Math.ceil(W/RES), GH=Math.ceil(H/RES);
+  const voroImg = ctx.createImageData(GW,GH);
+
+  function buildVoronoi(){
+    for(let gy=0;gy<GH;gy++){
+      for(let gx=0;gx<GW;gx++){
+        const px=gx*RES, py=gy*RES;
+        let minD=Infinity, closest=0;
+        sites.forEach((s,i)=>{
+          const d=(s.x-px)**2+(s.y-py)**2;
+          if(d<minD){minD=d;closest=i;}
+        });
+        const idx=(gy*GW+gx)*4;
+        // 색상: 사이트 인덱스에 따라 미세한 녹색 변형
+        const shade=30+Math.floor((closest/N)*80);
+        voroImg.data[idx]=0;
+        voroImg.data[idx+1]=shade;
+        voroImg.data[idx+2]=0;
+        voroImg.data[idx+3]=255;
+      }
+    }
+  }
+
+  function draw(){
+    // 사이트 이동
+    sites.forEach(s=>{
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<0||s.x>W) s.vx*=-1;
+      if(s.y<0||s.y>H) s.vy*=-1;
+    });
+
+    // 보로노이
+    buildVoronoi();
+    // 스케일 업
+    ctx.save();
+    ctx.scale(RES,RES);
+    ctx.putImageData(voroImg,0,0);
+    ctx.restore();
+
+    // 경계선 및 사이트 위에 그리기
+    ctx.save();
+    // 경계 오버레이: 인접 셀 경계에 밝은 선
+    const imgData = ctx.getImageData(0,0,W,H);
+    // 사이트 포인트
+    ctx.fillStyle='#000';
+    ctx.fillRect(0,0,W,H);
+    buildVoronoi();
+    ctx.scale(RES,RES);
+    ctx.putImageData(voroImg,0,0);
+    ctx.restore();
+
+    // 에지 검출 오버레이
+    const raw=ctx.getImageData(0,0,W,H);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    // 재드로우 (단순하게)
+    buildVoronoi();
+    const tmp = document.createElement('canvas');
+    tmp.width=GW; tmp.height=GH;
+    tmp.getContext('2d').putImageData(voroImg,0,0);
+    ctx.save();
+    ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(tmp,0,0,W,H);
+    ctx.restore();
+
+    // 사이트 포인트 + 교차 라인
+    sites.forEach((s,i)=>{
+      ctx.save();
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=6;
+      ctx.fillStyle='#00ff00';
+      ctx.beginPath(); ctx.arc(s.x,s.y,2,0,Math.PI*2); ctx.fill();
+      // 십자
+      ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=0.5;
+      ctx.beginPath(); ctx.moveTo(s.x-4,s.y); ctx.lineTo(s.x+4,s.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(s.x,s.y-4); ctx.lineTo(s.x,s.y+4); ctx.stroke();
+      ctx.restore();
+    });
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.12)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // HUD
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.4)'; ctx.textAlign='left';
+    ctx.fillText(`SITES:${N}  TICK:${tick}`,4,H-4);
+
+    tick++;
+  }
+
+  setInterval(draw,50);
+})();
+
+
+// ═══════════════════════════════════════════════
+// ③ 흐르는 벡터 필드 (Flow Field)
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c3');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  // 간단한 노이즈 (사인 합성)
+  function noise(x,y,t){
+    return Math.sin(x*0.008+t*0.6)*Math.cos(y*0.009+t*0.5)
+         + Math.sin(x*0.013+y*0.011+t*0.4)*0.5
+         + Math.cos(x*0.006-y*0.007+t*0.3)*0.3;
+  }
+
+  const NP=250;
+  let particles=Array.from({length:NP},()=>({
+    x:Math.random()*W, y:Math.random()*H,
+    life:Math.random()*120, maxLife:80+Math.random()*80,
+    trail:[],
+  }));
+
+  // 오프스크린 트레일 버퍼
+  const trail = document.createElement('canvas');
+  trail.width=W; trail.height=H;
+  const tctx=trail.getContext('2d');
+  tctx.fillStyle='#000'; tctx.fillRect(0,0,W,H);
+
+  function draw(){
+    // 트레일 페이드
+    tctx.fillStyle='rgba(0,0,0,0.04)';
+    tctx.fillRect(0,0,W,H);
+
+    const t=tick*0.01;
+    particles.forEach(p=>{
+      // 각도 계산
+      const angle = noise(p.x,p.y,t)*Math.PI*2;
+      const spd=0.8+Math.abs(noise(p.x*0.5,p.y*0.5,t))*0.8;
+      const ox=p.x, oy=p.y;
+      p.x+=Math.cos(angle)*spd;
+      p.y+=Math.sin(angle)*spd;
+      p.life++;
+
+      const alpha=Math.min(p.life/20,1)*Math.min(1,(p.maxLife-p.life)/30);
+      if(alpha>0.02){
+        tctx.strokeStyle=`rgba(0,255,100,${alpha*0.7})`;
+        tctx.lineWidth=0.8;
+        tctx.beginPath(); tctx.moveTo(ox,oy); tctx.lineTo(p.x,p.y); tctx.stroke();
+      }
+
+      // 리셋
+      if(p.life>p.maxLife||p.x<0||p.x>W||p.y<0||p.y>H){
+        p.x=Math.random()*W; p.y=Math.random()*H;
+        p.life=0; p.maxLife=80+Math.random()*80;
+      }
+    });
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(trail,0,0);
+
+    // 벡터 필드 화살표 (희미하게)
+    if(tick%60<1){
+      // 배경에 벡터 방향 표시
+    }
+    const step=20;
+    ctx.strokeStyle='rgba(0,255,0,0.06)'; ctx.lineWidth=0.5;
+    for(let gy=step/2;gy<H;gy+=step){
+      for(let gx=step/2;gx<W;gx+=step){
+        const angle=noise(gx,gy,t)*Math.PI*2;
+        const len=6;
+        ctx.beginPath();
+        ctx.moveTo(gx,gy);
+        ctx.lineTo(gx+Math.cos(angle)*len, gy+Math.sin(angle)*len);
+        ctx.stroke();
+      }
+    }
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // HUD
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='left';
+    ctx.fillText(`PARTICLES:${NP}`,4,H-4);
+
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ═══════════════════════════════════════════════
+// ④ 리사주 곡선 (Lissajous)
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c4');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+  const cx=W/2, cy=H/2;
+  const A=W*0.42, B=H*0.42;
+  const TRAIL=2000;
+  let pts=[];
+
+  // 파라미터 (천천히 변화)
+  let ra=3, rb=2, delta=0;
+
+  const off = document.createElement('canvas');
+  off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+  function draw(){
+    // 페이드
+    octx.fillStyle='rgba(0,0,0,0.018)';
+    octx.fillRect(0,0,W,H);
+
+    // 새 점
+    const t=tick*0.012;
+    const x=cx+A*Math.sin(ra*t+delta);
+    const y=cy+B*Math.sin(rb*t);
+    pts.push({x,y});
+    if(pts.length>TRAIL) pts.shift();
+
+    // 그리기
+    if(pts.length>2){
+      for(let i=1;i<pts.length;i++){
+        const alpha=(i/pts.length);
+        octx.strokeStyle=`rgba(0,255,120,${alpha*0.85})`;
+        octx.lineWidth=alpha*1.2+0.3;
+        octx.beginPath();
+        octx.moveTo(pts[i-1].x,pts[i-1].y);
+        octx.lineTo(pts[i].x,pts[i].y);
+        octx.stroke();
+      }
+    }
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+
+    // 격자
+    ctx.strokeStyle='rgba(0,255,0,0.06)'; ctx.lineWidth=0.5;
+    ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 현재 점 강조
+    const lp=pts[pts.length-1];
+    if(lp){
+      ctx.save();
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=12;
+      ctx.fillStyle='#00ff00';
+      ctx.beginPath(); ctx.arc(lp.x,lp.y,2.5,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+      // XY 프로젝션
+      ctx.strokeStyle='rgba(0,255,0,0.2)'; ctx.lineWidth=0.6;
+      ctx.setLineDash([2,4]);
+      ctx.beginPath(); ctx.moveTo(lp.x,cy); ctx.lineTo(lp.x,lp.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx,lp.y); ctx.lineTo(lp.x,lp.y); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // 파라미터 변화
+    delta+=0.003;
+    if(tick%400===0){
+      ra=[2,3,4,5,3][Math.floor(Math.random()*5)];
+      rb=[1,2,3,4,2][Math.floor(Math.random()*5)];
+      pts=[];
+      octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+    }
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // HUD
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='left';
+    ctx.fillText(`Fa:${ra}  Fb:${rb}  δ:${delta.toFixed(2)}`,4,H-4);
+
+    tick++;
+  }
+  setInterval(draw,16);
+})();
+
+
+// ═══════════════════════════════════════════════
+// ⑤ 3D 와이어프레임
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c5');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+  const cx=W/2, cy=H/2;
+
+  // 큐브 꼭짓점 + 이십면체 꼭짓점
+  function makeCube(s){
+    const v=[];
+    for(let x=-1;x<=1;x+=2) for(let y=-1;y<=1;y+=2) for(let z=-1;z<=1;z+=2)
+      v.push([x*s,y*s,z*s]);
+    return v;
+  }
+  function cubeEdges(){
+    return [[0,1],[0,2],[0,4],[1,3],[1,5],[2,3],[2,6],[3,7],[4,5],[4,6],[5,7],[6,7]];
+  }
+
+  // 이십면체
+  const phi=(1+Math.sqrt(5))/2;
+  const S=55;
+  function makeIcosa(s){
+    return [
+      [0,s,s*phi],[0,-s,s*phi],[0,s,-s*phi],[0,-s,-s*phi],
+      [s,s*phi,0],[-s,s*phi,0],[s,-s*phi,0],[-s,-s*phi,0],
+      [s*phi,0,s],[s*phi,0,-s],[-s*phi,0,s],[-s*phi,0,-s],
+    ];
+  }
+  function icosaEdges(){
+    return [[0,1],[0,4],[0,5],[0,8],[0,10],
+            [1,6],[1,7],[1,8],[1,10],
+            [2,3],[2,4],[2,5],[2,9],[2,11],
+            [3,6],[3,7],[3,9],[3,11],
+            [4,8],[4,9],[5,10],[5,11],
+            [6,8],[6,9],[7,10],[7,11]];
+  }
+
+  let obj=0; // 0=cube, 1=icosa
+  let verts=makeCube(50);
+  let edges=cubeEdges();
+
+  function rotX(v,a){return [v[0],v[1]*Math.cos(a)-v[2]*Math.sin(a),v[1]*Math.sin(a)+v[2]*Math.cos(a)];}
+  function rotY(v,a){return [v[0]*Math.cos(a)+v[2]*Math.sin(a),v[1],-v[0]*Math.sin(a)+v[2]*Math.cos(a)];}
+  function rotZ(v,a){return [v[0]*Math.cos(a)-v[1]*Math.sin(a),v[0]*Math.sin(a)+v[1]*Math.cos(a),v[2]];}
+
+  function project(v,fov){
+    const z=v[2]+200;
+    const f=fov/z;
+    return [v[0]*f+cx, v[1]*f+cy, v[2]];
+  }
+
+  let rx=0,ry=0,rz=0;
+  let trx=0.007,try_=0.011,trz=0.005;
+
+  // 오프스크린 글로우 트레일
+  const off=document.createElement('canvas');
+  off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+  function draw(){
+    octx.fillStyle='rgba(0,0,0,0.12)';
+    octx.fillRect(0,0,W,H);
+
+    const t=tick;
+    const rxn=rx+trx, ryn=ry+try_, rzn=rz+trz;
+
+    // 변환
+    const projected=verts.map(v=>{
+      let p=rotX(v,rxn);
+      p=rotY(p,ryn);
+      p=rotZ(p,rzn);
+      return project(p,320);
+    });
+
+    // 깊이 정렬 엣지
+    edges.forEach(([a,b])=>{
+      const pa=projected[a], pb=projected[b];
+      const avgZ=(pa[2]+pb[2])/2;
+      const alpha=Math.max(0.2,Math.min(0.9,(avgZ+100)/200));
+      octx.strokeStyle=`rgba(0,255,80,${alpha})`;
+      octx.lineWidth=0.8;
+      octx.shadowColor='#00ff00'; octx.shadowBlur=alpha*6;
+      octx.beginPath();
+      octx.moveTo(pa[0],pa[1]);
+      octx.lineTo(pb[0],pb[1]);
+      octx.stroke();
+    });
+    octx.shadowBlur=0;
+
+    // 꼭짓점
+    projected.forEach(p=>{
+      const alpha=Math.max(0.2,(p[2]+120)/220);
+      octx.fillStyle=`rgba(0,255,80,${alpha})`;
+      octx.beginPath(); octx.arc(p[0],p[1],1.5,0,Math.PI*2); octx.fill();
+    });
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // 축 표시
+    ctx.strokeStyle='rgba(0,255,0,0.12)'; ctx.lineWidth=0.5; ctx.setLineDash([2,4]);
+    ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 오브젝트 전환
+    if(tick%500===0){
+      obj=(obj+1)%2;
+      if(obj===0){verts=makeCube(50);edges=cubeEdges();}
+      else{verts=makeIcosa(45);edges=icosaEdges();}
+      octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+    }
+
+    // HUD
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='left';
+    ctx.fillText(`RX:${rxn.toFixed(2)} RY:${ryn.toFixed(2)}`,4,H-4);
+
+    rx=rxn; ry=ryn; rz=rzn;
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ═══════════════════════════════════════════════
+// ⑥ 파동 간섭
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c6');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  const RES=3;
+  const GW=Math.ceil(W/RES), GH=Math.ceil(H/RES);
+  const img=ctx.createImageData(GW,GH);
+
+  // 파원들
+  let sources=[
+    {x:W*0.25,y:H*0.5,freq:0.08,phase:0},
+    {x:W*0.75,y:H*0.5,freq:0.06,phase:Math.PI},
+    {x:W*0.5, y:H*0.25,freq:0.07,phase:Math.PI*0.5},
+  ];
+
+  function draw(){
+    const t=tick;
+    for(let gy=0;gy<GH;gy++){
+      for(let gx=0;gx<GW;gx++){
+        const px=gx*RES, py=gy*RES;
+        let v=0;
+        sources.forEach(s=>{
+          const d=Math.sqrt((px-s.x)**2+(py-s.y)**2);
+          v+=Math.sin(d*s.freq - t*0.1 + s.phase);
+        });
+        v/=sources.length;
+        // -1 ~ 1 → 색상
+        const n=(v+1)/2;
+        const idx=(gy*GW+gx)*4;
+        img.data[idx]=0;
+        img.data[idx+1]=Math.floor(n*255);
+        img.data[idx+2]=Math.floor((1-n)*60);
+        img.data[idx+3]=255;
+      }
+    }
+    const tmp=document.createElement('canvas');
+    tmp.width=GW; tmp.height=GH;
+    tmp.getContext('2d').putImageData(img,0,0);
+    ctx.save();
+    ctx.imageSmoothingEnabled=true;
+    ctx.drawImage(tmp,0,0,W,H);
+    ctx.restore();
+
+    // 파원 표시
+    sources.forEach((s,i)=>{
+      ctx.save();
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=10;
+      ctx.fillStyle='#00ff00';
+      ctx.beginPath(); ctx.arc(s.x,s.y,3,0,Math.PI*2); ctx.fill();
+      // 확산 링
+      const r=(tick*1.5)%60;
+      ctx.strokeStyle=`rgba(0,255,0,${Math.max(0,1-r/60)*0.5})`;
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+
+      // 파원 이동
+      s.x+=Math.sin(tick*0.008+i*2)*0.3;
+      s.y+=Math.cos(tick*0.007+i*1.5)*0.3;
+      s.x=Math.max(20,Math.min(W-20,s.x));
+      s.y=Math.max(20,Math.min(H-20,s.y));
+    });
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // HUD
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.4)'; ctx.textAlign='left';
+    ctx.fillText(`SOURCES:${sources.length}`,4,H-4);
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+
+// ═══════════════════════════════════════════════
+// ⑦ L-시스템 (회로 프랙탈)
+// ═══════════════════════════════════════════════
+(function(){
+  const c = document.getElementById('c7');
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  // L-시스템 정의 (회로 스타일)
+  const rules={
+    F:'FF',
+    X:'F+[[X]-X]-F[-FX]+X',
+    // 회로 스타일
+    A:'A+B',
+    B:'A-B',
+  };
+
+  // Fractal Plant
+  const SYSTEMS=[
+    { axiom:'X', rules:{'X':'F+[[X]-X]-F[-FX]+X','F':'FF'}, angle:25, n:4 },
+    { axiom:'F', rules:{'F':'F+F-F-F+F'}, angle:90, n:3 },
+    { axiom:'F-F-F-F', rules:{'F':'F-F+F+FF-F-F+F'}, angle:90, n:2 },
+    { axiom:'F', rules:{'F':'FF+[+F-F-F]-[-F+F+F]'}, angle:22.5, n:4 },
+  ];
+
+  let sysIdx=0;
+  let currentStr='';
+  let drawProgress=0;
+  let drawCmd=[];
+
+  function expand(axiom,rules,n){
+    let s=axiom;
+    for(let i=0;i<n;i++) s=[...s].map(ch=>rules[ch]||ch).join('');
+    return s;
+  }
+
+  function buildCmds(str,angle){
+    const cmds=[];
+    let x=W/2, y=H*0.85;
+    let a=-90*Math.PI/180;
+    const step=Math.max(2,7-sysIdx*1.2);
+    const ar=angle*Math.PI/180;
+    const stack=[];
+    [...str].forEach(ch=>{
+      if(ch==='F'||ch==='G') cmds.push({type:'line',x,y,nx:x+Math.cos(a)*step,ny:y+Math.sin(a)*step,a});
+      if(ch==='F'){x+=Math.cos(a)*step; y+=Math.sin(a)*step;}
+      if(ch==='+') a+=ar;
+      if(ch==='-') a-=ar;
+      if(ch==='[') stack.push({x,y,a});
+      if(ch===']'){const s=stack.pop();x=s.x;y=s.y;a=s.a;}
+    });
+    return cmds;
+  }
+
+  function reset(){
+    const sys=SYSTEMS[sysIdx];
+    currentStr=expand(sys.axiom,sys.rules,sys.n);
+    drawCmd=buildCmds(currentStr,sys.angle);
+    drawProgress=0;
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    sysIdx=(sysIdx+1)%SYSTEMS.length;
+  }
+
+  reset();
+
+  const off=document.createElement('canvas');
+  off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+  function draw(){
+    // 매 프레임마다 일부 그리기
+    const batch=Math.min(80,drawCmd.length-drawProgress);
+    for(let i=0;i<batch;i++){
+      const cmd=drawCmd[drawProgress+i];
+      if(!cmd) break;
+      if(cmd.type==='line'){
+        const prog=(drawProgress+i)/drawCmd.length;
+        octx.strokeStyle=`rgba(0,${180+Math.floor(prog*75)},${Math.floor(prog*60)},${0.6+prog*0.4})`;
+        octx.lineWidth=0.8;
+        octx.shadowColor='#00ff00'; octx.shadowBlur=2;
+        octx.beginPath();
+        octx.moveTo(cmd.x,cmd.y);
+        octx.lineTo(cmd.nx,cmd.ny);
+        octx.stroke();
+        octx.shadowBlur=0;
+      }
+    }
+    drawProgress+=batch;
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.drawImage(off,0,0);
+
+    // 성장 중인 끝점 강조
+    if(drawProgress<drawCmd.length){
+      const cur=drawCmd[drawProgress];
+      if(cur){
+        ctx.save();
+        ctx.shadowColor='#00ff00'; ctx.shadowBlur=12;
+        ctx.fillStyle='#00ff00';
+        ctx.beginPath(); ctx.arc(cur.x,cur.y,2,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // 스캔라인
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let sy=0;sy<H;sy+=2) ctx.fillRect(0,sy,W,1);
+
+    // HUD
+    const prog=drawCmd.length?Math.floor(drawProgress/drawCmd.length*100):100;
+    ctx.font="5px 'Press Start 2P',monospace";
+    ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='left';
+    ctx.fillText(`SYS:${sysIdx} GROW:${prog}%`,4,H-4);
+
+    // 완료 후 리셋
+    if(drawProgress>=drawCmd.length && tick>0 && tick%300===0){
+      octx.fillStyle='rgba(0,0,0,0.04)';
+      octx.fillRect(0,0,W,H);
+      reset();
+    }
+
+    tick++;
+  }
+  setInterval(draw,20);
+})();
+
+},600);
+</script>
+</body>
+</html>
