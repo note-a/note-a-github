@@ -15,18 +15,18 @@
 
     .search-sim {
       display:flex; border-top:1px solid #00ff00;
-      padding:6px; gap:4px; flex-shrink:0;
+      padding:5px 6px 3px 6px; gap:4px; flex-shrink:0;
     }
     .search-sim input {
       flex:1; background:#000; border:1px solid #00cc00;
-      color:#00ff00; padding:4px 8px;
-      font-family:'Press Start 2P',monospace; font-size:9px; outline:none;
+      color:#00ff00; padding:3px 6px;
+      font-family:'Press Start 2P',monospace; font-size:8px; outline:none;
       letter-spacing:0.5px;
     }
     .search-sim input::placeholder { color:rgba(0,255,0,0.45); }
     .search-sim button {
       background:#004d00; border:1px solid #00ff00; color:#00ff00;
-      padding:3px 10px; font-family:'Press Start 2P',monospace; font-size:9px;
+      padding:3px 10px; font-family:'Press Start 2P',monospace; font-size:8px;
       cursor:pointer; letter-spacing:0.5px;
     }
     .search-sim button:hover { background:#006600; }
@@ -179,7 +179,7 @@ setTimeout(() => {
   const dpr = window.devicePixelRatio || 1;
   const LW = 610, LH = 380;
   c.width = LW * dpr; c.height = LH * dpr;
-  c.style.width = LW + 'px'; c.style.height = LH + 'px';
+  c.style.width = '100%'; c.style.height = 'auto';
   ctx.scale(dpr, dpr);
   const W = LW, H = LH;
   let tick = 0;
