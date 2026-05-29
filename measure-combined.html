@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Measure Combined Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#0a0a0a; color:#00ff00;
+      font-family:'Press Start 2P',monospace;
+      padding:40px 24px;
+      display:flex; flex-direction:column; align-items:center; gap:32px;
+    }
+    h1 { font-size:8px; letter-spacing:2px; text-shadow:0 0 10px #00ff00; }
+    .subtitle { font-size:5px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
+
+    .panel-sim {
+      width:360px;
+      background:#000;
+      border:1px solid #003300;
+    }
+    .banner-area {
+      display:flex; flex-direction:column; align-items:center;
+      gap:10px; padding:14px 14px 10px;
+    }
+    .hint-text {
+      font-size:8px; color:#00ff00; text-align:center;
+      letter-spacing:1px; text-shadow:0 0 8px rgba(0,255,0,0.6);
+    }
+    .search-sim {
+      display:flex; border-top:1px solid #003300;
+      padding:10px 12px; gap:8px;
+    }
+    .search-sim input {
+      flex:1; background:#000; border:1px solid #004400;
+      color:#00ff00; padding:6px 8px;
+      font-family:'Press Start 2P',monospace; font-size:6px; outline:none;
+    }
+    .search-sim button {
+      background:#003800; border:1px solid #00ff00;
+      color:#00ff00; padding:6px 10px;
+      font-family:'Press Start 2P',monospace; font-size:6px; cursor:pointer;
+    }
+    .label { font-size:5.5px; color:rgba(0,255,0,0.3); letter-spacing:1px; margin-bottom:4px; }
+    .name  { font-size:8px; color:#00ff00; margin-bottom:12px; }
+  </style>
+</head>
+<body>
+
+<h1>▶ TERMINAL + SEARCHLIGHT</h1>
+<div class="subtitle">COMBINED CONCEPT — MEASURE SECTION BANNER</div>
+
+<div class="label">COMBINED CONCEPT</div>
+<div class="name">TERMINAL SEARCHLIGHT</div>
+
+<div class="panel-sim">
+  <div class="banner-area">
+    <canvas id="c" width="330" height="210"></canvas>
+    <div class="hint-text" id="hintText">ENTER YOUR INSTRUCTIONS</div>
+  </div>
+  <div class="search-sim">
+    <input placeholder="Search: crash / floating / shadow..." readonly>
+    <button>SEARCH</button>
+  </div>
+</div>
+
+<script>
+setTimeout(()=>{
+
+const c=document.getElementById('c'), ctx=c.getContext('2d');
+const W=c.width, H=c.height;
+let tick=0;
+
+// ─── 배경 이미지 블록 ───
+const BLOCKS=[
+  {x:10,  y:20,  w:55, h:45, id:'031'},
+  {x:75,  y:15,  w:50, h:52, id:'047'},
+  {x:138, y:22,  w:48, h:40, id:'023'},
+  {x:196, y:18,  w:52, h:50, id:'088'},
+  {x:258, y:20,  w:55, h:44, id:'012'},
+  {x:10,  y:80,  w:60, h:50, id:'055'},
+  {x:82,  y:78,  w:45, h:52, id:'064'},
+  {x:140, y:74,  w:52, h:55, id:'019'},
+  {x:204, y:80,  w:48, h:48, id:'033'},
+  {x:264, y:77,  w:52, h:52, id:'071'},
+];
+
+// ─── 탐조등 상태 ───
+const LIGHT_ORIGIN_X = W/2;
+const LIGHT_ORIGIN_Y = H + 60;
+const SPREAD = 0.22;
+
+function getLightAngle(){
+  return Math.sin(tick * 0.016) * 0.9;
+}
+
+function blockInLight(b, angle){
+  const bx = b.x + b.w/2, by = b.y + b.h/2;
+  const dx = bx - LIGHT_ORIGIN_X, dy = by - LIGHT_ORIGIN_Y;
+  const objAngle = Math.atan2(dy, dx) - (-Math.PI/2);
+  return Math.abs(objAngle - angle) < SPREAD + 0.08;
+}
+
+// ─── 터미널 라인 ───
+const LINES=[
+  { prefix:'SYS> ', text:'MEASURE.DB CONNECTED',    speed:1.2, delay:0   },
+  { prefix:'SYS> ', text:'ARCHIVE READY [2847 FILES]', speed:1.0, delay:50  },
+  { prefix:'    > ', text:'SCANNING...',             speed:0.9, delay:110 },
+  { prefix:'Q>   ', text:'ENTER KEYWORD TO SEARCH', speed:0.8, delay:180 },
+  { prefix:'TIP> ', text:'crash / shadow / float',  speed:0.7, delay:260 },
+  { prefix:'TIP> ', text:'yellow / scale / border', speed:0.7, delay:330 },
+  { prefix:'_    ', text:'',                         speed:1,   delay:400, isCursor:true },
+];
+
+let typeState = 0; // 전체 타이핑 진행
+const TOTAL = LINES.reduce((s,l)=>s+l.prefix.length+l.text.length,0);
+const FS = 6, LH = 14;
+const TERM_X = 8, TERM_Y = 140, TERM_W = W-16, TERM_H = 62;
+
+// ─── 오프스크린 (빔 트레일용) ───
+const off = document.createElement('canvas');
+off.width=W; off.height=H;
+const octx = off.getContext('2d');
+octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+function drawFrame(){
+  // 페이드아웃 (트레일)
+  octx.fillStyle='rgba(0,0,0,0.12)'; octx.fillRect(0,0,W,H);
+
+  const angle = getLightAngle();
+
+  // 빔 그라디언트
+  const bTipX = LIGHT_ORIGIN_X + Math.sin(angle)*500;
+  const bTipY = LIGHT_ORIGIN_Y - Math.cos(angle)*500;
+  const beamG = ctx.createRadialGradient(LIGHT_ORIGIN_X,LIGHT_ORIGIN_Y,0, bTipX,bTipY,W);
+  beamG.addColorStop(0,'rgba(0,255,80,0.22)');
+  beamG.addColorStop(0.3,'rgba(0,255,60,0.09)');
+  beamG.addColorStop(1,'rgba(0,0,0,0)');
+
+  octx.save();
+  octx.beginPath();
+  octx.moveTo(LIGHT_ORIGIN_X, LIGHT_ORIGIN_Y);
+  for(let a=angle-SPREAD; a<=angle+SPREAD; a+=0.012){
+    octx.lineTo(LIGHT_ORIGIN_X+Math.sin(a)*600, LIGHT_ORIGIN_Y-Math.cos(a)*600);
+  }
+  octx.closePath();
+  octx.fillStyle=beamG; octx.fill();
+  octx.restore();
+
+  // 이미지 블록들
+  BLOCKS.forEach(b=>{
+    const lit = blockInLight(b, angle);
+    if(lit){
+      // 켜진 상태
+      octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=12;
+      octx.strokeStyle='rgba(0,255,60,0.85)'; octx.lineWidth=1.5;
+      octx.strokeRect(b.x, b.y, b.w, b.h);
+      octx.fillStyle='rgba(0,60,20,0.35)'; octx.fillRect(b.x+1,b.y+1,b.w-2,b.h-2);
+      octx.font=`5px 'Press Start 2P',monospace`; octx.fillStyle='rgba(0,255,80,0.9)';
+      octx.textAlign='center';
+      octx.fillText(`#${b.id}`, b.x+b.w/2, b.y+b.h/2+2);
+      octx.restore();
+    } else {
+      octx.strokeStyle='rgba(0,35,0,0.5)'; octx.lineWidth=1;
+      octx.strokeRect(b.x, b.y, b.w, b.h);
+    }
+  });
+
+  // 탐조등 장치 (하단 중앙)
+  const headX = LIGHT_ORIGIN_X + Math.sin(angle)*22;
+  const headY = H - 18;
+  octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=14;
+  octx.fillStyle='rgba(0,200,60,0.85)';
+  octx.beginPath(); octx.ellipse(headX, headY, 13, 8, angle, 0, Math.PI*2); octx.fill();
+  // 기둥
+  octx.strokeStyle='rgba(0,200,0,0.6)'; octx.lineWidth=3;
+  octx.beginPath(); octx.moveTo(LIGHT_ORIGIN_X-5,H); octx.lineTo(LIGHT_ORIGIN_X-5,H-14); octx.stroke();
+  octx.beginPath(); octx.moveTo(LIGHT_ORIGIN_X+5,H); octx.lineTo(LIGHT_ORIGIN_X+5,H-14); octx.stroke();
+  octx.restore();
+
+  // ─── 메인 캔버스로 합성 ───
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+  ctx.drawImage(off,0,0);
+
+  // ─── 터미널 오버레이 ───
+  // 반투명 배경
+  ctx.fillStyle='rgba(0,0,0,0.82)';
+  ctx.fillRect(TERM_X, TERM_Y, TERM_W, TERM_H);
+  // 터미널 테두리
+  ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=8;
+  ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1;
+  ctx.strokeRect(TERM_X, TERM_Y, TERM_W, TERM_H); ctx.restore();
+
+  // 터미널 상단 헤더
+  ctx.fillStyle='rgba(0,40,0,0.9)';
+  ctx.fillRect(TERM_X+1, TERM_Y+1, TERM_W-2, 11);
+  ctx.font=`5px 'Press Start 2P',monospace`; ctx.fillStyle='rgba(0,255,0,0.5)';
+  ctx.textAlign='left';
+  ctx.fillText('MEASURE.DB  [SEARCH MODE]', TERM_X+6, TERM_Y+9);
+
+  // 탐조등 빛이 터미널 유리를 통과하는 느낌 (미묘한 틴트)
+  const litOnTerm = Math.abs(getLightAngle())<0.15;
+  if(litOnTerm){
+    ctx.fillStyle='rgba(0,255,60,0.04)';
+    ctx.fillRect(TERM_X+1, TERM_Y+1, TERM_W-2, TERM_H-2);
+  }
+
+  // 타이핑 진행
+  if(typeState < TOTAL + 60) typeState += 0.9;
+  else typeState = 0;
+
+  let charCount=0;
+  LINES.forEach((line,li)=>{
+    if(typeState < line.delay) return;
+    const y = TERM_Y + 22 + li*LH;
+    if(y > TERM_Y + TERM_H - 6) return;
+    const full = line.prefix + line.text;
+    const typed = Math.min(full.length, Math.floor(typeState - line.delay));
+    const display = full.slice(0, typed);
+
+    ctx.font=`${FS}px 'Press Start 2P',monospace`; ctx.textAlign='left';
+
+    // prefix
+    ctx.fillStyle='rgba(0,200,0,0.5)';
+    ctx.fillText(display.slice(0, line.prefix.length), TERM_X+6, y);
+    // body
+    ctx.fillStyle= line.isCursor ? 'rgba(0,255,0,0.9)' : 'rgba(0,255,80,0.8)';
+    ctx.fillText(display.slice(line.prefix.length), TERM_X+6+line.prefix.length*FS*0.62, y);
+
+    // 현재 타이핑 중인 줄 커서
+    if(!line.isCursor && typed < full.length && typed > 0){
+      const cx2 = TERM_X+6 + Math.min(typed, line.prefix.length)*FS*0.62
+        + Math.max(0, typed-line.prefix.length)*FS*0.62;
+      if(Math.floor(tick/10)%2===0){
+        ctx.fillStyle='rgba(0,255,0,0.9)';
+        ctx.fillRect(cx2, y-FS+1, 4, FS);
+      }
+    }
+
+    // 마지막 줄 깜빡이는 커서
+    if(line.isCursor && typed > 0 && Math.floor(tick/18)%2===0){
+      ctx.fillStyle='rgba(0,255,0,0.9)';
+      ctx.fillRect(TERM_X+6, y-FS+1, FS*0.62, FS);
+    }
+  });
+
+  // 터미널 하단 빛 새는 느낌 (서치라이트 반영)
+  const leakAlpha = (Math.sin(tick*0.016)*0.5+0.5)*0.08;
+  const leakG = ctx.createLinearGradient(0,TERM_Y,0,TERM_Y+TERM_H);
+  leakG.addColorStop(0,'rgba(0,255,60,0)');
+  leakG.addColorStop(1,`rgba(0,255,60,${leakAlpha})`);
+  ctx.fillStyle=leakG; ctx.fillRect(TERM_X+1,TERM_Y+12,TERM_W-2,TERM_H-13);
+
+  // 상단 스캔 라인 (빔 방향 표시)
+  const scanX = LIGHT_ORIGIN_X + Math.sin(angle)*(W*0.6);
+  const scanG = ctx.createLinearGradient(scanX-20,0,scanX+20,0);
+  scanG.addColorStop(0,'rgba(0,255,0,0)');
+  scanG.addColorStop(0.5,'rgba(0,255,0,0.07)');
+  scanG.addColorStop(1,'rgba(0,255,0,0)');
+  ctx.fillStyle=scanG; ctx.fillRect(scanX-20,0,40,TERM_Y);
+
+  // 상단 정보 (블록 몇 개 조명됐는지)
+  const litCount = BLOCKS.filter(b=>blockInLight(b,angle)).length;
+  ctx.font=`5px 'Press Start 2P',monospace`; ctx.fillStyle='rgba(0,255,0,0.3)';
+  ctx.textAlign='left'; ctx.fillText(`ARC: ${litCount} IN RANGE`, 8, 12);
+  ctx.textAlign='right'; ctx.fillText(`SWEEP: ${(angle*57.3).toFixed(0)}°`, W-8, 12);
+
+  // CRT
+  ctx.fillStyle='rgba(0,0,0,0.09)';
+  for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+  // 코너 브라켓
+  const bk=10; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+  [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+    ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+  });
+
+  tick++;
+}
+
+setInterval(drawFrame, 33);
+
+}, 500);
+</script>
+</body>
+</html>
