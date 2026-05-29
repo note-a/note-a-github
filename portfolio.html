@@ -4,16 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SET IS THE WORLD - PORTFOLIO</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Galmuri11&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
 
   <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Press Start 2P', 'Galmuri11', monospace !important; }
-html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'Galmuri11', monospace !important; height: 100%; overflow: hidden;
-  text-shadow: 0.8px 0.4px rgba(255,0,0,0.18), -0.8px -0.4px rgba(0,255,255,0.15); }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Press Start 2P', monospace !important; }
+html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', monospace !important; height: 100%; overflow: hidden;
+  text-shadow: 0.8px 0.4px rgba(255,0,0,0.35), -0.8px -0.4px rgba(0,255,255,0.28); }
 
-/* 큰 텍스트 — 강한 효과 */
-.menu-item, .menu-title, .section-title, #csOverlayTitle, #csOverlayHeader span {
-  text-shadow: 1.5px 0.8px rgba(255,0,0,0.35), -1.5px -0.8px rgba(0,255,255,0.28);
+/* 메뉴 아이템 */
+.menu-item, .menu-title, .section-title {
+  text-shadow: 1.2px 0.6px rgba(255,0,0,0.4), -1.2px -0.6px rgba(0,255,255,0.32);
+}
+
+/* 타이틀바 / 상태바 */
+.terminal-titlebar, .terminal-statusbar, .menu-statusbar {
+  text-shadow: 1px 0.5px rgba(255,0,0,0.38), -1px -0.5px rgba(0,255,255,0.3);
 }
 /* 극소 텍스트(6~8px) — 아주 약한 효과 */
 .cs-cell, .folder-label, #csStat1, #csStat2, #csStat3, #csStat4 {
@@ -264,11 +269,12 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
   flex-direction: column;
   border-top: 2px solid #80ff80;
   border-left: 2px solid #80ff80;
-  border-bottom: 2px solid #006600;
-  border-right: 3px solid #006600;
+  border-bottom: 2px solid #40aa40;
+  border-right: 3px solid #40aa40;
   background: rgba(0, 0, 0, 0.75);
   box-shadow: 0 0 10px rgba(0,255,0,0.7), 0 0 28px rgba(0,255,0,0.35), 0 0 60px rgba(0,255,0,0.15),
-              inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5);
+              inset 1px 1px 0 rgba(150,255,80,0.18), inset -1px -1px 0 rgba(0,0,0,0.5),
+              4px 0 8px rgba(0,255,0,0.2);
   position: relative;
 }
 
@@ -864,6 +870,49 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
   border-color: #ff9900;
 }
 
+.search-sim {
+  display: flex;
+  border-top: 1px solid #00ff00;
+  padding: 8px 6px 3px 6px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+.search-sim input {
+  flex: 1;
+  background: #000;
+  border: 1px solid #00cc00;
+  color: #00ff00;
+  padding: 4px 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  outline: none;
+  letter-spacing: 0.5px;
+  box-sizing: border-box;
+}
+
+.search-sim input::placeholder {
+  color: rgba(0, 255, 0, 0.45);
+}
+
+.search-sim button {
+  background: #004d00;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  padding: 3px 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  text-shadow: 0 0 8px #00ff00;
+  letter-spacing: 0.5px;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.search-sim button:hover {
+  background: #006600;
+}
+
 .photo-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -888,6 +937,10 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
   display: flex;
   flex-direction: column;
   min-height: 150px;
+  font-size: 9px !important;
+}
+.photo-item * {
+  font-size: 9px !important;
 }
 
 .photo-item:hover {
@@ -922,6 +975,14 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
   font-weight: bold;
   color: #00ff00;
   margin-bottom: 2px;
+}
+#terminalContent #photoGallery, #terminalContent #photoGallery *,
+#mobileTerminalContent #photoGallery, #mobileTerminalContent #photoGallery * {
+  font-size: 9px !important;
+}
+#terminalContent .photo-item-title,
+#mobileTerminalContent .photo-item-title {
+  font-size: 7px !important;
 }
 
 .photo-item-keywords {
@@ -1255,22 +1316,23 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
 
 
 
-/* ── Contact Sheet Gallery: Galmuri9 ── */
+/* ── 페이지 내부: DotGothic16, 글씨효과 없음 ── */
 #terminalContent.with-overlay, #terminalContent.with-overlay * {
-  font-family: 'Press Start 2P', monospace !important;
+  font-family: 'DotGothic16', monospace !important;
+  text-shadow: none !important;
 }
-
-/* ── Item Preview Modal: Galmuri9 ── */
 #itemPreviewModal, #itemPreviewModal * {
-  font-family: 'Press Start 2P', monospace !important;
+  font-family: 'DotGothic16', monospace !important;
+  text-shadow: none !important;
 }
-
-/* ── Terminal content: Galmuri9 전용 ── */
 #terminalContent, #terminalContent * {
-  font-family: 'Press Start 2P', monospace !important;
+  font-family: 'DotGothic16', monospace !important;
+  text-shadow: none !important;
 }
-
-/* ── Photo Gallery (SET): Galmuri9 강제 ── */
+#mobileTerminalContent, #mobileTerminalContent * {
+  font-family: 'DotGothic16', monospace !important;
+  text-shadow: none !important;
+}
 #photoGallery, #photoGallery *, #csLightbox, #csLightbox *,
 #csOverlay, #csOverlay *,
 .cs-cell, .cs-cell *, .cs-folder, .cs-folder *,
@@ -1278,9 +1340,9 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', 'G
 #csDetail, #csDetail *, #csDetImg, #csDetName, #csDetReason,
 #fpPhotos, #fpInfo, #fpPanel, #fpEmpty,
 #csBackBtn, .cs-fb, #csLoadMore {
-  font-family: 'Press Start 2P', monospace !important;
+  font-family: 'DotGothic16', monospace !important;
+  text-shadow: none !important;
 }
-/* ── 갤러리 헤더 타이틀만 Press Start 2P ── */
 #csOverlayTitle {
   font-family: 'Press Start 2P', monospace !important;
 }
@@ -1419,8 +1481,8 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         <div id="pmWindow" style="
           background:#000;
           border-top:2px solid #80ff80; border-left:2px solid #80ff80;
-          border-bottom:2px solid #003300; border-right:2px solid #003300;
-          box-shadow:0 0 20px rgba(0,255,0,0.2);
+          border-bottom:2px solid #003300; border-right:2px solid #00cc00;
+          box-shadow:0 0 20px rgba(0,255,0,0.2), 4px 0 10px rgba(0,255,0,0.2);
           font-family:'Press Start 2P', monospace;
           display:flex; flex-direction:column;
         ">
@@ -1451,8 +1513,8 @@ body.leaving { animation: crt-off 0.45s ease-in forwards !important; }
         <div id="vlWindow" style="
           background:#000;
           border-top:2px solid #80ff80; border-left:2px solid #80ff80;
-          border-bottom:2px solid #003300; border-right:2px solid #003300;
-          box-shadow:0 0 20px rgba(0,255,0,0.15);
+          border-bottom:2px solid #003300; border-right:2px solid #00cc00;
+          box-shadow:0 0 20px rgba(0,255,0,0.15), 4px 0 10px rgba(0,255,0,0.2);
           font-family:'Press Start 2P', monospace;
         ">
           <div style="background:#00ff00;color:#000;padding:5px 10px;font-size:8px;font-weight:bold;letter-spacing:1px;font-family:'Press Start 2P',monospace;display:flex;justify-content:space-between;align-items:center;">
@@ -2150,59 +2212,20 @@ REQUIRE LOGIN: No (Public access enabled)
           // Archive Photos format with search
           const archiveHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px -20px; position: relative;">
-              <div class="photo-gallery" id="photoGallery" style="padding: 12px 20px; flex: 1; overflow-y: auto;">
-                <div id="archiveInitialView" style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:20px;">
-                  <img src="images/big-brother.jpg?v=3"
-                    style="max-width:100%;max-height:270px;object-fit:contain;display:block;"
-                    onerror="this.style.display='none'">
-                  <div style="text-align:center;color:#00ff00;font-size:11px;font-family:'Press Start 2P', monospace;font-weight:bold;">
-                    Enter your instructions
-                  </div>
+              <div class="photo-gallery" id="photoGallery" style="padding: 0; margin: 0; flex: 1; overflow: hidden;">
+                <div id="archiveInitialView" style="padding:0;margin:0;width:100%;">
+                  <canvas id="measureBannerCanvas" style="display:block;width:100%;"></canvas>
                 </div>
               </div>
-              <div style="position: relative; padding: 0 20px 12px 20px; flex-shrink: 0;">
-                <canvas id="archiveWireframeCanvas" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 120px; z-index: 5; pointer-events: none;"></canvas>
-                <div class="archive-search-bar" style="position: relative; z-index: 10;">
-                  <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search by keyword: crash, floating, shadow...">
-                  <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
-                </div>
+              <div class="search-sim">
+                <input type="text" class="archive-search-input" id="archiveSearchInput" placeholder="Search: crash / floating / shadow...">
+                <button class="archive-search-btn" id="archiveSearchBtn">SEARCH</button>
               </div>
             </div>
           `;
           terminalContent.innerHTML = archiveHTML;
+          setTimeout(() => initMeasureBanner('measureBannerCanvas'), 100);
           const gallery = document.getElementById('photoGallery');
-
-          // Initialize rotating wireframe sphere at archive bottom
-          setTimeout(() => {
-            const archiveCanvas = document.getElementById('archiveWireframeCanvas');
-            if (archiveCanvas && typeof THREE !== 'undefined') {
-              const scene = new THREE.Scene();
-              const w = archiveCanvas.clientWidth;
-              const h = archiveCanvas.clientHeight;
-              const camera = new THREE.PerspectiveCamera(75, w / h || 1, 0.1, 1000);
-              const renderer = new THREE.WebGLRenderer({ canvas: archiveCanvas, antialias: true, alpha: true });
-
-              renderer.setSize(w, h);
-              renderer.setClearColor(0x000000, 0.05);
-              camera.position.z = 200;
-
-              const geometry = new THREE.IcosahedronGeometry(80, 3);
-              const material = new THREE.LineBasicMaterial({ color: 0x39dc00, linewidth: 1 });
-              const wireframe = new THREE.LineSegments(
-                new THREE.WireframeGeometry(geometry),
-                material
-              );
-              scene.add(wireframe);
-
-              function animateArchive() {
-                requestAnimationFrame(animateArchive);
-                wireframe.rotation.x += 0.005;
-                wireframe.rotation.y += 0.01;
-                renderer.render(scene, camera);
-              }
-              animateArchive();
-            }
-          }, 100);
 
           // Setup search functionality — merge published posts as photo entries
           const extraPhotos = publishedPosts.map(p => ({
@@ -2262,8 +2285,8 @@ REQUIRE LOGIN: No (Public access enabled)
                 ${th.line ? `<div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.28)}px;width:1px;background:${th.band};z-index:3;opacity:.5;"></div><div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.72)}px;width:1px;background:${th.band};z-index:3;opacity:.5;"></div>` : ''}
                 ${th.mark ? `<div style="position:absolute;top:-4px;right:${Math.max(4,Math.round(w*.3))}px;width:8px;height:18px;background:${th.mark};clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);z-index:5;opacity:.9;"></div>` : ''}
                 <div style="position:absolute;top:19px;bottom:8px;left:0;right:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;overflow:hidden;pointer-events:none;">
-                  <span style="writing-mode:vertical-rl;color:${th.tc};font-weight:700;font-size:9px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
-                  <span style="writing-mode:vertical-rl;color:${th.tc};opacity:.6;font-size:7px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
+                  <span style="writing-mode:vertical-rl;color:${th.tc};font-weight:700;font-size:11px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
+                  <span style="writing-mode:vertical-rl;color:${th.tc};opacity:.6;font-size:9px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
                 </div>
               </div>
               <div class="bk-side" style="background:${th.side};"></div>
@@ -2332,7 +2355,7 @@ REQUIRE LOGIN: No (Public access enabled)
               </div>
             ` : '';
             const listHTML = `
-              <div style="display: flex; flex-direction: column; height: 100%; padding: 0; margin: -12px;">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;">
                 ${noticeHTML}
                 <div style="padding: 8px 0; border-bottom: 1px solid #00ff00; background: #000; color: #00ff00; font-size: 12px; flex-shrink: 0; display: flex;">
                   <div style="flex: 1; padding: 0 12px; font-weight: bold; border-right: 1px solid #00ff00;">title</div>
@@ -2443,7 +2466,7 @@ REQUIRE LOGIN: No (Public access enabled)
           const statementBtnHTML = hasStatement
             ? `<button onclick="loadAboutStatement()" style="position:absolute;bottom:14px;right:14px;background:#000;border-top:2px solid #80ff80;border-left:2px solid #80ff80;border-bottom:2px solid #003300;border-right:2px solid #003300;color:#00ff00;padding:6px 14px;font-family:'Press Start 2P', monospace;font-size:6px;cursor:pointer;letter-spacing:1px;font-weight:bold;transition:all 0.1s;" onmouseover="this.style.background='#00ff00';this.style.color='#000';" onmouseout="this.style.background='#000';this.style.color='#00ff00';">[ ARTIST STATEMENT → ]</button>`
             : '';
-          let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;"><div class="md-content" id="contentText">${displayText}</div>${statementBtnHTML}</div>`;
+          let textHTML = `<div style="padding:12px;position:relative;height:100%;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;"><div class="md-content" id="contentText" style="flex:1;overflow-y:auto;${hasStatement ? 'padding-bottom:48px;' : ''}">${displayText}</div>${statementBtnHTML}</div>`;
           terminalContent.innerHTML = textHTML;
         }
       }
@@ -2866,11 +2889,11 @@ REQUIRE LOGIN: No (Public access enabled)
                     <span style="font-size:8px;color:#00ff00;letter-spacing:1px;">${p.category}</span>
                   </div>` : ''}
                   ${p.category ? `<div style="border-top:1px solid #00ff00;"></div>` : ''}
-                  <div style="font-size:9px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
-                  <div style="font-size:${isMobLb ? '11px' : '12px'};color:#ccc;line-height:1.9;">${
+                  <div style="font-size:11px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
+                  <div style="font-size:11px !important;color:#ccc;line-height:1.9;">${
                     (p.reason || '—').split('\n-----\n').map((part, i) =>
                       (i > 0 ? '<div style="border-top:1px solid #00ff0055;margin:6px 0;"></div>' : '') +
-                      '<div style="white-space:pre-wrap;">' + part + '</div>'
+                      '<div style="white-space:pre-wrap;font-size:11px !important;">' + part + '</div>'
                     ).join('')
                   }</div>
                 </div>
@@ -3022,36 +3045,35 @@ REQUIRE LOGIN: No (Public access enabled)
 
           <!-- A. VERDICT -->
           <div style="margin-bottom:9px;">
-            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">A  VERDICT</div>
+            <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">A  VERDICT</div>
             ${[['CORE',core,'#00ff00',pC],['SUP',sup,'#ffb000',pS],['DROP',drop,'rgba(0,255,0,0.25)',pD]].map(([lbl,cnt,clr,pct])=>`
-            <div style="display:flex;align-items:center;gap:5px;font-size:8px;margin-bottom:3px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:9px;margin-bottom:3px;">
               <span style="width:28px;color:${clr};letter-spacing:0.5px;">${lbl}</span>
               <div style="flex:1;height:5px;background:#0a0a0a;border:1px solid #001a00;">
                 <div style="width:${pct}%;height:100%;background:${clr};"></div>
               </div>
               <span style="width:22px;text-align:right;color:${clr};">${cnt}</span>
-              <span style="width:28px;text-align:right;color:rgba(0,255,0,0.2);font-size:7px;">${pct}%</span>
+              <span style="width:28px;text-align:right;color:rgba(0,255,0,0.2);font-size:9px;">${pct}%</span>
             </div>`).join('')}
-            <div style="font-size:7px;color:rgba(0,255,0,0.18);text-align:right;margin-top:1px;">TOTAL ${total}</div>
+            <div style="font-size:9px;color:rgba(0,255,0,0.18);text-align:right;margin-top:1px;">TOTAL ${total}</div>
           </div>
 
           <!-- BATCH -->
           ${subs.length ? `
           <div style="margin-bottom:9px;">
-            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">BATCHES</div>
+            <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">BATCHES</div>
             <div style="display:flex;flex-direction:column;gap:2px;">${batchInfo}</div>
           </div>` : ''}
 
           <!-- B. DIR -->
           ${topDirs.length ? `
           <div style="margin-bottom:9px;">
-            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">B  DIR FREQUENCY</div>
+            <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">B  DIR FREQUENCY</div>
             <div style="display:flex;flex-wrap:wrap;gap:3px;">
               ${topDirs.map(([dir,cnt]) => {
                 const r = cnt/maxDir;
                 const op = (0.3 + r*0.7).toFixed(2);
-                const fs = 8 + Math.round(r*3);
-                return `<span style="font-size:${fs}px;border:1px solid rgba(0,255,0,${op});color:rgba(0,255,0,${op});padding:1px 4px;letter-spacing:0.5px;white-space:nowrap;">${dir}<span style="font-size:7px;opacity:0.5;"> ${cnt}</span></span>`;
+                return `<span style="font-size:9px;border:1px solid rgba(0,255,0,${op});color:rgba(0,255,0,${op});padding:1px 4px;letter-spacing:0.5px;white-space:nowrap;">${dir}<span style="font-size:9px;opacity:0.5;"> ${cnt}</span></span>`;
               }).join('')}
             </div>
           </div>` : ''}
@@ -3059,17 +3081,17 @@ REQUIRE LOGIN: No (Public access enabled)
           <!-- C. FEED -->
           ${feed.length ? `
           <div>
-            <div style="font-size:7px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">C  SELECTIONS</div>
+            <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,0,0.35);margin-bottom:4px;">C  SELECTIONS</div>
             <div style="display:flex;flex-direction:column;gap:3px;">
               ${feed.map(p => {
                 const clr = p.verdict==='core' ? '#00ff00' : '#ffb000';
                 const vid = p.verdict==='core' ? 'CORE' : 'SUP';
-                return `<div style="display:flex;align-items:baseline;gap:4px;font-size:8px;line-height:1.4;">
+                return `<div style="display:flex;align-items:baseline;gap:4px;font-size:9px;line-height:1.4;">
                   <div style="width:5px;height:5px;border-radius:50%;background:${clr};flex-shrink:0;margin-top:4px;"></div>
-                  <span style="color:${clr};width:28px;flex-shrink:0;font-size:7px;">${vid}</span>
+                  <span style="color:${clr};width:28px;flex-shrink:0;font-size:9px;">${vid}</span>
                   <span style="color:rgba(0,255,0,0.5);flex-shrink:0;">${(p.id||'').toUpperCase()}</span>
-                  ${p.dir ? `<span style="color:#ffb000;flex-shrink:0;font-size:7px;"> ${p.dir}</span>` : ''}
-                  ${p.reason ? `<span style="color:rgba(255,255,255,0.25);font-size:7px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"> ${p.reason}</span>` : ''}
+                  ${p.dir ? `<span style="color:#ffb000;flex-shrink:0;font-size:9px;"> ${p.dir}</span>` : ''}
+                  ${p.reason ? `<span style="color:rgba(255,255,255,0.25);font-size:9px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"> ${p.reason}</span>` : ''}
                 </div>`;
               }).join('')}
             </div>
@@ -3142,9 +3164,8 @@ REQUIRE LOGIN: No (Public access enabled)
                 <img src="${previewSrc}" data-full="${_pFull}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
               </div>
               <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:0 2px;">
-                <span style="font-size:3px;font-family: 'Press Start 2P', monospace;color:rgba(0,255,0,0.5);letter-spacing:0.5px;">[SYS]</span>
-                <span style="font-size:4px;font-family: 'Press Start 2P', monospace;color:#00ff00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
-                <span style="font-size:3px;font-family: 'Press Start 2P', monospace;color:rgba(0,255,0,0.4);">(${childCount})</span>
+                <span style="font-size:9px;font-family: 'Press Start 2P', monospace;color:#00ff00;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
+                <span style="font-size:7px;font-family: 'Press Start 2P', monospace;color:rgba(0,255,0,0.4);">(${childCount})</span>
               </div>
             </div>`;
           } else {
@@ -3172,8 +3193,8 @@ REQUIRE LOGIN: No (Public access enabled)
           <div class="no-scrollbar" style="display:flex;flex-direction:column;height:100%;overflow-y:auto;">
             ${csNavStack.length > 0 ? `
             <div style="padding:5px 10px;border-bottom:1px dashed rgba(0,255,0,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:rgba(0,255,0,0.03);position:sticky;top:0;z-index:1;background:#000;">
-              <button id="csBackBtn" style="font-size:5px;font-family: 'Press Start 2P', monospace;padding:2px 8px;border:1px solid #00ff00;background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
-              <span style="font-size:4px;color:rgba(0,255,0,0.45);font-family: 'Press Start 2P', monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
+              <button id="csBackBtn" style="font-size:9px;font-family: 'Press Start 2P', monospace;padding:3px 10px;border:1px solid #00ff00;background:transparent;color:#00ff00;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
+              <span style="font-size:7px;color:rgba(0,255,0,0.45);font-family: 'Press Start 2P', monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
             </div>` : ''}
             <div style="padding:7px 12px;border-bottom:1px solid #00ff00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;position:sticky;top:${csNavStack.length > 0 ? '28' : '0'}px;z-index:1;background:#000;">
               ${filterBtns}
@@ -3639,7 +3660,7 @@ REQUIRE LOGIN: No (Public access enabled)
       const slide = currentSlides[slideIndex];
       document.querySelector('.slide-title').textContent = slide.title;
       document.querySelector('.slide-meta').textContent = `${slide.category}`;
-      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 0 24px; color: #e0e0e0; font-family: 'Press Start 2P', monospace; font-size:6px; line-height: 1.8;">${slide.text}</pre>`;
+      document.querySelector('.slide-text').innerHTML = `<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; padding: 0 24px; color: #e0e0e0; font-size:9px; line-height: 1.8;">${slide.text}</pre>`;
       document.querySelector('.slide-counter').textContent = `${slideIndex + 1}/${currentSlides.length}`;
     }
 
@@ -3867,6 +3888,118 @@ REQUIRE LOGIN: No (Public access enabled)
       });
     }
 
+    // ── Measure Banner Canvas Animation ──
+    function initMeasureBanner(canvasId) {
+      const c = document.getElementById(canvasId);
+      if (!c) return;
+      const dpr = window.devicePixelRatio || 1;
+      const ctx = c.getContext('2d');
+      const LW=610, LH=380;
+      c.width=LW*dpr; c.height=LH*dpr;
+      c.style.width='100%'; c.style.height='auto';
+      ctx.scale(dpr,dpr);
+      const W=LW, H=LH;
+      let tick=0;
+      const C2={bg:'#000000',topBar:'#004400',botBar:'#003300',divider:'#00ff00',dim:'#00dd00',yellow:'#aaff00',cyan:'#00ffaa',green:'#00ff00',white:'#00ff00'};
+      const MSGS=[
+        {en:'They started keeping count.',kr:'그들은 숫자를 세기 시작했다.',sys:false,wait:18,typing:14},
+        {en:'Not from fixation, but from a theory:',kr:'고정에서가 아니라 이론에서:',sys:false,wait:12,typing:12},
+        {en:'that what recurs without reason',kr:'이유 없이 반복되는 것',sys:false,wait:8,typing:10},
+        {en:'is probably evidence of a reason not yet named.',kr:'아마도 아직 이름이 밝혀지지 않은 이유의 증거일 것입니다.',sys:false,wait:60,typing:16},
+        {en:'The record reaches back,',kr:'기록은 거슬러 올라가지만',sys:false,wait:22,typing:14},
+        {en:'but experience does not accumulate.',kr:'경험은 쌓이지 않습니다.',sys:false,wait:8,typing:12},
+        {en:'The thing returning to your periphery —',kr:'당신의 주변으로 계속 돌아오는 것을',sys:false,wait:75,typing:14},
+        {en:'bring it here.',kr:'여기로 가져오세요.',sys:false,wait:8,typing:10},
+        {en:'The record will tell you how many times',kr:'기록에 이미 도착한 횟수가 몇 번인지 알려줍니다',sys:false,wait:20,typing:14},
+        {en:'it had already arrived before you began to look.',kr:'보기 전에.',sys:false,wait:8,typing:14},
+        {en:'Search for anything.',kr:'무엇이든 검색하세요.',sys:true,wait:85,typing:20},
+      ];
+      const TOP_H=26,BOT_H=30,HDR_H=20,EN_FS=12,KR_FS=11,EN_ROW=17,MSG_GAP=6,USER_X=8,EN_X=90,SPLIT_X=430;
+      const PANEL_W=W-SPLIT_X, EN_MAX_W=SPLIT_X-EN_X-8;
+      let revealed=0,phase='intro',phaseT=0,doneT=0,dotCount=0,dotT=0;
+      const USERS=['나(익명)','관찰자_01','수집가','방문자_09','익명의_이'];
+      function wrapEN(text){ctx.font=`${EN_FS}px monospace`;const words=text.split(' '),lines=[];let cur='';for(const w of words){const t=cur?cur+' '+w:w;if(ctx.measureText(t).width>EN_MAX_W&&cur){lines.push(cur);cur=w;}else cur=t;}if(cur)lines.push(cur);return lines;}
+      ctx.font=`${EN_FS}px monospace`;
+      const MSG_DATA=MSGS.map(m=>({...m,enLines:wrapEN(m.en)}));
+      function msgH(m){return m.enLines.length*EN_ROW+MSG_GAP;}
+      const startMs=Date.now();
+      function timeStr(){const d=new Date(startMs+tick*42),p=n=>String(n).padStart(2,'0');return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;}
+      function draw(){
+        if(phase==='intro'){
+          ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+          const bw=320,bh=100,bx=(W-bw)/2,by=(H-bh)/2;
+          ctx.fillStyle='#001400';ctx.fillRect(bx,by,bw,bh);
+          ctx.strokeStyle='#00ff00';ctx.lineWidth=1;ctx.strokeRect(bx,by,bw,bh);
+          ctx.fillStyle='#003300';ctx.fillRect(bx,by,bw,18);
+          ctx.fillStyle='#00ff00';ctx.font='bold 9px monospace';
+          ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText('★  시스템 공지  ★',W/2,by+9);
+          ctx.font='11px monospace';ctx.fillStyle='#00ff00';
+          ctx.fillText('채팅방에 입장하셨습니다.',W/2,by+44);
+          ctx.font='8px monospace';ctx.fillStyle='#00cc00';
+          ctx.fillText('MEASURE.DB 검색 채팅방',W/2,by+64);
+          if(Math.floor(tick/18)%2===0){ctx.fillStyle='rgba(0,220,0,0.55)';ctx.font='7px monospace';ctx.fillText('[ 연결 중... ]',W/2,by+85);}
+          phaseT++;tick++;
+          if(phaseT>=95){phase='pause';phaseT=0;}
+          return;
+        }
+        ctx.fillStyle=C2.bg;ctx.fillRect(0,0,W,H);
+        ctx.strokeStyle='#00ff00';ctx.lineWidth=2;ctx.strokeRect(0,0,W,H);
+        ctx.strokeStyle='rgba(100,100,255,0.10)';ctx.lineWidth=0.5;
+        for(let y=TOP_H+HDR_H;y<H-BOT_H;y+=EN_ROW+2){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(SPLIT_X,y);ctx.stroke();}
+        ctx.fillStyle=C2.topBar;ctx.fillRect(0,0,W,TOP_H);
+        ctx.font=`bold ${EN_FS}px monospace`;ctx.textBaseline='middle';ctx.textAlign='left';
+        const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티'];let mx=6;
+        menu.forEach((item,i)=>{ctx.fillStyle=i===3?C2.yellow:'rgba(220,220,255,0.88)';ctx.fillText(item,mx,TOP_H/2);mx+=ctx.measureText(item).width+14;});
+        ctx.fillStyle=C2.dim;ctx.textAlign='right';ctx.fillText(timeStr(),W-6,TOP_H/2);
+        ctx.fillStyle='rgba(0,120,40,0.95)';ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
+        ctx.fillStyle=C2.cyan;ctx.font=`bold ${EN_FS}px monospace`;ctx.textBaseline='middle';ctx.textAlign='left';
+        ctx.fillText('<MEASURE.DB>  데이터베이스 검색 채팅방',6,TOP_H+HDR_H/2);
+        ctx.fillStyle='rgba(0,140,50,0.95)';ctx.fillRect(SPLIT_X,TOP_H,PANEL_W,HDR_H);
+        ctx.fillStyle=C2.yellow;ctx.font=`bold ${KR_FS}px monospace`;ctx.textBaseline='middle';
+        ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
+        ctx.strokeStyle=C2.divider;ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(SPLIT_X,TOP_H);ctx.lineTo(SPLIT_X,H-BOT_H);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(0,TOP_H+HDR_H);ctx.lineTo(W,TOP_H+HDR_H);ctx.stroke();
+        ctx.font=`${KR_FS}px monospace`;ctx.textBaseline='top';ctx.textAlign='left';
+        USERS.forEach((u,i)=>{ctx.fillStyle=i===0?C2.cyan:C2.dim;ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));});
+        const rpY=H-BOT_H-KR_FS*3-6;ctx.strokeStyle='rgba(170,170,255,0.25)';ctx.lineWidth=0.5;
+        ctx.beginPath();ctx.moveTo(SPLIT_X+4,rpY);ctx.lineTo(W-4,rpY);ctx.stroke();
+        ctx.fillStyle=C2.dim;ctx.font=`${KR_FS-1}px monospace`;
+        ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
+        phaseT++;const mi=Math.min(revealed,MSGS.length-1);
+        if(phase==='pause'){if(phaseT>=55){phase='wait';phaseT=0;}}
+        else if(phase==='wait'){if(phaseT>=MSGS[mi].wait){phase='typing';phaseT=0;dotCount=0;dotT=0;}}
+        else if(phase==='typing'){dotT++;if(dotT%7===0)dotCount=(dotCount+1)%4;if(phaseT>=MSGS[mi].typing){if(revealed<MSGS.length)revealed++;phase=revealed>=MSGS.length?'done':'wait';phaseT=0;}}
+        else{doneT++;if(doneT>220){revealed=0;phase='intro';phaseT=0;doneT=0;}}
+        const showTyping=phase==='typing'&&revealed<MSGS.length;
+        const CTOP=TOP_H+HDR_H+4,CAVAIL=H-BOT_H-CTOP,vis=MSG_DATA.slice(0,revealed);
+        const typH=showTyping?EN_ROW+MSG_GAP:0;
+        const totalH=vis.reduce((s,m)=>s+msgH(m),0)+typH;
+        let curY=totalH>CAVAIL?CTOP+CAVAIL-totalH:CTOP;
+        ctx.save();ctx.beginPath();ctx.rect(0,CTOP,SPLIT_X,CAVAIL);ctx.clip();ctx.textBaseline='top';ctx.textAlign='left';
+        vis.forEach(msg=>{const lh=msgH(msg);if(curY+lh>CTOP&&curY<CTOP+CAVAIL){ctx.font=`bold ${EN_FS}px monospace`;ctx.fillStyle=msg.sys?C2.green:C2.yellow;ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);ctx.font=`${EN_FS}px monospace`;ctx.fillStyle=msg.sys?C2.green:C2.white;msg.enLines.forEach((line,li)=>{ctx.fillText(line,EN_X,curY+li*EN_ROW);});}curY+=lh;});
+        if(showTyping&&curY<CTOP+CAVAIL){ctx.font=`bold ${EN_FS}px monospace`;ctx.fillStyle=C2.yellow;ctx.fillText('MEASURE :',USER_X,curY);ctx.font=`${EN_FS}px monospace`;ctx.fillStyle='rgba(180,220,255,0.5)';ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);}
+        ctx.restore();
+        ctx.fillStyle=C2.botBar;ctx.fillRect(0,H-BOT_H,W,BOT_H);
+        ctx.strokeStyle=C2.divider;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,H-BOT_H);ctx.lineTo(W,H-BOT_H);ctx.stroke();
+        ctx.font=`bold ${EN_FS}px monospace`;ctx.textBaseline='middle';ctx.textAlign='left';
+        ctx.fillStyle=C2.yellow;ctx.fillText('>>',6,H-BOT_H/2);
+        if(Math.floor(tick/15)%2===0){ctx.fillStyle=C2.white;ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1);}
+        if(revealed>0){ctx.font='bold 11px monospace';ctx.textBaseline='middle';ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,42,H-BOT_H/2);}
+        ctx.fillStyle=C2.dim;ctx.textAlign='right';ctx.font=`${KR_FS}px monospace`;
+        ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
+        tick++;
+      }
+      let lastT=0;
+      function frame(t){
+        if(!document.getElementById(canvasId)) return;
+        if(t-lastT>=42){draw();lastT=t;}
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
     // Setup photo search
     function setupPhotoSearch(allPhotos) {
       const searchInput = document.getElementById('archiveSearchInput');
@@ -3878,15 +4011,11 @@ REQUIRE LOGIN: No (Public access enabled)
       // Display initial photos with placeholder
       function displayInitialPhotos() {
         gallery.innerHTML = `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px;">
-            <img src="images/big-brother.jpg?v=3"
-              style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
-              onerror="this.style.display='none'">
-            <div style="text-align: center; color: #00ff00; font-size:6px; font-family: 'Press Start 2P', monospace; font-weight: bold;">
-              Enter your instructions
-            </div>
+          <div style="padding:0;margin:0;width:100%;">
+            <canvas id="measureBannerCanvas" style="display:block;width:100%;"></canvas>
           </div>
         `;
+        setTimeout(() => initMeasureBanner('measureBannerCanvas'), 100);
       }
 
       // Pixelate image using Canvas
@@ -4265,11 +4394,8 @@ REQUIRE LOGIN: No (Public access enabled)
         mobileContent.style.whiteSpace = 'normal';
         mobileContent.innerHTML = `
           <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px; flex-shrink: 0;">
-              <img src="images/big-brother.jpg?v=3"
-                style="max-width: 100%; max-height: 270px; object-fit: contain; display: block;"
-                onerror="this.style.display='none'">
-              <div style="text-align: center; color: #00ff00; font-size:4px; font-family: 'Press Start 2P', monospace;">Enter your instructions</div>
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0; margin: 0; flex-shrink: 0; width: 100%; height: 274px; overflow: hidden;">
+              <canvas id="measureBannerCanvasMobile" style="display:block;width:100%;height:100%;margin:0;padding:0;border:none;"></canvas>
               <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
                 style="width: 100%; background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 6px; font-size:6px; font-family: 'Press Start 2P', monospace; box-sizing: border-box;">
             </div>
@@ -4277,6 +4403,7 @@ REQUIRE LOGIN: No (Public access enabled)
             </div>
           </div>
         `;
+        setTimeout(() => initMeasureBanner('measureBannerCanvasMobile'), 100);
 
         // Function to render photos with images (for search results)
         const renderPhotos = (photos) => {
@@ -4387,8 +4514,8 @@ REQUIRE LOGIN: No (Public access enabled)
               ${p.line ? `<div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.28)}px;width:1px;background:${p.band};z-index:3;opacity:.5;"></div><div style="position:absolute;top:0;bottom:0;left:${Math.round(w*.72)}px;width:1px;background:${p.band};z-index:3;opacity:.5;"></div>` : ''}
               ${p.mark ? `<div style="position:absolute;top:-4px;right:${Math.max(3,Math.round(w*.3))}px;width:7px;height:16px;background:${p.mark};clip-path:polygon(0 0,100% 0,100% 85%,50% 100%,0 85%);z-index:5;opacity:.9;"></div>` : ''}
               <div style="position:absolute;top:17px;bottom:6px;left:0;right:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;overflow:hidden;pointer-events:none;">
-                <span style="writing-mode:vertical-rl;color:${p.tc};font-weight:700;font-size:9px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
-                <span style="writing-mode:vertical-rl;color:${p.tc};opacity:.6;font-size:7px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
+                <span style="writing-mode:vertical-rl;color:${p.tc};font-weight:700;font-size:11px;letter-spacing:.04em;max-height:72%;overflow:hidden;text-align:center;">${item.title||''}</span>
+                <span style="writing-mode:vertical-rl;color:${p.tc};opacity:.6;font-size:9px;letter-spacing:.02em;max-height:22%;overflow:hidden;">${item.author||''}</span>
               </div>
             </div>
             <div class="bk-side" style="background:${p.side};"></div>
