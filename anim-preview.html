@@ -273,7 +273,7 @@ setTimeout(() => {
       ctx.fillStyle='#00ff00';
       ctx.beginPath(); ctx.arc(s.x,s.y,2,0,Math.PI*2); ctx.fill();
       // 십자
-      ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=0.5;
+      ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
       ctx.beginPath(); ctx.moveTo(s.x-4,s.y); ctx.lineTo(s.x+4,s.y); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(s.x,s.y-4); ctx.lineTo(s.x,s.y+4); ctx.stroke();
       ctx.restore();
@@ -342,7 +342,7 @@ setTimeout(() => {
       const alpha=Math.min(p.life/20,1)*Math.min(1,(p.maxLife-p.life)/30);
       if(alpha>0.02){
         tctx.strokeStyle=`rgba(0,255,100,${alpha*0.7})`;
-        tctx.lineWidth=0.8;
+        tctx.lineWidth=2;
         tctx.beginPath(); tctx.moveTo(ox,oy); tctx.lineTo(p.x,p.y); tctx.stroke();
       }
 
@@ -426,7 +426,7 @@ setTimeout(() => {
       for(let i=1;i<pts.length;i++){
         const alpha=(i/pts.length);
         octx.strokeStyle=`rgba(0,255,120,${alpha*0.85})`;
-        octx.lineWidth=alpha*1.2+0.3;
+        octx.lineWidth=alpha*2.5+1;
         octx.beginPath();
         octx.moveTo(pts[i-1].x,pts[i-1].y);
         octx.lineTo(pts[i].x,pts[i].y);
@@ -453,7 +453,7 @@ setTimeout(() => {
       ctx.beginPath(); ctx.arc(lp.x,lp.y,2.5,0,Math.PI*2); ctx.fill();
       ctx.restore();
       // XY 프로젝션
-      ctx.strokeStyle='rgba(0,255,0,0.2)'; ctx.lineWidth=0.6;
+      ctx.strokeStyle='rgba(0,255,0,0.2)'; ctx.lineWidth=1.5;
       ctx.setLineDash([2,4]);
       ctx.beginPath(); ctx.moveTo(lp.x,cy); ctx.lineTo(lp.x,lp.y); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx,lp.y); ctx.lineTo(lp.x,lp.y); ctx.stroke();
@@ -568,8 +568,8 @@ setTimeout(() => {
       const avgZ=(pa[2]+pb[2])/2;
       const alpha=Math.max(0.2,Math.min(0.9,(avgZ+100)/200));
       octx.strokeStyle=`rgba(0,255,80,${alpha})`;
-      octx.lineWidth=0.8;
-      octx.shadowColor='#00ff00'; octx.shadowBlur=alpha*6;
+      octx.lineWidth=2;
+      octx.shadowColor='#00ff00'; octx.shadowBlur=alpha*8;
       octx.beginPath();
       octx.moveTo(pa[0],pa[1]);
       octx.lineTo(pb[0],pb[1]);
@@ -674,7 +674,7 @@ setTimeout(() => {
       // 확산 링
       const r=(tick*1.5)%60;
       ctx.strokeStyle=`rgba(0,255,0,${Math.max(0,1-r/60)*0.5})`;
-      ctx.lineWidth=1;
+      ctx.lineWidth=2;
       ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.stroke();
       ctx.restore();
 
@@ -780,8 +780,8 @@ setTimeout(() => {
       if(cmd.type==='line'){
         const prog=(drawProgress+i)/drawCmd.length;
         octx.strokeStyle=`rgba(0,${180+Math.floor(prog*75)},${Math.floor(prog*60)},${0.6+prog*0.4})`;
-        octx.lineWidth=0.8;
-        octx.shadowColor='#00ff00'; octx.shadowBlur=2;
+        octx.lineWidth=2;
+        octx.shadowColor='#00ff00'; octx.shadowBlur=4;
         octx.beginPath();
         octx.moveTo(cmd.x,cmd.y);
         octx.lineTo(cmd.nx,cmd.ny);
