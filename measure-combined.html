@@ -56,6 +56,13 @@
 // ── 사진 데이터 ──────────────────────────────────────────────
 let _photos = [];
 
+// portfolio.html에서 postMessage로 데이터 수신
+window.addEventListener('message', e => {
+  if (e.data && e.data.type === 'measurePhotos' && Array.isArray(e.data.photos)) {
+    _photos = e.data.photos;
+  }
+});
+
 function flattenPhotos(data) {
   const results = [];
   function walk(node) {

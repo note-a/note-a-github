@@ -2277,8 +2277,16 @@ REQUIRE LOGIN: No (Public access enabled)
         } else if (content.isArchivePhotos) {
           // measure-combined.html을 iframe으로 임베드
           terminalContent.innerHTML = `
-            <iframe src="measure-combined.html" style="display:block;width:calc(100% + 40px);height:calc(100% + 24px);margin:-12px -20px;border:none;"></iframe>
+            <iframe id="measureIframe" src="measure-combined.html" style="display:block;width:calc(100% + 40px);height:calc(100% + 24px);margin:-12px -20px;border:none;"></iframe>
           `;
+          // iframe 로드 후 사진 데이터 전달
+          const mf = document.getElementById('measureIframe');
+          mf.addEventListener('load', () => {
+            const photos = window._measurePhotos || [];
+            if (photos.length > 0) {
+              mf.contentWindow.postMessage({ type: 'measurePhotos', photos }, '*');
+            }
+          });
         } else if (content.isContactSheet) {
           // 풀스크린 오버레이로 열기
           openContactSheetOverlay(content);
@@ -4806,7 +4814,14 @@ REQUIRE LOGIN: No (Public access enabled)
             }
             // measure 검색용 평면 배열 빌드 (GitHub 최신 데이터로 갱신)
             const _mp = flattenMeasurePhotos(data);
-            if (_mp.length > 0) window._measurePhotos = _mp;
+            if (_mp.length > 0) {
+              window._measurePhotos = _mp;
+              // iframe이 열려있으면 최신 데이터 전달
+              const mf = document.getElementById('measureIframe');
+              if (mf && mf.contentWindow) {
+                mf.contentWindow.postMessage({ type: 'measurePhotos', photos: _mp }, '*');
+              }
+            }
           }
 
           // published-posts.json 적용 (모바일 등 다른 기기에서 글 보이도록)
