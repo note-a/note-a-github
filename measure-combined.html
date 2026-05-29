@@ -16,29 +16,34 @@
     .subtitle { font-size:5px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
 
     .panel-sim {
-      width: 540px;
+      width: 600px;
       background: #000;
-      border: 1px solid #003300;
+      border: none;
     }
     .banner-area {
       display: flex; flex-direction: column; align-items: center;
-      padding: 20px 20px 0;
+      padding: 0;
       gap: 0;
     }
     .search-sim {
-      display: flex; border-top: 1px solid #003300;
-      padding: 12px 16px; gap: 10px;
+      display: flex; border-top: 1px solid #00ff00;
+      padding: 6px 0 12px 0; gap: 6px;
     }
     .search-sim input {
-      flex: 1; background: #000; border: 1px solid #004400;
-      color: #00ff00; padding: 8px 10px;
-      font-family: 'Press Start 2P', monospace; font-size: 7px; outline: none;
+      flex: 1; background: #000; border: 1px solid #00cc00;
+      color: #00ff00; padding: 4px 8px;
+      font-family: 'Press Start 2P', monospace; font-size: 9px; outline: none;
+      letter-spacing: 1px;
     }
+    .search-sim input::placeholder { color: rgba(0,255,0,0.45); }
     .search-sim button {
-      background: #003800; border: 1px solid #00ff00;
-      color: #00ff00; padding: 8px 14px;
-      font-family: 'Press Start 2P', monospace; font-size: 7px; cursor: pointer;
+      background: #004d00; border: 1px solid #00ff00;
+      color: #00ff00; padding: 4px 10px;
+      font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer;
+      text-shadow: 0 0 8px #00ff00;
+      letter-spacing: 1px;
     }
+    .search-sim button:hover { background: #006600; }
     canvas { display: block; }
   </style>
 </head>
@@ -49,10 +54,7 @@
 
 <div class="panel-sim">
   <div class="banner-area">
-    <!-- 위: 서치라이트 -->
     <canvas id="cLight"></canvas>
-    <!-- 아래: 터미널 -->
-    <canvas id="cTerm"></canvas>
   </div>
   <div class="search-sim">
     <input placeholder="Search: crash / floating / shadow..." readonly>
@@ -66,214 +68,273 @@ setTimeout(()=>{
 const dpr = window.devicePixelRatio || 1;
 
 // ════════════════════════════════════
-// 위 캔버스 — ASCII BIRD (M 배경 + 날아가는 새)
+// 위 캔버스 — PC통신 스타일 채팅
 // ════════════════════════════════════
 (function(){
   const c = document.getElementById('cLight');
   const ctx = c.getContext('2d');
-  const LW = 495, LH = 240;
+  const LW = 610, LH = 380;
   c.width  = LW * dpr; c.height = LH * dpr;
   c.style.width = LW+'px'; c.style.height = LH+'px';
   ctx.scale(dpr, dpr);
   const W=LW, H=LH;
   let tick=0;
 
-  // ── 문자 크기 설정 ──
-  const CW = 6, CH = 10;
-  const COLS = Math.ceil(W / CW) + 1;
-  const ROWS = Math.ceil(H / CH) + 1;
+  // ── PC통신 색상 팔레트 (밝은 초록색) ──
+  const C = {
+    bg:      '#000000',
+    topBar:  '#004400',
+    botBar:  '#003300',
+    divider: '#00ff00',
+    dim:     '#00dd00',
+    yellow:  '#aaff00',
+    cyan:    '#00ffaa',
+    green:   '#00ff00',
+    white:   '#00ff00',
+  };
 
-  // ── 배경 M 그리드 초기화 ──
-  const bgGrid = [];
-  for(let r=0;r<ROWS;r++){
-    bgGrid.push([]);
-    for(let col=0;col<COLS;col++){
-      bgGrid[r].push({ ch:'M', t:Math.random()*100 });
+  // ── 메시지 ──
+  const MSGS = [
+    { en:'how have you been.',
+      kr:'어떻게 지냈어?',                                     sys:false, wait:47, typing:22 },
+    { en:'the word you kept biting down on — it was in a photograph',
+      kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.',           sys:false, wait:36, typing:29 },
+    { en:'taken before you had the name for it.',
+      kr:'네가 그 단어의 이름을 알기 전에 찍힌 사진 말이야.',         sys:false, wait:27, typing:27 },
+    { en:'they started keeping count.',
+      kr:'그들은 세기 시작했어.',                               sys:false, wait:45, typing:22 },
+    { en:'not from fixation, but from a theory:',
+      kr:'집착 때문이 아니라, 하나의 이론에서.',                   sys:false, wait:25, typing:24 },
+    { en:'that what recurs without reason',
+      kr:'이유 없이 반복되는 것은',                              sys:false, wait:22, typing:20 },
+    { en:'is evidence of a reason not yet named.',
+      kr:'아직 이름 붙일 수 없는 어떤 이유의 증거라는 이론에서.',      sys:false, wait:47, typing:29 },
+    { en:'the record reaches back, but experience does not accumulate.',
+      kr:'기록은 거슬러 올라가지만, 경험은 축적되지 않아.',           sys:false, wait:27, typing:27 },
+    { en:'it does not know when it will stop.',
+      kr:'언제 멈출지 알지 못해.',                              sys:false, wait:22, typing:20 },
+    { en:'what you swallowed without naming — bring it here.',
+      kr:'네가 이름 붙이지 않고 삼킨 것, 여기로 가져와.',            sys:false, wait:50, typing:27 },
+    { en:'the record will tell you how many times',
+      kr:'기록은 네가 찾기 시작하기 전에 그것이 몇 번이나',           sys:false, wait:25, typing:29 },
+    { en:'it had already arrived before you began to look.',
+      kr:'왔는지 알려줄 거야.',                                 sys:false, wait:22, typing:20 },
+    { en:'search for anything.',
+      kr:'무엇이든 찾아봐.',                                   sys:true,  wait:68, typing:22 },
+  ];
+
+  // ── 레이아웃 상수 ──
+  const TOP_H  = 26;
+  const BOT_H  = 30;
+  const HDR_H  = 20;
+  const EN_FS  = 12;
+  const KR_FS  = 11;
+  const EN_ROW = EN_FS + 5;   // 17px
+  const MSG_GAP= 6;
+  const USER_X = 8;
+  const EN_X   = 90;
+  const SPLIT_X= 430;
+  const PANEL_W= W - SPLIT_X;
+  const EN_MAX_W = SPLIT_X - EN_X - 8;  // 최대 영문 너비 (패널 침범 방지)
+
+  // ── 상태 ──
+  let revealed = 0, phase = 'intro', phaseT = 0, doneT = 0, dotCount = 0, dotT = 0;
+
+  const USERS = ['나(익명)', '관찰자_01', '수집가', '방문자_09', '익명의_이'];
+
+  // 영문 줄바꿈 계산 (SPLIT_X 안에만)
+  function wrapEN(text){
+    ctx.font=`${EN_FS}px monospace`;
+    const words=text.split(' '), lines=[];
+    let cur='';
+    for(const w of words){
+      const t=cur?cur+' '+w:w;
+      if(ctx.measureText(t).width>EN_MAX_W && cur){ lines.push(cur); cur=w; }
+      else cur=t;
     }
+    if(cur) lines.push(cur);
+    return lines;
   }
 
-  // ── ASCII 새 (crow) 두 프레임 ──
-  // 날개 위 (wing up)
-  const BIRD_UP = [
-    '         ;+++?;++++?;         ',
-    '      ?++++++++++++++?+?      ',
-    '   ?++++++++++++++++++++++?   ',
-    '?+++++++?MMMMMMMM?+++++++++?++?',
-    '   ?+++++++++++++++++++++++?  ',
-    '      ?++++?     ?++++?       ',
-    '        ?+?       ?+?         ',
-    '         ?         ?          ',
-  ];
-  // 날개 아래 (wing down)
-  const BIRD_DN = [
-    '                              ',
-    '?+++++++?MMMMMMMM?+++++++++?++?',
-    ' ?++++++++++++++++++++++++?   ',
-    '   ?++++++++++++++++++++?     ',
-    '      ?++++++?  ?++++++?      ',
-    '        ?+++?    ?+++?        ',
-    '         ?++?    ?++?         ',
-    '          ??      ??          ',
-  ];
+  // 메시지별 줄 캐싱 (canvas 준비 후)
+  ctx.font=`${EN_FS}px monospace`;
+  const MSG_DATA = MSGS.map(m=>({ ...m, enLines: wrapEN(m.en) }));
 
-  const FRAMES_BIRD = [BIRD_UP, BIRD_DN];
-  let birdX = -32;        // 새 현재 컬럼 위치 (실수)
-  const birdRow = 8;      // 새 세로 위치 (행)
-  let wingFrame = 0;
-  let wingTimer = 0;
-  const BIRD_SPEED = 0.22; // 이동 속도 (컬럼/프레임)
+  function msgH(m){ return m.enLines.length * EN_ROW + MSG_GAP; }
+
+  const startMs = Date.now();
+  function timeStr(){
+    const d=new Date(startMs+tick*33), p=n=>String(n).padStart(2,'0');
+    return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  }
 
   function draw(){
-    ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
-    ctx.font = `bold ${CH}px monospace`;
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-
-    // ── 배경 M 그리드 ──
-    for(let r=0;r<ROWS;r++){
-      for(let col=0;col<COLS;col++){
-        const cell = bgGrid[r][col];
-        cell.t += 0.008;
-        // 가끔 글리치
-        if(Math.random() > 0.9995) cell.ch = '?+;=`~'.charAt(Math.floor(Math.random()*6));
-        else if(Math.random() > 0.9990) cell.ch = 'M';
-        const a = 0.35 + Math.sin(cell.t)*0.12;
-        ctx.fillStyle = `rgba(0,${Math.floor(65+Math.sin(cell.t)*18)},0,${a})`;
-        ctx.fillText(cell.ch, col*CW, r*CH);
+    // ── intro 팝업 ──
+    if(phase==='intro'){
+      ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+      const bw=320, bh=100, bx=(W-bw)/2, by=(H-bh)/2;
+      ctx.fillStyle='#001400'; ctx.fillRect(bx,by,bw,bh);
+      ctx.strokeStyle='#00ff00'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+      ctx.fillStyle='#003300'; ctx.fillRect(bx,by,bw,18);
+      ctx.fillStyle='#00ff00'; ctx.font='bold 9px monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('★  시스템 공지  ★', W/2, by+9);
+      ctx.font='11px monospace'; ctx.fillStyle='#00ff00';
+      ctx.fillText('채팅방에 입장하셨습니다.', W/2, by+44);
+      ctx.font='8px monospace'; ctx.fillStyle='#00cc00';
+      ctx.fillText('MEASURE.DB 검색 채팅방', W/2, by+64);
+      if(Math.floor(tick/18)%2===0){
+        ctx.fillStyle='rgba(0,220,0,0.55)'; ctx.font='7px monospace';
+        ctx.fillText('[ 연결 중... ]', W/2, by+85);
       }
+      phaseT++; tick++;
+      if(phaseT>=95){ phase='pause'; phaseT=0; }
+      return;
     }
 
-    // ── 새 그리기 ──
-    const frame = FRAMES_BIRD[wingFrame];
-    const bCol = Math.floor(birdX);
-    ctx.save();
-    ctx.shadowColor = '#00ff00';
-    ctx.shadowBlur = 7;
-    frame.forEach((line, ry) => {
-      [...line].forEach((ch, rx) => {
-        if(ch === ' ') return;
-        const px = (bCol + rx) * CW;
-        const py = (birdRow + ry) * CH;
-        if(px < -CW*2 || px > W+CW || py < 0 || py > H) return;
-        // M은 새 몸통 (살짝 다른 색)
-        ctx.fillStyle = ch === 'M'
-          ? 'rgba(0,160,0,0.95)'
-          : 'rgba(0,255,80,0.97)';
-        ctx.fillText(ch, px, py);
-      });
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+
+    // 테두리
+    ctx.strokeStyle='#00ff00'; ctx.lineWidth=2;
+    ctx.strokeRect(0,0,W,H);
+
+    // 희미한 가로선
+    ctx.strokeStyle='rgba(0,220,80,0.10)'; ctx.lineWidth=0.5;
+    for(let y=TOP_H+HDR_H;y<H-BOT_H;y+=EN_ROW+2){
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke();
+    }
+
+    // ── 상단 메뉴바 ──
+    ctx.fillStyle=C.topBar; ctx.fillRect(0,0,W,TOP_H);
+    ctx.font=`bold ${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티'];
+    let mx=6;
+    menu.forEach((item,i)=>{
+      ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)';
+      ctx.fillText(item,mx,TOP_H/2);
+      mx+=ctx.measureText(item).width+14;
     });
+    ctx.fillStyle=C.dim; ctx.textAlign='right';
+    ctx.fillText(timeStr(),W-6,TOP_H/2);
+
+    // ── 채팅방 제목 ──
+    ctx.fillStyle='rgba(0,120,40,0.95)'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
+    ctx.fillStyle=C.cyan; ctx.font=`bold ${EN_FS}px monospace`;
+    ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.fillText('<MEASURE.DB>  데이터베이스 검색 채팅방',6,TOP_H+HDR_H/2);
+
+    // ── 우측 패널 제목 ──
+    ctx.fillStyle='rgba(0,140,50,0.95)'; ctx.fillRect(SPLIT_X,TOP_H,PANEL_W,HDR_H);
+    ctx.fillStyle=C.yellow; ctx.font=`bold ${KR_FS}px monospace`;
+    ctx.textBaseline='middle';
+    ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
+
+    // ── 구분선 ──
+    ctx.strokeStyle=C.divider; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,TOP_H+HDR_H); ctx.lineTo(W,TOP_H+HDR_H); ctx.stroke();
+
+    // ── 우측 참여자 ──
+    ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    USERS.forEach((u,i)=>{
+      ctx.fillStyle=i===0?C.cyan:C.dim;
+      ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));
+    });
+    const rpY=H-BOT_H-KR_FS*3-6;
+    ctx.strokeStyle='rgba(0,220,80,0.25)'; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(SPLIT_X+4,rpY); ctx.lineTo(W-4,rpY); ctx.stroke();
+    ctx.fillStyle=C.dim; ctx.font=`${KR_FS-1}px monospace`;
+    ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);
+    ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
+
+    // ── 상태 업데이트 ──
+    phaseT++;
+    const mi=Math.min(revealed,MSGS.length-1);
+    if(phase==='pause'){
+      if(phaseT>=55){ phase='wait'; phaseT=0; }
+    } else if(phase==='wait'){
+      if(phaseT>=MSGS[mi].wait){ phase='typing'; phaseT=0; dotCount=0; dotT=0; }
+    } else if(phase==='typing'){
+      dotT++; if(dotT%7===0) dotCount=(dotCount+1)%4;
+      if(phaseT>=MSGS[mi].typing){
+        if(revealed<MSGS.length) revealed++;
+        phase=revealed>=MSGS.length?'done':'wait'; phaseT=0;
+      }
+    } else {
+      doneT++;
+      if(doneT>220){ revealed=0; phase='intro'; phaseT=0; doneT=0; }
+    }
+    const showTyping=phase==='typing'&&revealed<MSGS.length;
+
+    // ── 채팅 렌더링 (클립: 패널 침범 방지) ──
+    const CTOP  = TOP_H+HDR_H+4;
+    const CAVAIL= H-BOT_H-CTOP;
+    const vis   = MSG_DATA.slice(0,revealed);
+
+    // 총 높이 계산 → 스크롤 기준점
+    const typH  = showTyping ? EN_ROW+MSG_GAP : 0;
+    const totalH= vis.reduce((s,m)=>s+msgH(m),0)+typH;
+    let curY    = totalH>CAVAIL ? CTOP+CAVAIL-totalH : CTOP;
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0,CTOP,SPLIT_X,CAVAIL); ctx.clip();
+    ctx.textBaseline='top'; ctx.textAlign='left';
+
+    vis.forEach(msg=>{
+      const lh=msgH(msg);
+      if(curY+lh>CTOP && curY<CTOP+CAVAIL){
+        // 발신자
+        ctx.font=`bold ${EN_FS}px monospace`;
+        ctx.fillStyle=msg.sys?C.green:C.yellow;
+        ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);
+        // 영문 (줄바꿈)
+        ctx.font=`${EN_FS}px monospace`;
+        ctx.fillStyle=msg.sys?C.green:C.white;
+        msg.enLines.forEach((line,li)=>{
+          ctx.fillText(line,EN_X,curY+li*EN_ROW);
+        });
+      }
+      curY+=lh;
+    });
+
+    // 타이핑 인디케이터
+    if(showTyping && curY<CTOP+CAVAIL){
+      ctx.font=`bold ${EN_FS}px monospace`; ctx.fillStyle=C.yellow;
+      ctx.fillText('MEASURE :',USER_X,curY);
+      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(180,255,80,0.5)';
+      ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
+    }
     ctx.restore();
 
-    // ── 새 이동 + 날갯짓 ──
-    birdX += BIRD_SPEED;
-    if(birdX > COLS + 35) birdX = -35;
+    // ── 하단 입력바 ──
+    ctx.fillStyle=C.botBar; ctx.fillRect(0,H-BOT_H,W,BOT_H);
+    ctx.strokeStyle=C.divider; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,H-BOT_H); ctx.lineTo(W,H-BOT_H); ctx.stroke();
 
-    wingTimer++;
-    if(wingTimer >= 14){
-      wingFrame = 1 - wingFrame;
-      wingTimer = 0;
+    // >> 커서
+    ctx.font=`bold ${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.fillStyle=C.yellow; ctx.fillText('>>',6,H-BOT_H/2);
+    if(Math.floor(tick/15)%2===0){
+      ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1);
     }
 
-    // ── CRT 스캔라인 ──
-    ctx.fillStyle = 'rgba(0,0,0,0.08)';
-    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+    // >> 옆 한글 번역 (현재 메시지와 동기화)
+    if(revealed>0){
+      ctx.font=`bold 11px monospace`; ctx.textBaseline='middle';
+      ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;
+      ctx.fillText(MSGS[Math.max(0,revealed-1)].kr, 42, H-BOT_H/2);
+    }
 
-    // ── 위쪽 브라켓만 (아래는 터미널과 연결) ──
-    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(0,bk); ctx.lineTo(0,0); ctx.lineTo(bk,0); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(W-bk,0); ctx.lineTo(W,0); ctx.lineTo(W,bk); ctx.stroke();
-
-    tick++;
-  }
-  setInterval(draw, 40);
-})();
-
-
-// ════════════════════════════════════
-// 아래 캔버스 — TERMINAL PROMPT
-// ════════════════════════════════════
-(function(){
-  const c = document.getElementById('cTerm');
-  const ctx = c.getContext('2d');
-  const LW = 495, LH = 105;
-  c.width  = LW * dpr; c.height = LH * dpr;
-  c.style.width = LW+'px'; c.style.height = LH+'px';
-  ctx.scale(dpr, dpr);
-  const W=LW, H=LH;
-  let tick=0;
-
-  const FS=7, LHt=16;
-  const LINES=[
-    { prefix:'SYS>  ', text:'MEASURE.DB  [2847 FILES READY]', delay:0   },
-    { prefix:'SCAN> ', text:'INDEXING KEYWORDS...',           delay:45  },
-    { prefix:'Q>    ', text:'ENTER KEYWORD TO SEARCH',        delay:100 },
-    { prefix:'TIP>  ', text:'crash / shadow / float / scale', delay:170 },
-    { prefix:'TIP>  ', text:'yellow / border / distance',     delay:240 },
-    { prefix:'_     ', text:'',                               delay:310, isCursor:true },
-  ];
-  let typeState=0;
-  const TOTAL=LINES.reduce((s,l)=>s+l.prefix.length+l.text.length,0);
-
-  function draw(){
-    // 배경
-    ctx.fillStyle='rgba(0,3,0,0.96)'; ctx.fillRect(0,0,W,H);
-
-    // 가로 그리드 (희미)
-    ctx.strokeStyle='rgba(0,30,0,0.4)'; ctx.lineWidth=0.5;
-    for(let y=0;y<H;y+=LHt){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-
-    // 타이핑
-    if(typeState < TOTAL+80) typeState += 0.88;
-    else typeState = 0;
-
-    LINES.forEach((line,li)=>{
-      if(typeState < line.delay) return;
-      const y = 14 + li*LHt;
-      if(y > H-4) return;
-      const full = line.prefix + line.text;
-      const typed = Math.min(full.length, Math.floor(typeState - line.delay));
-      const display = full.slice(0, typed);
-
-      ctx.font=`${FS}px 'Press Start 2P',monospace`; ctx.textAlign='left';
-
-      // prefix
-      ctx.fillStyle='rgba(0,180,0,0.55)';
-      ctx.fillText(display.slice(0, line.prefix.length), 12, y);
-      // body
-      ctx.fillStyle = line.isCursor ? 'rgba(0,255,0,0.9)' : 'rgba(0,255,80,0.82)';
-      ctx.fillText(display.slice(line.prefix.length), 12 + line.prefix.length*FS*0.62, y);
-
-      // 타이핑 중 커서
-      if(!line.isCursor && typed < full.length && typed > 0){
-        const cx2 = 12 + Math.min(typed,line.prefix.length)*FS*0.62
-                       + Math.max(0,typed-line.prefix.length)*FS*0.62;
-        if(Math.floor(tick/9)%2===0){ ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(cx2,y-FS+2,4,FS); }
-      }
-      // 마지막 줄 깜빡이는 커서
-      if(line.isCursor && typed>0 && Math.floor(tick/16)%2===0){
-        ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(12,y-FS+2,FS*0.62,FS);
-      }
-    });
-
-    // 왼쪽 세로 포인터 라인
-    ctx.fillStyle='rgba(0,255,0,0.18)'; ctx.fillRect(8,0,1,H);
-
-    // CRT
-    ctx.fillStyle='rgba(0,0,0,0.08)';
-    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
-
-    // 브라켓 (아래 3개 면만 — 위는 서치라이트와 붙어있음)
-    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
-    ctx.beginPath(); ctx.moveTo(0,H-bk); ctx.lineTo(0,H); ctx.lineTo(bk,H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(W-bk,H); ctx.lineTo(W,H); ctx.lineTo(W,H-bk); ctx.stroke();
-    // 왼쪽, 오른쪽 세로선 전체 연결
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W,H); ctx.stroke();
+    // 우측 도움말
+    ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;
+    ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
 
     tick++;
   }
-  setInterval(draw, 40);
+  setInterval(draw, 42);
 })();
+
+
 
 }, 500);
 </script>
