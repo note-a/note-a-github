@@ -3980,12 +3980,13 @@ REQUIRE LOGIN: No (Public access enabled)
     }
 
     // ── Measure Banner Canvas Animation ──
-    function initMeasureBanner(canvasId) {
+    function initMeasureBanner(canvasId, isMobile) {
       const c = document.getElementById(canvasId);
       if (!c) return;
       const dpr = window.devicePixelRatio || 1;
       const ctx = c.getContext('2d');
-      const LW=610, LH=380;
+      const LW = isMobile ? 390 : 610;
+      const LH = isMobile ? 560 : 380;
       c.width=LW*dpr; c.height=LH*dpr;
       c.style.width='100%'; c.style.height='auto';
       ctx.scale(dpr,dpr);
@@ -4007,7 +4008,8 @@ REQUIRE LOGIN: No (Public access enabled)
         {en:'it had already arrived before you began to look.',kr:'왔는지 알려줄 거야.',sys:false,wait:22,typing:20},
         {en:'search for anything.',kr:'무엇이든 찾아봐.',sys:true,wait:68,typing:22},
       ];
-      const TOP_H=26,BOT_H=30,HDR_H=20,EN_FS=12,KR_FS=11,EN_ROW=17,MSG_GAP=6,USER_X=8,EN_X=90,SPLIT_X=430;
+      const TOP_H=26,BOT_H=30,HDR_H=20,EN_FS=12,KR_FS=11,EN_ROW=17,MSG_GAP=6,USER_X=8,EN_X=90;
+      const SPLIT_X=isMobile?W:430;
       const PANEL_W=W-SPLIT_X, EN_MAX_W=SPLIT_X-EN_X-8;
       let revealed=0,phase='intro',phaseT=0,doneT=0,dotCount=0,dotT=0;
       const USERS=['나(익명)','관찰자_01','수집가','방문자_09','익명의_이'];
@@ -4048,18 +4050,21 @@ REQUIRE LOGIN: No (Public access enabled)
         ctx.fillStyle='rgba(0,120,40,0.95)';ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
         ctx.fillStyle=C2.cyan;ctx.font=`bold ${EN_FS}px monospace`;ctx.textBaseline='middle';ctx.textAlign='left';
         ctx.fillText('<MEASURE.DB>  데이터베이스 검색 채팅방',6,TOP_H+HDR_H/2);
-        ctx.fillStyle='rgba(0,140,50,0.95)';ctx.fillRect(SPLIT_X,TOP_H,PANEL_W,HDR_H);
-        ctx.fillStyle=C2.yellow;ctx.font=`bold ${KR_FS}px monospace`;ctx.textBaseline='middle';
-        ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
+        if(!isMobile){
+          ctx.fillStyle='rgba(0,140,50,0.95)';ctx.fillRect(SPLIT_X,TOP_H,PANEL_W,HDR_H);
+          ctx.fillStyle=C2.yellow;ctx.font=`bold ${KR_FS}px monospace`;ctx.textBaseline='middle';
+          ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
+          ctx.strokeStyle=C2.divider;ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(SPLIT_X,TOP_H);ctx.lineTo(SPLIT_X,H-BOT_H);ctx.stroke();
+          ctx.font=`${KR_FS}px monospace`;ctx.textBaseline='top';ctx.textAlign='left';
+          USERS.forEach((u,i)=>{ctx.fillStyle=i===0?C2.cyan:C2.dim;ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));});
+          const rpY=H-BOT_H-KR_FS*3-6;ctx.strokeStyle='rgba(170,170,255,0.25)';ctx.lineWidth=0.5;
+          ctx.beginPath();ctx.moveTo(SPLIT_X+4,rpY);ctx.lineTo(W-4,rpY);ctx.stroke();
+          ctx.fillStyle=C2.dim;ctx.font=`${KR_FS-1}px monospace`;
+          ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
+        }
         ctx.strokeStyle=C2.divider;ctx.lineWidth=1;
-        ctx.beginPath();ctx.moveTo(SPLIT_X,TOP_H);ctx.lineTo(SPLIT_X,H-BOT_H);ctx.stroke();
         ctx.beginPath();ctx.moveTo(0,TOP_H+HDR_H);ctx.lineTo(W,TOP_H+HDR_H);ctx.stroke();
-        ctx.font=`${KR_FS}px monospace`;ctx.textBaseline='top';ctx.textAlign='left';
-        USERS.forEach((u,i)=>{ctx.fillStyle=i===0?C2.cyan:C2.dim;ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));});
-        const rpY=H-BOT_H-KR_FS*3-6;ctx.strokeStyle='rgba(170,170,255,0.25)';ctx.lineWidth=0.5;
-        ctx.beginPath();ctx.moveTo(SPLIT_X+4,rpY);ctx.lineTo(W-4,rpY);ctx.stroke();
-        ctx.fillStyle=C2.dim;ctx.font=`${KR_FS-1}px monospace`;
-        ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
         phaseT++;const mi=Math.min(revealed,MSGS.length-1);
         if(phase==='pause'){if(phaseT>=55){phase='wait';phaseT=0;}}
         else if(phase==='wait'){if(phaseT>=MSGS[mi].wait){phase='typing';phaseT=0;dotCount=0;dotT=0;}}
@@ -4457,14 +4462,33 @@ REQUIRE LOGIN: No (Public access enabled)
         }
 
       if (content.isComingSoon) {
+        const SET_ASCII_M = `##############################################################
+##                                                          ##
+##    _______________________________                       ##
+##   /   _____/\\_   _____/\\__    ___/                      ##
+##   \\_____  \\  |    __)_   |    |                          ##
+##   /        \\ |        \\  |    |                          ##
+##  /_______  //_______  /  |____|                          ##
+##          \\/         \\/                                   ##
+##                                                          ##
+##  .___              .__               .__                 ##
+##  |   | ____   ____ |  |  __ __  _____|__| ____   ____   ##
+##  |   |/    \\_/ ___\\|  | |  |  \\/  ___/  |/  _ \\ /    \\  ##
+##  |   |   |  \\  \\___|  |_|  |  /\\___ \\|  (  <_> )   |  \\ ##
+##  |___|___|  /\\___  >____/____//____  >__|\\____/|___|  / ##
+##           \\/     \\/                \\/               \\/  ##
+##                                                          ##
+##############################################################`;
         mobileContent.style.display = 'flex';
         mobileContent.style.flexDirection = 'column';
         mobileContent.style.alignItems = 'center';
         mobileContent.style.justifyContent = 'center';
         mobileContent.innerHTML = `
-          <pre style="font-family:'Press Start 2P', monospace;font-size:clamp(6px,2.5vw,11px);
-            line-height:1.4;color:#e8e8e8;letter-spacing:0.04em;user-select:none;white-space:pre;">SET : Inclusion</pre>
-          <div style="margin-top:20px;font-family:'Press Start 2P', monospace;font-size:8px;
+          <div style="width:100%;overflow-x:auto;padding:0 4px;box-sizing:border-box;display:flex;justify-content:center;">
+            <pre style="font-family:monospace;font-size:clamp(4.5px,1.9vw,8px);
+              line-height:1.35;color:#e8e8e8;letter-spacing:0.02em;user-select:none;white-space:pre;margin:0;">${SET_ASCII_M}</pre>
+          </div>
+          <div style="margin-top:24px;font-family:'Press Start 2P', monospace;font-size:8px;
             color:#00ff00;letter-spacing:4px;">— COMING SOON —</div>`;
         return;
       } else if (content.isGrammarCodes) {
@@ -4484,17 +4508,20 @@ REQUIRE LOGIN: No (Public access enabled)
         // For archive section, show search interface and big brother image initially
         mobileContent.style.whiteSpace = 'normal';
         mobileContent.innerHTML = `
-          <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0; margin: 0; flex-shrink: 0; width: 100%; height: 274px; overflow: hidden;">
-              <canvas id="measureBannerCanvasMobile" style="display:block;width:100%;height:100%;margin:0;padding:0;border:none;"></canvas>
-              <input type="text" id="mobileArchiveSearch" placeholder="search: crash, floating, shadow"
-                style="width: 100%; background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 6px; font-size:6px; font-family: 'Press Start 2P', monospace; box-sizing: border-box;">
+          <div style="display:flex;flex-direction:column;height:100%;gap:0;">
+            <div style="flex:1;min-height:0;overflow:hidden;">
+              <canvas id="measureBannerCanvasMobile" style="display:block;width:100%;height:auto;margin:0;padding:0;border:none;"></canvas>
             </div>
-            <div id="mobilePhotoGallery" style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; padding: 0 12px; display: none;">
+            <div style="display:flex;border-top:1px solid #00ff00;flex-shrink:0;">
+              <input type="text" id="mobileArchiveSearch" placeholder="search: mirror / float / surface"
+                style="flex:1;background:#000;border:none;border-right:1px solid #00ff00;color:#00ff00;padding:10px 8px;font-size:8px;font-family:'Press Start 2P',monospace;outline:none;box-sizing:border-box;">
+              <button id="mobileArchiveBtn" style="background:#004d00;border:none;color:#00ff00;padding:10px 12px;font-size:7px;font-family:'Press Start 2P',monospace;cursor:pointer;">SEARCH</button>
+            </div>
+            <div id="mobilePhotoGallery" style="display:none;flex-direction:column;gap:8px;overflow-y:auto;flex:1;padding:8px;">
             </div>
           </div>
         `;
-        setTimeout(() => initMeasureBanner('measureBannerCanvasMobile'), 100);
+        setTimeout(() => initMeasureBanner('measureBannerCanvasMobile', true), 100);
 
         // Function to render photos with images (for search results)
         const renderPhotos = (photos) => {
@@ -4522,23 +4549,31 @@ REQUIRE LOGIN: No (Public access enabled)
         // Setup mobile photo search
         setTimeout(() => {
           const searchInput = document.getElementById('mobileArchiveSearch');
+          const searchBtn = document.getElementById('mobileArchiveBtn');
+
+          const doSearch = () => {
+            const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+            if (!query) {
+              document.getElementById('mobilePhotoGallery').style.display = 'none';
+            } else {
+              if (typeof vlAddEntry === 'function') vlAddEntry(query);
+              const photos = window._measurePhotos || [];
+              const filtered = photos.filter(p =>
+                (p.keywords && p.keywords.some(k => k.toLowerCase().includes(query))) ||
+                (p.title && p.title.toLowerCase().includes(query)) ||
+                (p.dir && p.dir.toLowerCase().includes(query))
+              ).slice(0, 60);
+              renderPhotos(filtered);
+            }
+          };
+
           if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-              const query = e.target.value.toLowerCase().trim();
-              if (!query) {
-                // No search - hide results
-                document.getElementById('mobilePhotoGallery').style.display = 'none';
-              } else {
-                if (typeof vlAddEntry === 'function') vlAddEntry(query);
-                // Filter and show results
-                const filtered = content.photos.filter(p =>
-                  p.keywords.some(k => k.toLowerCase().includes(query)) ||
-                  p.title.toLowerCase().includes(query) ||
-                  p.description.toLowerCase().includes(query)
-                );
-                renderPhotos(filtered);
-              }
+            searchInput.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') doSearch();
             });
+          }
+          if (searchBtn) {
+            searchBtn.addEventListener('click', doSearch);
           }
         }, 0);
       } else if (content.isContactSheet) {
@@ -4710,14 +4745,14 @@ REQUIRE LOGIN: No (Public access enabled)
           if (isCardFormat) {
             // Board format for reference (matching desktop)
             html += `
-              <div style="cursor: pointer; border: 1px solid #00ff00; margin-bottom: 12px; background: #000; transition: all 0.2s; display: flex; flex-direction: column; height: 160px; overflow: hidden;" class="mobile-list-item mobile-board-item" data-index="${idx}">
-                <div style="background: linear-gradient(180deg, #00ff00 0%, #00ff00 100%); color: #000; padding: 3px 8px; font-weight: bold; font-size: 10px; border-bottom: 1px solid #00ff00; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;">
+              <div style="cursor: pointer; border: 1px solid #00ff00; margin-bottom: 12px; background: #000; transition: all 0.2s; display: flex; flex-direction: column;" class="mobile-list-item mobile-board-item" data-index="${idx}">
+                <div style="background: #00ff00; color: #000; padding: 3px 8px; font-weight: bold; font-size: 10px; border-bottom: 1px solid #00ff00; display: flex; justify-content: flex-end; align-items: center; flex-shrink: 0;">
                   <span style="flex-shrink: 0;">×</span>
                 </div>
-                <div style="padding: 8px 10px; color: #00ff00; font-size: 8px; display: flex; flex-direction: column; gap: 0; overflow: hidden;">
-                  <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #00ff00; font-weight: bold; flex-shrink: 0;">${item.title}</div>
-                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #00ff00; color: #ffc800; flex-shrink: 0;">${category}</div>
-                  <div style="padding-top: 5px; font-size: 10px; color: #aaa; overflow: hidden; line-height: 1.5; word-break: break-word;">${item.preview || ''}</div>
+                <div style="padding: 8px 10px; color: #00ff00; font-size: 8px; display: flex; flex-direction: column; gap: 0;">
+                  <div style="word-break: break-word; padding-bottom: 5px; border-bottom: 1px solid #00ff00; font-weight: bold;">${item.title}</div>
+                  <div style="padding-top: 4px; padding-bottom: 4px; border-bottom: 1px solid #00ff00; color: #ffc800;">${category}</div>
+                  <div style="padding-top: 5px; font-size: 10px; color: #aaa; line-height: 1.6; word-break: break-word;">${item.preview || ''}</div>
                 </div>
               </div>
             `;
