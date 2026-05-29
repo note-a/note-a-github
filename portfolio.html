@@ -159,7 +159,7 @@ html, body { background: #000; color: #00ff00; font-family: 'Press Start 2P', mo
   display: flex;
   width: 100%;
   max-width: 1100px;
-  height: calc(100vh - 240px);
+  height: 530px;
   gap: 12px;
   overflow: hidden;
 }
@@ -2736,7 +2736,7 @@ REQUIRE LOGIN: No (Public access enabled)
       const overlay = document.createElement('div');
       overlay.id = 'csOverlay';
       const isMobileOverlay = window.innerWidth < 1024;
-      const overlayInset = isMobileOverlay ? '4px' : '10vh 23vw';
+      const overlayInset = isMobileOverlay ? '4px' : 'calc(50vh - 300px) 23vw';
       overlay.style.cssText = `
         position: fixed; inset: ${overlayInset};
         background: #000; z-index: 9000;
@@ -3255,7 +3255,7 @@ REQUIRE LOGIN: No (Public access enabled)
             <div style="padding:7px 12px;border-bottom:1px solid #00ff00;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;position:sticky;top:${csNavStack.length > 0 ? '28' : '0'}px;z-index:1;background:#000;">
               ${filterBtns}
             </div>
-            <div id="csGrid" style="flex-shrink:0;padding:40px 48px 20px;">
+            <div id="csGrid" style="flex-shrink:0;padding:18px 48px 20px;">
               <div id="csCells" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:5px;content-visibility:auto;">
                 ${cells}
               </div>
