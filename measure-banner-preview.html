@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Measure Banner Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#000; color:#00ff00;
+      font-family:'Press Start 2P',monospace;
+      padding:40px 24px;
+      display:flex; flex-direction:column; align-items:center; gap:48px;
+    }
+    h1 { font-size:8px; letter-spacing:2px; color:#00ff00;
+      text-shadow:0 0 10px #00ff00; margin-bottom:8px; }
+    .subtitle { font-size:5px; color:rgba(0,255,0,0.4); letter-spacing:1px; }
+
+    /* 포트폴리오 내부와 동일한 너비 시뮬레이션 */
+    .panel-sim {
+      width: 360px;
+      background: #000;
+      border: 1px solid #003300;
+      display: flex; flex-direction: column; gap:0;
+    }
+    .banner-area {
+      display:flex; flex-direction:column; align-items:center;
+      gap:12px; padding:16px 16px 12px;
+    }
+    canvas { display:block; }
+    .hint-text {
+      font-size:8px; color:#00ff00;
+      text-align:center; letter-spacing:1px;
+      text-shadow:0 0 8px rgba(0,255,0,0.6);
+    }
+    .search-sim {
+      display:flex; border-top:1px solid #003300;
+      padding:10px 12px; gap:8px; align-items:center;
+    }
+    .search-sim input {
+      flex:1; background:#000; border:1px solid #004400;
+      color:#00ff00; padding:6px 8px;
+      font-family:'Press Start 2P',monospace; font-size:6px;
+      outline:none;
+    }
+    .search-sim button {
+      background:#003800; border:1px solid #00ff00;
+      color:#00ff00; padding:6px 10px;
+      font-family:'Press Start 2P',monospace; font-size:6px;
+      cursor:pointer;
+    }
+    .style-label {
+      font-size:5.5px; color:rgba(0,255,0,0.35);
+      letter-spacing:1px; margin-bottom:4px;
+    }
+    .style-name {
+      font-size:8px; color:#00ff00; margin-bottom:12px;
+    }
+    .item { display:flex; flex-direction:column; align-items:center; }
+  </style>
+</head>
+<body>
+
+<h1>▶ MEASURE BANNER — PIXEL ART SAMPLES</h1>
+<div class="subtitle">SEARCH SECTION HEADER CONCEPTS</div>
+
+<!-- ① BIG BROTHER EYE -->
+<div class="item">
+  <div class="style-label">① PIXEL ART CONCEPT</div>
+  <div class="style-name">BIG BROTHER EYE</div>
+  <div class="panel-sim">
+    <div class="banner-area">
+      <canvas id="c1" width="320" height="200"></canvas>
+      <div class="hint-text">ENTER YOUR INSTRUCTIONS</div>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search by keyword: crash, floating..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ② RADAR SCAN -->
+<div class="item">
+  <div class="style-label">② PIXEL ART CONCEPT</div>
+  <div class="style-name">RADAR SCAN</div>
+  <div class="panel-sim">
+    <div class="banner-area">
+      <canvas id="c2" width="320" height="200"></canvas>
+      <div class="hint-text">SCANNING FOR INPUT</div>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search by keyword: crash, floating..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ TERMINAL PROMPT -->
+<div class="item">
+  <div class="style-label">③ PIXEL ART CONCEPT</div>
+  <div class="style-name">TERMINAL PROMPT</div>
+  <div class="panel-sim">
+    <div class="banner-area">
+      <canvas id="c3" width="320" height="200"></canvas>
+      <div class="hint-text">AWAITING QUERY</div>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search by keyword: crash, floating..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ④ SEARCHLIGHT -->
+<div class="item">
+  <div class="style-label">④ PIXEL ART CONCEPT</div>
+  <div class="style-name">SEARCHLIGHT SWEEP</div>
+  <div class="panel-sim">
+    <div class="banner-area">
+      <canvas id="c4" width="320" height="200"></canvas>
+      <div class="hint-text">WHAT ARE YOU LOOKING FOR</div>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search by keyword: crash, floating..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ DATA FIGURE -->
+<div class="item">
+  <div class="style-label">⑤ PIXEL ART CONCEPT</div>
+  <div class="style-name">DATA FIGURE</div>
+  <div class="panel-sim">
+    <div class="banner-area">
+      <canvas id="c5" width="320" height="200"></canvas>
+      <div class="hint-text">SEARCHING THE DATABASE</div>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search by keyword: crash, floating..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<script>
+setTimeout(()=>{
+
+// ═══════════════════════════════════
+// ① BIG BROTHER EYE
+// 거대한 감시의 눈 — 깜빡이고 동공이 움직임
+// ═══════════════════════════════════
+(function(){
+  const c=document.getElementById('c1'), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0, blinkT=0, blinkState='open';
+  const cx=W/2, cy=H/2+10;
+
+  // 눈 픽셀맵 (32×16 픽셀, PS=7)
+  const EYELID_TOP=[
+    '00000000011111111111110000000000',
+    '00000001111111111111111100000000',
+    '00000111111111111111111111000000',
+    '00011111111111111111111111110000',
+    '00111111111111111111111111111100',
+    '01111111111111111111111111111110',
+    '11111111111111111111111111111111',
+    '11111111111111111111111111111111',
+  ];
+  const PUPIL=[
+    '000111000',
+    '011111110',
+    '111333111',
+    '113333311',
+    '113333311',
+    '111333111',
+    '011111110',
+    '000111000',
+  ];
+
+  const PS=7;
+  const EW=32*PS, EH=8*PS;
+  const eOffX=(W-EW)/2, eOffY=cy-EH;
+
+  function drawEye(blinkRatio){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    // 배경 노이즈
+    for(let i=0;i<40;i++){
+      ctx.fillStyle=`rgba(0,${Math.floor(40+Math.random()*30)},0,${Math.random()*0.08})`;
+      ctx.fillRect(Math.random()*W,Math.random()*H,Math.random()*3,1);
+    }
+
+    // 눈 흰자 (ellipse)
+    ctx.save();
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=20;
+    ctx.fillStyle='#001800';
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, EW/2, EH/2*1.2, 0, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    // 윗꺼풀 (blink ratio: 0=fully open, 1=closed)
+    const closedH=EH*1.4*blinkRatio;
+    if(blinkRatio<0.98){
+      // 흰자 + 동공
+      ctx.save(); ctx.beginPath();
+      ctx.ellipse(cx, cy, EW/2, EH/2*1.2, 0, 0, Math.PI*2);
+      ctx.clip();
+
+      // 홍채
+      ctx.shadowColor='#00ff00'; ctx.shadowBlur=15;
+      ctx.fillStyle='#003300';
+      ctx.beginPath(); ctx.arc(cx, cy, EH*0.38, 0, Math.PI*2); ctx.fill();
+
+      // 동공 (마우스처럼 천천히 이동)
+      const px=cx+Math.sin(tick*0.018)*18;
+      const py=cy+Math.cos(tick*0.013)*8;
+      ctx.fillStyle='#000800';
+      ctx.beginPath(); ctx.arc(px, py, EH*0.18, 0, Math.PI*2); ctx.fill();
+
+      // 동공 반짝임
+      ctx.shadowBlur=20;
+      ctx.fillStyle='rgba(0,255,80,0.9)';
+      ctx.beginPath(); ctx.arc(px-4, py-4, 3, 0, Math.PI*2); ctx.fill();
+
+      ctx.restore();
+    }
+
+    // 눈꺼풀 덮기 (blink)
+    ctx.fillStyle='#000';
+    // 위쪽
+    ctx.fillRect(0,0,W, cy-EH/2*1.2+closedH/2);
+    // 아래쪽
+    ctx.fillRect(0, cy+EH/2*1.2-closedH/2, W, H);
+
+    // 눈 테두리 (픽셀 아트 라인)
+    ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=12;
+    ctx.strokeStyle='rgba(0,255,0,0.8)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, EW/2, EH/2*1.2, 0, 0, Math.PI*2);
+    ctx.stroke(); ctx.restore();
+
+    // 속눈썹 느낌 (위)
+    const lashCount=12;
+    for(let i=0;i<lashCount;i++){
+      const angle=Math.PI+(i/(lashCount-1))*Math.PI;
+      const lx=cx+Math.cos(angle)*EW/2;
+      const ly=cy+Math.sin(angle)*EH/2*1.2;
+      const len=6+Math.random()*4;
+      ctx.strokeStyle='rgba(0,255,0,0.4)'; ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(lx,ly);
+      ctx.lineTo(lx+Math.cos(angle)*len, ly+Math.sin(angle)*len);
+      ctx.stroke();
+    }
+
+    // 주변 감시 라인
+    const alpha=0.2+Math.sin(tick*0.04)*0.1;
+    ctx.strokeStyle=`rgba(0,255,0,${alpha})`; ctx.lineWidth=1;
+    [80,100,120].forEach(r=>{
+      ctx.beginPath();
+      ctx.arc(cx,cy,r+Math.sin(tick*0.03)*5,0,Math.PI*2);
+      ctx.stroke();
+    });
+
+    // 좌우 스캔 라인
+    const scanX=(tick*3)%(W+40)-20;
+    const scanG=ctx.createLinearGradient(scanX-15,0,scanX+15,0);
+    scanG.addColorStop(0,'rgba(0,255,0,0)');
+    scanG.addColorStop(0.5,'rgba(0,255,0,0.12)');
+    scanG.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=scanG; ctx.fillRect(scanX-15,0,30,H);
+
+    // CRT
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    // 코너 브라켓
+    const bk=10; ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+    });
+
+    // 하단 라벨
+    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='center';
+    ctx.fillText('SURVEILLANCE MODE ACTIVE',W/2,H-8);
+  }
+
+  function draw(){
+    // 블링크 타이밍
+    blinkT++;
+    let br=0;
+    if(blinkT>180){
+      const p=blinkT-180;
+      if(p<8) br=p/8;
+      else if(p<14) br=1;
+      else if(p<22) br=1-(p-14)/8;
+      else { blinkT=0; br=0; }
+    }
+    drawEye(br);
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ═══════════════════════════════════
+// ② RADAR SCAN
+// 레이더 — 회전 스캔빔, 타겟 포인트
+// ═══════════════════════════════════
+(function(){
+  const c=document.getElementById('c2'), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+  const cx=W/2, cy=H/2+5;
+  const R=Math.min(W,H)*0.4;
+
+  // 타겟 포인트들 (고정 + 랜덤 생성)
+  const targets=[];
+  for(let i=0;i<8;i++){
+    const angle=Math.random()*Math.PI*2;
+    const dist=R*(0.3+Math.random()*0.65);
+    targets.push({
+      x:cx+Math.cos(angle)*dist,
+      y:cy+Math.sin(angle)*dist*0.7,
+      life:0, maxLife:120+Math.floor(Math.random()*80),
+      delay:Math.floor(Math.random()*200),
+      size:1+Math.random()*2,
+    });
+  }
+
+  // 오프스크린 트레일
+  const off=document.createElement('canvas'); off.width=W; off.height=H;
+  const octx=off.getContext('2d');
+  octx.fillStyle='#000'; octx.fillRect(0,0,W,H);
+
+  // 픽셀 아트 격자선 느낌
+  function drawGrid(){
+    ctx.strokeStyle='rgba(0,60,0,0.3)'; ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=20){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=20){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+  }
+
+  function draw(){
+    octx.fillStyle='rgba(0,0,0,0.08)'; octx.fillRect(0,0,W,H);
+
+    const angle=tick*0.025;
+
+    // 레이더 원
+    [R*0.3, R*0.6, R].forEach((r,i)=>{
+      octx.strokeStyle=`rgba(0,${100-i*25},0,0.4)`; octx.lineWidth=1;
+      octx.beginPath(); octx.arc(cx,cy,r,0,Math.PI*2); octx.stroke();
+    });
+
+    // 십자선
+    octx.strokeStyle='rgba(0,80,0,0.4)'; octx.lineWidth=1;
+    octx.beginPath(); octx.moveTo(cx-R,cy); octx.lineTo(cx+R,cy); octx.stroke();
+    octx.beginPath(); octx.moveTo(cx,cy-R); octx.lineTo(cx,cy+R); octx.stroke();
+
+    // 스캔 빔
+    const beamG=octx.createConicalGradient?null:null;
+    for(let a=0;a<Math.PI*0.28;a+=0.02){
+      const beamAngle=angle-a;
+      const alpha=Math.max(0,(0.28-a)/0.28)*0.45;
+      octx.strokeStyle=`rgba(0,255,80,${alpha})`;
+      octx.lineWidth=2;
+      octx.beginPath();
+      octx.moveTo(cx,cy);
+      octx.lineTo(cx+Math.cos(beamAngle)*R, cy+Math.sin(beamAngle)*R);
+      octx.stroke();
+    }
+
+    // 빔 끝 글로우
+    octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=15;
+    octx.strokeStyle='rgba(0,255,80,0.9)'; octx.lineWidth=2;
+    octx.beginPath();
+    octx.moveTo(cx,cy);
+    octx.lineTo(cx+Math.cos(angle)*R, cy+Math.sin(angle)*R);
+    octx.stroke(); octx.restore();
+
+    // 타겟 포인트 (스캔빔이 지나갈 때 켜짐)
+    targets.forEach(t=>{
+      if(tick<t.delay) return;
+      const tAngle=Math.atan2(t.y-cy, t.x-cx);
+      let diff=(angle-tAngle)%(Math.PI*2);
+      if(diff<0) diff+=Math.PI*2;
+      if(diff<0.3){ t.life=t.maxLife; }
+      if(t.life>0){
+        t.life--;
+        const alpha=Math.min(1,t.life/30);
+        octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=10*alpha;
+        octx.fillStyle=`rgba(0,255,80,${alpha})`;
+        octx.beginPath(); octx.arc(t.x,t.y,t.size+1,0,Math.PI*2); octx.fill();
+        // 십자 마커
+        octx.strokeStyle=`rgba(0,255,80,${alpha*0.8})`; octx.lineWidth=1;
+        const ms=5;
+        octx.beginPath(); octx.moveTo(t.x-ms,t.y); octx.lineTo(t.x+ms,t.y); octx.stroke();
+        octx.beginPath(); octx.moveTo(t.x,t.y-ms); octx.lineTo(t.x,t.y+ms); octx.stroke();
+        octx.restore();
+      }
+    });
+
+    // 중심 점
+    octx.save(); octx.shadowColor='#00ff00'; octx.shadowBlur=12;
+    octx.fillStyle='rgba(0,255,80,0.9)';
+    octx.beginPath(); octx.arc(cx,cy,3,0,Math.PI*2); octx.fill(); octx.restore();
+
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    drawGrid();
+    ctx.drawImage(off,0,0);
+
+    // 왼쪽 데이터 패널
+    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.4)'; ctx.textAlign='left';
+    ctx.fillText(`ANG: ${(angle%(Math.PI*2)*57.3).toFixed(1)}°`,8,16);
+    ctx.fillText(`TGT: ${targets.filter(t=>t.life>0).length}/${targets.length}`,8,28);
+    ctx.fillText(`MODE: SCAN`,8,40);
+
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10; ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+    });
+
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ═══════════════════════════════════
+// ③ TERMINAL PROMPT
+// 터미널 타이핑 + 커서 깜빡임
+// ═══════════════════════════════════
+(function(){
+  const c=document.getElementById('c3'), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  const LINES=[
+    { prefix:'SYSTEM>', text:' MEASURE DATABASE ONLINE', color:'rgba(0,255,0,0.9)', delay:0 },
+    { prefix:'STATUS>', text:' ALL ARCHIVES ACCESSIBLE', color:'rgba(0,200,0,0.7)', delay:60 },
+    { prefix:'READY> ', text:' AWAITING SEARCH QUERY...', color:'rgba(0,255,100,0.8)', delay:120 },
+    { prefix:'HINT>  ', text:' TRY: crash / floating / shadow', color:'rgba(0,180,0,0.5)', delay:200 },
+    { prefix:'HINT>  ', text:' TRY: yellow / distance / scale', color:'rgba(0,180,0,0.5)', delay:270 },
+    { prefix:'INPUT> ', text:' _', color:'rgba(0,255,0,1)', delay:340, isCursor:true },
+  ];
+
+  // 타이핑 진행 상태
+  let typeProgress=0;
+  const TOTAL_CHARS=LINES.reduce((s,l)=>s+l.prefix.length+l.text.length,0);
+
+  const FS=8, LH=22;
+  const startY=30;
+  const startX=16;
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.85)'; ctx.fillRect(0,0,W,H);
+
+    // 배경 그리드
+    ctx.strokeStyle='rgba(0,30,0,0.4)'; ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=16){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=LH){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // 화면 상단 바
+    ctx.fillStyle='rgba(0,50,0,0.8)';
+    ctx.fillRect(0,0,W,16);
+    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.6)'; ctx.textAlign='left';
+    ctx.fillText('MEASURE.DB  v2.1  [CONNECTED]',8,11);
+
+    // 타이핑 속도
+    if(typeProgress<TOTAL_CHARS+30) typeProgress++;
+
+    let charCount=0;
+    LINES.forEach((line,li)=>{
+      if(tick<line.delay) return;
+      const y=startY+li*LH;
+      const fullLine=line.prefix+line.text;
+      const lineStart=charCount;
+      const lineEnd=charCount+fullLine.length;
+
+      // 얼마나 타이핑됐는지
+      const typed=Math.max(0,Math.min(fullLine.length, typeProgress-line.delay));
+      const displayLine=fullLine.slice(0,typed);
+
+      ctx.font=`${FS}px 'Press Start 2P',monospace`;
+      ctx.fillStyle=line.color;
+      ctx.textAlign='left';
+
+      // prefix 색상
+      ctx.fillStyle='rgba(0,255,0,0.45)';
+      ctx.fillText(displayLine.slice(0,line.prefix.length), startX, y);
+      ctx.fillStyle=line.color;
+      ctx.fillText(displayLine.slice(line.prefix.length), startX+line.prefix.length*FS*0.62, y);
+
+      // 커서 (마지막 줄, 깜빡임)
+      if(line.isCursor && typed>0){
+        const cursorVisible=Math.floor(tick/18)%2===0;
+        if(cursorVisible){
+          const curX=startX+(line.prefix.length)*FS*0.62;
+          ctx.fillStyle='rgba(0,255,0,0.9)';
+          ctx.fillRect(curX, y-FS, FS*0.62, FS+2);
+        }
+      }
+
+      charCount+=fullLine.length;
+    });
+
+    // 타이핑 완료 후 반복
+    if(typeProgress>TOTAL_CHARS+120) typeProgress=0;
+
+    // 화면 가장자리 글로우
+    const edgeG=ctx.createLinearGradient(0,0,W,0);
+    edgeG.addColorStop(0,'rgba(0,255,0,0.05)');
+    edgeG.addColorStop(0.1,'rgba(0,0,0,0)');
+    edgeG.addColorStop(0.9,'rgba(0,0,0,0)');
+    edgeG.addColorStop(1,'rgba(0,255,0,0.05)');
+    ctx.fillStyle=edgeG; ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10; ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+    });
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+
+// ═══════════════════════════════════
+// ④ SEARCHLIGHT SWEEP
+// 탐조등 — 좌우 스윕, 아래서 위로 비춤
+// ═══════════════════════════════════
+(function(){
+  const c=document.getElementById('c4'), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  // 배경 픽셀 아트 장면 (어두운 물체들 — 사진을 찾는 느낌)
+  const OBJECTS=[
+    { x:60,  y:80,  w:40, h:55, type:'rect', label:'#031' },
+    { x:140, y:60,  w:35, h:70, type:'rect', label:'#047' },
+    { x:230, y:90,  w:45, h:50, type:'rect', label:'#023' },
+    { x:290, y:70,  w:30, h:60, type:'rect', label:'#088' },
+    { x:30,  y:140, w:50, h:40, type:'rect', label:'#012' },
+    { x:185, y:150, w:40, h:38, type:'rect', label:'#055' },
+    { x:260, y:145, w:55, h:40, type:'rect', label:'#064' },
+  ];
+
+  // 탐조등 위치
+  const lightX_base=W/2;
+  const lightOriginY=H+30;
+
+  function getLightAngle(){
+    return Math.sin(tick*0.018)*0.85; // -0.85 ~ +0.85 라디안
+  }
+
+  function isInLight(px,py,angle,spread){
+    const dx=px-lightX_base, dy=py-lightOriginY;
+    const objAngle=Math.atan2(dy,dx)-(-Math.PI/2);
+    const diff=Math.abs(objAngle-angle);
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    return diff<spread && dist<lightOriginY+50;
+  }
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+
+    const lightAngle=getLightAngle();
+    const spread=0.18;
+
+    // 탐조등 빔
+    ctx.save();
+    const bx=lightX_base+Math.sin(lightAngle)*200;
+    const by=0;
+    const beamG=ctx.createRadialGradient(lightX_base,lightOriginY,0, bx,by,W*0.6);
+    beamG.addColorStop(0,'rgba(0,255,100,0.18)');
+    beamG.addColorStop(0.4,'rgba(0,255,80,0.08)');
+    beamG.addColorStop(1,'rgba(0,255,0,0)');
+
+    ctx.beginPath();
+    ctx.moveTo(lightX_base, lightOriginY);
+    for(let a=lightAngle-spread;a<=lightAngle+spread;a+=0.01){
+      ctx.lineTo(lightX_base+Math.sin(a)*400, lightOriginY-Math.cos(a)*400);
+    }
+    ctx.closePath();
+    ctx.fillStyle=beamG; ctx.fill();
+    ctx.restore();
+
+    // 물체들 그리기
+    OBJECTS.forEach(obj=>{
+      const inLight=isInLight(obj.x+obj.w/2, obj.y+obj.h/2, lightAngle, spread+0.1);
+
+      if(inLight){
+        // 빛이 비칠 때: 밝게
+        ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=15;
+        ctx.strokeStyle='rgba(0,255,80,0.9)'; ctx.lineWidth=2;
+        ctx.strokeRect(obj.x,obj.y,obj.w,obj.h);
+        // 내부 채우기
+        ctx.fillStyle='rgba(0,80,0,0.4)'; ctx.fillRect(obj.x+1,obj.y+1,obj.w-2,obj.h-2);
+        // 라벨
+        ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.textAlign='center';
+        ctx.fillText(obj.label, obj.x+obj.w/2, obj.y+obj.h/2+2);
+        ctx.restore();
+      } else {
+        // 어두울 때: 흐릿하게
+        ctx.strokeStyle='rgba(0,50,0,0.3)'; ctx.lineWidth=1;
+        ctx.strokeRect(obj.x,obj.y,obj.w,obj.h);
+      }
+    });
+
+    // 탐조등 기둥 (하단)
+    ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=20;
+    ctx.strokeStyle='rgba(0,255,0,0.6)'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(lightX_base-6,H); ctx.lineTo(lightX_base-6,H-20); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(lightX_base+6,H); ctx.lineTo(lightX_base+6,H-20); ctx.stroke();
+
+    // 탐조등 머리
+    ctx.fillStyle='rgba(0,200,0,0.8)';
+    ctx.beginPath();
+    ctx.ellipse(lightX_base+Math.sin(lightAngle)*15, H-25, 14, 9, lightAngle, 0, Math.PI*2);
+    ctx.fill(); ctx.restore();
+
+    // 상단 라벨
+    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.35)'; ctx.textAlign='left';
+    ctx.fillText(`SWEEP: ${(lightAngle*57).toFixed(1)}°`,8,14);
+    ctx.textAlign='right';
+    ctx.fillText(`${OBJECTS.filter(obj=>isInLight(obj.x+obj.w/2,obj.y+obj.h/2,lightAngle,spread+0.1)).length} FOUND`,W-8,14);
+
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10; ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+    });
+
+    tick++;
+  }
+  setInterval(draw,30);
+})();
+
+
+// ═══════════════════════════════════
+// ⑤ DATA FIGURE
+// 픽셀 인물이 데이터를 뒤지는 장면
+// ═══════════════════════════════════
+(function(){
+  const c=document.getElementById('c5'), ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let tick=0;
+
+  // 인물 픽셀맵 (12×16, PS=7) — 서서 모니터를 보는 자세
+  const FIGURE_MAP=[
+    '000111000000',  // 머리 위
+    '001111100000',  // 머리
+    '001111100000',  // 머리
+    '001131100000',  // 눈
+    '001111100000',  // 얼굴
+    '000111000000',  // 목
+    '011111110000',  // 어깨
+    '011211110000',  // 팔 왼쪽
+    '011111110000',  // 몸
+    '001121100000',  // 허리
+    '001111100000',  // 하체
+    '001111100000',  // 다리
+    '001100100000',  // 발
+    '001100100000',  // 발
+    '000000000000',
+    '000000000000',
+  ];
+  const FIG_COLOR={'1':'#005000','3':'#00ff44','2':'#003800'};
+  const FPS=7;
+  const figX=20, figY=20;
+
+  // 모니터 (오른쪽)
+  const MON_X=120, MON_Y=30, MON_W=170, MON_H=110;
+
+  // 흐르는 데이터 줄들
+  const DATA_LINES=Array.from({length:12},(_,i)=>({
+    y: MON_Y+15+i*8,
+    offset: Math.random()*100,
+    speed: 0.3+Math.random()*0.4,
+    text: ['CRASH.JPG','FLOAT_001','SHADOW_X','DISTANCE','SCALE_03',
+           'YELLOW_2','MEASURE_','BORDER__','TRANSIT1','PERIMETER',
+           'OBSERVE_','MATERIAL'][i],
+  }));
+
+  let highlightLine=-1, highlightTimer=0;
+
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.fillRect(0,0,W,H);
+
+    // 배경 노이즈
+    for(let i=0;i<15;i++){
+      ctx.fillStyle=`rgba(0,${20+Math.floor(Math.random()*20)},0,0.05)`;
+      ctx.fillRect(Math.random()*W,Math.random()*H,2,1);
+    }
+
+    // 인물
+    const walkOffset=Math.sin(tick*0.04)*1; // 미묘한 흔들림
+    FIGURE_MAP.forEach((row,ry)=>{
+      [...row].forEach((cell,rx)=>{
+        if(cell==='0') return;
+        ctx.fillStyle=FIG_COLOR[cell]||'#004400';
+        ctx.fillRect(figX+rx*FPS, figY+ry*FPS+walkOffset, FPS-1, FPS-1);
+      });
+    });
+
+    // 인물 → 모니터 연결 팔 (손이 키보드를 치는 느낌)
+    const armY=figY+7*FPS+walkOffset;
+    const armEndX=MON_X;
+    const armEndY=MON_Y+MON_H-10;
+    ctx.strokeStyle='rgba(0,120,0,0.6)'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(figX+5*FPS, armY);
+    ctx.bezierCurveTo(figX+8*FPS, armY+10, armEndX-20, armEndY-10, armEndX, armEndY);
+    ctx.stroke();
+
+    // 모니터 외곽
+    ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=15;
+    ctx.strokeStyle='rgba(0,255,0,0.7)'; ctx.lineWidth=2;
+    ctx.strokeRect(MON_X, MON_Y, MON_W, MON_H);
+    ctx.restore();
+
+    // 모니터 내부 채우기
+    ctx.fillStyle='rgba(0,10,0,0.95)'; ctx.fillRect(MON_X+1,MON_Y+1,MON_W-2,MON_H-2);
+
+    // 모니터 상단 바
+    ctx.fillStyle='rgba(0,60,0,0.8)'; ctx.fillRect(MON_X+1,MON_Y+1,MON_W-2,12);
+    ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle='rgba(0,255,0,0.6)'; ctx.textAlign='left';
+    ctx.fillText('ARCHIVE.DB  [SEARCHING...]',MON_X+6,MON_Y+10);
+
+    // 하이라이트 타이밍
+    if(highlightTimer>0) highlightTimer--;
+    else if(Math.random()>0.97){
+      highlightLine=Math.floor(Math.random()*DATA_LINES.length);
+      highlightTimer=30;
+    }
+
+    // 데이터 줄들
+    DATA_LINES.forEach((line,i)=>{
+      line.offset+=line.speed;
+      const x=MON_X+6+((tick*line.speed*0.5)%MON_W);
+      const alpha=i===highlightLine?1:0.45;
+      const col=i===highlightLine?`rgba(0,255,80,${alpha})`:`rgba(0,180,0,${alpha})`;
+
+      ctx.save();
+      if(i===highlightLine){
+        ctx.shadowColor='#00ff00'; ctx.shadowBlur=8;
+        ctx.fillStyle='rgba(0,40,0,0.5)';
+        ctx.fillRect(MON_X+1, line.y-8, MON_W-2, 10);
+      }
+      ctx.font="5px 'Press Start 2P',monospace"; ctx.fillStyle=col; ctx.textAlign='left';
+      ctx.fillText(line.text, MON_X+6, line.y);
+
+      // 하이라이트 라인에 커서
+      if(i===highlightLine && Math.floor(tick/12)%2===0){
+        ctx.fillStyle='rgba(0,255,0,0.9)';
+        const tw=line.text.length*5.5+2;
+        ctx.fillRect(MON_X+6+tw, line.y-8, 4, 9);
+      }
+      ctx.restore();
+    });
+
+    // 화면 스캔 라인
+    const scanY=MON_Y+(tick*2)%(MON_H+10);
+    const sg=ctx.createLinearGradient(0,scanY-6,0,scanY+6);
+    sg.addColorStop(0,'rgba(0,255,0,0)'); sg.addColorStop(0.5,'rgba(0,255,0,0.12)'); sg.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sg; ctx.fillRect(MON_X,scanY-6,MON_W,12);
+
+    // 인물 눈이 모니터를 볼 때 글로우
+    const eyeX=figX+3*FPS+FPS/2, eyeY=figY+3*FPS;
+    ctx.save(); ctx.shadowColor='#00ff44'; ctx.shadowBlur=8;
+    ctx.fillStyle='rgba(0,255,68,0.8)';
+    ctx.beginPath(); ctx.arc(eyeX,eyeY,3,0,Math.PI*2); ctx.fill(); ctx.restore();
+
+    ctx.fillStyle='rgba(0,0,0,0.1)';
+    for(let ly=0;ly<H;ly+=2) ctx.fillRect(0,ly,W,1);
+
+    const bk=10; ctx.strokeStyle='rgba(0,255,0,0.5)'; ctx.lineWidth=1.5;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy*bk); ctx.stroke();
+    });
+
+    tick++;
+  }
+  setInterval(draw,40);
+})();
+
+}, 500);
+</script>
+</body>
+</html>
