@@ -469,13 +469,19 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 #repContent::-webkit-scrollbar { width:3px; }
 #repContent::-webkit-scrollbar-thumb { background:rgba(0,255,0,0.35); }
 #repContent::-webkit-scrollbar-track { background:transparent; }
-.rep-h2 { color:var(--acc); display:block; margin-top:6px; letter-spacing:1px; }
-.rep-h3 { color:var(--g2); display:block; margin-top:4px; }
-.rep-trow { display:flex; gap:6px; border-bottom:1px solid rgba(0,221,85,0.08); padding:1px 0; }
-.rep-trow span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.rep-trow span:first-child { flex:0 0 80px; color:var(--g4); }
-.rep-meta { color:var(--g3); display:block; }
-.rep-hr { border:none; border-top:1px solid var(--g4); margin:4px 0; }
+.rep-h2 { color:var(--acc); display:block; margin:10px 0 4px; letter-spacing:1.5px; border-bottom:1px solid rgba(0,221,85,0.2); padding-bottom:3px; }
+.rep-h3 { color:var(--g2); display:block; margin:6px 0 2px; letter-spacing:1px; }
+.rep-trow { display:flex; gap:8px; border-bottom:1px solid rgba(0,221,85,0.1); padding:2px 0; }
+.rep-trow span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--g2); }
+.rep-trow span:first-child { flex:0 0 90px; color:var(--g4); }
+.rep-thead { background:rgba(0,221,85,0.06); }
+.rep-thead span { color:var(--g3) !important; letter-spacing:.5px; }
+.rep-meta { color:var(--g3); display:block; line-height:1.7; }
+.rep-hr { border:none; border-top:1px solid rgba(0,221,85,0.2); margin:8px 0; }
+.rep-p { display:block; color:var(--g2); margin:2px 0; line-height:2; }
+.rep-core { color:#00ff88; }
+.rep-sup  { color:#ffcc00; }
+.rep-drop { color:rgba(255,60,30,0.8); }
 /* 촬영 보고서 */
 .rep-body { display:flex; flex-direction:column; height:100%; }
 .rep-2col { display:flex; gap:16px; flex:1; min-height:0; }
@@ -728,7 +734,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
     <div class="pnl" id="logPnl"><div class="pnl-in">
       <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span class="pnl-tab on" id="repNo">—</span></span></div>
       <div class="pnl-bd" style="padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;">
-        <div id="repContent" style="flex:1;overflow-y:auto;font-size:9px;line-height:1.9;color:var(--g3);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.35) transparent;">
+        <div id="repContent" style="flex:1;overflow-y:auto;font-size:10px;line-height:2;color:var(--g2);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.35) transparent;">
           <span style="color:var(--g4)">배치를 선택하면 보고서가 표시됩니다.</span>
         </div>
       </div>
@@ -2700,38 +2706,52 @@ const REPORT_FILES = {
 
 function mdToRepHtml(md){
   const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const fmt = s => s
+    .replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--acc)">$1</b>')
+    .replace(/`([^`]+)`/g,'<span style="color:var(--acc);background:rgba(0,221,85,0.08);padding:0 3px">$1</span>')
+    .replace(/🟢/g,'<span class="rep-core">●CORE</span>')
+    .replace(/🟡/g,'<span class="rep-sup">●SUP</span>')
+    .replace(/🔴/g,'<span class="rep-drop">●DROP</span>')
+    .replace(/\[\[(.+?)\]\]/g,'<span style="color:var(--acc)">$1</span>');
   const lines = md.split('\n');
   let html = '';
+  let prevBlank = false;
+  let tableRowCount = 0;
   for(let i=0;i<lines.length;i++){
-    let l = lines[i];
+    const l = lines[i];
     // 테이블 행
     if(/^\|/.test(l)){
       const cells = l.split('|').filter((_,j,a)=>j>0&&j<a.length-1).map(c=>c.trim());
-      if(cells.every(c=>/^[-:]+$/.test(c))) continue; // separator
-      html += '<div class="rep-trow">' + cells.map((c,ci)=>
-        `<span style="${ci===0?'color:var(--g4);flex:0 0 90px':'flex:1'}">${esc(c).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/`([^`]+)`/g,'<span style="color:var(--acc)">$1</span>').replace(/🟢/g,'◆').replace(/🟡/g,'◇').replace(/🔴/g,'✕')}</span>`
+      if(cells.every(c=>/^[-:]+$/.test(c))){ tableRowCount++; continue; } // separator → thead 다음
+      const isHead = tableRowCount === 0; // separator 전 = 헤더
+      const cls = isHead ? 'rep-trow rep-thead' : 'rep-trow';
+      html += `<div class="${cls}">` + cells.map((c,ci)=>
+        `<span>${fmt(esc(c))}</span>`
       ).join('') + '</div>';
+      if(isHead) tableRowCount = 0;
       continue;
-    }
+    } else { tableRowCount = 0; }
     // --- 구분선
-    if(/^---+$/.test(l.trim())){ html += '<hr class="rep-hr">'; continue; }
+    if(/^---+$/.test(l.trim())){ html += '<hr class="rep-hr">'; prevBlank=false; continue; }
     // ## 제목
-    if(/^## /.test(l)){ html += `<span class="rep-h2">${esc(l.slice(3))}</span>`; continue; }
+    if(/^## /.test(l)){ html += `<span class="rep-h2">▶ ${esc(l.slice(3))}</span>`; prevBlank=false; continue; }
     // ### 제목
-    if(/^### /.test(l)){ html += `<span class="rep-h3">${esc(l.slice(4))}</span>`; continue; }
-    // > abstract 블록 (헤더 메타)
+    if(/^### /.test(l)){ html += `<span class="rep-h3">■ ${esc(l.slice(4))}</span>`; prevBlank=false; continue; }
+    // > abstract 블록
     if(/^> /.test(l)){
       const inner = l.slice(2);
       if(/^\[!abstract\]/.test(inner)) continue;
-      const clean = esc(inner).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/\[\[(.+?)\]\]/g,'<span style="color:var(--acc)">$1</span>');
-      html += `<span class="rep-meta">${clean}</span>`;
-      continue;
+      if(!inner.trim()) continue;
+      html += `<span class="rep-meta">${fmt(esc(inner))}</span>`;
+      prevBlank=false; continue;
     }
-    // 빈 줄
-    if(!l.trim()){ html += '<br>'; continue; }
-    // 일반 텍스트
-    const clean = esc(l).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/`([^`]+)`/g,'<span style="color:var(--acc)">$1</span>').replace(/🟢/g,'◆').replace(/🟡/g,'◇').replace(/🔴/g,'✕');
-    html += `<span style="display:block;color:var(--g3)">${clean}</span>`;
+    // 빈 줄 — 연속 빈 줄은 하나만
+    if(!l.trim()){
+      if(!prevBlank) html += '<div style="height:4px"></div>';
+      prevBlank=true; continue;
+    }
+    prevBlank=false;
+    html += `<span class="rep-p">${fmt(esc(l))}</span>`;
   }
   return html;
 }
