@@ -785,8 +785,9 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
   </div>
 
-  <!-- 보고서 원문 모달 (소형 팝업, 오버레이 없음) -->
-  <div id="repModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;width:min(360px,calc(100vw-80px));height:440px;background:#020e05;border:1px solid var(--g);flex-direction:column;box-shadow:0 0 60px rgba(0,0,0,0.95),0 0 2px rgba(0,221,85,0.4);">
+  <!-- 보고서 원문 모달 -->
+  <div id="repBackdrop" onclick="closeRepModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;"></div>
+  <div id="repModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;width:480px;max-width:calc(100vw-40px);height:520px;max-height:calc(100vh-60px);background:#020e05;border:1px solid var(--g);flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,0.98),0 0 3px rgba(0,221,85,0.5);">
     <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--g4);flex-shrink:0;">
       <span style="font-size:10px;color:var(--acc);letter-spacing:2px">◆ CAPTURE REPORT · 원문</span>
       <span id="repModalTitle" style="font-size:9px;color:var(--g3);margin-left:12px"></span>
@@ -3126,18 +3127,22 @@ async function renderCaptureReport(dateKey, batchTitle){
 }
 
 function openRepModal(){
-  const modal = document.getElementById('repModal');
-  const body  = document.getElementById('repModalBody');
-  const title = document.getElementById('repModalTitle');
+  const modal    = document.getElementById('repModal');
+  const backdrop = document.getElementById('repBackdrop');
+  const body     = document.getElementById('repModalBody');
+  const title    = document.getElementById('repModalTitle');
   if(!modal || !window._currentRepMd) return;
-  body.innerHTML  = mdToRepHtml(window._currentRepMd);
+  body.innerHTML = mdToRepHtml(window._currentRepMd);
   if(title) title.textContent = window._currentRepLabel || '';
-  modal.style.display = 'flex';
+  modal.style.display    = 'flex';
+  backdrop.style.display = 'block';
   document.addEventListener('keydown', _repModalEsc);
 }
 function closeRepModal(){
-  const modal = document.getElementById('repModal');
-  if(modal) modal.style.display = 'none';
+  const modal    = document.getElementById('repModal');
+  const backdrop = document.getElementById('repBackdrop');
+  if(modal)    modal.style.display    = 'none';
+  if(backdrop) backdrop.style.display = 'none';
   document.removeEventListener('keydown', _repModalEsc);
 }
 function _repModalEsc(e){ if(e.key==='Escape') closeRepModal(); }
