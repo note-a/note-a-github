@@ -940,6 +940,8 @@ document.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
   b.classList.add('on'); S.sec=b.dataset.sec; renderMapInfo(); updateCtx();
   renderSection(S.sec);
+  // GALLERY 클릭 시 루트로 리셋
+  if(S.sec==='GALLERY' && window._galRenderRoot) window._galRenderRoot();
   log('SYS',false,'SECTION · '+S.sec);
 });
 
@@ -1823,13 +1825,8 @@ function renderOptions(el){
 }
 // HOME → 이 페이지 메인 (갤러리 루트)
 document.getElementById('homeBtn').onclick=()=>{
-  document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
-  document.querySelector('.mbtn[data-sec="GALLERY"]').classList.add('on');
-  S.sec='GALLERY'; renderMapInfo(); updateCtx();
-  document.getElementById('gallery-inner').style.display='flex';
-  document.getElementById('emptyState').style.display='none';
-  if(window._galRenderRoot) window._galRenderRoot();
-  log('SYS',false,'→ ROOT');
+  log('SYS',false,'→ PORTFOLIO');
+  window.location.href='portfolio.html';
 };
 
 // SPOTLIGHT 패널 — 가장 많이 클릭된 사진 우선
@@ -2484,7 +2481,7 @@ document.querySelectorAll('.rel-mode').forEach(m=>m.onclick=()=>{
 });
 
 // EXIT
-document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED · DENIED (READ-ONLY)'); };
+document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT · REDIRECTING'); window.location.href='index.html'; };
 
 // ── SCAN 애니메이션: 타겟 이동 + % 카운터 ──
 (function scanAnim(){
