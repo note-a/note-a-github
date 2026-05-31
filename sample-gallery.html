@@ -1496,113 +1496,145 @@ function renderField(el, D){
     nodes.sort((a,b)=>a.depth-b.depth);
   }
 
+  // ── 애니메이션용 위치 초기화 ──
+  // scatterX/Y: 흩뿌려진 초기 위치
+  // catX/Y: 카테고리별 작은 원의 위치
+  function initAnimPositions(){
+    function seed(id){let h=0;for(const c of id)h=(h*31+c.charCodeAt(0))>>>0;return h;}
+    // scatter: 캔버스 전체에 무작위 배치
+    nodes.forEach(n=>{
+      const s=seed(n.id);
+      const r1=((s*9301+49297)%233280)/233280;
+      const r2=((s*6364+1013904223)%233280)/233280;
+      n.scatterX=W*0.08+r1*W*0.84;
+      n.scatterY=H*0.08+r2*H*0.84;
+    });
+    // 카테고리별 소원 배치: 오각형 중심으로 배열
+    const penR=Math.min(W,H)*0.26;
+    const cx=W*0.5,cy=H*0.5;
+    const catAngles={
+      SPACE:    -Math.PI/2,
+      OBJECT:   -Math.PI/2+Math.PI*0.4,
+      FIGURE:   -Math.PI/2+Math.PI*0.8,
+      FIGUREBG: -Math.PI/2+Math.PI*1.2,
+      UNJUDGE:  -Math.PI/2+Math.PI*1.6,
+      OTHER:    0
+    };
+    const catGroups={};
+    nodes.forEach(n=>{(catGroups[n.cat]=catGroups[n.cat]||[]).push(n);});
+    Object.entries(catGroups).forEach(([cat,ns])=>{
+      const ang=catAngles[cat]||0;
+      const pcx=cx+Math.cos(ang)*penR;
+      const pcy=cy+Math.sin(ang)*penR;
+      const ringR=Math.max(12,Math.sqrt(ns.length)*8);
+      ns.forEach((n,i)=>{
+        const a=2*Math.PI*i/ns.length-Math.PI/2;
+        n.catX=pcx+Math.cos(a)*ringR;
+        n.catY=pcy+Math.sin(a)*ringR;
+      });
+    });
+  }
+
   function draw(){
     const rev=Math.min(1,(Date.now()-REVEAL_START)/REVEAL_DUR_MS);
 
-    // ── 3단계 구분 ──
-    // Phase 1 (0~0.40): 점 — 노드 순차 등장
-    // Phase 2 (0.40~0.75): 선 — 엣지 순서대로 연결
-    // Phase 3 (0.75~1.0): 면 — 전체 opacity 완성 + 라벨
-    const P1_END=0.40, P2_END=0.75;
+    // ── 3단계 위치 애니메이션 ──
+    // Phase 1 (0~0.38): 점 흩뿌림 → 카테고리별 작은 원으로 집합
+    // Phase 2 (0.38~0.72): 작은 원들 → 큰 구로 합쳐짐
+    // Phase 3 (0.72~1.0): 엣지 연결 + 라벨
+    const P1=0.38, P2=0.72;
+    function smst(t){return t<=0?0:t>=1?1:t*t*(3-2*t);}
 
-    // 노드 reveal: phase1 구간에서 순차 등장
-    const nodePhaseT=Math.min(1,rev/P1_END);          // 0→1 in phase1
-    // 엣지 reveal: phase2 구간에서 순서대로 연결 (co-edge 우선)
-    const edgePhaseT=Math.max(0,Math.min(1,(rev-P1_END)/(P2_END-P1_END)));
-    const visibleEdges=Math.floor(edges.length*edgePhaseT);
-    // 면(opacity) 완성: phase3 구간
-    const finishT=Math.max(0,Math.min(1,(rev-P2_END)/(1-P2_END)));
+    const t1=smst(Math.min(1,rev/P1));
+    const t2=smst(Math.max(0,Math.min(1,(rev-P1)/(P2-P1))));
+    const finishT=Math.max(0,Math.min(1,(rev-P2)/(1-P2)));
+    const nodeAlpha=Math.min(1,rev*6);
 
     const ctx=cv.getContext('2d');
     ctx.save();ctx.scale(dpr,dpr);
     ctx.clearRect(0,0,W,H);
     ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
 
-    project();
+    project(); // n.px/py = 구 위치
 
-    // ── 메타볼 레이어: 작은 원들이 합쳐져 큰 원을 형성 ──
+    // 각 노드의 현재 애니메이션 위치 계산
+    nodes.forEach(n=>{
+      const midX=n.scatterX*(1-t1)+n.catX*t1;
+      const midY=n.scatterY*(1-t1)+n.catY*t1;
+      n.dpx=midX*(1-t2)+n.px*t2;
+      n.dpy=midY*(1-t2)+n.py*t2;
+    });
+
+    // ── 메타볼 레이어: blur+contrast로 점→원→구 머지 ──
     {
       const bc=blobCv.getContext('2d');
       bc.clearRect(0,0,blobCv.width,blobCv.height);
-      bc.save(); bc.scale(dpr,dpr);
-      bc.fillStyle='#000301'; bc.fillRect(0,0,W,H);
-      nodes.forEach((n,i)=>{
-        const nT=Math.max(0,Math.min(1,(nodePhaseT-i/nodes.length)*nodes.length));
-        if(nT<=0) return;
+      bc.save();bc.scale(dpr,dpr);
+      bc.fillStyle='#000301';bc.fillRect(0,0,W,H);
+      nodes.forEach(n=>{
+        if(nodeAlpha<=0)return;
         const col=CCOLOR[n.cat]||'#00dd55';
-        const df=0.3+0.7*((n.depth+1)*0.5);
+        const df=t2>0?0.3+0.7*((n.depth+1)*0.5):1;
         const baseR=1+Math.pow(n.count/maxCount,0.5)*2.5;
-        const bR=(baseR*6+4)*nT*df;
-        bc.beginPath(); bc.arc(n.px,n.py,bR,0,Math.PI*2);
-        bc.fillStyle=col;
-        bc.fill();
+        const bR=(baseR*5+5)*nodeAlpha*df;
+        bc.beginPath();bc.arc(n.dpx,n.dpy,bR,0,Math.PI*2);
+        bc.fillStyle=col;bc.fill();
       });
       bc.restore();
-      const blurPx=Math.max(4,Math.round(13/zoom));
+      const blurPx=Math.max(3,Math.round(11/zoom));
       ctx.save();
-      ctx.filter=`blur(${blurPx}px) contrast(20)`;
-      ctx.globalAlpha=0.45+0.35*finishT;
+      ctx.filter=`blur(${blurPx}px) contrast(22)`;
+      ctx.globalAlpha=0.5+0.35*finishT;
       ctx.drawImage(blobCv,0,0,W,H);
-      ctx.filter='none'; ctx.globalAlpha=1;
+      ctx.filter='none';ctx.globalAlpha=1;
       ctx.restore();
     }
 
-    // ── Phase 2: 엣지 순서대로 그리기 ──
-    edges.slice(0,visibleEdges).forEach(({s,t,w,isCo},ei)=>{
-      if(!s||!t) return;
-      const avgD=(s.depth+t.depth)*0.5;
-      const df=0.35+0.65*((avgD+1)*0.5);
-      const isHov=hov&&(s.id===hov.id||t.id===hov.id);
-      const col=CCOLOR[s.cat]||'#00dd55';
-      const edgeFade=Math.min(1,(visibleEdges-ei)*3);
-      const baseA=(isCo?0.65+w*0.30:0.42)*df;
-      const finalA=baseA*(0.5+finishT*0.5);
-      const a=(isHov?0.95:finalA)*edgeFade;
-      ctx.beginPath();ctx.moveTo(s.px,s.py);ctx.lineTo(t.px,t.py);
-      ctx.strokeStyle=col+Math.round(a*255).toString(16).padStart(2,'0');
-      ctx.lineWidth=isHov?2.2:isCo?1.0+w*0.8:0.6;
-      if(isHov){ctx.shadowBlur=6;ctx.shadowColor=col;}
-      ctx.stroke();
-      ctx.shadowBlur=0;
-    });
+    // ── Phase 3: 엣지 연결 ──
+    if(finishT>0){
+      const visEdges=Math.floor(edges.length*Math.min(1,finishT*1.4));
+      edges.slice(0,visEdges).forEach(({s,t,w,isCo},ei)=>{
+        if(!s||!t)return;
+        const df=0.35+0.65*((s.depth+t.depth)*0.25+0.5);
+        const isHov=hov&&(s.id===hov.id||t.id===hov.id);
+        const col=CCOLOR[s.cat]||'#00dd55';
+        const eFade=Math.min(1,(visEdges-ei)*3);
+        const a=(isHov?0.95:(isCo?0.65+w*0.30:0.42)*df)*eFade*finishT;
+        ctx.beginPath();ctx.moveTo(s.dpx,s.dpy);ctx.lineTo(t.dpx,t.dpy);
+        ctx.strokeStyle=col+Math.round(a*255).toString(16).padStart(2,'0');
+        ctx.lineWidth=isHov?2.2:isCo?1.0+w*0.8:0.6;
+        if(isHov){ctx.shadowBlur=6;ctx.shadowColor=col;}
+        ctx.stroke();ctx.shadowBlur=0;
+      });
+    }
 
-    // ── Phase 1: 노드 순차 등장 ──
+    // ── 노드 ──
     nodes.forEach((n,i)=>{
-      // 노드마다 등장 시점: phase1 구간 내에서 균등 배분
-      const nodeT=Math.max(0,Math.min(1,(nodePhaseT-i/nodes.length)*nodes.length));
-      if(nodeT<=0) return;
+      if(nodeAlpha<=0)return;
       const col=CCOLOR[n.cat]||'#557755';
       const isHov=hov&&hov.id===n.id;
-      const df=0.2+0.8*((n.depth+1)*0.5);
+      const df=t2>0?(0.2+0.8*((n.depth+1)*0.5)):1;
       const baseR=1+Math.pow(n.count/maxCount,0.5)*2.5;
-      const rMult=nodeT<0.3?nodeT/0.3*1.8:1.0;
-      const r=(isHov?5:baseR)*Math.sqrt(nodeT)*rMult;
-
-      ctx.beginPath();ctx.arc(n.px,n.py,r,0,Math.PI*2);
-      const opBase=(isHov?0.95:0.55)*df;
-      const opFinal=opBase*(0.6+finishT*0.4);
-      const fa=opFinal*nodeT;
+      const r=(isHov?5:baseR)*nodeAlpha;
+      ctx.beginPath();ctx.arc(n.dpx,n.dpy,r,0,Math.PI*2);
+      const fa=(isHov?0.95:0.6)*df*nodeAlpha;
       ctx.fillStyle=col+Math.round(fa*255).toString(16).padStart(2,'0');
-      ctx.shadowBlur=isHov?24:nodeT>0.8?(n.depth>0.2?10:3):4;
+      ctx.shadowBlur=isHov?24:(t2>0&&n.depth>0.2?10:3);
       ctx.shadowColor=col;
-      ctx.fill();
-      ctx.shadowBlur=0;
-
-      // ── Phase 3: 라벨 등장 ──
+      ctx.fill();ctx.shadowBlur=0;
       if(isHov){
         ctx.strokeStyle='#eeffee88';ctx.lineWidth=1;ctx.stroke();
         ctx.fillStyle='#eeffee';
         ctx.font='6px "Press Start 2P",monospace';
         ctx.textAlign='center';ctx.textBaseline='bottom';
         ctx.shadowBlur=8;ctx.shadowColor=col;
-        ctx.fillText(n.id,n.px,n.py-r-3);
-        ctx.shadowBlur=0;
+        ctx.fillText(n.id,n.dpx,n.dpy-r-3);ctx.shadowBlur=0;
       } else if(finishT>0.4&&n.depth>0.4&&n.count>maxCount*0.12){
         const lblA=df*0.65*finishT;
         ctx.fillStyle=col+Math.round(lblA*255).toString(16).padStart(2,'0');
         ctx.font='4px "Press Start 2P",monospace';
         ctx.textAlign='center';ctx.textBaseline='bottom';
-        ctx.fillText(n.id,n.px,n.py-r-1);
+        ctx.fillText(n.id,n.dpx,n.dpy-r-1);
       }
     });
     ctx.restore();
@@ -1617,7 +1649,7 @@ function renderField(el, D){
     nodes.forEach(n=>{
       if(n.depth<-0.5) return;
       const r=1+Math.pow(n.count/maxCount,0.5)*2.5;
-      const d=Math.hypot(n.px-px,n.py-py);
+      const d=Math.hypot((n.dpx||n.px)-px,(n.dpy||n.py)-py);
       if(d<r+12&&d<bd){bd=d;best=n;}
     });
     return best;
@@ -1682,9 +1714,9 @@ function renderField(el, D){
 
   resize();
   initPositions();
-  // physics를 화면 표시 전에 미리 실행 → 초기 떨림 제거
   for(let i=0;i<400;i++) tick();
-  new ResizeObserver(()=>resize()).observe(wrap);
+  initAnimPositions(); // scatter + catCircle 위치 계산 (W/H 필요하므로 resize 후)
+  new ResizeObserver(()=>{resize();initAnimPositions();}).observe(wrap);
   el.querySelector('#gZoomIn').onclick=()=>{zoom=Math.min(zoom+0.2,4.0);};
   el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.2,0.3);};
   el.querySelector('#gReset').onclick=()=>{zoom=1.5;panX=0;panY=0;};
