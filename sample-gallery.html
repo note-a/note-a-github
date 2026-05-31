@@ -1561,7 +1561,7 @@ function renderField(el, D){
 
   let hov=null;
   const REVEAL_START=Date.now();
-  const REVEAL_DUR_MS=3000;
+  const REVEAL_DUR_MS=10000;
   function canvasXY(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
   function nearest(px,py){
     let best=null,bd=Infinity;
