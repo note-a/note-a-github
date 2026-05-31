@@ -705,7 +705,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
         <div class="pnl" id="metaPnl" style="flex:1; min-width:0;"><div class="pnl-in">
           <div class="pnl-hd">METADATA<span class="hd-r"><span class="pnl-tab" id="fiVerdict">—</span></span></div>
           <div class="pnl-bd">
-            <div class="fi-meta" id="fiMeta"></div>
+            <div class="fi-meta" id="fiMeta"><span style="font-size:6px;color:var(--g4);letter-spacing:1px;line-height:2;">AWAITING SELECTION —<br>SELECT A PHOTO TO VIEW METADATA</span></div>
           </div>
         </div></div>
 
@@ -715,6 +715,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
       <div class="pnl" id="srcPnl"><div class="pnl-in">
         <div class="pnl-hd">SOURCE RECORD · 원본<span class="hd-r"><span class="pnl-tab" id="srcRef">····</span></span></div>
         <div class="pnl-bd">
+          <div id="srcPlaceholder" style="font-size:6px;color:var(--g4);letter-spacing:1px;line-height:2;padding:2px 0;">NO RECORD LOADED —<br>SELECT A PHOTO TO LOAD SOURCE</div>
           <div class="src-doc" id="srcDoc" style="display:none;"></div>
         </div>
       </div></div>
@@ -757,7 +758,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
           </span>
         </div>
         <div class="pnl-bd">
-          <div class="rel-cap" id="relCap">— MATCHES</div>
+          <div class="rel-cap" id="relCap">SELECT A PHOTO TO VIEW RELATED</div>
           <div class="rel-grid" id="relGrid"></div>
         </div>
       </div></div>
@@ -2160,6 +2161,8 @@ function renderDirInstruction(dirCodes){
   srcDoc.innerHTML=html;
   srcDoc.style.display='block';
   srcDoc.style.overflowY='auto';
+  const srcPh=document.getElementById('srcPlaceholder');
+  if(srcPh) srcPh.style.display='none';
 }
 
 // ── SOURCE RECORD (원본) ──
