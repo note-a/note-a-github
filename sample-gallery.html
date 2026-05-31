@@ -206,10 +206,9 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 }
 .gal-folder-thumb {
   aspect-ratio:3/2; background:#0a1209; overflow:hidden; border:1px solid rgba(0,221,85,0.2);
-  position:relative; align-self:start;
 }
 .gal-folder-thumb img {
-  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  width:100%; height:100%; object-fit:cover; display:block;
   filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);
 }
 .gal-folder-name {
