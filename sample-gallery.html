@@ -1016,90 +1016,102 @@ function renderSector(el, D){
   const maxMF = Math.max(...months.map(m=>m.leaves.length), 1);
   const maxBF = Math.max(...batches.map(b=>b.leaves.length), 1);
 
-  el.innerHTML = `<div class="sec-wrap">
-    <div class="sec-hd">TIMELINE · <b>${months.length} MONTHS</b></div>
-    ${months.map(m=>{
-      const core=m.leaves.filter(p=>p.verdict==='core').length;
-      const sup=m.leaves.filter(p=>p.verdict==='support').length;
-      const tot=m.leaves.length;
-      const fpct=Math.round(tot/maxMF*100);
-      const rate=(tot/30).toFixed(1);
-      const mBatches=batches.filter(b=>b.monthKey===m.id);
-      return `<div class="month-group">
-        <div class="month-row">
-          <span class="month-label">${m.name}</span>
-          <span class="month-track">
-            <span class="month-fill" style="width:${fpct}%"></span>
-            <span class="month-core" style="width:${Math.round(core/maxMF*100)}%"></span>
-          </span>
-          <span class="month-meta">${tot.toLocaleString()}F · C${core} S${sup} · ${rate}/d</span>
-        </div>
-        <div class="batch-sub">
-          ${mBatches.map(b=>{
-            const bc=b.leaves.filter(p=>p.verdict==='core').length;
-            const bs=b.leaves.filter(p=>p.verdict==='support').length;
-            const bt=b.leaves.length;
-            const bw=Math.round(bt/maxBF*100);
-            const cw=Math.round(bc/maxBF*100);
-            return `<div class="batch-row" data-bk="${b.id}">
-              <span class="batch-id">${b.id.split('/').pop()}</span>
-              <span class="batch-bars">
-                <span class="batch-bar drop" style="width:${bw}px"></span>
-                <span class="batch-bar core" style="width:${cw}px;position:absolute;left:0;top:0"></span>
-              </span>
-              <span class="batch-cnt">C<b style="color:var(--acc)">${bc}</b> S<b style="color:#ffb000">${bs}</b> <b style="color:var(--g3)">${bt}</b>F</span>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-    }).join('')}
+  // 좌우 2열 레이아웃: 왼쪽=타임라인, 오른쪽=차트 3종
+  el.innerHTML = `<div style="display:flex;height:100%;overflow:hidden;">
+    <!-- 왼쪽: 타임라인 -->
+    <div style="flex:1;overflow-y:auto;padding:14px;border-right:1px solid rgba(0,221,85,0.12);">
+      <div class="sec-hd" style="margin-bottom:8px;">TIMELINE · <b>${months.length} MONTHS</b></div>
+      ${months.map(m=>{
+        const core=m.leaves.filter(p=>p.verdict==='core').length;
+        const sup=m.leaves.filter(p=>p.verdict==='support').length;
+        const tot=m.leaves.length;
+        const fpct=Math.round(tot/maxMF*100);
+        const rate=(tot/30).toFixed(1);
+        const mBatches=batches.filter(b=>b.monthKey===m.id);
+        return `<div class="month-group">
+          <div class="month-row">
+            <span class="month-label">${m.name}</span>
+            <span class="month-track">
+              <span class="month-fill" style="width:${fpct}%"></span>
+              <span class="month-core" style="width:${Math.round(core/maxMF*100)}%"></span>
+            </span>
+            <span class="month-meta">${tot.toLocaleString()}F · C${core} S${sup} · ${rate}/d</span>
+          </div>
+          <div class="batch-sub">
+            ${mBatches.map(b=>{
+              const bc=b.leaves.filter(p=>p.verdict==='core').length;
+              const bs=b.leaves.filter(p=>p.verdict==='support').length;
+              const bt=b.leaves.length;
+              const bw=Math.round(bt/maxBF*100);
+              const cw=Math.round(bc/maxBF*100);
+              return `<div class="batch-row" data-bk="${b.id}">
+                <span class="batch-id">${b.id.split('/').pop()}</span>
+                <span class="batch-bars">
+                  <span class="batch-bar drop" style="width:${bw}px"></span>
+                  <span class="batch-bar core" style="width:${cw}px;position:absolute;left:0;top:0"></span>
+                </span>
+                <span class="batch-cnt">C<b style="color:var(--acc)">${bc}</b> S<b style="color:#ffb000">${bs}</b> <b style="color:var(--g3)">${bt}</b>F</span>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <!-- 오른쪽: 차트 3종 -->
+    <div id="sectorCharts" style="flex:1;display:flex;flex-direction:column;gap:0;overflow:hidden;"></div>
   </div>`;
+
   el.querySelectorAll('.batch-row').forEach(r=>r.onclick=()=>{
     const b=D.byBatch[r.dataset.bk];
     if(b){ setScanPhoto(b.leaves[0]&&(b.leaves[0].filename||b.leaves[0].url)||'');
            log('NODE',false,'BATCH: '+r.dataset.bk); }
   });
 
-  // 차트 섹션 추가
-  const chartWrap=document.createElement('div');
-  chartWrap.style.cssText='padding:0 14px 14px;display:flex;flex-direction:column;gap:16px;';
+  const chartsEl=el.querySelector('#sectorCharts');
+  const CAT_C={SPACE:'#00dd55',OBJECT:'#ffb000',FIGURE:'#ff5533',FIGUREBG:'#3399ff',UNJUDGE:'#aa55ff',OTHER:'#557755'};
+  const CAT_MAP={
+    HRZLAY:'SPACE',WNDGLO:'SPACE',SPTISO:'SPACE',VANSRC:'SPACE',FUNREV:'SPACE',
+    FOGDIS:'SPACE',EQREP:'SPACE',ISOOBJ:'SPACE',URBREFL:'SPACE',ARTNAT:'SPACE',
+    LGTPAT:'SPACE',UNIDIST:'SPACE',FUNSAT:'SPACE',MATCOV:'SPACE',
+    MONOLITH:'SPACE',STRATA:'SPACE',DISSOLVE:'SPACE',LITGRID:'SPACE',VANISH:'SPACE',
+    MIRRORSURF:'SPACE',PEEL:'SPACE',SNOWFILL:'SPACE',OXIDE:'SPACE',ADWRAP:'SPACE',
+    ROADCLASH:'SPACE',WALLTXT:'SPACE',OVERGROW:'SPACE',
+    DMGPAT:'OBJECT',TONEDIS:'OBJECT',HETOBJ:'OBJECT',DOCAGE:'OBJECT',LGTSTR:'OBJECT',OBJREP:'OBJECT',
+    ISOLATE:'OBJECT',RUPTURE:'OBJECT',GRID:'OBJECT',CLUSTER:'OBJECT',FLOAT:'OBJECT',
+    SKELETON:'OBJECT',BLOOM:'OBJECT',WRAP:'OBJECT',SURFACE:'OBJECT',
+    FACBLK:'FIGURE',HANDEXT:'FIGURE',FOOTEXT:'FIGURE',HRZPAS:'FIGURE',DRKSPOT:'FIGURE',
+    GROUPREP:'FIGURE',BGDOM:'FIGURE',DUALSPC:'FIGURE',PLNTENV:'FIGURE',GENPORT:'FIGURE',
+    NONSUBS:'FIGURE',BACKPOSE:'FIGURE',DRESSIDENT:'FIGURE',LIMBACT:'FIGURE',
+    DUALFRAME:'FIGURE',HEADOBJ:'FIGURE',DUALFIG:'FIGURE',DIPTYCH:'FIGURE',
+    FGBG:'FIGURE',COLORISO:'FIGURE',SKINREP:'FIGURE',BODYTXT:'FIGURE',
+    REPDOM:'FIGUREBG',REFLMED:'FIGUREBG',SMOKLYR:'FIGUREBG',OPTFUSE:'FIGUREBG',
+    PARTINTR:'FIGUREBG',OBJCOVR:'FIGUREBG',ARCHOP:'FIGUREBG',GLASMED:'FIGUREBG',
+    ATMOSOLV:'FIGUREBG',SCLFIG:'FIGUREBG',HORZERO:'FIGUREBG',
+    BGPAT:'FIGUREBG',SCALE:'FIGUREBG',ATMOFUSE:'FIGUREBG',GLASSDUAL:'FIGUREBG',
+    AEROFLT:'FIGUREBG',ARCHCAP:'FIGUREBG',BACKLIT:'FIGUREBG',
+  };
 
-  // A. Monthly Trend
-  const mCanvas=document.createElement('canvas');
-  mCanvas.style.cssText='width:100%;height:80px;display:block;';
-  const mLabel=document.createElement('div');
-  mLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
-  mLabel.textContent='MONTHLY TREND — FRAMES · CORE';
-  const mWrap=document.createElement('div');
-  mWrap.appendChild(mLabel);mWrap.appendChild(mCanvas);
-  chartWrap.appendChild(mWrap);
+  function mkChartBlock(label, flexVal){
+    const wrap=document.createElement('div');
+    wrap.style.cssText=`flex:${flexVal};display:flex;flex-direction:column;padding:10px 12px 8px;border-bottom:1px solid rgba(0,221,85,0.1);min-height:0;`;
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;flex-shrink:0;font-family:"Press Start 2P",monospace;';
+    lbl.textContent=label;
+    const cv=document.createElement('canvas');
+    cv.style.cssText='flex:1;width:100%;min-height:0;display:block;';
+    wrap.appendChild(lbl);wrap.appendChild(cv);
+    chartsEl.appendChild(wrap);
+    return cv;
+  }
 
-  // B. Verdict Arc
-  const vCanvas=document.createElement('canvas');
-  vCanvas.style.cssText='width:100%;height:80px;display:block;';
-  const vLabel=document.createElement('div');
-  vLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
-  vLabel.textContent='VERDICT DISTRIBUTION';
-  const vWrap=document.createElement('div');
-  vWrap.appendChild(vLabel);vWrap.appendChild(vCanvas);
-  chartWrap.appendChild(vWrap);
-
-  // C. Top DIRs
-  const dCanvas=document.createElement('canvas');
-  dCanvas.style.cssText='width:100%;height:120px;display:block;';
-  const dLabel=document.createElement('div');
-  dLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
-  dLabel.textContent='TOP DIRS — FREQUENCY';
-  const dWrap=document.createElement('div');
-  dWrap.appendChild(dLabel);dWrap.appendChild(dCanvas);
-  chartWrap.appendChild(dWrap);
-
-  el.querySelector('.sec-wrap').appendChild(chartWrap);
+  const mCanvas=mkChartBlock('MONTHLY TREND — FRAMES · CORE',1);
+  const vCanvas=mkChartBlock('VERDICT DISTRIBUTION',1);
+  const dCanvas=mkChartBlock('TOP DIRS — FREQUENCY',2);
 
   requestAnimationFrame(()=>{
     const dpr=window.devicePixelRatio||1;
 
-    // A. Monthly Trend Chart
+    // A. Monthly Trend
     (()=>{
       const W=mCanvas.offsetWidth,H=mCanvas.offsetHeight;
       if(!W||!H) return;
@@ -1118,42 +1130,31 @@ function renderSector(el, D){
         const sup=m.leaves.filter(p=>p.verdict==='support').length;
         const fH=Math.round((tot/maxF)*cH);
         const cH2=Math.round((core/maxF)*cH);
-        // background bar
-        ctx.fillStyle='#0a1a0a';
-        ctx.fillRect(x,pad.t,bW,cH);
-        // total bar
-        ctx.fillStyle='#1a3a1a';
-        ctx.fillRect(x,pad.t+cH-fH,bW,fH);
-        // core bar
-        ctx.fillStyle='#00dd55';
-        ctx.fillRect(x,pad.t+cH-cH2,bW,cH2);
-        // sup bar
+        ctx.fillStyle='#0a1a0a';ctx.fillRect(x,pad.t,bW,cH);
+        ctx.fillStyle='#1a3a1a';ctx.fillRect(x,pad.t+cH-fH,bW,fH);
+        ctx.fillStyle='#00dd55';ctx.fillRect(x,pad.t+cH-cH2,bW,cH2);
         const sH=Math.round((sup/maxF)*cH);
-        ctx.fillStyle='#ffb00066';
-        ctx.fillRect(x,pad.t+cH-cH2-sH,bW,sH);
-        // label
+        ctx.fillStyle='#ffb00066';ctx.fillRect(x,pad.t+cH-cH2-sH,bW,sH);
         if(i%2===0||months.length<=6){
           ctx.fillStyle='#00dd5577';
-          ctx.font=`${3.5*dpr/dpr}px "Press Start 2P",monospace`;
+          ctx.font='3.5px "Press Start 2P",monospace';
           ctx.textAlign='center';
           ctx.fillText(m.name.slice(2),x+bW/2,H-pad.b+9);
         }
       });
-      // Y axis line
       ctx.strokeStyle='#00dd5533';ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+cH);ctx.stroke();
-      // core rate line
       ctx.beginPath();ctx.strokeStyle='#00ffaa';ctx.lineWidth=1.5;
       months.forEach((m,i)=>{
         const x=pad.l+i*(cW/months.length)+bW/2;
         const rate=m.leaves.length?m.leaves.filter(p=>p.verdict==='core').length/m.leaves.length:0;
         const y=pad.t+cH-rate*cH;
-        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
       });
       ctx.stroke();
     })();
 
-    // B. Verdict arc
+    // B. Verdict donut
     (()=>{
       const W=vCanvas.offsetWidth,H=vCanvas.offsetHeight;
       if(!W||!H) return;
@@ -1165,63 +1166,34 @@ function renderSector(el, D){
       const core=D.leaves.filter(p=>p.verdict==='core').length;
       const sup=D.leaves.filter(p=>p.verdict==='support').length;
       const drop=tot-core-sup;
-      const cx=H/2,cy=H/2,R=H/2-8,IR=R*0.55;
+      const r=Math.min(H,W/2)*0.5-4;
+      const cx=r+8,cy=H/2,IR=r*0.55;
       let start=-Math.PI/2;
       [[core,'#00dd55'],[sup,'#ffb000'],[drop,'#1a2a1a']].forEach(([cnt,col])=>{
         const sweep=tot?(cnt/tot)*Math.PI*2:0;
         ctx.beginPath();ctx.moveTo(cx,cy);
-        ctx.arc(cx,cy,R,start,start+sweep);
-        ctx.closePath();
-        ctx.fillStyle=col;ctx.fill();
-        // inner ring cutout
+        ctx.arc(cx,cy,r,start,start+sweep);
+        ctx.closePath();ctx.fillStyle=col;ctx.fill();
         ctx.beginPath();ctx.arc(cx,cy,IR,0,Math.PI*2);
         ctx.fillStyle='#000301';ctx.fill();
         start+=sweep;
       });
-      // center text
-      ctx.fillStyle='#00dd55';
-      ctx.font=`5px "Press Start 2P",monospace`;
+      ctx.fillStyle='#00dd55';ctx.font='5px "Press Start 2P",monospace';
       ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText('TOTAL',cx,cy-5);
-      ctx.fillStyle='#eeffee';
-      ctx.font=`7px "Press Start 2P",monospace`;
+      ctx.fillStyle='#eeffee';ctx.font='7px "Press Start 2P",monospace';
       ctx.fillText(tot.toLocaleString(),cx,cy+5);
-      // legend
-      const lx=H+12,ly=12;
-      [[`CORE ${core}`,'#00dd55'],[`SUP ${sup}`,'#ffb000'],[`DROP ${drop}`,'#334433']].forEach(([lbl,col],i)=>{
-        ctx.fillStyle=col;
-        ctx.fillRect(lx,ly+i*18,8,8);
-        ctx.fillStyle='#00dd5599';
-        ctx.font=`5px "Press Start 2P",monospace`;
+      const lx=cx+r+14,ly=H/2-22;
+      [[`CORE`,core,'#00dd55'],[`SUP`,sup,'#ffb000'],[`DROP`,drop,'#334433']].forEach(([lbl,cnt,col],i)=>{
+        ctx.fillStyle=col;ctx.fillRect(lx,ly+i*18,8,8);
+        ctx.fillStyle='#00dd5599';ctx.font='5px "Press Start 2P",monospace';
         ctx.textAlign='left';ctx.textBaseline='top';
-        ctx.fillText(lbl,lx+12,ly+i*18+1);
+        ctx.fillText(`${lbl} ${cnt}`,lx+11,ly+i*18+1);
       });
     })();
 
-    // C. Top DIRs horizontal bar chart
+    // C. Top DIRs
     (()=>{
-      const CAT_C={SPACE:'#00dd55',OBJECT:'#ffb000',FIGURE:'#ff5533',FIGUREBG:'#3399ff',UNJUDGE:'#aa55ff',OTHER:'#557755'};
-      const CAT_MAP={
-        HRZLAY:'SPACE',WNDGLO:'SPACE',SPTISO:'SPACE',VANSRC:'SPACE',FUNREV:'SPACE',
-        FOGDIS:'SPACE',EQREP:'SPACE',ISOOBJ:'SPACE',URBREFL:'SPACE',ARTNAT:'SPACE',
-        LGTPAT:'SPACE',UNIDIST:'SPACE',FUNSAT:'SPACE',MATCOV:'SPACE',
-        MONOLITH:'SPACE',STRATA:'SPACE',DISSOLVE:'SPACE',LITGRID:'SPACE',VANISH:'SPACE',
-        MIRRORSURF:'SPACE',PEEL:'SPACE',SNOWFILL:'SPACE',OXIDE:'SPACE',ADWRAP:'SPACE',
-        ROADCLASH:'SPACE',WALLTXT:'SPACE',OVERGROW:'SPACE',
-        DMGPAT:'OBJECT',TONEDIS:'OBJECT',HETOBJ:'OBJECT',DOCAGE:'OBJECT',LGTSTR:'OBJECT',OBJREP:'OBJECT',
-        ISOLATE:'OBJECT',RUPTURE:'OBJECT',GRID:'OBJECT',CLUSTER:'OBJECT',FLOAT:'OBJECT',
-        SKELETON:'OBJECT',BLOOM:'OBJECT',WRAP:'OBJECT',SURFACE:'OBJECT',
-        FACBLK:'FIGURE',HANDEXT:'FIGURE',FOOTEXT:'FIGURE',HRZPAS:'FIGURE',DRKSPOT:'FIGURE',
-        GROUPREP:'FIGURE',BGDOM:'FIGURE',DUALSPC:'FIGURE',PLNTENV:'FIGURE',GENPORT:'FIGURE',
-        NONSUBS:'FIGURE',BACKPOSE:'FIGURE',DRESSIDENT:'FIGURE',LIMBACT:'FIGURE',
-        DUALFRAME:'FIGURE',HEADOBJ:'FIGURE',DUALFIG:'FIGURE',DIPTYCH:'FIGURE',
-        FGBG:'FIGURE',COLORISO:'FIGURE',SKINREP:'FIGURE',BODYTXT:'FIGURE',
-        REPDOM:'FIGUREBG',REFLMED:'FIGUREBG',SMOKLYR:'FIGUREBG',OPTFUSE:'FIGUREBG',
-        PARTINTR:'FIGUREBG',OBJCOVR:'FIGUREBG',ARCHOP:'FIGUREBG',GLASMED:'FIGUREBG',
-        ATMOSOLV:'FIGUREBG',SCLFIG:'FIGUREBG',HORZERO:'FIGUREBG',
-        BGPAT:'FIGUREBG',SCALE:'FIGUREBG',ATMOFUSE:'FIGUREBG',GLASSDUAL:'FIGUREBG',
-        AEROFLT:'FIGUREBG',ARCHCAP:'FIGUREBG',BACKLIT:'FIGUREBG',
-      };
       const sorted=Object.entries(D.byDir).sort((a,b)=>b[1]-a[1]).slice(0,15);
       const maxV=sorted[0]?sorted[0][1]:1;
       const W=dCanvas.offsetWidth,H=dCanvas.offsetHeight;
@@ -1234,22 +1206,14 @@ function renderSector(el, D){
       const labW=52,barMaxW=W-labW-30;
       sorted.forEach(([id,cnt],i)=>{
         const y=i*rowH;
-        const cat=CAT_MAP[id]||'OTHER';
-        const col=CAT_C[cat];
+        const col=CAT_C[CAT_MAP[id]||'OTHER'];
         const bW=Math.round((cnt/maxV)*barMaxW);
-        // bar bg
-        ctx.fillStyle='#0a1a0a';
-        ctx.fillRect(labW,y+2,barMaxW,rowH-4);
-        // bar fill
-        ctx.fillStyle=col+'aa';
-        ctx.fillRect(labW,y+2,bW,rowH-4);
-        // count text
-        ctx.fillStyle=col;
-        ctx.font=`${3.5}px "Press Start 2P",monospace`;
+        ctx.fillStyle='#0a1a0a';ctx.fillRect(labW,y+2,barMaxW,rowH-4);
+        ctx.fillStyle=col+'aa';ctx.fillRect(labW,y+2,bW,rowH-4);
+        ctx.fillStyle=col;ctx.font='3.5px "Press Start 2P",monospace';
         ctx.textAlign='right';ctx.textBaseline='middle';
         ctx.fillText(id,labW-3,y+rowH/2);
-        ctx.fillStyle='#ffffff88';
-        ctx.textAlign='left';
+        ctx.fillStyle='#ffffff88';ctx.textAlign='left';
         ctx.fillText(cnt,labW+bW+3,y+rowH/2);
       });
     })();
@@ -1597,7 +1561,7 @@ function renderField(el, D){
 
   let hov=null;
   const REVEAL_START=Date.now();
-  const REVEAL_DUR_MS=1500;
+  const REVEAL_DUR_MS=3000;
   function canvasXY(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
   function nearest(px,py){
     let best=null,bd=Infinity;
