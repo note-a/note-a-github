@@ -1419,8 +1419,8 @@ function renderField(el, D){
       const s=seed(n);
       const r1=((s*9301+49297)%233280)/233280;
       const r2=((s*6364+1013904223)%233280)/233280;
-      n.x=c.x+(r1-0.5)*0.24;
-      n.y=c.y+(r2-0.5)*0.24;
+      n.x=c.x+(r1-0.5)*0.50;
+      n.y=c.y+(r2-0.5)*0.50;
       n.vx=0;n.vy=0;
     });
   }
@@ -1434,14 +1434,14 @@ function renderField(el, D){
     if(!forceDone&&frame>30&&alpha<0.002){forceDone=true;}
 
     if(!forceDone){
-      // 노드간 반발력 — 가까운 노드만 (d2<0.6 cutoff)
+      // 노드간 반발력 — 범위 d<1.2까지 (적당히 넓게)
       for(let i=0;i<nodes.length;i++){
         for(let j=i+1;j<nodes.length;j++){
           const a=nodes[i],b=nodes[j];
           const dx=b.x-a.x,dy=b.y-a.y;
           const d2=dx*dx+dy*dy+0.0001;
-          if(d2>0.6) continue;
-          const f=0.00018/d2*alpha;
+          if(d2>1.4) continue;
+          const f=0.00032/d2*alpha;
           a.vx-=f*dx;a.vy-=f*dy;
           b.vx+=f*dx;b.vy+=f*dy;
         }
@@ -1451,13 +1451,13 @@ function renderField(el, D){
         if(!s||!t) return;
         const dx=t.x-s.x,dy=t.y-s.y;
         const d=Math.sqrt(dx*dx+dy*dy)+0.001;
-        const rest=isCo?0.15:0.22;
-        const str=isCo?0.10:0.06;
+        const rest=isCo?0.22:0.40;
+        const str=isCo?0.08:0.05;
         const f=str*(d-rest)*Math.max(w,0.2)*alpha;
         s.vx+=f*dx/d;s.vy+=f*dy/d;
         t.vx-=f*dx/d;t.vy-=f*dy/d;
       });
-      // 카테고리 centroid 인력 — 같은 카테고리끼리 뭉침
+      // 카테고리 centroid 인력 — 느슨하게
       const catSum={};
       nodes.forEach(n=>{
         if(!catSum[n.cat])catSum[n.cat]={x:0,y:0,c:0};
@@ -1465,16 +1465,16 @@ function renderField(el, D){
       });
       nodes.forEach(n=>{
         const s=catSum[n.cat];if(!s||s.c<2)return;
-        n.vx+=(s.x/s.c-n.x)*0.022*alpha;
-        n.vy+=(s.y/s.c-n.y)*0.022*alpha;
+        n.vx+=(s.x/s.c-n.x)*0.012*alpha;
+        n.vy+=(s.y/s.c-n.y)*0.012*alpha;
       });
-      // 전체 중심 인력 (드리프트 방지)
+      // 전체 중심 인력
       nodes.forEach(n=>{
-        n.vx-=n.x*0.012*alpha;
-        n.vy-=n.y*0.012*alpha;
+        n.vx-=n.x*0.006*alpha;
+        n.vy-=n.y*0.006*alpha;
       });
       const DAMP=0.80+0.18*(1-alpha);
-      const VMAX=0.020*alpha+0.001;
+      const VMAX=0.025*alpha+0.001;
       nodes.forEach(n=>{
         n.vx*=DAMP;n.vy*=DAMP;
         const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
@@ -1489,7 +1489,7 @@ function renderField(el, D){
 
   function project(){
     const cx=W*0.5+panX,cy=H*0.5+panY;
-    const R=Math.min(W,H)*0.44*zoom;
+    const R=Math.min(W,H)*0.48*zoom;
     nodes.forEach(n=>{
       n.px=cx+n.x*R;
       n.py=cy+n.y*R;
