@@ -2319,7 +2319,7 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
 
     const main = photos[0];
     const thumbs = photos.slice(1,6);
-    const THUMB_H=40, THUMB_W=Math.round(THUMB_H*3/2), THUMB_GAP=4;
+    const THUMB_H=56, THUMB_W=Math.round(THUMB_H*3/2), THUMB_GAP=4;
     const stripW = thumbs.length*THUMB_W+(thumbs.length-1)*THUMB_GAP+8;
 
     fpPhotos.innerHTML = `
