@@ -1,0 +1,2657 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROJECT_SET — ARCHIVE</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:   #00dd55;
+  --g2:  rgba(0,221,85,0.7);
+  --g3:  rgba(0,221,85,0.42);
+  --g4:  rgba(0,221,85,0.16);
+  --acc: #9bff3a;
+  --red: #ff3b1f;
+  --pnl-top: #06401c;
+  --pnl:     #021105;
+  --hd:      #00401a;
+  --bd:      #00aa3a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { width:100%; height:100%; overflow:hidden; background:#000; font-family:'Press Start 2P',monospace; }
+
+/* ════ 블러 배경 — 초록 크고 흐리게 ════ */
+#bg { position:fixed; inset:0; z-index:0; background:#000702; overflow:hidden; }
+#bg-lights {
+  position:absolute; inset:-200px;
+  background:
+    radial-gradient(ellipse 55% 60% at 2%  0%,  rgba(0,235,90,0.75) 0%, transparent 68%),
+    radial-gradient(ellipse 50% 55% at 100% 100%, rgba(0,235,90,0.7)  0%, transparent 68%),
+    radial-gradient(ellipse 45% 60% at 100% 0%,  rgba(0,210,80,0.55) 0%, transparent 68%),
+    radial-gradient(ellipse 55% 50% at 0%  100%, rgba(0,210,80,0.55) 0%, transparent 68%),
+    radial-gradient(ellipse 70% 70% at 50% 50%, rgba(0,150,55,0.22) 0%, transparent 72%);
+  filter:blur(70px);
+  animation:bgdrift 24s ease-in-out infinite alternate;
+}
+@keyframes bgdrift {
+  0%   { transform:scale(1)    translate(0,0); }
+  100% { transform:scale(1.14) translate(-30px,20px); }
+}
+#bg-grid {
+  position:absolute; inset:-40px;
+  background-image:
+    linear-gradient(rgba(0,221,85,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,221,85,0.06) 1px, transparent 1px);
+  background-size:64px 64px; filter:blur(2.5px);
+}
+#bg-overlay {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse 56% 54% at 50% 50%,
+    rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 58%, transparent 100%);
+}
+
+/* ════ 셸 / wrap ════ */
+#shell { position:fixed; inset:0; z-index:1; display:flex; align-items:center; justify-content:center; }
+#wrap {
+  width:1300px; max-width:calc(100vw - 70px);
+  height:calc(100vh - 60px);
+  background:rgba(1,13,5,0.97);   /* 평면 */
+  display:flex; flex-direction:column; gap:8px;
+  position:relative; padding:10px;
+  border:1px solid var(--bd);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.9),
+    inset 0 1px 0 rgba(0,221,85,0.25),
+    0 0 80px rgba(0,221,85,0.1),
+    0 22px 90px rgba(0,0,0,0.97);
+}
+#wrap::before,#wrap::after,#wc-bl,#wc-br { content:''; position:absolute; width:16px; height:16px; z-index:30; }
+#wrap::before { top:-1px; left:-1px; border-top:1px solid var(--g); border-left:1px solid var(--g); }
+#wrap::after  { top:-1px; right:-1px; border-top:1px solid var(--g); border-right:1px solid var(--g); }
+#wc-bl { bottom:-1px; left:-1px; border-bottom:1px solid var(--g); border-left:1px solid var(--g); }
+#wc-br { bottom:-1px; right:-1px; border-bottom:1px solid var(--g); border-right:1px solid var(--g); }
+.crt { position:absolute; inset:0; z-index:25; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px); }
+
+/* ════ 각진 패널 — 테두리에만 베벨 입체감 ════ */
+.pnl {
+  /* 보더 레이어: 좌상단 밝고 우하단 어둡게 → 베벨 (얇게) */
+  background:linear-gradient(135deg, #2fd66a 0%, #009a34 40%, #00601f 75%, #003e16 100%);
+  padding:1px;
+  clip-path:polygon(13px 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%, 0 13px);
+}
+.pnl-in {
+  background:var(--pnl);   /* 평면 */
+  height:100%;
+  clip-path:polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.pnl-hd {
+  height:24px; flex-shrink:0; display:flex; align-items:center;
+  padding:0 12px 0 16px; gap:8px;
+  background:#002e12;   /* 평면 */
+  border-bottom:1px solid rgba(0,221,85,0.25);
+  font-size:7px; letter-spacing:2px; color:var(--g);
+}
+.pnl-hd::before { content:'◆'; font-size:6px; color:var(--acc); }
+.pnl-hd .hd-r { margin-left:auto; display:flex; gap:6px; align-items:center; }
+.pnl-tab { font-size:6px; color:var(--g3); padding:2px 6px; cursor:pointer;
+  background:rgba(0,28,11,0.8); border:1px solid var(--g4); }
+.pnl-tab.on { color:#000; background:var(--acc); border-color:var(--acc); }
+.pnl-arrow { font-size:9px; color:var(--g3); cursor:pointer; padding:0 2px; }
+.pnl-arrow:hover { color:var(--acc); }
+.pnl-bd { flex:1; padding:10px; overflow:hidden; position:relative; }
+
+/* ════ 타이틀 바 ════ */
+#titleBar { height:44px; flex-shrink:0; display:flex; align-items:stretch; gap:6px; }
+#tbLogo {
+  display:flex; align-items:center; gap:8px; padding:0 22px;
+  background:#00351480; border:1px solid var(--bd);
+  clip-path:polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  font-size:13px; color:var(--g); letter-spacing:3px;
+}
+#tbLogo .arr { color:var(--acc); font-size:10px; }
+.ttab {
+  display:flex; align-items:center; padding:0 20px;
+  font-size:7px; letter-spacing:1.5px; color:var(--g3);
+  background:rgba(0,22,9,0.8); border:1px solid var(--g4);
+  clip-path:polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  cursor:pointer; margin-right:-8px; user-select:none;
+  transition:all .1s;
+}
+.ttab:hover { color:var(--g2); background:rgba(0,36,14,0.9); }
+.ttab.on { color:#000; background:var(--acc); border-color:var(--acc); font-size:8px; }
+/* 타이틀바 스탯 칩 */
+.tb-stat {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:0 12px; gap:2px; border-right:1px solid rgba(0,221,85,0.12);
+  height:100%;
+}
+.tb-stat-k { font-size:5px; color:rgba(0,221,85,0.4); letter-spacing:1.5px; }
+.tb-stat-v { font-size:8px; color:var(--g2); letter-spacing:1px; }
+.tb-stat-v.acc { color:var(--acc); }
+.tb-stat-v.org { color:#ffb000; }
+.tb-stat-v.dim { color:rgba(0,221,85,0.35); }
+/* 상태 도트 */
+.tb-dot {
+  width:8px; height:8px; border-radius:50%; background:rgba(0,221,85,0.2);
+  border:1px solid rgba(0,221,85,0.3); margin:0 6px;
+  flex-shrink:0;
+}
+.tb-dot.on { background:var(--acc); box-shadow:0 0 6px var(--acc); animation:dotpulse 2s ease-in-out infinite; }
+@keyframes dotpulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.tb-spacer { flex:1; }
+#tbRight {
+  display:flex; align-items:center; gap:14px; padding:0 18px;
+  background:rgba(0,20,8,0.8); border:1px solid var(--g4);
+  clip-path:polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+}
+.tb-cls { font-size:5.5px; letter-spacing:1.5px; color:rgba(255,60,30,0.7); }
+.tb-time { font-size:9px; color:var(--g2); }
+
+/* ════ 메인 행 ════ */
+#mainRow { flex:1; display:flex; gap:8px; min-height:0; }
+
+/* ── 중앙 ── */
+#centerCol { flex:1; display:flex; flex-direction:column; min-width:0; }
+#centerCol .pnl, #centerCol .pnl-in { height:100%; }
+#sysHd { display:flex; align-items:center; gap:10px; padding:8px 12px 6px; font-size:9px; color:var(--g); letter-spacing:2px; }
+#sysHd .chev { color:var(--acc); }
+#sysHd .sub { font-size:6px; color:var(--g3); letter-spacing:1px; }
+#sysHd #ctxLabel { margin-left:auto; font-size:6px; color:var(--acc); letter-spacing:1px; }
+#subTabs { display:flex; gap:5px; padding:0 12px 8px; }
+.stab {
+  font-size:6px; letter-spacing:1px; color:var(--g3); padding:5px 12px; cursor:pointer; user-select:none;
+  background:rgba(0,20,8,0.7); border:1px solid var(--g4);
+  clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+}
+.stab:hover { color:var(--g2); }
+.stab.on { color:#000; background:var(--acc); border-color:var(--acc); }
+
+/* ── 갤러리 빈 영역 ── */
+#gallery {
+  flex:1; margin:0 12px; position:relative; overflow:hidden;
+  border:1px solid var(--g4); background:#010803;
+  box-shadow:inset 0 0 50px rgba(0,0,0,0.8), inset 0 1px 0 rgba(0,221,85,0.18);
+}
+#gallery-inner {
+  position:absolute; inset:0; z-index:5;
+  overflow-y:auto; overflow-x:hidden;
+  display:flex; flex-direction:column;
+}
+#gallery-inner::-webkit-scrollbar { width:6px; }
+#gallery-inner::-webkit-scrollbar-track { background:transparent; }
+#gallery-inner::-webkit-scrollbar-thumb { background:rgba(0,221,85,0.3); }
+/* 컨텍트시트 셀 */
+.gal-cell {
+  aspect-ratio:3/2; cursor:pointer; position:relative; overflow:hidden;
+  background:#0a1209;
+}
+.gal-cell img {
+  position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;
+}
+.gal-cell.gal-core { outline:1px solid var(--acc); outline-offset:-1px; }
+.gal-cell.gal-sup  { outline:1px solid #ffb000; outline-offset:-1px; }
+.gal-cell.gal-drop { filter:brightness(0.5) saturate(0) sepia(1) hue-rotate(90deg); }
+.gal-cell-label {
+  position:absolute; top:2px; right:2px; font-size:5px; padding:1px 3px;
+  background:var(--acc); color:#000;
+}
+.gal-cell-label.sup { background:#ffb000; }
+/* 폴더 셀 */
+.gal-folder {
+  cursor:pointer; display:flex; flex-direction:column; gap:4px;
+}
+.gal-folder-thumb {
+  aspect-ratio:3/2; background:#0a1209; overflow:hidden; border:1px solid rgba(0,221,85,0.2);
+}
+.gal-folder-thumb img {
+  width:100%; height:100%; object-fit:cover;
+  filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);
+}
+.gal-folder-name {
+  display:flex; align-items:center; justify-content:center; gap:4px;
+  font-size:7px; color:var(--g); letter-spacing:0.5px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.gal-folder-name span { color:var(--g3); font-size:6px; }
+/* 브레드크럼 + 필터 바 */
+#galNav {
+  flex-shrink:0; padding:5px 10px; border-bottom:1px dashed rgba(0,221,85,0.2);
+  display:flex; align-items:center; gap:8px; background:#000; position:sticky; top:0; z-index:10;
+}
+#galBackBtn {
+  font-size:6px; padding:2px 8px; border:1px solid var(--g); background:transparent;
+  color:var(--g); cursor:pointer; letter-spacing:1px; flex-shrink:0; font-family:'Press Start 2P',monospace;
+}
+#galBackBtn:hover { background:var(--g); color:#000; }
+#galBreadcrumb { font-size:5px; color:var(--g3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#galFilters {
+  flex-shrink:0; padding:5px 10px 5px; border-bottom:1px solid rgba(0,221,85,0.15);
+  display:flex; gap:4px; align-items:center; background:#000; position:sticky; top:0; z-index:9;
+}
+.gal-fb {
+  font-size:6px; padding:2px 8px; border:1px solid; background:transparent;
+  cursor:pointer; letter-spacing:1px; font-family:'Press Start 2P',monospace;
+}
+.gal-fb[data-f="all"]     { border-color:var(--g); color:var(--g); }
+.gal-fb[data-f="core"]    { border-color:var(--acc); color:var(--acc); }
+.gal-fb[data-f="support"] { border-color:#ffb000; color:#ffb000; }
+.gal-fb[data-f="drop"]    { border-color:var(--g3); color:var(--g3); }
+.gal-fb.on { color:#000 !important; }
+.gal-fb[data-f="all"].on     { background:var(--g); }
+.gal-fb[data-f="core"].on    { background:var(--acc); }
+.gal-fb[data-f="support"].on { background:#ffb000; }
+.gal-fb[data-f="drop"].on    { background:var(--g3); }
+#galGrid { padding:10px; }
+#galCells {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(80px,1fr)); gap:4px;
+}
+#galLoadMore {
+  text-align:center; padding:12px;
+}
+#galLoadMore button {
+  font-family:'Press Start 2P',monospace; font-size:6px; padding:4px 14px;
+  border:1px solid rgba(0,221,85,0.4); background:transparent; color:var(--g);
+  cursor:pointer; letter-spacing:1px;
+}
+#galLoadMore button:hover { background:rgba(0,221,85,0.1); }
+/* 라이트박스 */
+#galLightbox {
+  position:absolute; inset:0; z-index:20; background:rgba(0,0,0,0.96);
+  display:flex; flex-direction:column;
+}
+#galLbImg {
+  flex:1; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden;
+}
+#galLbImg img { max-width:100%; max-height:100%; object-fit:contain; }
+#galLbBar {
+  flex-shrink:0; display:flex; align-items:center; gap:10px; padding:8px 12px;
+  border-top:1px solid rgba(0,221,85,0.2); background:#000;
+}
+#galLbClose, #galLbPrev, #galLbNext {
+  font-family:'Press Start 2P',monospace; font-size:6px; padding:3px 8px;
+  border:1px solid var(--g); background:transparent; color:var(--g); cursor:pointer;
+}
+#galLbClose:hover, #galLbPrev:hover, #galLbNext:hover { background:var(--g); color:#000; }
+#galLbMeta { font-size:5.5px; color:var(--g3); flex:1; line-height:1.7; }
+#galLbMeta b { color:var(--g2); font-weight:normal; }
+#gallery-grid {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(0,221,85,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,221,85,0.05) 1px, transparent 1px);
+  background-size:46px 46px;
+}
+#gallery-scan {
+  position:absolute; left:0; right:0; height:70px; z-index:2; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgba(0,221,85,0.07), transparent);
+  animation:gscan 6s linear infinite;
+}
+@keyframes gscan { 0%{top:-70px} 100%{top:100%} }
+/* 코너 브래킷 (각진) */
+.gc { position:absolute; width:20px; height:20px; z-index:4; }
+.gc.tl { top:10px; left:10px; border-top:1px solid var(--g3); border-left:1px solid var(--g3); }
+.gc.tr { top:10px; right:10px; border-top:1px solid var(--g3); border-right:1px solid var(--g3); }
+.gc.bl { bottom:10px; left:10px; border-bottom:1px solid var(--g3); border-left:1px solid var(--g3); }
+.gc.br { bottom:10px; right:10px; border-bottom:1px solid var(--g3); border-right:1px solid var(--g3); }
+/* 빈 상태 라벨 */
+#emptyState { position:absolute; inset:0; z-index:3; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:12px; pointer-events:none; }
+#emptyState .es1 { font-size:10px; color:rgba(0,221,85,0.18); letter-spacing:6px; }
+#emptyState .es2 { font-size:6px; color:rgba(0,221,85,0.12); letter-spacing:2px; }
+/* 눈금 마커 */
+#ruler-x, #ruler-y { position:absolute; z-index:4; display:flex; }
+#ruler-x { left:0; right:0; bottom:0; height:8px; }
+#ruler-x i { flex:1; border-left:1px solid rgba(0,221,85,0.15); }
+#ruler-y { top:0; bottom:0; right:0; width:8px; flex-direction:column; }
+#ruler-y i { flex:1; border-top:1px solid rgba(0,221,85,0.15); }
+
+/* ── 하단 정보 (섹션별 동적) ── */
+#mapInfo { display:flex; gap:12px; padding:4px 14px 4px; }
+.mi { display:flex; gap:9px; flex:1; align-items:flex-start; }
+.mi-ico { width:30px; height:30px; flex-shrink:0; }
+.mi-body { flex:1; min-width:0; }
+.mi-title { font-size:6px; color:var(--g); letter-spacing:1.5px; margin-bottom:6px; }
+.mi-row { font-size:5.5px; color:var(--g3); line-height:1.95; }
+.mi-row b { color:var(--g2); font-weight:normal; }
+
+/* ── 세로 메뉴 ── */
+#menuCol { width:122px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
+#exitBtn {
+  height:52px; flex-shrink:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:3px; cursor:pointer; user-select:none;
+  background:#3a0703; border:1px solid var(--red);
+  clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  color:var(--red);
+}
+#exitBtn:hover { background:#520a05; }
+#exitBtn:active { transform:translateY(1px); }
+#exitBtn .ex-i { font-size:13px; } #exitBtn .ex-t { font-size:6px; letter-spacing:1px; }
+.mbtn {
+  flex:1; display:flex; align-items:center; padding-left:10px; padding-right:16px; gap:6px;
+  font-size:6.5px; letter-spacing:1px; color:var(--g3); cursor:pointer; user-select:none;
+  background:rgba(0,22,9,0.75); border:1px solid var(--g4);
+  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+  transition:all .12s; justify-content:flex-end;
+}
+.mbtn::after { content:'◂'; font-size:6px; color:var(--g4); }
+.mbtn:hover { color:var(--g2); background:rgba(0,36,14,0.85); }
+.mbtn:active { transform:translateX(-1px); }
+.mbtn.on { color:#000; background:var(--acc); border-color:var(--acc); font-size:7px; margin-right:-6px; padding-right:22px; }
+.mbtn.on::after { color:#000; }
+.home-btn { margin-top:auto; color:var(--g3); border-color:rgba(0,221,85,0.2); text-decoration:none; }
+
+/* ── 우측 컬럼 ── */
+#rightCol { width:300px; flex-shrink:0; display:flex; flex-direction:column; gap:8px; min-height:0; }
+#scanPnl { flex:0 0 auto; } #metaPnl { flex:0 0 auto; }
+#srcPnl { flex:1 1 0; min-height:0; } #relPnl { flex:1 1 0; min-height:0; }
+#rightCol .pnl { min-height:0; } #rightCol .pnl-in { height:100%; }
+/* 우측 패널 선 약화: 베벨·내부 보더 흐리게 */
+#rightCol .pnl { background:linear-gradient(135deg,#149040 0%,#006a25 52%,#00401a 100%); }
+#rightCol .pnl-hd { border-bottom-color:rgba(0,221,85,0.13); }
+#rightCol .pnl-tab, #rightCol .nav-btn, #rightCol .rel-mode, #rightCol .rel-cell { border-color:rgba(0,221,85,0.1); }
+
+/* 헤더 내 프레임 이동 */
+.nav-btn { width:18px; height:14px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+  border:1px solid var(--g4); background:rgba(0,24,9,0.7); color:var(--g3); font-size:6px; user-select:none; }
+.nav-btn:hover { color:var(--g); } .nav-btn:active { transform:translateY(1px); }
+.nav-ind { font-size:6px; color:var(--g3); } .nav-ind b { color:var(--acc); }
+
+/* SCAN / ANALYSIS — 분석 레이더 스코프 (각진) */
+.sc-scope { position:relative; width:100%; height:90px; background:#010d04;
+  border:1px solid rgba(0,221,85,0.12); overflow:hidden; margin-bottom:8px; }
+#scScopeImg {
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+  filter:brightness(0.55) saturate(0) sepia(1) hue-rotate(90deg) brightness(1.4);
+  transition:opacity 0.3s ease;
+}
+#scScopeNoise {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,0.18) 2px,rgba(0,0,0,0.18) 3px);
+}
+.sc-grid { position:absolute; inset:0;
+  background-image:linear-gradient(rgba(0,221,85,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(0,221,85,0.07) 1px,transparent 1px);
+  background-size:14px 14px; }
+.sc-frameN { position:absolute; left:6px; top:5px; font-size:9px; color:rgba(0,221,85,0.25); letter-spacing:1px; z-index:3; }
+.sc-corner { position:absolute; width:12px; height:12px; z-index:3; }
+.sc-corner.tl { top:5px; left:5px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
+.sc-corner.tr { top:5px; right:5px; border-top:1px solid var(--acc); border-right:1px solid var(--acc); }
+.sc-corner.bl { bottom:5px; left:5px; border-bottom:1px solid var(--acc); border-left:1px solid var(--acc); }
+.sc-corner.br { bottom:5px; right:5px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
+.sc-sweep { position:absolute; top:0; bottom:0; width:30px; z-index:2;
+  background:linear-gradient(90deg, transparent, rgba(155,255,58,0.28), rgba(155,255,58,0.05));
+  animation:scsweep 2.2s linear infinite; }
+@keyframes scsweep { 0%{left:-30px} 100%{left:100%} }
+.sc-cross-h, .sc-cross-v { position:absolute; background:rgba(155,255,58,0.2); z-index:2; }
+.sc-cross-h { left:0; right:0; height:1px; top:50%; }
+.sc-cross-v { top:0; bottom:0; width:1px; left:50%; }
+.sc-tick { position:absolute; width:7px; height:7px; border:1px solid var(--acc); z-index:3;
+  transform:translate(-50%,-50%); transition:left .5s, top .5s; box-shadow:0 0 6px rgba(155,255,58,0.7); }
+/* 수직 이동 스캔라인 */
+.sc-hline { position:absolute; left:0; right:0; height:2px; z-index:3; pointer-events:none;
+  background:linear-gradient(90deg,transparent 0%,rgba(155,255,58,0.55) 30%,rgba(155,255,58,0.8) 50%,rgba(155,255,58,0.55) 70%,transparent 100%);
+  animation:schline 1.8s linear infinite; }
+@keyframes schline { 0%{top:-2px;opacity:0.8} 90%{opacity:0.8} 100%{top:100%;opacity:0} }
+/* 타겟 박스 */
+.sc-target { position:absolute; width:28px; height:20px; z-index:4; pointer-events:none;
+  border:1px solid rgba(155,255,58,0.85);
+  box-shadow:0 0 6px rgba(155,255,58,0.4), inset 0 0 4px rgba(155,255,58,0.1);
+  transition:left 1.4s cubic-bezier(.25,.8,.25,1), top 1s cubic-bezier(.25,.8,.25,1); }
+.sc-target::before,.sc-target::after { content:''; position:absolute; width:5px; height:5px; }
+.sc-target::before { top:-3px; left:-3px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
+.sc-target::after  { bottom:-3px; right:-3px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
+/* 분석 퍼센트 */
+.sc-pct { position:absolute; right:7px; bottom:6px; font-size:7px; color:var(--acc);
+  z-index:5; letter-spacing:1px; font-family:'Press Start 2P',monospace;
+  text-shadow:0 0 6px rgba(155,255,58,0.8); }
+/* 분석 레이블 */
+.sc-ana-lbl { position:absolute; left:7px; bottom:6px; font-size:5px; color:rgba(155,255,58,0.6);
+  z-index:5; letter-spacing:1.5px; font-family:'Press Start 2P',monospace; }
+/* 글리치 슬라이스 */
+.sc-glitch { position:absolute; left:0; right:0; z-index:4; pointer-events:none;
+  background:rgba(155,255,58,0.12); animation:scglitch 5s step-end infinite; }
+@keyframes scglitch {
+  0%,88%,100%{opacity:0;height:0}
+  89%{opacity:1;top:18%;height:4px}
+  90%{top:55%;height:2px}
+  91%{top:72%;height:6px}
+  92%{opacity:0;height:0}
+  95%{opacity:1;top:33%;height:3px}
+  96%{opacity:0}
+}
+/* 코너 브래킷 애니메이션 */
+@keyframes bktpulse { 0%,100%{opacity:1;width:12px;height:12px} 50%{opacity:0.5;width:8px;height:8px} }
+.sc-corner { animation:bktpulse 3s ease-in-out infinite; }
+.sc-corner.tr { animation-delay:.75s; }
+.sc-corner.bl { animation-delay:1.5s; }
+.sc-corner.br { animation-delay:2.25s; }
+.sc-readout { font-size:5.5px; line-height:1.85; color:var(--g3); }
+.sc-readout .rk { color:rgba(180,40,0,0.5); } .sc-readout b { color:var(--g2); font-weight:normal; }
+.sc-bar { display:inline-block; width:46px; height:5px; background:#001005; border:1px solid var(--g4);
+  vertical-align:middle; position:relative; margin-left:3px; }
+.sc-bar i { position:absolute; left:0; top:0; bottom:0; background:var(--acc); }
+
+/* METADATA */
+.fi-meta { display:grid; grid-template-columns:max-content 1fr; gap:3px 10px; align-items:baseline; }
+.fi-meta .mk { font-size:5.5px; color:rgba(180,40,0,0.5); letter-spacing:0.5px; }
+.fi-meta .mv { font-size:6.5px; color:var(--g2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.fi-meta .mv.core { color:var(--acc); } .fi-meta .mv.drop { color:var(--g3); }
+
+/* SOURCE RECORD (원본 문서) */
+.src-doc { font-size:6px; line-height:1.85; color:var(--g3); height:100%; overflow:hidden; }
+.src-doc .sk { color:rgba(180,40,0,0.5); }
+.src-doc .quote { color:var(--g2); border-left:2px solid var(--g4); padding-left:6px; margin:5px 0; display:block; }
+.src-doc .raw { color:rgba(0,221,85,0.45); }
+
+/* RELATED (교집합 그리드) */
+.rel-mode { font-size:5px; color:var(--g3); padding:2px 5px; cursor:pointer; user-select:none;
+  border:1px solid var(--g4); background:rgba(0,24,9,0.7); }
+.rel-mode.on { color:#000; background:var(--acc); border-color:var(--acc); }
+.rel-cap { font-size:5.5px; color:var(--g3); letter-spacing:1px; margin-bottom:6px; }
+.rel-cap b { color:var(--acc); }
+.rel-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:4px; }
+.rel-cell { aspect-ratio:3/2; background:rgba(0,221,85,0.05); border:1px solid var(--g4);
+  display:flex; align-items:center; justify-content:center; font-size:5px; color:var(--g3);
+  cursor:pointer; user-select:none; position:relative; }
+.rel-cell:hover { background:rgba(0,221,85,0.16); color:var(--g2); }
+.rel-cell.core::after { content:''; position:absolute; top:2px; right:2px; width:4px; height:4px;
+  background:var(--acc); transform:rotate(45deg); }
+
+/* ════ 하단 행 ════ */
+#botRow { height:118px; flex-shrink:0; display:flex; gap:8px; }
+#logPnl { flex:1; } #logPnl .pnl-in { height:100%; }
+/* 촬영 보고서 */
+.rep-body { display:flex; flex-direction:column; height:100%; }
+.rep-2col { display:flex; gap:16px; flex:1; min-height:0; }
+.rep-half { flex:1; display:grid; grid-template-columns:max-content minmax(0,1fr); gap:4px 10px; align-items:baseline; align-content:start; }
+.rep-grid { display:grid; grid-template-columns:max-content minmax(0,1fr) max-content minmax(0,1fr);
+  gap:6px 16px; align-items:baseline; }
+.rk { font-size:5.5px; letter-spacing:1px; color:rgba(180,40,0,0.55); }
+.rk::before { content:'▪ '; color:var(--g3); }
+.rv { font-size:6.5px; color:var(--g2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rv .cc { color:var(--acc); } .rv .dd { color:var(--g3); }
+.rep-note { font-size:6px; color:var(--g3); line-height:1.8; margin-top:8px;
+  border-top:1px solid var(--g4); padding-top:7px; }
+.rep-note .lbl { color:rgba(180,40,0,0.55); }
+.rep-ticker { margin-top:auto; font-size:6px; color:var(--acc); letter-spacing:0.5px;
+  border-top:1px solid var(--g4); padding-top:6px; display:flex; gap:6px; align-items:center; }
+.rep-ticker .tk-cur { display:inline-block; width:6px; height:9px; background:var(--acc); animation:blink .9s step-end infinite; }
+
+/* SPOTLIGHT 패널 */
+#sidePnl { width:430px; flex-shrink:0; }
+#sidePnl .pnl-in { height:100%; }
+.sp-dir-tag { font-size:4.5px; padding:2px 5px; border:1px solid var(--g4); color:var(--g3); letter-spacing:.5px; }
+
+/* 최근 디렉터리 (각진 다이아 마커) */
+#recentPnl { width:202px; flex-shrink:0; } #recentPnl .pnl-in { height:100%; }
+.rec-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:6px; cursor:pointer; padding:2px 4px; user-select:none; }
+.rec-row:hover { background:rgba(0,221,85,0.08); }
+.rec-row.on { background:rgba(155,255,58,0.12); }
+.rec-dia { width:7px; height:7px; background:var(--g); transform:rotate(45deg); flex-shrink:0; box-shadow:0 0 4px rgba(0,221,85,0.6); }
+.rec-dia.off { background:var(--g4); box-shadow:none; }
+.rec-name { color:var(--g3); } .rec-row.on .rec-name { color:var(--acc); }
+.rec-cnt { margin-left:auto; color:var(--g2); font-size:5.5px; }
+
+/* ════ 섹션 공통 ════ */
+.sec-wrap { padding:14px; height:100%; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+.sec-wrap::-webkit-scrollbar { width:4px; }
+.sec-wrap::-webkit-scrollbar-thumb { background:rgba(0,221,85,0.25); }
+.sec-hd { font-size:7px; color:var(--g); letter-spacing:2px; padding-bottom:8px; border-bottom:1px solid var(--g4); flex-shrink:0; }
+.sec-hd b { color:var(--acc); font-weight:normal; }
+/* SECTOR */
+.batch-row { display:flex; align-items:center; gap:10px; padding:6px 8px; border:1px solid var(--g4); background:rgba(0,10,4,0.6); cursor:pointer; font-size:6px; transition:background .1s; }
+.batch-row:hover { background:rgba(0,221,85,0.07); }
+.batch-id { color:var(--acc); letter-spacing:1px; min-width:130px; }
+.batch-month { color:var(--g3); min-width:70px; }
+.batch-bars { flex:1; display:flex; gap:3px; align-items:center; }
+.batch-bar { height:8px; min-width:2px; }
+.batch-bar.core { background:var(--acc); }
+.batch-bar.sup  { background:#ffb000; }
+.batch-bar.drop { background:rgba(0,221,85,0.15); }
+.batch-cnt { font-size:5px; color:var(--g3); min-width:80px; text-align:right; }
+/* SECTOR+MONTH 통합 */
+.month-group { border-left:2px solid var(--g4); margin-bottom:6px; }
+.batch-sub { padding-left:10px; display:flex; flex-direction:column; gap:2px; margin-top:2px; }
+.batch-bars { position:relative; flex:1; height:8px; }
+/* MONTH */
+.month-row { display:flex; align-items:center; gap:10px; padding:6px 8px; background:rgba(0,10,4,0.4); }
+.month-label { color:var(--acc); font-size:7px; min-width:80px; letter-spacing:1px; }
+.month-track { flex:1; height:10px; background:rgba(0,221,85,0.08); position:relative; border:1px solid var(--g4); }
+.month-fill { position:absolute; left:0; top:0; bottom:0; background:rgba(0,221,85,0.35); }
+.month-core { position:absolute; left:0; top:0; bottom:0; background:var(--acc); }
+.month-meta { font-size:5.5px; color:var(--g3); min-width:130px; text-align:right; line-height:1.8; }
+/* VERDICT */
+.verd-big { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+.verd-card { padding:12px; border:1px solid var(--g4); background:rgba(0,10,4,0.5); display:flex; flex-direction:column; gap:6px; }
+.verd-card-lbl { font-size:6px; letter-spacing:2px; }
+.verd-card-lbl.core { color:var(--acc); }
+.verd-card-lbl.sup  { color:#ffb000; }
+.verd-card-lbl.drop { color:var(--g3); }
+.verd-card-n { font-size:16px; color:var(--g2); }
+.verd-card-pct { font-size:5px; color:var(--g3); }
+.verd-card-bar { height:4px; background:rgba(0,221,85,0.1); }
+.verd-card-bar i { display:block; height:100%; }
+.verd-card-bar.core i { background:var(--acc); }
+.verd-card-bar.sup  i { background:#ffb000; }
+.verd-card-bar.drop i { background:rgba(0,221,85,0.25); }
+.verd-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(60px,1fr)); gap:4px; }
+.verd-cell { aspect-ratio:3/2; background:#0a1209; overflow:hidden; position:relative; border:1px solid var(--g4); cursor:pointer; }
+.verd-cell img { width:100%; height:100%; object-fit:cover; filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg); }
+.verd-cell:hover img { filter:brightness(0.9) saturate(0) sepia(1) hue-rotate(90deg); }
+/* FORMAT */
+.fmt-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.fmt-card { padding:10px 12px; border:1px solid var(--g4); background:rgba(0,10,4,0.5); }
+.fmt-card-lbl { font-size:5px; color:rgba(180,40,0,0.6); letter-spacing:1.5px; margin-bottom:4px; }
+.fmt-card-val { font-size:10px; color:var(--g2); }
+.fmt-card-sub { font-size:5.5px; color:var(--g3); margin-top:3px; }
+/* FIELD */
+.field-row { display:flex; align-items:center; gap:8px; padding:3px 0; cursor:pointer; }
+.field-row:hover .field-lbl { color:var(--acc); }
+.field-lbl { font-size:6px; color:var(--g3); min-width:80px; letter-spacing:0.5px; }
+.field-track { flex:1; height:6px; background:rgba(0,221,85,0.08); border:1px solid rgba(0,221,85,0.1); }
+.field-fill { height:100%; background:rgba(0,221,85,0.45); }
+.field-n { font-size:6px; color:var(--g2); min-width:28px; text-align:right; }
+.field-cat { font-size:5px; color:rgba(0,221,85,0.25); letter-spacing:1px; padding:6px 0 3px; border-top:1px solid rgba(0,221,85,0.08); margin-top:4px; }
+/* EXPORT */
+.exp-actions { display:flex; gap:6px; }
+.exp-btn { font-family:'Press Start 2P',monospace; font-size:6px; padding:4px 12px; border:1px solid var(--g); background:transparent; color:var(--g); cursor:pointer; letter-spacing:1px; }
+.exp-btn:hover { background:var(--g); color:#000; }
+.exp-section { margin-top:8px; }
+.exp-section-hd { font-size:5.5px; color:rgba(180,40,0,0.6); letter-spacing:2px; margin-bottom:5px; }
+.exp-list { font-size:5px; color:var(--g3); line-height:2; max-height:200px; overflow-y:auto; padding:6px; border:1px solid var(--g4); background:rgba(0,0,0,0.3); }
+.exp-list::-webkit-scrollbar { width:3px; }
+.exp-list::-webkit-scrollbar-thumb { background:rgba(0,221,85,0.2); }
+/* OPTIONS */
+.opt-section { border:1px solid var(--g4); padding:10px 12px; }
+.opt-section-hd { font-size:5.5px; color:rgba(180,40,0,0.6); letter-spacing:2px; margin-bottom:8px; }
+.opt-row { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+.opt-lbl { font-size:6px; color:var(--g3); min-width:90px; }
+.opt-btn { font-family:'Press Start 2P',monospace; font-size:5.5px; padding:3px 8px; border:1px solid var(--g4); background:transparent; color:var(--g3); cursor:pointer; }
+.opt-btn:hover { border-color:var(--g); color:var(--g); }
+.opt-btn.on { color:#000; background:var(--acc); border-color:var(--acc); }
+
+/* ════ 상태 바 ════ */
+#statusBar { height:22px; flex-shrink:0; display:flex; align-items:center; border-top:1px solid var(--g4); }
+.sb-i { padding:0 12px; font-size:6px; letter-spacing:1px; color:var(--g3); border-right:1px solid var(--g4); height:100%; display:flex; align-items:center; }
+.sb-i b { color:var(--g); font-weight:normal; }
+.sb-sp { flex:1; }
+.sb-w { padding:0 12px; font-size:5px; letter-spacing:1.5px; color:rgba(255,60,30,0.35); }
+</style>
+</head>
+<body>
+
+<div id="bg">
+  <div id="bg-lights"></div>
+  <div id="bg-grid"></div>
+  <div id="bg-overlay"></div>
+</div>
+
+<div id="shell">
+<div id="wrap">
+  <div class="crt"></div>
+  <div id="wc-bl"></div><div id="wc-br"></div>
+
+  <!-- 타이틀 바 -->
+  <div id="titleBar">
+    <div id="tbLogo">SET ARCHIVE <span class="arr">&gt;&gt;</span></div>
+    <div class="tb-dot on"></div>
+    <div class="tb-spacer"></div>
+    <div id="tbRight">
+      <span class="tb-cls">CLASSIFICATION: RESTRICTED · LEVEL-2</span>
+      <span class="tb-time" id="clock">--:--:--</span>
+    </div>
+  </div>
+
+  <!-- 메인 행 -->
+  <div id="mainRow">
+
+    <!-- 중앙 -->
+    <div id="centerCol">
+      <div class="pnl"><div class="pnl-in">
+        <div id="sysHd"><span class="chev">»</span> ARCHIVE: SET_NULL_CH <span class="sub">· 5,900 RECORDS</span><span id="ctxLabel">CONTACT SHEET · ALL</span></div>
+        <div id="subTabs">
+          <div class="stab on" data-view="CONTACT SHEET">CONTACT SHEET</div>
+          <div class="stab" data-view="LIGHTBOX">LIGHTBOX</div>
+          <div class="stab" data-view="TIMELINE">TIMELINE</div>
+          <div class="stab" data-view="GRID">GRID</div>
+          <div class="stab" data-view="LIST">LIST</div>
+        </div>
+        <!-- 갤러리 빈 영역 -->
+        <div id="gallery">
+          <div id="gallery-grid"></div>
+          <div id="gallery-scan"></div>
+          <div id="ruler-x"></div>
+          <div id="ruler-y"></div>
+          <div class="gc tl"></div><div class="gc tr"></div><div class="gc bl"></div><div class="gc br"></div>
+          <div id="emptyState">
+            <div class="es1" id="esLabel">LOADING...</div>
+            <div class="es2" id="esSub">FETCHING ARCHIVE DATA</div>
+          </div>
+          <!-- 실제 갤러리 콘텐츠 -->
+          <div id="gallery-inner" style="display:none;"></div>
+        </div>
+        <!-- 동적 하단 정보 -->
+        <div id="mapInfo"></div>
+      </div></div>
+    </div>
+
+    <!-- 우측 -->
+    <div id="rightCol">
+
+      <!-- SCAN + METADATA 2열 -->
+      <div style="display:flex; gap:8px; flex-shrink:0;">
+
+        <!-- SCAN / ANALYSIS -->
+        <div class="pnl" id="scanPnl" style="flex:1; min-width:0;"><div class="pnl-in">
+          <div class="pnl-hd">SCAN / ANALYSIS
+            <span class="hd-r">
+              <span class="nav-btn" id="navPrev">◄</span>
+              <span class="nav-ind"><b id="navCur">0001</b>/<span id="navTot">198</span></span>
+              <span class="nav-btn" id="navNext">►</span>
+            </span>
+          </div>
+          <div class="pnl-bd">
+            <div class="sc-scope" id="scScope">
+              <img id="scScopeImg" src="" alt="" style="opacity:0;">
+              <span id="scScopeNoise"></span>
+              <span class="sc-frameN" id="fiThumbN">0001</span>
+              <span class="sc-corner tl"></span><span class="sc-corner tr"></span>
+              <span class="sc-corner bl"></span><span class="sc-corner br"></span>
+              <span class="sc-grid"></span>
+              <span class="sc-sweep"></span>
+              <span class="sc-hline"></span>
+              <span class="sc-glitch"></span>
+              <span class="sc-cross-h"></span><span class="sc-cross-v"></span>
+              <span class="sc-tick" id="scTick"></span>
+              <span class="sc-target" id="scTarget"></span>
+              <span class="sc-pct" id="scPct">00%</span>
+              <span class="sc-ana-lbl" id="scAnaLbl">SCANNING</span>
+            </div>
+            <!-- sc-readout 숨김 -->
+          </div>
+        </div></div>
+
+        <!-- METADATA -->
+        <div class="pnl" id="metaPnl" style="flex:1; min-width:0;"><div class="pnl-in">
+          <div class="pnl-hd">METADATA<span class="hd-r"><span class="pnl-tab" id="fiVerdict">—</span></span></div>
+          <div class="pnl-bd">
+            <div class="fi-meta" id="fiMeta"></div>
+          </div>
+        </div></div>
+
+      </div>
+
+      <!-- SOURCE RECORD (원본 지시문/기록) -->
+      <div class="pnl" id="srcPnl"><div class="pnl-in">
+        <div class="pnl-hd">SOURCE RECORD · 원본<span class="hd-r"><span class="pnl-tab" id="srcRef">····</span></span></div>
+        <div class="pnl-bd">
+          <div class="src-doc" id="srcDoc" style="display:none;"></div>
+        </div>
+      </div></div>
+
+      <!-- RELATED (교집합: 비슷한 컷) -->
+      <div class="pnl" id="relPnl"><div class="pnl-in">
+        <div class="pnl-hd">RELATED · 교집합
+          <span class="hd-r">
+            <span class="rel-mode on" data-rel="SEQ">SEQ</span>
+            <span class="rel-mode" data-rel="SCENE">SCENE</span>
+            <span class="rel-mode" data-rel="TAG">TAG</span>
+          </span>
+        </div>
+        <div class="pnl-bd">
+          <div class="rel-cap" id="relCap">— MATCHES</div>
+          <div class="rel-grid" id="relGrid"></div>
+        </div>
+      </div></div>
+
+    </div>
+
+    <!-- 세로 메뉴 -->
+    <div id="menuCol">
+      <div id="exitBtn"><span class="ex-i">⏻</span><span class="ex-t">EXIT</span></div>
+      <div class="mbtn on" data-sec="GALLERY">GALLERY</div>
+      <div class="mbtn" data-sec="SECTOR">SECTOR</div>
+      <div class="mbtn" data-sec="VERDICT">VERDICT</div>
+      <div class="mbtn" data-sec="FIELD">FIELD</div>
+      <div class="mbtn" data-sec="OPTIONS">OPTIONS</div>
+      <div class="mbtn home-btn" id="homeBtn">HOME</div>
+    </div>
+
+  </div>
+
+  <!-- 하단 행 -->
+  <div id="botRow">
+    <div class="pnl" id="logPnl"><div class="pnl-in">
+      <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span class="pnl-tab on" id="repNo">SCF-2026-03</span></span></div>
+      <div class="pnl-bd">
+        <div class="rep-body">
+          <div class="rep-ticker">» <span id="ticker">REPORT LOADED</span><span class="tk-cur"></span></div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="pnl" id="sidePnl"><div class="pnl-in">
+      <div class="pnl-hd">SPOTLIGHT<span class="hd-r" id="spMeta" style="font-size:5px;color:var(--g3)">RANDOM · CORE</span></div>
+      <div class="pnl-bd" id="spBody" style="display:flex;gap:8px;align-items:stretch;height:calc(100% - 22px)">
+        <div id="spImg" style="width:90px;flex-shrink:0;background:#050f07;border:1px solid var(--g4);overflow:hidden;cursor:pointer;position:relative">
+          <img id="spThumb" style="width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(0) sepia(1) hue-rotate(90deg)" src="" onerror="this.style.display='none'">
+          <div style="position:absolute;bottom:3px;right:4px;font-size:4px;color:var(--g3)">CLICK ▶</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0">
+          <div id="spFile" style="font-size:5.5px;color:var(--acc);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+          <div id="spBatch" style="font-size:5px;color:var(--g3);letter-spacing:.5px"></div>
+          <div id="spDirs" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:2px"></div>
+          <div style="margin-top:auto;border-top:1px solid var(--g4);padding-top:4px;display:flex;gap:6px">
+            <div id="spVerdict" style="font-size:5.5px"></div>
+            <div id="spNext" style="font-size:5px;color:var(--g4);cursor:pointer;margin-left:auto">NEXT ›</div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+
+  </div>
+
+  <!-- 상태 바 -->
+  <div id="statusBar">
+    <div class="sb-i">SHOWING: <b id="sbShow">5,900</b></div>
+    <div class="sb-i">SECTION: <b id="sbSection">GALLERY</b></div>
+    <div class="sb-i">VIEW: <b id="sbView">CONTACT SHEET</b></div>
+    <div class="sb-i">DIR: <b id="sbDir">2026_03_MAR</b></div>
+    <div class="sb-i" id="sbSess" style="color:var(--g4); font-size:5px;"></div>
+    <div class="sb-sp"></div>
+    <div class="sb-w">UNAUTHORIZED ACCESS OR REPRODUCTION IS PROHIBITED UNDER FEDERAL LAW</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+//═══════ 데이터 모델 ═══════
+const sid = 'S-' + Math.random().toString(16).slice(2,10).toUpperCase();
+document.getElementById('sbSess').textContent = 'SESS: ' + sid;
+
+const COUNTS = { ALL:5900, CORE:167, SUP:374, DROP:5659, FAV:42 };
+
+// 섹션별 하단 정보 (3블록)
+const ICO = {
+  ap:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="var(--g3)" stroke-width="1"/><rect x="13" y="13" width="4" height="4" fill="var(--g)"/></svg>',
+  bar:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="4" y="18" width="5" height="8" fill="var(--g3)"/><rect x="12" y="10" width="5" height="16" fill="var(--g)"/><rect x="20" y="14" width="5" height="12" fill="var(--g3)"/></svg>',
+  film:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="3" y="6" width="24" height="18" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="3" y="6" width="3" height="18" fill="var(--g3)"/><rect x="11" y="6" width="3" height="18" fill="var(--g3)"/><rect x="19" y="6" width="3" height="18" fill="var(--g3)"/></svg>',
+  grid:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="4" y="4" width="9" height="9" fill="var(--g)"/><rect x="17" y="4" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="4" y="17" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="17" y="17" width="9" height="9" fill="var(--g3)"/></svg>',
+  diam:'<svg class="mi-ico" viewBox="0 0 30 30"><polygon points="15,3 27,15 15,27 3,15" fill="none" stroke="var(--g)" stroke-width="1.5"/><polygon points="15,10 20,15 15,20 10,15" fill="var(--g)"/></svg>',
+  hex:'<svg class="mi-ico" viewBox="0 0 30 30"><polygon points="15,3 26,9 26,21 15,27 4,21 4,9" fill="none" stroke="var(--g)" stroke-width="1.5"/></svg>',
+};
+const SECTIONS = {
+  GALLERY:[
+    {i:ICO.ap, t:'CAPTURE INFO', rows:[['FORMAT','35mm'],['SENSOR','APS-C'],['FOCAL','23/35mm']]},
+    {i:ICO.bar,t:'VERDICT',      rows:[['CORE','167'],['SUPPORT','374'],['DROP','5,659']]},
+    {i:ICO.film,t:'EXPOSURE',    rows:[['FRAMES','5,900'],['PERIOD','213 DAYS'],['AVG/DAY','27.7']]},
+  ],
+  SECTOR:[
+    {i:ICO.grid,t:'GRID REF',  rows:[['ACTIVE','A1·C1·B2'],['MARKED','9 / 20'],['MODE','SCAN']]},
+    {i:ICO.diam,t:'COVERAGE',  rows:[['ZONES','5'],['DENSE','C3'],['SPARSE','A4']]},
+    {i:ICO.hex, t:'FIELD',     rows:[['LAT','37.5N'],['LON','127.0E'],['ALT','38M']]},
+  ],
+  VERDICT:[
+    {i:ICO.diam,t:'CORE',      rows:[['COUNT','167'],['RATIO','2.8%'],['RANK','A']]},
+    {i:ICO.diam,t:'SUPPORT',   rows:[['COUNT','374'],['RATIO','6.4%'],['RANK','B']]},
+    {i:ICO.diam,t:'DROP',      rows:[['COUNT','5,659'],['RATIO','90.8%'],['RANK','—']]},
+  ],
+  FIELD:[
+    {i:ICO.ap,  t:'SETTINGS',  rows:[['ISO','AUTO'],['SHTR','1/60-4000'],['APT','F2-F11']]},
+    {i:ICO.hex, t:'BODY',      rows:[['CAM','X-T4'],['LENS','XF23 F2'],['WB','AUTO']]},
+    {i:ICO.diam,t:'COND',      rows:[['LIGHT','MIXED'],['WX','CLEAR'],['TIME','DAY']]},
+  ],
+  OPTIONS:[
+    {i:ICO.diam,t:'DISPLAY',   rows:[['THEME','GREEN'],['SCAN','ON'],['GRID','ON']]},
+    {i:ICO.hex, t:'SESSION',   rows:[['CLEAR','L-2'],['IDLE','15M'],['LOG','ON']]},
+    {i:ICO.grid,t:'SYSTEM',    rows:[['VER','2.4'],['NODE','7'],['PING','12ms']]},
+  ],
+};
+
+// 케이스 파일 데이터 (◄► 순환)
+const CASES = [
+  {name:'SET_NULL', rows:[['SUBJECT','STREET/DAILY'],['CLEAR','LEVEL-2'],['ACCESS','READ ONLY'],['STATUS','ACTIVE',1],['DIRS / FRAMES',''],['45 / 5,900','',1]]},
+  {name:'NIGHT_SET', rows:[['SUBJECT','NIGHT/NEON'],['CLEAR','LEVEL-2'],['ACCESS','READ ONLY'],['STATUS','SEALED',1],['DIRS / FRAMES',''],['12 / 1,430','',1]]},
+  {name:'ARCHIVE_X', rows:[['SUBJECT','MISC'],['CLEAR','LEVEL-3'],['ACCESS','RESTRICTED'],['STATUS','LOCKED',1],['DIRS / FRAMES',''],['08 / 622','',1]]},
+];
+
+// 디렉터리
+const DIRS = [
+  {n:'2026_03_MAR', c:198, on:true},
+  {n:'2026_02_FEB', c:244, on:true},
+  {n:'2026_01_JAN', c:187, on:false},
+  {n:'2025_12_DEC', c:503, on:false},
+];
+
+// 촬영 보고서 (디렉터리별)
+const REPORTS = {
+  '2026_03_MAR':{no:'SCF-2026-03', date:'2026.03.01–31', loc:'SEOUL · 종로', frames:198, wx:'맑음/흐림', gear:'X-T4 · XF23', core:12, sup:28, drop:158, note:'야간 세션 3회 진행 · 필름시뮬 CLASSIC NEG · 노출 -0.3EV 고정 운용.'},
+  '2026_02_FEB':{no:'SCF-2026-02', date:'2026.02.01–28', loc:'SEOUL · 을지로', frames:244, wx:'흐림/눈', gear:'X-T4 · XF23', core:18, sup:41, drop:185, note:'실내 위주 · 고감도(ISO 3200+) 테스트 · 1/60 핸드헬드 한계 점검.'},
+  '2026_01_JAN':{no:'SCF-2026-01', date:'2026.01.01–31', loc:'BUSAN · 해운대', frames:187, wx:'맑음', gear:'X-T4 · XF35', core:9, sup:22, drop:156, note:'해안 일출 세션 · 저온 배터리 소모 이슈 기록 · 예비 2팩 운용.'},
+  '2025_12_DEC':{no:'SCF-2025-12', date:'2025.12.01–31', loc:'SEOUL · 명동', frames:503, wx:'흐림', gear:'X-T4 · XF23', core:31, sup:67, drop:405, note:'연말 인파 · 최다 촬영월 · 셔터 1/250 이상 고정으로 모션 억제.'},
+};
+
+//═══════ 상태 ═══════
+const S = { top:'SET', view:'CONTACT SHEET', sec:'GALLERY', filter:'ALL', dir:'2026_03_MAR',
+            frame:1, relMode:'SEQ' };
+
+//═══════ 렌더 함수 ═══════
+function renderMapInfo(){
+  const data = SECTIONS[S.sec];
+  document.getElementById('mapInfo').innerHTML = data.map(b=>
+    `<div class="mi">${b.i}<div class="mi-body"><div class="mi-title">${b.t}:</div>${
+      b.rows.map(r=>`<div class="mi-row">${r[0]}${r[1]?': <b>'+r[1]+'</b>':''}</div>`).join('')
+    }</div></div>`).join('');
+}
+function renderRecent(){
+  const recList = document.getElementById('recList');
+  if(!recList) return;
+  recList.innerHTML = DIRS.map(d=>
+    `<div class="rec-row${d.n===S.dir?' on':''}" data-dir="${d.n}">
+      <span class="rec-dia${d.on?'':' off'}"></span><span class="rec-name">${d.n}</span><span class="rec-cnt">${d.c}</span>
+    </div>`).join('');
+  document.querySelectorAll('.rec-row').forEach(r=>{
+    r.onclick = ()=>{ S.dir=r.dataset.dir; document.getElementById('sbDir').textContent=S.dir;
+      renderRecent(); renderReport(); setFrame(1); log('NODE',false,'REPORT · '+S.dir); };
+  });
+}
+// 촬영 보고서 렌더
+function renderReport(){
+  const r = REPORTS[S.dir] || REPORTS['2026_03_MAR'];
+  document.getElementById('repNo').textContent = r.no;
+  document.getElementById('repGrid').innerHTML =
+    `<div class="rk">DATE</div><div class="rv">${r.date}</div>`+
+    `<div class="rk">LOCATION</div><div class="rv">${r.loc}</div>`+
+    `<div class="rk">FRAMES</div><div class="rv">${r.frames} FRAMES</div>`+
+    `<div class="rk">WEATHER</div><div class="rv">${r.wx}</div>`+
+    `<div class="rk">GEAR</div><div class="rv">${r.gear}</div>`+
+    `<div class="rk">SELECT</div><div class="rv"><span class="cc">CORE ${r.core}</span> · SUP ${r.sup} · <span class="dd">DROP ${r.drop}</span></div>`;
+  document.getElementById('repNote').innerHTML = `<span class="lbl">NOTE:</span> ${r.note}`;
+}
+function updateCtx(){
+  document.getElementById('ctxLabel').textContent = S.view + ' · ' + S.filter;
+  document.getElementById('esLabel').textContent = '[ ' + S.view + ' ]';
+  document.getElementById('sbShow').textContent = COUNTS[S.filter].toLocaleString();
+  document.getElementById('sbSection').textContent = S.sec;
+  document.getElementById('sbView').textContent = S.view;
+  document.getElementById('esSub').textContent = 'GALLERY MOUNTS HERE · ' + COUNTS[S.filter].toLocaleString() + ' FRAMES';
+}
+
+//═══════ 액션 티커 (보고서 하단) ═══════
+const tickerEl = document.getElementById('ticker');
+function log(who, me, msg){
+  if(tickerEl) tickerEl.textContent = (who?who+' · ':'') + msg;
+}
+
+//═══════ 이벤트 바인딩 ═══════
+// 상단 탭
+document.querySelectorAll('.ttab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.ttab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); S.top=t.dataset.top;
+  log('SYS',false,'TAB · '+S.top);
+});
+// 뷰 서브탭
+document.querySelectorAll('.stab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on'); S.view=t.dataset.view; updateCtx();
+  log('SYS',false,'VIEW · '+S.view);
+});
+// 세로 메뉴
+document.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); S.sec=b.dataset.sec; renderMapInfo(); updateCtx();
+  renderSection(S.sec);
+  log('SYS',false,'SECTION · '+S.sec);
+});
+
+//═══════ 데이터 구조화 ═══════
+function buildSetData(photos){
+  const leaves=[], byMonth={}, byBatch={}, byDir={};
+  function walk(items, mk, bk){
+    for(const p of items){
+      if(p.type==='sheet'){
+        const id = p.id||p.name||'';
+        const isMonth = /^\d{4}\/\d{2}$/.test(id);
+        if(isMonth){
+          byMonth[id]={id,name:id,leaves:[],batchIds:[]};
+          walk(p.children||[], id, null);
+        } else {
+          if(mk && byMonth[mk]) byMonth[mk].batchIds.push(id);
+          byBatch[id]={id,name:id,leaves:[],monthKey:mk};
+          walk(p.children||[], mk, id);
+        }
+      } else {
+        const leaf={...p,monthKey:mk,batchKey:bk};
+        leaves.push(leaf);
+        if(mk && byMonth[mk]) byMonth[mk].leaves.push(leaf);
+        if(bk && byBatch[bk]) byBatch[bk].leaves.push(leaf);
+        if(p.dir){
+          String(p.dir).split(/[\s,;]+/).filter(d=>d && d!=='/' && /[A-Za-z]/.test(d)).forEach(d=>{
+            const k=d.replace(/^DIR-\d+-?/,'').toUpperCase();
+            if(k) byDir[k]=(byDir[k]||0)+1;
+          });
+        }
+      }
+    }
+  }
+  walk(photos, null, null);
+  return {leaves,byMonth,byBatch,byDir};
+}
+
+//═══════ 섹션 렌더러 ═══════
+function renderSection(name){
+  if(name==='GALLERY'){
+    // 갤러리는 이미 렌더됨
+    const inner=document.getElementById('gallery-inner');
+    if(inner) inner.style.display='flex';
+    document.getElementById('emptyState').style.display='none';
+    return;
+  }
+  const inner=document.getElementById('gallery-inner');
+  if(!inner) return;
+  const empty=document.getElementById('emptyState');
+  if(empty) empty.style.display='none';
+  inner.style.display='flex';
+  inner.style.flexDirection='column';
+
+  const D = window.SET_DATA;
+  if(!D){ inner.innerHTML='<div style="padding:20px;font-size:6px;color:var(--g3)">LOADING DATA...</div>'; return; }
+
+  if(name==='SECTOR')        renderSector(inner, D);
+  else if(name==='VERDICT') renderVerdict(inner, D);
+  else if(name==='FIELD')   renderField(inner, D);
+  else if(name==='OPTIONS') renderOptions(inner);
+}
+
+/* ── SECTOR (+ MONTH 통합) ── */
+function renderSector(el, D){
+  const months = Object.values(D.byMonth).filter(m=>m.leaves.length>0);
+  const batches = Object.values(D.byBatch).filter(b=>b.leaves.length>0 && b.id.split('/').length===3);
+  const maxMF = Math.max(...months.map(m=>m.leaves.length), 1);
+  const maxBF = Math.max(...batches.map(b=>b.leaves.length), 1);
+
+  el.innerHTML = `<div class="sec-wrap">
+    <div class="sec-hd">TIMELINE · <b>${months.length} MONTHS</b></div>
+    ${months.map(m=>{
+      const core=m.leaves.filter(p=>p.verdict==='core').length;
+      const sup=m.leaves.filter(p=>p.verdict==='support').length;
+      const tot=m.leaves.length;
+      const fpct=Math.round(tot/maxMF*100);
+      const rate=(tot/30).toFixed(1);
+      const mBatches=batches.filter(b=>b.monthKey===m.id);
+      return `<div class="month-group">
+        <div class="month-row">
+          <span class="month-label">${m.name}</span>
+          <span class="month-track">
+            <span class="month-fill" style="width:${fpct}%"></span>
+            <span class="month-core" style="width:${Math.round(core/maxMF*100)}%"></span>
+          </span>
+          <span class="month-meta">${tot.toLocaleString()}F · C${core} S${sup} · ${rate}/d</span>
+        </div>
+        <div class="batch-sub">
+          ${mBatches.map(b=>{
+            const bc=b.leaves.filter(p=>p.verdict==='core').length;
+            const bs=b.leaves.filter(p=>p.verdict==='support').length;
+            const bt=b.leaves.length;
+            const bw=Math.round(bt/maxBF*100);
+            const cw=Math.round(bc/maxBF*100);
+            return `<div class="batch-row" data-bk="${b.id}">
+              <span class="batch-id">${b.id.split('/').pop()}</span>
+              <span class="batch-bars">
+                <span class="batch-bar drop" style="width:${bw}px"></span>
+                <span class="batch-bar core" style="width:${cw}px;position:absolute;left:0;top:0"></span>
+              </span>
+              <span class="batch-cnt">C<b style="color:var(--acc)">${bc}</b> S<b style="color:#ffb000">${bs}</b> <b style="color:var(--g3)">${bt}</b>F</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+  el.querySelectorAll('.batch-row').forEach(r=>r.onclick=()=>{
+    const b=D.byBatch[r.dataset.bk];
+    if(b){ setScanPhoto(b.leaves[0]&&(b.leaves[0].filename||b.leaves[0].url)||'');
+           log('NODE',false,'BATCH: '+r.dataset.bk); }
+  });
+}
+
+/* ── VERDICT ── */
+function showVerdictLightbox(pool, startIdx){
+  let idx = startIdx;
+  function render(){
+    const existing = document.getElementById('verdLightbox');
+    if(existing) existing.remove();
+    const p = pool[idx];
+    const pid = p.id||p.filename||p.url||'';
+    if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; if(window._onPhotoClick) window._onPhotoClick(); }
+    const full = p.filename||p.url||'';
+    const file = full.split('/').pop();
+    const v = p.verdict||'drop';
+    const vCol = {core:'var(--acc)',support:'#ffb000',drop:'#444'}[v]||'#444';
+    const lb = document.createElement('div');
+    lb.id = 'verdLightbox';
+    lb.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    lb.innerHTML=`
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:12px;min-height:0;width:100%">
+        <img src="${full}" style="max-width:100%;max-height:100%;object-fit:contain;filter:none;" loading="eager">
+      </div>
+      <div style="flex-shrink:0;width:100%;display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(0,6,2,0.95);border-top:1px solid var(--g4);font-family:'Press Start 2P',monospace;font-size:6px;letter-spacing:1px">
+        <button id="vlPrev" style="background:none;border:1px solid var(--g4);color:var(--g);padding:4px 8px;cursor:pointer;font-family:inherit;font-size:6px">◄</button>
+        <button id="vlNext" style="background:none;border:1px solid var(--g4);color:var(--g);padding:4px 8px;cursor:pointer;font-family:inherit;font-size:6px">►</button>
+        <span style="color:var(--acc)">${file}</span>
+        <span style="color:${vCol}">${v.toUpperCase()}</span>
+        <span style="color:var(--g3)">${p.batchKey||'—'} · ${idx+1}/${pool.length}</span>
+        <button id="vlClose" style="margin-left:auto;background:none;border:1px solid var(--g4);color:var(--g3);padding:4px 10px;cursor:pointer;font-family:inherit;font-size:6px">✕ CLOSE</button>
+      </div>`;
+    document.body.appendChild(lb);
+    lb.querySelector('#vlClose').onclick=()=>lb.remove();
+    lb.querySelector('#vlPrev').onclick=()=>{ idx=Math.max(0,idx-1); render(); };
+    lb.querySelector('#vlNext').onclick=()=>{ idx=Math.min(pool.length-1,idx+1); render(); };
+    lb.onclick=e=>{ if(e.target===lb) lb.remove(); };
+  }
+  render();
+}
+
+function renderVerdict(el, D){
+  const tot=D.leaves.length;
+  const core=D.leaves.filter(p=>p.verdict==='core');
+  const sup=D.leaves.filter(p=>p.verdict==='support');
+  const allVerd=[...core,...sup];
+  el.innerHTML=`<div class="sec-wrap">
+    <div class="sec-hd">CORE FRAMES · <b>${core.length} SELECTED</b> · ${(core.length/tot*100).toFixed(1)}% OF ${tot.toLocaleString()}</div>
+    <div class="verd-grid">${core.map((p,i)=>{
+      const url=(p.filename||p.url||'').replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
+      return `<div class="verd-cell" data-vi="${i}" style="cursor:pointer" title="${(p.filename||'').split('/').pop()}"><img src="${url}" onerror="this.style.display='none'"></div>`;
+    }).join('')}</div>
+    <div class="sec-hd" style="margin-top:6px">SUPPORT · <b>${sup.length}</b> · ${(sup.length/tot*100).toFixed(1)}%</div>
+    <div class="verd-grid" style="opacity:0.55">${sup.slice(0,48).map((p,i)=>{
+      const url=(p.filename||p.url||'').replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
+      return `<div class="verd-cell" data-vi="${core.length+i}" style="cursor:pointer"><img src="${url}" onerror="this.style.display='none'"></div>`;
+    }).join('')}</div>
+  </div>`;
+  el.querySelectorAll('.verd-cell[data-vi]').forEach(cell=>{
+    cell.onclick=()=>{
+      const p=allVerd[parseInt(cell.dataset.vi)];
+      if(p && window._galOpenPhoto) window._galOpenPhoto(p);
+    };
+  });
+}
+
+/* ── FIELD: DIR network 3D sphere ── */
+let _fieldAnimId = null;
+window._clickMap = {}; // photo click tracking: id → count
+function renderField(el, D){
+  if(_fieldAnimId){ cancelAnimationFrame(_fieldAnimId); _fieldAnimId=null; }
+
+  const sorted = Object.entries(D.byDir).sort((a,b)=>b[1]-a[1]);
+  if(!sorted.length){ el.innerHTML='<div class="sec-wrap"><div class="sec-hd">NO DATA</div></div>'; return; }
+
+  const CAT={
+    // 2차 SPACE (14)
+    HRZLAY:'SPACE',WNDGLO:'SPACE',SPTISO:'SPACE',VANSRC:'SPACE',FUNREV:'SPACE',
+    FOGDIS:'SPACE',EQREP:'SPACE',ISOOBJ:'SPACE',URBREFL:'SPACE',ARTNAT:'SPACE',
+    LGTPAT:'SPACE',UNIDIST:'SPACE',FUNSAT:'SPACE',MATCOV:'SPACE',
+    // 1차 SPACE (13)
+    MONOLITH:'SPACE',STRATA:'SPACE',DISSOLVE:'SPACE',LITGRID:'SPACE',VANISH:'SPACE',
+    MIRRORSURF:'SPACE',PEEL:'SPACE',SNOWFILL:'SPACE',OXIDE:'SPACE',ADWRAP:'SPACE',
+    ROADCLASH:'SPACE',WALLTXT:'SPACE',OVERGROW:'SPACE',
+    // 2차 OBJECT (6)
+    DMGPAT:'OBJECT',TONEDIS:'OBJECT',HETOBJ:'OBJECT',DOCAGE:'OBJECT',LGTSTR:'OBJECT',OBJREP:'OBJECT',
+    // 1차 OBJECT (9)
+    ISOLATE:'OBJECT',RUPTURE:'OBJECT',GRID:'OBJECT',CLUSTER:'OBJECT',FLOAT:'OBJECT',
+    SKELETON:'OBJECT',BLOOM:'OBJECT',WRAP:'OBJECT',SURFACE:'OBJECT',
+    // 2차 FIGURE (14)
+    FACBLK:'FIGURE',HANDEXT:'FIGURE',FOOTEXT:'FIGURE',HRZPAS:'FIGURE',DRKSPOT:'FIGURE',
+    GROUPREP:'FIGURE',BGDOM:'FIGURE',DUALSPC:'FIGURE',PLNTENV:'FIGURE',GENPORT:'FIGURE',
+    NONSUBS:'FIGURE',BACKPOSE:'FIGURE',DRESSIDENT:'FIGURE',LIMBACT:'FIGURE',
+    // 1차 FIGURE (8, BACKPOSE는 2차 우선)
+    DUALFRAME:'FIGURE',HEADOBJ:'FIGURE',DUALFIG:'FIGURE',DIPTYCH:'FIGURE',
+    FGBG:'FIGURE',COLORISO:'FIGURE',SKINREP:'FIGURE',BODYTXT:'FIGURE',
+    // 2차 FIGUREBG (11)
+    REPDOM:'FIGUREBG',REFLMED:'FIGUREBG',SMOKLYR:'FIGUREBG',OPTFUSE:'FIGUREBG',
+    PARTINTR:'FIGUREBG',OBJCOVR:'FIGUREBG',ARCHOP:'FIGUREBG',GLASMED:'FIGUREBG',
+    ATMOSOLV:'FIGUREBG',SCLFIG:'FIGUREBG',HORZERO:'FIGUREBG',
+    // 1차 FIGUREBG (7)
+    BGPAT:'FIGUREBG',SCALE:'FIGUREBG',ATMOFUSE:'FIGUREBG',GLASSDUAL:'FIGUREBG',
+    AEROFLT:'FIGUREBG',ARCHCAP:'FIGUREBG',BACKLIT:'FIGUREBG',
+    // UNJUDGE (2)
+    SURFILL:'UNJUDGE',BLURABS:'UNJUDGE'
+  };
+  const CCOLOR={SPACE:'#00dd55',OBJECT:'#ffb000',FIGURE:'#ff5533',FIGUREBG:'#3399ff',UNJUDGE:'#aa55ff',OTHER:'#557755'};
+
+  // Co-occurrence edges
+  const edgeMap={};
+  D.leaves.forEach(p=>{
+    if(!p.dir) return;
+    const ds=String(p.dir).split(/[\s,;]+/)
+      .filter(d=>d&&d!=='/'&&/[A-Za-z]/.test(d))
+      .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean);
+    const uniq=[...new Set(ds)];
+    for(let i=0;i<uniq.length;i++)
+      for(let j=i+1;j<uniq.length;j++){
+        const a=uniq[i],b=uniq[j];
+        const k=a<b?a+':'+b:b+':'+a;
+        edgeMap[k]=(edgeMap[k]||0)+1;
+      }
+  });
+
+  const maxCount=sorted[0][1];
+  const nodes=sorted.map(([id,count])=>({
+    id, count, cat:CAT[id]||'OTHER',
+    sx:0,sy:0,sz:0, vx:0,vy:0,vz:0,
+    px:0,py:0,depth:0
+  }));
+  const nMap={}; nodes.forEach(n=>nMap[n.id]=n);
+
+  const maxEdge=Math.max(...Object.values(edgeMap),1);
+  const coEdges=Object.entries(edgeMap)
+    .filter(([,v])=>v>=1).sort((a,b)=>b[1]-a[1]).slice(0,120)
+    .map(([k,v])=>{const[a,b]=k.split(':');return{s:nMap[a],t:nMap[b],w:v/maxEdge,isCo:true};})
+    .filter(e=>e.s&&e.t);
+
+  // Within-category topology edges for visual sphere density
+  const catNodes={};
+  nodes.forEach(n=>{if(!catNodes[n.cat])catNodes[n.cat]=[];catNodes[n.cat].push(n);});
+  const taxEdges=[];
+  Object.values(catNodes).forEach(list=>{
+    for(let i=0;i<list.length;i++){
+      if(i+1<list.length) taxEdges.push({s:list[i],t:list[i+1],w:0.25,isCo:false});
+      if(i+2<list.length) taxEdges.push({s:list[i],t:list[i+2],w:0.15,isCo:false});
+      if(i+4<list.length) taxEdges.push({s:list[i],t:list[i+4],w:0.10,isCo:false});
+    }
+  });
+  const edges=[...coEdges,...taxEdges];
+
+  let zoom=1.0;
+
+  el.innerHTML=`
+    <div style="display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden">
+      <div class="sec-hd" style="padding:10px 14px 8px;flex-shrink:0;display:flex;align-items:center;gap:8px">
+        <b style="flex:1">${D.leaves.length.toLocaleString()} FRAMES · ${D.leaves.filter(p=>p.verdict==='core').length} CORE · ${nodes.length} DIRS · ${coEdges.length} CO-LINKS</b>
+        <span style="font-size:5px;color:var(--g3);letter-spacing:0">
+          ${Object.entries(CCOLOR).map(([c,col])=>`<span style="color:${col}">◉ ${c}</span>`).join(' ')}
+        </span>
+        <button id="gZoomIn"  style="background:none;border:1px solid var(--g3);color:var(--g);font-family:inherit;font-size:6px;padding:2px 6px;cursor:pointer;letter-spacing:1px">+</button>
+        <button id="gZoomOut" style="background:none;border:1px solid var(--g3);color:var(--g);font-family:inherit;font-size:6px;padding:2px 6px;cursor:pointer;letter-spacing:1px">−</button>
+      </div>
+      <div id="gWrap" style="flex:1;position:relative;min-height:0">
+        <canvas id="dirGraph" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        <div id="gTip" style="position:absolute;pointer-events:none;display:none;background:rgba(0,8,3,0.95);border:1px solid var(--g);padding:5px 8px;font-size:5.5px;color:var(--g);letter-spacing:1px;line-height:1.8;z-index:9"></div>
+      </div>
+    </div>`;
+
+  const wrap=el.querySelector('#gWrap');
+  const cv=el.querySelector('#dirGraph');
+  const tip=el.querySelector('#gTip');
+  let W=0,H=0,dpr=1;
+
+  function resize(){
+    dpr=window.devicePixelRatio||1;
+    W=wrap.clientWidth; H=wrap.clientHeight;
+    cv.width=W*dpr; cv.height=H*dpr;
+  }
+
+  // Fibonacci sphere: evenly distribute N points on unit sphere surface
+  function initPositions(){
+    const N=nodes.length;
+    const phi=(1+Math.sqrt(5))/2;
+    nodes.forEach((n,i)=>{
+      const cosP=1-2*(i+0.5)/N;
+      const sinP=Math.sqrt(Math.max(0,1-cosP*cosP));
+      const theta=2*Math.PI*i/phi;
+      n.sx=sinP*Math.cos(theta);
+      n.sy=cosP;
+      n.sz=sinP*Math.sin(theta);
+      n.vx=0;n.vy=0;n.vz=0;
+    });
+  }
+
+  function normSphere(n){
+    const l=Math.sqrt(n.sx*n.sx+n.sy*n.sy+n.sz*n.sz)||1;
+    n.sx/=l;n.sy/=l;n.sz/=l;
+  }
+  function projTangent(n){
+    const d=n.vx*n.sx+n.vy*n.sy+n.vz*n.sz;
+    n.vx-=d*n.sx;n.vy-=d*n.sy;n.vz-=d*n.sz;
+  }
+
+  let rotY=0;
+  let frame=0, forceDone=false;
+
+  function tick(){
+    const alpha=forceDone?0:Math.max(0,1-frame/280);
+    if(!forceDone&&alpha<0.002){forceDone=true;}
+
+    if(!forceDone){
+      // Surface repulsion
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          const a=nodes[i],b=nodes[j];
+          const dx=b.sx-a.sx,dy=b.sy-a.sy,dz=b.sz-a.sz;
+          const d2=dx*dx+dy*dy+dz*dz;
+          if(d2>3.2) continue;
+          const f=0.9/(d2+0.02)*alpha;
+          a.vx-=f*dx;a.vy-=f*dy;a.vz-=f*dz;
+          b.vx+=f*dx;b.vy+=f*dy;b.vz+=f*dz;
+        }
+      }
+      // Edge spring
+      edges.forEach(({s,t,w,isCo})=>{
+        if(!s||!t) return;
+        const dx=t.sx-s.sx,dy=t.sy-s.sy,dz=t.sz-s.sz;
+        const d=Math.sqrt(dx*dx+dy*dy+dz*dz)+0.01;
+        const rest=isCo?0.35:0.58;
+        const f=0.06*(d-rest)*Math.max(w,0.15)*alpha;
+        s.vx+=f*dx/d;s.vy+=f*dy/d;s.vz+=f*dz/d;
+        t.vx-=f*dx/d;t.vy-=f*dy/d;t.vz-=f*dz/d;
+      });
+      const DAMP=0.76+0.22*(1-alpha);
+      const VMAX=0.05*alpha+0.003;
+      nodes.forEach(n=>{
+        projTangent(n);
+        n.vx*=DAMP;n.vy*=DAMP;n.vz*=DAMP;
+        const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy+n.vz*n.vz);
+        if(spd>VMAX){n.vx=n.vx/spd*VMAX;n.vy=n.vy/spd*VMAX;n.vz=n.vz/spd*VMAX;}
+        n.sx+=n.vx;n.sy+=n.vy;n.sz+=n.vz;
+        normSphere(n);
+      });
+      frame++;
+    }
+    rotY+=0.004;
+  }
+
+  function project(){
+    const cx=W*0.5,cy=H*0.5;
+    const R=Math.min(W,H)*0.40*zoom;
+    const FOV=2.2;
+    const cosY=Math.cos(rotY),sinY=Math.sin(rotY);
+    nodes.forEach(n=>{
+      const rx=n.sx*cosY+n.sz*sinY;
+      const ry=n.sy;
+      const rz=-n.sx*sinY+n.sz*cosY;
+      const scale=FOV/(rz+FOV);
+      n.px=cx+R*rx*scale;
+      n.py=cy-R*ry*scale;
+      n.depth=rz;
+    });
+    nodes.sort((a,b)=>a.depth-b.depth);
+  }
+
+  function draw(){
+    const ctx=cv.getContext('2d');
+    ctx.save();ctx.scale(dpr,dpr);
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
+
+    project();
+
+    // Edges
+    edges.forEach(({s,t,w,isCo})=>{
+      if(!s||!t) return;
+      const avgD=(s.depth+t.depth)*0.5;
+      const df=0.35+0.65*((avgD+1)*0.5);
+      const isHov=hov&&(s.id===hov.id||t.id===hov.id);
+      const col=CCOLOR[s.cat]||'#00dd55';
+      const a=isHov?0.95:(isCo?0.65+w*0.30:0.42)*df;
+      ctx.beginPath();ctx.moveTo(s.px,s.py);ctx.lineTo(t.px,t.py);
+      ctx.strokeStyle=col+Math.round(a*255).toString(16).padStart(2,'0');
+      ctx.lineWidth=isHov?2.2:isCo?1.0+w*1.0:0.7;
+      if(isHov){ctx.shadowBlur=6;ctx.shadowColor=col;}
+      ctx.stroke();
+      ctx.shadowBlur=0;
+    });
+
+    // Nodes (back→front)
+    nodes.forEach(n=>{
+      const col=CCOLOR[n.cat]||'#557755';
+      const isHov=hov&&hov.id===n.id;
+      const df=0.2+0.8*((n.depth+1)*0.5);
+      const r=isHov?5:1+Math.pow(n.count/maxCount,0.5)*2.5;
+
+      ctx.beginPath();ctx.arc(n.px,n.py,r,0,Math.PI*2);
+      const fa=(isHov?0.95:0.55)*df;
+      ctx.fillStyle=col+Math.round(fa*255).toString(16).padStart(2,'0');
+      ctx.shadowBlur=isHov?24:n.depth>0.2?10:3;
+      ctx.shadowColor=col;
+      ctx.fill();
+      ctx.shadowBlur=0;
+
+      if(isHov){
+        ctx.strokeStyle='#eeffee88';ctx.lineWidth=1;ctx.stroke();
+        ctx.fillStyle='#eeffee';
+        ctx.font='6px "Press Start 2P",monospace';
+        ctx.textAlign='center';ctx.textBaseline='bottom';
+        ctx.shadowBlur=8;ctx.shadowColor=col;
+        ctx.fillText(n.id,n.px,n.py-r-3);
+        ctx.shadowBlur=0;
+      } else if(n.depth>0.4&&n.count>maxCount*0.12){
+        ctx.fillStyle=col+Math.round(df*0.65*255).toString(16).padStart(2,'0');
+        ctx.font='4px "Press Start 2P",monospace';
+        ctx.textAlign='center';ctx.textBaseline='bottom';
+        ctx.fillText(n.id,n.px,n.py-r-1);
+      }
+    });
+    ctx.restore();
+  }
+
+  let hov=null;
+  function canvasXY(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+  function nearest(px,py){
+    let best=null,bd=Infinity;
+    nodes.forEach(n=>{
+      if(n.depth<-0.5) return;
+      const r=1+Math.pow(n.count/maxCount,0.5)*2.5;
+      const d=Math.hypot(n.px-px,n.py-py);
+      if(d<r+10&&d<bd){bd=d;best=n;}
+    });
+    return best;
+  }
+  cv.onmousemove=ev=>{
+    const {x,y}=canvasXY(ev);
+    hov=nearest(x,y);
+    if(hov){
+      cv.style.cursor='pointer';
+      tip.style.display='block';
+      tip.style.left=Math.min(x+14,W-110)+'px';
+      tip.style.top=Math.max(y-36,4)+'px';
+      const conn=coEdges.filter(e=>e.s.id===hov.id||e.t.id===hov.id).length;
+      tip.innerHTML=`${hov.id}<br><span style="color:var(--g3)">${hov.cat} · ${hov.count}× · ${conn} links</span>`;
+    } else {
+      cv.style.cursor='default';tip.style.display='none';
+    }
+  };
+  cv.onmouseleave=()=>{hov=null;tip.style.display='none';};
+
+  document.querySelectorAll('.mbtn').forEach(b=>{
+    const prev=b.onclick;
+    b.onclick=ev=>{cancelAnimationFrame(_fieldAnimId);_fieldAnimId=null;if(prev)prev.call(b,ev);};
+  });
+
+  resize();
+  initPositions();
+  new ResizeObserver(()=>resize()).observe(wrap);
+  el.querySelector('#gZoomIn').onclick=()=>{zoom=Math.min(zoom+0.15,3.0);};
+  el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.15,0.3);};
+
+  function loop(){
+    const steps=forceDone?1:4;
+    for(let i=0;i<steps;i++)tick();
+    draw();
+    _fieldAnimId=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* ── EXPORT ── */
+function renderExport(el, D){
+  const core=D.leaves.filter(p=>p.verdict==='core');
+  const sup=D.leaves.filter(p=>p.verdict==='support');
+  const getFn=p=>(p.filename||p.url||p.id||'').split('/').pop();
+  const coreList=core.map(getFn).filter(Boolean);
+  const supList=sup.map(getFn).filter(Boolean);
+  el.innerHTML=`<div class="sec-wrap">
+    <div class="sec-hd">EXPORT · 선택 목록</div>
+    <div class="exp-actions">
+      <button class="exp-btn" id="expCopyAll">COPY ALL</button>
+      <button class="exp-btn" id="expCopyCore">CORE ONLY</button>
+      <button class="exp-btn" id="expDownload">DOWNLOAD JSON</button>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-hd">CORE · ${coreList.length} FILES</div>
+      <div class="exp-list">${coreList.join('<br>')}</div>
+    </div>
+    <div class="exp-section">
+      <div class="exp-section-hd">SUPPORT · ${supList.length} FILES</div>
+      <div class="exp-list">${supList.join('<br>')}</div>
+    </div>
+  </div>`;
+  el.querySelector('#expCopyAll').onclick=()=>{
+    navigator.clipboard.writeText([...coreList,...supList].join('\n'))
+      .then(()=>log('SYS',false,'EXPORT: '+(coreList.length+supList.length)+' FILENAMES COPIED'))
+      .catch(()=>log('SYS',false,'CLIPBOARD ACCESS DENIED'));
+  };
+  el.querySelector('#expCopyCore').onclick=()=>{
+    navigator.clipboard.writeText(coreList.join('\n'))
+      .then(()=>log('SYS',false,'EXPORT: '+coreList.length+' CORE FILENAMES COPIED'))
+      .catch(()=>log('SYS',false,'CLIPBOARD ACCESS DENIED'));
+  };
+  el.querySelector('#expDownload').onclick=()=>{
+    const obj={core:core.map(p=>({id:p.id,file:getFn(p),dir:p.dir})),
+               support:sup.map(p=>({id:p.id,file:getFn(p),dir:p.dir}))};
+    const a=document.createElement('a');
+    a.href='data:application/json,'+encodeURIComponent(JSON.stringify(obj,null,2));
+    a.download='SET_selection.json'; a.click();
+    log('SYS',false,'EXPORT: JSON DOWNLOADED');
+  };
+}
+
+/* ── OPTIONS ── */
+const OPT={grid:'MD',crt:true,scanline:true,theme:'GREEN'};
+function renderOptions(el){
+  el.innerHTML=`<div class="sec-wrap">
+    <div class="sec-hd">OPTIONS · 인터페이스 설정</div>
+    <div class="opt-section">
+      <div class="opt-section-hd">DISPLAY</div>
+      <div class="opt-row">
+        <span class="opt-lbl">GRID SIZE</span>
+        ${['SM','MD','LG'].map(v=>`<button class="opt-btn${OPT.grid===v?' on':''}" data-opt="grid" data-val="${v}">${v}</button>`).join('')}
+      </div>
+      <div class="opt-row">
+        <span class="opt-lbl">CRT EFFECT</span>
+        ${['ON','OFF'].map(v=>`<button class="opt-btn${(OPT.crt?'ON':'OFF')===v?' on':''}" data-opt="crt" data-val="${v}">${v}</button>`).join('')}
+      </div>
+      <div class="opt-row">
+        <span class="opt-lbl">SCANLINES</span>
+        ${['ON','OFF'].map(v=>`<button class="opt-btn${(OPT.scanline?'ON':'OFF')===v?' on':''}" data-opt="scanline" data-val="${v}">${v}</button>`).join('')}
+      </div>
+    </div>
+    <div class="opt-section">
+      <div class="opt-section-hd">THEME</div>
+      <div class="opt-row">
+        <span class="opt-lbl">COLOR</span>
+        ${['GREEN','AMBER','BLUE'].map(v=>`<button class="opt-btn${OPT.theme===v?' on':''}" data-opt="theme" data-val="${v}">${v}</button>`).join('')}
+      </div>
+    </div>
+    <div class="opt-section">
+      <div class="opt-section-hd">INFO</div>
+      <div style="font-size:5.5px;color:var(--g3);line-height:2">
+        VERSION: SET_NULL_CH v0.1<br>
+        BUILD: 2026.05.31<br>
+        RECORDS: ${(window.SET_DATA&&window.SET_DATA.leaves.length)||'—'}<br>
+        AGENT: RESTRICTED / LEVEL-2
+      </div>
+    </div>
+  </div>`;
+  el.querySelectorAll('.opt-btn').forEach(btn=>btn.onclick=()=>{
+    const opt=btn.dataset.opt, val=btn.dataset.val;
+    OPT[opt]=opt==='crt'||opt==='scanline'? val==='ON' : val;
+    // CRT 토글
+    if(opt==='crt') document.querySelector('.crt').style.display=OPT.crt?'block':'none';
+    // 스캔라인
+    if(opt==='scanline'){
+      const scan=document.getElementById('gallery-scan');
+      if(scan) scan.style.display=OPT.scanline?'block':'none';
+    }
+    // 그리드 크기
+    if(opt==='grid'){
+      const sizes={SM:60,MD:80,LG:110};
+      const galCells=document.getElementById('galCells');
+      if(galCells) galCells.style.gridTemplateColumns=`repeat(auto-fill,minmax(${sizes[val]}px,1fr))`;
+    }
+    // 테마
+    if(opt==='theme'){
+      const themes={GREEN:['#00dd55','#9bff3a'],AMBER:['#ddaa00','#ffee55'],BLUE:['#0088dd','#55ccff']};
+      const [g,acc]=themes[val]||themes.GREEN;
+      document.documentElement.style.setProperty('--g',g);
+      document.documentElement.style.setProperty('--acc',acc);
+    }
+    renderOptions(el);
+    log('SYS',false,'OPT: '+opt+'='+val);
+  });
+}
+// HOME → 이 페이지 메인 (갤러리 루트)
+document.getElementById('homeBtn').onclick=()=>{
+  document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
+  document.querySelector('.mbtn[data-sec="GALLERY"]').classList.add('on');
+  S.sec='GALLERY'; renderMapInfo(); updateCtx();
+  document.getElementById('gallery-inner').style.display='flex';
+  document.getElementById('emptyState').style.display='none';
+  if(window._galRenderRoot) window._galRenderRoot();
+  log('SYS',false,'→ ROOT');
+};
+
+// SPOTLIGHT 패널 — 가장 많이 클릭된 사진 우선
+function initSpotlight(){
+  const D=window.SET_DATA; if(!D||!D.leaves.length) return;
+  const pool=D.leaves.filter(p=>p.verdict==='core');
+  let idx=Math.floor(Math.random()*pool.length);
+
+  function getTopClicked(){
+    // _clickMap에서 가장 많이 클릭된 core 사진 찾기
+    let best=null, bestCount=0;
+    pool.forEach(p=>{
+      const pid=p.id||p.filename||p.url||'';
+      const c=window._clickMap[pid]||0;
+      if(c>bestCount){ bestCount=c; best=p; }
+    });
+    return best;
+  }
+
+  function show(){
+    const top=getTopClicked();
+    const p=top||pool[idx];
+    const pid=p.id||p.filename||p.url||'';
+    const cnt=window._clickMap[pid]||0;
+    const url=(p.filename||p.url||'').replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
+    const file=(p.filename||p.url||'').split('/').pop();
+    const dirs=String(p.dir||'').split(/[\s,;]+/).filter(d=>d&&d!=='/'&&/[A-Za-z]/.test(d))
+      .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean).slice(0,6);
+    document.getElementById('spThumb').src=url;
+    document.getElementById('spThumb').style.display='';
+    document.getElementById('spFile').textContent=file;
+    document.getElementById('spBatch').textContent=(p.batchKey||'—')+' · '+(p.monthKey||'—');
+    document.getElementById('spVerdict').innerHTML=`<span style="color:var(--acc)">◉ CORE</span>`;
+    const label=cnt>0?`▲${cnt} CLICKS · TOP`:`${idx+1} / ${pool.length} · CORE`;
+    document.getElementById('spMeta').textContent=label;
+    document.getElementById('spDirs').innerHTML=dirs.map(d=>`<span class="sp-dir-tag">${d}</span>`).join('');
+  }
+  show();
+  // 이미지 클릭 → 갤러리 안에서 열기
+  document.getElementById('spImg').onclick=()=>{
+    const top=getTopClicked();
+    const p=top||pool[idx];
+    if(window._galOpenPhoto) window._galOpenPhoto(p);
+  };
+  document.getElementById('spNext').onclick=()=>{ idx=(idx+1)%pool.length; show(); };
+  // 클릭 후 SPOTLIGHT 갱신
+  window._onPhotoClick=show;
+}
+// 데이터 로드 후 초기화 (약간 지연)
+// initSpotlight는 데이터 로드 후 직접 호출됨
+// ════ 프레임 모델 (결정론적) ════
+const VERDS=['CORE','SUP','DROP','DROP','DROP'];
+const SCENES=['STREET','ALLEY','CROSSING','MARKET','RIVERSIDE','STATION','ARCADE'];
+const TAGSETS=[['STREET','DAY'],['NIGHT','NEON'],['PORTRAIT'],['ARCHITECTURE'],['MOTION','BLUR']];
+const BRIEFS={STREET:'보행자 흐름 · 비개입 관찰',ALLEY:'골목 명암 대비 · 정적 구도',CROSSING:'횡단 대기 군중 · 결정적 순간',MARKET:'상점가 활기 · 색 밀도',RIVERSIDE:'수변 원경 · 여백 확보',STATION:'환승 동선 · 모션 포착',ARCADE:'아케이드 반사 · 네온'};
+function curCount(){ const d=DIRS.find(x=>x.n===S.dir); return d?d.c:198; }
+function frameData(n){
+  const v=VERDS[(n*7)%5];
+  const shtr=['1/60','1/125','1/250','1/500','1/1000'][n%5];
+  const apt=['F2.0','F2.8','F4.0','F5.6','F8.0'][(n*2)%5];
+  const iso=[200,400,800,1600,3200][(n*3)%5];
+  const lens=(n%3===0)?'XF35mmF2':'XF23mmF2';
+  const hh=String(8+(n%11)).padStart(2,'0'),mm=String((n*7)%60).padStart(2,'0'),ss=String((n*13)%60).padStart(2,'0');
+  return {n,v,shtr,apt,iso,lens,time:hh+':'+mm+':'+ss,
+    scene:SCENES[(n*5)%SCENES.length], tags:TAGSETS[(n*3)%TAGSETS.length],
+    file:'SET_'+S.dir.slice(0,7)+'_'+String(n).padStart(4,'0')};
+}
+const VC={CORE:'core',SUP:'',DROP:'drop'};
+
+// ── SCAN / ANALYSIS ──
+function renderScan(d){
+  document.getElementById('fiThumbN').textContent=String(d.n).padStart(4,'0');
+  document.getElementById('fiVerdict').textContent=d.v;
+  const tx=12+(d.n*13)%76, ty=14+(d.n*7)%72;
+  const tk=document.getElementById('scTick'); tk.style.left=tx+'%'; tk.style.top=ty+'%';
+  const focus=(0.70+((d.n*17)%30)/100).toFixed(2);
+  const expo=['-0.3','0.0','+0.3','+0.7','-0.7'][d.n%5];
+  const edge=40+(d.n*11)%55, noise=5+(d.n*7)%28;
+  document.getElementById('scReadout').innerHTML=
+    `<span class="rk">FOCUS</span> <b>${focus}</b>  <span class="rk">EXP</span> <b>${expo}EV</b><br>`+
+    `<span class="rk">EDGE</span><span class="sc-bar"><i style="width:${edge}%"></i></span> <b>${edge}%</b><br>`+
+    `<span class="rk">NOISE</span><span class="sc-bar"><i style="width:${noise}%"></i></span> <b>${noise}%</b>`;
+}
+// ── METADATA ──
+function renderMeta(d){
+  document.getElementById('fiMeta').innerHTML=
+    `<span class="mk">FILE</span><span class="mv">${d.file}</span>`+
+    `<span class="mk">TIME</span><span class="mv">${d.time}</span>`+
+    `<span class="mk">SHTR</span><span class="mv">${d.shtr}</span>`+
+    `<span class="mk">APT</span><span class="mv">${d.apt}</span>`+
+    `<span class="mk">ISO</span><span class="mv">${d.iso}</span>`+
+    `<span class="mk">LENS</span><span class="mv">${d.lens}</span>`+
+    `<span class="mk">SCENE</span><span class="mv">${d.scene}</span>`+
+    `<span class="mk">VERDICT</span><span class="mv ${VC[d.v]}">${d.v}</span>`;
+}
+// 실제 사진 데이터로 METADATA 패널 업데이트
+function renderPhotoMeta(p){
+  if(!p) return;
+  const file=(p.filename||p.url||'').split('/').pop()||'—';
+  const v=(p.verdict||'drop').toUpperCase();
+  const vCls={CORE:'core',SUPPORT:'sup',DROP:'drop'}[v]||'drop';
+  const dirStr=String(p.dir||'').split(/[\s,;]+/)
+    .filter(d=>d&&d!=='/'&&/[A-Za-z]/.test(d))
+    .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean).join(' · ')||'—';
+  const batch=(p.batchKey||'—').replace(/\//g,'-');
+  const month=(p.monthKey||'—');
+  document.getElementById('fiMeta').innerHTML=
+    `<span class="mk">FILE</span><span class="mv" title="${file}">${file}</span>`+
+    `<span class="mk">VERDICT</span><span class="mv ${vCls}">${v}</span>`+
+    `<span class="mk">BATCH</span><span class="mv">${batch}</span>`+
+    `<span class="mk">MONTH</span><span class="mv">${month}</span>`+
+    `<span class="mk">DIR</span><span class="mv" title="${dirStr}" style="white-space:normal;line-height:1.6">${dirStr}</span>`;
+  const vTab=document.getElementById('fiVerdict');
+  if(vTab){ vTab.textContent=v; vTab.className='pnl-tab '+vCls; }
+  // SOURCE RECORD: DIR 지시문 표시
+  renderDirInstruction(p.dir);
+  // SCAN 패널 이미지 업데이트
+  const full=p.filename||p.url||'';
+  if(full && typeof setScanPhoto==='function') setScanPhoto(full);
+}
+// ── DIR 지시문 (1차 지시문) ──
+const DIR_INSTRUCTIONS={
+  // ── 2차 SPACE (14) ──
+  HRZLAY:`원본 문법(G-01): 교량·방음벽·비계·발광 구조물·도로 면 등 인공 구조물이 화면의 수평 경계를 형성하며 자연·도시 경관 사이에 끼어들어 상하 이질적 영역을 물리적으로 분리한다. 인공 레이어와 인접 레이어(식생·수면·하늘·건물군)가 재질·색조·기능에서 뚜렷하게 이질적이다. 인공 구조물이 배경·수직 요소로만 기능하거나 자연 레이어만 원근으로 적층되는 일반 풍경은 포함하지 않는다.
+
+교량·방음벽·비계·도로 면 등 인공 구조물이 수평 경계를 형성하는 지점을 찾아라. 인공 레이어가 상하의 이질적 영역(식생·수면·하늘·건물군)을 기계적으로 분리하도록 거리와 각도를 조정하라. 인공 레이어가 자연·도시 경관 사이에 단절선으로 끼어들고, 인공 레이어와 인접 레이어가 재질·색조·기능에서 뚜렷하게 이질적으로 읽힐 때 멈춘다.
+
+기각: 인공 구조물이 배경 요소 또는 수직 구조로만 기능하는 경우 / 자연 레이어(식생·수면·하늘)가 원근으로 적층되지만 인공 수평 침입 구조가 없는 일반 풍경인 경우 / 인공 레이어와 인접 레이어 사이의 이질감이 없어 단일 공간으로 읽히는 경우`,
+  WNDGLO:`원본 문법(G-02): 야간 또는 박명 환경에서 건물 외벽이 어둠에 소거되고 창문 내부 조명이 발광하여, 발광 창문과 어두운 외벽의 명도 대비가 화면의 지배적 시각 조건을 형성한다. 건물 외부 투광 조명이나 간판·네온·상징물 자체 발광이 주된 광원인 경우는 포함하지 않는다.
+
+야간 또는 박명 환경에서 건물 외벽이 어둠에 소거된 상태를 찾아라. 창문 내부 조명이 발광하고 외벽 면적의 대부분이 어둠에 흡수되도록 노출을 조정하라. 발광하는 창문과 어두운 외벽의 명도 대비가 화면의 지배적 시각 조건으로 기능하고, 창문의 위치·크기·수가 외벽 구조를 부분적으로 드러낼 때 멈춘다.
+
+기각: 건물 외부 투광 조명으로 외벽 전체가 밝혀진 경우 / 간판·네온·상징물(십자가·로고) 자체 발광이 주된 광원인 경우 (→ SPTISO) / 외벽 면적 대부분이 어둠에 소거되지 않아 창문 발광의 대비 구조가 성립하지 않는 경우`,
+  SPTISO:`원본 문법(G-03): 어두운 공간(야간 또는 실내 암실 환경)에서 하나의 집중된 조명 구역이 좁은 범위만을 밝히고 나머지 배경은 어둠으로 소거된다. 광원은 단일 인공 조명·촛불 군집·창 틈 빛 등 하나의 집중된 조명 구역으로 기능하는 것이면 포함한다. 건물 창문 내부 조명이 외벽을 발광시키는 경우는 G-02, 자연 광원이나 화면 전체를 고르게 조명하는 경우는 포함하지 않는다.
+
+어두운 공간(야간 또는 실내 암실 환경)에서 하나의 조명 구역을 찾아라. 조명 받은 오브제 또는 구역이 밝게 부각되고 조명 밖 배경 대부분이 어둠으로 소거되도록 위치와 각도를 잡아라. 단 하나의 조명 구역이 좁은 범위만을 선택적으로 밝히고, 나머지 배경은 어둠에 소거되며, 조명 구역 내 오브제만이 화면의 주된 시각 정보로 기능할 때 멈춘다.
+
+기각: 두 개 이상의 광원이 공간을 분산 조명하는 경우 / 자연 광원(태양·구름 빛)이 광원으로 기능하는 경우 / 배경이 완전히 어둠에 소거되지 않아 공간 정보가 가시화되는 경우 / 빛이 표면에 그림자·광반 패턴을 새기는 구조인 경우 (→ LGTPAT)`,
+  VANSRC:`원본 문법(G-04): 도로·터널·수로·수목 열 등 선형 구조물이 단일 발광·역광 지점으로 수렴하며, 수렴 구조와 광학 에너지가 동일 소실점에 집중되어 화면 전체가 흡인되는 시각 구조가 형성된다. 또는 블러·박명으로 수렴선만이 화면의 유일한 형태 정보로 남는 경우도 포함한다. 광원 없는 일반 원근 구도는 포함하지 않는다.
+
+도로·터널·수로·수목 열 등 선형 구조물이 수렴하는 지점을 찾아라. 수렴 지점에 발광 또는 역광이 집중되도록 방향을 잡거나, 블러·박명 조건에서 수렴선이 유일한 형태 정보로 남도록 노출과 각도를 조정하라. 수렴 구조와 광학 에너지가 동일 소실점에 집중되어 화면 전체가 그 지점을 향해 흡인되거나, 수렴선만이 화면의 유일한 식별 가능 형태일 때 멈춘다.
+
+기각: 소실점에 광원이 없고 화면 내 다른 형태들이 충분히 식별되는 일반 원근 구도인 경우 / 선형 구조가 수렴하지 않고 평행하게 유지되는 경우 / 광원이 있지만 선형 구조와 소실점을 공유하지 않는 경우`,
+  FUNREV:`원본 문법(G-05): ①방치·퇴거 유형 — 공간이 원래 기능을 잃은 상태에서 이전 기능의 오브제들이 방치·집적되어 이전 용도를 물질로 기록한다. ②기능 침입 유형 — 공간의 원래 용도와 다른 오브제 또는 활동이 현재 존재하여 기능적 충돌이 가시화된다. 창고·보관실 등 혼합 기능이 일상적으로 인정되는 공간은 포함하지 않는다.
+
+공간의 현재 물리 용도와 오브제들의 기능적 귀속이 불일치하는 장소를 찾아라. ①원래 기능을 잃은 공간에 이전 용도의 오브제들이 방치·집적된 상태이거나 ②공간 코드와 오브제 코드의 불일치가 단일 프레임에서 병치되도록 위치와 각도를 잡아라. 공간과 오브제 사이의 기능적 충돌 또는 이전 용도의 물질 흔적이 화면의 주된 시각 정보로 기능할 때 멈춘다.
+
+기각: 창고·보관실 등 혼합 기능이 일상적으로 인정되는 공간인 경우 / 공간과 오브제의 기능이 일치하여 충돌이 없는 경우 / 기능 오브제의 집적 밀도가 기대치를 초과하지만 기능 불일치가 없는 경우 (→ FUNSAT)`,
+  FOGDIS:`원본 문법(G-06): 안개·박명·과노출 등 자연 환경 조건에 의해 배경이 단색 또는 저채도 색면으로 균질화되고, 공간 경계 대부분이 소멸하며 하나 또는 소수의 요소만이 시각 앵커로 남는다. 아웃포커스·모션 블러 등 카메라 기법에 의한 소멸은 포함하지 않는다. ①균질화 색면이 화면 면적 2/3 이상 + 형태 요소 1~3개 이하 ②형태 요소 완전 소거 ③색조·명도 범위가 극도로 압축되어 단색 추상 구성에 근접 중 하나를 충족해야 한다.
+
+안개·박명·과노출 등 자연 환경 조건으로 배경이 균질화된 상황을 찾아라. 균질화된 색면이 화면 면적의 2/3 이상을 점유하거나 형태 요소가 1~3개 이하로 제한되도록 구도를 잡아라. 자연 조건에 의해 공간 경계가 소멸하고 단색 또는 저채도 색면이 화면을 지배하며, 살아남은 소수 요소만이 시각 앵커로 기능할 때 멈춘다.
+
+기각: 아웃포커스·모션 블러 등 카메라 기법으로 경계가 소멸하는 경우 — 자연 환경 조건이어야 함 / 안개·박명이 있어도 배경에서 다수의 형태 요소가 색조·명도 차이를 유지하며 식별되는 일반 저시정 사진인 경우 / 단일 소재·색채가 표면을 의도적으로 피복하는 경우 (→ MATCOV)`,
+  EQREP:`원본 문법(G-07): 동일하거나 유사한 형태·재질의 구조물이 규칙적 등간격으로 배열되어 화면의 지배적 기하 패턴을 형성한다. ①선형 배열(볼라드 열·창문 행·기둥 열) ②격자 배열(타일·패널·창문 격자). 화면 면적의 과반 이상을 점유하며 배경이 반복 패턴에 부수적인 경우만 포함, 3개 이하 소수 반복과 불규칙 배열은 포함하지 않는다.
+
+동일하거나 유사한 형태·재질의 구조물이 규칙적 등간격으로 배열된 상태를 찾아라. 반복 요소들이 ①단일 방향 선형 배열 또는 ②수평·수직 격자 배열로 화면 면적의 과반 이상을 점유하도록 거리와 각도를 잡아라. 등간격 반복 패턴이 화면의 지배적 기하 구조를 형성하고, 배경이 반복 패턴에 부수적으로 처리될 때 멈춘다.
+
+기각: 반복 요소들이 불규칙하게 배열되어 등간격 패턴이 형성되지 않는 경우 (→ UNIDIST) / 반복 요소가 3개 이하로 소수에 그쳐 패턴 지배력이 없는 경우 / 반복 요소가 화면 면적의 과반 미만이고 배경이 우선하는 경우`,
+  ISOOBJ:`원본 문법(G-08): 광대하거나 균질한 배경 환경(광장·초원·설원·빈 하늘·텅 빈 공간) 안에서 단일 구조물 또는 오브제가 인접 요소 없이 단독으로 고립 배치된다. 오브제와 배경 사이의 스케일·재질·색채 대비가 시각적 긴장을 형성한다. 복수 오브제가 군집을 이루거나 배경과 동화되어 대비가 없는 경우는 포함하지 않는다.
+
+광대하거나 균질한 배경 환경(광장·초원·설원·빈 하늘·텅 빈 공간)을 찾아라. 단일 오브제 또는 구조물이 인접 동종 요소 없이 단독 고립 배치되도록 시점과 거리를 조정하라. 오브제와 배경 사이의 스케일 대비 또는 재질·색채 대비가 시각적 긴장을 형성하고, 오브제 주변에 인접 동종 요소가 없어 고립 상태가 명확히 읽힐 때 멈춘다.
+
+기각: 오브제 주변에 동종 요소가 군집하는 경우 / 오브제가 배경과 색채·재질이 동화되어 대비가 없는 경우 / 오브제가 해당 배경 공간의 일상적 사용 상황에서 그 위치에 자연스럽게 존재하는 경우 / 복수 오브제가 군집을 이루는 경우 (→ UNIDIST)`,
+  URBREFL:`원본 문법(G-09): 수면·결빙면·웅덩이 등 자연 수계 표면이 인공·도시·산업 요소의 역상을 담아 반영상이 실제보다 더 강렬한 정보 소스로 기능하거나, 반영을 통해서만 포착되는 요소가 화면의 주된 정보가 된다. 산·하늘·수목 등 자연 경관만이 단독으로 반영되는 일반 자연 반영은 포함하지 않는다.
+
+수면·결빙면·웅덩이 등 수계 표면이 인공·도시 요소를 반영하는 위치를 찾아라. 반영상이 실제보다 더 강렬한 정보이거나, 반영을 통해서만 포착되는 요소가 화면의 주된 정보가 되도록 각도와 위치를 조정하라. 수면선이 실제 세계와 역상 세계의 경계로 기능하고, 인공·도시 역상이 화면의 주된 정보를 형성하거나 실제에서 소거된 요소를 수면에서 포착할 때 멈춘다.
+
+기각: 산·하늘·수목 등 자연 경관만이 단독으로 반영되는 일반 자연 반영 구성인 경우 / 수면 반영이 없고 반영 대상이 직접 촬영된 경우 / 반영상이 배경 요소에 그쳐 화면의 주된 정보가 아닌 경우`,
+  ARTNAT:`원본 문법(G-10): ①인공물 침입 — 인공 구조물이 자연 환경 안에 놓여 재질 대비가 접촉면에서 가시화. ②자연의 잠식 — 자연 요소가 인공 구조물을 덮거나 관통하여 원래 형태를 변형. 인공물과 자연이 완전히 동화된 경우, 건물 뒤 산이나 원거리 배경에 자연이 깔리는 단순 공존은 포함하지 않는다.
+
+인공 재질과 자연 환경이 물리적으로 접촉·침범하는 지점을 찾아라. ①인공 구조물이 자연 환경 안에 놓여 재질 대비가 접촉면에서 가시화되거나 ②자연 요소가 인공 구조물을 덮거나 관통하여 원래 형태를 변형하도록 시점과 거리를 조정하라. 인공 재질과 자연 환경의 충돌 구조가 화면의 지배적 형태 정보를 형성하고, 접촉면 또는 침범 지점이 명확히 가시화될 때 멈춘다.
+
+기각: 인공 구조물이 자연 환경과 완전히 동화되어 이질감이 없는 경우 / 건물 뒤 산이나 원거리 배경에 자연이 깔리는 단순 공존인 경우 — 접촉면 또는 침범 지점이 없어야 함 / 인공물과 자연의 인접만 있고 물리적 결합·충돌이 없는 경우`,
+  LGTPAT:`원본 문법(G-11 — G-03 반전): G-03이 단일 조명으로 오브제를 고립시키는 대신, 방향성 있는 직사광 또는 인공 측광이 공간 표면(바닥·벽·파사드·담장)에 그림자·광반을 투영하여 투영된 패턴이 공간의 주된 기하 구조가 된다. 광원 자체가 주된 피사체로 부각되거나 인공 조명이 오브제를 단독 고립시키는 경우는 G-03에 귀속한다.
+
+방향성 있는 직사광 또는 인공 측광이 공간 표면(바닥·벽·파사드·담장)에 투영되는 조건을 찾아라. 그림자 또는 광반의 형태가 공간 내 물리 구조물과 동등하거나 그 이상의 시각 구조 정보를 형성하도록 각도와 시점을 조정하라. 투영된 패턴이 공간의 형태 정보를 지배하고, 빛 또는 그림자를 제거했을 때 화면의 주된 기하 구조가 소멸할 때 멈춘다.
+
+기각: 광원 자체가 화면의 주된 피사체로 부각되는 경우 / 빛이 공간을 고르게 조명하여 그림자·광반 패턴이 형성되지 않는 경우 / 단일 조명 구역이 오브제를 고립시키고 나머지 배경이 어둠에 소거되는 경우 (→ SPTISO)`,
+  UNIDIST:`원본 문법(G-12 — G-07 반전): G-07이 등간격 규칙 배열을 선택하는 대신, 동종 또는 유사한 요소들이 불규칙한 밀도와 간격으로 화면에 분산 배치된다. 밀집 구역과 희소 구역의 불규칙한 교차, 방향이나 크기의 변이가 화면의 지배적 시각 패턴을 형성한다. 등간격 배열은 EQREP, 단일 요소 고립은 ISOOBJ에 귀속한다.
+
+동종 또는 유사한 형태·재질의 요소들이 불규칙한 밀도와 간격으로 분산된 상태를 찾아라. 밀집 구역과 희소 구역의 불규칙한 교차, 방향·크기의 변이가 화면 면적의 대다수를 점유하도록 거리와 각도를 조정하라. 비균등 분포 패턴이 화면의 지배적 시각 정보를 형성하고, 개별 요소들의 간격이 불균일하여 분포 자체가 예측 불가능한 패턴을 만들 때 멈춘다.
+
+기각: 단일 요소가 배경에 고립 배치되는 경우 (→ ISOOBJ) / 동종 요소들이 규칙적 등간격으로 배열되어 등간격 패턴이 형성되는 경우 (→ EQREP)`,
+  FUNSAT:`원본 문법(G-13 — G-05 보완): G-05가 기능 불일치를 다루는 대신, 공간 기능에 부합하는 오브제·재료·기반 시설이 기대치를 초과하는 밀도로 집적되어 기능 오브제의 집적 규모 자체가 공간의 주된 시각 구조를 형성한다. 공간 기능과 오브제 기능이 불일치하거나 방치된 경우는 FUNREV에 귀속한다.
+
+공간 기능에 부합하는 오브제·재료·기반 시설이 기대치를 초과하는 밀도로 집적된 장소를 찾아라. 기능 오브제들의 물리적 집적 규모가 공간 내 이동 경로나 기능 수행 여지를 압박하거나 다른 모든 요소를 부수적 정보로 만들도록 거리와 각도를 조정하라. 기능 오브제의 집적 규모·밀도가 기능 수행에 필요한 수준을 초과하여 포화 상태에 이르고, 집적 자체가 화면의 주된 시각 구조를 형성할 때 멈춘다.
+
+기각: 집적 밀도가 기대치 내에서 기능 수행 수준에 머무는 경우 / 공간과 오브제의 기능 불일치가 가시화되거나, 원래 기능을 잃은 공간에 오브제가 방치된 경우 (→ FUNREV)`,
+  MATCOV:`원본 문법(G-14 — G-06 독립): G-06이 자연 환경 조건에 의한 균질화인 데 반해, G-14는 인공 소재·색채에 의한 의도적 균질 피복이다. 건축·구조 요소의 전체 또는 대다수 표면이 단일 소재 또는 색채로 균질하게 피복되어 공간이 하나의 균질한 물질 표면으로 인식된다. 피복 원인은 의도적 설계(도장·마감재·장식 직물) 또는 기능적 포장이다.
+
+건축·구조 요소의 전체 또는 대다수 표면이 단일 소재 또는 색채로 피복된 공간을 찾아라. 단일 소재 또는 색채의 물리적 피복이 공간 내 개별 요소들의 재질·색채 차이를 소멸시키도록 시점과 거리를 조정하라. 공간 전체 또는 주요 표면의 색조·재질이 단일 계열로 수렴하여 개별 요소들의 구별이 어려워지고, 공간이 하나의 균질한 물질 표면으로 인식될 때 멈춘다.
+
+기각: 피복이 단일 소재가 아닌 복수 소재·색채가 혼재하는 경우 / 피복이 부분적이어서 공간이 균질한 물질 표면으로 인식되지 않는 경우 / 자연 환경 조건(안개·박명·눈보라)에 의해 배경이 균질화되고 경계가 소멸하는 경우 (→ FOGDIS)`,
+  // ── 2차 OBJECT (6) ──
+  DMGPAT:`원본 문법(G-01): 사물 표면이 물리적 손상을 입은 상태에서 ①손상이 표면 전체에 반복·분포하여 패턴·텍스처로 읽히거나 ②외표면 파괴·박리에 의해 내층이 드러나 외표면과 내부가 동일 화면에 공존한다. 국소적·비정형 손상, 의도된 예술 처리, 의도적 절개는 포함하지 않는다.
+
+손상 표면을 찾아라. 손상이 표면 전체에 분포하여 패턴·텍스처로 읽히는 상태[①] 또는 외표면 파괴·박리로 내층 재료가 드러난 상태[②]가 되도록 각도와 거리를 조정하라. 손상이 화면 면적의 주요 부분을 점유하고, 손상 자체가 표면의 주요 시각 정보로 기능하거나[①] 외표면과 내층이 동일 화면 안에 공존할[②] 때 멈춘다.
+
+기각: 손상이 국소적이어서 패턴으로 읽히지 않고 내층도 드러나지 않는 경우 / 손상이 의도된 예술 처리(조각·도안)로 읽히는 경우 / 우발적 손상이 아닌 의도적 절개에 의한 내부 노출인 경우`,
+  TONEDIS:`원본 문법(G-02): 피사체와 배경이 동일하거나 근접한 색조·명도를 가져 피사체 윤곽선이 색·명도 동화에 의해 부분적 또는 전체적으로 소멸한다. 아웃포커스 처리에 의한 흐림은 포함하지 않는다 — 색·명도의 물리적 동화이어야 한다.
+
+피사체와 배경이 동일하거나 근접한 색조·명도를 공유하는 조합을 찾아라. 피사체 윤곽선이 배경과의 색·명도 동화에 의해 소멸하도록 배경을 선택하거나 위치를 조정하라. 피사체가 배경 속으로 용해되어 보이며, 윤곽선이 색·명도 동화에 의해 소멸하거나 부분적으로만 식별 가능할 때 멈춘다.
+
+기각: 피사체와 배경의 색·명도 차이가 뚜렷하여 윤곽선이 명확한 경우 / 아웃포커스 처리에 의해 피사체가 배경에 흐려지는 경우 / 빛의 형태가 표면 위에 독립적 구조물로 가시화되는 경우 (→ LGTSTR)`,
+  HETOBJ:`원본 문법(G-03): 재질·기능·맥락이 서로 다른 사물 둘 이상이 기능적 관계 없이 동일 화면 안에 배치된다. ①사물들이 인접·겹쳐 재질 충돌이 접촉면에서 가시화되거나 ②공간적으로 분리된 채 맥락 차이가 병렬로 노출된다. 기능적으로 연관된 사물 집합은 포함하지 않는다.
+
+재질·기능·맥락이 서로 다른 사물 둘 이상을 찾아라. ①사물들이 인접하거나 겹쳐 재질 충돌이 접촉면에서 가시화되거나 ②공간적으로 분리된 채 각 사물의 맥락 차이가 병렬로 노출되도록 위치와 각도를 잡아라. 두 사물 이상이 기능적 관계 없이 동일 화면 안에서 재질·맥락의 이질성이 주요 시각 정보로 기능할 때 멈춘다.
+
+기각: 사물들이 기능적으로 연관된 경우(공구 세트·주방 도구 모음 등 동일 용도 집합) / 사물이 하나만 있고 배경과의 재질 대비만 있는 경우 / 사물 간 이질성보다 유사성이 지배적인 경우 (→ OBJREP)`,
+  DOCAGE:`원본 문법(G-04): ①기록물(사진·장부·달력·도해)에서 물리적 열화(변색·황변·색 바램·오염)가 기록 내용보다 시각적으로 우선하거나 ②인쇄 표면(종이·포스터·전자 화면·표지판)이 극단 클로즈업 또는 광학 현상에 의해 잉크·지면·픽셀·반사 구조 등 물리 질감이 텍스트 의미보다 시각적으로 우선한다. 기록 내용·텍스트 의미가 주요 정보인 경우는 포함하지 않는다.
+
+기록물 또는 인쇄 표면을 찾아라. ①기록물의 물리적 열화 상태(변색·황변·색 바램·오염)가 기록 내용보다 시각적으로 우선하도록 거리와 각도를 조정하라. 또는 ②인쇄 표면을 극단 클로즈업하거나 광학 현상(회절·반사)이 발생하는 각도를 잡아 잉크·픽셀·반사 구조 등 물리 질감이 텍스트 의미보다 우선하도록 하라. 기록 내용이나 텍스트 의미가 아닌 물리적 상태가 화면의 주요 시각 정보를 담당할 때 멈춘다.
+
+기각: 기록 내용 또는 텍스트 의미가 여전히 주요 정보로 읽히는 경우 / 열화나 물질화가 부분적이어서 기록 내용이 우선하는 경우`,
+  LGTSTR:`원본 문법(G-05 — G-02 반전): G-02가 색·명도 동화로 피사체와 배경의 경계를 소멸시키는 대신, 광선·광면·광점 등 빛의 형태가 배경 또는 피사체 위에 독립적 구조물로서 가시화되어 화면의 주요 형태 정보를 담당한다. 빛이 단순히 피사체를 조명하는 수단이거나 그림자가 피사체에 인접하여 쌍을 이루는 경우는 포함하지 않는다.
+
+광선·광면·광점이 표면 위에 독립적 형태로 가시화되는 광원 또는 조건을 찾아라. 빛의 방향·형태·경계가 화면을 분할하거나 피사체를 규정하도록 위치와 각도를 조정하라. 광선·광면·광점이 배경 또는 피사체 위에서 독립적 구조 단위로 기능하고, 빛을 제거했을 때 화면의 주요 형태 정보가 소멸할 때 멈춘다.
+
+기각: 빛이 피사체를 단순히 조명하는 수단으로만 기능하는 경우 / 그림자가 피사체에 인접하여 쌍을 이루는 구조인 경우 / 피사체와 배경의 색·명도 경계가 소멸하는 경우 (→ TONEDIS)`,
+  OBJREP:`원본 문법(G-06 — G-03 반전): G-03이 이질 사물을 기능적 관계 없이 병치하는 대신, 동일하거나 유사한 형태·재질·기능의 사물 둘 이상이 ①정렬·배열로 개체 간 미세 차이가 비교 단위로 기능하거나 ②대량 집적으로 개별 사물의 독립성이 소멸하고 패턴·질감·색면으로 전환된다.
+
+동일하거나 유사한 형태·재질·기능의 사물 둘 이상을 찾아라. ①사물들이 정렬·배열되어 개체 간 미세 차이가 비교 단위로 기능하거나 ②대량 집적되어 개별 독립성이 소멸하고 패턴·질감·색면으로 전환되도록 위치와 각도를 조정하라. 동종 사물의 유사성·차이·밀도가 화면의 주요 구조 정보를 형성할 때 멈춘다.
+
+기각: 기능적으로 이질적인 사물들이 함께 배치된 경우 (→ HETOBJ) / 사물이 하나만 있거나 반복 배열 없이 단독 존재하는 경우 / 이질 사물이 기능적 관계 없이 병치되는 경우 (→ HETOBJ)`,
+  // ── 2차 FIGURE (14) ──
+  FACBLK:`원본 문법(G-01): 인물이 화면 주요 면적을 점유하는 근접~전신 구도에서 가림 수단(모자·후드·헤어·식물성 오브제·의복·합성 이미지)이 얼굴 전체를 봉쇄한다. 눈·코·입 세 부위가 동시에 식별 불가한 상태가 구조적으로 성립한다. 가림이 우연적(바람·움직임)이거나 부분적(안대·마스크 단독)인 경우는 포함하지 않는다.
+
+가림 수단(모자·후드·헤어·식물·오브제·합성 이미지)을 확인하라. 인물의 눈·코·입 세 부위가 동시에 식별 불가한 상태가 되도록 각도와 거리를 조정하라. 가림 수단이 얼굴 전면을 구조적으로 봉쇄하여 어떤 구도 거리에서도 세 부위를 복원할 수 없는 상태가 될 때 멈춘다.
+
+기각: 눈·코·입 중 하나라도 식별 가능한 경우 / 가림이 바람·움직임에 의한 일시적·우연적 상태인 경우 / 안대·마스크만으로 눈 또는 코·입 중 일부만 가려진 경우 / 후두부·뒷모습이 주된 화면 구조인 경우 (→ BACKPOSE)`,
+  HANDEXT:`원본 문법(G-02A): 손·팔뚝이 화면 세로의 1/2 이상을 단독 점유한다. 얼굴과 전신은 프레임 밖이다. 피부 질감·자세·흔적(흉터·타투·물방울) 또는 손-사물 접촉 관계가 화면의 유일한 정보로 기능한다.
+
+손 또는 팔뚝이 화면의 유일한 피사체가 되도록 시점을 이동하라. 손·팔뚝이 프레임 세로의 50% 이상을 점유할 때까지 거리와 앵글을 조정하라. 얼굴·두부·전신이 프레임 밖으로 완전히 이탈하고 피부 질감·자세·흔적 또는 손-사물 접촉 관계가 화면의 유일한 정보로 기능할 때 멈춘다.
+
+기각: 두부 또는 전신이 프레임 안에 부분적으로라도 포함되는 경우 / 사물이 손·팔뚝과 동등한 면적으로 경쟁하여 손의 시각적 우선권이 사라지는 경우 / 발·하체가 주된 말단부인 경우 (→ FOOTEXT)`,
+  FOOTEXT:`원본 문법(G-02B): 발·하체가 화면 세로의 1/2 이상을 단독 점유한다. 얼굴과 전신은 프레임 밖이다. 피부 질감·보행 자세·접촉 표면 또는 발-사물 관계가 화면의 유일한 정보로 기능한다.
+
+발 또는 하체가 화면의 유일한 피사체가 되도록 앵글을 낮추거나 시점을 이동하라. 발·하체가 프레임 세로의 50% 이상을 점유할 때까지 거리와 앵글을 조정하라. 얼굴·두부·상체가 프레임 밖으로 완전히 이탈하고 피부 질감·보행 자세·접촉 표면 또는 발-사물 관계가 화면의 유일한 정보로 기능할 때 멈춘다.
+
+기각: 두부 또는 상체가 프레임 안에 부분적으로라도 포함되는 경우 / 사물이 발·하체와 동등한 면적으로 경쟁하여 발의 시각적 우선권이 사라지는 경우 / 손·팔뚝이 주된 말단부인 경우 (→ HANDEXT)`,
+  HRZPAS:`원본 문법(G-03): 인물이 수평면(바닥·침상·수면·지면)에 완전히 접촉하여 눕거나 엎드린 비능동 상태에 있으며, 타자 또는 오브제가 신체에 직접 접촉·개입하거나 인물 위·옆을 물리적으로 점유한다. 수평으로 누운 것만으로는 성립하지 않는다.
+
+수평면에 완전히 접촉하여 눕거나 엎드린 인물을 찾아라. 타자 또는 오브제(사람·동물·직물·도구·의료 장비)가 인물 신체에 직접 접촉하거나 신체 위·옆을 물리적으로 점유하도록 위치와 각도를 잡아라. 인물이 화면 세로의 50% 이상을 수평으로 점유하고, 타자·오브제의 개입이 인물과 동등한 구조적 비중을 가지며, 인물의 시선이 없거나 화면 밖을 향할 때 멈춘다.
+
+기각: 인물이 앉거나 기댄 자세로 수평 귀속이 미완성인 경우 / 타자·오브제의 물리적 개입 없이 단순히 누운 자세만인 경우 / 인물이 눈을 뜨고 카메라를 응시하는 능동 포즈인 경우`,
+  DRKSPOT:`원본 문법(G-04): 완전 암흑 또는 극단 저조도 공간에서 단일 인공 광원(스팟 조명·헤드램프·스마트폰·광고 백라이트)이 유일한 광원으로 기능한다. 조명 범위 안의 신체 부위만 선택적으로 드러나며, 조명 밖의 신체와 배경은 암흑에 흡수된다.
+
+완전 암흑 또는 극단 저조도 환경을 확인하라. 단일 인공 광원이 인물의 일부(얼굴·상반신·손)를 선택적으로 비추도록 위치를 잡아라. 광원 밖의 신체 부위와 배경이 암흑에 완전히 흡수되고, 조명 범위 안의 신체 부위만 화면에 가시화되며, 광원의 조명 경계가 명확히 읽힐 때 멈춘다.
+
+기각: 두 개 이상의 광원이 신체 전체를 균등하게 조명하는 경우 / 자연광이 광원으로 기능하는 경우 / 배경이 암흑이 아닌 저조도 환경에 그쳐 공간 정보가 가시화되는 경우`,
+  GROUPREP:`원본 문법(G-05): 복수 인물의 복장·포즈·도구·간격이 동일하거나 거의 동일하게 반복된다. 집단 전체의 패턴 구조가 개별 인물보다 먼저 인식되며, 인물 집단이 화면 면적의 2/3 이상을 점유한다.
+
+동일 복장·포즈·장비를 착용한 복수의 인물을 찾아라. 인물 집단이 화면 면적의 2/3 이상을 점유하도록 거리와 각도를 조정하라. 개별 인물의 얼굴보다 집단 전체의 반복 패턴이 먼저 인식되고, 집단 구조를 제거했을 때 단일 인물로는 화면이 성립하지 않을 정도로 패턴 단위가 지배적일 때 멈춘다.
+
+기각: 인물이 1명이거나 집단 구조가 성립하지 않는 경우 / 개별 인물이 집단 패턴보다 먼저 인식되는 경우 / 인물 간 복장·포즈·간격 차이가 뚜렷하여 반복 패턴이 읽히지 않는 경우 / 세대 차이가 있는 소규모 가족 구성의 경우 (→ GENPORT)`,
+  BGDOM:`원본 문법(G-06): 현수막·광고판·포스터·초상화·조형물 등 배경 이미지 요소가 화면의 1/2 이상을 점유하며, 전경 인물을 규모·권위 면에서 가시적으로 압도한다. 배경 이미지 요소는 단순 배경이 아닌 전경 인물과 경쟁하는 독립적 주체로 기능한다.
+
+압도적 규모의 배경 이미지 요소(현수막·광고판·초상화·조형물)를 찾아라. 배경 이미지 요소가 프레임의 50% 이상을 점유하고, 전경 실제 인물이 배경 이미지 높이의 1/3 이하로 왜소하게 배치될 때까지 거리와 각도를 조정하라. 배경 이미지가 전경 인물보다 규모·권위 면에서 먼저 인식되고, 전경 인물이 배경 이미지의 대비 요소 또는 척도로만 기능할 때 멈춘다.
+
+기각: 배경 이미지와 전경 인물이 대등한 크기로 배치되는 경우 / 전경 인물이 배경 이미지보다 먼저 인식되는 경우 / 배경이 텍스트·그래픽 요소만이고 인물 형상을 포함하지 않는 경우 / 배경의 단순 맥락 차이(복장-장소 부조화)로만 판단되는 경우`,
+  DUALSPC:`원본 문법(G-07): 유리·거울·금속 패널·차창 등 반사 또는 투과 특성을 가진 표면이 두 개의 공간을 단일 화면 안에 중첩한다. 반사상 또는 투과상이 독립적 시각 정보를 형성하여 인물이 두 공간에 동시 존재하거나, 실상과 반사상이 동등한 비중으로 공존한다. 단순히 유리·거울을 통해 인물을 찍은 것(창 너머 인물 단독 포착)은 포함하지 않는다.
+
+반사 또는 투과 특성을 가진 표면(유리창·거울·금속 패널·차창·수면)을 찾아라. 표면 너머 원경 또는 반사상이 독립적 시각 정보를 형성하도록 각도를 조정하라. 실상과 반사·투과상이 각각 프레임의 30% 이상을 점유하며 두 공간이 동등한 비중으로 단일 화면 안에서 공존할 때 멈춘다.
+
+기각: 반사·투과상이 단순 배경 텍스처로만 기능하며 독립 시각 정보를 갖지 않는 경우 / 유리·거울이 촬영 매개체로만 사용되어 단일 공간 인물만 포착된 경우 / 실상 또는 반사상 중 하나가 프레임의 10% 미만을 점유하는 경우`,
+  PLNTENV:`원본 문법(G-08): 꽃 또는 식물 군락(꽃밭·수목·수초·덩굴)이 인물을 사방에서 물리적으로 포위하거나, 인물이 식물 군락 속에 삽입되어 식물과 직접 접촉한다. 식물이 배경을 채우거나 인물 앞에만 위치하는 것은 포함하지 않는다.
+
+꽃밭·수목·수초·덩굴 등 식물 군락이 밀집한 위치에서 인물을 식물 군락 내부에 배치하라. 식물이 인물의 좌·우·전·후 중 3방향 이상에서 신체에 직접 접촉하거나, 인물이 식물 속에 삽입된 상태가 되도록 위치를 조정하라. 인물이 식물 군락 속에 물리적으로 매립되어 식물과 인물 신체의 경계가 혼재하고, 식물을 제거했을 때 인물의 위치 구조가 붕괴되는 조건이 성립할 때 멈춘다.
+
+기각: 식물이 배경에만 위치하고 인물과 물리적 접촉이 없는 경우 / 식물이 인물 앞에만 배치되어 단순 전경 요소로 기능하는 경우 / 인물이 식물을 들고 있으나 식물 군락 속에 삽입되지 않은 경우 / 화분·꽃다발 등 소형 오브제로 식물이 한정되고 군락을 이루지 않는 경우`,
+  GENPORT:`원본 문법(G-09): 세대 차이가 있는 인물들(어린이·부모·노인)이 동일 화면에 배치되며, 신체 밀착(포옹·손잡기·뺨 맞대기) 또는 공간 배치로 세대 간 관계가 구도 안에서 직접 읽힌다. 개별 인물의 나이 차이가 시각적으로 명확하다.
+
+세대 차이가 시각적으로 명확한 복수 인물을 찾아라. 신체 밀착(포옹·손잡기·뺨 맞대기·함께 들여다보기) 또는 공간 배치로 세대 간 관계가 단일 프레임 안에서 즉각 읽히도록 구도를 잡아라. 인물 간 나이 차이가 구도 안에서 명확히 인식되고, 세대 관계가 신체 접촉 또는 공간 배치로 직접 확인되며, 인물들의 시선이 카메라 또는 서로를 향할 때 멈춘다.
+
+기각: 인물 간 나이 차이가 시각적으로 불명확한 경우 / 동일 세대 복수 인물만 있는 경우 (→ GROUPREP) / 세대 관계가 맥락 정보로만 추측되고 신체 접촉·공간 배치로 직접 확인되지 않는 경우`,
+  NONSUBS:`원본 문법(G-10): 디지털 포인트 클라우드 렌더링·3D CG·고전 조각상이 인물 역할을 한다. 인간 신체 형태를 모방하되 피사체 자체의 재질(점군·메쉬·대리석·테라코타)이 실사 인간과 구별된다. 다중 노출·필터 등 촬영 기법으로 실사 인물이 비실사적으로 처리된 경우는 포함하지 않는다.
+
+디지털 렌더링(포인트 클라우드·메쉬·CG) 또는 고전 조각상 피사체를 찾아라. 피사체의 재질(점군·메쉬·대리석·테라코타)이 실사 인간과 명확히 구별되도록 조명과 각도를 조정하라. 피사체 자체가 비실사 재질임이 화면에서 즉각 인식되고, 촬영 기법이 아닌 피사체 물성 자체가 비실사임이 확인될 때 멈춘다.
+
+기각: 다중 노출·장노출·소프트 필터 등 촬영 기법으로 실사 인물이 비실사적으로 처리된 경우 — 피사체 자체가 실사 촬영 인간이 아닌 경우에만 성립 / 조각상·렌더링이 배경 요소로만 기능하고 전경 실사 인물이 주피사체인 경우 (→ BGDOM)`,
+  BACKPOSE:`원본 문법(G-11): 딥블랙·단색 또는 공간 정보가 최소화된 배경(안개·야외 하늘·무채색 벽·텍스처 평면)에서 인물이 카메라를 완전히 등진 뒷모습으로 단독 배치된다. 얼굴·표정·시선이 전혀 포착되지 않으며, 헤어·의복·자세만이 인물 정보의 전부이다.
+
+공간 정보가 최소화된 단색 또는 중성 배경(딥블랙·안개·무채색 벽·야외 하늘)을 찾아라. 인물이 카메라를 완전히 등지도록 시점을 이동하라. 인물이 화면 세로의 50% 이상을 점유하고, 헤어·의복·자세만이 인물 정보의 전부로 기능하며, 배경이 인물의 시각 정보를 경쟁하지 않을 때 멈춘다.
+
+기각: 인물의 얼굴이 부분적으로라도 보이는 경우 / 배경의 공간 정보가 인물 정보와 경쟁하는 경우 / 두 명 이상의 인물이 동시에 배치되어 단독 뒷모습 구도가 성립하지 않는 경우 (→ GROUPREP) / 가림 수단이 얼굴을 봉쇄하는 구조인 경우 (→ FACBLK)`,
+  DRESSIDENT:`원본 문법(G-12 — G-01 반전): G-01이 얼굴 차단으로 익명화하는 대신, 얼굴을 완전히 노출하되 의복·자세·제스처·소지품의 구체성으로 인물 고유성을 서술한다. 인물의 시선이 카메라와 직접 맞닿는다.
+
+얼굴이 완전히 노출되고 카메라를 직접 응시하는 인물을 찾아라. 의복·자세·소지품·제스처가 인물의 고유성을 얼굴과 독립적으로 서술할 수 있는 정도로 구체적인지 확인하라. 얼굴이 노출된 상태에서도 의복·자세·소지품만으로 인물 고유성이 전달될 정도로 복장·제스처의 구체성이 화면을 지배하고, 시선이 카메라와 직접 맞닿을 때 멈춘다.
+
+기각: 얼굴이 부분적으로라도 가려진 경우 / 시선이 카메라를 향하지 않거나 눈을 감은 경우 / 의복·자세가 불특정 다수에게 공통되는 평범한 수준에 그쳐 개인 고유성을 서술하지 못하는 경우 / 얼굴이 가림 수단에 의해 구조적으로 봉쇄된 경우 (→ FACBLK) / 얼굴 없이 신체 말단부만 화면에 존재하는 경우 (→ HANDEXT 또는 FOOTEXT) / 인물이 카메라를 완전히 등진 뒷모습인 경우 (→ BACKPOSE)`,
+  LIMBACT:`원본 문법(G-13 — G-02 반전): G-02가 말단부만으로 인물을 대표하는 대신, 전신을 포함하되 말단부(손·발)의 행위·접촉이 전신 구도 안에서 인물의 핵심 정보로 기능한다. 시선이 말단부 행위 방향을 향하거나 카메라를 향한다.
+
+전신이 프레임에 포함되는 상태에서 말단부(손·발)의 행위나 접촉이 화면 내 가장 강한 시각 정보로 기능하는지 확인하라. 말단부의 행위(쥐기·건네기·접촉·조작·전달)가 프레임 안에서 즉각 인식되도록 각도와 거리를 조정하라. 전신이 프레임 안에 존재하되 말단부의 행위가 인물 전체의 상태를 대표하고, 시선이 말단부 행위 방향 또는 카메라를 향할 때 멈춘다.
+
+기각: 전신이 프레임에 포함되지 않은 경우 (→ HANDEXT 또는 FOOTEXT) / 말단부 행위가 전신 구도 안에서 배경 정보 수준으로 약화되는 경우 / 얼굴 없이 말단부만 단독으로 화면을 점유하는 경우 (→ HANDEXT 또는 FOOTEXT) / 얼굴이 가림 수단에 의해 봉쇄된 경우 (→ FACBLK)`,
+  // ── 2차 FIGUREBG (11) ──
+  REPDOM:`원본 문법: 화면 안에 인물 신체보다 현저히 큰 인쇄물·광고판·포스터·조각상·스크린 이미지가 존재하고, 실제 인물이 그 앞 또는 주변에 소형으로 배치된다. 표상 이미지가 실제 신체를 크기 면에서 압도하며, 실제 인물의 존재는 이미지 또는 조각의 실제 규모를 가늠하는 척도로 기능한다.
+
+표상 이미지(광고판·포스터·조각상·스크린)를 찾아라. 표상 이미지가 프레임의 40% 이상을 점유하고 실제 인물이 표상 이미지 크기의 1/3 이하로 배치될 때까지 거리와 각도를 조정하라. 시선이 표상 이미지로 먼저 향하고 실제 인물이 규모 척도 또는 부수 요소로만 기능할 때 멈춘다.
+
+기각: 실제 인물이 표상 이미지와 대등한 크기인 경우 / 실제 인물이 표상 이미지보다 먼저 인식되는 경우 / 표상 이미지가 배경으로만 기능하며 크기 위계가 성립하지 않는 경우 / 비모듈형 단일 물리 오브제가 표상 이미지 역할 없이 규모 척도로만 기능하는 경우 (→ SCLFIG)`,
+  REFLMED:`원본 문법(G-03 반사·재현형): 거울·수면·CRT 화면 등 반사 또는 재현 매체가 시선과 인물 사이에 개입한다. 인물은 매체에 반사되거나 화면에 재현되어서만 존재하며, 실제 신체는 프레임 바깥이다. 매체를 제거하면 인물이 직접 지각되지 않는 것이 조건이다.
+
+거울·수면·CRT 화면 앞에서 인물의 실제 신체가 프레임 밖에 위치하도록 각도를 조정하라. 반사 이미지 또는 화면 속 재현 이미지만이 프레임에 존재할 때까지 각도를 이동하라. 실제 신체 없이 반사·재현만으로 인물이 가시화될 때 멈춘다.
+
+기각: 실제 인물 신체가 프레임 안에 부분적으로라도 진입하는 경우 / 매체 반사 없이 인물이 직접 지각되는 경우 / 투명 매체에서 인물이 투과로 보이는 경우 (→ GLASMED)`,
+  SMOKLYR:`원본 문법(G-04 ②): 화면 내 발생원(화재·간헐천·소각·담배)에서 나온 연기·증기가 인물과 배경 사이에 국소적 물리 레이어를 형성하여 신체 윤곽을 부분 소거한다.
+
+연기·증기 발생원(화재·소각·간헐천·담배)이 있는 위치를 찾아라. 연기·증기가 인물과 배경 사이 레이어를 형성하도록 각도와 거리를 조정하라. 연기·증기 레이어가 인물 신체의 30% 이상을 가리거나 윤곽선을 부분 소거할 때 멈춘다.
+
+기각: 연기·증기가 인물과 배경 사이 레이어가 아닌 인물 뒤편에만 있는 경우 / 연기가 프레임 전체를 균질화하는 경우 (→ ATMOSOLV) / 발생원 없이 기상 조건에서 발생한 경우 (→ ATMOSOLV)`,
+  OPTFUSE:`원본 문법(G-04 ③): 광학적 조건(소프트 포커스·다중 필터·전면 아웃포커스)으로 화면 전체가 균질하게 흐릿하게 처리되어 인물과 배경이 동등하게 경계를 잃는다.
+
+전면 아웃포커스 또는 소프트 포커스 상태로 렌즈를 설정하라. 인물과 배경 모두가 동일한 소프트 텍스처로 처리될 때까지 조리개와 초점을 조정하라. 뷰파인더에서 인물과 배경의 선예도 차이가 소거되고 두 요소가 동일한 표면 질감으로 통합될 때 멈춘다.
+
+기각: 인물에만 아웃포커스가 적용되고 배경은 선명한 경우 / 배경에만 아웃포커스가 적용되고 인물은 선명한 경우 / 기상·대기 조건이 흐릿함의 원인인 경우 (→ ATMOSOLV)`,
+  PARTINTR:`원본 문법(G-07): 특정 신체 부위(손·발·머리·하체·머리카락·팔뚝)만이 프레임에 진입하고 나머지 신체는 프레임 외부 또는 구조물·수면·시트에 귀속된다. 관람자는 진입한 신체 부위만으로 인물의 존재를 지각하며 신원은 특정되지 않는다.
+
+[유형 A — 프레임 경계 진입] 안면을 포함하지 않는 단일 신체 부위(손·발·하체·팔뚝·머리카락)만이 프레임 경계 안에 진입하도록 시점을 이동하라. 나머지 신체가 프레임 바깥으로 완전히 이탈하고, 진입한 신체 부위만으로 인물의 존재가 지각될 때 멈춘다.
+
+[유형 B — 구조물·오브제 경계 진입] 구조물·수면·시트를 경계로 안면을 포함하지 않는 신체 부위만이 경계 너머로 노출되는 위치를 찾아라. 나머지 신체가 구조물·수면·시트에 완전히 귀속되고, 진입한 부위만으로 신원 특정이 불가능할 때 멈춘다.
+
+기각: 안면이 프레임에 포함되어 신원 특정이 가능한 경우 / 전신이 프레임에 완전히 포함되는 경우 / 인물 전신이 개구부 안에 귀속되는 경우 (→ ARCHOP) / 인물 전신이 표상 이미지 앞 척도로 기능하는 경우 (→ REPDOM)`,
+  OBJCOVR:`원본 문법(G-08 ①): 편평한 오브제(천막·담요·현수막·판재)가 신체 위에 놓여 신체 표면을 가린다. 오브제를 제거하면 신체가 복원되는 것이 조건이다.
+
+편평한 오브제(천막·담요·현수막·판재)로 인물 신체의 60% 이상이 덮이는 위치를 찾거나 연출하라. 오브제 표면이 신체 표면을 대체하여 신체의 개별 정보(얼굴·의복·자세)가 완전히 소거될 때까지 오브제 위치를 조정하라. 오브제를 제거하면 신체가 복원되는 조건이 확인될 때 멈춘다.
+
+기각: 오브제가 신체의 일부만 가리고 신체 개별 정보가 여전히 식별되는 경우 / 오브제가 신체 뒤편 배경으로만 기능하는 경우 / 연기·대기가 오브제 역할을 하는 경우 (→ ATMOSOLV, SMOKLYR) / 오브제가 개구부 역할로 인물 위치를 결정하는 경우 (→ ARCHOP)`,
+  ARCHOP:`원본 문법: 건축 구조물의 개구부(발코니·아치·기둥 격자·맨홀·버킷)가 인물 신체의 화면 내 위치를 전적으로 결정한다. 인물은 개구부 안에 배치되며, 해당 구조물이 없으면 인물이 그 위치에 존재할 수 없다. 관람자는 구조물의 기하학적 형태를 먼저 인식한 후 그 내부에서 인물을 탐색하게 된다.
+
+개구부(발코니·아치·기둥 격자·맨홀·버킷)가 있는 구조물을 찾아 구조물 바깥에 서라. 인물이 개구부 안에 완전히 포함되도록 각도와 거리를 조정하라. 개구부의 기하학 형태가 프레임의 50% 이상을 점유하고, 구조물 형태를 먼저 보고 그 안에서 인물을 탐색하게 될 때 멈춘다.
+
+기각: 인물이 개구부 경계에 걸쳐 잘리는 경우 (→ PARTINTR 유형 B) / 인물이 개구부 외부에서 구조물을 바라보는 위치인 경우 / 인물이 구조물보다 먼저 인식되는 경우`,
+  GLASMED:`원본 문법(G-03 투과형): 유리창·쇼윈도·투명 패널·목제 격자창 등 투명 또는 반투명 매체가 시선과 인물 사이에 개입한다. 인물은 매체를 통해서만 보이며, 매체 표면을 통한 투과로만 가시화된다. 매체를 제거하면 인물이 직접 지각되지 않는 것이 조건이다.
+
+유리창·쇼윈도·투명 패널·목제 격자창 앞에 서라. 인물이 매체 반대편에 위치하도록 시점을 고정하거나, 내외부 공간이 동시에 프레임에 들어오도록 각도를 조정하라. 매체를 제거했을 때 인물이 사라지는 조건이 성립하고, 매체가 인물과 시선 사이의 유일한 접점이 될 때 멈춘다.
+
+기각: 매체가 배경으로만 기능하며 인물이 매체 없이 직접 지각 가능한 경우 / 인물이 매체 앞면과 같은 측에 있어 투과 없이 인식되는 경우 / 거울·수면·화면이 매체인 경우 (→ REFLMED)`,
+  ATMOSOLV:`원본 문법(G-04 ①): 기상·대기 조건(안개·황혼·역광·극단적 단색 하늘)이 화면 전체 색조를 단일화하여 인물을 실루엣 또는 밀도 차이로만 지각하게 만든다. 비고체 물질을 제거했을 때 인물-배경 경계가 복원되는 것이 조건이다.
+
+안개·황혼·역광·극단적 단색 하늘이 공간 전체를 단일 색조로 덮는 조건을 확인하라. 인물을 그 색조 영역 안 또는 경계 위에 위치시켜라. 뷰파인더에서 인물의 색채 정보가 배경 색조에 흡수되어 실루엣 또는 명도 차이로만 인물을 인식하게 될 때까지 거리와 각도를 조정하라. 인물과 배경의 색채 경계가 완전히 소거될 때 멈춘다.
+
+기각: 기상 조건이 공간 전체가 아닌 일부에만 적용되는 경우 / 인물의 색채 정보가 여전히 배경과 독립적으로 인식되는 경우 / 연기·증기 발생원이 원인인 경우 (→ SMOKLYR) / 광학 설정이 경계 소거의 원인인 경우 (→ OPTFUSE)`,
+  SCLFIG:`원본 문법(G-05·G-06 통합): DS를 인공 구조물 또는 자연지형·비모듈형 단일 오브제가 지배한다. 인물 신체가 공간·구조물·지형 규모를 결정하는 유일한 척도 단위로 작동한다. 인물 없이는 공간의 실제 규모가 특정되지 않는다.
+
+[유형 A — 반복 모듈 인공 구조물] 층고·경간·격자 등 반복 모듈을 가진 인공 구조물(빌딩·교통 인프라·경기장·교차로·타워) 앞에 인물을 배치하라. 구조물이 프레임의 60% 이상을 점유하고 인물 신체가 반복 모듈 한 단위(층고·경간·도로 폭)와 비교 가능한 크기로 배치될 때까지 거리를 조정하라. 인물 신체 높이를 기준으로 구조물 모듈의 실제 치수가 환산될 때 멈춘다.
+
+[유형 B — 자연지형·비모듈형 단일 오브제] 내재적 치수 기준이 없는 자연지형 또는 비모듈형 단일 오브제(수면·초지·모래사장·해안·방파제·설지·구체·기념물)를 찾아라. 인물 신체가 지형·오브제 규모에 비해 극소로 배치될 때까지 뒤로 물러나거나 인물을 원거리로 이동시켜라. 프레임 안에서 인물 신체 외에 규모를 가늠할 독립적 기준이 완전히 사라질 때 멈춘다.
+
+기각: 인물이 구조물·지형 규모를 지시하지 않고 독립적으로 인식되는 경우 / 인물 없이 구조물·지형만으로 규모 판단이 가능한 경우 / 인물 신체가 오브제에 의해 소거된 경우 (→ OBJCOVR)`,
+  HORZERO:`원본 문법(G-08 ②): 신체가 지면·지형 표면에 수평으로 귀속되거나 신체 윤곽선만 바닥에 남아 수직 세움이 사라진다. 인물이 일어서면 신체가 복원되는 것이 조건이다.
+
+인물을 지면·지형 표면에 수평으로 귀속시키거나(눕기·엎드리기), 신체 윤곽선이 바닥에 남아 있는 조건을 찾아라. 뷰파인더에서 신체의 수직 세움이 완전히 소거되고 지면과 평행한 수평 상태가 될 때까지 각도를 조정하라. 인물이 일어서면 신체가 복원되는 조건이 확인될 때 멈춘다.
+
+기각: 신체가 수직과 수평 중간 상태(기대기·앉기)로 수직 세움이 부분적으로 남아 있는 경우 / 부감·망원 기법이 수평화의 원인이고 실제 신체는 직립 상태인 경우 (→ AEROFLT) / 수평 신체가 공간·구조물·지형 규모의 척도로 기능하는 경우 (→ SCLFIG)`,
+
+  // ── 1차 SPACE (13) ──
+  MONOLITH:`원본 문법: DS에서 균질 수평 지면(설원·수면·갯벌·풀밭·모래사장·평원)이 프레임의 절반 이상을 점령. 그 지면 위에 수직 방향의 단독 구조물(기둥·탑·장비·조형물·건물·돔 시설)이 있고, 주변에 연결 요소나 인접 구조물이 없음. 구조물의 지면 삽입 깊이를 판단할 수 없거나, 지면 위에 고립·부유·방치된 것처럼 보인다고 명시됨. 균질 지면이 거리감과 깊이 단서를 제거하는 것이 핵심 공간 조건.
+
+설원·수면·갯벌·모래사장·평원이 프레임 절반 이상을 수평으로 채우고 있는 곳으로 이동하라. 그 지면 위에 구조물(기둥·탑·조형물·건물)이 하나만 수직으로 서 있고, 그것이 지면에 얼마나 박혔는지 눈으로 판단할 수 없을 때 멈춘다.
+
+기각: 주변에 다른 구조물·전선·울타리 있음 / 지면이 프레임 1/3 이하 / 수목이 지면을 덮고 있음 / 깊이 단서(그림자·경계선)가 보임`,
+  STRATA:`원본 문법: SD에서 프레임이 성격이 다른 물질 또는 공간 유형의 수평 층 3개 이상으로 분절됨. 각 층의 면적이 SD에서 백분율 또는 분수로 명시됨. 층 경계가 날카로운 수평선·능선·건물 상단선으로 구분되며 층간 전환이 점진적이지 않고 경계에서 급격히 일어남.
+
+서로 다른 물질(물·흙·풀·암반·건물군·하늘 등)이 수평 띠 3개 이상으로 프레임을 가르는 위치에 서라. 각 띠의 경계가 날카로운 선으로 끊기고, 각 면적을 "하단 약 30%, 중단 약 40%" 식으로 수치로 말할 수 있을 때 멈춘다.
+
+기각: 경계가 흐릿하거나 그라디언트 / 층이 2개 이하 / 면적 비율을 수치로 말할 수 없음 / 안개·동일 톤으로 경계 소멸`,
+  DISSOLVE:`원본 문법: 원래 서로 다른 물질인 두 공간(수면과 하늘, 설원과 안개, 포말과 수면, 수목과 안개)이 동일하거나 유사한 회색·흰색·황갈색 계조로 처리되어 두 물질의 경계를 육안으로 구분할 수 없는 상태가 됨.
+
+수면과 하늘, 설원과 안개처럼 원래 서로 다른 두 물질이 동일한 회색·흰색·황갈색 계조로 합쳐진 방향으로 이동하라. 어디가 경계인지 눈으로 선을 그을 수 없을 때 멈춘다.
+
+기각: 경계선이 여전히 보임 / 톤 차이가 인식 가능함 / 동일 톤이 안개·역광·과포화 등 물리적 이유 없이 발생`,
+  LITGRID:`원본 문법: DS에서 건물 파사드의 창문 또는 동일 형태 반복 유닛(아파트 동·격자 패널·개구부)이 수직·수평으로 균등 배열됨. 동일 규격의 유닛 각각이 서로 다른 빛 상태(켜짐/꺼짐, 색온도 차이, 밝기 차이)를 보이며, 그 분포가 불규칙함.
+
+같은 크기의 창문·칸막이가 규칙적으로 배열된 건물 파사드 앞에 서라. 각 창의 불 상태(켜짐·꺼짐·색온도·밝기)가 제각각 다를 때 멈춘다.
+
+기각: 모든 창이 동일한 상태 / 그리드 구조 자체가 불규칙함 / 여러 건물이 겹쳐 있음`,
+  VANISH:`원본 문법: DS 또는 SD에서 도로·통로·복도·골목·묘지 열 등의 선형 공간이 화면 안쪽으로 수렴함. 선형 공간의 측면(벽·연석·경계·열)이 수렴 방향을 명시하며, 공간의 폭이 전경에서 원경으로 갈수록 좁아짐.
+
+도로·골목·통로·복도·안뜰·묘지 열 같은 선형 공간의 입구 쪽에 서서 공간을 프레임 안쪽으로 향하게 하라. 공간의 측면(벽·연석·경계·열)이 발 앞에서부터 안쪽으로 좁아지며 소실점으로 수렴할 때 멈춘다.
+
+기각: 측면 경계가 없음 / 수렴 없는 단순 경사 / 공간이 곧바로 막히거나 소실점이 화면 밖으로 나감`,
+  MIRRORSURF:`원본 문법: SA에서 잔잔한 수면이 경관·구조물·생물·하늘을 거울처럼 뒤집어 반사. 실물과 반사상이 동일 프레임 안에서 공존하며 상하가 역전되는 프레임 구조 조건.
+
+잔잔한 수면(호수·강·바다·논·수전) 앞에 서서 수면이 프레임 아래쪽에 포함되도록 위치를 잡아라. 수면이 경관·구조물·하늘을 거울처럼 뒤집어 반사하고, 실물과 반사상이 위아래로 공존할 때 멈춘다.
+
+기각: 수면에 파문·물결이 있어 반사상이 흐트러짐 / 건물 바닥·유리 커튼월의 반사 / 실물과 반사상이 동일 프레임 안에 없음`,
+  PEEL:`원본 문법: SA에서 건물·공간의 인공 표면(외벽·타일·도배지·콘크리트·도료·페인트·천장)이 균열·벗겨짐·박락·뜯겨짐·침식·붕괴 상태에 있음. 단순 오염이나 색 변화가 아닌 표면 자체의 물리적 분리 또는 이탈이 조건.
+
+건물·구조물의 인공 표면(외벽·타일·도배지·콘크리트·페인트·천장)에 가까이 이동하라. 표면이 균열·벗겨짐·박락·뜯겨짐·침식 상태에 있으며, 재료 자체가 물리적으로 분리되거나 이탈하고 있을 때 멈춘다.
+
+기각: 단순 오염·색 변화만 있음(표면 분리·이탈 없음) / 의도적으로 제거된 표면(공사·리모델링 중)`,
+  SNOWFILL:`원본 문법: DS에서 지면·사면·들판·빙하 표면이 눈 또는 결빙으로 덮임. 눈 표면의 균질성(깊이 판단 불가, 낙엽·가지 부분 노출, 매끄러운 표면)이 기술됨. 지면 자체의 형태 정보가 눈·결빙 피복으로 인해 소거되어 지면인지 수면인지 단단한 면인지 확인할 수 없는 조건이 핵심.
+
+눈 또는 결빙이 지면·사면·들판을 덮고 있는 곳으로 이동하라. 눈 표면이 균질하여 지면인지 수면인지 단단한 면인지 확인할 수 없을 때 멈춘다.
+
+기각: 흙·아스팔트·풀이 눈 밖으로 충분히 드러나 지면 구조 파악 가능 / 눈이 부분적으로만 덮여 있음`,
+  OXIDE:`원본 문법: DS 또는 SA에서 철·금속 구조물 표면 전체 또는 대부분이 산화(녹)로 덮인 상태. 구조물의 원래 금속 질감이 산화층으로 대체되어 재료의 물리적 기원이 표면에서 소거된 것이 핵심. 단순 오염이나 부분 녹이 아닌 표면 전체의 산화 피복 상태.
+
+녹이 슨 철·금속 구조물(철판 건물·기계·열차·컨테이너·기둥)에 다가가라. 표면 전체 또는 대부분이 붉은 산화층으로 덮여 있으며, 원래 금속 질감이 녹으로 대체되어 보이지 않을 때 멈춘다.
+
+기각: 부분 녹 또는 단순 오염(전체 피복이 아님) / 도료·페인트가 표면을 덮고 있음(산화 아님)`,
+  ADWRAP:`원본 문법: DS에서 광고·현수막·타포린·대형 인쇄 사진 등 인쇄 목적으로 제작된 표면이 건물 외벽·임시 구조물 벽·가림막 역할로 전용됨. 인쇄 기능에서 건축 외벽 기능으로 전환, 건물인지 광고물인지 경계가 흐릿한 표면.
+
+광고·현수막·타포린·대형 인쇄물이 건물 외벽·임시 구조물·가림막으로 전용된 곳 앞에 서라. 인쇄 표면이 건물인지 광고물인지 경계가 흐릿하고, 인쇄 기능이 건축 기능으로 전환된 상태일 때 멈춘다.
+
+기각: 인쇄물이 독립 게시판·현수막 형태로 걸려 있음(건축 기능 전용이 아님) / 건물 외벽에 붙여진 일반 포스터`,
+  ROADCLASH:`원본 문법: DS에서 아스팔트 도로 또는 시멘트 포장면이 프레임 대부분을 점령. SA에서 그 위에 차선·화살표 마킹·맨홀 뚜껑·주차 구획선·노면 번호·횡단보도·스텐실 텍스트 등 서로 다른 설계 논리와 목적의 그래픽 요소들이 동일한 수평면 위에 집적.
+
+아스팔트·시멘트 포장 지면 위에 서서 지면이 프레임 대부분을 채우도록 낮춰라. 차선·맨홀·화살표·횡단보도·스텐실 텍스트 등 서로 다른 설계 논리의 그래픽 요소들이 동일한 수평면 위에서 충돌하거나 중첩될 때 멈춘다.
+
+기각: 지면에 하나의 그래픽 요소만 있음 / 동일 설계 논리의 요소들만 있음(차선만, 맨홀만)`,
+  WALLTXT:`원본 문법: DS에서 간판 구조물 없이 벽면·가림막·방호벽·건물 외벽 표면에 페인트·스텐실로 직접 찍힌 텍스트 또는 그림이 있음. SA에서 텍스트와 벽면이 동일한 물리적 노화(박락·얼룩·균열·훼손)를 공유하거나, 텍스트 일부가 벽면 손상으로 판독 불완전한 상태.
+
+간판 구조물(프레임·등·거치대) 없이 벽면·외벽·가림막에 직접 도포(페인트·스텐실)된 텍스트 또는 이미지 앞에 서라. 텍스트와 벽면이 동일한 노화(박락·얼룩·균열)를 공유하거나, 텍스트 일부가 벽면 손상으로 판독 불완전할 때 멈춘다.
+
+기각: 간판 구조물이 별도로 있음 / 텍스트가 벽에서 분리된 독립 부착물(스티커·포스터)`,
+  OVERGROW:`원본 문법: SA 또는 DS에서 잡초·덩굴·이끼 등 비의도적 식물이 금속 기계 부위 사이·콘크리트 틈·격자 블록 사이·장비 받침대 내부·철재 난간·방치된 차량에서 자라거나 덮음. 식물이 인공 구조물의 설계된 틈·경계·균열 지점을 점거.
+
+금속 기계·콘크리트 구조물·격자 블록에 가까이 이동하라. 잡초·덩굴·이끼 등 비의도적 식물이 그 구조물의 설계된 틈·경계·균열 지점에서 자라거나 덮고 있으며, 인공 구조물과 식물의 경계가 불분명할 때 멈춘다.
+
+기각: 식물이 화분·화단 등 의도적으로 식재된 것 / 식물이 구조물 옆에 있을 뿐 내부로 침투하지 않음`,
+
+  // ── 1차 OBJECT (9) ──
+  ISOLATE:`원본 문법: DS에서 중성 단색 배경(흰색·검은색·균일한 단색)이 명시됨. 오브제 주변에 기능·공간·사용 맥락을 드러내는 요소(테이블·선반·손·창문·건물·환경)가 없음. 오브제의 물질 자체(형태·재질·색상·질감)가 이미지의 유일한 정보원.
+
+중성 단색 배경(흰색·검은색·균일 단색) 앞에 오브제를 단독으로 찾거나 놓아라. 오브제 주변에 손·테이블·선반·창문·벽 등 기능 맥락을 드러내는 요소가 프레임 안에 들어오지 않도록 시점을 조정하라. 오브제 자체의 형태·재질·색상 외에 다른 정보가 읽히지 않는 순간이 올 때 멈춘다.
+
+기각: 배경에 기능 맥락 요소가 보임 / 오브제가 다른 오브제나 표면과 접촉·연결된 상태 / 배경이 단색이 아닌 복잡한 환경`,
+  RUPTURE:`원본 문법: DS에서 오브제가 파손·파쇄·비산·분열·수평 전도·낙화 상태로 기술됨. 기능적 단위에서 분리, 구조적 연결의 단절 지점이 주요 정보.
+
+파손·전도·분열·낙화 상태의 오브제를 찾아라. 부러진 연결부·비산된 파편·수평으로 넘어진 몸체·가지에서 떨어진 꽃 중 하나가 프레임 중앙에 놓이도록 시점을 조정하라. 파손 지점 또는 분리 경계가 프레임 안에서 가장 선명하게 읽힐 때 멈춘다.
+
+기각: 파손·분열이 아닌 단순 노후화나 마모 / 기능 단절 지점이 화면 밖에 있음 / 오브제의 완전한 형태가 유지됨`,
+  GRID:`원본 문법: DS에서 동일하거나 동류인 오브제가 격자·일렬·집합·컬렉션 구조로 배열됨. 개체간 물리 차이 또는 동일 형태의 반복 패턴이 이미지의 주된 정보.
+
+동종 또는 동류 오브제를 격자·일렬·집합 구조로 배열한 상태를 찾아라. 2개 이상의 오브제가 프레임 안에 포함되도록 위치를 잡고 거리를 조정하라. 개체 간 형태·내부·색상 차이 또는 동일 형태의 반복 패턴이 한 프레임 안에서 동시에 읽힐 때 멈춘다.
+
+기각: 동종 오브제이나 개체 간 차이가 없어 반복 외에 읽히는 정보가 없음 / 배열 구조가 불규칙해서 격자·일렬·집합으로 읽히지 않음 / 오브제가 1개뿐임`,
+  CLUSTER:`원본 문법: DS에서 성격이 다른 복수 오브제 또는 동일 오브제이나 이질적 처리가 적용된 집합이 단일 프레임에 밀집·집적 배치됨. 재질·색상·렌더링 방식의 이질성이 이미지의 주된 물리 정보.
+
+성격이 다른 복수 오브제가 단일 프레임 안에 밀집·집적된 상태를 찾아라. 재질·색상·기원이 이질적인 오브제들이 빈 공간 없이 프레임을 채우도록 거리와 시점을 조정하라. 이질 요소들이 각자의 물리 구조를 유지하면서 하나의 밀도 높은 평면을 형성할 때 멈춘다.
+
+기각: 오브제가 동종이거나 재질이 균질함 / 오브제 간 빈 공간이 많아 밀도 집적이 읽히지 않음 / 이질성보다 배경이 더 강하게 읽힘`,
+  FLOAT:`원본 문법: DS에서 오브제 또는 유기체(식물·동물)가 지지면 없이 공중에 위치하거나 상부 구조물에 매달린 상태로 기술됨. 중력에서 분리된 상태가 오브제의 구조 전체를 가시화하는 조건 — 지지면에 닿아 있으면 보이지 않는 오브제의 하단부·뿌리부·전체 단면이 동시에 읽힘.
+
+지지면 없이 공중에 위치하거나 상부 구조물에 매달린 오브제·유기체를 찾아라. 오브제가 지면·테이블·표면에 닿지 않은 상태가 프레임 안에서 확인되도록 시점을 낮추거나 배경을 정리하라. 오브제의 하단부·뿌리부·전체 외곽이 지지면 없이 동시에 가시화될 때 멈춘다.
+
+기각: 오브제가 실제로 표면에 닿아 있음 / 매달린 구조물이 보이지 않아 부유인지 착지인지 판단 불가 / 오브제 일부만 프레임 안에 있어 전체 구조가 읽히지 않음`,
+  SKELETON:`원본 문법: DS에서 나목·고사목·건조 식물의 가지들이 분기하며 선형 망 구조를 형성하거나, 수목 전체의 골격 수형이 가시화되는 상태. 또는 주근에서 뿌리 섬유들이 수직 하향 확산하는 구조.
+
+잎이 없는 나목·고사목·건조 식물 줄기, 또는 뿌리가 노출된 식물 구조물을 찾아라. 가지의 분기 구조 또는 뿌리 네트워크가 프레임 전체에 펼쳐지도록 거리와 시점을 잡아라. 식물의 선형·분기 골격이 배경으로부터 분리되어 읽히고 가지 끝 또는 뿌리 끝이 프레임 안에 포함될 때 멈춘다.
+
+기각: 잎이 무성해서 골격 구조가 가려짐 / 가지 분기가 프레임 밖에서 시작되어 구조 전체가 읽히지 않음 / 식물이 클로즈업 대상이 아닌 배경으로 작동함`,
+  BLOOM:`원본 문법: DS에서 꽃 오브제가 단독으로 또는 소수로 배치되어 꽃잎 자체가 이미지의 주인공으로 기술됨. 꽃잎 표면의 반투명 질감·빛 투과, 꽃잎 가장자리의 말림·주름, 또는 꽃 전체에서 내부 발광하는 것처럼 빛이 퍼지는 상태.
+
+꽃이 단독으로 또는 소수로 배치된 상태를 찾아라. 꽃잎 자체가 프레임의 주인공이 되도록 거리를 좁혀라. 개화 상태·낙화 지점·특수 조명 하의 색상 중 하나가 충분히 가시화될 때 멈춘다.
+
+기각: 꽃이 배경의 일부로 작동하고 꽃잎 표면 정보가 읽히지 않음 / 꽃보다 줄기·잎·화분이 더 강하게 읽힘 / 꽃잎 형태가 무너진 상태여서 개화·낙화 구분이 불가`,
+  WRAP:`원본 문법: DS에서 직물·보자기·린넨 등 섬유 오브제가 내부 물체를 감싸거나 단독으로 수직 매달린 상태로 기술됨. 직물 주름 분포가 내부 오브제의 형태·위치·경도를 간접적으로 기록하는 조건.
+
+직물·보자기·린넨이 내부 오브제를 감싸거나 단독으로 매달린 상태를 찾아라. 묶인 부위·매듭·주름이 프레임 안에서 주요 정보원이 되도록 거리를 좁히고 시점을 조정하라. 직물의 주름 분포가 내부 오브제의 형태 또는 무게를 간접적으로 기록하거나, 성긴 직조 사이로 배경이 투시되는 순간이 올 때 멈춘다.
+
+기각: 직물이 배경·표면으로만 작동하고 감싸기·주름·투시 중 어느 것도 읽히지 않음 / 내부 오브제가 직물 밖으로 완전히 노출되어 감싸기 구조가 무너짐`,
+  SURFACE:`원본 문법: DS에서 도자·유리·광물·금속 오브제가 단독 또는 복수 배치로, 또는 노화된 손이 오브제를 파지·제시하는 상태로 기술됨. SA에서 ①도자 표면의 유약 광택 편차 ②반투명 광물·결정·유리의 내부 구조 가시화 ③암석·공예물 표면에 인위적 가공선과 자연 풍화·균열·이끼의 공존 ④도료·코팅의 부분적 탈락으로 하부층 노출 ⑤손의 주름·혈관·건조 피부 질감 중 하나 이상이 기술됨.
+
+도자·유리·광물·금속·손 중 하나를 찾아라. 유약 편차·균열·도료 탈락·반투명 내부·손 주름·혈관 중 하나가 프레임에서 지배적으로 읽히도록 거리를 최대한 좁혀라. 오브제 표면의 층위 노출·내부 가시화·시간 축적 구조·재질 대비 중 하나가 의심 없이 읽힐 때 멈춘다.
+
+기각: 표면 정보보다 오브제의 전체 형태가 더 강하게 읽힘 / 클로즈업 거리에서도 표면 세부가 불분명함 / 조명이 표면 질감을 평탄화시켜 물리 조건이 가시화되지 않음`,
+
+  // ── 1차 FIGURE (8) ──
+  DUALFRAME:`원본 문법: DS에서 카메라 프레임 안에 오브제 개구부(창문·TV 케이스·교량 아치·원형 마스크 등)가 2차 프레임으로 존재함. 인물이 카메라 프레임과 오브제 개구부 두 겹의 테두리 안에 동시에 포함됨.
+
+오브제 개구부(창문·아치·원형 구멍·교량 기둥 사이)가 있는 위치로 이동하라. 개구부 바깥에 서서 인물이 그 안에 들어오도록 각도를 조정하라. 카메라 프레임과 오브제 개구부가 동시에 인물을 감쌀 때 멈춘다.
+
+기각: 개구부가 인물을 포함하지 않고 배경으로만 기능하는 경우 / 인물이 개구부 경계에 걸쳐 잘리는 경우`,
+  HEADOBJ:`원본 문법: DS에서 두상 위에 비신체 오브제가 올려지거나 두상에서 오브제가 성장하거나 오브제가 두상 전체를 덮는 상태로 기술됨. 신체 실루엣의 수직 최상단이 두상이 아닌 오브제로 이탈하는 것이 핵심 조건.
+
+두상 위 또는 두상에서 성장하는 오브제를 확인하라. 오브제가 두상보다 높은 위치를 점하도록 카메라 높이를 낮추거나 각도를 조정하라. 신체 실루엣의 수직 최상단이 두상이 아닌 오브제로 이탈할 때 멈춘다.
+
+기각: 오브제가 두상 위가 아니라 등·옆에 위치하는 경우 / 두상이 여전히 실루엣 최상단인 경우`,
+  DUALFIG:`원본 문법: DS에서 실재 인물(3차원)과 인쇄·합성·반사된 인물 이미지(2차원)가 동일 프레임 안에 공존함. 두 층위가 크기 역전·수직 겹침·시선 교차 중 하나 이상의 방식으로 충돌하는 것으로 기술됨.
+
+실재 인물 근처에 인쇄·반사·프린트된 인물 이미지(포스터·현수막·유리 반사·의복 프린트)가 있는 위치로 이동하라. 두 층위가 동일 프레임 안에서 동등하게 경쟁하도록 각도와 거리를 조정하라. 실재 인물과 이미지 인물이 동시에 프레임 안에 들어올 때 멈춘다.
+
+기각: 인쇄 이미지가 인물 형상이 아닌 경우 / 반사상이 너무 희미해 식별 불가한 경우 / 실재 인물이 프레임 바깥에 있는 경우`,
+  DIPTYCH:`원본 문법: DS에서 두 개의 패널이 동일 인물 또는 관련 대상을 상이한 조건(환경·시간·조명·색조)으로 병치함. 변하는 변수(색조·조명·공간·시간)와 유지되는 변수(인물·자세·의복) 사이의 대비가 핵심.
+
+동일 인물을 두 가지 상이한 조건(공간·조명·색조 중 하나 이상)에서 각각 촬영하라. 두 컷 사이에 인물·자세·의복 중 적어도 하나를 유지하라. 두 패널을 나란히 놓았을 때 유지되는 변수와 변하는 변수가 명확히 대비될 때 멈춘다.
+
+기각: 두 패널의 조건 차이가 거의 없는 경우 / 두 패널의 인물이 다른 경우`,
+  FGBG:`원본 문법: DS·SD에서 전경 단독(소수) 인물과 후경 인물 집단이 단일 프레임 안에서 대조적 축으로 배치됨. 전경-후경 인물 사이의 자세·운동성·스케일 차이가 원근에 의해 증폭됨.
+
+전경과 후경에 인물이 각각 분리된 깊이 층위에 위치하는 곳을 찾아라. 전경 인물과 후경 인물의 자세·운동성·스케일 차이가 원근에 의해 증폭되도록 카메라 높이와 각도를 조정하라. 두 집단이 단일 프레임 안에서 대립 축을 이룰 때 멈춘다.
+
+기각: 전경과 후경 인물이 같은 행동을 하고 있는 경우 / 원근 차이가 충분하지 않아 두 집단이 동등한 스케일로 읽히는 경우`,
+  COLORISO:`원본 문법: SA에서 인물 의복이 배경·환경의 중성 또는 저채도 색조와 대비되는 단일 강채도 색상으로 기술됨. 의복 색상이 공간 안에서 인물 위치를 지시하는 가장 강한 시각 단서.
+
+인물의 의복이 단일 고채도 색상일 때 배경이 중성·저채도인 위치를 찾아라. 의복 색상이 프레임 내 유일한 고채도 요소가 될 때까지 배경을 선택하거나 위치를 이동하라. 의복 색상이 환경으로부터 분리되어 인물 위치를 지시하는 가장 강한 단서가 될 때 멈춘다.
+
+기각: 배경에도 동등한 채도의 색 요소가 있는 경우 / 의복 색상이 배경에 묻히는 경우`,
+  SKINREP:`원본 문법: SA에서 흙·도료·수기 텍스트·잉크·머리카락 등 비신체 이질 물질이 피부 노출 표면에 광범위하게 도포됨. 피복 물질이 피부 본래 색조·질감을 소거하고 피복 물질 질감으로 대체하는 것이 핵심.
+
+비신체 물질(흙·도료·머리카락·잉크 등)이 피부 노출면을 광범위하게 덮고 있는 인물 앞에 서라. 피복 범위가 최대화되는 각도와 거리를 잡아라. 피부 본래 색조·질감이 피복 물질로 대체된 상태가 프레임 전체에서 명확히 읽힐 때 멈춘다.
+
+기각: 피복이 부분적이어서 피부가 여전히 우세한 경우 / 피복이 소량 장식에 그치는 경우(작은 문신·점 등)`,
+  BODYTXT:`원본 문법: SA에서 텍스트·기호·인쇄 언어가 신체와 동일한 공간 층위에서 공존함. 언어 레이어와 신체 레이어의 경계가 물리적으로 해소되는 것으로 기술됨. 피부 직접 기재·기호 밀집 환경·텍스트 패널 이분 중 하나의 방식으로 실현됨.
+
+텍스트·기호·인쇄 언어가 인물 신체와 동일 공간 층위에서 공존하는 위치를 찾아라. 신체와 언어 레이어가 깊이상 분리되지 않고 같은 평면에서 겹치거나 경쟁하도록 각도를 조정하라. 텍스트 레이어와 신체 레이어의 경계가 물리적으로 해소된 상태가 될 때 멈춘다.
+
+기각: 텍스트가 배경 요소로만 기능하며 신체와 층위가 분리된 경우 / 텍스트가 너무 소량이거나 작아 프레임 내 시각 무게가 없는 경우`,
+
+  // ── 1차 FIGUREBG (7) ──
+  BGPAT:`원본 문법: DS에서 배경 전체에 강한 반복 구조(기둥 열·전선 격자·수간 밀집·체크 패턴)가 분포함. 인물의 위치·크기·색채가 그 반복 단위의 하나로 인식됨.
+
+배경에 규칙적 반복 구조(기둥·전선·수간·체크 패턴)가 공간 전체를 점유하는 위치로 이동하라. 인물을 반복 단위 중 하나와 동일 축선에 세우거나 패턴 내부에 포함시켜라. 인물보다 배경 반복 구조가 먼저 인식될 때 멈춘다.
+
+기각: 반복 구조가 공간 전체가 아닌 일부에만 있는 경우 / 인물이 패턴 바깥에서 패턴을 바라보는 위치인 경우 / 조감·망원 기법이 반복 구조의 원인인 경우 (→ AEROFLT)`,
+  SCALE:`원본 문법: DS에서 인물과 무관한 배경 사건(재난 현장·산업 구조물·대규모 자연 현상)이 프레임을 지배함. 인물의 존재가 배경 사건의 규모를 역으로 지시하는 척도 또는 목격자로만 기능.
+
+인물과 무관하게 진행 중인 배경 사건(재난 현장·산업 구조물·대규모 자연 현상)을 찾아라. 인물이 그 사건을 향해 서거나 사건 규모에 비해 극소하게 위치하도록 거리를 조정하라. 인물의 존재가 배경 사건의 규모를 지시하는 척도로만 기능할 때 멈춘다.
+
+기각: 인물이 배경 사건에 적극 참여하거나 행위를 주도하는 경우 / 배경 사건 없이 단순히 배경이 큰 경우 (→ SCLFIG)`,
+  ATMOFUSE:`원본 문법: SA에서 안개·역광·황혼·극단적 단색 하늘 등 기상·광학 현상이 배경 공간 전체를 단일 색조로 균질화하는 것으로 기술됨. 인물의 개별 색채 정보가 그 색조에 흡수되어 인물과 배경의 색채 경계가 소거됨.
+
+안개·황혼·역광·극단적 단색 하늘이 공간 전체를 단일 색조로 균질화하는 조건을 확인하라. 인물을 그 색조 경계 위 또는 색조 안으로 이동시켜라. 인물의 개별 색채가 배경 색조에 흡수되어 색채로 인물과 배경을 구분할 수 없을 때 멈춘다.
+
+기각: 인물 색채가 배경 색조와 분리되어 독립적으로 인식되는 경우 / 기상 조건이 공간 전체가 아닌 일부에만 있는 경우`,
+  GLASSDUAL:`원본 문법: DS에서 유리창·쇼윈도·버스 전면 유리 등 투명 매체가 프레임을 점유함. SA에서 내부 인공 조명과 외부 야간 암부의 조도 차이가 유리면의 투과·반사를 동시에 유발하는 것으로 기술됨. 물리적으로 분리된 내외부 두 공간이 단일 프레임에 중첩됨.
+
+내부가 밝고 외부가 어두운 유리 매체(유리창·쇼윈도·버스 유리) 앞에 서라. 내부와 외부 공간이 동시에 프레임 안에 들어오도록 각도를 조정하라. 유리면이 투과와 반사를 동시에 수행하며 두 공간이 단일 평면에서 중첩될 때 멈춘다.
+
+기각: 유리가 투과만 하거나 반사만 하는 경우 / 내외부 조도 차이가 없어 두 공간이 중첩되지 않는 경우 / 인물이 한 공간에만 존재하는 경우`,
+  AEROFLT:`원본 문법: DS에서 수직 부감 또는 강한 망원 압축 촬영 기법이 인물의 깊이·부피 정보를 제거하는 것으로 기술됨. SD에서 인물 신체가 배경 표면(빙면·직물·지면) 위에 납작하게 투영된 평면 형태로 환원됨.
+
+높은 지점에서 수직으로 내려다보거나 강한 망원으로 압축하라. 인물 신체의 3차원 부피가 배경 표면에 납작하게 투영되는 각도를 유지하라. 인물 신체를 입체로 인식하기 위해 적극적 탐색이 필요하거나 개별 인물보다 집단 분포 패턴이 먼저 인식될 때 멈춘다.
+
+기각: 인물의 입체감이 즉각적으로 인식되는 경우 / 부감이지만 인물이 여전히 이미지의 주된 정보인 경우`,
+  ARCHCAP:`원본 문법: DS에서 건축 구조물의 개구부(아치·홍예문) 또는 설치 구조물의 틀(투명 패널 열·천막 캐노피)이 프레임을 지배함. 구조물의 기하학적 형태가 인물 신체보다 먼저 인식되고, 인물이 개구부를 채우거나 수렴점을 점유하는 하나의 요소로 기능.
+
+건축·설치 구조물의 개구부(아치·문루·패널 열·천막)가 있는 위치로 이동하라. 구조물 바깥에 서서 인물이 개구부 안에 포획되도록 각도를 잡아라. 구조물의 기하학 형태를 먼저 보고 그 안에서 인물을 탐색하게 될 때 멈춘다.
+
+기각: 개구부가 인물을 포함하지 않고 배경으로만 기능하는 경우 / 인물이 구조물보다 먼저 인식되는 경우 / 인물이 개구부 경계에 걸쳐 잘리는 경우`,
+  BACKLIT:`원본 문법: SA에서 강한 역광 광원이 인물 신체 표면 전체를 암전시키는 것으로 기술됨. 얼굴·의복·피부 등 신체 내부 정보가 완전히 소거되고 윤곽선(실루엣)만 잔존. 형태·자세·이동 방향이 유일한 식별 단서.
+
+역광 광원(역광 골목·황혼·가로등·역광 창문)이 있는 방향을 향해 서라. 인물이 광원과 카메라 사이에 위치하도록 각도와 거리를 조정하라. 인물 신체 표면 정보가 완전히 소거되고 윤곽선만 잔존할 때 멈춘다.
+
+기각: 얼굴·의복·피부가 부분적으로라도 식별 가능한 경우 / 역광이 불충분하여 신체 표면 정보가 남아 있는 경우 / 구조물 개구부가 역광의 원인인 경우 (→ ARCHCAP)`,
+
+  // ── UNJUDGE (2) ──
+  SURFILL:`원본 문법: DS에서 단일 재질(금속 안료·벽돌·콘크리트·아스팔트·수목 줄기 등) 표면이 프레임 전체를 점유함. 인물·구조물 경계·배경 공간 전무 또는 극소화. 피사체의 공간적 맥락이 소거되거나, 변성 흔적(산화·이끼·마모)이 인공 구조 위에 중첩되어 표면이 이중 질서를 포함.
+
+표면에 다가서라. 배경과 공간 경계가 프레임 밖으로 완전히 밀려날 때까지 피사체에 접근하거나 렌즈를 당겨라. 표면의 질감·구조·변성이 프레임의 유일한 정보가 될 때 멈춘다.
+
+기각: 배경·공간 경계가 일부라도 프레임 안에 남아 있는 경우 / 표면이 프레임 절반 이하를 점유하는 경우 / 표면 위에 인물·사물이 피사체로 포함된 경우`,
+  BLURABS:`원본 문법: SA에서 극단적 아웃포커스 처리로 모든 윤곽선이 용해됨. 피사체의 물질 정체 확정 불가. 배경색·이질적 색 요소·미세 질감이 블러로 통합된 단일 추상 평면 구조.
+
+조리개를 최대 개방하고 피사체를 극단적으로 아웃포커스 처리하라. 피사체의 형태가 완전히 용해되어 색·질감 레이어만 잔존할 때까지 초점을 이탈시켜라. 프레임 안 어느 요소의 형태도 윤곽선으로 식별 불가한 추상 평면이 될 때 멈춘다.
+
+기각: 윤곽선이 일부라도 식별 가능한 경우 / 아웃포커스가 부분적이어서 선명한 구역이 남아 있는 경우 / 피사체 정체를 유추할 수 있는 색·형태 조합이 잔존하는 경우`,
+};
+
+function renderDirInstruction(dirCodes){
+  const srcDoc=document.getElementById('srcDoc');
+  const srcRef=document.getElementById('srcRef');
+  if(!srcDoc) return;
+  const codes=String(dirCodes||'').split(/[\s,;·]+/)
+    .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean);
+  if(!codes.length){ srcRef.textContent='DIR —'; srcDoc.innerHTML='<span style="color:var(--g4)">DIR 없음</span>'; return; }
+  srcRef.textContent=codes[0];
+  const html=codes.map(code=>{
+    const instr=DIR_INSTRUCTIONS[code];
+    const instrHtml=instr
+      ? instr.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
+      : null;
+    return `<span class="sk">${code}</span><br>`+
+      (instrHtml?`<span class="quote" style="white-space:normal;line-height:1.7">${instrHtml}</span>`:`<span style="color:var(--g4)">지시문 없음</span>`);
+  }).join('<br><br>');
+  srcDoc.innerHTML=html;
+  srcDoc.style.overflowY='auto';
+}
+
+// ── SOURCE RECORD (원본) ──
+function renderSrc(d){
+  document.getElementById('srcRef').textContent='#'+String(d.n).padStart(4,'0');
+  document.getElementById('srcDoc').innerHTML=
+    `<span class="sk">REF:</span> ${d.file}<br>`+
+    `<span class="sk">BRIEF:</span><span class="quote">"${BRIEFS[d.scene]||'관찰 기록'}"</span>`+
+    `<span class="sk">TAGS:</span> ${d.tags.join(' · ')}<br>`+
+    `<span class="sk">RAW:</span> <span class="raw">${d.lens} ${d.shtr} ${d.apt} ISO${d.iso}</span>`;
+}
+// ── RELATED (교집합) ──
+function renderRel(d){
+  const cnt=curCount(); const all=[];
+  for(let i=1;i<=cnt;i++){ if(i===d.n) continue; const o=frameData(i); let m=false;
+    if(S.relMode==='SEQ') m=Math.abs(i-d.n)<=4;
+    else if(S.relMode==='SCENE') m=o.scene===d.scene;
+    else m=o.tags.some(t=>d.tags.includes(t));
+    if(m) all.push(o);
+  }
+  document.getElementById('relCap').innerHTML=`<b>${all.length}</b> MATCHES · ${S.relMode}`;
+  document.getElementById('relGrid').innerHTML = all.slice(0,2).map(o=>
+    `<div class="rel-cell ${o.v==='CORE'?'core':''}" data-f="${o.n}">${String(o.n).padStart(4,'0')}</div>`).join('')
+    || '<div style="font-size:5px;color:var(--g4)">NO MATCH</div>';
+  document.querySelectorAll('.rel-cell').forEach(c=>c.onclick=()=>setFrame(+c.dataset.f));
+}
+
+// ════ 프레임 선택 (연동 루프) ════
+function setFrame(n){
+  const cnt=curCount();
+  S.frame=Math.max(1,Math.min(cnt,n));
+  const d=frameData(S.frame);
+  document.getElementById('navCur').textContent=String(S.frame).padStart(4,'0');
+  document.getElementById('navTot').textContent=cnt;
+  renderScan(d); renderMeta(d); renderSrc(d); renderRel(d);
+  log('NODE',false,'FRAME '+String(S.frame).padStart(4,'0')+' · '+d.scene+' · '+d.v);
+}
+document.getElementById('navPrev').onclick=()=>setFrame(S.frame-1);
+document.getElementById('navNext').onclick=()=>setFrame(S.frame+1);
+
+// RELATED 기준 토글
+document.querySelectorAll('.rel-mode').forEach(m=>m.onclick=()=>{
+  document.querySelectorAll('.rel-mode').forEach(x=>x.classList.remove('on'));
+  m.classList.add('on'); S.relMode=m.dataset.rel; renderRel(frameData(S.frame));
+});
+
+// EXIT
+document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED · DENIED (READ-ONLY)'); };
+
+// ── SCAN 애니메이션: 타겟 이동 + % 카운터 ──
+(function scanAnim(){
+  const tgt = document.getElementById('scTarget');
+  const pct = document.getElementById('scPct');
+  const lbl = document.getElementById('scAnaLbl');
+  const LBLS = ['SCANNING','ANALYZING','PROCESSING','MAPPING','VERIFYING'];
+  let lblIdx = 0, pctVal = 0, pctDir = 1;
+
+  function moveTarget(){
+    const scope = document.getElementById('scScope');
+    const sw = scope.offsetWidth, sh = scope.offsetHeight;
+    const tw = 28, th = 20;
+    const px = 8 + Math.random() * (sw - tw - 16);
+    const py = 8 + Math.random() * (sh - th - 16);
+    tgt.style.left = px + 'px';
+    tgt.style.top  = py + 'px';
+  }
+
+  function tickPct(){
+    pctVal += pctDir * (Math.random() * 3 + 1 | 0);
+    if(pctVal >= 100){ pctVal = 100; pctDir = -1; }
+    if(pctVal <= 0)  { pctVal = 0;   pctDir = 1;  }
+    pct.textContent = String(pctVal).padStart(2,'0') + '%';
+  }
+
+  function tickLbl(){
+    lblIdx = (lblIdx + 1) % LBLS.length;
+    lbl.textContent = LBLS[lblIdx];
+  }
+
+  moveTarget();
+  setInterval(moveTarget, 1800);
+  setInterval(tickPct, 90);
+  setInterval(tickLbl, 2200);
+})();
+
+//═══════ CONTACT SHEET GALLERY ═══════
+(function(){
+  const GAL_COLORS = { core:'#9bff3a', support:'#ffb000', drop:'#1a3a0a' };
+  const GAL_LABELS = { core:'CORE', support:'SUP' };
+  const SHOW_BORDER = ['core','support'];
+
+  let galNavStack = [];
+  let galCurrentPhotos = [];
+  let galCurrentFilter = 'all';
+  const PAGE = 80;
+  let _fpCell = null, _fpShowTimer = null, _fpHideTimer = null;
+
+  function fpGetPhotos(node, max){
+    if(!node) return [];
+    if(node.type !== 'sheet') return [node];
+    const r = [];
+    for(const c of (node.children||[])){
+      if(r.length >= max) break;
+      r.push(...fpGetPhotos(c, max - r.length));
+    }
+    return r;
+  }
+
+  function fpCountStats(node){
+    if(!node) return {core:0,sup:0,drop:0,total:0};
+    if(node.type !== 'sheet'){
+      const v = node.verdict||'';
+      return {core:v==='core'?1:0, sup:v==='support'?1:0, drop:(v==='drop'||!v)?1:0, total:1};
+    }
+    const r = {core:0,sup:0,drop:0,total:0};
+    for(const c of (node.children||[])){
+      const s = fpCountStats(c);
+      r.core+=s.core; r.sup+=s.sup; r.drop+=s.drop; r.total+=s.total;
+    }
+    return r;
+  }
+
+  function showFolderPreview(folder){
+    const fpPhotos = document.getElementById('fpPhotos');
+    const fpInfo   = document.getElementById('fpInfo');
+    const fpEmpty  = document.getElementById('fpEmpty2');
+    if(!fpPhotos || !fpInfo) return;
+
+    const photos = fpGetPhotos(folder, 8);
+    const statsLeaves = fpGetPhotos(folder, 200);
+    const {core,sup,drop,total} = fpCountStats(folder);
+    const subs = (folder.children||[]).filter(c=>c.type==='sheet');
+    let dateRange = '';
+    if(subs.length > 0){
+      const f = subs[0].id||'', l = subs[subs.length-1].id||'';
+      dateRange = f===l ? f : `${f} – ${l}`;
+    }
+    const title = (folder.title||folder.id||'').toUpperCase().replace(/\./g,'/');
+    const pC = total ? +(core/total*100).toFixed(0) : 0;
+    const pS = total ? +(sup/total*100).toFixed(0) : 0;
+    const pD = total ? +(drop/total*100).toFixed(0) : 0;
+
+    const dirCounts = {};
+    statsLeaves.forEach(p=>{ if(p.dir) dirCounts[p.dir]=(dirCounts[p.dir]||0)+1; });
+    const topDirs = Object.entries(dirCounts).sort((a,b)=>b[1]-a[1]).slice(0,14);
+    const maxDir = topDirs[0] ? topDirs[0][1] : 1;
+    const feed = statsLeaves.filter(p=>p.verdict==='core'||p.verdict==='support').slice(0,8);
+
+    function imgDiv(p, style, border){
+      const url = p ? (p.filename||p.url||'') : '';
+      const thumb = url.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
+      return `<div style="${style}overflow:hidden;background:#0d0d0d;${border!==undefined?border:'border:1px solid var(--g);'}">
+        ${url?`<img src="${thumb}" data-full="${url}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}" alt="">`:''}</div>`;
+    }
+
+    const main = photos[0];
+    const thumbs = photos.slice(1,6);
+    const THUMB_H=56, THUMB_W=Math.round(THUMB_H*3/2), THUMB_GAP=4;
+    const stripW = thumbs.length*THUMB_W+(thumbs.length-1)*THUMB_GAP+8;
+
+    fpPhotos.innerHTML = `
+      <div style="height:100%;display:flex;flex-direction:column;gap:4px;width:${stripW}px;flex-shrink:0;">
+        ${imgDiv(main,'flex:1;width:100%;')}
+        <div style="height:${THUMB_H}px;flex-shrink:0;display:flex;gap:${THUMB_GAP}px;border:1px solid var(--g);padding:3px;">
+          ${thumbs.map(p=>imgDiv(p,`width:${THUMB_W}px;height:100%;flex-shrink:0;`,'')). join('')}
+        </div>
+      </div>`;
+
+    const batchInfo = subs.map(s=>{
+      const sc = fpCountStats(s);
+      return `<div style="display:flex;align-items:center;gap:6px;font-size:8px;">
+        <span style="color:var(--g3);width:36px;flex-shrink:0;">${s.id||''}</span>
+        <div style="flex:1;height:2px;background:#0a0a0a;position:relative;">
+          <div style="position:absolute;left:0;top:0;height:100%;width:${sc.total?+(sc.core/sc.total*100).toFixed(0):0}%;background:var(--g);"></div>
+        </div>
+        <span style="color:var(--g3);font-size:7px;">${sc.total}</span>
+      </div>`;
+    }).join('');
+
+    fpInfo.innerHTML = `
+      <div style="padding-bottom:6px;border-bottom:1px solid rgba(0,221,85,0.2);margin-bottom:8px;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--g);">${title}</div>
+        ${dateRange?`<div style="font-size:7px;color:var(--g3);letter-spacing:1px;margin-top:2px;">${dateRange} · ${subs.length} BATCH${subs.length>1?'ES':''}</div>`:''}
+      </div>
+      <div style="margin-bottom:9px;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;">A  VERDICT</div>
+        ${[['CORE',core,'var(--acc)',pC],['SUP',sup,'#ffb000',pS],['DROP',drop,'var(--g3)',pD]].map(([lbl,cnt,clr,pct])=>`
+        <div style="display:flex;align-items:center;gap:5px;font-size:9px;margin-bottom:3px;">
+          <span style="width:28px;color:${clr};letter-spacing:0.5px;">${lbl}</span>
+          <div style="flex:1;height:5px;background:#0a0a0a;border:1px solid #001a00;">
+            <div style="width:${pct}%;height:100%;background:${clr};"></div>
+          </div>
+          <span style="width:22px;text-align:right;color:${clr};">${cnt}</span>
+          <span style="width:28px;text-align:right;color:var(--g3);font-size:9px;">${pct}%</span>
+        </div>`).join('')}
+        <div style="font-size:9px;color:var(--g4);text-align:right;margin-top:1px;">TOTAL ${total}</div>
+      </div>
+      ${subs.length?`
+      <div style="margin-bottom:9px;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;">BATCHES</div>
+        <div style="display:flex;flex-direction:column;gap:2px;">${batchInfo}</div>
+      </div>`:''}
+      ${topDirs.length?`
+      <div style="margin-bottom:9px;">
+        <div style="font-size:9px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;">B  DIR FREQUENCY</div>
+        <div style="display:flex;flex-wrap:wrap;gap:3px;">
+          ${topDirs.map(([dir,cnt])=>{
+            const op=(0.3+cnt/maxDir*0.7).toFixed(2);
+            return `<span style="font-size:9px;border:1px solid rgba(0,221,85,${op});color:rgba(0,221,85,${op});padding:1px 4px;letter-spacing:0.5px;white-space:nowrap;">${dir}<span style="opacity:0.5;"> ${cnt}</span></span>`;
+          }).join('')}
+        </div>
+      </div>`:''}
+      ${feed.length?`
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;">C  SELECTIONS</div>
+        <div style="display:flex;flex-direction:column;gap:3px;">
+          ${feed.map(p=>{
+            const clr=p.verdict==='core'?'var(--acc)':'#ffb000';
+            const vid=p.verdict==='core'?'CORE':'SUP';
+            return `<div style="display:flex;align-items:baseline;gap:4px;font-size:9px;line-height:1.4;">
+              <div style="width:5px;height:5px;border-radius:50%;background:${clr};flex-shrink:0;margin-top:4px;"></div>
+              <span style="color:${clr};width:28px;flex-shrink:0;">${vid}</span>
+              <span style="color:var(--g3);flex-shrink:0;">${(p.id||'').toUpperCase()}</span>
+              ${p.dir?`<span style="color:#ffb000;flex-shrink:0;"> ${p.dir}</span>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`:''}`;
+
+    if(fpEmpty) fpEmpty.style.display='none';
+
+    // SCAN 패널 사진 업데이트
+    const mainUrl = main ? (main.filename||main.url||'') : '';
+    if(mainUrl) setScanPhoto(mainUrl);
+  }
+
+  function hideFolderPreview(){
+    const fpPhotos = document.getElementById('fpPhotos');
+    const fpInfo   = document.getElementById('fpInfo');
+    const fpEmpty  = document.getElementById('fpEmpty2');
+    if(fpPhotos) fpPhotos.innerHTML='';
+    if(fpInfo)   fpInfo.innerHTML='';
+    if(fpEmpty)  fpEmpty.style.display='flex';
+    _fpCell = null;
+  }
+
+  function setScanPhoto(url){
+    const img = document.getElementById('scScopeImg');
+    if(!img || !url) return;
+    const thumb = url.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
+    img.style.opacity = '0';
+    const tmp = new Image();
+    tmp.onload = ()=>{ img.src = tmp.src; img.style.opacity = '1'; };
+    tmp.onerror = ()=>{ img.src = url; img.style.opacity = '1'; };
+    tmp.src = thumb || url;
+  }
+
+  function fakeThumbnailStyle(n){
+    n = parseInt(String(n).replace(/\D/g,'')) || 0;
+    const h1=(n*137.508)%360, h2=(h1+30+(n%7)*12)%360;
+    const s=12+(n%6)*4, l1=6+(n%9)*3, l2=l1+8+(n%5)*4;
+    const angle=(n*73)%180;
+    return `background:linear-gradient(${angle}deg,hsl(${h1},${s}%,${l1}%) 0%,hsl(${h2},${s}%,${l2}%) 60%,hsl(${h1},${s}%,${Math.max(l1-4,3)}%) 100%);`;
+  }
+
+  function cellHTML(p, idx){
+    if(p.type === 'sheet'){
+      const first = (p.children||[]).flatMap(c=>c.type==='sheet'?(c.children||[]):[c])[0];
+      const full = (first && (first.filename||first.url)) || '';
+      const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg') : '';
+      return `<div class="gal-folder" data-idx="${idx}" data-type="sheet">
+        <div class="gal-folder-thumb">
+          ${thumb ? `<img src="${thumb}" data-full="${full}" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}" loading="eager">` : ''}
+        </div>
+        <div class="gal-folder-name">${(p.title||p.id).toUpperCase().replace(/\./g,'/')} <span>(${(p.children||[]).length})</span></div>
+      </div>`;
+    }
+    const v = p.verdict || 'drop';
+    const isKey = SHOW_BORDER.includes(v);
+    const full = p.filename || p.url || '';
+    const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg') : '';
+    const num = (p.id||'').replace(/\D/g,'');
+    const cls = v==='core'?'gal-core':v==='support'?'gal-sup':'gal-drop';
+    return `<div class="gal-cell ${cls}" data-idx="${idx}" data-v="${v}" data-type="photo" style="${isKey?'':''}${thumb?'':''+fakeThumbnailStyle(num)}">
+      ${(thumb||full) ? `<img src="${thumb||full}" data-full="${full}" loading="eager" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
+      ${isKey ? `<div class="gal-cell-label${v==='support'?' sup':''}">${GAL_LABELS[v]}</div>` : ''}
+    </div>`;
+  }
+
+  function renderLevel(photos, title){
+    galCurrentPhotos = photos;
+    const inner = document.getElementById('gallery-inner');
+    if(!inner) return;
+
+    const hasSheets = photos.some(p=>p.type==='sheet');
+    const filterBtns = !hasSheets ? `
+      <button class="gal-fb on" data-f="all">ALL</button>
+      <button class="gal-fb" data-f="core">CORE</button>
+      <button class="gal-fb" data-f="support">SUP</button>
+      <button class="gal-fb" data-f="drop">DROP</button>` : '';
+
+    const breadcrumb = galNavStack.length > 0
+      ? galNavStack.map(l=>l.title).join(' › ') + ' › ' + title : '';
+
+    const cells = photos.slice(0,PAGE).map((p,i)=>cellHTML(p,i)).join('');
+    const more = photos.length > PAGE
+      ? `<div id="galLoadMore"><button data-loaded="${PAGE}">MORE (${photos.length-PAGE} LEFT)</button></div>` : '';
+
+    const showFP = galNavStack.length < 2 && hasSheets;
+
+    inner.innerHTML = `
+      ${galNavStack.length > 0 ? `<div id="galNav">
+        <button id="galBackBtn">← BACK</button>
+        <span id="galBreadcrumb">${breadcrumb}</span>
+      </div>` : ''}
+      ${filterBtns ? `<div id="galFilters">${filterBtns}</div>` : ''}
+      <div id="galGrid"><div id="galCells">${cells}</div>${more}</div>
+      ${showFP ? `
+      <div id="fpPanel" style="
+        flex:1; min-height:240px; background:#000;
+        border:1px solid var(--g4); border-top:1px solid rgba(0,221,85,0.2);
+        position:relative; overflow:hidden; display:flex;
+      ">
+        <div id="fpInner" style="display:flex;height:100%;padding:12px 14px;gap:0;width:100%;">
+          <div id="fpPhotos" style="flex:0 0 auto;display:flex;overflow:hidden;"></div>
+          <div id="fpInfo" style="flex:1;min-width:0;border-left:1px solid rgba(0,221,85,0.15);padding:10px 14px;display:flex;flex-direction:column;overflow-y:auto;font-family:'Press Start 2P',monospace;"></div>
+        </div>
+        <div id="fpEmpty2" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+          <span style="font-size:5px;font-family:'Press Start 2P',monospace;color:rgba(0,221,85,0.18);letter-spacing:3px;">— HOVER A FOLDER TO PREVIEW —</span>
+        </div>
+      </div>` : ''}`;
+
+    galCurrentFilter = 'all';
+
+    // 사진 셀 hover → SCAN 패널
+    inner.querySelectorAll('.gal-cell').forEach(cell=>{
+      cell.addEventListener('mouseenter', ()=>{
+        const idx = parseInt(cell.dataset.idx);
+        const p = galCurrentPhotos[idx];
+        if(p && p.type !== 'sheet'){
+          const url = p.filename||p.url||'';
+          if(url) setScanPhoto(url);
+          document.getElementById('fiThumbN').textContent = (p.id||'').toUpperCase().slice(-4)||'----';
+        }
+      });
+    });
+
+    // 폴더 hover → fpPanel
+    if(showFP){
+      const firstFolder = photos.find(p=>p.type==='sheet');
+      if(firstFolder) showFolderPreview(firstFolder);
+
+      inner.querySelectorAll('.gal-folder').forEach(function(cell){
+        cell.addEventListener('mouseenter', function(){
+          clearTimeout(_fpHideTimer);
+          if(cell === _fpCell) return;
+          _fpCell = cell;
+          clearTimeout(_fpShowTimer);
+          const idx = parseInt(cell.dataset.idx);
+          const folder = galCurrentPhotos[idx];
+          if(!folder || folder.type!=='sheet') return;
+          _fpShowTimer = setTimeout(()=>showFolderPreview(folder), 60);
+        });
+        cell.addEventListener('mouseleave', function(){
+          if(cell !== _fpCell) return;
+          clearTimeout(_fpShowTimer);
+          _fpCell = null;
+          _fpHideTimer = setTimeout(()=>{
+            const first = galCurrentPhotos.find(p=>p.type==='sheet');
+            if(first) showFolderPreview(first);
+          }, 150);
+        });
+      });
+    }
+
+    // 이벤트 위임
+    inner.onclick = function(e){
+      // 더 보기
+      const moreBtn = e.target.closest('#galLoadMore button');
+      if(moreBtn){
+        const loaded = parseInt(moreBtn.dataset.loaded);
+        const next = galCurrentPhotos.slice(loaded, loaded+PAGE);
+        const moreCells = next.map((p,i)=>cellHTML(p,loaded+i)).join('');
+        document.getElementById('galCells').insertAdjacentHTML('beforeend', moreCells);
+        const newLoaded = loaded+PAGE;
+        const rem = galCurrentPhotos.length - newLoaded;
+        if(rem<=0) moreBtn.parentElement.remove();
+        else{ moreBtn.dataset.loaded=newLoaded; moreBtn.textContent=`MORE (${rem} LEFT)`; }
+        return;
+      }
+      // BACK
+      if(e.target.closest('#galBackBtn')){
+        if(galNavStack.length>0){
+          const prev = galNavStack.pop();
+          renderLevel(prev.photos, prev.title);
+        }
+        return;
+      }
+      // 필터
+      const fb = e.target.closest('.gal-fb');
+      if(fb){
+        galCurrentFilter = fb.dataset.f;
+        inner.querySelectorAll('.gal-fb').forEach(b=>b.classList.toggle('on', b===fb));
+        applyFilter(galCurrentFilter);
+        return;
+      }
+      // 셀 클릭
+      const cell = e.target.closest('[data-idx]');
+      if(!cell) return;
+      const idx = parseInt(cell.dataset.idx);
+      const p = galCurrentPhotos[idx];
+      if(!p) return;
+      if(p.type==='sheet'){
+        galNavStack.push({title: galNavStack.length===0?'ROOT':galCurrentPhotos._title||title, photos:galCurrentPhotos});
+        renderLevel(p.children||[], p.title||p.id);
+        return;
+      }
+      const leaves = galCurrentPhotos.filter(pp=>pp.type!=='sheet');
+      showLightbox(leaves, leaves.indexOf(p));
+    };
+  }
+
+  function applyFilter(f){
+    const inner = document.getElementById('gallery-inner');
+    if(!inner) return;
+    inner.querySelectorAll('[data-type="photo"]').forEach(cell=>{
+      const v = cell.dataset.v || 'drop';
+      if(f==='all' || v===f) cell.style.display='';
+      else cell.style.display='none';
+    });
+    inner.querySelectorAll('[data-type="sheet"]').forEach(cell=>{
+      cell.style.display = f==='all' ? '' : 'none';
+    });
+  }
+
+  function showLightbox(leaves, startIdx){
+    let idx = startIdx;
+    const inner = document.getElementById('gallery-inner');
+    function render(){
+      const existing = document.getElementById('galLightbox');
+      if(existing) existing.remove();
+      const p = leaves[idx];
+      // track click + METADATA 업데이트
+      const pid = p.id || p.filename || p.url || '';
+      if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; if(window._onPhotoClick) window._onPhotoClick(); }
+      if(typeof renderPhotoMeta==='function') renderPhotoMeta(p);
+      const v = p.verdict||'drop';
+      const full = p.filename||p.url||'';
+      const color = GAL_COLORS[v]||'#333';
+      const lb = document.createElement('div');
+      lb.id = 'galLightbox';
+      lb.innerHTML = `
+        <div id="galLbImg"><img src="${full}" style="filter:none;" loading="eager"></div>
+        <div id="galLbBar">
+          <button id="galLbPrev">◄</button>
+          <button id="galLbNext">►</button>
+          <div id="galLbMeta">
+            <b>${(p.id||'').toUpperCase()}</b> &nbsp;
+            <span style="color:${color}">${v.toUpperCase()}</span> &nbsp;
+            ${p.dir ? `<span>${p.dir}</span>` : ''}
+            <br><span style="color:rgba(0,221,85,0.35)">${idx+1} / ${leaves.length}</span>
+          </div>
+          <button id="galLbClose">✕ CLOSE</button>
+        </div>`;
+      inner.appendChild(lb);
+      lb.querySelector('#galLbClose').onclick=()=>lb.remove();
+      lb.querySelector('#galLbPrev').onclick=()=>{ idx=Math.max(0,idx-1); render(); };
+      lb.querySelector('#galLbNext').onclick=()=>{ idx=Math.min(leaves.length-1,idx+1); render(); };
+    }
+    render();
+  }
+
+  // 갤러리 외부에서 특정 사진을 갤러리 라이트박스로 열기
+  window._galOpenPhoto = function(targetPhoto){
+    // GALLERY 섹션 활성화
+    document.querySelectorAll('.mbtn').forEach(x=>x.classList.remove('on'));
+    document.querySelector('.mbtn[data-sec="GALLERY"]').classList.add('on');
+    if(window.S) window.S.sec='GALLERY';
+    document.getElementById('gallery-inner').style.display='flex';
+    document.getElementById('emptyState').style.display='none';
+    // 해당 배치 폴더 내 사진들로 라이트박스 열기
+    const D=window.SET_DATA;
+    if(!D) return;
+    const batchKey=targetPhoto.batchKey;
+    let pool=null;
+    if(batchKey && D.byBatch[batchKey]) pool=D.byBatch[batchKey].leaves.filter(p=>p.type!=='sheet');
+    if(!pool||!pool.length) pool=D.leaves;
+    const idx=pool.findIndex(p=>p===targetPhoto||p.id===targetPhoto.id);
+    galNavStack=[];
+    if(batchKey && D.byBatch[batchKey]){
+      renderLevel(D.byBatch[batchKey].leaves,'BATCH · '+batchKey);
+    }
+    setTimeout(()=>showLightbox(pool, Math.max(0,idx)), 80);
+  };
+
+  function countLeaves(items){
+    let n=0;
+    for(const item of items){
+      if(item.type==='sheet') n+=countLeaves(item.children||[]);
+      else n++;
+    }
+    return n;
+  }
+
+  // admin-contents.json 로드 (GitHub → 로컬 fallback)
+  const ts = Date.now();
+  const githubBase = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+  fetch(githubBase + 'admin-contents.json?t=' + ts)
+    .catch(() => fetch('./admin-contents.json?t=' + ts))
+    .then(r => r.ok ? r.json() : Promise.reject('fetch failed'))
+    .then(data=>{
+      const photos = (data.project && data.project.photos) || [];
+      const total = countLeaves(photos);
+      // 상태 업데이트
+      document.getElementById('esSub').textContent = `${total.toLocaleString()} FRAMES LOADED`;
+      document.getElementById('esLabel').textContent = '[ CONTACT SHEET ]';
+      // 갤러리 표시
+      const inner = document.getElementById('gallery-inner');
+      const empty = document.getElementById('emptyState');
+      if(inner && photos.length){
+        inner.style.display = 'flex';
+        inner.style.flexDirection = 'column';
+        if(empty) empty.style.display = 'none';
+        // gallery-scan 멈춤
+        const scan = document.getElementById('gallery-scan');
+        if(scan) scan.style.animation = 'none';
+        renderLevel(photos, 'SET_NULL_CH');
+        // 루트 복귀 함수 전역 노출
+        window._galRenderRoot = ()=>{ galNavStack=[]; renderLevel(photos, 'SET_NULL_CH'); };
+        // 상단 헤더 업데이트
+        document.querySelector('#sysHd .sub').textContent = `· ${total.toLocaleString()} RECORDS`;
+        log('NODE', false, `ARCHIVE LOADED · ${total.toLocaleString()} FRAMES · ${photos.length} DIRS`);
+        // 필터 카운트 업데이트
+        let core=0, sup=0, drop=0;
+        function countVerdicts(items){
+          for(const p of items){
+            if(p.type==='sheet') countVerdicts(p.children||[]);
+            else if(p.verdict==='core') core++;
+            else if(p.verdict==='support') sup++;
+            else drop++;
+          }
+        }
+        countVerdicts(photos);
+        COUNTS.ALL=total; COUNTS.CORE=core; COUNTS.SUP=sup; COUNTS.DROP=drop;
+        // 전역 데이터 노출
+        window.SET_DATA = buildSetData(photos);
+        initSpotlight();
+      }
+    })
+    .catch(err=>{
+      document.getElementById('esLabel').textContent = 'LOAD ERROR';
+      document.getElementById('esSub').textContent = err.message;
+      log('SYS', false, 'ARCHIVE FETCH FAILED');
+    });
+})();
+
+//═══════ 룰러 / 시계 / 초기 렌더 ═══════
+(function(){
+  const rx=document.getElementById('ruler-x'), ry=document.getElementById('ruler-y');
+  for(let i=0;i<24;i++){ rx.appendChild(document.createElement('i')); }
+  for(let i=0;i<16;i++){ ry.appendChild(document.createElement('i')); }
+})();
+function tick(){ document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8); }
+tick(); setInterval(tick,1000);
+
+renderMapInfo(); renderRecent(); renderReport(); updateCtx(); setFrame(1);
+
+// 시작 로그
+['SESSION INIT · OBSERVER','HANDSHAKE OK · LEVEL-2','RECORDS FETCHED · 5,900','INDEX LOADED · 45 DIRS','VIEW: CONTACT SHEET'].forEach((m,i)=>{
+  setTimeout(()=>log(i<2?'SYS':'NODE',false,m), 300+i*500);
+});
+</script>
+</body>
+</html>
