@@ -785,9 +785,9 @@ html,body { width:100%; height:100%; min-width:1170px; overflow:auto; background
 
   </div>
 
-  <!-- 보고서 원문 모달 -->
-  <div id="repBackdrop" onclick="closeRepModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9998;"></div>
-  <div id="repModal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;width:480px;max-width:calc(100vw-40px);height:520px;max-height:calc(100vh-60px);background:#020e05;border:1px solid var(--g);flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,0.98),0 0 3px rgba(0,221,85,0.5);">
+  <!-- 보고서 원문 모달 (wrap 내부 absolute) -->
+  <div id="repBackdrop" onclick="closeRepModal()" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.80);z-index:200;"></div>
+  <div id="repModal" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;width:500px;height:540px;background:#020e05;border:1px solid var(--g);flex-direction:column;box-shadow:0 0 0 1px rgba(0,221,85,0.3),0 0 60px rgba(0,0,0,0.98);">
     <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--g4);flex-shrink:0;">
       <span style="font-size:10px;color:var(--acc);letter-spacing:2px">◆ CAPTURE REPORT · 원문</span>
       <span id="repModalTitle" style="font-size:9px;color:var(--g3);margin-left:12px"></span>
