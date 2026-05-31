@@ -1615,8 +1615,9 @@ function renderPhotoMeta(p){
     `<span class="mk">DIR</span><span class="mv" title="${dirStr}" style="white-space:normal;line-height:1.6">${dirStr}</span>`;
   const vTab=document.getElementById('fiVerdict');
   if(vTab){ vTab.textContent=v; vTab.className='pnl-tab '+vCls; }
-  // SOURCE RECORD: DIR 지시문 표시
-  renderDirInstruction(p.dir);
+  // SOURCE RECORD: DIR 지시문 — CORE/SUPPORT만 표시
+  if(v==='CORE'||v==='SUPPORT') renderDirInstruction(p.dir);
+  else { const sd=document.getElementById('srcDoc'); if(sd){ sd.style.display='none'; sd.innerHTML=''; } }
   // SCAN 패널 이미지 업데이트
   const full=p.filename||p.url||'';
   if(full && typeof setScanPhoto==='function') setScanPhoto(full);
@@ -2080,13 +2081,16 @@ function renderDirInstruction(dirCodes){
       (instrHtml?`<span class="quote" style="white-space:normal;line-height:1.7">${instrHtml}</span>`:`<span style="color:var(--g4)">지시문 없음</span>`);
   }).join('<br><br>');
   srcDoc.innerHTML=html;
+  srcDoc.style.display='block';
   srcDoc.style.overflowY='auto';
 }
 
 // ── SOURCE RECORD (원본) ──
 function renderSrc(d){
   document.getElementById('srcRef').textContent='#'+String(d.n).padStart(4,'0');
-  document.getElementById('srcDoc').innerHTML=
+  const sd=document.getElementById('srcDoc');
+  sd.style.display='block';
+  sd.innerHTML=
     `<span class="sk">REF:</span> ${d.file}<br>`+
     `<span class="sk">BRIEF:</span><span class="quote">"${BRIEFS[d.scene]||'관찰 기록'}"</span>`+
     `<span class="sk">TAGS:</span> ${d.tags.join(' · ')}<br>`+
