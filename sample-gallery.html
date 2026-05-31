@@ -33,11 +33,13 @@ html,body { width:100%; height:100%; min-width:1170px; overflow:auto; background
 #bg-lights {
   position:absolute; inset:-200px;
   background:
-    radial-gradient(ellipse 55% 60% at 2%  0%,  rgba(0,235,90,0.75) 0%, transparent 68%),
-    radial-gradient(ellipse 50% 55% at 100% 100%, rgba(0,235,90,0.7)  0%, transparent 68%),
-    radial-gradient(ellipse 45% 60% at 100% 0%,  rgba(0,210,80,0.55) 0%, transparent 68%),
-    radial-gradient(ellipse 55% 50% at 0%  100%, rgba(0,210,80,0.55) 0%, transparent 68%),
-    radial-gradient(ellipse 70% 70% at 50% 50%, rgba(0,150,55,0.22) 0%, transparent 72%);
+    radial-gradient(ellipse 62% 48% at 1%  3%,   rgba(0,235,90,0.78) 0%, transparent 62%),
+    radial-gradient(ellipse 44% 58% at 98% 97%,  rgba(0,235,90,0.65) 0%, transparent 70%),
+    radial-gradient(ellipse 38% 52% at 97% 2%,   rgba(0,210,80,0.48) 0%, transparent 65%),
+    radial-gradient(ellipse 52% 41% at 2%  96%,  rgba(0,218,75,0.52) 0%, transparent 60%),
+    radial-gradient(ellipse 28% 35% at 72% 88%,  rgba(0,200,70,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 32% 24% at 18% 74%,  rgba(0,190,65,0.15) 0%, transparent 58%),
+    radial-gradient(ellipse 65% 55% at 48% 52%,  rgba(0,140,50,0.18) 0%, transparent 74%);
   filter:blur(70px);
   animation:bgdrift 24s ease-in-out infinite alternate;
 }
@@ -1174,15 +1176,15 @@ function renderSector(el, D){
         ctx.fillStyle='#000301';ctx.fill();
         start+=sweep;
       });
-      ctx.fillStyle='#00dd55';ctx.font='15px "Space Mono",monospace';
+      ctx.fillStyle='#00dd55';ctx.font='12px "Space Mono",monospace';
       ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText('TOTAL',cx,cy-5);
-      ctx.fillStyle='#eeffee';ctx.font='18px "Space Mono",monospace';
+      ctx.fillStyle='#eeffee';ctx.font='14px "Space Mono",monospace';
       ctx.fillText(tot.toLocaleString(),cx,cy+5);
       const lx=cx+r+14,ly=H/2-22;
       [[`CORE`,core,'#00dd55'],[`SUP`,sup,'#ffb000'],[`DROP`,drop,'#334433']].forEach(([lbl,cnt,col],i)=>{
         ctx.fillStyle=col;ctx.fillRect(lx,ly+i*18,8,8);
-        ctx.fillStyle='#00dd5599';ctx.font='15px "Space Mono",monospace';
+        ctx.fillStyle='#00dd5599';ctx.font='12px "Space Mono",monospace';
         ctx.textAlign='left';ctx.textBaseline='top';
         ctx.fillText(`${lbl} ${cnt}`,lx+11,ly+i*18+1);
       });
@@ -1761,7 +1763,7 @@ function renderExport(el, D){
 }
 
 /* ── OPTIONS ── */
-const OPT={grid:'MD',crt:true,scanline:true,theme:'GREEN'};
+const OPT={grid:'MD',crt:true,scanline:true,theme:'GREEN',bg:true,bganim:true,blur:'MID'};
 function renderOptions(el){
   el.innerHTML=`<div class="sec-wrap">
     <div class="sec-hd">OPTIONS · 인터페이스 설정</div>
@@ -1785,6 +1787,21 @@ function renderOptions(el){
       <div class="opt-row">
         <span class="opt-lbl">COLOR</span>
         ${['GREEN','AMBER','BLUE'].map(v=>`<button class="opt-btn${OPT.theme===v?' on':''}" data-opt="theme" data-val="${v}">${v}</button>`).join('')}
+      </div>
+    </div>
+    <div class="opt-section">
+      <div class="opt-section-hd">BACKGROUND</div>
+      <div class="opt-row">
+        <span class="opt-lbl">BG LIGHT</span>
+        ${['ON','OFF'].map(v=>`<button class="opt-btn${(OPT.bg?'ON':'OFF')===v?' on':''}" data-opt="bg" data-val="${v}">${v}</button>`).join('')}
+      </div>
+      <div class="opt-row">
+        <span class="opt-lbl">ANIMATION</span>
+        ${['ON','OFF'].map(v=>`<button class="opt-btn${(OPT.bganim?'ON':'OFF')===v?' on':''}" data-opt="bganim" data-val="${v}">${v}</button>`).join('')}
+      </div>
+      <div class="opt-row">
+        <span class="opt-lbl">BLUR</span>
+        ${['LOW','MID','HIGH'].map(v=>`<button class="opt-btn${OPT.blur===v?' on':''}" data-opt="blur" data-val="${v}">${v}</button>`).join('')}
       </div>
     </div>
     <div class="opt-section">
@@ -1819,6 +1836,22 @@ function renderOptions(el){
       const [g,acc]=themes[val]||themes.GREEN;
       document.documentElement.style.setProperty('--g',g);
       document.documentElement.style.setProperty('--acc',acc);
+    }
+    // 배경 라이트
+    if(opt==='bg'){
+      const lights=document.getElementById('bg-lights');
+      if(lights) lights.style.opacity=OPT.bg?'1':'0';
+    }
+    // 배경 애니메이션
+    if(opt==='bganim'){
+      const lights=document.getElementById('bg-lights');
+      if(lights) lights.style.animationPlayState=OPT.bganim?'running':'paused';
+    }
+    // 블러 강도
+    if(opt==='blur'){
+      const lights=document.getElementById('bg-lights');
+      const blurPx={LOW:'40px',MID:'70px',HIGH:'110px'};
+      if(lights) lights.style.filter=`blur(${blurPx[val]||'70px'})`;
     }
     renderOptions(el);
     log('SYS',false,'OPT: '+opt+'='+val);
