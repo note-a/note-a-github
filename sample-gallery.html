@@ -167,14 +167,6 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 #sysHd .chev { color:var(--acc); }
 #sysHd .sub { font-size:8px; color:var(--g3); letter-spacing:1px; }
 #sysHd #ctxLabel { margin-left:auto; font-size:8px; color:var(--acc); letter-spacing:1px; }
-#subTabs { display:flex; gap:5px; padding:0 12px 8px; }
-.stab {
-  font-size:8px; letter-spacing:1px; color:var(--g3); padding:5px 12px; cursor:pointer; user-select:none;
-  background:rgba(0,20,8,0.7); border:1px solid var(--g4);
-  clip-path:polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
-}
-.stab:hover { color:var(--g2); }
-.stab.on { color:#000; background:var(--acc); border-color:var(--acc); }
 
 /* ── 갤러리 빈 영역 ── */
 #gallery {
@@ -653,13 +645,6 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
     <div id="centerCol">
       <div class="pnl"><div class="pnl-in">
         <div id="sysHd"><span class="chev">»</span> ARCHIVE: SET_NULL_CH <span class="sub">· 5,900 RECORDS</span><span id="ctxLabel">CONTACT SHEET · ALL</span></div>
-        <div id="subTabs">
-          <div class="stab on" data-view="CONTACT SHEET">CONTACT SHEET</div>
-          <div class="stab" data-view="LIGHTBOX">LIGHTBOX</div>
-          <div class="stab" data-view="TIMELINE">TIMELINE</div>
-          <div class="stab" data-view="GRID">GRID</div>
-          <div class="stab" data-view="LIST">LIST</div>
-        </div>
         <!-- 갤러리 빈 영역 -->
         <div id="gallery">
           <div id="gallery-grid"></div>
@@ -949,12 +934,6 @@ document.querySelectorAll('.ttab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.ttab').forEach(x=>x.classList.remove('on'));
   t.classList.add('on'); S.top=t.dataset.top;
   log('SYS',false,'TAB · '+S.top);
-});
-// 뷰 서브탭
-document.querySelectorAll('.stab').forEach(t=>t.onclick=()=>{
-  document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));
-  t.classList.add('on'); S.view=t.dataset.view; updateCtx();
-  log('SYS',false,'VIEW · '+S.view);
 });
 // 세로 메뉴
 document.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
