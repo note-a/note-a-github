@@ -347,7 +347,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 /* ── 우측 컬럼 ── */
 #rightCol { width:300px; flex-shrink:0; display:flex; flex-direction:column; gap:8px; min-height:0; }
 #scanPnl { flex:0 0 auto; } #metaPnl { flex:0 0 auto; }
-#srcPnl { flex:1 1 0; min-height:0; } #relPnl { flex:1 1 0; min-height:0; }
+#srcPnl { flex:1 1 0; min-height:0; } #relPnl { min-height:0; } #sidePnl { min-height:0; }
 #rightCol .pnl { min-height:0; } #rightCol .pnl-in { height:100%; }
 /* 우측 패널 선 약화: 베벨·내부 보더 흐리게 */
 #rightCol .pnl { background:linear-gradient(135deg,#149040 0%,#006a25 52%,#00401a 100%); }
@@ -441,7 +441,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 .fi-meta .mv.core { color:var(--acc); } .fi-meta .mv.drop { color:var(--g3); }
 
 /* SOURCE RECORD (원본 문서) */
-.src-doc { font-size:6px; line-height:1.85; color:var(--g3); height:100%; overflow-y:auto; overflow-x:hidden; }
+.src-doc { font-size:9px; line-height:1.9; color:var(--g3); height:100%; overflow-y:auto; overflow-x:hidden; }
 .src-doc::-webkit-scrollbar { width:4px; }
 .src-doc::-webkit-scrollbar-track { background:transparent; }
 .src-doc::-webkit-scrollbar-thumb { background:rgba(0,255,0,0.3); }
@@ -708,20 +708,43 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
         </div>
       </div></div>
 
-      <!-- RELATED (교집합: 비슷한 컷) -->
-      <div class="pnl" id="relPnl"><div class="pnl-in">
-        <div class="pnl-hd">RELATED · 교집합
-          <span class="hd-r">
-            <span class="rel-mode on" data-rel="SEQ">SEQ</span>
-            <span class="rel-mode" data-rel="SCENE">SCENE</span>
-            <span class="rel-mode" data-rel="TAG">TAG</span>
-          </span>
-        </div>
-        <div class="pnl-bd">
-          <div class="rel-cap" id="relCap">— MATCHES</div>
-          <div class="rel-grid" id="relGrid"></div>
-        </div>
-      </div></div>
+      <!-- RELATED + SPOTLIGHT 2열 -->
+      <div style="display:flex;gap:8px;flex:1 1 0;min-height:0;">
+
+        <div class="pnl" id="relPnl" style="flex:1;min-width:0;"><div class="pnl-in">
+          <div class="pnl-hd">RELATED · 교집합
+            <span class="hd-r">
+              <span class="rel-mode on" data-rel="SEQ">SEQ</span>
+              <span class="rel-mode" data-rel="SCENE">SCENE</span>
+              <span class="rel-mode" data-rel="TAG">TAG</span>
+            </span>
+          </div>
+          <div class="pnl-bd">
+            <div class="rel-cap" id="relCap">— MATCHES</div>
+            <div class="rel-grid" id="relGrid"></div>
+          </div>
+        </div></div>
+
+        <div class="pnl" id="sidePnl" style="flex:1;min-width:0;"><div class="pnl-in">
+          <div class="pnl-hd">SPOTLIGHT<span class="hd-r" id="spMeta" style="font-size:5px;color:var(--g3)">RANDOM · CORE</span></div>
+          <div class="pnl-bd" id="spBody" style="display:flex;gap:8px;align-items:stretch;height:calc(100% - 22px)">
+            <div id="spImg" style="width:60px;flex-shrink:0;background:#050f07;border:1px solid var(--g4);overflow:hidden;cursor:pointer;position:relative">
+              <img id="spThumb" style="width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(0) sepia(1) hue-rotate(90deg)" src="" onerror="this.style.display='none'">
+              <div style="position:absolute;bottom:3px;right:4px;font-size:4px;color:var(--g3)">▶</div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div id="spFile" style="font-size:5.5px;color:var(--acc);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+              <div id="spBatch" style="font-size:5px;color:var(--g3);letter-spacing:.5px"></div>
+              <div id="spDirs" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:2px"></div>
+              <div style="margin-top:auto;border-top:1px solid var(--g4);padding-top:4px;display:flex;gap:6px">
+                <div id="spVerdict" style="font-size:5.5px"></div>
+                <div id="spNext" style="font-size:5px;color:var(--g4);cursor:pointer;margin-left:auto">NEXT ›</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+
+      </div>
 
     </div>
 
@@ -745,25 +768,6 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
       <div class="pnl-bd" style="padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;">
         <div id="repContent" style="flex:1;overflow-y:auto;font-size:5.5px;line-height:1.8;color:var(--g3);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.35) transparent;">
           <span style="color:var(--g4)">배치를 선택하면 보고서가 표시됩니다.</span>
-        </div>
-      </div>
-    </div></div>
-
-    <div class="pnl" id="sidePnl"><div class="pnl-in">
-      <div class="pnl-hd">SPOTLIGHT<span class="hd-r" id="spMeta" style="font-size:5px;color:var(--g3)">RANDOM · CORE</span></div>
-      <div class="pnl-bd" id="spBody" style="display:flex;gap:8px;align-items:stretch;height:calc(100% - 22px)">
-        <div id="spImg" style="width:90px;flex-shrink:0;background:#050f07;border:1px solid var(--g4);overflow:hidden;cursor:pointer;position:relative">
-          <img id="spThumb" style="width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(0) sepia(1) hue-rotate(90deg)" src="" onerror="this.style.display='none'">
-          <div style="position:absolute;bottom:3px;right:4px;font-size:4px;color:var(--g3)">CLICK ▶</div>
-        </div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0">
-          <div id="spFile" style="font-size:5.5px;color:var(--acc);letter-spacing:.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-          <div id="spBatch" style="font-size:5px;color:var(--g3);letter-spacing:.5px"></div>
-          <div id="spDirs" style="display:flex;flex-wrap:wrap;gap:3px;margin-top:2px"></div>
-          <div style="margin-top:auto;border-top:1px solid var(--g4);padding-top:4px;display:flex;gap:6px">
-            <div id="spVerdict" style="font-size:5.5px"></div>
-            <div id="spNext" style="font-size:5px;color:var(--g4);cursor:pointer;margin-left:auto">NEXT ›</div>
-          </div>
         </div>
       </div>
     </div></div>
@@ -2745,7 +2749,7 @@ async function renderCaptureReport(dateKey, batchTitle){
   }
   repContent.innerHTML = '<span style="color:var(--g4)">로딩 중…</span>';
   const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
-  const urls = [base+'reports/'+encodeURIComponent(filename), './reports/'+encodeURIComponent(filename)];
+  const urls = ['./reports/'+encodeURIComponent(filename), base+'reports/'+encodeURIComponent(filename)];
   for(const url of urls){
     try{
       const res = await fetch(url);
