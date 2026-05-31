@@ -1069,7 +1069,7 @@ function showVerdictLightbox(pool, startIdx){
     if(existing) existing.remove();
     const p = pool[idx];
     const pid = p.id||p.filename||p.url||'';
-    if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; if(window._onPhotoClick) window._onPhotoClick(); }
+    if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; window._saveClickMap(); if(window._onPhotoClick) window._onPhotoClick(); }
     const full = p.filename||p.url||'';
     const file = full.split('/').pop();
     const v = p.verdict||'drop';
@@ -1125,7 +1125,12 @@ function renderVerdict(el, D){
 
 /* ── FIELD: DIR network 3D sphere ── */
 let _fieldAnimId = null;
-window._clickMap = {}; // photo click tracking: id → count
+// photo click tracking: id → count — localStorage 영속
+(function(){
+  try{ window._clickMap=JSON.parse(localStorage.getItem('set_clickmap')||'{}'); }
+  catch(e){ window._clickMap={}; }
+  window._saveClickMap=function(){ try{ localStorage.setItem('set_clickmap',JSON.stringify(window._clickMap)); }catch(e){} };
+})();
 function renderField(el, D){
   if(_fieldAnimId){ cancelAnimationFrame(_fieldAnimId); _fieldAnimId=null; }
 
@@ -2107,16 +2112,37 @@ const DIR_INSTRUCTIONS={
 기각: 윤곽선이 일부라도 식별 가능한 경우 / 아웃포커스가 부분적이어서 선명한 구역이 남아 있는 경우 / 피사체 정체를 유추할 수 있는 색·형태 조합이 잔존하는 경우`,
 };
 
+// DIR 코드 별칭 매핑 (데이터에서 쓰는 약어 → DIR_INSTRUCTIONS 키)
+const DIR_ALIASES={
+  MIRROR:'MIRRORSURF',
+  GRIDLIGHT:'LITGRID',
+  MIRRORSURF:'MIRRORSURF',
+  LITGRID:'LITGRID',
+  INFIL:'OVERGROW',      // 침투·침식 계열
+  PRINTWALL:'WALLTXT',   // 인쇄 벽면 → WALLTXT
+  ROADGFX:'ROADCLASH',  // 노면 그래픽 → ROADCLASH
+  SURFILL:'SNOWFILL',    // 표면 충전 → SNOWFILL
+};
+
 function renderDirInstruction(dirCodes){
   const srcDoc=document.getElementById('srcDoc');
   const srcRef=document.getElementById('srcRef');
   if(!srcDoc) return;
-  const codes=String(dirCodes||'').split(/[\s,;·]+/)
-    .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean);
+  // 특수문자·오염 제거 파서: [[]], 백틱, ?, ↯, 괄호내용, + 구분자 등 처리
+  const raw=String(dirCodes||'')
+    .replace(/\[\[|\]\]/g,' ')  // [[ ]] 제거
+    .replace(/`/g,' ')           // 백틱 제거
+    .replace(/↯/g,' ')           // 특수기호 제거
+    .replace(/\([^)]*\)/g,' ')   // 괄호와 내용 제거 (광물), (손) 등
+    .replace(/\?/g,' ');         // ? 제거
+  const codes=raw.split(/[\s,;·+]+/)
+    .map(d=>d.replace(/^DIR-\d+-?/i,'').replace(/[^A-Za-z0-9]/g,'').toUpperCase())
+    .filter(d=>d && d.length>=3 && !/^G\d+$/.test(d) && !/^\d/.test(d));
   if(!codes.length){ srcRef.textContent='DIR —'; srcDoc.innerHTML='<span style="color:var(--g4)">DIR 없음</span>'; srcDoc.style.display='block'; return; }
   srcRef.textContent=codes[0];
   const html=codes.map(code=>{
-    const instr=DIR_INSTRUCTIONS[code];
+    const resolved=DIR_ALIASES[code]||code;
+    const instr=DIR_INSTRUCTIONS[resolved];
     const instrHtml=instr
       ? instr.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')
       : null;
@@ -2579,7 +2605,7 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
       const p = leaves[idx];
       // track click + METADATA 업데이트
       const pid = p.id || p.filename || p.url || '';
-      if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; if(window._onPhotoClick) window._onPhotoClick(); }
+      if(pid){ window._clickMap[pid]=(window._clickMap[pid]||0)+1; window._saveClickMap(); if(window._onPhotoClick) window._onPhotoClick(); }
       if(typeof renderPhotoMeta==='function') renderPhotoMeta(p);
       const v = p.verdict||'drop';
       const full = p.filename||p.url||'';
