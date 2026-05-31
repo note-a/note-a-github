@@ -1059,6 +1059,201 @@ function renderSector(el, D){
     if(b){ setScanPhoto(b.leaves[0]&&(b.leaves[0].filename||b.leaves[0].url)||'');
            log('NODE',false,'BATCH: '+r.dataset.bk); }
   });
+
+  // 차트 섹션 추가
+  const chartWrap=document.createElement('div');
+  chartWrap.style.cssText='padding:0 14px 14px;display:flex;flex-direction:column;gap:16px;';
+
+  // A. Monthly Trend
+  const mCanvas=document.createElement('canvas');
+  mCanvas.style.cssText='width:100%;height:80px;display:block;';
+  const mLabel=document.createElement('div');
+  mLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
+  mLabel.textContent='MONTHLY TREND — FRAMES · CORE';
+  const mWrap=document.createElement('div');
+  mWrap.appendChild(mLabel);mWrap.appendChild(mCanvas);
+  chartWrap.appendChild(mWrap);
+
+  // B. Verdict Arc
+  const vCanvas=document.createElement('canvas');
+  vCanvas.style.cssText='width:100%;height:80px;display:block;';
+  const vLabel=document.createElement('div');
+  vLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
+  vLabel.textContent='VERDICT DISTRIBUTION';
+  const vWrap=document.createElement('div');
+  vWrap.appendChild(vLabel);vWrap.appendChild(vCanvas);
+  chartWrap.appendChild(vWrap);
+
+  // C. Top DIRs
+  const dCanvas=document.createElement('canvas');
+  dCanvas.style.cssText='width:100%;height:120px;display:block;';
+  const dLabel=document.createElement('div');
+  dLabel.style.cssText='font-size:6px;color:var(--g3);letter-spacing:2px;margin-bottom:4px;';
+  dLabel.textContent='TOP DIRS — FREQUENCY';
+  const dWrap=document.createElement('div');
+  dWrap.appendChild(dLabel);dWrap.appendChild(dCanvas);
+  chartWrap.appendChild(dWrap);
+
+  el.querySelector('.sec-wrap').appendChild(chartWrap);
+
+  requestAnimationFrame(()=>{
+    const dpr=window.devicePixelRatio||1;
+
+    // A. Monthly Trend Chart
+    (()=>{
+      const W=mCanvas.offsetWidth,H=mCanvas.offsetHeight;
+      if(!W||!H) return;
+      mCanvas.width=W*dpr;mCanvas.height=H*dpr;
+      const ctx=mCanvas.getContext('2d');
+      ctx.scale(dpr,dpr);
+      ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
+      const pad={l:28,r:8,t:6,b:18};
+      const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+      const maxF=Math.max(...months.map(m=>m.leaves.length),1);
+      const bW=Math.max(2,Math.floor(cW/months.length)-2);
+      months.forEach((m,i)=>{
+        const x=pad.l+i*(cW/months.length);
+        const tot=m.leaves.length;
+        const core=m.leaves.filter(p=>p.verdict==='core').length;
+        const sup=m.leaves.filter(p=>p.verdict==='support').length;
+        const fH=Math.round((tot/maxF)*cH);
+        const cH2=Math.round((core/maxF)*cH);
+        // background bar
+        ctx.fillStyle='#0a1a0a';
+        ctx.fillRect(x,pad.t,bW,cH);
+        // total bar
+        ctx.fillStyle='#1a3a1a';
+        ctx.fillRect(x,pad.t+cH-fH,bW,fH);
+        // core bar
+        ctx.fillStyle='#00dd55';
+        ctx.fillRect(x,pad.t+cH-cH2,bW,cH2);
+        // sup bar
+        const sH=Math.round((sup/maxF)*cH);
+        ctx.fillStyle='#ffb00066';
+        ctx.fillRect(x,pad.t+cH-cH2-sH,bW,sH);
+        // label
+        if(i%2===0||months.length<=6){
+          ctx.fillStyle='#00dd5577';
+          ctx.font=`${3.5*dpr/dpr}px "Press Start 2P",monospace`;
+          ctx.textAlign='center';
+          ctx.fillText(m.name.slice(2),x+bW/2,H-pad.b+9);
+        }
+      });
+      // Y axis line
+      ctx.strokeStyle='#00dd5533';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+cH);ctx.stroke();
+      // core rate line
+      ctx.beginPath();ctx.strokeStyle='#00ffaa';ctx.lineWidth=1.5;
+      months.forEach((m,i)=>{
+        const x=pad.l+i*(cW/months.length)+bW/2;
+        const rate=m.leaves.length?m.leaves.filter(p=>p.verdict==='core').length/m.leaves.length:0;
+        const y=pad.t+cH-rate*cH;
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    })();
+
+    // B. Verdict arc
+    (()=>{
+      const W=vCanvas.offsetWidth,H=vCanvas.offsetHeight;
+      if(!W||!H) return;
+      vCanvas.width=W*dpr;vCanvas.height=H*dpr;
+      const ctx=vCanvas.getContext('2d');
+      ctx.scale(dpr,dpr);
+      ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
+      const tot=D.leaves.length;
+      const core=D.leaves.filter(p=>p.verdict==='core').length;
+      const sup=D.leaves.filter(p=>p.verdict==='support').length;
+      const drop=tot-core-sup;
+      const cx=H/2,cy=H/2,R=H/2-8,IR=R*0.55;
+      let start=-Math.PI/2;
+      [[core,'#00dd55'],[sup,'#ffb000'],[drop,'#1a2a1a']].forEach(([cnt,col])=>{
+        const sweep=tot?(cnt/tot)*Math.PI*2:0;
+        ctx.beginPath();ctx.moveTo(cx,cy);
+        ctx.arc(cx,cy,R,start,start+sweep);
+        ctx.closePath();
+        ctx.fillStyle=col;ctx.fill();
+        // inner ring cutout
+        ctx.beginPath();ctx.arc(cx,cy,IR,0,Math.PI*2);
+        ctx.fillStyle='#000301';ctx.fill();
+        start+=sweep;
+      });
+      // center text
+      ctx.fillStyle='#00dd55';
+      ctx.font=`5px "Press Start 2P",monospace`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('TOTAL',cx,cy-5);
+      ctx.fillStyle='#eeffee';
+      ctx.font=`7px "Press Start 2P",monospace`;
+      ctx.fillText(tot.toLocaleString(),cx,cy+5);
+      // legend
+      const lx=H+12,ly=12;
+      [[`CORE ${core}`,'#00dd55'],[`SUP ${sup}`,'#ffb000'],[`DROP ${drop}`,'#334433']].forEach(([lbl,col],i)=>{
+        ctx.fillStyle=col;
+        ctx.fillRect(lx,ly+i*18,8,8);
+        ctx.fillStyle='#00dd5599';
+        ctx.font=`5px "Press Start 2P",monospace`;
+        ctx.textAlign='left';ctx.textBaseline='top';
+        ctx.fillText(lbl,lx+12,ly+i*18+1);
+      });
+    })();
+
+    // C. Top DIRs horizontal bar chart
+    (()=>{
+      const CAT_C={SPACE:'#00dd55',OBJECT:'#ffb000',FIGURE:'#ff5533',FIGUREBG:'#3399ff',UNJUDGE:'#aa55ff',OTHER:'#557755'};
+      const CAT_MAP={
+        HRZLAY:'SPACE',WNDGLO:'SPACE',SPTISO:'SPACE',VANSRC:'SPACE',FUNREV:'SPACE',
+        FOGDIS:'SPACE',EQREP:'SPACE',ISOOBJ:'SPACE',URBREFL:'SPACE',ARTNAT:'SPACE',
+        LGTPAT:'SPACE',UNIDIST:'SPACE',FUNSAT:'SPACE',MATCOV:'SPACE',
+        MONOLITH:'SPACE',STRATA:'SPACE',DISSOLVE:'SPACE',LITGRID:'SPACE',VANISH:'SPACE',
+        MIRRORSURF:'SPACE',PEEL:'SPACE',SNOWFILL:'SPACE',OXIDE:'SPACE',ADWRAP:'SPACE',
+        ROADCLASH:'SPACE',WALLTXT:'SPACE',OVERGROW:'SPACE',
+        DMGPAT:'OBJECT',TONEDIS:'OBJECT',HETOBJ:'OBJECT',DOCAGE:'OBJECT',LGTSTR:'OBJECT',OBJREP:'OBJECT',
+        ISOLATE:'OBJECT',RUPTURE:'OBJECT',GRID:'OBJECT',CLUSTER:'OBJECT',FLOAT:'OBJECT',
+        SKELETON:'OBJECT',BLOOM:'OBJECT',WRAP:'OBJECT',SURFACE:'OBJECT',
+        FACBLK:'FIGURE',HANDEXT:'FIGURE',FOOTEXT:'FIGURE',HRZPAS:'FIGURE',DRKSPOT:'FIGURE',
+        GROUPREP:'FIGURE',BGDOM:'FIGURE',DUALSPC:'FIGURE',PLNTENV:'FIGURE',GENPORT:'FIGURE',
+        NONSUBS:'FIGURE',BACKPOSE:'FIGURE',DRESSIDENT:'FIGURE',LIMBACT:'FIGURE',
+        DUALFRAME:'FIGURE',HEADOBJ:'FIGURE',DUALFIG:'FIGURE',DIPTYCH:'FIGURE',
+        FGBG:'FIGURE',COLORISO:'FIGURE',SKINREP:'FIGURE',BODYTXT:'FIGURE',
+        REPDOM:'FIGUREBG',REFLMED:'FIGUREBG',SMOKLYR:'FIGUREBG',OPTFUSE:'FIGUREBG',
+        PARTINTR:'FIGUREBG',OBJCOVR:'FIGUREBG',ARCHOP:'FIGUREBG',GLASMED:'FIGUREBG',
+        ATMOSOLV:'FIGUREBG',SCLFIG:'FIGUREBG',HORZERO:'FIGUREBG',
+        BGPAT:'FIGUREBG',SCALE:'FIGUREBG',ATMOFUSE:'FIGUREBG',GLASSDUAL:'FIGUREBG',
+        AEROFLT:'FIGUREBG',ARCHCAP:'FIGUREBG',BACKLIT:'FIGUREBG',
+      };
+      const sorted=Object.entries(D.byDir).sort((a,b)=>b[1]-a[1]).slice(0,15);
+      const maxV=sorted[0]?sorted[0][1]:1;
+      const W=dCanvas.offsetWidth,H=dCanvas.offsetHeight;
+      if(!W||!H) return;
+      dCanvas.width=W*dpr;dCanvas.height=H*dpr;
+      const ctx=dCanvas.getContext('2d');
+      ctx.scale(dpr,dpr);
+      ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
+      const rowH=H/sorted.length;
+      const labW=52,barMaxW=W-labW-30;
+      sorted.forEach(([id,cnt],i)=>{
+        const y=i*rowH;
+        const cat=CAT_MAP[id]||'OTHER';
+        const col=CAT_C[cat];
+        const bW=Math.round((cnt/maxV)*barMaxW);
+        // bar bg
+        ctx.fillStyle='#0a1a0a';
+        ctx.fillRect(labW,y+2,barMaxW,rowH-4);
+        // bar fill
+        ctx.fillStyle=col+'aa';
+        ctx.fillRect(labW,y+2,bW,rowH-4);
+        // count text
+        ctx.fillStyle=col;
+        ctx.font=`${3.5}px "Press Start 2P",monospace`;
+        ctx.textAlign='right';ctx.textBaseline='middle';
+        ctx.fillText(id,labW-3,y+rowH/2);
+        ctx.fillStyle='#ffffff88';
+        ctx.textAlign='left';
+        ctx.fillText(cnt,labW+bW+3,y+rowH/2);
+      });
+    })();
+  });
 }
 
 /* ── VERDICT ── */
@@ -1213,7 +1408,7 @@ function renderField(el, D){
   });
   const edges=[...coEdges,...taxEdges];
 
-  let zoom=1.0;
+  let zoom=1.5;
 
   el.innerHTML=`
     <div style="display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden">
@@ -1338,6 +1533,9 @@ function renderField(el, D){
   }
 
   function draw(){
+    const rev=Math.min(1,revealFrame/REVEAL_DUR);
+    const edgeRev=Math.max(0,Math.min(1,(rev-0.35)*2.5)); // edges: rev 35%~75% 구간에서 페이드인
+
     const ctx=cv.getContext('2d');
     ctx.save();ctx.scale(dpr,dpr);
     ctx.clearRect(0,0,W,H);
@@ -1345,14 +1543,14 @@ function renderField(el, D){
 
     project();
 
-    // Edges
+    // Edges - reveal 후반부에 등장
     edges.forEach(({s,t,w,isCo})=>{
-      if(!s||!t) return;
+      if(!s||!t||edgeRev<=0) return;
       const avgD=(s.depth+t.depth)*0.5;
       const df=0.35+0.65*((avgD+1)*0.5);
       const isHov=hov&&(s.id===hov.id||t.id===hov.id);
       const col=CCOLOR[s.cat]||'#00dd55';
-      const a=isHov?0.95:(isCo?0.65+w*0.30:0.42)*df;
+      const a=(isHov?0.95:(isCo?0.65+w*0.30:0.42)*df)*edgeRev;
       ctx.beginPath();ctx.moveTo(s.px,s.py);ctx.lineTo(t.px,t.py);
       ctx.strokeStyle=col+Math.round(a*255).toString(16).padStart(2,'0');
       ctx.lineWidth=isHov?2.2:isCo?1.0+w*1.0:0.7;
@@ -1361,12 +1559,15 @@ function renderField(el, D){
       ctx.shadowBlur=0;
     });
 
-    // Nodes (back→front)
-    nodes.forEach(n=>{
+    // Nodes - 인덱스별 staggered 등장 (앞쪽 노드부터)
+    nodes.forEach((n,i)=>{
+      const nodeStart=i/nodes.length*0.65; // 0~0.65 사이에서 순차 시작
+      const nodeRev=Math.max(0,Math.min(1,(rev-nodeStart)*3.5));
+      if(nodeRev<=0) return;
       const col=CCOLOR[n.cat]||'#557755';
       const isHov=hov&&hov.id===n.id;
-      const df=0.2+0.8*((n.depth+1)*0.5);
-      const r=isHov?5:1+Math.pow(n.count/maxCount,0.5)*2.5;
+      const df=(0.2+0.8*((n.depth+1)*0.5))*nodeRev;
+      const r=(isHov?5:1+Math.pow(n.count/maxCount,0.5)*2.5)*Math.sqrt(nodeRev);
 
       ctx.beginPath();ctx.arc(n.px,n.py,r,0,Math.PI*2);
       const fa=(isHov?0.95:0.55)*df;
@@ -1384,7 +1585,7 @@ function renderField(el, D){
         ctx.shadowBlur=8;ctx.shadowColor=col;
         ctx.fillText(n.id,n.px,n.py-r-3);
         ctx.shadowBlur=0;
-      } else if(n.depth>0.4&&n.count>maxCount*0.12){
+      } else if(n.depth>0.4&&n.count>maxCount*0.12&&nodeRev>0.8){
         ctx.fillStyle=col+Math.round(df*0.65*255).toString(16).padStart(2,'0');
         ctx.font='4px "Press Start 2P",monospace';
         ctx.textAlign='center';ctx.textBaseline='bottom';
@@ -1395,6 +1596,8 @@ function renderField(el, D){
   }
 
   let hov=null;
+  let revealFrame=0;
+  const REVEAL_DUR=80;
   function canvasXY(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
   function nearest(px,py){
     let best=null,bd=Infinity;
@@ -1429,13 +1632,15 @@ function renderField(el, D){
 
   resize();
   initPositions();
+  // physics를 화면 표시 전에 미리 실행 → 초기 떨림 제거
+  for(let i=0;i<400;i++) tick();
   new ResizeObserver(()=>resize()).observe(wrap);
   el.querySelector('#gZoomIn').onclick=()=>{zoom=Math.min(zoom+0.15,3.0);};
   el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.15,0.3);};
 
   function loop(){
-    const steps=forceDone?1:4;
-    for(let i=0;i<steps;i++)tick();
+    tick(); // rotation only (forceDone=true이므로 physics 없음)
+    if(revealFrame<REVEAL_DUR) revealFrame++;
     draw();
     _fieldAnimId=requestAnimationFrame(loop);
   }
