@@ -1396,11 +1396,13 @@ function renderField(el, D){
   const cv=el.querySelector('#dirGraph');
   const tip=el.querySelector('#gTip');
   let W=0,H=0,dpr=1;
+  const blobCv=document.createElement('canvas');
 
   function resize(){
     dpr=window.devicePixelRatio||1;
     W=wrap.clientWidth; H=wrap.clientHeight;
     cv.width=W*dpr; cv.height=H*dpr;
+    blobCv.width=W*dpr; blobCv.height=H*dpr;
   }
 
   // Fibonacci sphere + random perturbation
@@ -1517,6 +1519,33 @@ function renderField(el, D){
     ctx.fillStyle='#000301';ctx.fillRect(0,0,W,H);
 
     project();
+
+    // ── 메타볼 레이어: 작은 원들이 합쳐져 큰 원을 형성 ──
+    {
+      const bc=blobCv.getContext('2d');
+      bc.clearRect(0,0,blobCv.width,blobCv.height);
+      bc.save(); bc.scale(dpr,dpr);
+      bc.fillStyle='#000301'; bc.fillRect(0,0,W,H);
+      nodes.forEach((n,i)=>{
+        const nT=Math.max(0,Math.min(1,(nodePhaseT-i/nodes.length)*nodes.length));
+        if(nT<=0) return;
+        const col=CCOLOR[n.cat]||'#00dd55';
+        const df=0.3+0.7*((n.depth+1)*0.5);
+        const baseR=1+Math.pow(n.count/maxCount,0.5)*2.5;
+        const bR=(baseR*6+4)*nT*df;
+        bc.beginPath(); bc.arc(n.px,n.py,bR,0,Math.PI*2);
+        bc.fillStyle=col;
+        bc.fill();
+      });
+      bc.restore();
+      const blurPx=Math.max(4,Math.round(13/zoom));
+      ctx.save();
+      ctx.filter=`blur(${blurPx}px) contrast(20)`;
+      ctx.globalAlpha=0.45+0.35*finishT;
+      ctx.drawImage(blobCv,0,0,W,H);
+      ctx.filter='none'; ctx.globalAlpha=1;
+      ctx.restore();
+    }
 
     // ── Phase 2: 엣지 순서대로 그리기 ──
     edges.slice(0,visibleEdges).forEach(({s,t,w,isCo},ei)=>{
