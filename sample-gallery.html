@@ -1381,8 +1381,10 @@ function renderField(el, D){
         <span style="font-size:5px;color:var(--g3);letter-spacing:0">
           ${Object.entries(CCOLOR).map(([c,col])=>`<span style="color:${col}">◉ ${c}</span>`).join(' ')}
         </span>
+        <span style="font-size:5px;color:var(--g4);letter-spacing:0.5px">DRAG · SCROLL</span>
         <button id="gZoomIn"  style="background:none;border:1px solid var(--g3);color:var(--g);font-family:inherit;font-size:6px;padding:2px 6px;cursor:pointer;letter-spacing:1px">+</button>
         <button id="gZoomOut" style="background:none;border:1px solid var(--g3);color:var(--g);font-family:inherit;font-size:6px;padding:2px 6px;cursor:pointer;letter-spacing:1px">−</button>
+        <button id="gReset"   style="background:none;border:1px solid var(--g3);color:var(--g4);font-family:inherit;font-size:6px;padding:2px 6px;cursor:pointer;letter-spacing:1px">RST</button>
       </div>
       <div id="gWrap" style="flex:1;position:relative;min-height:0">
         <canvas id="dirGraph" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
@@ -1483,8 +1485,10 @@ function renderField(el, D){
     }
   }
 
+  let panX=0,panY=0;
+
   function project(){
-    const cx=W*0.5,cy=H*0.5;
+    const cx=W*0.5+panX,cy=H*0.5+panY;
     const R=Math.min(W,H)*0.44*zoom;
     nodes.forEach(n=>{
       n.px=cx+n.x*R;
@@ -1586,25 +1590,62 @@ function renderField(el, D){
     nodes.forEach(n=>{
       const r=1+Math.pow(n.count/maxCount,0.5)*2.8;
       const d=Math.hypot(n.px-px,n.py-py);
-      if(d<r+10&&d<bd){bd=d;best=n;}
+      if(d<r+12&&d<bd){bd=d;best=n;}
     });
     return best;
   }
+
+  // ── 드래그 패닝 ──
+  let drag=false,dragX0=0,dragY0=0,panX0=0,panY0=0;
+  cv.onmousedown=ev=>{
+    drag=true;
+    dragX0=ev.clientX;dragY0=ev.clientY;
+    panX0=panX;panY0=panY;
+    cv.style.cursor='grabbing';
+  };
   cv.onmousemove=ev=>{
+    if(drag){
+      panX=panX0+(ev.clientX-dragX0);
+      panY=panY0+(ev.clientY-dragY0);
+      hov=null;tip.style.display='none';
+      return;
+    }
     const {x,y}=canvasXY(ev);
     hov=nearest(x,y);
     if(hov){
       cv.style.cursor='pointer';
       tip.style.display='block';
-      tip.style.left=Math.min(x+14,W-110)+'px';
+      tip.style.left=Math.min(x+14,W-120)+'px';
       tip.style.top=Math.max(y-36,4)+'px';
       const conn=coEdges.filter(e=>e.s.id===hov.id||e.t.id===hov.id).length;
       tip.innerHTML=`${hov.id}<br><span style="color:var(--g3)">${hov.cat} · ${hov.count}× · ${conn} links</span>`;
     } else {
-      cv.style.cursor='default';tip.style.display='none';
+      cv.style.cursor='grab';tip.style.display='none';
     }
   };
-  cv.onmouseleave=()=>{hov=null;tip.style.display='none';};
+  cv.onmouseup=ev=>{
+    // 드래그 거리 짧으면 hover 처리
+    if(drag&&Math.hypot(ev.clientX-dragX0,ev.clientY-dragY0)<4){
+      const {x,y}=canvasXY(ev);
+      hov=nearest(x,y);
+    }
+    drag=false;
+    cv.style.cursor=hov?'pointer':'grab';
+  };
+  cv.onmouseleave=()=>{drag=false;hov=null;tip.style.display='none';cv.style.cursor='grab';};
+
+  // ── 마우스 휠 줌 (커서 위치 기준) ──
+  cv.onwheel=ev=>{
+    ev.preventDefault();
+    const {x,y}=canvasXY(ev);
+    const before=zoom;
+    zoom=Math.max(0.3,Math.min(4.0,zoom*(ev.deltaY<0?1.12:0.89)));
+    // 커서 위치 고정 패닝 보정
+    const scale=zoom/before;
+    panX=x+(panX-x)*scale;
+    panY=y+(panY-y)*scale;
+  };
+  cv.style.cursor='grab';
 
   document.querySelectorAll('.mbtn').forEach(b=>{
     const prev=b.onclick;
@@ -1616,8 +1657,9 @@ function renderField(el, D){
   // physics를 화면 표시 전에 미리 실행 → 초기 떨림 제거
   for(let i=0;i<600;i++) tick();
   new ResizeObserver(()=>resize()).observe(wrap);
-  el.querySelector('#gZoomIn').onclick=()=>{zoom=Math.min(zoom+0.15,3.0);};
-  el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.15,0.3);};
+  el.querySelector('#gZoomIn').onclick=()=>{zoom=Math.min(zoom+0.2,4.0);};
+  el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.2,0.3);};
+  el.querySelector('#gReset').onclick=()=>{zoom=1.5;panX=0;panY=0;};
 
   function loop(){
     tick();
