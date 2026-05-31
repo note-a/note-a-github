@@ -1533,7 +1533,7 @@ function renderField(el, D){
   }
 
   function draw(){
-    const rev=Math.min(1,revealFrame/REVEAL_DUR);
+    const rev=Math.min(1,(Date.now()-REVEAL_START)/REVEAL_DUR_MS);
     const edgeRev=Math.max(0,Math.min(1,(rev-0.35)*2.5)); // edges: rev 35%~75% 구간에서 페이드인
 
     const ctx=cv.getContext('2d');
@@ -1596,8 +1596,8 @@ function renderField(el, D){
   }
 
   let hov=null;
-  let revealFrame=0;
-  const REVEAL_DUR=80;
+  const REVEAL_START=Date.now();
+  const REVEAL_DUR_MS=1500;
   function canvasXY(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
   function nearest(px,py){
     let best=null,bd=Infinity;
@@ -1639,8 +1639,7 @@ function renderField(el, D){
   el.querySelector('#gZoomOut').onclick=()=>{zoom=Math.max(zoom-0.15,0.3);};
 
   function loop(){
-    tick(); // rotation only (forceDone=true이므로 physics 없음)
-    if(revealFrame<REVEAL_DUR) revealFrame++;
+    tick();
     draw();
     _fieldAnimId=requestAnimationFrame(loop);
   }
