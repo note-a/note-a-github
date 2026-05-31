@@ -2393,12 +2393,6 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
 
   function renderLevel(photos, title){
     galCurrentPhotos = photos;
-    // CAPTURE REPORT 연동: 배치 날짜 감지
-    const batchDateMatch = (title||'').match(/^(\d{4})\/(\d{2})\/(\d{4})$/);
-    if(batchDateMatch){
-      const dateKey = batchDateMatch[1] + batchDateMatch[3]; // YYYY + MMDD = YYYYMMDD
-      renderCaptureReport(dateKey, title);
-    }
     const inner = document.getElementById('gallery-inner');
     if(!inner) return;
 
@@ -2521,6 +2515,13 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
       const p = galCurrentPhotos[idx];
       if(!p) return;
       if(p.type==='sheet'){
+        // CAPTURE REPORT: 배치 폴더 접속 시 보고서 로드 (id = 'YYYY/MM/MMDD')
+        const pid = p.id||'';
+        const pidParts = pid.split('/');
+        if(pidParts.length === 3){
+          const dateKey = pidParts[0] + pidParts[2]; // YYYYMMDD
+          renderCaptureReport(dateKey, pid);
+        }
         galNavStack.push({title: galNavStack.length===0?'ROOT':galCurrentPhotos._title||title, photos:galCurrentPhotos});
         renderLevel(p.children||[], p.title||p.id);
         return;
