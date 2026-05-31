@@ -54,8 +54,9 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 /* ════ 셸 / wrap ════ */
 #shell { position:fixed; inset:0; z-index:1; display:flex; align-items:center; justify-content:center; }
 #wrap {
-  width:1300px; max-width:calc(100vw - 70px);
+  width:calc(100vw - 70px); max-width:1600px;
   height:calc(100vh - 60px);
+  height:calc(100dvh - 60px);
   background:rgba(1,13,5,0.97);   /* 평면 */
   display:flex; flex-direction:column; gap:8px;
   position:relative; padding:10px;
@@ -2070,7 +2071,7 @@ function renderDirInstruction(dirCodes){
   if(!srcDoc) return;
   const codes=String(dirCodes||'').split(/[\s,;·]+/)
     .map(d=>d.replace(/^DIR-\d+-?/,'').toUpperCase()).filter(Boolean);
-  if(!codes.length){ srcRef.textContent='DIR —'; srcDoc.innerHTML='<span style="color:var(--g4)">DIR 없음</span>'; return; }
+  if(!codes.length){ srcRef.textContent='DIR —'; srcDoc.innerHTML='<span style="color:var(--g4)">DIR 없음</span>'; srcDoc.style.display='block'; return; }
   srcRef.textContent=codes[0];
   const html=codes.map(code=>{
     const instr=DIR_INSTRUCTIONS[code];
