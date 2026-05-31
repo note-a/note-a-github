@@ -464,8 +464,18 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
   background:var(--acc); transform:rotate(45deg); }
 
 /* ════ 하단 행 ════ */
-#botRow { height:118px; flex-shrink:0; display:flex; gap:8px; }
+#botRow { height:160px; flex-shrink:0; display:flex; gap:8px; }
 #logPnl { flex:1; } #logPnl .pnl-in { height:100%; }
+#repContent::-webkit-scrollbar { width:3px; }
+#repContent::-webkit-scrollbar-thumb { background:rgba(0,255,0,0.35); }
+#repContent::-webkit-scrollbar-track { background:transparent; }
+.rep-h2 { color:var(--acc); display:block; margin-top:6px; letter-spacing:1px; }
+.rep-h3 { color:var(--g2); display:block; margin-top:4px; }
+.rep-trow { display:flex; gap:6px; border-bottom:1px solid rgba(0,221,85,0.08); padding:1px 0; }
+.rep-trow span { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rep-trow span:first-child { flex:0 0 80px; color:var(--g4); }
+.rep-meta { color:var(--g3); display:block; }
+.rep-hr { border:none; border-top:1px solid var(--g4); margin:4px 0; }
 /* 촬영 보고서 */
 .rep-body { display:flex; flex-direction:column; height:100%; }
 .rep-2col { display:flex; gap:16px; flex:1; min-height:0; }
@@ -731,10 +741,10 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
   <!-- 하단 행 -->
   <div id="botRow">
     <div class="pnl" id="logPnl"><div class="pnl-in">
-      <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span class="pnl-tab on" id="repNo">SCF-2026-03</span></span></div>
-      <div class="pnl-bd">
-        <div class="rep-body">
-          <div class="rep-ticker">» <span id="ticker">REPORT LOADED</span><span class="tk-cur"></span></div>
+      <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span class="pnl-tab on" id="repNo">—</span></span></div>
+      <div class="pnl-bd" style="padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;">
+        <div id="repContent" style="flex:1;overflow-y:auto;font-size:5.5px;line-height:1.8;color:var(--g3);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.35) transparent;">
+          <span style="color:var(--g4)">배치를 선택하면 보고서가 표시됩니다.</span>
         </div>
       </div>
     </div></div>
@@ -2383,6 +2393,12 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
 
   function renderLevel(photos, title){
     galCurrentPhotos = photos;
+    // CAPTURE REPORT 연동: 배치 날짜 감지
+    const batchDateMatch = (title||'').match(/^(\d{4})\/(\d{2})\/(\d{4})$/);
+    if(batchDateMatch){
+      const dateKey = batchDateMatch[1] + batchDateMatch[3]; // YYYY + MMDD = YYYYMMDD
+      renderCaptureReport(dateKey, title);
+    }
     const inner = document.getElementById('gallery-inner');
     if(!inner) return;
 
@@ -2656,6 +2672,90 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
 })();
 function tick(){ document.getElementById('clock').textContent=new Date().toTimeString().slice(0,8); }
 tick(); setInterval(tick,1000);
+
+// ── CAPTURE REPORT 보고서 파일 매핑 ──
+const REPORT_FILES = {
+  '20251011':'6.20251011 review.md',
+  '20251018':'4.20251018 review.md',
+  '20251025':'5.20251025 review.md',
+  '20251102':'7.20251102 review.md',
+  '20251104':'8.20251104 review.md',
+  '20251115':'9.20251115 review.md',
+  '20251122':'10.20251122 review.md',
+  '20251129':'11.20251129 review.md',
+  '20251206':'12.20251206 review.md',
+  '20251213':'13.20251213 review.md',
+  '20251227':'14.20251227 review.md',
+  '20260221':'2.20260221 review.md',
+  '20260227':'3.20260227 review.md',
+  '20260301':'4.20260301 review.md',
+  '20260304':'5.20260304 review.md',
+  '20260316':'6.20260316 review.md',
+};
+
+function mdToRepHtml(md){
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines = md.split('\n');
+  let html = '';
+  for(let i=0;i<lines.length;i++){
+    let l = lines[i];
+    // 테이블 행
+    if(/^\|/.test(l)){
+      const cells = l.split('|').filter((_,j,a)=>j>0&&j<a.length-1).map(c=>c.trim());
+      if(cells.every(c=>/^[-:]+$/.test(c))) continue; // separator
+      html += '<div class="rep-trow">' + cells.map((c,ci)=>
+        `<span style="${ci===0?'color:var(--g4);flex:0 0 90px':'flex:1'}">${esc(c).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/`([^`]+)`/g,'<span style="color:var(--acc)">$1</span>').replace(/🟢/g,'◆').replace(/🟡/g,'◇').replace(/🔴/g,'✕')}</span>`
+      ).join('') + '</div>';
+      continue;
+    }
+    // --- 구분선
+    if(/^---+$/.test(l.trim())){ html += '<hr class="rep-hr">'; continue; }
+    // ## 제목
+    if(/^## /.test(l)){ html += `<span class="rep-h2">${esc(l.slice(3))}</span>`; continue; }
+    // ### 제목
+    if(/^### /.test(l)){ html += `<span class="rep-h3">${esc(l.slice(4))}</span>`; continue; }
+    // > abstract 블록 (헤더 메타)
+    if(/^> /.test(l)){
+      const inner = l.slice(2);
+      if(/^\[!abstract\]/.test(inner)) continue;
+      const clean = esc(inner).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/\[\[(.+?)\]\]/g,'<span style="color:var(--acc)">$1</span>');
+      html += `<span class="rep-meta">${clean}</span>`;
+      continue;
+    }
+    // 빈 줄
+    if(!l.trim()){ html += '<br>'; continue; }
+    // 일반 텍스트
+    const clean = esc(l).replace(/\*\*(.+?)\*\*/g,'<b style="color:var(--g2)">$1</b>').replace(/`([^`]+)`/g,'<span style="color:var(--acc)">$1</span>').replace(/🟢/g,'◆').replace(/🟡/g,'◇').replace(/🔴/g,'✕');
+    html += `<span style="display:block;color:var(--g3)">${clean}</span>`;
+  }
+  return html;
+}
+
+async function renderCaptureReport(dateKey, batchTitle){
+  const repContent = document.getElementById('repContent');
+  const repNo = document.getElementById('repNo');
+  if(!repContent) return;
+  const filename = REPORT_FILES[dateKey];
+  const label = dateKey.slice(0,4)+'.'+dateKey.slice(4,6)+'.'+dateKey.slice(6,8);
+  if(repNo) repNo.textContent = label;
+  if(!filename){
+    repContent.innerHTML = `<span style="color:var(--g4)">${label} — 보고서 없음</span>`;
+    return;
+  }
+  repContent.innerHTML = '<span style="color:var(--g4)">로딩 중…</span>';
+  const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+  const urls = [base+'reports/'+encodeURIComponent(filename), './reports/'+encodeURIComponent(filename)];
+  for(const url of urls){
+    try{
+      const res = await fetch(url);
+      if(!res.ok) continue;
+      const md = await res.text();
+      repContent.innerHTML = mdToRepHtml(md);
+      return;
+    }catch(e){}
+  }
+  repContent.innerHTML = '<span style="color:rgba(255,60,30,0.7)">보고서 로드 실패</span>';
+}
 
 renderMapInfo(); renderRecent(); renderReport(); updateCtx(); setFrame(1);
 
