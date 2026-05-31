@@ -469,6 +469,10 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 #repContent::-webkit-scrollbar { width:3px; }
 #repContent::-webkit-scrollbar-thumb { background:rgba(0,255,0,0.35); }
 #repContent::-webkit-scrollbar-track { background:transparent; }
+#repModalBody::-webkit-scrollbar { width:5px; }
+#repModalBody::-webkit-scrollbar-thumb { background:rgba(0,255,0,0.4); }
+#repModalBody::-webkit-scrollbar-track { background:transparent; }
+#repFullBtn:hover { color:var(--acc) !important; border-color:var(--acc) !important; }
 .rep-h2 { color:var(--acc); display:block; margin:10px 0 4px; letter-spacing:1.5px; border-bottom:1px solid rgba(0,221,85,0.2); padding-bottom:3px; }
 .rep-h3 { color:var(--g2); display:block; margin:6px 0 2px; letter-spacing:1px; }
 .rep-trow { display:flex; gap:8px; border-bottom:1px solid rgba(0,221,85,0.1); padding:2px 0; }
@@ -732,7 +736,7 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
   <!-- 하단 행 -->
   <div id="botRow">
     <div class="pnl" id="logPnl"><div class="pnl-in">
-      <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span class="pnl-tab on" id="repNo">—</span></span></div>
+      <div class="pnl-hd">CAPTURE REPORT · 촬영 보고서<span class="hd-r"><span id="repFullBtn" style="font-size:6px;color:var(--g4);cursor:pointer;padding:2px 6px;border:1px solid var(--g4);letter-spacing:1px;display:none" onclick="openRepModal()">원문 ▶</span><span class="pnl-tab on" id="repNo">—</span></span></div>
       <div class="pnl-bd" style="padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;">
         <div id="repContent" style="flex:1;overflow-y:auto;font-size:10px;line-height:2;color:var(--g2);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.35) transparent;">
           <span style="color:var(--g4)">배치를 선택하면 보고서가 표시됩니다.</span>
@@ -778,6 +782,18 @@ html,body { width:100%; height:100%; overflow:hidden; background:#000; font-fami
 
     </div>
 
+  </div>
+
+  <!-- 보고서 원문 모달 -->
+  <div id="repModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;">
+    <div style="width:min(820px,calc(100vw-60px));max-height:calc(100vh-80px);background:#020e05;border:1px solid var(--g);display:flex;flex-direction:column;position:relative;">
+      <div style="display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--g4);flex-shrink:0;">
+        <span style="font-size:8px;color:var(--acc);letter-spacing:2px">◆ CAPTURE REPORT · 원문</span>
+        <span id="repModalTitle" style="font-size:7px;color:var(--g3);margin-left:12px"></span>
+        <span onclick="closeRepModal()" style="margin-left:auto;font-size:8px;color:var(--g4);cursor:pointer;padding:2px 8px;border:1px solid var(--g4);letter-spacing:1px">✕ CLOSE</span>
+      </div>
+      <div id="repModalBody" style="flex:1;overflow-y:auto;padding:16px 20px;font-family:'Press Start 2P',monospace;font-size:10px;line-height:2;color:var(--g2);scrollbar-width:thin;scrollbar-color:rgba(0,255,0,0.4) transparent;"></div>
+    </div>
   </div>
 
   <!-- 상태 바 -->
@@ -2775,12 +2791,37 @@ async function renderCaptureReport(dateKey, batchTitle){
       const res = await fetch(url);
       if(!res.ok) continue;
       const md = await res.text();
+      window._currentRepMd = md;
+      window._currentRepLabel = label;
       repContent.innerHTML = mdToRepHtml(md);
+      const btn = document.getElementById('repFullBtn');
+      if(btn) btn.style.display = 'inline';
       return;
     }catch(e){}
   }
   repContent.innerHTML = '<span style="color:rgba(255,60,30,0.7)">보고서 로드 실패</span>';
 }
+
+function openRepModal(){
+  const modal = document.getElementById('repModal');
+  const body  = document.getElementById('repModalBody');
+  const title = document.getElementById('repModalTitle');
+  if(!modal || !window._currentRepMd) return;
+  body.innerHTML  = mdToRepHtml(window._currentRepMd);
+  if(title) title.textContent = window._currentRepLabel || '';
+  modal.style.display = 'flex';
+  document.addEventListener('keydown', _repModalEsc);
+}
+function closeRepModal(){
+  const modal = document.getElementById('repModal');
+  if(modal) modal.style.display = 'none';
+  document.removeEventListener('keydown', _repModalEsc);
+}
+function _repModalEsc(e){ if(e.key==='Escape') closeRepModal(); }
+document.addEventListener('click', e=>{
+  const modal = document.getElementById('repModal');
+  if(modal && modal.style.display==='flex' && e.target===modal) closeRepModal();
+});
 
 renderMapInfo(); renderRecent(); renderReport(); updateCtx(); setFrame(1);
 
