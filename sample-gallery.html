@@ -2621,11 +2621,20 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
 
     fpPhotos.innerHTML = `
       <div style="height:100%;display:flex;flex-direction:column;gap:4px;width:${stripW}px;flex-shrink:0;">
-        ${imgDiv(main,'aspect-ratio:3/2;width:100%;flex-shrink:0;')}
+        <div id="fpMainImg" style="flex:1;min-height:0;width:100%;cursor:pointer;position:relative;overflow:hidden;background:#0d0d0d;border:1px solid var(--g);">
+          ${main ? `<img src="${(main.filename||main.url||'').replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg')}" data-full="${main.filename||main.url||''}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}" alt="">` : ''}
+        </div>
         <div style="height:${THUMB_H}px;flex-shrink:0;display:flex;gap:${THUMB_GAP}px;border:1px solid var(--g);padding:3px;">
           ${thumbs.map(p=>imgDiv(p,`width:${THUMB_W}px;height:100%;flex-shrink:0;`,'')). join('')}
         </div>
       </div>`;
+    document.getElementById('fpMainImg').addEventListener('click', ()=>{
+      galNavStack.push({title: galNavStack.length===0?'ROOT':galCurrentPhotos._title||'', photos:galCurrentPhotos});
+      const pid = folder.id||'';
+      const pidParts = pid.split('/');
+      if(pidParts.length===3){ const dateKey=pidParts[0]+pidParts[2]; renderCaptureReport(dateKey,pid); }
+      renderLevel(folder.children||[], folder.title||folder.id);
+    });
 
     const batchInfo = subs.map(s=>{
       const sc = fpCountStats(s);
@@ -2708,6 +2717,9 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
   function setScanPhoto(url){
     const img = document.getElementById('scScopeImg');
     if(!img || !url) return;
+    img.dataset.full = url;
+    const scope = document.getElementById('scScope');
+    if(scope) scope.style.cursor = 'pointer';
     const thumb = url.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/,'/t/DSCF$1.jpg');
     img.style.opacity = '0';
     const tmp = new Image();
@@ -2715,6 +2727,11 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT REQUESTED
     tmp.onerror = ()=>{ img.src = url; img.style.opacity = '1'; };
     tmp.src = thumb || url;
   }
+  document.getElementById('scScope').addEventListener('click', ()=>{
+    const img = document.getElementById('scScopeImg');
+    const full = img && img.dataset.full;
+    if(full) window.open(full, '_blank');
+  });
 
   function fakeThumbnailStyle(n){
     n = parseInt(String(n).replace(/\D/g,'')) || 0;
