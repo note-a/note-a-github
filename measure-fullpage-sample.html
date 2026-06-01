@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEASURE.DB — 검색 채팅방</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body {
+      height:100%; background:#0000aa; color:#00d4ff;
+      font-family:'Press Start 2P',monospace; overflow:hidden;
+    }
+    body { display:flex; align-items:center; justify-content:center; padding:14px; }
+
+    /* ── 전체 HUD 그리드 ── */
+    #hud {
+      width:68%; height:76%;
+      display:grid;
+      grid-template-columns: 230px 1fr 230px;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        "top    top    top"
+        "left   chat   right"
+        "bottom bottom bottom";
+      gap:10px;
+    }
+
+    /* 패널 공통 */
+    .panel {
+      border:2px solid #55ffff;
+      background:#0000aa;
+      position:relative;
+      overflow:hidden;
+    }
+    .panel-h {
+      background:#00a8a8; color:#000000;
+      font-size:10px; letter-spacing:0.5px;
+      padding:5px 8px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .panel-b { padding:9px; font-size:10px; line-height:2; color:#9ec5ff; }
+
+    /* TOP BAR */
+    #top { grid-area:top; }
+    #top .panel-h { font-size:12px; padding:7px 12px; background:#00a8a8; color:#000000; }
+    #top .led { display:flex; gap:5px; align-items:center; }
+    #top .led b { width:9px; height:9px; background:#000; display:inline-block; }
+    #top .led b.on { background:#000; box-shadow:0 0 5px #000 inset; }
+
+    /* LEFT / RIGHT */
+    #left  { grid-area:left;  display:flex; flex-direction:column; gap:10px; }
+    #right { grid-area:right; display:flex; flex-direction:column; gap:10px; }
+    #left .panel { flex:1; display:flex; flex-direction:column; background:#0000aa; }
+    #right .panel { flex:1; display:flex; flex-direction:column; background:#0000aa; }
+    #left .panel:nth-child(1) { background:#0000aa; }
+    #left .panel:nth-child(2) { background:#0000aa; }
+    #right .panel:nth-child(1) { background:#0000aa; }
+    #right .panel:nth-child(2) { background:#0000aa; }
+    #left .panel-b, #right .panel-b { flex:1; overflow-y:auto; }
+
+    .kv { display:flex; justify-content:space-between; gap:6px; }
+    .kv .k { color:#9090fc; }
+    .kv .v { color:#fcfc54; }
+
+    .bar { height:10px; background:#000040; margin:3px 0 7px; position:relative; overflow:hidden; border:1px solid #2a3a9a; }
+    .bar > i { position:absolute; left:0; top:0; bottom:0; display:block;
+      background:repeating-linear-gradient(90deg,#54fcfc 0,#54fcfc 5px,#000040 5px,#000040 8px); }
+
+    .tag { display:inline-block; border:1px solid #54fcfc; padding:3px 6px; margin:0 4px 5px 0; font-size:9px; color:#54fcfc; }
+    .tag:hover { background:#fcfc54; border-color:#fcfc54; color:#0000aa; cursor:pointer; }
+
+    .logrow { display:flex; justify-content:space-between; font-size:9px; padding:3px 0; border-bottom:1px dotted #3838c8; }
+    .logrow .q { color:#54fcfc; }
+    .logrow .n { color:#ff8800; }
+
+    /* CHAT (중앙) */
+    #chat {
+      grid-area:chat;
+      border:2px solid #55ffff;
+      display:flex; flex-direction:column;
+      position:relative; overflow:hidden; background:#0000aa;
+    }
+    #chat::after {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:50;
+      background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(64,96,192,0.05) 3px, rgba(64,96,192,0.05) 4px);
+    }
+    #chatTitle {
+      background:#00a8a8; color:#000000; padding:6px 12px; font-size:11px; letter-spacing:1px;
+      display:flex; justify-content:space-between; align-items:center; flex-shrink:0;
+    }
+    #canvasWrap { flex:1; overflow:hidden; position:relative; min-height:0; }
+    #canvasWrap canvas { display:block; width:100%; height:100%; }
+
+    .search-sim { display:flex; border-top:2px solid #54fcfc; padding:8px; gap:6px; flex-shrink:0; background:#00019d; }
+    .search-sim input {
+      flex:1; background:#000060; border:1px solid #54fcfc; color:#54fcfc; padding:12px 14px;
+      font-family:'Press Start 2P',monospace; font-size:12px; outline:none; letter-spacing:0.5px;
+    }
+    .search-sim input::placeholder { color:rgba(64,96,192,0.45); font-size:10px; }
+    .search-sim button {
+      background:#000088; border:1px solid #54fcfc; color:#fcfc54; padding:12px 22px;
+      font-family:'Press Start 2P',monospace; font-size:12px; cursor:pointer; letter-spacing:0.5px;
+    }
+    .search-sim button:hover { background:#3838c8; }
+
+    #photoGallery {
+      display:none; position:absolute; top:0; left:0; right:0; bottom:0;
+      background:#00019d; overflow-y:auto; z-index:20;
+    }
+    #photoGallery.visible { display:block; }
+    .no-results { padding:24px; font-size:10px; color:rgba(64,96,192,0.4); text-align:center; }
+
+    /* BOTTOM */
+    #bottom.panel { grid-area:bottom; background:#0000dd !important; }
+    #bottom .panel-b {
+      display:flex; justify-content:space-between; align-items:center;
+      font-size:10px; padding:7px 12px; line-height:1; color:#54fcfc;
+    }
+    #bottom .blink { animation:bl 0.8s infinite; }
+    @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── 하이텔식 대화실 로비 (입장 화면) ── */
+    #lobby {
+      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:68%; height:76%; z-index:200; background:#0000aa;
+      display:flex; flex-direction:column; padding:14px;
+      font-family:'Press Start 2P',monospace; color:#ffffff;
+    }
+    #lobby.hidden { animation:lobbyOff 0.45s ease forwards; }
+    @keyframes lobbyOff { to { opacity:0; visibility:hidden; transform:translate(-50%,-50%) scale(1.02); } }
+    #lobby::after {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px);
+    }
+    .lob-top {
+      display:flex; justify-content:space-between; align-items:center;
+      background:#00a8a8; color:#000; padding:7px 14px; font-size:13px; letter-spacing:1px;
+      flex-shrink:0;
+    }
+    .lob-grid {
+      flex:1; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
+      gap:12px; margin:12px 0; min-height:0;
+    }
+    .lob-box {
+      border:2px solid #55ffff; padding:10px 12px 8px; display:flex; flex-direction:column;
+      background:#0000aa;
+    }
+    .lob-box h4 {
+      text-align:center; font-size:12px; color:#ffffff; margin-bottom:12px;
+      letter-spacing:1px; font-weight:normal;
+    }
+    .lob-row {
+      font-size:11px; line-height:2.1; color:#55ffff; cursor:pointer;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .lob-row:hover { color:#0000aa; background:#ffff55; }
+    .lob-row .num { color:#ffff55; margin-right:7px; }
+    .lob-row.hot { color:#fc54fc; }
+    .lob-row.hot .num { color:#ffff55; }
+    .lob-row.hot:hover { color:#0000aa; background:#fc54fc; }
+    .lob-blink { animation:bl 0.9s infinite; color:#fc54fc; }
+    .lob-cmd {
+      flex-shrink:0; background:#0000dd; border:2px solid #55ffff;
+      padding:8px 14px; font-size:11px; color:#55ffff; letter-spacing:0.5px;
+      line-height:1.7;
+    }
+    .lob-cmd b { color:#ffff55; font-weight:normal; }
+  </style>
+</head>
+<body>
+
+<!-- ── 대화실 로비 (입장 화면) ── -->
+<div id="lobby">
+  <div class="lob-top">
+    <span>MEASURE.DB &nbsp;CHATTING</span>
+    <span>대화실 [ 분류 ]</span>
+    <span>SET ARCHIVE</span>
+  </div>
+  <div class="lob-grid">
+
+    <div class="lob-box">
+      <h4>수다 대화실</h4>
+      <div class="lob-row"><span class="num">01</span>그냥 잡담</div>
+      <div class="lob-row"><span class="num">02</span>심심한 사람 다 모여</div>
+      <div class="lob-row"><span class="num">03</span>안 자고 계속 보는 사람</div>
+      <div class="lob-row"><span class="num">04</span>어제도 왔던 사람</div>
+    </div>
+
+    <div class="lob-box">
+      <h4>관심사 모임</h4>
+      <div class="lob-row"><span class="num">21</span>음악 좋아하는 사람</div>
+      <div class="lob-row"><span class="num">22</span>영화 본 얘기</div>
+      <div class="lob-row"><span class="num">23</span>책 읽는 방</div>
+      <div class="lob-row"><span class="num">24</span>게임 한판</div>
+      <div class="lob-row"><span class="num">25</span>야구 좋아해</div>
+      <div class="lob-row"><span class="num">26</span>그림 그리는 사람</div>
+    </div>
+
+    <div class="lob-box">
+      <h4>나이별 대화실</h4>
+      <div class="lob-row"><span class="num">41</span>10대 모여라</div>
+      <div class="lob-row"><span class="num">42</span>20대 대화실</div>
+      <div class="lob-row"><span class="num">43</span>30대 라운지</div>
+      <div class="lob-row"><span class="num">44</span>동갑내기끼리</div>
+      <div class="lob-row"><span class="num">45</span>직장인의 푸념</div>
+      <div class="lob-row"><span class="num">46</span>새내기 환영</div>
+    </div>
+
+    <div class="lob-box">
+      <h4>마음 한구석</h4>
+      <div class="lob-row"><span class="num">11</span>연애 상담</div>
+      <div class="lob-row"><span class="num">12</span>짝사랑 중</div>
+      <div class="lob-row"><span class="num">13</span>헤어진 사람</div>
+      <div class="lob-row"><span class="num">14</span>외로운 밤</div>
+      <div class="lob-row"><span class="num">15</span>비밀 얘기</div>
+      <div class="lob-row"><span class="num">16</span>계속 듣고만 있는 사람</div>
+    </div>
+
+    <div class="lob-box">
+      <h4>지금 핫한 방</h4>
+      <div class="lob-row hot"><span class="num">31</span>실시간 검색 대화실 ★</div>
+      <div class="lob-row"><span class="num">32</span>참여자 0명 · 대화중</div>
+      <div class="lob-row"><span class="num">77</span>노래방</div>
+      <div class="lob-row"><span class="num">88</span>나간 사람이 안 나가는 방</div>
+      <div class="lob-row" style="color:#ff8800;"><span class="lob-blink">새로운 만남이 있는 곳...</span></div>
+    </div>
+
+    <div class="lob-box">
+      <h4>안내</h4>
+      <div class="lob-row"><span class="num">51</span>대화실 이용법</div>
+      <div class="lob-row"><span class="num">52</span>채팅 예절</div>
+      <div class="lob-row"><span class="num">88</span>신고센터</div>
+      <div class="lob-row"><span class="num">99</span>나가기</div>
+    </div>
+
+  </div>
+  <div class="lob-cmd">
+    이동(<b>GO</b>,인덱스) &nbsp;상위메뉴(<b>P</b>) &nbsp;초기화면(<b>T</b>) &nbsp;다음메뉴(<b>N</b>) &nbsp;앞메뉴(<b>A</b>) &nbsp;프로필(<b>PF</b>) &nbsp;기타(<b>ETC</b>) &nbsp;도움말(<b>H</b>) &nbsp;&gt;&gt; <span class="blink">_</span>
+  </div>
+</div>
+
+<div id="hud">
+
+  <!-- ── TOP ── -->
+  <div id="top" class="panel">
+    <div class="panel-h">
+      <span>◆ MEASURE.DB · 측정값 누적 단말 ── 외부망 접속중</span>
+      <span class="led"><b class="on"></b><b class="on"></b><b></b></span>
+    </div>
+  </div>
+
+  <!-- ── LEFT ── -->
+  <div id="left">
+    <div class="panel">
+      <div class="panel-h"><span>단말 정보</span><span>●기록중</span></div>
+      <div class="panel-b">
+        <div class="kv"><span class="k">수록</span><span class="v">438 점</span></div>
+        <div class="kv"><span class="k">묶음</span><span class="v">45 개</span></div>
+        <div class="kv"><span class="k">개설</span><span class="v">2022—</span></div>
+        <div class="kv"><span class="k">접속</span><span class="v" id="uptime">00:00:00</span></div>
+        <div style="margin-top:8px;color:#9090fc;">회선 속도</div>
+        <div class="bar"><i style="width:72%"></i></div>
+        <div style="color:#9090fc;">버퍼</div>
+        <div class="bar"><i style="width:54%"></i></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><span>대화 갈래</span></div>
+      <div class="panel-b">
+        <span class="tag">ISOLATE</span><span class="tag">RUPTURE</span><span class="tag">GRID</span>
+        <span class="tag">CLUSTER</span><span class="tag">HEADOBJ</span><span class="tag">STRATA</span>
+        <span class="tag">DMGPAT</span><span class="tag">TONEDIS</span><span class="tag">DIPTYCH</span>
+        <span class="tag">MATCOV</span><span class="tag">HETOBJ</span><span class="tag">BACKPOSE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHAT (중앙, 기존 디자인) ── -->
+  <div id="chat">
+    <div id="chatTitle">
+      <span>&lt;MEASURE.DB&gt; 검색 대화실</span>
+      <span>접속 5</span>
+    </div>
+    <div id="canvasWrap">
+      <canvas id="measureCanvas"></canvas>
+      <div id="photoGallery"></div>
+    </div>
+    <div class="search-sim">
+      <input type="text" id="searchInput" placeholder="무엇을 찾으십니까?  (예: crash, shadow, grid)">
+      <button id="searchBtn">찾기</button>
+    </div>
+  </div>
+
+  <!-- ── RIGHT ── -->
+  <div id="right">
+    <div class="panel">
+      <div class="panel-h"><span>검색 현황</span></div>
+      <div class="panel-b">
+        <div class="kv"><span class="k">찾기</span><span class="v" id="qCount">0</span></div>
+        <div class="kv"><span class="k">맞음</span><span class="v" id="hCount">0</span></div>
+        <div class="kv"><span class="k">허탕</span><span class="v" id="nCount">0</span></div>
+        <div style="margin-top:8px;color:#9090fc;">적중률</div>
+        <div class="bar"><i id="hitBar" style="width:0%"></i></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><span>허탕 기록</span><span style="color:#000;">∅</span></div>
+      <div class="panel-b" id="nullLog">
+        <div class="logrow"><span class="q">(empty)</span><span class="n">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM ── -->
+  <div id="bottom" class="panel">
+    <div class="panel-b">
+      <span>상태 : <span style="color:#fcfc54;">대기중</span> <span class="blink">_</span></span>
+      <span>측정한 것을, 기입하라.</span>
+      <span id="clock">--:--:--</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let _photos = [];
+let _stats = { q:0, h:0, n:0 };
+
+function flattenPhotos(data) {
+  const results = [];
+  function walk(node) {
+    if (!node) return;
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (typeof node !== 'object') return;
+    if (node.filename && !node.type) {
+      if (node.verdict !== 'drop' && node.dir) {
+        const keywords = node.dir.split(/[\s\/]+/).map(k => k.trim()).filter(k => k.length > 1 && /^[A-Za-z0-9가-힣(]/.test(k));
+        results.push({
+          id: node.id || '', title: node.id || node.filename.split('/').pop().replace(/\.[^.]+$/, ''),
+          filename: node.filename, verdict: node.verdict || '', dir: node.dir || '', keywords,
+        });
+      }
+    } else { Object.values(node).forEach(v => { if (v && typeof v === 'object') walk(v); }); }
+  }
+  if (data && data.project && data.project.photos) walk(data.project.photos);
+  return results;
+}
+
+(function() {
+  const ts = Date.now();
+  const ghBase = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+  fetch(ghBase + 'admin-contents.json?t=' + ts)
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .catch(() => fetch('./admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}))
+    .then(data => { if (data && data.project) _photos = flattenPhotos(data); })
+    .catch(() => {});
+})();
+
+function updateStats(hit, query, count) {
+  _stats.q++;
+  if (hit) _stats.h++; else { _stats.n++; pushNull(query, count); }
+  document.getElementById('qCount').textContent = _stats.q;
+  document.getElementById('hCount').textContent = _stats.h;
+  document.getElementById('nCount').textContent = _stats.n;
+  const rate = _stats.q ? Math.round(_stats.h / _stats.q * 100) : 0;
+  document.getElementById('hitBar').style.width = rate + '%';
+}
+const _nullMap = {};
+function pushNull(q, c) {
+  _nullMap[q] = (_nullMap[q] || 0) + 1;
+  const rows = Object.entries(_nullMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  document.getElementById('nullLog').innerHTML = rows.map(([q,n]) =>
+    `<div class="logrow"><span class="q">${q}</span><span class="n">×${n}</span></div>`).join('');
+}
+
+function showResults(filtered, query) {
+  const gallery = document.getElementById('photoGallery');
+  if (!gallery) return;
+  gallery.classList.add('visible');
+  updateStats(filtered.length > 0, query, filtered.length);
+
+  if (filtered.length === 0) {
+    gallery.innerHTML = '<div class="no-results">검색 결과가 없습니다.</div>';
+    return;
+  }
+  const note = `<div style="padding:6px 10px;font-size:8px;color:rgba(64,96,192,0.4);">─ ${filtered.length}${filtered.length >= 60 ? '+ (showing 60)' : ''} results ─</div>`;
+  const grid = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:6px 10px;">
+    ${filtered.map(p => `
+      <div data-id="${p.id}" style="border:1px solid rgba(255,100,0,0.3);cursor:pointer;"
+        onmouseover="this.style.borderColor='#ffcc00'" onmouseout="this.style.borderColor='rgba(255,100,0,0.3)'">
+        <div style="width:100%;aspect-ratio:3/2;background:#050505;overflow:hidden;position:relative;">
+          <img src="${p.filename}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(255,136,0,0.2);font-size:8px;">[NO IMG]</div>
+        </div>
+        <div style="padding:5px 6px;">
+          <div style="font-size:9px;color:rgba(255,200,0,0.6);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
+          <div style="font-size:8px;color:${p.verdict === 'core' ? '#ffcc00' : p.verdict === 'support' ? '#ff9900' : '#555'};opacity:0.8;">${p.verdict} · ${p.title}</div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+  gallery.innerHTML = note + grid;
+  gallery.querySelectorAll('[data-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const photo = filtered.find(p => p.id === el.getAttribute('data-id'));
+      if (photo) showOverlay(photo);
+    });
+  });
+}
+
+function performSearch() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const gallery = document.getElementById('photoGallery');
+  if (!query) { gallery.innerHTML = ''; gallery.classList.remove('visible'); return; }
+  if (_photos.length === 0) {
+    gallery.classList.add('visible');
+    gallery.innerHTML = '<div class="no-results">데이터 로딩 중...<br>잠시 후 다시 시도해주세요.</div>';
+    return;
+  }
+  const filtered = _photos.filter(p =>
+    (p.dir || '').toLowerCase().includes(query) ||
+    (p.keywords || []).some(k => k.toLowerCase().includes(query)) ||
+    (p.title || '').toLowerCase().includes(query)
+  ).slice(0, 60);
+  showResults(filtered, query);
+}
+
+document.getElementById('searchBtn').addEventListener('click', performSearch);
+document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') performSearch(); });
+document.getElementById('searchInput').addEventListener('input', e => {
+  if (!e.target.value.trim()) {
+    const g = document.getElementById('photoGallery'); g.innerHTML = ''; g.classList.remove('visible');
+  }
+});
+document.querySelectorAll('.tag').forEach(t => t.addEventListener('click', () => {
+  document.getElementById('searchInput').value = t.textContent; performSearch();
+}));
+
+function showOverlay(photo) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;cursor:pointer;';
+  ov.innerHTML = `
+    <div style="font-size:11px;color:rgba(255,200,0,0.6);letter-spacing:1px;">${photo.dir}</div>
+    <img src="${photo.filename}" style="max-width:100%;max-height:75vh;object-fit:contain;border:1px solid rgba(255,100,0,0.3);">
+    <div style="font-size:10px;color:${photo.verdict === 'core' ? '#ffcc00' : photo.verdict === 'support' ? '#ff9900' : '#555'};"><${photo.verdict} · ${photo.title}</div>
+    <div style="font-size:8px;color:rgba(255,100,0,0.3);">[ click to close ]</div>`;
+  ov.addEventListener('click', () => ov.remove());
+  document.body.appendChild(ov);
+}
+
+const _start = Date.now();
+setInterval(() => {
+  const d = new Date(), p = n => String(n).padStart(2,'0');
+  document.getElementById('clock').textContent = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  const up = Math.floor((Date.now()-_start)/1000);
+  document.getElementById('uptime').textContent = `${p(Math.floor(up/3600))}:${p(Math.floor(up/60)%60)}:${p(up%60)}`;
+}, 1000);
+
+function initCanvas() {
+  const c = document.getElementById('measureCanvas');
+  const ctx = c.getContext('2d');
+  const wrap = document.getElementById('canvasWrap');
+  let W, H, tick = 0;
+
+  const C = { bg:'#0000a9', topBar:'#0000a9', botBar:'#0000a9', divider:'#53fbfb', dim:'#9090fc', yellow:'#fcfc54', cyan:'#53fbfb', green:'#53fbfb', white:'#53fbfb' };
+  const MSGS = [
+    { en:'how have you been.', kr:'어떻게 지냈어?', sys:false, wait:47, typing:22 },
+    { en:'the word you kept biting down on — it was in a photograph', kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.', sys:false, wait:36, typing:29 },
+    { en:'taken before you had the name for it.', kr:'네가 그 단어의 이름을 알기 전에 찍힌 사진 말이야.', sys:false, wait:27, typing:27 },
+    { en:'they started keeping count.', kr:'그들은 세기 시작했어.', sys:false, wait:45, typing:22 },
+    { en:'not from fixation, but from a theory:', kr:'집착 때문이 아니라, 하나의 이론에서.', sys:false, wait:25, typing:24 },
+    { en:'that what recurs without reason', kr:'이유 없이 반복되는 것은', sys:false, wait:22, typing:20 },
+    { en:'is evidence of a reason not yet named.', kr:'아직 이름 붙일 수 없는 어떤 이유의 증거라는 이론에서.', sys:false, wait:47, typing:29 },
+    { en:'the record reaches back, but experience does not accumulate.', kr:'기록은 거슬러 올라가지만, 경험은 축적되지 않아.', sys:false, wait:27, typing:27 },
+    { en:'it does not know when it will stop.', kr:'언제 멈출지 알지 못해.', sys:false, wait:22, typing:20 },
+    { en:'what you swallowed without naming — bring it here.', kr:'네가 이름 붙이지 않고 삼킨 것, 여기로 가져와.', sys:false, wait:50, typing:27 },
+    { en:'the record will tell you how many times', kr:'기록은 네가 찾기 시작하기 전에 그것이 몇 번이나', sys:false, wait:25, typing:29 },
+    { en:'it had already arrived before you began to look.', kr:'왔는지 알려줄 거야.', sys:false, wait:22, typing:20 },
+    { en:'search for anything.', kr:'무엇이든 찾아봐.', sys:true, wait:68, typing:22 },
+  ];
+  const TOP_H=28, BOT_H=34, HDR_H=24, EN_FS=13, KR_FS=13, EN_ROW=21, MSG_GAP=7;
+  const USER_X=10, EN_X=104;
+  let SPLIT_X, EN_MAX_W;
+  let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
+  const USERS=['나','밤안개','자니..','거기누구세요','(퇴장함)'];
+  let MSG_DATA = [];
+
+  function wrapEN(text) {
+    ctx.font=`${EN_FS}px monospace`;
+    const words=text.split(' '), lines=[]; let cur='';
+    for (const w of words) { const t = cur ? cur+' '+w : w; if (ctx.measureText(t).width > EN_MAX_W && cur) { lines.push(cur); cur=w; } else cur=t; }
+    if (cur) lines.push(cur); return lines;
+  }
+  function msgH(m) { return m.enLines.length * EN_ROW + MSG_GAP; }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    W = wrap.offsetWidth || 600; H = wrap.offsetHeight || 400;
+    SPLIT_X = Math.round(W * 0.78);
+    EN_MAX_W = SPLIT_X - EN_X - 8;
+    c.width = W * dpr; c.height = H * dpr;
+    c.style.width = '100%'; c.style.height = '100%';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.font=`${EN_FS}px monospace`;
+    MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const startMs = Date.now();
+  function timeStr() { const d=new Date(startMs+tick*33), p=n=>String(n).padStart(2,'0'); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+
+  function draw() {
+    if (phase === 'intro') {
+      ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#0000a9'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
+      ctx.fillStyle=C.green; ctx.font=`${EN_FS-1}px monospace`; ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText('<MEASURE.DB> 검색 대화실',8,TOP_H+HDR_H/2);
+      ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px monospace`;
+      ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+8,TOP_H+HDR_H/2);
+      ctx.strokeStyle=C.divider; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
+      ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top';
+      USERS.forEach((u,i) => { ctx.fillStyle=i===0?C.cyan:C.dim; ctx.fillText(u,SPLIT_X+8,TOP_H+HDR_H+6+i*(KR_FS+6)); });
+      const msgAreaTop=TOP_H+HDR_H, msgAreaH=H-TOP_H-HDR_H-BOT_H;
+      const bw=Math.min(360,SPLIT_X-30), bh=92;
+      const bx=(SPLIT_X-bw)/2, by=msgAreaTop+(msgAreaH-bh)/2;
+      ctx.fillStyle='#000061'; ctx.fillRect(bx,by,bw,bh);
+      ctx.strokeStyle='#53fbfb'; ctx.lineWidth=0.5; ctx.strokeRect(bx,by,bw,bh);
+      ctx.fillStyle='#3838c8'; ctx.fillRect(bx,by,bw,18);
+      ctx.fillStyle='#53fbfb'; ctx.font=`${EN_FS-1}px monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText('★  시스템 공지  ★',bx+bw/2,by+9);
+      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='#53fbfb'; ctx.fillText('채팅방에 입장하셨습니다.',bx+bw/2,by+42);
+      ctx.font=`${EN_FS-2}px monospace`; ctx.fillStyle='#53fbfb'; ctx.fillText('MEASURE.DB 검색 채팅방',bx+bw/2,by+62);
+      if (Math.floor(tick/18)%2===0) { ctx.fillStyle='rgba(83,251,251,0.55)'; ctx.font=`${EN_FS-2}px monospace`; ctx.fillText('[ 연결 중... ]',bx+bw/2,by+80); }
+      phaseT++; tick++; if (phaseT >= 95) { phase='pause'; phaseT=0; } return;
+    }
+
+    ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(83,251,251,0.10)'; ctx.lineWidth=0.5;
+    for (let y=TOP_H+HDR_H; y<H-BOT_H; y+=EN_ROW+2) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke(); }
+
+    ctx.fillStyle=C.topBar; ctx.fillRect(0,0,W,TOP_H);
+    ctx.font=`${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티']; let mx=8;
+    menu.forEach((item,i) => { ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)'; ctx.fillText(item,mx,TOP_H/2); mx+=ctx.measureText(item).width+14; });
+    ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.fillText(timeStr(),W-8,TOP_H/2);
+
+    ctx.fillStyle='#0000a9'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
+    ctx.fillStyle=C.cyan; ctx.font=`${EN_FS-1}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.fillText('<MEASURE.DB> 검색 대화실',8,TOP_H+HDR_H/2);
+    ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px monospace`; ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+8,TOP_H+HDR_H/2);
+
+    ctx.strokeStyle=C.divider; ctx.lineWidth=0.5;
+    ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,TOP_H+HDR_H); ctx.lineTo(W,TOP_H+HDR_H); ctx.stroke();
+
+    ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    USERS.forEach((u,i) => { ctx.fillStyle=i===0?C.cyan:C.dim; ctx.fillText(u,SPLIT_X+8,TOP_H+HDR_H+6+i*(KR_FS+6)); });
+
+    phaseT++;
+    const mi=Math.min(revealed,MSGS.length-1);
+    if (phase==='pause') { if (phaseT>=55) { phase='wait'; phaseT=0; } }
+    else if (phase==='wait') { if (phaseT>=MSGS[mi].wait) { phase='typing'; phaseT=0; dotCount=0; dotT=0; } }
+    else if (phase==='typing') { dotT++; if (dotT%7===0) dotCount=(dotCount+1)%4; if (phaseT>=MSGS[mi].typing) { if (revealed<MSGS.length) revealed++; phase=revealed>=MSGS.length?'done':'wait'; phaseT=0; } }
+    else { doneT++; if (doneT>220) { revealed=0; phase='intro'; phaseT=0; doneT=0; } }
+    const showTyping=phase==='typing'&&revealed<MSGS.length;
+
+    const CTOP=TOP_H+HDR_H+4, CAVAIL=H-BOT_H-CTOP;
+    const vis=MSG_DATA.slice(0,revealed);
+    const typH=showTyping?EN_ROW+MSG_GAP:0;
+    const totalH=vis.reduce((s,m)=>s+msgH(m),0)+typH;
+    let curY=totalH>CAVAIL?CTOP+CAVAIL-totalH:CTOP;
+
+    ctx.save(); ctx.beginPath(); ctx.rect(0,CTOP,SPLIT_X,CAVAIL); ctx.clip();
+    ctx.textBaseline='top'; ctx.textAlign='left';
+    vis.forEach(msg => {
+      const lh=msgH(msg);
+      if (curY+lh>CTOP && curY<CTOP+CAVAIL) {
+        ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=msg.sys?C.green:C.yellow;
+        ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);
+        ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=msg.sys?C.green:C.white;
+        msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
+      }
+      curY+=lh;
+    });
+    if (showTyping && curY<CTOP+CAVAIL) {
+      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=C.yellow; ctx.fillText('MEASURE :',USER_X,curY);
+      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(180,200,252,0.5)'; ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
+    }
+    ctx.restore();
+
+    ctx.fillStyle=C.botBar; ctx.fillRect(0,H-BOT_H,W,BOT_H);
+    ctx.strokeStyle=C.divider; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(0,H-BOT_H); ctx.lineTo(W,H-BOT_H); ctx.stroke();
+    ctx.font=`${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.fillStyle=C.yellow; ctx.fillText('>>',8,H-BOT_H/2);
+    if (Math.floor(tick/15)%2===0) { ctx.fillStyle=C.white; ctx.fillRect(34,H-BOT_H/2-EN_FS/2,9,EN_FS); }
+    if (revealed>0) { ctx.font=`${EN_FS+2}px monospace`; ctx.textBaseline='middle'; ctx.fillStyle=`rgba(255,136,0,${0.88+Math.sin(tick*0.06)*0.12})`; ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,50,H-BOT_H/2); }
+    else { ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`; ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-8,H-BOT_H/2); }
+
+    tick++;
+  }
+  setInterval(draw, 42);
+}
+setTimeout(initCanvas, 200);
+
+// ── 로비 → 채팅방 입장 ──
+(function() {
+  const lobby = document.getElementById('lobby');
+  let entered = false;
+  function enter() {
+    if (entered) return; entered = true;
+    lobby.classList.add('hidden');
+    setTimeout(() => { lobby.style.display = 'none'; }, 480);
+    setTimeout(() => { document.getElementById('searchInput').focus(); }, 600);
+  }
+  lobby.querySelectorAll('.lob-row').forEach(r => r.addEventListener('click', enter));
+  // 숫자/엔터 입력으로도 입장 (PC통신 느낌)
+  document.addEventListener('keydown', e => {
+    if (!entered && (/^[0-9]$/.test(e.key) || e.key === 'Enter')) enter();
+  });
+})();
+</script>
+</body>
+</html>
