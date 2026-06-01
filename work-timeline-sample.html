@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>WORK.STATUS — SAMPLE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#00ff00; --g2:rgba(0,255,0,0.7); --g3:rgba(0,255,0,0.4); --g4:rgba(0,255,0,0.14);
+  --acc:#aaff00; --pnl:#010801; --bd:#00cc00; --amb:#ffb000; --red:#ff3b1f; --cy:#00ffaa;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000702;font-family:var(--mono);}
+
+.feed-wrap{width:100%;height:100%;display:flex;flex-direction:column;background:var(--pnl);position:relative;overflow:hidden;}
+.feed-wrap::before{content:'';position:absolute;inset:0;z-index:20;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);}
+
+/* header */
+.feed-hdr{flex-shrink:0;display:flex;align-items:center;height:22px;background:#000;
+  border-bottom:1px solid rgba(0,255,65,.5);padding:0 8px;font-size:9px;color:#00cc00;letter-spacing:1px;}
+.feed-hdr .arr{color:var(--g3);margin-right:7px;}
+.feed-hdr .tag{margin-left:auto;color:var(--g3);font-size:7px;}
+
+/* sub bar */
+.feed-sub{flex-shrink:0;display:flex;align-items:center;gap:8px;
+  padding:3px 8px;border-bottom:1px solid var(--g4);font-size:6.5px;color:var(--g3);letter-spacing:.5px;}
+.feed-sub .live{display:flex;align-items:center;gap:4px;color:var(--acc);}
+.feed-sub .live i{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 4px var(--acc);
+  animation:fblink 1s step-end infinite;}
+.feed-sub .sp{margin-left:auto;}
+@keyframes fblink{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* stats strip */
+.f-stats{flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--g4);background:#000;}
+.f-stat{padding:3px 7px;display:flex;flex-direction:column;gap:2px;border-right:1px solid rgba(0,255,0,.07);}
+.f-stat:last-child{border-right:none;}
+.f-stat .k{font-size:5.5px;color:var(--g3);letter-spacing:1px;}
+.f-stat .v{font-size:12px;color:var(--g);font-weight:500;line-height:1;}
+.f-stat.core .v{color:var(--acc);} .f-stat.sup .v{color:var(--amb);}
+.f-stat.drop .v{color:var(--g3);} .f-stat.q .v{color:var(--cy);}
+
+/* now processing */
+.f-now{flex-shrink:0;padding:5px 8px;border-bottom:1px solid var(--g4);background:rgba(0,255,0,.015);}
+.f-now-top{display:flex;align-items:baseline;gap:6px;font-size:7px;}
+.f-now-top .lbl{color:var(--acc);letter-spacing:1px;}
+.f-now-top .tgt{color:var(--g2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-now-top .pct{margin-left:auto;color:var(--g3);flex-shrink:0;}
+.f-now-bar{height:4px;background:rgba(0,255,0,.08);border:1px solid var(--g4);margin-top:4px;overflow:hidden;}
+.f-now-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--acc));transition:width .35s linear;}
+
+/* throughput sparkline */
+.f-spk-wrap{flex-shrink:0;padding:3px 8px 4px;border-bottom:1px solid var(--g4);}
+.f-spk-lbl{display:flex;justify-content:space-between;font-size:5.5px;color:var(--g3);letter-spacing:1px;}
+.f-spk{display:flex;align-items:flex-end;gap:1px;height:20px;margin-top:3px;}
+.f-spk .sb{flex:1;background:rgba(0,255,0,.28);min-height:1px;transition:height .3s ease;}
+.f-spk .sb.hi{background:var(--acc);box-shadow:0 0 4px rgba(170,255,0,.5);}
+
+/* list */
+.feed-list{flex:1;overflow:hidden;min-height:0;display:flex;flex-direction:column;padding:2px 0;position:relative;z-index:5;}
+.frow{display:grid;grid-template-columns:46px 34px 1fr;gap:5px;align-items:baseline;
+  padding:2.5px 8px;font-size:8px;border-bottom:1px solid rgba(0,255,0,.05);animation:fslide .3s ease;}
+@keyframes fslide{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.frow .ft{font-size:7px;color:var(--g3);}
+.frow .fy{font-size:6px;letter-spacing:.5px;text-align:center;padding:1px 0;border:1px solid currentColor;line-height:1;}
+.frow .fx{color:var(--g);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.fy.scan{color:var(--acc);} .fy.cull{color:var(--g2);} .fy.core{color:#001a0e;background:var(--acc);border-color:var(--acc);}
+.fy.drop{color:var(--red);} .fy.tag{color:var(--cy);} .fy.sync{color:var(--amb);}
+
+/* footer */
+.feed-ftr{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--g4);padding:4px 8px;font-size:6.5px;color:var(--g3);letter-spacing:.5px;
+  position:relative;z-index:5;background:rgba(0,255,0,.02);}
+.feed-ftr b{color:var(--acc);font-weight:400;}
+.feed-ftr .cur{color:var(--g2);}
+</style>
+</head>
+<body>
+<div class="feed-wrap">
+  <div class="feed-hdr">
+    <span class="arr">&#9654;</span>
+    <span>WORK.STATUS</span>
+    <span class="tag">작업 현황</span>
+  </div>
+
+  <div class="feed-sub">
+    <span class="live"><i></i>LIVE</span>
+    <span id="f-clk">00:00:00</span>
+    <span class="sp">RATE <b id="f-rate">0</b>/min</span>
+  </div>
+
+  <div class="f-stats">
+    <div class="f-stat core"><span class="k">CORE</span><span class="v" id="s-core">32</span></div>
+    <div class="f-stat sup"><span class="k">SUP</span><span class="v" id="s-sup">0</span></div>
+    <div class="f-stat drop"><span class="k">DROP</span><span class="v" id="s-drop">263</span></div>
+    <div class="f-stat q"><span class="k">QUEUE</span><span class="v" id="s-q">143</span></div>
+  </div>
+
+  <div class="f-now">
+    <div class="f-now-top">
+      <span class="lbl">&#9654; NOW</span>
+      <span class="tgt" id="now-tgt">0345/12 셀렉션 검토</span>
+      <span class="pct" id="now-pct">0%</span>
+    </div>
+    <div class="f-now-bar"><i id="now-bar"></i></div>
+  </div>
+
+  <div class="f-spk-wrap">
+    <div class="f-spk-lbl"><span>THROUGHPUT</span><span id="spk-peak">peak 0</span></div>
+    <div class="f-spk" id="spk"></div>
+  </div>
+
+  <div class="feed-list" id="f-list"></div>
+
+  <div class="feed-ftr">
+    <span>FOCUS <span class="cur">최종 셀렉션</span></span>
+    <span>진행 <b id="f-prog">62%</b></span>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const list=$('f-list');
+  const p2=n=>String(n).padStart(2,'0');
+  const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+  const pick=a=>a[Math.floor(Math.random()*a.length)];
+  const nowT=()=>{const d=new Date();return p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds());};
+
+  const CODES=['MONOLITH','STRATA','DISSOLVE','FOGDIS','BACKPOSE','TONEDIS','MATCOV','RUPTURE'];
+  const EVENTS=[
+    ['scan','SCAN', ()=>`DIR_${p2(ri(1,45))} 검토중`],
+    ['cull','CULL', ()=>`셀렉션 ${ri(3,18)}장 처리`],
+    ['core','CORE', ()=>`CORE 판정 +${ri(1,4)}`],
+    ['drop','DROP', ()=>`DROP ${ri(1,7)}장 제외`],
+    ['tag','TAG',   ()=>`그래머 ${pick(CODES)} 태깅`],
+    ['sync','SYNC', ()=>`MEASURE 검색 동기화`],
+    ['scan','SCAN', ()=>`메타데이터 ${ri(2,9)}건 갱신`],
+    ['cull','CULL', ()=>`0345/${p2(ri(1,40))} 인덱싱`],
+  ];
+  const NOWS=['0345/12 셀렉션 검토','DIR_07 그래머 태깅','0346/Y 메타 동기화','9355/Z CORE 판정','STRATA 배치 처리','0321/A2 인덱싱'];
+
+  // ── live stats ──
+  let core=32, sup=0, drop=263, queue=143, progress=62, total=0;
+  function renderStats(){ $('s-core').textContent=core; $('s-sup').textContent=sup; $('s-drop').textContent=drop; $('s-q').textContent=queue; $('f-prog').textContent=progress+'%'; }
+  renderStats();
+
+  // ── throughput sparkline ──
+  const NB=28; const spk=$('spk'); const sdata=Array.from({length:NB},()=>ri(0,3));
+  const bars=[];
+  for(let i=0;i<NB;i++){ const b=document.createElement('div'); b.className='sb'; spk.appendChild(b); bars.push(b); }
+  let recent=0, peak=0;
+  function renderSpark(){
+    const mx=Math.max(3,...sdata);
+    sdata.forEach((v,i)=>{ bars[i].style.height=Math.max(1,Math.round(v/mx*20))+'px'; bars[i].className='sb'+(i===NB-1?' hi':''); });
+    if(recent>peak)peak=recent; $('spk-peak').textContent='peak '+peak;
+  }
+  setInterval(()=>{ sdata.shift(); sdata.push(recent); $('f-rate').textContent=Math.round(recent*20); recent=0; renderSpark(); },3000);
+  renderSpark();
+
+  // ── NOW processing ──
+  let nowPct=0;
+  function setNow(){ $('now-tgt').textContent=pick(NOWS); }
+  setNow();
+  setInterval(()=>{
+    nowPct+=ri(4,13);
+    if(nowPct>=100){ nowPct=0; setNow(); }
+    $('now-bar').style.width=nowPct+'%'; $('now-pct').textContent=nowPct+'%';
+  },420);
+
+  // ── activity feed ──
+  function addEvent(){
+    const e=pick(EVENTS);
+    const row=document.createElement('div'); row.className='frow';
+    row.innerHTML='<span class="ft">'+nowT()+'</span><span class="fy '+e[0]+'">'+e[1]+'</span><span class="fx">'+e[2]()+'</span>';
+    list.insertBefore(row,list.firstChild);
+    while(list.children.length>7) list.lastElementChild.remove();
+    [...list.children].forEach((r,i)=>{ r.style.opacity=Math.max(0.3,1-i*0.12).toFixed(2); });
+    total++; recent++;
+    // stat 반영
+    if(e[0]==='core'){ core+=ri(1,3); queue=Math.max(0,queue-ri(1,3)); }
+    else if(e[0]==='drop'){ drop+=ri(1,5); queue=Math.max(0,queue-ri(1,4)); }
+    else if(e[0]==='cull'){ queue=Math.max(0,queue-ri(2,6)); if(Math.random()<0.3) sup+=1; }
+    if(Math.random()<0.35){ progress=Math.min(99,progress+1); }
+    renderStats();
+  }
+  setInterval(()=>{ $('f-clk').textContent=nowT(); },1000);
+  let seed=0; const si=setInterval(()=>{ addEvent(); if(++seed>=6) clearInterval(si); },240);
+  setTimeout(()=>{ setInterval(addEvent, 2100); },1500);
+})();
+</script>
+</body>
+</html>

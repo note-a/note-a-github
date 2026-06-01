@@ -234,7 +234,8 @@ setTimeout(() => {
     { en:'search for anything.',                                        kr:'무엇이든 찾아봐.',                                   sys:true,  wait:68, typing:22 },
   ];
 
-  const TOP_H=24, BOT_H=32, HDR_H=20, EN_FS=12, KR_FS=11, EN_ROW=16, KR_ROW=15, MSG_GAP=6;
+  const SHOW_CHROME=false;
+  const TOP_H=SHOW_CHROME?24:0, BOT_H=SHOW_CHROME?32:4, HDR_H=SHOW_CHROME?20:0, EN_FS=12, KR_FS=11, EN_ROW=16, KR_ROW=15, MSG_GAP=6;
   const USER_X=6, EN_X=68, SPLIT_X=W, EN_MAX_W=SPLIT_X-EN_X-8;
 
   let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
@@ -277,7 +278,7 @@ setTimeout(() => {
   function draw() {
     if (phase === 'intro') {
       ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-      const bw=W-24,bh=100,bx=(W-bw)/2,by=(H-bh)/2;
+      const bw=W-24,bh=100,bx=(W-bw)/2,by=(H-bh)/2-48;
       ctx.fillStyle='#001400'; ctx.fillRect(bx,by,bw,bh);
       ctx.strokeStyle='#00ff00'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
       ctx.fillStyle='#003300'; ctx.fillRect(bx,by,bw,18);
@@ -298,8 +299,8 @@ setTimeout(() => {
     }
 
     ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle='#00ff00'; ctx.lineWidth=2; ctx.strokeRect(0,0,W,H);
 
+    if (SHOW_CHROME) {
     ctx.strokeStyle='rgba(0,220,80,0.10)'; ctx.lineWidth=0.5;
     for (let y=TOP_H+HDR_H; y<H-BOT_H; y+=EN_ROW+2) {
       ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke();
@@ -342,6 +343,7 @@ setTimeout(() => {
     ctx.fillStyle=C.dim; ctx.font=`${KR_FS-1}px monospace`;
     ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);
     ctx.fillText('MEASURE.DB',SPLIT_X+6,rpY+4+KR_FS+4);
+    }
 
     phaseT++;
     const mi=Math.min(revealed,MSGS.length-1);
@@ -392,6 +394,7 @@ setTimeout(() => {
     }
     ctx.restore();
 
+    if (SHOW_CHROME) {
     ctx.fillStyle=C.botBar; ctx.fillRect(0,H-BOT_H,W,BOT_H);
     ctx.strokeStyle=C.divider; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(0,H-BOT_H); ctx.lineTo(W,H-BOT_H); ctx.stroke();
@@ -405,6 +408,7 @@ setTimeout(() => {
     } else {
       ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;
       ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-6,H-BOT_H/2);
+    }
     }
 
     tick++;

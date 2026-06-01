@@ -796,8 +796,38 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   font-family:var(--mono);font-size:7px;color:var(--g3);justify-content:space-between;background:rgba(0,0,0,.2);}
 
 /* ── BOTTOM ROW ── */
-#bot-row{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:3px;min-height:0;}
-.bot-left{display:grid;grid-template-columns:215px minmax(0,1fr) minmax(0,1fr);gap:3px;min-height:0;}
+#bot-row{display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr);gap:3px;min-height:0;}
+.bot-left{display:grid;grid-template-columns:215px 200px minmax(0,1fr);gap:3px;min-height:0;}
+.bl-split{display:grid;grid-template-rows:1fr 1fr;gap:3px;min-height:0;}
+
+/* 채팅 입장 버튼 (시스템 공지 스타일) */
+.chat-enter-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  width:100%;height:100%;text-decoration:none;box-sizing:border-box;padding:6px;
+  background:#010d03;font-family:var(--mono);color:#00ff41;text-align:center;
+  transition:background .15s,box-shadow .15s;cursor:pointer;}
+.chat-enter-btn:hover{background:#01180a;box-shadow:inset 0 0 18px rgba(0,255,65,.2);}
+.ceb-title{font-size:8px;letter-spacing:1px;color:#9dff8a;}
+.ceb-main{font-size:9.5px;font-weight:600;letter-spacing:.4px;color:#00ff41;}
+.ceb-sub{font-size:6.5px;color:rgba(0,255,65,.6);letter-spacing:.4px;}
+.ceb-go{font-size:7px;color:#aaff00;letter-spacing:1px;margin-top:3px;border:1px solid rgba(170,255,0,.5);padding:2px 7px;}
+.chat-enter-btn:hover .ceb-go{color:#000;background:#aaff00;border-color:#aaff00;}
+
+/* SET.TEXT 개념 텍스트 패널 */
+.stmt-scroll{flex:1;overflow-y:auto;padding:10px 12px;min-height:0;
+  font-family:var(--mono);color:rgba(0,255,65,.42);font-size:9px;line-height:1.65;letter-spacing:.2px;}
+.stmt-scroll::-webkit-scrollbar{width:4px;}
+.stmt-scroll::-webkit-scrollbar-thumb{background:rgba(0,255,65,.2);}
+.stmt-scroll p{margin:0 0 9px;}
+.stmt-scroll .lead{color:rgba(0,255,65,.58);}
+.stmt-scroll .num{color:rgba(150,210,0,.6);font-weight:600;display:block;margin-bottom:2px;}
+.stmt-scroll .closing{color:rgba(0,255,65,.36);font-style:italic;}
+.stmt-caret{display:inline-block;color:rgba(0,255,65,.75);margin-left:1px;animation:stmtcaret 1s step-end infinite;}
+@keyframes stmtcaret{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* VIEWER_LOG.EXE */
+@keyframes vlpulse{0%,100%{opacity:1;box-shadow:0 0 4px #aaff00;}50%{opacity:.3;box-shadow:none;}}
+@keyframes pm-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+@keyframes vlSlideIn{from{opacity:0;}to{opacity:1;}}
 
 /* ── PC통신 채팅 (measure-chat-sample) ── */
 .pc{width:100%;height:100%;display:flex;flex-direction:column;background:#000;font-family:'VT323',monospace;font-size:18px;line-height:1.3;color:#00cc00;}
@@ -1436,7 +1466,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 
   <!-- TITLE BAR (3-column) — moved below SET.VIEW/HUD.XT2 -->
   <div id="gbar">
-    <iframe src="gbar-redesign-sample.html?v=4" title="GBAR" scrolling="no"></iframe>
+    <iframe src="gbar-redesign-sample.html?v=6" title="GBAR" scrolling="no"></iframe>
   </div>
 
   <!-- BOTTOM ROW -->
@@ -1445,20 +1475,64 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
     <!-- LEFT: 3 패널 -->
     <div class="bot-left">
 
-      <!-- STAT -->
-      <div class="pnl dim"><div class="pnl-in"></div></div>
+      <!-- LEFT column: split top/bottom -->
+      <div class="bl-split">
+        <!-- TOP: 채팅 입장 버튼 (시스템 공지 스타일) -->
+        <div class="pnl dim"><div class="pnl-in" style="padding:0;">
+          <a href="measure-fullpage-sample.html" class="chat-enter-btn" target="_blank" rel="noopener">
+            <div class="ceb-title">★ SYSTEM NOTICE ★</div>
+            <div class="ceb-main">You have entered the chatroom</div>
+            <div class="ceb-sub">MEASURE.DB SEARCH CHATROOM</div>
+            <div class="ceb-go">[ ENTER ▶ ]</div>
+          </a>
+        </div></div>
+        <!-- BOTTOM: VIEWER_LOG.EXE (채팅/검색 기록) -->
+        <div class="pnl dim"><div class="pnl-in" style="padding:0;">
+          <div id="vlWindow" style="display:flex;flex-direction:column;height:100%;background:var(--pnl);font-family:var(--mono);">
+            <div style="flex-shrink:0;display:flex;align-items:center;height:22px;background:#000;border-bottom:1px solid rgba(0,255,65,.5);padding:0 8px;font-size:9px;color:#00cc00;letter-spacing:1px;">
+              <span style="color:var(--g3);margin-right:7px;">▶</span>
+              <span>VIEWER_LOG.EXE</span>
+              <span onclick="const b=document.getElementById('vlBody');b.style.display=b.style.display==='none'?'flex':'none';" style="margin-left:auto;width:14px;height:14px;border:1px solid rgba(0,255,65,.25);color:#00cc00;font-size:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;">_</span>
+            </div>
+            <div id="vlBody" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+              <div style="border-bottom:1px solid var(--g4);padding:3px 8px;font-size:6.5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;color:var(--g3);letter-spacing:.5px;">
+                <span><span id="vlDot" style="display:inline-block;width:5px;height:5px;background:var(--acc);border-radius:50%;margin-right:4px;vertical-align:middle;animation:vlpulse .9s infinite;box-shadow:0 0 4px var(--acc);"></span>MEASURE SEARCH LOG</span>
+                <span style="color:var(--g2);" id="vlCount">0 queries</span>
+              </div>
+              <div style="flex:1;overflow:hidden;min-height:0;">
+                <div id="vlList" style="display:flex;flex-direction:column;padding:3px 0;"></div>
+              </div>
+              <div style="border-top:1px solid var(--g4);padding:3px 8px;font-size:6.5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;color:var(--g3);letter-spacing:.5px;">
+                <span>/measure/search</span>
+                <span id="vlLastTime" style="color:var(--g3);">--:--:--</span>
+                <span style="color:var(--acc);animation:pm-blink 1s infinite;">█</span>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
 
-      <!-- DIR FREQ -->
-      <div class="pnl dim"><div class="pnl-in"></div></div>
+      <!-- ID CARD -->
+      <div class="pnl dim"><div class="pnl-in" style="padding:0;background:#000;">
+        <iframe src="id-card-compact.html?v=2" title="ID CARD" scrolling="no" style="width:100%;height:100%;border:none;display:block;"></iframe>
+      </div></div>
 
-      <!-- MODE -->
-      <div class="pnl dim"><div class="pnl-in"></div></div>
+      <!-- WORK.STATUS -->
+      <div class="pnl dim"><div class="pnl-in" style="padding:0;background:#000;">
+        <iframe src="work-timeline-sample.html?v=1" title="WORK STATUS" scrolling="no" style="width:100%;height:100%;border:none;display:block;"></iframe>
+      </div></div>
 
     </div><!-- /bot-left -->
 
-    <!-- RIGHT: measure-combined iframe -->
-    <div class="pnl"><div class="pnl-in" style="padding:0;background:#000;">
-      <iframe src="measure-combined.html?v=4" style="width:100%;height:100%;border:none;display:block;"></iframe>
+    <!-- RIGHT: SET.TEXT (개념 텍스트) — 채팅 대체 -->
+    <div class="pnl dim"><div class="pnl-in">
+      <div class="stmt-scroll" id="stmt">
+        <p class="lead">세계를 측정하려면 세계 바깥에 서야 한다. 그 자리는 없다.</p>
+        <p>이 작업은 그 불가능한 전제에서 출발한다. 타인의 사진에서 반복되는 시각적 조건을 추출해 지시문으로 변환하고, 그 언어를 들고 직접 촬영에 나섰다. 지시문은 미적 판단이 아니라 구조적 조건을 명령한다. 피사체의 배치, 배경과의 관계, 공간이 작동하는 방식. 나는 그 언어가 현실에 존재하는 장면을 찾아다녔고, 조건이 온전히 작동한 사진을 가려냈다. 이 선택이 축적되어 문법이 된다.</p>
+        <p>SET는 타인의 사진에서 추출한 지시문으로, SET:Inclusion은 나 자신의 과거 사진에서 추출한 지시문으로 같은 과정을 반복한다. 출처는 반대 방향이지만 두 작업은 어느 지점에서 교집합을 이룬다. 그 교집합이 이 작업이 추적하는 것이다. 취향도 개인도 아닌, 시선을 작동시키는 보이지 않는 구조.</p>
+        <p>사진은 결과물이 아니다. 촬영하고 선택하고 기록하는 과정 전체가 온라인에 공개되며, 관객은 MEASURE를 통해 지시문의 언어를 직접 입력할 수 있다. 코드를 검색하면 날짜를 가로질러 그 조건을 충족한 사진들이 모인다. 교집합은 미리 완성되어 있지 않다. 관객의 검색이 교집합을 만들고, 그 기록은 작업 안에 누적된다. 측정하는 자도 측정된다. 탈출은 없었다. 지시문을 어기는 순간이 지시문에 가장 충실했고, 저항은 수행이 되었다. 나는 그 역설을 끝내지 않기로 했다.</p>
+        <p class="closing">이 작업의 이름은 유예다.</p>
+      </div>
       <div class="pc" style="display:none;">
 
         <!-- 타이틀 -->
@@ -2762,5 +2836,44 @@ function scrollHud(dir){
   if(t) t.scrollBy({ top: dir * 100, behavior: 'smooth' });
 }
 </script>
+<script>
+// ── VIEWER_LOG.EXE (채팅/검색 기록 데모 피드) ──
+(function(){
+  const list = document.getElementById('vlList');
+  if(!list) return;
+  const countEl = document.getElementById('vlCount');
+  const lastEl  = document.getElementById('vlLastTime');
+  let total = 0;
+  const p2 = n => String(n).padStart(2,'0');
+  const nowT = () => { const d=new Date(); return `${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`; };
+  const ageColors = ['#aaff00','rgba(0,255,0,.62)','rgba(0,255,0,.38)','rgba(0,255,0,.24)','rgba(0,255,0,.13)'];
+  const ageTimes  = ['#88cc00','rgba(0,255,0,.4)','rgba(0,255,0,.26)','rgba(0,255,0,.16)','rgba(0,255,0,.1)'];
+  function addEntry(query){
+    total++;
+    const t = nowT();
+    list.querySelectorAll('.vl-entry').forEach((el,i)=>{
+      const a=Math.min(i+1,4);
+      const q=el.querySelector('.vlq'), tm=el.querySelector('.vlt');
+      if(q){ q.style.color=ageColors[a]; q.style.fontWeight = a===0?'bold':'normal'; }
+      if(tm) tm.style.color=ageTimes[a];
+    });
+    const e=document.createElement('div');
+    e.className='vl-entry';
+    e.style.cssText='display:grid;grid-template-columns:44px 1fr;gap:5px;padding:2px 7px;font-size:8px;font-family:var(--mono);border-bottom:1px solid #0a0a0a;animation:vlSlideIn .3s ease;';
+    e.innerHTML='<span class="vlt" style="color:#88cc00;font-size:7px;padding-top:1px;">'+t+'</span>'+
+                '<span class="vlq" style="color:#aaff00;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+query+'</span>';
+    list.prepend(e);
+    while(list.children.length>5) list.lastElementChild.remove();
+    if(countEl) countEl.textContent = total+' queries';
+    if(lastEl) lastEl.textContent = t;
+  }
+  const QUERIES=['crash','floating','shadow','grid','FOGDIS','cluster','rupture','isolate','strata','dmgpat','tonedis','diptych','matcov','headobj','backpose'];
+  const pick = () => QUERIES[Math.floor(Math.random()*QUERIES.length)];
+  let seeded=0;
+  const seedIv=setInterval(()=>{ addEntry(pick()); if(++seeded>=3) clearInterval(seedIv); }, 450);
+  setTimeout(()=>{ setInterval(()=>addEntry(pick()), 3400); }, 2400);
+})();
+</script>
+
 </body>
 </html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>GBAR — REDESIGN v3</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#00ff00; --g2:rgba(0,255,0,.7); --g3:rgba(0,255,0,.42); --g4:rgba(0,255,0,.13);
+  --cy:#aaff00; --amb:#ffb000; --red:#ff3b40; --vio:#b388ff; --pnl:#03100a;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace; --px:'Press Start 2P',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  font-family:var(--mono);padding:0;
+  background-image:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(170,255,0,.05),transparent 70%);}
+.cap{font-size:9px;color:var(--g3);letter-spacing:3px;font-family:var(--px);}
+
+/* ───── BAR ───── */
+.bar{position:relative;width:100%;max-width:1200px;height:84px;overflow:hidden;
+  background:linear-gradient(180deg,#041a12,#02110b 55%,#03150d);
+  border:1px solid rgba(0,255,0,.3);
+  box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 44px rgba(170,255,0,.1),inset 0 0 34px rgba(0,255,0,.05);
+  display:grid;grid-template-columns:250px 370px minmax(0,1fr) 210px;align-items:stretch;}
+.seg{position:relative;z-index:4;display:flex;align-items:center;border-right:1px solid rgba(0,255,0,.1);}
+.seg:last-child{border-right:none;}
+/* order: SET.OS | STATEMENT | NAV | STATS */
+.seg-id{order:1;}.seg-stmt{order:2;border-right:1px solid rgba(0,255,0,.1);}.seg-nav{order:3;}.seg-stats{order:4;border-right:none;}
+.scan{position:absolute;inset:0;z-index:6;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.16) 2px,rgba(0,0,0,.16) 3px);}
+.vscan{display:none;position:absolute;top:0;bottom:0;width:90px;z-index:5;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(170,255,0,.10),transparent);animation:vscan 5s linear infinite;}
+@keyframes vscan{0%{left:-90px}100%{left:100%}}
+.corner{position:absolute;width:12px;height:12px;z-index:8;}
+.corner.tl{top:3px;left:3px;border-top:1px solid var(--g);border-left:1px solid var(--g);}
+.corner.tr{top:3px;right:3px;border-top:1px solid var(--g);border-right:1px solid var(--g);}
+.corner.bl{bottom:3px;left:3px;border-bottom:1px solid var(--g);border-left:1px solid var(--g);}
+.corner.br{bottom:3px;right:3px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
+
+/* ── 1 identity glyph + title ── */
+.seg-id{gap:12px;padding:0 14px;}
+.glyph{width:46px;height:46px;flex-shrink:0;position:relative;}
+.glyph svg{position:absolute;inset:0;}
+.glyph .hex{animation:spin 9s linear infinite;transform-origin:50% 50%;}
+.glyph .hex2{animation:spin 6s linear infinite reverse;transform-origin:50% 50%;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.glyph .radar{transform-origin:50% 50%;animation:spin 2.4s linear infinite;}
+.idtxt{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.ttl{font-family:var(--px);font-size:13px;letter-spacing:2px;color:var(--g);position:relative;text-shadow:0 0 10px rgba(0,255,0,.5);}
+.ttl::after{content:attr(data-text);position:absolute;inset:0;color:var(--cy);clip-path:inset(45% 0 0 0);
+  animation:tglitch 4s steps(1) infinite;opacity:0;}
+@keyframes tglitch{0%,90%,100%{opacity:0;transform:translateX(0)}91%{opacity:.8;transform:translateX(2px)}93%{transform:translateX(-2px)}95%{opacity:0}}
+.sub{font-size:6px;letter-spacing:2px;color:var(--g3);}
+.sub b{color:var(--cy);font-weight:500;}
+.boot{font-size:6px;letter-spacing:.5px;color:var(--g2);height:9px;overflow:hidden;white-space:nowrap;}
+.boot .cur{color:var(--cy);animation:cur 1s steps(1) infinite;}
+@keyframes cur{50%{opacity:0}}
+
+/* ── 2 nav (sliding filled block) ── */
+.seg-nav{padding:0;}
+.nav{position:relative;display:flex;width:100%;height:100%;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-size:8px;letter-spacing:1.5px;color:var(--g3);cursor:pointer;position:relative;z-index:2;transition:color .25s;}
+.ni b{font-size:6px;font-weight:400;color:var(--g4);border:1px solid var(--g4);border-radius:2px;padding:0 2px;}
+.ni.on{color:var(--g3);}
+.ni.on b{color:var(--g4);border-color:var(--g4);}
+.nslide{display:none;position:absolute;top:6px;bottom:6px;width:25%;z-index:1;
+  background:linear-gradient(180deg,var(--g),#00cc00);box-shadow:0 0 16px rgba(0,255,0,.5);
+  transition:left .4s cubic-bezier(.5,0,.2,1);}
+
+/* ── info rows (ID-card style) ── */
+.seg-stats{flex-direction:column;justify-content:center;padding:7px 13px;gap:0;}
+.irow{display:flex;justify-content:space-between;align-items:baseline;width:100%;
+  font-size:7.5px;letter-spacing:.5px;color:var(--g3);padding:3px 0;border-bottom:1px solid rgba(0,255,0,.07);}
+.irow:last-child{border-bottom:none;}
+.irow span{opacity:.8;}
+.irow b{font-weight:400;color:var(--g);}
+.irow b.y{color:var(--amb);} .irow b.g{color:var(--acc);}
+
+/* ── 4 data rain ── */
+.seg-rain{padding:0;}
+#rain{width:100%;height:100%;display:block;}
+
+/* ── 5 sys: uptime + LED ladder ── */
+.seg-sys{flex-direction:column;justify-content:center;align-items:stretch;gap:5px;padding:0 12px;}
+.uptime{display:flex;align-items:baseline;justify-content:space-between;}
+.uptime .ul{font-size:6px;letter-spacing:2px;color:var(--g3);}
+.uptime span:last-child{font-family:var(--term);font-size:18px;color:var(--amb);text-shadow:0 0 8px rgba(255,176,0,.4);}
+.leds{display:flex;flex-direction:column;gap:2px;}
+.led-row{display:flex;align-items:center;gap:4px;font-size:5px;letter-spacing:1px;color:var(--g3);}
+.led-row .lname{width:22px;flex-shrink:0;}
+.led-row .cells{display:flex;gap:2px;flex:1;}
+.led-row .cells i{flex:1;height:3px;background:var(--g4);transition:background .2s;}
+.led-row.ok .cells i.lit{background:var(--g);box-shadow:0 0 4px var(--g);}
+.led-row.net .cells i.lit{background:var(--cy);box-shadow:0 0 4px var(--cy);}
+.led-row.io .cells i.lit{background:var(--amb);box-shadow:0 0 4px var(--amb);}
+.led-row.pwr .cells i.lit{background:var(--red);box-shadow:0 0 4px var(--red);}
+
+/* ── v3.1 polish ── */
+.bar{animation:pwr 9s steps(1) infinite;}
+@keyframes pwr{0%,96.5%,100%{filter:none}97%{filter:brightness(1.22)}98%{filter:brightness(.86)}99%{filter:brightness(1.06)}}
+.flow{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:6;pointer-events:none;
+  background:repeating-linear-gradient(90deg,var(--g3) 0 5px,transparent 5px 15px);background-size:15px 100%;
+  animation:flowmove 1.1s linear infinite;opacity:.45;}
+@keyframes flowmove{to{background-position:15px 0}}
+.flow::before{content:'';position:absolute;top:-1px;bottom:-1px;width:36px;
+  background:linear-gradient(90deg,transparent,var(--cy),transparent);box-shadow:0 0 8px var(--cy);
+  animation:flowsweep 3.2s linear infinite;}
+@keyframes flowsweep{0%{left:-36px}100%{left:100%}}
+.glyph .ticks{animation:spin 16s linear infinite reverse;transform-origin:50% 50%;}
+.ring .rd{position:absolute;top:5px;right:2px;font-size:6px;line-height:1;}
+.ring.frm .rd{color:var(--g);} .ring.kep .rd{color:var(--cy);} .ring.drp .rd{color:var(--red);}
+.ni.on::before,.ni.on::after{content:none;}
+
+/* ── statement segment (replaces data rain) ── */
+.seg-stmt{align-items:center;padding:8px 13px;}
+.stmt-txt{display:flex;flex-direction:column;gap:5px;max-height:100%;overflow:hidden;position:relative;}
+.st-tag{display:flex;align-items:center;gap:5px;font-size:5px;letter-spacing:2px;color:var(--cy);opacity:.85;}
+.st-tag::before{content:'';width:4px;height:4px;background:var(--cy);box-shadow:0 0 5px var(--cy);animation:pulse 1.8s ease-in-out infinite;}
+.stmt-txt p{font-size:7px;line-height:1.5;letter-spacing:.3px;color:var(--g2);text-shadow:0 0 5px rgba(0,255,0,.14);}
+.stmt-txt p b{color:var(--cy);}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="vscan"></div>
+  <div class="scan"></div>
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+
+  <!-- 1 identity -->
+  <div class="seg seg-id">
+    <div class="glyph">
+      <svg viewBox="0 0 46 46" fill="none">
+        <circle class="ticks" cx="23" cy="23" r="21" stroke="#00ff00" stroke-width="2" stroke-dasharray="1 4" opacity=".4"/>
+        <polygon class="hex" points="23,3 39,12 39,34 23,43 7,34 7,12" stroke="#00ff00" stroke-width="1" opacity=".55"/>
+        <polygon class="hex2" points="23,9 34,15.5 34,30.5 23,37 12,30.5 12,15.5" stroke="#aaff00" stroke-width=".8" opacity=".5"/>
+        <circle cx="23" cy="23" r="4" stroke="#00ff00" stroke-width=".8" opacity=".7"/>
+        <circle cx="23" cy="23" r="1.5" fill="#00ff00"/>
+        <line class="radar" x1="23" y1="23" x2="23" y2="6" stroke="#aaff00" stroke-width="1.2" opacity=".85"/>
+      </svg>
+    </div>
+    <div class="idtxt">
+      <div class="ttl" data-text="SET.OS">SET.OS</div>
+      <div class="sub">ARCHIVE TERMINAL <b>v2.4</b></div>
+      <div class="boot"><span id="boot"></span><span class="cur">_</span></div>
+    </div>
+  </div>
+
+  <!-- 2 nav -->
+  <div class="seg seg-nav">
+    <div class="nav" id="nav">
+      <div class="ni on" data-i="0"><b>1</b>INTAKE</div>
+      <div class="ni" data-i="1"><b>2</b>CULL</div>
+      <div class="ni" data-i="2"><b>3</b>RENDER</div>
+      <div class="ni" data-i="3"><b>4</b>SYNC</div>
+      <div class="nslide" id="nslide"></div>
+    </div>
+  </div>
+
+  <!-- 3 info rows -->
+  <div class="seg seg-stats">
+    <div class="irow"><span>ENTRY</span><b id="g-entry">--:--:--</b></div>
+    <div class="irow"><span>SESSION</span><b class="y" id="g-sess">00:00:00</b></div>
+    <div class="irow"><span>STATUS</span><b class="g" id="g-status">&#9679; ACTIVE</b></div>
+    <div class="irow"><span>DEPT</span><b id="g-dept">KR-09-A</b></div>
+  </div>
+
+  <!-- 4 statement -->
+  <div class="seg seg-stmt">
+    <div class="stmt-txt">
+      <div class="st-tag">// STATEMENT</div>
+      <p>Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.</p>
+      <p><b>Set is the world.</b> I'm measuring the perimeter of the set. But the scale I hold is already contaminated by the world itself.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── nav sliding block (auto + hover/click) ──
+(function(){
+  // 이동하는 초록 버튼(nslide) 제거 — 자동 순환/하이라이트 비활성화
+  document.querySelectorAll('#nav .ni.on').forEach(t=>t.classList.remove('on'));
+})();
+
+// ── typewriter boot log ──
+(function(){
+  const el=document.getElementById('boot');
+  const msgs=['> mount /archive ... ok','> index 4,210 frames','> cull queue: 432','> render farm online','> node-77 linked','> sync delta +18'];
+  let m=0,c=0,del=false;
+  function step(){
+    const s=msgs[m];
+    el.textContent = s.slice(0,c);
+    if(!del){ c++; if(c>s.length){del=true;setTimeout(step,1100);return;} }
+    else { c--; if(c<0){del=false;c=0;m=(m+1)%msgs.length;} }
+    setTimeout(step, del?22:46);
+  }
+  step();
+})();
+
+// ── info rows (ENTRY / SESSION / STATUS / DEPT) ──
+(function(){
+  const p=n=>String(n).padStart(2,'0');
+  const now=new Date();
+  document.getElementById('g-entry').textContent = p(now.getHours())+':'+p(now.getMinutes())+':'+p(now.getSeconds());
+  let s=0;
+  setInterval(()=>{ s++; document.getElementById('g-sess').textContent = p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60); },1000);
+  const st=document.getElementById('g-status');
+  setInterval(()=>{
+    st.textContent='◌ SCANNING'; st.style.color='#ffb000';
+    setTimeout(()=>{ st.textContent='● ACTIVE'; st.style.color='#aaff00'; },900);
+  },5600);
+})();
+
+</script>
+</body>
+</html>

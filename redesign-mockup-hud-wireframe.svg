@@ -1,0 +1,217 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 816" font-family="'Courier New',monospace">
+  <style>
+    .fr{fill:none;stroke:#222;stroke-width:1.4}
+    .bx{fill:#fff;stroke:#333;stroke-width:1.2}
+    .hd{fill:#f1f1f1;stroke:#333;stroke-width:1}
+    .sub{fill:none;stroke:#9a9a9a;stroke-width:1;stroke-dasharray:4 3}
+    .gl{fill:none;stroke:#555;stroke-width:1}
+    .img{fill:none;stroke:#c2c2c2;stroke-width:1}
+    .ln{stroke:#bcbcbc;stroke-width:3;stroke-linecap:round}
+    .lnk{stroke:#d6d6d6;stroke-width:2;stroke-linecap:round}
+    .t{fill:#222;font-size:11px}
+    .tb{fill:#111;font-size:13px;font-weight:bold}
+    .ts{fill:#888;font-size:8px}
+    .tn{fill:#555;font-size:9px}
+    .tag{fill:#333;font-size:8px}
+  </style>
+
+  <rect x="0" y="0" width="1160" height="816" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="14" y="22" class="tb" font-size="15">WIREFRAME · SET / HUD.XT2</text>
+  <text x="14" y="36" class="tn">redesign-mockup-hud.html  —  #wrap 1140×757  (rows: 1fr / 84 / 1fr / 28)</text>
+
+  <g transform="translate(10,46)">
+
+    <!-- ===== WRAP FRAME ===== -->
+    <rect x="0" y="0" width="1140" height="757" class="fr"/>
+    <!-- corner brackets -->
+    <path d="M0 14 V0 H14" class="gl"/><path d="M1126 0 H1140 V14" class="gl"/>
+    <path d="M0 743 V757 H14" class="gl"/><path d="M1126 757 H1140 V743" class="gl"/>
+
+    <!-- =========================================================
+         ROW 1 — TOP ROW  (y 8..315)
+         cols: SET.VIEW 521 | HUD.XT2 521 | CTRL 72
+    ========================================================== -->
+
+    <!-- SET.VIEW -->
+    <rect x="8" y="8" width="521" height="307" class="bx"/>
+    <rect x="8" y="8" width="521" height="30" class="hd"/>
+    <text x="18" y="27" class="t">&lt;SET.VIEW&gt;</text>
+    <text x="120" y="26" class="ts">결과 분석</text>
+    <circle cx="505" cy="23" r="3" class="gl"/><circle cx="492" cy="23" r="3" class="gl"/>
+    <!-- tab bar -->
+    <rect x="8" y="38" width="521" height="16" class="sub"/>
+    <text x="16" y="50" class="tag">[ANALYSIS]</text>
+    <text x="86" y="50" class="tag">CONTACT</text>
+    <text x="146" y="50" class="tag">FILMSTRIP</text>
+    <!-- left: blurred photo + scope (image placeholder) -->
+    <rect x="16" y="62" width="306" height="245" class="img"/>
+    <line x1="16" y1="62" x2="322" y2="307" class="img"/>
+    <line x1="322" y1="62" x2="16" y2="307" class="img"/>
+    <text x="22" y="76" class="ts">BLUR PHOTO</text>
+    <!-- reticle -->
+    <line x1="16" y1="184" x2="322" y2="184" class="sub"/>
+    <line x1="169" y1="62" x2="169" y2="307" class="sub"/>
+    <rect x="150" y="168" width="38" height="30" class="gl"/>
+    <path d="M150 162 h-6 M150 162 v-6 M188 162 h6 M188 162 v-6" class="gl"/>
+    <text x="200" y="300" class="ts">SCOPE / GVA</text>
+    <!-- right: distribution scatter -->
+    <rect x="328" y="62" width="193" height="245" class="sub"/>
+    <text x="335" y="76" class="ts">DIST / SCATTER</text>
+    <line x1="345" y1="84" x2="345" y2="296" class="gl"/>
+    <circle cx="380" cy="110" r="5" class="gl"/><circle cx="420" cy="140" r="7" class="gl"/>
+    <circle cx="400" cy="180" r="4" class="gl"/><circle cx="455" cy="160" r="6" class="gl"/>
+    <circle cx="375" cy="210" r="8" class="gl"/><circle cx="440" cy="230" r="5" class="gl"/>
+    <circle cx="410" cy="260" r="6" class="gl"/><circle cx="470" cy="120" r="4" class="gl"/>
+    <text x="335" y="292" class="ts">CORE · SUP · DROP</text>
+
+    <!-- HUD.XT2 -->
+    <rect x="534" y="8" width="521" height="307" class="bx"/>
+    <rect x="534" y="8" width="521" height="30" class="hd"/>
+    <text x="544" y="27" class="t">&lt;HUD.XT2&gt;</text>
+    <circle cx="648" cy="23" r="3" class="gl"/><text x="656" y="26" class="ts">LIVE</text>
+    <circle cx="690" cy="23" r="3" class="gl"/><text x="698" y="26" class="ts">ERR</text>
+    <circle cx="1031" cy="23" r="3" class="gl"/><circle cx="1018" cy="23" r="3" class="gl"/>
+    <!-- tab bar + search -->
+    <rect x="534" y="38" width="521" height="16" class="sub"/>
+    <text x="542" y="50" class="tag">[ICON]</text>
+    <text x="590" y="50" class="tag">LIST</text>
+    <rect x="980" y="40" width="70" height="12" class="sub"/>
+    <text x="986" y="49" class="ts">search</text>
+    <!-- folder grid 5 x 3 -->
+    <g class="gl">
+      <!-- row 1 -->
+      <g transform="translate(560,70)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(660,70)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(760,70)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(860,70)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(960,70)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <!-- row 2 -->
+      <g transform="translate(560,150)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(660,150)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(760,150)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(860,150)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(960,150)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <!-- row 3 -->
+      <g transform="translate(560,230)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(660,230)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(760,230)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+      <g transform="translate(860,230)"><rect x="0" y="4" width="44" height="28"/><rect x="0" y="0" width="16" height="6"/></g>
+    </g>
+    <text x="560" y="112" class="ts">0345/0</text><text x="660" y="112" class="ts">0346/0</text>
+    <text x="760" y="112" class="ts">0343/A</text><text x="860" y="112" class="ts">0344/A</text>
+    <text x="960" y="112" class="ts">0345/A</text>
+    <text x="560" y="192" class="ts">0345/02</text><text x="660" y="192" class="ts">0346/Y</text>
+    <text x="760" y="192" class="ts">0347/0</text><text x="860" y="192" class="ts">9355/Z</text>
+    <text x="960" y="192" class="ts">0345/Y</text>
+    <text x="560" y="272" class="ts">0321/A2</text><text x="660" y="272" class="ts">0366465/B</text>
+    <text x="760" y="272" class="ts">0334/3</text><text x="860" y="272" class="ts">A2045/H</text>
+    <text x="544" y="305" class="tn">FILE BROWSER · 5×3</text>
+
+    <!-- CTRL (UP / EXIT / DOWN) -->
+    <rect x="1060" y="8" width="72" height="307" class="bx"/>
+    <line x1="1060" y1="110" x2="1132" y2="110" class="sub"/>
+    <line x1="1060" y1="213" x2="1132" y2="213" class="sub"/>
+    <path d="M1096 40 l-8 12 h16 z" class="gl"/>
+    <text x="1090" y="74" class="t">UP</text>
+    <text x="1085" y="164" class="t">EXIT</text>
+    <path d="M1096 285 l-8 -12 h16 z" class="gl"/>
+    <text x="1083" y="255" class="t">DOWN</text>
+
+    <!-- =========================================================
+         ROW 2 — GBAR / SET.OS BAR  (y 320..404, h 84)
+    ========================================================== -->
+    <rect x="8" y="320" width="1124" height="84" class="bx"/>
+    <text x="14" y="332" class="ts">#gbar  ·  gbar-redesign-sample.html (iframe)</text>
+    <!-- logo -->
+    <circle cx="44" cy="368" r="16" class="gl"/><line x1="44" y1="368" x2="54" y2="360" class="gl"/>
+    <text x="70" y="368" class="tb" font-size="18">SET.OS</text>
+    <text x="70" y="382" class="ts">ARCHIVE TERMINAL v2.4</text>
+    <text x="70" y="394" class="tn">&gt; mount /archive</text>
+    <!-- statement lines -->
+    <line x1="250" y1="346" x2="560" y2="346" class="lnk"/>
+    <line x1="250" y1="358" x2="540" y2="358" class="lnk"/>
+    <line x1="250" y1="372" x2="430" y2="372" class="ln"/>
+    <line x1="250" y1="386" x2="560" y2="386" class="lnk"/>
+    <text x="250" y="338" class="ts">STATEMENT</text>
+    <!-- process buttons -->
+    <g class="gl">
+      <rect x="690" y="340" width="52" height="40"/>
+      <rect x="748" y="340" width="52" height="40"/>
+      <rect x="806" y="340" width="52" height="40"/>
+      <rect x="864" y="340" width="52" height="40"/>
+    </g>
+    <text x="698" y="394" class="ts">INTAKE</text><text x="758" y="394" class="ts">CULL</text>
+    <text x="812" y="394" class="ts">RENDER</text><text x="874" y="394" class="ts">SYNC</text>
+    <!-- status fields -->
+    <line x1="935" y1="332" x2="935" y2="392" class="sub"/>
+    <text x="945" y="344" class="tn">ENTRY    14:06:14</text>
+    <text x="945" y="360" class="tn">SESSION  00:01:06</text>
+    <text x="945" y="376" class="tn">STATUS   ● ACTIVE</text>
+    <text x="945" y="392" class="tn">DEPT     KR-09-A</text>
+
+    <!-- =========================================================
+         ROW 3 — BOTTOM ROW  (y 409..716)
+         bot-left (STAT 215 | DIR FREQ 307 | MODE 307) | CHAT 280
+    ========================================================== -->
+    <rect x="8" y="409" width="215" height="307" class="bx"/>
+    <text x="16" y="424" class="t">STAT</text>
+    <text x="16" y="438" class="ts">(dim panel)</text>
+
+    <rect x="228" y="409" width="307" height="307" class="bx"/>
+    <text x="236" y="424" class="t">DIR FREQ</text>
+    <text x="236" y="438" class="ts">(dim panel)</text>
+
+    <rect x="540" y="409" width="307" height="307" class="bx"/>
+    <text x="548" y="424" class="t">MODE</text>
+    <text x="548" y="438" class="ts">(dim panel)</text>
+
+    <!-- CHAT / MEASURE.DB (measure-combined.html iframe) -->
+    <rect x="852" y="409" width="280" height="307" class="bx"/>
+    <rect x="852" y="409" width="280" height="18" class="hd"/>
+    <text x="858" y="422" class="tag">색상 음악소 홈 PC통신 통신 게임</text>
+    <rect x="852" y="427" width="280" height="16" class="hd"/>
+    <text x="858" y="439" class="ts">&lt;MEASURE.DB&gt; 검색 채팅방</text>
+    <!-- message lines: EN (solid) + KR 자막 (lighter) -->
+    <g>
+      <text x="858" y="460" class="ts">MEASURE :</text>
+      <line x1="906" y1="457" x2="1118" y2="457" class="ln"/>
+      <line x1="906" y1="471" x2="1040" y2="471" class="lnk"/>
+      <text x="858" y="492" class="ts">MEASURE :</text>
+      <line x1="906" y1="489" x2="1100" y2="489" class="ln"/>
+      <line x1="906" y1="503" x2="1118" y2="503" class="lnk"/>
+      <line x1="906" y1="515" x2="1010" y2="515" class="lnk"/>
+      <text x="858" y="536" class="ts">MEASURE :</text>
+      <line x1="906" y1="533" x2="1080" y2="533" class="ln"/>
+      <line x1="906" y1="547" x2="1060" y2="547" class="lnk"/>
+      <text x="858" y="572" class="ts">MEASURE :</text>
+      <line x1="906" y1="569" x2="1118" y2="569" class="ln"/>
+      <line x1="906" y1="583" x2="990" y2="583" class="lnk"/>
+    </g>
+    <text x="858" y="682" class="tn">&gt;&gt; 자막(KR) ticker bar</text>
+    <line x1="858" y1="700" x2="886" y2="700" class="ln"/><text x="892" y="704" class="ts">EN</text>
+    <line x1="930" y1="700" x2="958" y2="700" class="lnk"/><text x="964" y="704" class="ts">KR 자막</text>
+    <text x="858" y="713" class="tn">CHAT · 검색창 숨김</text>
+
+    <!-- =========================================================
+         ROW 4 — STATUS BAR  (y 721..749, h 28)
+    ========================================================== -->
+    <rect x="8" y="721" width="1124" height="28" class="bx"/>
+    <text x="16" y="739" class="tn">\GH.24 TR 23.3 Slow</text>
+    <line x1="170" y1="723" x2="170" y2="747" class="sub"/>
+    <text x="180" y="739" class="tn">ERR-03 SECTOR-F</text>
+    <line x1="320" y1="723" x2="320" y2="747" class="sub"/>
+    <g class="tag">
+      <rect x="330" y="727" width="44" height="16" class="gl"/><text x="338" y="739">SET</text>
+      <rect x="380" y="727" width="74" height="16" class="sub"/><text x="388" y="739">INCLUSION</text>
+      <rect x="460" y="727" width="44" height="16" class="sub"/><text x="468" y="739">LOG</text>
+      <rect x="510" y="727" width="44" height="16" class="sub"/><text x="518" y="739">REF</text>
+      <rect x="560" y="727" width="66" height="16" class="sub"/><text x="568" y="739">MEASURE</text>
+      <rect x="632" y="727" width="52" height="16" class="sub"/><text x="640" y="739">ABOUT</text>
+    </g>
+    <rect x="980" y="727" width="70" height="16" class="gl"/><text x="988" y="739" class="tag">ACTIVATE</text>
+    <text x="1064" y="739" class="tn">SET XT2</text>
+
+  </g>
+</svg>
