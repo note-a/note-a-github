@@ -14,7 +14,7 @@
     #canvasWrap canvas { display:block; width:100%; height:auto; }
 
     .search-sim {
-      display:flex; border-top:1px solid #00ff00;
+      display:none; border-top:1px solid #00ff00;
       padding:14px 6px; gap:4px; flex-shrink:0;
     }
     .search-sim input {
@@ -205,7 +205,7 @@ setTimeout(() => {
   const c = document.getElementById('measureCanvas');
   const ctx = c.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
-  const LW = 610, LH = 380;
+  const LW = 300, LH = 445;
   c.width = LW * dpr; c.height = LH * dpr;
   c.style.width = '100%'; c.style.height = 'auto';
   ctx.scale(dpr, dpr);
@@ -234,8 +234,8 @@ setTimeout(() => {
     { en:'search for anything.',                                        kr:'무엇이든 찾아봐.',                                   sys:true,  wait:68, typing:22 },
   ];
 
-  const TOP_H=26, BOT_H=30, HDR_H=20, EN_FS=12, KR_FS=11, EN_ROW=17, MSG_GAP=6;
-  const USER_X=8, EN_X=90, SPLIT_X=430, EN_MAX_W=SPLIT_X-EN_X-8;
+  const TOP_H=24, BOT_H=32, HDR_H=20, EN_FS=12, KR_FS=11, EN_ROW=16, KR_ROW=15, MSG_GAP=6;
+  const USER_X=6, EN_X=68, SPLIT_X=W, EN_MAX_W=SPLIT_X-EN_X-8;
 
   let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
   const USERS=['나(익명)','관찰자_01','수집가','방문자_09','익명의_이'];
@@ -253,9 +253,20 @@ setTimeout(() => {
     return lines;
   }
 
+  function wrapKR(text) {
+    ctx.font=`${KR_FS}px monospace`;
+    const lines=[]; let cur='';
+    for (const ch of text) {
+      const t = cur+ch;
+      if (ctx.measureText(t).width > EN_MAX_W && cur) { lines.push(cur); cur=ch; }
+      else cur=t;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
   ctx.font=`${EN_FS}px monospace`;
-  const MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
-  function msgH(m) { return m.enLines.length * EN_ROW + MSG_GAP; }
+  const MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en), krLines: wrapKR(m.kr) }));
+  function msgH(m) { return m.enLines.length * EN_ROW + m.krLines.length * KR_ROW + MSG_GAP; }
 
   const startMs = Date.now();
   function timeStr() {
@@ -266,7 +277,7 @@ setTimeout(() => {
   function draw() {
     if (phase === 'intro') {
       ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
-      const bw=320,bh=100,bx=(W-bw)/2,by=(H-bh)/2;
+      const bw=W-24,bh=100,bx=(W-bw)/2,by=(H-bh)/2;
       ctx.fillStyle='#001400'; ctx.fillRect(bx,by,bw,bh);
       ctx.strokeStyle='#00ff00'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
       ctx.fillStyle='#003300'; ctx.fillRect(bx,by,bw,18);
@@ -295,8 +306,8 @@ setTimeout(() => {
     }
 
     ctx.fillStyle=C.topBar; ctx.fillRect(0,0,W,TOP_H);
-    ctx.font=`bold ${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
-    const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티'];
+    ctx.font='bold 9px monospace'; ctx.textBaseline='middle'; ctx.textAlign='left';
+    const menu=['색상','음악소','홈','PC통신','통신','게임'];
     let mx=6;
     menu.forEach((item,i) => {
       ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)';
@@ -366,6 +377,10 @@ setTimeout(() => {
         ctx.font=`${EN_FS}px monospace`;
         ctx.fillStyle=msg.sys?C.green:C.white;
         msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
+        const krY=curY+msg.enLines.length*EN_ROW;
+        ctx.font=`${KR_FS}px monospace`;
+        ctx.fillStyle=C.cyan;
+        msg.krLines.forEach((line,li) => { ctx.fillText(line,EN_X,krY+li*KR_ROW); });
       }
       curY+=lh;
     });
@@ -384,7 +399,7 @@ setTimeout(() => {
     ctx.fillStyle=C.yellow; ctx.fillText('>>',6,H-BOT_H/2);
     if (Math.floor(tick/15)%2===0) { ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1); }
     if (revealed>0) {
-      ctx.font='bold 11px monospace'; ctx.textBaseline='middle';
+      ctx.font='bold 10px monospace'; ctx.textBaseline='middle';
       ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;
       ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,42,H-BOT_H/2);
     } else {
