@@ -8,11 +8,11 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
-      height:100%; background:#000099; color:#a6a6b8;
-      font-family:'Galmuri11',monospace; overflow:hidden;
+      min-height:100%; background:#000099; color:#a6a6b8;
+      font-family:'Galmuri11',monospace; overflow-x:hidden;
       -webkit-text-stroke:0.4px currentColor; text-stroke:0.4px currentColor;
     }
-    body { display:flex; align-items:center; justify-content:center; padding:14px; }
+    body { display:flex; align-items:safe center; justify-content:center; padding:14px; min-height:100vh; }
 
     /* ── 전체 HUD 그리드 ── */
     #hud {
@@ -125,15 +125,16 @@
 
     /* ── 하이텔식 대화실 로비 (입장 화면) ── */
     #lobby {
-      position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-      width:54.4%; height:60.8%; z-index:200; background:#000099;
-      display:flex; flex-direction:column; padding:14px;
+      position:fixed; inset:0; z-index:200; background:#000099;
+      display:flex; align-items:safe center; justify-content:center;
+      padding:14px; overflow-y:auto;
       font-family:'Galmuri11',monospace; color:#a6a6b8;
     }
+    .lob-wrap { width:54.4%; display:flex; flex-direction:column; }
     #lobby.hidden { animation:lobbyOff 0.45s ease forwards; }
-    @keyframes lobbyOff { to { opacity:0; visibility:hidden; transform:translate(-50%,-50%) scale(1.02); } }
+    @keyframes lobbyOff { to { opacity:0; visibility:hidden; transform:scale(1.02); } }
     #lobby::after {
-      content:''; position:absolute; inset:0; pointer-events:none;
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:201;
       background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px);
     }
     .lob-top {
@@ -142,8 +143,8 @@
       border:3px solid #808080; flex-shrink:0;
     }
     .lob-grid {
-      flex:1; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
-      gap:12px; margin:12px 0; min-height:0;
+      display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
+      gap:12px; margin:12px 0;
     }
     .lob-box {
       border:3px solid #808080; padding:10px 12px 8px; display:flex; flex-direction:column;
@@ -193,13 +194,10 @@
       .search-sim button { padding:10px 16px; font-size:11px; }
       #bottom .panel-b { font-size:9px; padding:6px 10px; }
 
-      #lobby {
-        width:100vw; height:100vh; height:100dvh;
-        padding:8px; overflow-y:auto;
-      }
+      #lobby { padding:8px; align-items:stretch; }
+      .lob-wrap { width:100%; }
       .lob-top { font-size:10px; padding:6px 10px; flex-wrap:wrap; gap:2px 8px; }
       .lob-grid {
-        flex:0 0 auto;
         grid-template-columns:1fr;
         grid-template-rows:none; grid-auto-rows:auto;
         gap:8px; margin:8px 0;
@@ -214,6 +212,7 @@
 
 <!-- ── 대화실 로비 (입장 화면) ── -->
 <div id="lobby">
+  <div class="lob-wrap">
   <div class="lob-top">
     <span>MEASURE.DB &nbsp;CHATTING</span>
     <span>대화실 [ 분류 ]</span>
@@ -279,6 +278,7 @@
   </div>
   <div class="lob-cmd">
     이동(<b>GO</b>,인덱스) &nbsp;상위메뉴(<b>P</b>) &nbsp;초기화면(<b>T</b>) &nbsp;다음메뉴(<b>N</b>) &nbsp;앞메뉴(<b>A</b>) &nbsp;프로필(<b>PF</b>) &nbsp;기타(<b>ETC</b>) &nbsp;도움말(<b>H</b>) &nbsp;&gt;&gt; <span class="blink">_</span>
+  </div>
   </div>
 </div>
 
