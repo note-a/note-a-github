@@ -4,18 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MEASURE.DB — 검색 채팅방</title>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     html, body {
-      height:100%; background:#0000aa; color:#00d4ff;
-      font-family:'Press Start 2P',monospace; overflow:hidden;
+      height:100%; background:#000099; color:#a6a6b8;
+      font-family:'Galmuri11',monospace; overflow:hidden;
+      -webkit-text-stroke:0.4px currentColor; text-stroke:0.4px currentColor;
     }
     body { display:flex; align-items:center; justify-content:center; padding:14px; }
 
     /* ── 전체 HUD 그리드 ── */
     #hud {
-      width:68%; height:76%;
+      width:54.4%; height:60.8%;
       display:grid;
       grid-template-columns: 230px 1fr 230px;
       grid-template-rows: auto 1fr auto;
@@ -28,22 +29,23 @@
 
     /* 패널 공통 */
     .panel {
-      border:2px solid #55ffff;
-      background:#0000aa;
+      border:3px solid #808080;
+      background:#b0b0bc;
       position:relative;
       overflow:hidden;
+      box-shadow:4px 4px 0 rgba(0,0,20,0.55);
     }
     .panel-h {
-      background:#00a8a8; color:#000000;
+      background:#0000dd; color:#a6a6b8;
       font-size:10px; letter-spacing:0.5px;
       padding:5px 8px;
       display:flex; justify-content:space-between; align-items:center;
     }
-    .panel-b { padding:9px; font-size:10px; line-height:2; color:#9ec5ff; }
+    .panel-b { padding:9px; font-size:10px; line-height:2; color:#181820; }
 
     /* TOP BAR */
     #top { grid-area:top; }
-    #top .panel-h { font-size:12px; padding:7px 12px; background:#00a8a8; color:#000000; }
+    #top .panel-h { font-size:12px; padding:7px 12px; background:#0000dd; color:#a6a6b8; }
     #top .led { display:flex; gap:5px; align-items:center; }
     #top .led b { width:9px; height:9px; background:#000; display:inline-block; }
     #top .led b.on { background:#000; box-shadow:0 0 5px #000 inset; }
@@ -51,62 +53,63 @@
     /* LEFT / RIGHT */
     #left  { grid-area:left;  display:flex; flex-direction:column; gap:10px; }
     #right { grid-area:right; display:flex; flex-direction:column; gap:10px; }
-    #left .panel { flex:1; display:flex; flex-direction:column; background:#0000aa; }
-    #right .panel { flex:1; display:flex; flex-direction:column; background:#0000aa; }
-    #left .panel:nth-child(1) { background:#0000aa; }
-    #left .panel:nth-child(2) { background:#0000aa; }
-    #right .panel:nth-child(1) { background:#0000aa; }
-    #right .panel:nth-child(2) { background:#0000aa; }
+    #left .panel { flex:1; display:flex; flex-direction:column; background:#b0b0bc; }
+    #right .panel { flex:1; display:flex; flex-direction:column; background:#b0b0bc; }
+    #left .panel:nth-child(1) { background:#b0b0bc; }
+    #left .panel:nth-child(2) { background:#b0b0bc; }
+    #right .panel:nth-child(1) { background:#b0b0bc; }
+    #right .panel:nth-child(2) { background:#b0b0bc; }
     #left .panel-b, #right .panel-b { flex:1; overflow-y:auto; }
 
     .kv { display:flex; justify-content:space-between; gap:6px; }
-    .kv .k { color:#9090fc; }
-    .kv .v { color:#fcfc54; }
+    .kv .k { color:#33335a; }
+    .kv .v { color:#15153a; }
 
     .bar { height:10px; background:#000040; margin:3px 0 7px; position:relative; overflow:hidden; border:1px solid #2a3a9a; }
     .bar > i { position:absolute; left:0; top:0; bottom:0; display:block;
-      background:repeating-linear-gradient(90deg,#54fcfc 0,#54fcfc 5px,#000040 5px,#000040 8px); }
+      background:repeating-linear-gradient(90deg,#bbbbbb 0,#bbbbbb 5px,#000040 5px,#000040 8px); }
 
-    .tag { display:inline-block; border:1px solid #54fcfc; padding:3px 6px; margin:0 4px 5px 0; font-size:9px; color:#54fcfc; }
-    .tag:hover { background:#fcfc54; border-color:#fcfc54; color:#0000aa; cursor:pointer; }
+    .tag { display:inline-block; border:1px solid #555588; padding:3px 6px; margin:0 4px 5px 0; font-size:9px; color:#33335a; }
+    .tag:hover { background:#33335a; border-color:#33335a; color:#e8e8f2; cursor:pointer; }
 
-    .logrow { display:flex; justify-content:space-between; font-size:9px; padding:3px 0; border-bottom:1px dotted #3838c8; }
-    .logrow .q { color:#54fcfc; }
-    .logrow .n { color:#ff8800; }
+    .logrow { display:flex; justify-content:space-between; font-size:9px; padding:3px 0; border-bottom:1px dotted #777777; }
+    .logrow .q { color:#33335a; }
+    .logrow .n { color:#666699; }
 
     /* CHAT (중앙) */
     #chat {
       grid-area:chat;
-      border:2px solid #55ffff;
+      border:3px solid #808080;
       display:flex; flex-direction:column;
-      position:relative; overflow:hidden; background:#0000aa;
+      position:relative; overflow:hidden; background:#b0b0bc;
+      box-shadow:4px 4px 0 rgba(0,0,20,0.55);
     }
     #chat::after {
       content:''; position:absolute; inset:0; pointer-events:none; z-index:50;
       background:repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(64,96,192,0.05) 3px, rgba(64,96,192,0.05) 4px);
     }
     #chatTitle {
-      background:#00a8a8; color:#000000; padding:6px 12px; font-size:11px; letter-spacing:1px;
+      background:#0000dd; color:#a6a6b8; padding:6px 12px; font-size:11px; letter-spacing:1px;
       display:flex; justify-content:space-between; align-items:center; flex-shrink:0;
     }
     #canvasWrap { flex:1; overflow:hidden; position:relative; min-height:0; }
     #canvasWrap canvas { display:block; width:100%; height:100%; }
 
-    .search-sim { display:flex; border-top:2px solid #54fcfc; padding:8px; gap:6px; flex-shrink:0; background:#00019d; }
+    .search-sim { display:flex; border-top:2px solid #808080; padding:8px; gap:6px; flex-shrink:0; background:#b0b0bc; }
     .search-sim input {
-      flex:1; background:#000060; border:1px solid #54fcfc; color:#54fcfc; padding:12px 14px;
-      font-family:'Press Start 2P',monospace; font-size:12px; outline:none; letter-spacing:0.5px;
+      flex:1; background:#000099; border:2px solid #808080; color:#a6a6b8; padding:12px 14px;
+      font-family:'Galmuri11',monospace; font-size:12px; outline:none; letter-spacing:0.5px;
     }
-    .search-sim input::placeholder { color:rgba(64,96,192,0.45); font-size:10px; }
+    .search-sim input::placeholder { color:rgba(212,212,220,0.55); font-size:10px; }
     .search-sim button {
-      background:#000088; border:1px solid #54fcfc; color:#fcfc54; padding:12px 22px;
-      font-family:'Press Start 2P',monospace; font-size:12px; cursor:pointer; letter-spacing:0.5px;
+      background:#0000dd; border:2px solid #808080; color:#a6a6b8; padding:12px 22px;
+      font-family:'Galmuri11',monospace; font-size:12px; cursor:pointer; letter-spacing:0.5px;
     }
-    .search-sim button:hover { background:#3838c8; }
+    .search-sim button:hover { background:#1a1aff; border-color:#808080; }
 
     #photoGallery {
       display:none; position:absolute; top:0; left:0; right:0; bottom:0;
-      background:#00019d; overflow-y:auto; z-index:20;
+      background:#b0b0bc; overflow-y:auto; z-index:20;
     }
     #photoGallery.visible { display:block; }
     .no-results { padding:24px; font-size:10px; color:rgba(64,96,192,0.4); text-align:center; }
@@ -115,7 +118,7 @@
     #bottom.panel { grid-area:bottom; background:#0000dd !important; }
     #bottom .panel-b {
       display:flex; justify-content:space-between; align-items:center;
-      font-size:10px; padding:7px 12px; line-height:1; color:#54fcfc;
+      font-size:10px; padding:7px 12px; line-height:1; color:#a6a6b8;
     }
     #bottom .blink { animation:bl 0.8s infinite; }
     @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -123,9 +126,9 @@
     /* ── 하이텔식 대화실 로비 (입장 화면) ── */
     #lobby {
       position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-      width:68%; height:76%; z-index:200; background:#0000aa;
+      width:54.4%; height:60.8%; z-index:200; background:#000099;
       display:flex; flex-direction:column; padding:14px;
-      font-family:'Press Start 2P',monospace; color:#ffffff;
+      font-family:'Galmuri11',monospace; color:#a6a6b8;
     }
     #lobby.hidden { animation:lobbyOff 0.45s ease forwards; }
     @keyframes lobbyOff { to { opacity:0; visibility:hidden; transform:translate(-50%,-50%) scale(1.02); } }
@@ -135,37 +138,76 @@
     }
     .lob-top {
       display:flex; justify-content:space-between; align-items:center;
-      background:#00a8a8; color:#000; padding:7px 14px; font-size:13px; letter-spacing:1px;
-      flex-shrink:0;
+      background:#0000dd; color:#a6a6b8; padding:7px 14px; font-size:13px; letter-spacing:1px;
+      border:3px solid #808080; flex-shrink:0;
     }
     .lob-grid {
       flex:1; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr);
       gap:12px; margin:12px 0; min-height:0;
     }
     .lob-box {
-      border:2px solid #55ffff; padding:10px 12px 8px; display:flex; flex-direction:column;
-      background:#0000aa;
+      border:3px solid #808080; padding:10px 12px 8px; display:flex; flex-direction:column;
+      background:#b0b0bc;
     }
     .lob-box h4 {
-      text-align:center; font-size:12px; color:#ffffff; margin-bottom:12px;
+      text-align:center; font-size:12px; color:#181820; margin-bottom:12px;
       letter-spacing:1px; font-weight:normal;
     }
     .lob-row {
-      font-size:11px; line-height:2.1; color:#55ffff; cursor:pointer;
+      font-size:11px; line-height:2.1; color:#0a6a6a; cursor:pointer;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .lob-row:hover { color:#0000aa; background:#ffff55; }
-    .lob-row .num { color:#ffff55; margin-right:7px; }
-    .lob-row.hot { color:#fc54fc; }
-    .lob-row.hot .num { color:#ffff55; }
-    .lob-row.hot:hover { color:#0000aa; background:#fc54fc; }
-    .lob-blink { animation:bl 0.9s infinite; color:#fc54fc; }
+    .lob-row:hover { color:#000099; background:#ffff55; }
+    .lob-row .num { color:#9a6a00; margin-right:7px; }
+    .lob-row.hot { color:#cc00cc; }
+    .lob-row.hot .num { color:#9a6a00; }
+    .lob-row.hot:hover { color:#000099; background:#fc54fc; }
+    .lob-blink { animation:bl 0.9s infinite; color:#cc00cc; }
     .lob-cmd {
-      flex-shrink:0; background:#0000dd; border:2px solid #55ffff;
-      padding:8px 14px; font-size:11px; color:#55ffff; letter-spacing:0.5px;
+      flex-shrink:0; background:#0000dd; border:3px solid #808080;
+      padding:8px 14px; font-size:11px; color:#a6a6b8; letter-spacing:0.5px;
       line-height:1.7;
     }
-    .lob-cmd b { color:#ffff55; font-weight:normal; }
+    .lob-cmd b { color:#a6a6b8; font-weight:normal; }
+
+    /* ── 모바일 반응형 ── */
+    @media (max-width: 768px) {
+      body { padding:0; align-items:stretch; justify-content:stretch; }
+
+      #hud {
+        width:100vw; height:100vh; height:100dvh;
+        gap:6px; padding:6px;
+        grid-template-columns:1fr;
+        grid-template-rows:auto minmax(0,1fr) auto;
+        grid-template-areas:
+          "top"
+          "chat"
+          "bottom";
+      }
+      #left, #right { display:none; }
+      .panel, #chat { box-shadow:2px 2px 0 rgba(0,0,20,0.55); }
+      #top .panel-h { font-size:11px; padding:6px 10px; }
+      #chatTitle { font-size:10px; padding:6px 10px; letter-spacing:0.5px; }
+      .search-sim { padding:6px; gap:5px; }
+      .search-sim input { padding:10px 12px; font-size:11px; }
+      .search-sim button { padding:10px 16px; font-size:11px; }
+      #bottom .panel-b { font-size:9px; padding:6px 10px; }
+
+      #lobby {
+        width:100vw; height:100vh; height:100dvh;
+        padding:8px; overflow-y:auto;
+      }
+      .lob-top { font-size:10px; padding:6px 10px; flex-wrap:wrap; gap:2px 8px; }
+      .lob-grid {
+        flex:0 0 auto;
+        grid-template-columns:1fr;
+        grid-template-rows:none; grid-auto-rows:auto;
+        gap:8px; margin:8px 0;
+      }
+      .lob-box { padding:8px 10px 6px; }
+      .lob-row { line-height:1.9; }
+      .lob-cmd { font-size:10px; padding:8px 10px; line-height:1.8; }
+    }
   </style>
 </head>
 <body>
@@ -259,9 +301,9 @@
         <div class="kv"><span class="k">묶음</span><span class="v">45 개</span></div>
         <div class="kv"><span class="k">개설</span><span class="v">2022—</span></div>
         <div class="kv"><span class="k">접속</span><span class="v" id="uptime">00:00:00</span></div>
-        <div style="margin-top:8px;color:#9090fc;">회선 속도</div>
+        <div style="margin-top:8px;color:#aaaaaa;">회선 속도</div>
         <div class="bar"><i style="width:72%"></i></div>
-        <div style="color:#9090fc;">버퍼</div>
+        <div style="color:#aaaaaa;">버퍼</div>
         <div class="bar"><i style="width:54%"></i></div>
       </div>
     </div>
@@ -300,12 +342,12 @@
         <div class="kv"><span class="k">찾기</span><span class="v" id="qCount">0</span></div>
         <div class="kv"><span class="k">맞음</span><span class="v" id="hCount">0</span></div>
         <div class="kv"><span class="k">허탕</span><span class="v" id="nCount">0</span></div>
-        <div style="margin-top:8px;color:#9090fc;">적중률</div>
+        <div style="margin-top:8px;color:#aaaaaa;">적중률</div>
         <div class="bar"><i id="hitBar" style="width:0%"></i></div>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-h"><span>허탕 기록</span><span style="color:#000;">∅</span></div>
+      <div class="panel-h"><span>허탕 기록</span><span style="color:#a6a6b8;">∅</span></div>
       <div class="panel-b" id="nullLog">
         <div class="logrow"><span class="q">(empty)</span><span class="n">—</span></div>
       </div>
@@ -315,7 +357,7 @@
   <!-- ── BOTTOM ── -->
   <div id="bottom" class="panel">
     <div class="panel-b">
-      <span>상태 : <span style="color:#fcfc54;">대기중</span> <span class="blink">_</span></span>
+      <span>상태 : <span style="color:#aaccff;">대기중</span> <span class="blink">_</span></span>
       <span>측정한 것을, 기입하라.</span>
       <span id="clock">--:--:--</span>
     </div>
@@ -460,10 +502,20 @@ setInterval(() => {
 function initCanvas() {
   const c = document.getElementById('measureCanvas');
   const ctx = c.getContext('2d');
+  // 글자를 살짝 두껍게: fillText에 같은 색 가는 stroke를 덧댐
+  const _fillText = ctx.fillText.bind(ctx);
+  ctx.lineJoin = 'round';
+  ctx.fillText = function(...a) {
+    _fillText(...a);
+    const prev = ctx.strokeStyle, lw = ctx.lineWidth;
+    ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 0.7;
+    ctx.strokeText(...a);
+    ctx.strokeStyle = prev; ctx.lineWidth = lw;
+  };
   const wrap = document.getElementById('canvasWrap');
   let W, H, tick = 0;
 
-  const C = { bg:'#0000a9', topBar:'#0000a9', botBar:'#0000a9', divider:'#53fbfb', dim:'#9090fc', yellow:'#fcfc54', cyan:'#53fbfb', green:'#53fbfb', white:'#53fbfb' };
+  const C = { bg:'#b0b0bc', topBar:'#b0b0bc', botBar:'#b0b0bc', divider:'#8888a8', dim:'#555588', yellow:'#9a6a00', cyan:'#0a6a6a', green:'#1a7a1a', white:'#181820' };
   const MSGS = [
     { en:'how have you been.', kr:'어떻게 지냈어?', sys:false, wait:47, typing:22 },
     { en:'the word you kept biting down on — it was in a photograph', kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.', sys:false, wait:36, typing:29 },
@@ -479,7 +531,7 @@ function initCanvas() {
     { en:'it had already arrived before you began to look.', kr:'왔는지 알려줄 거야.', sys:false, wait:22, typing:20 },
     { en:'search for anything.', kr:'무엇이든 찾아봐.', sys:true, wait:68, typing:22 },
   ];
-  const TOP_H=28, BOT_H=34, HDR_H=24, EN_FS=13, KR_FS=13, EN_ROW=21, MSG_GAP=7;
+  const TOP_H=28, BOT_H=34, HDR_H=6, EN_FS=13, KR_FS=13, EN_ROW=21, MSG_GAP=7, MENU_Y=16;
   const USER_X=10, EN_X=104;
   let SPLIT_X, EN_MAX_W;
   let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
@@ -487,7 +539,7 @@ function initCanvas() {
   let MSG_DATA = [];
 
   function wrapEN(text) {
-    ctx.font=`${EN_FS}px monospace`;
+    ctx.font=`${EN_FS}px Galmuri11, monospace`;
     const words=text.split(' '), lines=[]; let cur='';
     for (const w of words) { const t = cur ? cur+' '+w : w; if (ctx.measureText(t).width > EN_MAX_W && cur) { lines.push(cur); cur=w; } else cur=t; }
     if (cur) lines.push(cur); return lines;
@@ -502,7 +554,7 @@ function initCanvas() {
     c.width = W * dpr; c.height = H * dpr;
     c.style.width = '100%'; c.style.height = '100%';
     ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.font=`${EN_FS}px monospace`;
+    ctx.font=`${EN_FS}px Galmuri11, monospace`;
     MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
   }
   resize();
@@ -514,48 +566,48 @@ function initCanvas() {
   function draw() {
     if (phase === 'intro') {
       ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
-      ctx.fillStyle='#0000a9'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
-      ctx.fillStyle=C.green; ctx.font=`${EN_FS-1}px monospace`; ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText('<MEASURE.DB> 검색 대화실',8,TOP_H+HDR_H/2);
-      ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px monospace`;
-      ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+8,TOP_H+HDR_H/2);
+      
+      ctx.fillStyle="#ffffff"; ctx.font=`${EN_FS-1}px Galmuri11, monospace`; ctx.textAlign='left'; ctx.textBaseline='middle';
+      
+      ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px Galmuri11, monospace`;
       ctx.strokeStyle=C.divider; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
-      ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top';
+      ctx.font=`${KR_FS}px Galmuri11, monospace`; ctx.textBaseline='top';
       USERS.forEach((u,i) => { ctx.fillStyle=i===0?C.cyan:C.dim; ctx.fillText(u,SPLIT_X+8,TOP_H+HDR_H+6+i*(KR_FS+6)); });
       const msgAreaTop=TOP_H+HDR_H, msgAreaH=H-TOP_H-HDR_H-BOT_H;
       const bw=Math.min(360,SPLIT_X-30), bh=92;
       const bx=(SPLIT_X-bw)/2, by=msgAreaTop+(msgAreaH-bh)/2;
-      ctx.fillStyle='#000061'; ctx.fillRect(bx,by,bw,bh);
-      ctx.strokeStyle='#53fbfb'; ctx.lineWidth=0.5; ctx.strokeRect(bx,by,bw,bh);
-      ctx.fillStyle='#3838c8'; ctx.fillRect(bx,by,bw,18);
-      ctx.fillStyle='#53fbfb'; ctx.font=`${EN_FS-1}px monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillStyle='#555555'; ctx.fillRect(bx,by,bw,bh);
+      ctx.strokeStyle='#a6a6b8'; ctx.lineWidth=2; ctx.strokeRect(bx+1,by+1,bw-2,bh-2);
+      ctx.strokeStyle='#808080'; ctx.lineWidth=1; ctx.strokeRect(bx+4,by+4,bw-8,bh-8);
+      ctx.fillStyle='#777777'; ctx.fillRect(bx,by,bw,18);
+      ctx.fillStyle='#a6a6b8'; ctx.font=`${EN_FS-1}px Galmuri11, monospace`; ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillText('★  시스템 공지  ★',bx+bw/2,by+9);
-      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='#53fbfb'; ctx.fillText('채팅방에 입장하셨습니다.',bx+bw/2,by+42);
-      ctx.font=`${EN_FS-2}px monospace`; ctx.fillStyle='#53fbfb'; ctx.fillText('MEASURE.DB 검색 채팅방',bx+bw/2,by+62);
-      if (Math.floor(tick/18)%2===0) { ctx.fillStyle='rgba(83,251,251,0.55)'; ctx.font=`${EN_FS-2}px monospace`; ctx.fillText('[ 연결 중... ]',bx+bw/2,by+80); }
+      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='#a6a6b8'; ctx.fillText('채팅방에 입장하셨습니다.',bx+bw/2,by+42);
+      ctx.font=`${EN_FS-2}px Galmuri11, monospace`; ctx.fillStyle='#a6a6b8'; ctx.fillText('MEASURE.DB 검색 채팅방',bx+bw/2,by+62);
+      if (Math.floor(tick/18)%2===0) { ctx.fillStyle='rgba(200,200,200,0.6)'; ctx.font=`${EN_FS-2}px Galmuri11, monospace`; ctx.fillText('[ 연결 중... ]',bx+bw/2,by+80); }
       phaseT++; tick++; if (phaseT >= 95) { phase='pause'; phaseT=0; } return;
     }
 
     ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
-    ctx.strokeStyle='rgba(83,251,251,0.10)'; ctx.lineWidth=0.5;
+    ctx.strokeStyle='rgba(0,0,40,0.06)'; ctx.lineWidth=0.5;
     for (let y=TOP_H+HDR_H; y<H-BOT_H; y+=EN_ROW+2) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke(); }
 
     ctx.fillStyle=C.topBar; ctx.fillRect(0,0,W,TOP_H);
-    ctx.font=`${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
     const menu=['색상','음악소','홈','PC통신','통신','게임','검색','커뮤니티']; let mx=8;
-    menu.forEach((item,i) => { ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)'; ctx.fillText(item,mx,TOP_H/2); mx+=ctx.measureText(item).width+14; });
-    ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.fillText(timeStr(),W-8,TOP_H/2);
+    menu.forEach((item,i) => { ctx.fillStyle=i===3?C.yellow:'rgba(40,40,60,0.9)'; ctx.fillText(item,mx,MENU_Y); mx+=ctx.measureText(item).width+14; });
+    ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.fillText(timeStr(),W-8,MENU_Y);
 
-    ctx.fillStyle='#0000a9'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
-    ctx.fillStyle=C.cyan; ctx.font=`${EN_FS-1}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
-    ctx.fillText('<MEASURE.DB> 검색 대화실',8,TOP_H+HDR_H/2);
-    ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px monospace`; ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+8,TOP_H+HDR_H/2);
+    
+    ctx.fillStyle="#ffffff"; ctx.font=`${EN_FS-1}px Galmuri11, monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    
+    ctx.fillStyle=C.yellow; ctx.font=`${KR_FS}px Galmuri11, monospace`;
 
     ctx.strokeStyle=C.divider; ctx.lineWidth=0.5;
     ctx.beginPath(); ctx.moveTo(SPLIT_X,TOP_H); ctx.lineTo(SPLIT_X,H-BOT_H); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0,TOP_H+HDR_H); ctx.lineTo(W,TOP_H+HDR_H); ctx.stroke();
 
-    ctx.font=`${KR_FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    ctx.font=`${KR_FS}px Galmuri11, monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
     USERS.forEach((u,i) => { ctx.fillStyle=i===0?C.cyan:C.dim; ctx.fillText(u,SPLIT_X+8,TOP_H+HDR_H+6+i*(KR_FS+6)); });
 
     phaseT++;
@@ -577,26 +629,26 @@ function initCanvas() {
     vis.forEach(msg => {
       const lh=msgH(msg);
       if (curY+lh>CTOP && curY<CTOP+CAVAIL) {
-        ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=msg.sys?C.green:C.yellow;
+        ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle=msg.sys?C.green:'#cc00cc';
         ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);
-        ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=msg.sys?C.green:C.white;
+        ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle=msg.sys?C.green:C.white;
         msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
       }
       curY+=lh;
     });
     if (showTyping && curY<CTOP+CAVAIL) {
-      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle=C.yellow; ctx.fillText('MEASURE :',USER_X,curY);
-      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(180,200,252,0.5)'; ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
+      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='#cc00cc'; ctx.fillText('MEASURE :',USER_X,curY);
+      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='rgba(40,40,90,0.5)'; ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
     }
     ctx.restore();
 
     ctx.fillStyle=C.botBar; ctx.fillRect(0,H-BOT_H,W,BOT_H);
     ctx.strokeStyle=C.divider; ctx.lineWidth=0.5; ctx.beginPath(); ctx.moveTo(0,H-BOT_H); ctx.lineTo(W,H-BOT_H); ctx.stroke();
-    ctx.font=`${EN_FS}px monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
+    ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.textBaseline='middle'; ctx.textAlign='left';
     ctx.fillStyle=C.yellow; ctx.fillText('>>',8,H-BOT_H/2);
     if (Math.floor(tick/15)%2===0) { ctx.fillStyle=C.white; ctx.fillRect(34,H-BOT_H/2-EN_FS/2,9,EN_FS); }
-    if (revealed>0) { ctx.font=`${EN_FS+2}px monospace`; ctx.textBaseline='middle'; ctx.fillStyle=`rgba(255,136,0,${0.88+Math.sin(tick*0.06)*0.12})`; ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,50,H-BOT_H/2); }
-    else { ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`; ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-8,H-BOT_H/2); }
+    if (revealed>0) { ctx.font=`${EN_FS+2}px Galmuri11, monospace`; ctx.textBaseline='middle'; ctx.fillStyle=`rgba(204,0,204,${0.88+Math.sin(tick*0.06)*0.12})`; ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,50,H-BOT_H/2); }
+    else { ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px Galmuri11, monospace`; ctx.fillText('/h 도움말  /s 설정  /q 나가기',W-8,H-BOT_H/2); }
 
     tick++;
   }
