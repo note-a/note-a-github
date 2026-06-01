@@ -7,29 +7,29 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    html, body { height:100%; background:#000; color:#00ff00; font-family:'Press Start 2P',monospace; overflow:hidden; }
+    html, body { height:100%; background:#000; color:#d96a0e; font-family:'Press Start 2P',monospace; overflow:hidden; }
     body { display:flex; flex-direction:column; }
 
     #canvasWrap { flex:1; overflow:hidden; position:relative; }
     #canvasWrap canvas { display:block; width:100%; height:auto; }
 
     .search-sim {
-      display:none; border-top:1px solid #00ff00;
+      display:none; border-top:1px solid #d96a0e;
       padding:14px 6px; gap:4px; flex-shrink:0;
     }
     .search-sim input {
-      flex:1; background:#000; border:1px solid #00cc00;
-      color:#00ff00; padding:18px 8px;
+      flex:1; background:#000; border:1px solid #d96a0e;
+      color:#d96a0e; padding:18px 8px;
       font-family:'Press Start 2P',monospace; font-size:11px; outline:none;
       letter-spacing:0.5px;
     }
-    .search-sim input::placeholder { color:rgba(0,255,0,0.45); font-size:7px; }
+    .search-sim input::placeholder { color:rgba(217,106,14,0.45); font-size:7px; }
     .search-sim button {
-      background:#004d00; border:1px solid #00ff00; color:#00ff00;
+      background:#6e3812; border:1px solid #d96a0e; color:#d96a0e;
       padding:18px 14px; font-family:'Press Start 2P',monospace; font-size:7px;
       cursor:pointer; letter-spacing:0.5px;
     }
-    .search-sim button:hover { background:#006600; }
+    .search-sim button:hover { background:#8a4512; }
 
     /* 결과는 캔버스 위 오버레이 */
     #photoGallery {
@@ -39,7 +39,7 @@
     }
     #photoGallery.visible { display:block; }
     .no-results {
-      padding:20px; font-size:7px; color:rgba(0,255,0,0.4); text-align:center;
+      padding:20px; font-size:7px; color:rgba(217,106,14,0.4); text-align:center;
     }
   </style>
 </head>
@@ -115,7 +115,7 @@ function flattenPhotos(data) {
 })();
 
 // ── 검색 ─────────────────────────────────────────────────────
-const verdictColor = v => v === 'core' ? '#00ff00' : v === 'support' ? '#88ff88' : v === 'hold' ? '#ffcc00' : '#555';
+const verdictColor = v => v === 'core' ? '#d96a0e' : v === 'support' ? '#ff9a55' : v === 'hold' ? '#ffcc00' : '#555';
 
 function showResults(filtered) {
   const gallery = document.getElementById('photoGallery');
@@ -127,18 +127,18 @@ function showResults(filtered) {
     return;
   }
 
-  const note = `<div style="padding:4px 8px;font-size:6px;color:rgba(0,255,0,0.4);">─ ${filtered.length}${filtered.length >= 60 ? '+ (showing 60)' : ''} results ─</div>`;
+  const note = `<div style="padding:4px 8px;font-size:6px;color:rgba(217,106,14,0.4);">─ ${filtered.length}${filtered.length >= 60 ? '+ (showing 60)' : ''} results ─</div>`;
   const grid = `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:4px;">
     ${filtered.map(p => `
-      <div data-id="${p.id}" style="border:1px solid rgba(0,255,0,0.3);cursor:pointer;"
-        onmouseover="this.style.borderColor='#00ff00'" onmouseout="this.style.borderColor='rgba(0,255,0,0.3)'">
+      <div data-id="${p.id}" style="border:1px solid rgba(217,106,14,0.3);cursor:pointer;"
+        onmouseover="this.style.borderColor='#d96a0e'" onmouseout="this.style.borderColor='rgba(217,106,14,0.3)'">
         <div style="width:100%;aspect-ratio:3/2;background:#050505;overflow:hidden;position:relative;">
           <img src="${p.filename}" style="width:100%;height:100%;object-fit:cover;" loading="lazy"
             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(0,255,0,0.2);font-size:7px;">[NO IMG]</div>
+          <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(217,106,14,0.2);font-size:7px;">[NO IMG]</div>
         </div>
         <div style="padding:4px 5px;">
-          <div style="font-size:8px;color:rgba(0,255,0,0.6);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
+          <div style="font-size:8px;color:rgba(217,106,14,0.6);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
           <div style="font-size:7px;color:${verdictColor(p.verdict)};opacity:0.8;">${p.verdict} · ${p.title}</div>
         </div>
       </div>
@@ -191,10 +191,10 @@ function showOverlay(photo) {
   const ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;cursor:pointer;';
   ov.innerHTML = `
-    <div style="font-size:9px;color:rgba(0,255,0,0.6);letter-spacing:1px;">${photo.dir}</div>
-    <img src="${photo.filename}" style="max-width:100%;max-height:70vh;object-fit:contain;border:1px solid rgba(0,255,0,0.3);">
+    <div style="font-size:9px;color:rgba(217,106,14,0.6);letter-spacing:1px;">${photo.dir}</div>
+    <img src="${photo.filename}" style="max-width:100%;max-height:70vh;object-fit:contain;border:1px solid rgba(217,106,14,0.3);">
     <div style="font-size:8px;color:${verdictColor(photo.verdict)};">${photo.verdict} · ${photo.title}</div>
-    <div style="font-size:7px;color:rgba(0,255,0,0.3);">[ click to close ]</div>
+    <div style="font-size:7px;color:rgba(217,106,14,0.3);">[ click to close ]</div>
   `;
   ov.addEventListener('click', () => ov.remove());
   document.body.appendChild(ov);
@@ -213,9 +213,9 @@ setTimeout(() => {
   let tick = 0;
 
   const C = {
-    bg:'#000000', topBar:'#004400', botBar:'#003300',
-    divider:'#00ff00', dim:'#00dd00', yellow:'#aaff00',
-    cyan:'#00ffaa', green:'#00ff00', white:'#00ff00',
+    bg:'#000000', topBar:'#5e3010', botBar:'#4a2610',
+    divider:'#d96a0e', dim:'#d96a0e', yellow:'#d96a0e',
+    cyan:'#ff9040', green:'#d96a0e', white:'#d96a0e',
   };
 
   const MSGS = [
@@ -279,18 +279,18 @@ setTimeout(() => {
     if (phase === 'intro') {
       ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
       const bw=W-24,bh=100,bx=(W-bw)/2,by=(H-bh)/2-48;
-      ctx.fillStyle='#001400'; ctx.fillRect(bx,by,bw,bh);
-      ctx.strokeStyle='#00ff00'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
-      ctx.fillStyle='#003300'; ctx.fillRect(bx,by,bw,18);
-      ctx.fillStyle='#00ff00'; ctx.font='bold 9px monospace';
+      ctx.fillStyle='#000000'; ctx.fillRect(bx,by,bw,bh);
+      ctx.strokeStyle='#d96a0e'; ctx.lineWidth=1; ctx.strokeRect(bx,by,bw,bh);
+      ctx.fillStyle='#4a2610'; ctx.fillRect(bx,by,bw,18);
+      ctx.fillStyle='#d96a0e'; ctx.font='bold 9px monospace';
       ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillText('★  시스템 공지  ★',W/2,by+9);
-      ctx.font='11px monospace'; ctx.fillStyle='#00ff00';
+      ctx.font='11px monospace'; ctx.fillStyle='#d96a0e';
       ctx.fillText('채팅방에 입장하셨습니다.',W/2,by+44);
-      ctx.font='8px monospace'; ctx.fillStyle='#00cc00';
+      ctx.font='8px monospace'; ctx.fillStyle='#d96a0e';
       ctx.fillText('MEASURE.DB 검색 채팅방',W/2,by+64);
       if (Math.floor(tick/18)%2===0) {
-        ctx.fillStyle='rgba(0,220,0,0.55)'; ctx.font='7px monospace';
+        ctx.fillStyle='rgba(217,106,14,0.55)'; ctx.font='7px monospace';
         ctx.fillText('[ 연결 중... ]',W/2,by+85);
       }
       phaseT++; tick++;
@@ -301,7 +301,7 @@ setTimeout(() => {
     ctx.fillStyle=C.bg; ctx.fillRect(0,0,W,H);
 
     if (SHOW_CHROME) {
-    ctx.strokeStyle='rgba(0,220,80,0.10)'; ctx.lineWidth=0.5;
+    ctx.strokeStyle='rgba(217,106,14,0.10)'; ctx.lineWidth=0.5;
     for (let y=TOP_H+HDR_H; y<H-BOT_H; y+=EN_ROW+2) {
       ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(SPLIT_X,y); ctx.stroke();
     }
@@ -311,19 +311,19 @@ setTimeout(() => {
     const menu=['색상','음악소','홈','PC통신','통신','게임'];
     let mx=6;
     menu.forEach((item,i) => {
-      ctx.fillStyle=i===3?C.yellow:'rgba(200,255,210,0.88)';
+      ctx.fillStyle=i===3?C.yellow:'rgba(255,215,180,0.88)';
       ctx.fillText(item,mx,TOP_H/2);
       mx+=ctx.measureText(item).width+14;
     });
     ctx.fillStyle=C.dim; ctx.textAlign='right';
     ctx.fillText(timeStr(),W-6,TOP_H/2);
 
-    ctx.fillStyle='rgba(0,120,40,0.95)'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
+    ctx.fillStyle='rgba(140,65,0,0.95)'; ctx.fillRect(0,TOP_H,SPLIT_X,HDR_H);
     ctx.fillStyle=C.cyan; ctx.font=`bold ${EN_FS}px monospace`;
     ctx.textBaseline='middle'; ctx.textAlign='left';
     ctx.fillText('<MEASURE.DB>  데이터베이스 검색 채팅방',6,TOP_H+HDR_H/2);
 
-    ctx.fillStyle='rgba(0,140,50,0.95)'; ctx.fillRect(SPLIT_X,TOP_H,W-SPLIT_X,HDR_H);
+    ctx.fillStyle='rgba(150,70,0,0.95)'; ctx.fillRect(SPLIT_X,TOP_H,W-SPLIT_X,HDR_H);
     ctx.fillStyle=C.yellow; ctx.font=`bold ${KR_FS}px monospace`;
     ctx.textBaseline='middle';
     ctx.fillText(`[참여자:${USERS.length}명]`,SPLIT_X+6,TOP_H+HDR_H/2);
@@ -338,7 +338,7 @@ setTimeout(() => {
       ctx.fillText(u,SPLIT_X+6,TOP_H+HDR_H+5+i*(KR_FS+5));
     });
     const rpY=H-BOT_H-KR_FS*3-6;
-    ctx.strokeStyle='rgba(0,220,80,0.25)'; ctx.lineWidth=0.5;
+    ctx.strokeStyle='rgba(217,106,14,0.25)'; ctx.lineWidth=0.5;
     ctx.beginPath(); ctx.moveTo(SPLIT_X+4,rpY); ctx.lineTo(W-4,rpY); ctx.stroke();
     ctx.fillStyle=C.dim; ctx.font=`${KR_FS-1}px monospace`;
     ctx.fillText('검색으로 입장',SPLIT_X+6,rpY+4);
@@ -389,7 +389,7 @@ setTimeout(() => {
     if (showTyping && curY<CTOP+CAVAIL) {
       ctx.font=`bold ${EN_FS}px monospace`; ctx.fillStyle=C.yellow;
       ctx.fillText('MEASURE :',USER_X,curY);
-      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(180,255,80,0.5)';
+      ctx.font=`${EN_FS}px monospace`; ctx.fillStyle='rgba(255,160,60,0.5)';
       ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
     }
     ctx.restore();
@@ -403,7 +403,7 @@ setTimeout(() => {
     if (Math.floor(tick/15)%2===0) { ctx.fillStyle=C.white; ctx.fillRect(29,H-BOT_H+5,8,EN_FS-1); }
     if (revealed>0) {
       ctx.font='bold 10px monospace'; ctx.textBaseline='middle';
-      ctx.fillStyle=`rgba(0,255,0,${0.88+Math.sin(tick*0.06)*0.12})`;
+      ctx.fillStyle=`rgba(217,106,14,${0.88+Math.sin(tick*0.06)*0.12})`;
       ctx.fillText(MSGS[Math.max(0,revealed-1)].kr,42,H-BOT_H/2);
     } else {
       ctx.fillStyle=C.dim; ctx.textAlign='right'; ctx.font=`${KR_FS}px monospace`;

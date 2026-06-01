@@ -6,30 +6,30 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
 :root{
-  --g:#00ff00; --g2:rgba(0,255,0,.7); --g3:rgba(0,255,0,.42); --g4:rgba(0,255,0,.13);
-  --cy:#aaff00; --amb:#ffb000; --red:#ff3b40; --vio:#b388ff; --pnl:#03100a;
+  --g:#d96a0e; --g2:rgba(217,106,14,.7); --g3:rgba(217,106,14,.42); --g4:rgba(217,106,14,.13);
+  --cy:#ff7e00; --amb:#ffb000; --red:#ff3b40; --vio:#b388ff; --pnl:#000000;
   --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace; --px:'Press Start 2P',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+body{min-height:100vh;background:#000000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
   font-family:var(--mono);padding:0;
-  background-image:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(170,255,0,.05),transparent 70%);}
+  background-image:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(217,106,14,.05),transparent 70%);}
 .cap{font-size:9px;color:var(--g3);letter-spacing:3px;font-family:var(--px);}
 
 /* ───── BAR ───── */
 .bar{position:relative;width:100%;max-width:1200px;height:84px;overflow:hidden;
-  background:linear-gradient(180deg,#041a12,#02110b 55%,#03150d);
-  border:1px solid rgba(0,255,0,.3);
-  box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 44px rgba(170,255,0,.1),inset 0 0 34px rgba(0,255,0,.05);
+  background:linear-gradient(180deg,#000000,#000000 55%,#000000);
+  border:1px solid rgba(217,106,14,.3);
+  box-shadow:0 0 0 1px rgba(0,0,0,.8),0 0 44px rgba(217,106,14,.1),inset 0 0 34px rgba(217,106,14,.05);
   display:grid;grid-template-columns:250px 370px minmax(0,1fr) 210px;align-items:stretch;}
-.seg{position:relative;z-index:4;display:flex;align-items:center;border-right:1px solid rgba(0,255,0,.1);}
+.seg{position:relative;z-index:4;display:flex;align-items:center;border-right:1px solid rgba(217,106,14,.1);}
 .seg:last-child{border-right:none;}
 /* order: SET.OS | STATEMENT | NAV | STATS */
-.seg-id{order:1;}.seg-stmt{order:2;border-right:1px solid rgba(0,255,0,.1);}.seg-nav{order:3;}.seg-stats{order:4;border-right:none;}
+.seg-id{order:1;}.seg-stmt{order:2;border-right:1px solid rgba(217,106,14,.1);}.seg-nav{order:3;}.seg-stats{order:4;border-right:none;}
 .scan{position:absolute;inset:0;z-index:6;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.16) 2px,rgba(0,0,0,.16) 3px);}
 .vscan{display:none;position:absolute;top:0;bottom:0;width:90px;z-index:5;pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(170,255,0,.10),transparent);animation:vscan 5s linear infinite;}
+  background:linear-gradient(90deg,transparent,rgba(217,106,14,.10),transparent);animation:vscan 5s linear infinite;}
 @keyframes vscan{0%{left:-90px}100%{left:100%}}
 .corner{position:absolute;width:12px;height:12px;z-index:8;}
 .corner.tl{top:3px;left:3px;border-top:1px solid var(--g);border-left:1px solid var(--g);}
@@ -46,7 +46,7 @@ body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;alig
 @keyframes spin{to{transform:rotate(360deg)}}
 .glyph .radar{transform-origin:50% 50%;animation:spin 2.4s linear infinite;}
 .idtxt{display:flex;flex-direction:column;gap:3px;min-width:0;}
-.ttl{font-family:var(--px);font-size:13px;letter-spacing:2px;color:var(--g);position:relative;text-shadow:0 0 10px rgba(0,255,0,.5);}
+.ttl{font-family:var(--px);font-size:13px;letter-spacing:2px;color:var(--g);position:relative;text-shadow:0 0 10px rgba(217,106,14,.5);}
 .ttl::after{content:attr(data-text);position:absolute;inset:0;color:var(--cy);clip-path:inset(45% 0 0 0);
   animation:tglitch 4s steps(1) infinite;opacity:0;}
 @keyframes tglitch{0%,90%,100%{opacity:0;transform:translateX(0)}91%{opacity:.8;transform:translateX(2px)}93%{transform:translateX(-2px)}95%{opacity:0}}
@@ -65,13 +65,13 @@ body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;alig
 .ni.on{color:var(--g3);}
 .ni.on b{color:var(--g4);border-color:var(--g4);}
 .nslide{display:none;position:absolute;top:6px;bottom:6px;width:25%;z-index:1;
-  background:linear-gradient(180deg,var(--g),#00cc00);box-shadow:0 0 16px rgba(0,255,0,.5);
+  background:linear-gradient(180deg,var(--g),#d96a0e);box-shadow:0 0 16px rgba(217,106,14,.5);
   transition:left .4s cubic-bezier(.5,0,.2,1);}
 
 /* ── info rows (ID-card style) ── */
 .seg-stats{flex-direction:column;justify-content:center;padding:7px 13px;gap:0;}
 .irow{display:flex;justify-content:space-between;align-items:baseline;width:100%;
-  font-size:7.5px;letter-spacing:.5px;color:var(--g3);padding:3px 0;border-bottom:1px solid rgba(0,255,0,.07);}
+  font-size:7.5px;letter-spacing:.5px;color:var(--g3);padding:3px 0;border-bottom:1px solid rgba(217,106,14,.07);}
 .irow:last-child{border-bottom:none;}
 .irow span{opacity:.8;}
 .irow b{font-weight:400;color:var(--g);}
@@ -117,7 +117,7 @@ body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;alig
 .stmt-txt{display:flex;flex-direction:column;gap:5px;max-height:100%;overflow:hidden;position:relative;}
 .st-tag{display:flex;align-items:center;gap:5px;font-size:5px;letter-spacing:2px;color:var(--cy);opacity:.85;}
 .st-tag::before{content:'';width:4px;height:4px;background:var(--cy);box-shadow:0 0 5px var(--cy);animation:pulse 1.8s ease-in-out infinite;}
-.stmt-txt p{font-size:7px;line-height:1.5;letter-spacing:.3px;color:var(--g2);text-shadow:0 0 5px rgba(0,255,0,.14);}
+.stmt-txt p{font-size:7px;line-height:1.5;letter-spacing:.3px;color:var(--g2);text-shadow:0 0 5px rgba(217,106,14,.14);}
 .stmt-txt p b{color:var(--cy);}
 </style>
 </head>
@@ -131,12 +131,12 @@ body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;alig
   <div class="seg seg-id">
     <div class="glyph">
       <svg viewBox="0 0 46 46" fill="none">
-        <circle class="ticks" cx="23" cy="23" r="21" stroke="#00ff00" stroke-width="2" stroke-dasharray="1 4" opacity=".4"/>
-        <polygon class="hex" points="23,3 39,12 39,34 23,43 7,34 7,12" stroke="#00ff00" stroke-width="1" opacity=".55"/>
-        <polygon class="hex2" points="23,9 34,15.5 34,30.5 23,37 12,30.5 12,15.5" stroke="#aaff00" stroke-width=".8" opacity=".5"/>
-        <circle cx="23" cy="23" r="4" stroke="#00ff00" stroke-width=".8" opacity=".7"/>
-        <circle cx="23" cy="23" r="1.5" fill="#00ff00"/>
-        <line class="radar" x1="23" y1="23" x2="23" y2="6" stroke="#aaff00" stroke-width="1.2" opacity=".85"/>
+        <circle class="ticks" cx="23" cy="23" r="21" stroke="#d96a0e" stroke-width="2" stroke-dasharray="1 4" opacity=".4"/>
+        <polygon class="hex" points="23,3 39,12 39,34 23,43 7,34 7,12" stroke="#d96a0e" stroke-width="1" opacity=".55"/>
+        <polygon class="hex2" points="23,9 34,15.5 34,30.5 23,37 12,30.5 12,15.5" stroke="#d96a0e" stroke-width=".8" opacity=".5"/>
+        <circle cx="23" cy="23" r="4" stroke="#d96a0e" stroke-width=".8" opacity=".7"/>
+        <circle cx="23" cy="23" r="1.5" fill="#d96a0e"/>
+        <line class="radar" x1="23" y1="23" x2="23" y2="6" stroke="#d96a0e" stroke-width="1.2" opacity=".85"/>
       </svg>
     </div>
     <div class="idtxt">
@@ -208,7 +208,7 @@ body{min-height:100vh;background:#00080a;display:flex;flex-direction:column;alig
   const st=document.getElementById('g-status');
   setInterval(()=>{
     st.textContent='◌ SCANNING'; st.style.color='#ffb000';
-    setTimeout(()=>{ st.textContent='● ACTIVE'; st.style.color='#aaff00'; },900);
+    setTimeout(()=>{ st.textContent='● ACTIVE'; st.style.color='#d96a0e'; },900);
   },5600);
 })();
 
