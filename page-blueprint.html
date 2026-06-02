@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.E.T. — LOG // 자료함</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0316;          /* deep synthwave purple */
+  --ln:#ff3df0;          /* magenta line */
+  --dim:#8a2a86;         /* dim magenta */
+  --lbl:#ffd6fb;         /* light pink label */
+  --red:#ff5a8a;         /* input */
+  --blue:#36e0ff;        /* cyan accent */
+  --hot:#ffffff;         /* hover */
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  zoom:0.7;
+  min-height:100vh;color:var(--ln);
+  font-family:'Chakra Petch','IBM Plex Sans KR',monospace;
+  overflow-x:hidden;animation:fadein .5s ease-out forwards;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 13px,rgba(255,61,240,.04) 13px 14px),
+    repeating-linear-gradient(90deg,transparent 0 13px,rgba(255,61,240,.04) 13px 14px),
+    #0a0316;
+  background-attachment:fixed;
+}
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+@keyframes crt-off{0%{clip-path:inset(0 0 0 0);filter:brightness(1);}40%{clip-path:inset(48% 0 48% 0);filter:brightness(3);}72%{clip-path:inset(49.5% 12% 49.5% 12%);filter:brightness(5);}100%{clip-path:inset(50% 50% 50% 50%);filter:brightness(0);}}
+body.leaving{animation:crt-off .45s ease-in forwards !important;}
+
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+  background:radial-gradient(135% 125% at 50% 45%,transparent 64%,rgba(0,0,0,.6) 100%);}
+
+.topbar{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;
+  padding:16px 24px;font-size:11px;letter-spacing:3px;color:var(--dim);}
+.exit{border:1.3px solid var(--ln);background:transparent;color:var(--ln);
+  font-family:'Chakra Petch',monospace;font-size:11px;letter-spacing:2px;padding:7px 14px;cursor:pointer;transition:.15s;}
+.exit:hover{background:var(--ln);color:var(--bg);}
+
+.stage{position:relative;z-index:5;width:100%;max-width:1760px;margin:0 auto;padding:4px 14px 56px;display:flex;gap:22px;align-items:flex-start;}
+svg{flex:1 1 0;min-width:0;height:auto;display:block;}
+.tocside{flex:0 0 262px;display:flex;flex-direction:column;gap:12px;align-self:flex-start;font-family:'Chakra Petch',monospace;}
+#tocR{margin-top:360px;}
+
+/* ---- schematic primitives ---- */
+.w{fill:none;stroke:var(--ln);stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+.wd{fill:none;stroke:var(--dim);stroke-width:1.1;}
+text{fill:var(--lbl);font-family:'Chakra Petch',monospace;}
+.ts{font-size:9px;fill:var(--dim);letter-spacing:1px;}
+.node{fill:var(--ln);}
+.jdot{fill:var(--ln);}
+.sym{fill:none;stroke:var(--ln);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.symf{fill:var(--ln);stroke:var(--ln);stroke-width:1.2;}
+
+/* clickable components (= posts) */
+.cmp{cursor:pointer;}
+.cmp .sym{fill:none;stroke:var(--ln);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:.14s;}
+.cmp .symf{fill:var(--ln);stroke:var(--ln);stroke-width:1.2;}
+.cmp .hit{fill:transparent;stroke:none;}
+.cmp .box{fill:var(--bg);stroke:var(--ln);stroke-width:1.5;transition:.14s;}
+.cmp:hover .box{stroke:var(--hot);fill:#15191f;filter:drop-shadow(0 0 5px rgba(255,255,255,.5));}
+.dbox{fill:var(--bg);stroke:var(--dim);stroke-width:1.2;}
+/* mind-map tree */
+.branch{fill:none;opacity:.8;stroke-linecap:round;}
+.catlbl{font-family:'Chakra Petch',monospace;font-size:14px;letter-spacing:1px;}
+.leaf{cursor:pointer;}
+.leaf .lhit{fill:transparent;}
+.lnum{font-family:'Chakra Petch',monospace;font-size:11px;fill:var(--dim);}
+.ltxt{font-family:'IBM Plex Sans KR',monospace;font-size:13px;fill:var(--lbl);}
+.leaf:hover .ltxt,.leaf:hover .lnum{fill:#fff;}
+.leaf:hover .ldot{filter:drop-shadow(0 0 6px #fff);}
+.dtxt{font-family:'Chakra Petch',monospace;font-size:9.5px;fill:var(--dim);letter-spacing:.3px;}
+.sublbl{font-family:'Chakra Petch',monospace;font-size:11px;letter-spacing:1px;}
+.leaf:hover .dtxt{fill:var(--lbl);}
+.tocside:empty{display:none;}
+/* signal flow animation */
+.flow{fill:none;stroke:#a02a96;stroke-width:2.2;stroke-linecap:round;stroke-dasharray:16 26;filter:drop-shadow(0 0 3px #4d064d);animation:march 2.8s linear infinite;}
+@keyframes march{to{stroke-dashoffset:-42;}}
+/* moving signal SHAPE (square) */
+.pulse{fill:rgba(0,255,80,.22);stroke:#7bff7b;stroke-width:2;filter:drop-shadow(0 0 8px #ff3df0) drop-shadow(0 0 14px #cc33aa);}
+.pulse2{fill:none;stroke:#2ad62a;stroke-width:1.6;opacity:.6;}
+.pulse3{fill:none;stroke:#159615;stroke-width:1.3;opacity:.4;}
+.cmp .box{animation:trace 18s linear infinite;}
+@keyframes trace{0%,9%,100%{filter:none;}3%{filter:drop-shadow(0 0 5px #0a7a0a) brightness(1.2);}}
+/* DIR box = double solid line */
+.cmp .boxin{fill:none;stroke:var(--ln);stroke-width:1.1;}
+
+/* table of contents — per-category panels, staggered left & right */
+.tocpanel{border:1px solid var(--dim);background:rgba(0,22,0,.4);padding:9px 11px 10px;}
+.tocpanel h5{font-size:10px;letter-spacing:2px;color:var(--ln);border-bottom:1px solid var(--dim);padding-bottom:6px;margin-bottom:6px;display:flex;justify-content:space-between;}
+.tocpanel h5 span{color:var(--dim);}
+.tocrow{display:flex;gap:9px;align-items:baseline;font-size:10.5px;color:var(--lbl);padding:3px 5px;cursor:pointer;border-left:2px solid transparent;transition:.12s;}
+.tocrow:hover{background:rgba(255,61,240,.12);border-left-color:var(--ln);color:var(--hot);}
+.tocrow .tn{color:var(--dim);min-width:20px;font-size:9.5px;}
+.cmp .cn{font-size:20px;fill:var(--ln);font-family:'Chakra Petch',monospace;letter-spacing:.5px;}
+.cn{font-size:18px;fill:var(--dim);font-family:'Chakra Petch',monospace;letter-spacing:.5px;}
+.nm{font-family:'Chakra Petch',monospace;font-size:15px;fill:var(--lbl);letter-spacing:.3px;}
+.cmp .cv{font-size:8px;fill:var(--dim);letter-spacing:.5px;}
+.cmp .ct{font-family:'IBM Plex Sans KR',monospace;font-size:8px;fill:var(--lbl);font-weight:500;}
+.cmp:hover .sym{stroke:var(--hot);filter:drop-shadow(0 0 5px rgba(255,255,255,.55));}
+.cmp:hover .symf{fill:var(--hot);stroke:var(--hot);}
+.cmp:hover .cn,.cmp:hover .cv,.cmp:hover .ct{fill:var(--hot);}
+
+/* terminals + title */
+.title-main{font-family:'Chakra Petch',monospace;font-size:15px;fill:var(--ln);letter-spacing:3px;}
+.title-sub{font-family:'IBM Plex Sans KR',monospace;font-size:10px;fill:var(--dim);letter-spacing:1px;}
+.tbl{font-size:8px;fill:var(--dim);letter-spacing:1px;}
+
+/* ============ CAD ELECTRICAL LAYOUT ============ */
+:root{--cy:#36e0ff;--yl:#ffd24a;--rd:#ff5a7a;--gn:#ff3df0;}
+.cadwrap{position:relative;z-index:5;display:flex;gap:18px;align-items:flex-start;justify-content:center;max-width:2020px;margin:0 auto;padding:6px;}
+#cad{flex:1 1 0;min-width:0;max-width:1560px;padding:10px;border:2px solid var(--gn);background:#0a0316;}
+.sidecol.outside{flex:0 0 380px;align-self:flex-start;}
+.sidecol.outside .panelbox{margin-top:12px;}
+.cadhead{display:flex;align-items:center;gap:16px;border:1.5px solid var(--gn);background:linear-gradient(180deg,#1a0726,#0a0316);padding:10px 16px;position:relative;}
+.cadhead .hx{position:absolute;right:10px;top:10px;font-size:10px;}
+.hlogo{display:flex;flex-direction:column;align-items:center;color:var(--gn);font-size:26px;line-height:1;border:1.5px solid var(--gn);padding:6px 10px;}
+.hlogo b{font-size:11px;letter-spacing:2px;}
+.htitles{flex:1;text-align:center;}
+.htitles h1{font-family:'Chakra Petch',monospace;font-size:30px;letter-spacing:3px;color:var(--gn);font-weight:700;text-shadow:0 0 8px rgba(255,61,240,.5);}
+.htitles h2{font-family:'Chakra Petch',monospace;font-size:17px;letter-spacing:6px;color:#ffd6fb;font-weight:500;margin-top:2px;}
+.hfree{display:inline-block;margin-top:6px;background:var(--gn);color:#021;font-size:10px;letter-spacing:2px;padding:3px 12px;font-family:'Chakra Petch',monospace;}
+.hhaz{text-align:center;color:var(--yl);font-size:10px;letter-spacing:1px;line-height:1.4;}
+.hhaz .exb{display:inline-block;border:2px solid var(--yl);color:var(--yl);font-weight:700;font-size:18px;padding:2px 8px;border-radius:6px;margin-bottom:4px;font-style:italic;}
+
+.cadgrid{display:flex;gap:10px;margin-top:10px;}
+.planwrap{flex:1 1 0;min-width:0;border:1.5px solid var(--cy);background:#010402;padding:4px;}
+.planwrap svg{width:100%;height:auto;display:block;}
+.sidecol{flex:0 0 360px;display:flex;flex-direction:column;gap:10px;}
+
+.panelbox{border:1.5px solid var(--gn);background:#0a0316;}
+.ptitle{background:var(--gn);color:#021;font-family:'Chakra Petch',monospace;font-size:14px;letter-spacing:2px;text-align:center;padding:6px;font-weight:700;}
+.ptitle.cy{background:var(--cy);} .ptitle.yl{background:var(--yl);} .ptitle.rd{background:var(--rd);color:#200;}
+
+table.sched{width:100%;border-collapse:collapse;font-family:'Chakra Petch',monospace;}
+table.sched th,table.sched td{border:1px solid #5a1a55;padding:5px 7px;font-size:12.5px;text-align:left;color:#9fe8ff;}
+table.sched th{background:#2a0726;color:#ff9e3d;letter-spacing:1px;font-size:11px;}
+table.sched td.gen{color:#ff9e3d;}
+#equipBox table.sched td{color:#ff9e3d;}
+table.sched tr.cl{cursor:pointer;}
+table.sched tr.cl:hover td{background:rgba(255,61,240,.14);color:#fff;}
+table.sched td.no{color:#ff9e3d;width:40px;text-align:center;}
+table.sched td.cat{width:46px;text-align:center;font-weight:700;}
+
+.legrow2{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#ff9e3d;padding:5px 10px;font-family:'Chakra Petch',monospace;}
+.legrow2 i{width:16px;height:16px;display:inline-block;border:1.5px solid;flex:0 0 auto;}
+.notesbody{padding:10px 12px;font-size:12.5px;line-height:1.75;color:#e0a860;font-family:'Chakra Petch',monospace;}
+.notesbody b{color:var(--yl);}
+
+.cadbottom{display:flex;gap:10px;margin-top:10px;}
+#equipBox{flex:1 1 0;}
+.titleblock{flex:0 0 460px;}
+.tbgrid{padding:8px 12px;font-family:'Chakra Petch',monospace;font-size:11px;color:#cfe;}
+.tbrow{display:flex;border-bottom:1px dashed #5a1a55;padding:5px 0;}
+.tbrow .k{flex:0 0 130px;color:var(--gn);letter-spacing:1px;}
+.tbrow .v{color:#ffd6fb;}
+
+.cadfoot{display:flex;gap:8px;margin-top:10px;}
+.ftile{flex:1;border:1.5px solid var(--gn);background:#0a0316;text-align:center;padding:10px 4px;font-family:'Chakra Petch',monospace;}
+.ftile .fi{font-size:24px;line-height:1;}
+.ftile .fl{font-size:9px;letter-spacing:1px;color:#bfe;margin-top:6px;}
+.ftile.rd{border-color:var(--rd);} .ftile.rd .fi{color:var(--rd);}
+.ftile.yl{border-color:var(--yl);} .ftile.yl .fi{color:var(--yl);}
+.ftile.cy{border-color:var(--cy);} .ftile.cy .fi{color:var(--cy);}
+.pnode{cursor:pointer;}
+.pnode:hover .pbody{fill:rgba(255,61,240,.2);stroke:#fff;}
+.pnode:hover text{fill:#fff;}
+/* moving signal along cable route */
+.planroute{fill:none;stroke:#ff3df0;stroke-width:1.8;stroke-dasharray:14 12;opacity:.7;filter:drop-shadow(0 0 3px #5a0a5a);animation:march 2.4s linear infinite;}
+.psig{fill:rgba(255,61,240,.28);stroke:#ffd6fb;stroke-width:2;filter:drop-shadow(0 0 8px #ff3df0) drop-shadow(0 0 16px #8a1a86);}
+.psig2{fill:none;stroke:#ff3df0;stroke-width:1.6;opacity:.5;}
+
+/* ---- doc overlay (schematic dark) ---- */
+.modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;
+  background:rgba(2,6,2,.38);overflow-y:auto;padding:54px 16px;}
+.modal.on{display:flex;}
+.doc{position:relative;width:100%;max-width:1020px;background:#0e1116;
+  border:1.4px solid var(--ln);box-shadow:0 0 40px rgba(180,190,205,.25);animation:pop .25s ease-out;}
+.doc::-webkit-scrollbar{width:7px;}
+.doc::-webkit-scrollbar-thumb{background:rgba(180,190,205,.25);}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98);}to{opacity:1;transform:none;}}
+.doc .dbr{position:absolute;width:16px;height:16px;border:2px solid var(--ln);}
+.doc .dbr.tl{top:-2px;left:-2px;border-right:none;border-bottom:none;}
+.doc .dbr.tr{top:-2px;right:-2px;border-left:none;border-bottom:none;}
+.doc .dbr.bl{bottom:-2px;left:-2px;border-right:none;border-top:none;}
+.doc .dbr.br2{bottom:-2px;right:-2px;border-left:none;border-top:none;}
+.dochead{padding:20px 24px 16px;border-bottom:1px solid var(--dim);position:relative;}
+.dochead .mod{font-size:10px;letter-spacing:3px;color:var(--dim);}
+.dochead h2{font-family:'IBM Plex Sans KR',monospace;font-weight:700;font-size:23px;color:#fff;margin:8px 0 6px;}
+.dochead .dmeta{font-size:10px;letter-spacing:2px;color:var(--dim);}
+.close{position:absolute;top:16px;right:18px;width:42px;height:42px;border:1.5px solid var(--ln);z-index:5;
+  background:#0e1116;color:var(--ln);font-size:24px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;}
+.close:hover{background:var(--ln);color:var(--bg);}
+.docbody{padding:22px 26px 30px;line-height:1.75;font-family:'IBM Plex Sans KR',monospace;font-size:14px;color:var(--ln);}
+.docbody h2{font-family:'Chakra Petch',monospace;font-size:15px;color:#fff;letter-spacing:2px;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--dim);}
+.docbody h3{font-size:14px;color:#a9c6ff;letter-spacing:1px;margin:18px 0 8px;}
+.docbody p{margin:10px 0;}
+.docbody ul,.docbody ol{margin:10px 0 10px 22px;}
+.docbody li{margin:5px 0;}
+.docbody strong{color:#fff;}
+.docbody blockquote{border-left:3px solid var(--ln);background:rgba(255,255,255,.05);padding:10px 16px;margin:14px 0;color:var(--dim);}
+.docbody blockquote strong{color:#fff;}
+.docbody a{color:#fff;}
+</style>
+</head>
+<body>
+<div class="cadwrap">
+<div id="cad">
+  <header class="cadhead">
+    <button class="exit hx" onclick="navigate('portfolio.html')">&larr; EXIT</button>
+    <div class="hlogo">◈<b>S.E.T</b></div>
+    <div class="htitles"><h1>S.E.T. // LOG STATION</h1><h2>ARCHIVE WORKFLOW LAYOUT</h2></div>
+    <span id="cnt" style="display:none"></span>
+  </header>
+  <div class="cadgrid">
+    <section class="planwrap"><svg id="sch" preserveAspectRatio="xMidYMid meet"></svg></section>
+  </div>
+  <div class="cadbottom">
+    <div class="panelbox" id="equipBox"></div>
+    <div class="panelbox titleblock" id="titleBlock"></div>
+  </div>
+  <footer class="cadfoot" id="cadFoot"></footer>
+</div>
+<aside class="sidecol outside">
+  <div id="schedWrap"></div>
+  <div class="panelbox" id="legendBox"></div>
+  <div class="panelbox" id="notesBox"></div>
+</aside>
+</div>
+
+<!-- DOC OVERLAY -->
+<div class="modal" id="modal" onclick="if(event.target===this)closeDoc()">
+  <div class="doc">
+    <span class="dbr tl"></span><span class="dbr tr"></span><span class="dbr bl"></span><span class="dbr br2"></span>
+    <button class="close" onclick="closeDoc()">&times;</button>
+    <div class="dochead">
+      <div class="mod" id="dMod">MOD-00</div>
+      <h2 id="dTitle">—</h2>
+      <div class="dmeta" id="dMeta">—</div>
+    </div>
+    <div class="docbody" id="dBody"></div>
+  </div>
+</div>
+
+<script>
+const SVGNS='http://www.w3.org/2000/svg';
+function navigate(url){document.body.classList.add('leaving');setTimeout(()=>{location.href=url;},450);}
+function pad(n){return String(n).padStart(2,'0');}
+const defaultItems=[{id:'-',title:'아카이브 로드 실패',year:'',category:'rule',status:'',preview:'<p>admin-contents.json 을 불러오지 못했습니다.</p>'}];
+let ITEMS=[];
+
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function sysOf(t){t=(t||'').toLowerCase();
+  if(t.includes('sva'))return'SVA-PIPE';
+  if(t.includes('grammer')||t.includes('grammar')||t.includes('문법'))return'GRAMMAR';
+  if(t.includes('dir')||t.includes('지시문')||t.includes('변환'))return'DIR-GEN';
+  if(t.includes('dashboard')||t.includes('meeting')||t.includes('가이드')||t.includes('work')||t.includes('table')||t.includes('작업')||t.includes('direction'))return'OPS';
+  return'RULE';}
+function catOf(t){const o=(t||'').toLowerCase();
+  if(o.includes('공간')||o.includes('space'))return'SP';
+  if(o.includes('사물')||o.includes('objects'))return'OB';
+  if(o.includes('인물전면')||o.includes('figure forward'))return'FF';
+  if(o.includes('인물배경')||o.includes('figure background'))return'FB';
+  if(o.includes('판정불가')||o.includes('unjudg'))return'UJ';
+  return'';}
+function wrap(s,max,maxLines){s=String(s||'무제');const words=s.split(/\s+/);const lines=[];let cur='';
+  for(const w0 of words){let w=w0;
+    while(w.length>max){if(cur){lines.push(cur);cur='';}lines.push(w.slice(0,max));w=w.slice(max);}
+    if(!cur){cur=w;}else if((cur+' '+w).length<=max){cur+=' '+w;}else{lines.push(cur);cur=w;}}
+  if(cur)lines.push(cur);
+  if(lines.length>maxLines){const out=lines.slice(0,maxLines);out[maxLines-1]=out[maxLines-1].slice(0,max-1)+'…';return out;}
+  return lines;}
+
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function L(a,b,c,d){return '<line class="sym" x1="'+a+'" y1="'+b+'" x2="'+c+'" y2="'+d+'"/>';}
+function C(x,y,r,cls){return '<circle class="'+(cls||'sym')+'" cx="'+x+'" cy="'+y+'" r="'+r+'"/>';}
+function PA(d){return '<path class="sym" d="'+d+'"/>';}
+function WP(pts){return '<polyline class="w" points="'+pts+'"/>';}
+function DOT(x,y){return '<circle class="jdot" cx="'+x+'" cy="'+y+'" r="2.6"/>';}
+function GND(x,y){return L(x,y,x,y+9)+L(x-11,y+9,x+11,y+9)+L(x-7,y+13,x+7,y+13)+L(x-3,y+17,x+3,y+17);}
+function TXT(x,y,t,cls,anc){return '<text class="'+(cls||'cv')+'" x="'+x+'" y="'+y+'"'+(anc?' text-anchor="'+anc+'"':'')+'>'+t+'</text>';}
+// transformer centred at cx,cy ; pins: pTL,pBL (left coil top/bottom), pTR,pBR
+function XFMR(cx,cy){var g='';for(var k=0;k<3;k++)g+=PA('M'+(cx-6)+' '+(cy-15+k*10)+' q-7 5 0 10');for(var k2=0;k2<3;k2++)g+=PA('M'+(cx+6)+' '+(cy-15+k2*10)+' q7 5 0 10');g+=L(cx-1,cy-16,cx-1,cy+16)+L(cx+1,cy-16,cx+1,cy+16);return g;}
+
+function build(items){
+  var N=items.length;
+  function catOf2(it){var c=((it&&it.category)||'').toLowerCase(), t=((it&&it.title)||'').toLowerCase();
+    if(c==='rule'||t.indexOf('규칙')>=0||t.indexOf('기준표')>=0)return'rule';
+    if(c.indexOf('sva')>=0||t.indexOf('sva')>=0)return'sva';
+    if(c.indexOf('gramm')>=0||t.indexOf('gramm')>=0||t.indexOf('문법')>=0)return'grammer';
+    if(c==='dir'||c.indexOf('dir')>=0||t.indexOf('dir')>=0||t.indexOf('instruction')>=0||t.indexOf('지시')>=0)return'dir';
+    return'ops';}
+  function roundOf(it){return /v2|v 2/.test(((it&&it.title)||'').toLowerCase())?'2차':'1차';}
+  function seqKey(it){var cat=catOf2(it); if(cat==='rule')return 0;
+    var round=/v2|v 2/.test(((it&&it.title)||'').toLowerCase())?2:1;
+    var co={sva:0,grammer:1,dir:2,ops:3}[cat]; return round*10+co;}
+  var ord=items.map(function(it,idx){return {it:it,idx:idx,key:seqKey(it)};});
+  ord.sort(function(a,b){return (a.key-b.key)||(a.idx-b.idx);});
+  ITEMS=ord.map(function(o){return o.it;}); items=ITEMS;
+  var cntEl=document.getElementById('cnt'); if(cntEl) cntEl.textContent=pad(N)+' NODES';
+
+  var META={rule:{lbl:'RULE',ko:'규칙',col:'#ff6a6a',code:'RL'},sva:{lbl:'SVA',ko:'사진분석',col:'#3fd2ff',code:'SV'},grammer:{lbl:'GRAMMER',ko:'문법',col:'#4dff7a',code:'GR'},dir:{lbl:'DIR',ko:'지시문',col:'#ffd24a',code:'DR'},ops:{lbl:'OPS',ko:'기타',col:'#b78bff',code:'OP'}};
+  var order=['rule','sva','grammer','dir','ops'];
+  var byCat={}; order.forEach(function(k){byCat[k]=[];});
+  for(var i=0;i<N;i++){var c=catOf2(items[i]); (byCat[c]||byCat.ops).push(i);}
+  function catCode(i){return META[catOf2(items[i])].code;}
+
+  /* ============ PLAN (svg) — faithful LPG site layout ============ */
+  var W=760, H=1160, s='';
+  function TX(x,y,t,col,sz,anc,ls){return '<text x="'+x+'" y="'+y+'" fill="'+col+'" font-size="'+(sz||10)+'" font-family="Chakra Petch"'+(anc?' text-anchor="'+anc+'"':'')+(ls?' letter-spacing="'+ls+'"':'')+'>'+t+'</text>';}
+  function R(x,y,w,h,col,sw,fill){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+(fill||'none')+'" stroke="'+col+'" stroke-width="'+(sw||1.3)+'"/>';}
+  function CIR(cx,cy,r,col,dash){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="1.3"'+(dash?' stroke-dasharray="8 6"':'')+'/>';}
+  function LN(x1,y1,x2,y2,col,sw,dash){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+col+'" stroke-width="'+(sw||1)+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';}
+  var CY='#36e0ff', GN='#ff3df0', YL='#ffd24a', RD='#ff5a7a', BL='#1f72e6';
+  s+='<defs><pattern id="haz" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="26" height="26" fill="#0b1d3a"/><rect width="13" height="26" fill="'+BL+'"/></pattern></defs>';
+  s+=R(6,6,W-12,H-12,'#a02a96',1.6)+R(13,13,W-26,H-26,'#6a1a62',1);
+  // faint drafting grid (fine)
+  for(var gx=30;gx<W-16;gx+=22) s+=LN(gx,16,gx,H-16,'#3a0a35',0.5);
+  for(var gy=30;gy<H-16;gy+=22) s+=LN(16,gy,W-16,gy,'#3a0a35',0.5);
+  // compass
+  s+='<g transform="translate(52,66)"><polygon points="0,-26 8,10 0,2 -8,10" fill="'+GN+'"/><line x1="0" y1="-26" x2="0" y2="16" stroke="#a02a96"/></g>'+TX(52,32,'N',GN,14,'middle');
+
+  // ===== CONTROL / ESD ROOMS (top centre) =====
+  s+=R(300,40,360,118,CY,1.5)+LN(480,40,480,158,CY,1.3);
+  s+='<path d="M316 158 a24 24 0 0 1 24 -24" fill="none" stroke="'+CY+'"/><path d="M496 158 a24 24 0 0 1 24 -24" fill="none" stroke="'+CY+'"/>';
+  s+=TX(390,96,'셀렉션실 · SELECTION',CY,12,'middle')+TX(570,96,'자료함 · ARCHIVE',CY,12,'middle');
+  s+=R(620,52,34,20,RD,1.3)+TX(637,66,'LOG',RD,9,'middle');
+
+  // ===== LPG STORAGE (left, two overlapping EX circles + tanks) =====
+  s+=TX(190,150,'이미지 저장소 · STORAGE',CY,12,'middle',1);
+  s+=CIR(190,275,108,CY,1)+CIR(175,400,108,CY,1);
+  s+=TX(70,255,'작업영역',CY,9,'middle')+TX(70,267,'WORK ZONE',CY,8,'middle');
+  s+=TX(60,395,'작업영역',CY,9,'middle')+TX(60,407,'WORK ZONE',CY,8,'middle');
+  // tanks
+  function tank(cx,cy){return '<rect x="'+(cx-26)+'" y="'+(cy-16)+'" width="52" height="32" rx="16" fill="#1a0420" stroke="'+CY+'" stroke-width="1.6"/>'+LN(cx,cy-16,cx,cy+16,CY)+LN(cx-26,cy,cx+26,cy,CY);}
+  s+=tank(190,275)+tank(175,400);
+  // gas detectors ⊗ (far left)
+  s+=CIR(46,300,12,CY)+LN(38,292,54,308,CY)+LN(54,292,38,308,CY);
+  s+=CIR(46,360,12,CY)+LN(38,352,54,368,CY)+LN(54,352,38,368,CY);
+  s+=TX(60,470,'저장 09',GN,11,'middle');
+
+  // ===== VAPORIZER =====
+  s+=TX(210,520,'문법 엔진 · GRAMMAR',GN,11,'middle');
+  s+=R(168,534,86,42,GN,1.6,'#1a0420')+CIR(190,555,12,GN)+CIR(232,555,12,GN);
+  s+=TX(150,612,'수집 랙 · INGEST',GN,10,'middle')+TX(150,624,'(2차 작업)',GN,9,'middle');
+
+  // ===== GATE / F.DG POINT / FILLING POINT =====
+  s+=R(40,560,46,26,GN,1.3)+TX(63,577,'게이트 · GATE',GN,9,'middle');
+  s+=TX(40,610,'피드 포인트-1 · FEED',GN,9,'start');
+  s+=R(110,660,150,96,GN,1.4,'#1a0420')+TX(115,652,'수집 포인트-1 · INGEST PT',GN,9,'start');
+  s+=LN(130,690,240,690,GN)+LN(130,712,240,712,GN)+CIR(160,730,9,GN)+CIR(210,730,9,GN)+R(140,675,18,12,GN,1);
+  s+=CIR(185,705,115,YL,1);
+
+  // ===== DISPENSER (right) =====
+  s+=TX(560,300,'지시문 출력 · DIRECTIVE',YL,11,'middle');
+  s+=R(536,316,48,70,YL,1.6,'#1a0420')+LN(536,344,584,344,YL)+CIR(560,366,9,YL)+TX(596,330,'02',YL,11,'start');
+  s+=CIR(560,400,120,YL,1)+TX(560,290,'작업영역 WORK ZONE',YL,8,'middle');
+
+  // ===== DRIVE WAY arrows =====
+  s+=TX(410,250,'◀  데이터 경로 · DATA WAY',CY,12,'middle',2);
+  s+=TX(410,640,'◀  데이터 경로 · DATA WAY',CY,12,'middle',2);
+
+  // ===== (EARTHING pit removed — label overlapped nodes) =====
+
+  // ===== cable routes + JB junction boxes =====
+  function jb(cx,cy,no){return R(cx-12,cy-9,24,18,GN,1.2,'#040a04')+TX(cx,cy+4,no,GN,8,'middle');}
+  s+='<polyline points="190,400 300,400 300,555 420,555" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>';
+  s+='<polyline points="420,555 560,555 560,400" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>';
+  s+='<polyline points="190,275 420,275 420,158" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>';
+  s+='<polyline points="210,555 210,700 420,700 420,800" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".7"/>';
+
+  /* ===== 32 post nodes — short title labels, bigger boxes ===== */
+  function shortOf(it){var t=(it.title||''), l=t.toLowerCase(), v=/v2/.test(l)?' v2':'';
+    var pipe = l.indexOf('sva')>=0?' sva' : (l.indexOf('gramm')>=0?' gram' : ((l.indexOf('dir')>=0&&l.indexOf('instruction')<0)?' dir':''));
+    var field;
+    if(l.indexOf('space')>=0||t.indexOf('공간')>=0)field='space';
+    else if(l.indexOf('object')>=0||t.indexOf('사물')>=0)field='object';
+    else if(l.indexOf('figure background')>=0||t.indexOf('인물배경')>=0)field='figure bg';
+    else if(l.indexOf('figure forward')>=0||t.indexOf('인물전면')>=0)field='figure';
+    else if(l.indexOf('unjudg')>=0||t.indexOf('판정불가')>=0)field='unjudg';
+    else if(l.indexOf('instruction')>=0){field='instr table';pipe='';}
+    else if(l.indexOf('meeting')>=0){field='meetings';pipe='';v='';}
+    else if(l.indexOf('dashboard')>=0){field='dashboard';pipe='';v='';}
+    else if(t.indexOf('가이드')>=0){field='작업 가이드';pipe='';v='';}
+    else if(t.indexOf('이미지 분석 규칙')>=0){field='이미지 규칙';pipe='';}
+    else if(t.indexOf('문법 생성 규칙')>=0){field='문법 규칙';pipe='';}
+    else if(t.indexOf('지시문 변환')>=0){field='지시문 규칙';pipe='';v='';}
+    else if(t.indexOf('기준표')>=0){field='평가표';pipe='';}
+    else {field=t.slice(0,10);pipe='';}
+    return field+pipe+v;}
+  var place={sva:[320,210,0,56],grammer:[320,560,0,56],dir:[668,300,0,54],rule:[430,470,0,58],ops:[560,840,118,0]};
+  var BW=112, BH=40;
+  order.forEach(function(k){var p=place[k],m=META[k],arr=byCat[k]; if(!arr.length||!p)return;
+    arr.forEach(function(idx,j){var nx,ny;
+      if(p[2]){nx=p[0]+(j%2)*p[2]; ny=p[1]+Math.floor(j/2)*56;} else { nx=p[0]; ny=p[1]+j*p[3]; }
+      s+='<g class="pnode" onclick="openDoc('+idx+')">';
+      s+=R(nx-BW/2,ny-BH/2,BW,BH,m.col,1.5,'#1a0420').replace('<rect','<rect class="pbody"');
+      s+=TX(nx,ny+5,shortOf(items[idx]),m.col,13,'middle');
+      s+='</g>';
+    });
+  });
+
+  // ===== density detail: extra routes, JB, cable tags, lighting, dims =====
+  s+='<polyline points="190,275 190,160 420,160" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".5"/>';
+  s+='<polyline points="560,400 668,400 668,710 420,710" fill="none" stroke="'+YL+'" stroke-width="1" stroke-dasharray="6 4" opacity=".45"/>';
+  s+='<polyline points="118,520 118,706 110,706" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".5"/>';
+  s+='<polyline points="300,275 484,275 484,92" fill="none" stroke="'+GN+'" stroke-width="1" stroke-dasharray="4 4" opacity=".45"/>';
+  function ctag(x,y,t,col){return '<text x="'+x+'" y="'+y+'" fill="'+col+'" font-size="7.5" font-family="Chakra Petch" transform="rotate(-90 '+x+' '+y+')" opacity=".85">'+t+'</text>';}
+  function lamp(cx,cy){return CIR(cx,cy,9,YL)+LN(cx-9,cy,cx+9,cy,YL)+LN(cx,cy-9,cx,cy+9,YL);}
+  s+=lamp(118,200)+TX(118,224,'색인 L1',YL,8,'middle')+lamp(560,210)+TX(560,234,'색인 L2',YL,8,'middle')+lamp(706,840)+TX(706,864,'L3 · 내보내기',YL,8,'middle');
+  // (motor symbol removed — label overlapped nodes)
+
+  // ===== bottom hazard band: EXIT / ENTRY / ENTRY GATE =====
+  var hy=H-70, hh=36;
+  s+=R(20,hy,236,hh,BL,1.2,'url(#haz)')+TX(138,hy+hh+15,'내보내기 · EXPORT',CY,11,'middle',2);
+  s+=R(268,hy,224,hh,BL,1.2,'url(#haz)')+TX(380,hy+hh+15,'들이기 · IMPORT',CY,11,'middle',2);
+  s+='<polygon points="350,'+(hy-12)+' 362,'+(hy-12)+' 356,'+(hy-2)+'" fill="'+CY+'"/><polygon points="380,'+(hy-12)+' 392,'+(hy-12)+' 386,'+(hy-2)+'" fill="'+CY+'"/><polygon points="410,'+(hy-12)+' 422,'+(hy-12)+' 416,'+(hy-2)+'" fill="'+CY+'"/>';
+  s+=R(504,hy,232,hh,BL,1.2,'url(#haz)')+TX(620,hy+hh+15,'제출 게이트 · SUBMIT',CY,11,'middle',2);
+
+  // ===== moving signal animation along route =====
+  var flowD='M120 360 L300 360 L300 560 L484 560 L484 200 L560 200 L560 410 L668 410 L668 760 L420 760 L420 980 L760 980';
+  s+='<path id="planflow" class="planroute" d="'+flowD+'"/>';
+  s+='<rect class="psig2" x="-12" y="-12" width="24" height="24"><animateMotion dur="10s" begin="-0.5s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#planflow" href="#planflow"/></animateMotion></rect>';
+  s+='<rect class="psig" x="-9" y="-9" width="18" height="18"><animateMotion dur="10s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#planflow" href="#planflow"/></animateMotion></rect>';
+  var svg=document.getElementById('sch'); svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.innerHTML=s;
+
+  /* ============ SCHEDULE TABLES ============ */
+  var sw='';
+  order.forEach(function(k){var arr=byCat[k]; if(!arr.length)return; var m=META[k];
+    sw+='<div class="panelbox" style="margin-bottom:10px"><div class="ptitle">'+m.lbl+' SCHEDULE · '+m.ko+'</div>';
+    sw+='<table class="sched"><tr><th>NO</th><th>TITLE</th><th>GEN</th></tr>';
+    arr.forEach(function(idx){var it=items[idx];
+      var t=it.title||'무제'; if(t.length>40)t=t.slice(0,39)+'…';
+      sw+='<tr class="cl" onclick="openDoc('+idx+')"><td class="no">'+pad(idx+1)+'</td><td>'+esc(t)+'</td><td class="gen" style="text-align:center">'+roundOf(it)+'</td></tr>';
+    });
+    sw+='</table></div>';
+  });
+  document.getElementById('schedWrap').innerHTML=sw;
+
+  /* ============ LEGEND ============ */
+  var lg='<div class="ptitle cy">LEGEND</div>';
+  order.forEach(function(k){var m=META[k];lg+='<div class="legrow2"><i style="border-color:'+m.col+';background:'+m.col+'33"></i> '+m.lbl+' · '+m.ko+' — '+pad(byCat[k].length)+' UNITS</div>';});
+  lg+='<div class="legrow2"><i style="border-color:#36e0ff;border-style:dashed"></i> EX-ZONE (CONTENT) RADIUS</div>';
+  document.getElementById('legendBox').innerHTML=lg;
+
+  /* ============ NOTES ============ */
+  document.getElementById('notesBox').innerHTML='<div class="ptitle">GENERAL NOTES</div><div class="notesbody">'+
+    '1. ALL CONTENT SHALL BE <b>EX-PROOF</b> AND SUITABLE FOR THE HAZARDOUS ARCHIVE.<br>'+
+    '2. SVA(사진분석) → GRAMMER(문법) → DIR(지시문). <b>RULE</b>(규칙) IS THE CORE REFERENCE.<br>'+
+    '3. ALL ENTRIES SHALL BE LAID PER PUBLISHED-POSTS · SECTION RULE.<br>'+
+    '4. SCALE: NTS · DIMENSIONS ARE LOGICAL.<br>'+
+    '5. READ IN CONJUNCTION WITH ARCHIVE-ADMIN.</div>';
+
+  /* ============ EQUIPMENT LIST ============ */
+  var eq='<div class="ptitle yl">CONTENT EQUIPMENT LIST</div><table class="sched"><tr><th>ITEM</th><th>DESCRIPTION</th><th>QTY</th><th>UNIT</th></tr>';
+  order.forEach(function(k,ix){var m=META[k];eq+='<tr><td class="no">'+pad(ix+1)+'</td><td>'+m.lbl+' · '+m.ko+'</td><td style="text-align:center;color:#ffd24a">'+pad(byCat[k].length)+'</td><td style="text-align:center">NO</td></tr>';});
+  eq+='<tr><td class="no">'+pad(order.length+1)+'</td><td>TOTAL NODES</td><td style="text-align:center;color:#ffd24a">'+pad(N)+'</td><td style="text-align:center">NO</td></tr>';
+  eq+='</table>';
+  document.getElementById('equipBox').innerHTML=eq;
+
+  /* ============ TITLE BLOCK ============ */
+  var d=new Date(); var ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  document.getElementById('titleBlock').innerHTML='<div class="ptitle">S.E.T. LOG STATION</div><div class="tbgrid">'+
+    '<div class="tbrow"><div class="k">PROJECT</div><div class="v">LOG ARCHIVE STATION</div></div>'+
+    '<div class="tbrow"><div class="k">DRAWING TITLE</div><div class="v">ARCHIVE ELECTRICAL LAYOUT</div></div>'+
+    '<div class="tbrow"><div class="k">DRAWING NO</div><div class="v">EL-01 · REV.0</div></div>'+
+    '<div class="tbrow"><div class="k">NODES</div><div class="v">'+pad(N)+' · TEAM KSS</div></div>'+
+    '<div class="tbrow"><div class="k">DATE / SCALE</div><div class="v">'+ds+' · NTS</div></div></div>';
+
+  /* ============ FOOTER ICONS ============ */
+  var foot=[['◈','ARCHIVE','gn'],['▦','RULE 규칙','rd'],['◉','SVA 사진분석','cy'],['▤','GRAMMER 문법','gn'],['▷','DIR 지시문','yl'],['⏚','기준 접지 · EARTH','gn'],['Ex','EX-PROOF','yl'],['⊘','NO BYPASS','rd']];
+  var fh=''; foot.forEach(function(f){fh+='<div class="ftile '+f[2]+'"><div class="fi">'+f[0]+'</div><div class="fl">'+f[1]+'</div></div>';});
+  document.getElementById('cadFoot').innerHTML=fh;
+}
+
+function openDocItem(it, modLabel){
+  if(!it)return;
+  document.getElementById('dMod').textContent=(modLabel||'MOD')+' // '+(it.category||'rule').toUpperCase();
+  document.getElementById('dTitle').textContent=it.title||'무제';
+  document.getElementById('dMeta').textContent='STATUS '+((it.status||'STD').toUpperCase())+'　·　'+(it.year||'—')+'　·　ID '+(it.id||'—');
+  document.getElementById('dBody').innerHTML=it.text||it.preview||'<p>내용 없음</p>';
+  const md=document.getElementById('modal');md.classList.add('on');md.scrollTop=0;
+  const dc=md.querySelector('.doc');if(dc)dc.scrollTop=0;
+}
+function openDoc(i){
+  const it=ITEMS[i];if(!it)return;
+  openDocItem(it,'MOD-'+pad(i+1));
+}
+function closeDoc(){document.getElementById('modal').classList.remove('on');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDoc();});
+function openFromQuery(){
+  try{
+    var q=new URLSearchParams(location.search).get('post');
+    if(!q)return;
+    q=decodeURIComponent(q);
+    var idx=ITEMS.findIndex(function(it){return String(it.id)===q;});
+    if(idx<0) idx=ITEMS.findIndex(function(it){return (it.title||'')===q;});
+    if(idx>=0){ openDoc(idx); return; }
+    // 노드에 없으면 admin-contents.json의 고정 LOG(rule) 항목에서 찾아 모달로 표시
+    fetch('https://raw.githubusercontent.com/note-a/note-a-github/main/admin-contents.json?t='+Date.now())
+      .then(function(r){return r.ok?r.json():Promise.reject();})
+      .catch(function(){return fetch('./admin-contents.json?t='+Date.now()).then(function(r){return r.json();});})
+      .then(function(d){
+        var items=(d&&d.rule&&Array.isArray(d.rule.items))?d.rule.items:(Array.isArray(d&&d.rule)?d.rule:[]);
+        var it=items.find(function(x){return String(x.id)===q;})||items.find(function(x){return (x.title||'')===q;});
+        if(it) openDocItem(it,'LOG');
+      }).catch(function(){});
+  }catch(e){}
+}
+
+(function(){
+  const ts=Date.now();const base='https://raw.githubusercontent.com/note-a/note-a-github/main/';
+  const getLog=d=>{const arr=Array.isArray(d)?d:[];return arr.filter(x=>x&&x.publishedSection==='rule');};
+  const getRules=d=>{try{return (d&&d.rule&&d.rule.items&&d.rule.items.length)?d.rule.items:[];}catch(e){return[];}};
+  const load=u=>fetch(base+u+'?t='+ts).then(r=>r.ok?r.json():Promise.reject()).catch(()=>fetch('./'+u+'?t='+ts).then(r=>r.ok?r.json():null).catch(()=>null));
+  Promise.all([load('published-posts.json'),load('admin-contents.json')]).then(res=>{
+    const all=getRules(res[1]).concat(getLog(res[0]));
+    build(all.length?all:defaultItems);openFromQuery();
+  }).catch(()=>{build(defaultItems);openFromQuery();});
+})();
+</script>
+</body>
+</html>
