@@ -18,11 +18,59 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 .nb:hover{color:#e02010;}
 .nt{display:flex;align-items:center;padding:0 14px;font-size:7px;letter-spacing:2.5px;color:#500800;border-right:1px solid #1e0000;}
 
-/* ─── layout ─── */
-#layout{display:flex;height:calc(100vh - 30px);margin-top:30px;}
+/* ─── 바깥 배경 (프레임 밖 공간) ─── */
+#outer{
+  position:fixed;inset:30px 0 0 0;
+  display:flex;align-items:center;justify-content:center;
+  background:#060000;
+}
+/* 배경 노이즈 그리드 */
+#outer::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(80,0,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(80,0,0,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+/* ─── 70% 프레임 ─── */
+#page-frame{
+  position:relative;
+  width:70vw;
+  height:82vh;
+  display:flex;
+  /* 빨간 테두리 */
+  border:2px solid #c01000;
+  box-shadow:
+    0 0 0 1px rgba(60,2,0,.7),
+    0 0 60px rgba(200,8,0,.18),
+    0 0 120px rgba(160,4,0,.08),
+    inset 0 0 80px rgba(60,0,0,.25);
+  background:#080000;
+  overflow:hidden;
+}
+/* 외곽 보조선 */
+#page-frame::before{
+  content:'';position:absolute;inset:5px;
+  border:1px solid rgba(90,4,0,.35);
+  pointer-events:none;z-index:10;
+}
+/* 네 코너 L자 장식 */
+#page-frame::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:11;
+  background:
+    linear-gradient(#cc1000,#cc1000) top    left  / 24px 2px no-repeat,
+    linear-gradient(#cc1000,#cc1000) top    left  / 2px 24px no-repeat,
+    linear-gradient(#cc1000,#cc1000) top    right / 24px 2px no-repeat,
+    linear-gradient(#cc1000,#cc1000) top    right / 2px 24px no-repeat,
+    linear-gradient(#cc1000,#cc1000) bottom left  / 24px 2px no-repeat,
+    linear-gradient(#cc1000,#cc1000) bottom left  / 2px 24px no-repeat,
+    linear-gradient(#cc1000,#cc1000) bottom right / 24px 2px no-repeat,
+    linear-gradient(#cc1000,#cc1000) bottom right / 2px 24px no-repeat;
+}
 
 /* ─── sidebar ─── */
-#sb{width:280px;flex-shrink:0;background:#060000;border-right:1px solid #240000;
+#sb{width:220px;flex-shrink:0;background:#050000;border-right:1px solid #200000;
   display:flex;flex-direction:column;overflow:hidden;}
 .sb-head{padding:22px 18px 18px;border-bottom:1px solid #1e0000;}
 .sb-label{font-size:5.5px;letter-spacing:3px;color:#3a0600;margin-bottom:5px;}
@@ -56,42 +104,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 .sb-hint{padding:10px 18px;border-top:1px solid #200000;
   font-size:5.5px;letter-spacing:1px;color:#701010;line-height:1.8;}
 
-/* ─── canvas frame ─── */
-#cv-wrap{
-  flex:1;min-width:0;
-  padding:20px;
-  background:#060000;
-  display:flex;
-  position:relative;
-}
-/* 이중 프레임 — 바깥 */
-#cv-wrap::before{
-  content:'';position:absolute;inset:12px;
-  border:1px solid rgba(100,4,0,.5);
-  pointer-events:none;z-index:2;
-}
-/* 코너 장식 */
-#cv-wrap::after{
-  content:'';position:absolute;inset:12px;
-  background:
-    linear-gradient(#cc1000,#cc1000) top left / 18px 2px no-repeat,
-    linear-gradient(#cc1000,#cc1000) top left / 2px 18px no-repeat,
-    linear-gradient(#cc1000,#cc1000) top right / 18px 2px no-repeat,
-    linear-gradient(#cc1000,#cc1000) top right / 2px 18px no-repeat,
-    linear-gradient(#cc1000,#cc1000) bottom left / 18px 2px no-repeat,
-    linear-gradient(#cc1000,#cc1000) bottom left / 2px 18px no-repeat,
-    linear-gradient(#cc1000,#cc1000) bottom right / 18px 2px no-repeat,
-    linear-gradient(#cc1000,#cc1000) bottom right / 2px 18px no-repeat;
-  pointer-events:none;z-index:3;
-}
-#cv{
-  flex:1;min-width:0;display:block;cursor:none;
-  border:2px solid #c01000;
-  box-shadow:
-    0 0 0 1px rgba(80,4,0,.6),
-    0 0 40px rgba(200,10,0,.22),
-    inset 0 0 60px rgba(80,0,0,.3);
-}
+/* ─── canvas ─── */
+#cv{flex:1;min-width:0;display:block;cursor:none;}
 </style>
 </head>
 <body>
@@ -100,7 +114,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
   <div class="nt">REFERENCE · DARKROOM</div>
 </div>
 
-<div id="layout">
+<div id="outer">
+<div id="page-frame">
   <!-- 사이드바 -->
   <div id="sb">
     <div class="sb-head">
@@ -141,11 +156,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
     </div>
   </div>
 
-  <!-- 캔버스 (암실) — 프레임 안 -->
-  <div id="cv-wrap">
-    <canvas id="cv"></canvas>
-  </div>
-</div>
+  <!-- 캔버스 (암실) -->
+  <canvas id="cv"></canvas>
+</div><!-- /page-frame -->
+</div><!-- /outer -->
 
 <script>
 /* ════════════════════
@@ -714,8 +728,10 @@ function findHovCanvas(cx,cy,W,H){
 }
 
 function resize(){
-  cvs.width=window.innerWidth-280-40;   // 20px padding × 2
-  cvs.height=window.innerHeight-30-40;  // 20px padding × 2
+  const fw=Math.round(window.innerWidth*.70);
+  const fh=Math.round(window.innerHeight*.82);
+  cvs.width=Math.max(1,fw-220);  // 프레임 너비 - 사이드바
+  cvs.height=Math.max(1,fh);
 }
 
 init();
