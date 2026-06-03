@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — MEASUREMENT TERMINAL (Sample D)</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri11.css">
+<style>
+:root{
+  --blue:#0f66aa; --hd:#0055aa; --hd2:#0077cc; --gray:#b0b0bc; --gray2:#999999;
+  --ink:#112233; --ink2:#334455; --lt:#a6a6b8; --yel:#ffff55; --teal:#0a6a6a; --amb:#9a6a00;
+  --fnt:'Galmuri11',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:var(--ink);font-family:var(--fnt);
+  image-rendering:pixelated;display:flex;align-items:center;justify-content:center;}
+.scan{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,40,0.06) 2px,rgba(0,0,40,0.06) 3px);}
+#mon{
+  position:relative;width:1120px;max-width:97vw;height:730px;max-height:95vh;
+  background:var(--gray);border:3px solid #999999;
+  box-shadow:inset -3px -3px 0 #777777,inset 3px 3px 0 #cccccc,0 0 0 3px #003060,0 14px 40px rgba(0,0,0,.6);
+  display:grid;grid-template-rows:auto auto 1fr auto;gap:3px;padding:4px;
+}
+.tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:8px;padding:5px 9px;font-size:12px;letter-spacing:1px;
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.tbar .led{display:flex;gap:4px;margin-left:auto;}
+.tbar .led b{width:8px;height:8px;background:#002040;display:inline-block;box-shadow:inset 1px 1px 0 #000;}
+.tbar .led b.on{background:var(--yel);box-shadow:0 0 5px var(--yel);}
+.tbar .clk{font-size:11px;color:var(--yel);}
+
+.menubar{background:var(--gray);display:flex;gap:0;font-size:11px;border-bottom:2px solid #777777;}
+.menubar span{padding:3px 11px;color:var(--ink2);cursor:default;border-right:1px solid #999999;}
+.menubar span:hover{background:var(--hd);color:var(--lt);}
+
+.body{display:grid;grid-template-columns:236px 1fr 260px;gap:3px;min-height:0;}
+.panel{background:var(--gray);border:2px solid #999999;box-shadow:inset -2px -2px 0 #888888,inset 2px 2px 0 #cccccc;display:flex;flex-direction:column;min-height:0;}
+.ph{background:var(--hd);color:var(--lt);font-size:11px;padding:5px 9px;letter-spacing:1px;flex-shrink:0;
+  box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
+.pb{padding:9px 10px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
+
+.kv{display:flex;justify-content:space-between;}
+.kv .k{color:var(--ink2);} .kv .v{color:var(--ink);}
+.bar{height:11px;background:#002040;border:1px solid #2a3a9a;margin:2px 0 8px;position:relative;overflow:hidden;}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#3a88ff,var(--yel));transition:width .2s;}
+.bar.amb i{background:linear-gradient(90deg,#3a88ff,#ff8a3a);}
+
+.led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:6px 0;}
+.led-grid b{height:10px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
+.led-grid b.on{background:var(--yel);box-shadow:0 0 4px var(--yel);}
+
+.console{background:var(--blue);border:2px solid #999999;box-shadow:inset 2px 2px 0 #003060;color:var(--lt);
+  font-size:11px;line-height:1.8;padding:9px 11px;height:170px;overflow:hidden;}
+.console .row{opacity:0;animation:cin .25s forwards;}
+@keyframes cin{to{opacity:1}}
+.console .ln{white-space:pre-wrap;}
+.console .ln .t{color:#6aaaff;} .console .ln .ok{color:var(--yel);} .console .ln .em{color:#7affff;}
+.cur{display:inline-block;width:7px;height:12px;background:var(--lt);vertical-align:-1px;animation:bl .6s steps(1) infinite;}
+@keyframes bl{50%{opacity:0}}
+
+.intro{font-size:12px;line-height:2;color:var(--ink);}
+.intro p{margin-bottom:9px;}
+.intro .hl{background:var(--yel);}
+
+.feed{flex:1;overflow:hidden;}
+.frow{display:flex;gap:7px;font-size:10px;line-height:1.9;cursor:default;padding:1px 2px;}
+.frow:hover{background:var(--yel);color:var(--blue);}
+.frow.on{background:var(--teal);color:#fff;}
+.frow .num{color:var(--amb);} .frow:hover .num{color:var(--blue);}
+.frow .q{color:var(--ink2);} .frow .n{color:#667799;margin-left:auto;}
+
+.search{display:flex;gap:5px;padding:6px;border-top:2px solid #999999;background:var(--gray);}
+.search input{flex:1;background:var(--blue);border:2px solid #999999;color:var(--lt);padding:8px 10px;font-family:var(--fnt);font-size:11px;outline:none;
+  box-shadow:inset 2px 2px 0 #003060;}
+.search button{background:var(--hd);border:2px solid #999999;color:var(--lt);padding:8px 16px;font-family:var(--fnt);font-size:11px;cursor:pointer;
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.search button:hover{background:var(--hd2);}
+
+.foot{display:flex;gap:3px;}
+.foot button{flex:1;background:var(--gray);border:2px solid #999999;box-shadow:inset -2px -2px 0 #888888,inset 2px 2px 0 #cccccc;
+  font-family:var(--fnt);font-size:14px;letter-spacing:1px;color:var(--ink);padding:13px;cursor:pointer;}
+.foot button:hover{background:var(--yel);}
+.foot button:active{box-shadow:inset 2px 2px 0 #888888,inset -2px -2px 0 #cccccc;}
+.foot button.pri{background:var(--hd);color:var(--lt);box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.foot button.pri:hover{background:var(--hd2);}
+.statusln{background:var(--hd);color:var(--lt);font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div id="mon">
+  <div class="tbar"><span>◳ SET_MEASURE.EXE — ENTRY</span><span style="color:var(--lt);font-size:11px;">[ SET_WORLD ]</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></span><span class="clk" id="clk">00:00:00</span></div>
+  <div class="menubar"><span>FILE</span><span>VIEW</span><span>MEASURE</span><span>LOG</span><span>HELP</span></div>
+
+  <div class="body">
+    <div style="display:flex;flex-direction:column;gap:3px;min-height:0;">
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="ph">▣ SYSTEM</div>
+        <div class="pb">
+          <div class="kv"><span class="k">SRC</span><span class="v">SET_WORLD</span></div>
+          <div class="kv"><span class="k">SINCE</span><span class="v">2022</span></div>
+          <div class="kv"><span class="k">REC</span><span class="v" id="recv">● ACTIVE</span></div>
+          <div class="led-grid" id="ledgrid"></div>
+        </div>
+      </div>
+      <div class="panel" style="flex:1;">
+        <div class="ph">▣ SIGNAL</div>
+        <div class="pb">
+          <div class="kv"><span class="k">SIG</span><span class="v" id="sigv">62%</span></div>
+          <div class="bar"><i id="sig" style="width:62%"></i></div>
+          <div class="kv"><span class="k">REC</span><span class="v" id="recpv">84%</span></div>
+          <div class="bar amb"><i id="recp" style="width:84%"></i></div>
+          <div class="kv"><span class="k">BUF</span><span class="v">OK</span></div>
+          <div class="bar"><i id="buf" style="width:100%"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">▣ TRANSMISSION — SET WORLD / ACCUMULATION LOG</div>
+      <div class="pb">
+        <div class="intro">
+          <p>There are things that keep appearing. In different cities, different light, different hands. <span class="hl">The same thing, almost.</span> Close enough to ask why.</p>
+          <p>This is one answer to that question. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+        </div>
+        <div class="console" style="margin-top:8px;"><div id="con"></div></div>
+      </div>
+      <div class="search">
+        <input id="q" placeholder="MEASURE INPUT ▸ what you measure, you enter" readonly>
+        <button onclick="go('set-os.html')">SCAN</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph">▣ CONDITION INDEX</div>
+      <div class="pb feed" id="feed" style="padding:6px 8px;"></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <button class="pri" onclick="go('set-os.html')">▸ ENTER  [SET.OS]</button>
+    <button onclick="go('portfolio.html')">BROWSE ▸  [PORTFOLIO]</button>
+  </div>
+  <div class="statusln"><span id="stat">READY.</span><span>SET_MEASURE v.XT2 · 438 SAMPLES</span></div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function feed(){document.getElementById('feed').innerHTML=items.map((it,i)=>`<div class="frow${i===idx?' on':''}"><span class="num">${String(i+1).padStart(2,'0')}</span><span class="q">${it}</span><span class="n">${(Math.random()*0.9+0.1).toFixed(2)}</span></div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);feed();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);feed();e.preventDefault();}});
+feed();
+// boot console typewriter
+const lines=['<span class="t">&gt;</span> INIT SET_MEASURE ......... <span class="ok">OK</span>','<span class="t">&gt;</span> MOUNT /set_world ......... <span class="ok">OK</span>','<span class="t">&gt;</span> LOAD ACCUMULATION.LOG .... <span class="ok">438 REC</span>','<span class="t">&gt;</span> CALIBRATE SENSOR ........ <span class="em">RUNNING</span>','<span class="t">&gt;</span> <span class="em">Someone noticed. Wrote them down. Went looking.</span>','<span class="t">&gt;</span> RECORD SINCE 2022 — <span class="ok">STILL GOING</span>','<span class="t">&gt;</span> What you measure, you enter._'];
+const con=document.getElementById('con');let li=0;
+function type(){
+  if(li>=lines.length){setTimeout(()=>{con.innerHTML='';li=0;type();},3000);return;}
+  const r=document.createElement('div');r.className='row';r.innerHTML=lines[li].replace(/_$/,'<span class="cur"></span>');
+  con.appendChild(r);li++;
+  setTimeout(type,li>=lines.length?0:420);
+}
+type();
+// live meters + clock + leds
+function pad(n){return String(n).padStart(2,'0');}
+setInterval(()=>{const d=new Date();document.getElementById('clk').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());},1000);
+function jitter(id,base,amp){const v=Math.max(0,Math.min(100,base+(Math.random()-0.5)*amp));document.getElementById(id).style.width=v+'%';return Math.round(v);}
+setInterval(()=>{
+  const s=jitter('sig',62,18);document.getElementById('sigv').textContent=s+'%';
+  const r=jitter('recp',84,10);document.getElementById('recpv').textContent=r+'%';
+  document.getElementById('led').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>0.4));
+  const lg=document.getElementById('ledgrid');if(lg.children.length){lg.querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>0.55));}
+},700);
+const lg=document.getElementById('ledgrid');lg.innerHTML=Array(16).fill('<b></b>').join('');
+const stats=['SCANNING SECTOR 04...','MATCH FOUND: STRATA','RECORDING...','SAMPLE +1','IDLE','CALIBRATING...'];
+setInterval(()=>{document.getElementById('stat').textContent=stats[Math.floor(Math.random()*stats.length)];},1400);
+function go(u){if(parent!==window)return;location.href=u;}
+</script>
+</body>
+</html>
