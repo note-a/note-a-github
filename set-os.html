@@ -2114,8 +2114,19 @@ function fetchData(){
             date, exif:p.id||''
           });
         });
+        // 랜덤 셔플 (Fisher-Yates)
+        for(let i=GL_FRAMES.length-1;i>0;i--){
+          const j=Math.floor(Math.random()*(i+1));
+          [GL_FRAMES[i],GL_FRAMES[j]]=[GL_FRAMES[j],GL_FRAMES[i]];
+        }
+        GL_FRAMES.forEach((f,i)=>{f.n=String(i+1).padStart(3,'0');f.total=GL_FRAMES.length;});
         glIdx=0;
         glAThumbClick(0);
+        // 8초마다 다음 사진으로 자동 전환
+        if(window._gvaTimer) clearInterval(window._gvaTimer);
+        window._gvaTimer=setInterval(()=>{
+          glAThumbClick((glIdx+1)%GL_FRAMES.length);
+        },8000);
         const cs=document.getElementById('cs2-grid');
         if(cs&&cs.dataset.built)buildCs2Grid();
         const fs=document.getElementById('gvc-frames');
