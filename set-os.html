@@ -86,7 +86,9 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-profile{flex:0 0 32px;border-top:1px solid var(--g4);position:relative;background:rgba(0,0,0,.3);}
 .lr-profile svg{position:absolute;inset:0;width:100%;height:100%;}
 .lr-profile .plbl{position:absolute;left:3px;top:1px;font-size:5px;color:var(--g3);z-index:2;}
-@media (max-width:1560px){.lr-rail{display:none;}}
+.rr-rail{position:fixed;z-index:3;width:250px;height:306px;transform-origin:top left;
+  display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+@media (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
 
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
 .pnl{
@@ -1423,6 +1425,39 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
           <div class="tr"><span class="k">∇mag</span><span class="v" id="cont-grad">0.00</span></div>
           <div class="tr"><span class="k">azim</span><span class="v" id="cont-az">000°</span></div>
           <div class="tr"><span class="k">pk</span><span class="v hi">3</span></div>
+        </div>
+      </div>
+    </div>
+   </div>
+  </div>
+</aside>
+
+<!-- ── RIGHT RAIL : SVA RADAR ── -->
+<aside class="rr-rail">
+  <div class="lr-dp teal">
+   <div class="lr-dp-in">
+    <div class="lr-h"><span class="arr">▶</span>SVA RADAR<span class="no">F.04</span><span class="tag">4축 형태학</span></div>
+    <div class="lr-b">
+      <div class="lr-gfx"><svg id="rr-radar" viewBox="0 0 210 210" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="lr-side">
+        <div class="sh">SPECIMEN</div>
+        <div class="lr-tbl">
+          <div class="tr"><span class="k">id</span><span class="v tl" id="rr-id">img_000</span></div>
+          <div class="tr"><span class="k">round</span><span class="v" id="rr-rnd">1차</span></div>
+          <div class="tr"><span class="k">n</span><span class="v" id="rr-n">000/438</span></div>
+        </div>
+        <div class="sh" style="border-top:1px solid var(--g4)">AXES</div>
+        <div class="lr-tbl">
+          <div class="tr"><span class="k">DS</span><span class="v" id="rr-ds">0.0</span></div>
+          <div class="tr"><span class="k">SD</span><span class="v" id="rr-sd">0.0</span></div>
+          <div class="tr"><span class="k">SA</span><span class="v" id="rr-sa">0.0</span></div>
+          <div class="tr"><span class="k">KV</span><span class="v hi" id="rr-kv">0.0</span></div>
+        </div>
+        <div class="lr-slbl">KV WEIGHT</div><div class="lr-minibar"><i id="rr-kvbar" style="width:0%;background:#3fb09a"></i></div>
+        <div class="sh" style="margin-top:auto;border-top:1px solid var(--g4)">VERDICT</div>
+        <div class="lr-tbl">
+          <div class="tr"><span class="k">score</span><span class="v hi" id="rr-score">0.00</span></div>
+          <div class="tr"><span class="k">cut</span><span class="v" id="rr-cut">DROP</span></div>
         </div>
       </div>
     </div>
@@ -3629,6 +3664,74 @@ document.addEventListener('keydown',function(e){
       pfpath.setAttribute('d',buildProfile(t));sy+=1.3;if(sy>186)sy=14;scan.setAttribute('y1',sy);scan.setAttribute('y2',sy);
       const px=(sy-14)/172*300;pfscan.setAttribute('x1',px);pfscan.setAttribute('x2',px);
       $('cont-grad').textContent=(Math.abs(Math.sin(t*0.7))*2.4).toFixed(2);$('cont-az').textContent=p2(Math.floor((t*8)%360)).toString().padStart(3,'0')+'°';},50);
+  })();
+})();
+</script>
+
+<!-- ── RIGHT RAIL : SVA RADAR ── -->
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  if(!$('rr-radar'))return;
+
+  /* 오른쪽 레일을 메인(#wrap) 오른쪽 가장자리에 붙이기 (내용 120%) */
+  (function(){
+    const rail=document.querySelector('.rr-rail'),wrap=$('wrap');
+    function place(){
+      if(!rail||!wrap)return;
+      const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
+      const r=wrap.getBoundingClientRect();
+      rail.style.transform='scale('+(s*1.2)+')';
+      rail.style.top=r.top+'px';
+      rail.style.left=(r.right+6)+'px';
+    }
+    window.addEventListener('resize',place);
+    window.addEventListener('orientationchange',()=>setTimeout(place,200));
+    setTimeout(place,0); setTimeout(place,120);
+  })();
+
+  /* ════ SVA RADAR (민트 사각형 입체 압출) ════ */
+  (function(){
+    const svg=$('rr-radar');const cx=105,cy=105,R=72;
+    const axes=[['DS','지배구조'],['SD','공간배치'],['SA','표면이상'],['KV','고유변칙']];
+    const cuts=['DROP','DROP','SUPPORT','CORE'];
+    const ang=i=>-Math.PI/2+i*Math.PI/2;const depth={x:13,y:-12};
+    let rings='';for(let k=1;k<=4;k++){let p='';for(let i=0;i<4;i++)p+=(cx+Math.cos(ang(i))*R*k/4).toFixed(1)+','+(cy+Math.sin(ang(i))*R*k/4).toFixed(1)+' ';
+      rings+='<polygon points="'+p+'" fill="none" stroke="rgba(255,74,22,.12)" stroke-width="0.6"/>';
+      rings+='<text x="'+(cx+2)+'" y="'+(cy-R*k/4+3).toFixed(1)+'" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+(k/4).toFixed(2)+'</text>';}
+    let spokes='',labels='';for(let i=0;i<4;i++){const a=ang(i);
+      spokes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(a)*R).toFixed(1)+'" y2="'+(cy+Math.sin(a)*R).toFixed(1)+'" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>';
+      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)).toFixed(1)+'" fill="#3fb09a" font-size="8" font-family="VT323,monospace" text-anchor="middle">'+axes[i][0]+'</text>';
+      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)+7).toFixed(1)+'" fill="rgba(63,176,154,.5)" font-size="4.5" font-family="IBM Plex Mono" text-anchor="middle">'+axes[i][1]+'</text>';}
+    svg.innerHTML=rings+spokes+labels
+      +'<circle cx="'+cx+'" cy="'+cy+'" r="1.5" fill="rgba(255,74,22,.4)"/>'
+      +'<polygon id="rr-ghost" fill="none" stroke="rgba(63,176,154,.22)" stroke-width="0.8" stroke-dasharray="2 2"/>'
+      +'<g id="rr-3d"></g><g id="rr-dots"></g>';
+    const ghost=svg.querySelector('#rr-ghost'),box=svg.querySelector('#rr-3d'),dots=svg.querySelector('#rr-dots');
+    let cur=[0.6,0.5,0.7,0.9],tgt=[...cur],prev=[...cur],id='img_000',rnd='1차',n=0;
+    const verts=arr=>arr.map((v,i)=>[cx+Math.cos(ang(i))*R*v,cy+Math.sin(ang(i))*R*v]);
+    const ptsStr=v=>v.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    function newTarget(){prev=[...cur];ghost.setAttribute('points',ptsStr(verts(prev)));
+      tgt=axes.map(()=>0.2+Math.random()*0.75);id='img_'+String(Math.floor(Math.random()*900)+100);rnd=Math.random()<0.5?'1차':'2차';n++;}
+    newTarget();setInterval(newTarget,3000);
+    setInterval(()=>{
+      cur=cur.map((v,i)=>v+(tgt[i]-v)*0.08);
+      const f=verts(cur),b=f.map(p=>[p[0]+depth.x,p[1]+depth.y]);
+      let s='<polygon points="'+ptsStr(b)+'" fill="rgba(63,176,154,.07)" stroke="rgba(63,176,154,.3)" stroke-width="0.8"/>';
+      const shades=[.10,.20,.15,.06];
+      for(let i=0;i<4;i++){const j=(i+1)%4;s+='<polygon points="'+ptsStr([f[i],f[j],b[j],b[i]])+'" fill="rgba(63,176,154,'+shades[i]+')" stroke="rgba(63,176,154,.32)" stroke-width="0.6"/>';}
+      s+='<polygon points="'+ptsStr(f)+'" fill="rgba(63,176,154,.22)" stroke="#3fb09a" stroke-width="1.4"/>';
+      box.innerHTML=s;
+      let d='';for(let i=0;i<4;i++){const a=ang(i),x=f[i][0],y=f[i][1];
+        d+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.2" fill="#3fb09a"/>';
+        d+='<text x="'+(x+Math.cos(a)*7).toFixed(1)+'" y="'+(y+Math.sin(a)*7+2).toFixed(1)+'" fill="#3fb09a" font-size="5" font-family="IBM Plex Mono" text-anchor="middle">'+cur[i].toFixed(2)+'</text>';}
+      dots.innerHTML=d;
+      const score=(cur[0]*0.2+cur[1]*0.2+cur[2]*0.25+cur[3]*0.35);
+      $('rr-id').textContent=id;$('rr-rnd').textContent=rnd;$('rr-n').textContent=String(n).padStart(3,'0')+'/438';
+      $('rr-ds').textContent=cur[0].toFixed(2);$('rr-sd').textContent=cur[1].toFixed(2);$('rr-sa').textContent=cur[2].toFixed(2);$('rr-kv').textContent=cur[3].toFixed(2);
+      $('rr-kvbar').style.width=(cur[3]*100).toFixed(0)+'%';
+      $('rr-score').textContent=score.toFixed(2);$('rr-cut').textContent=cuts[Math.min(3,Math.floor(score*4))];
+    },50);
   })();
 })();
 </script>
