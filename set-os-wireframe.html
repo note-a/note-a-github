@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>set-os.html — Wireframe</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:#1a1a2e;color:#c8d0e0;font-family:'Courier New',monospace;font-size:10px;}
+body{padding:20px;min-width:1600px;}
+
+h1{font-size:14px;letter-spacing:3px;color:#7090d0;margin-bottom:6px;}
+.meta{font-size:9px;color:#506080;letter-spacing:1px;margin-bottom:24px;}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;padding:10px 14px;border:1px solid #2a3448;background:#12172a;}
+.lg{display:flex;align-items:center;gap:6px;font-size:8.5px;color:#607090;}
+.lg-box{width:12px;height:12px;border:1px solid;}
+
+/* ── LAYER COLORS ── */
+.bg-layer  {border-color:#2a3a5a!important;background:rgba(20,30,55,.4)!important;}
+.shell-layer{border-color:#3a4a6a!important;background:rgba(25,35,60,.5)!important;}
+.rail-layer {border-color:#4a5a7a!important;background:rgba(30,45,75,.5)!important;}
+.panel-layer{border-color:#5a6a9a!important;background:rgba(35,50,90,.5)!important;}
+.inner-layer{border-color:#6a7aaa!important;background:rgba(40,55,100,.4)!important;}
+.sub-layer  {border-color:#7a8aba!important;background:rgba(45,60,110,.35)!important;}
+.hidden-layer{border-color:#8a4a6a!important;background:rgba(60,25,50,.4)!important;}
+.overlay-layer{border-color:#6a8a4a!important;background:rgba(35,55,25,.35)!important;}
+
+/* ── LABEL ── */
+.lbl{
+  position:absolute;top:2px;left:4px;
+  font-size:8px;letter-spacing:.5px;
+  white-space:nowrap;pointer-events:none;
+  line-height:1.2;
+}
+.lbl .id{color:#90b0e0;font-weight:bold;}
+.lbl .cls{color:#708090;}
+.lbl .note{color:#8a6a9a;font-style:italic;}
+.lbl.hidden-note .id{color:#c07090;}
+
+/* ── GENERAL BOX ── */
+.wf{
+  position:relative;
+  border:1px solid;
+  border-radius:1px;
+}
+
+/* ─────────────────────────────────────
+   BACKGROUND SECTION
+───────────────────────────────────── */
+.bg-section{
+  position:relative;height:60px;
+  border:1px solid #2a3a5a;background:rgba(12,18,35,.7);
+  margin-bottom:6px;display:flex;align-items:center;gap:8px;padding:6px 12px;
+}
+.bg-block{
+  position:relative;flex:1;height:44px;
+  border:1px dashed;display:flex;align-items:center;justify-content:center;
+  font-size:8px;letter-spacing:1px;
+}
+
+/* ─────────────────────────────────────
+   SHELL
+───────────────────────────────────── */
+#wf-shell{
+  display:flex;gap:5px;
+  height:700px;
+  border:1px solid #3a4a6a;background:rgba(16,24,45,.6);
+  padding:5px;position:relative;
+}
+.wf-section-title{
+  position:absolute;top:-14px;left:0;
+  font-size:8px;color:#405070;letter-spacing:2px;
+}
+
+/* ─────────────────────────────────────
+   RAILS
+───────────────────────────────────── */
+.wf-rail{
+  width:160px;flex-shrink:0;
+  height:100%;
+  border:1px solid #4a5a7a;background:rgba(22,34,64,.5);
+  padding:3px;display:flex;flex-direction:column;gap:3px;position:relative;
+  overflow:hidden;
+}
+.wf-lr-dp{
+  flex:1;position:relative;min-height:0;
+  border:1px solid #5a6a9a;background:rgba(28,42,80,.4);
+  display:flex;flex-direction:column;
+}
+.wf-lr-h{
+  height:17px;flex-shrink:0;
+  border-bottom:1px solid #5a6a9a;
+  background:rgba(40,55,100,.3);
+  display:flex;align-items:center;padding:0 5px;
+  font-size:7.5px;color:#6a7aaa;letter-spacing:.5px;
+}
+.wf-lr-b{
+  flex:1;min-height:0;position:relative;
+  display:flex;align-items:center;justify-content:center;
+}
+.wf-gfx{
+  width:80%;height:80%;
+  border:1px dashed #4a5a7a;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;color:#4a5a7a;letter-spacing:.5px;
+}
+.wf-lr-dcol{
+  border-top:1px solid #3a4a6a;padding:3px 4px;font-size:7px;color:#506080;
+}
+
+/* ─────────────────────────────────────
+   WRAP
+───────────────────────────────────── */
+#wf-wrap{
+  flex:1;display:grid;
+  height:100%;
+  grid-template-rows:1fr 84px 1fr 28px;
+  gap:5px;min-width:0;position:relative;
+  overflow:hidden;
+}
+
+/* ─────────────────────────────────────
+   TOP-ROW
+───────────────────────────────────── */
+#wf-top-row{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;position:relative;
+  min-height:0;overflow:hidden;
+}
+.wf-pnl{
+  border:1px solid #5a6a9a;background:rgba(28,42,80,.45);
+  display:flex;flex-direction:column;position:relative;min-height:0;
+  overflow:hidden;
+}
+.wf-pnl-in{
+  flex:1;display:flex;flex-direction:column;min-height:0;
+  border:1px solid #4a5a7a;margin:2px;background:rgba(22,34,64,.5);
+}
+.wf-ph{
+  flex-shrink:0;
+  border-bottom:1px solid #5a6a9a;
+}
+.wf-ph-row1{
+  height:22px;display:flex;align-items:center;gap:4px;padding:0 6px;
+  border-bottom:1px solid #4a5a7a;
+  font-size:7.5px;color:#6a7aaa;
+}
+.wf-ph-row2{
+  height:18px;display:flex;align-items:center;padding:0 4px;gap:3px;
+  font-size:7.5px;color:#506080;
+}
+.wf-tab{
+  height:14px;padding:0 8px;
+  border:1px solid #4a5a7a;font-size:7px;
+  display:flex;align-items:center;letter-spacing:.5px;color:#6a8aaa;
+}
+.wf-tab.active{background:rgba(60,100,180,.2);color:#90b0e0;border-color:#6a8aaa;}
+.wf-ph-wc{margin-left:auto;display:flex;gap:3px;}
+.wf-wc-b{width:10px;height:10px;border:1px solid #4a5a7a;border-radius:1px;}
+.wf-wc-b.cl{border-color:#7a4a5a;}
+
+.wf-view-area{flex:1;min-height:0;position:relative;}
+
+/* gva-wrap */
+.wf-gva{
+  position:absolute;inset:4px;
+  border:1px solid #5a7a9a;background:rgba(20,35,60,.6);
+  display:grid;grid-template-columns:1fr 80px;grid-template-rows:1fr 50px;gap:3px;
+  padding:3px;
+}
+.wf-gva-main{
+  grid-row:1/2;grid-column:1/2;
+  border:1px solid #4a6a8a;background:rgba(15,25,50,.5);
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.wf-gva-sub{
+  font-size:7px;color:#4a6a8a;letter-spacing:.5px;text-align:center;
+}
+
+/* overlay items inside gva */
+.wf-ov-item{
+  position:absolute;border:1px dashed;font-size:6.5px;
+  display:flex;align-items:center;justify-content:center;
+  letter-spacing:.3px;
+}
+
+/* scatter / signal */
+.wf-scatter{
+  grid-column:1/2;grid-row:2/3;
+  border:1px solid #4a5a7a;background:rgba(18,28,55,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:7px;color:#4a5a7a;
+}
+.wf-sidebar-r{
+  grid-column:2/3;grid-row:1/3;
+  border:1px solid #3a4a7a;background:rgba(16,24,50,.5);
+  padding:3px;display:flex;flex-direction:column;gap:2px;
+}
+.wf-sr-block{
+  border:1px solid #3a4a7a;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:6.5px;color:#4a5a7a;letter-spacing:.3px;
+}
+
+/* HUD PANEL */
+.wf-h-title{
+  flex-shrink:0;border-bottom:1px solid #5a6a9a;
+}
+.wf-h-title-row1{
+  height:40px;display:flex;align-items:center;padding:4px 8px;gap:6px;
+  border-bottom:1px solid #4a5a7a;
+}
+.wf-logo{
+  width:70px;height:28px;border:1px solid #5a6a9a;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;color:#6a7aaa;letter-spacing:1px;
+}
+.wf-badges{
+  display:flex;flex-direction:column;gap:3px;
+}
+.wf-badge{width:50px;height:10px;border:1px solid #4a5a7a;background:rgba(30,45,90,.5);}
+.wf-h-title-row2{
+  height:22px;display:flex;align-items:center;padding:0 6px;gap:4px;
+}
+.wf-hmenu-item{
+  height:14px;padding:0 6px;border:1px solid #3a4a6a;
+  font-size:7px;color:#506080;display:flex;align-items:center;letter-spacing:.5px;
+}
+.wf-hsearch{
+  margin-left:auto;height:16px;width:80px;border:1px solid #4a5a7a;
+  display:flex;align-items:center;padding:0 4px;font-size:7px;color:#4a5a7a;
+}
+.wf-h-list{flex:1;min-height:0;display:flex;flex-direction:column;}
+.wf-h-cols{
+  height:16px;display:flex;align-items:center;
+  border-bottom:1px solid #3a4a6a;padding:0 4px;gap:4px;
+  font-size:7px;color:#405070;letter-spacing:.5px;background:rgba(20,30,60,.4);
+}
+.wf-h-rows{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:1px;padding:2px;}
+.wf-h-row{
+  height:18px;display:flex;align-items:center;gap:3px;padding:0 3px;
+  border:1px solid transparent;font-size:7px;color:#506080;
+}
+.wf-h-row.sel{border-color:#5a6a9a;background:rgba(40,60,110,.4);}
+.wf-r-cell{flex-shrink:0;border:1px solid #2a3a5a;height:12px;}
+.wf-h-folders{
+  flex-shrink:0;height:70px;border-top:1px solid #3a4a6a;
+  padding:4px;display:flex;gap:3px;flex-wrap:wrap;
+}
+.wf-fld{
+  width:52px;height:42px;border:1px solid #3a4a7a;
+  background:rgba(25,38,70,.4);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;font-size:6.5px;color:#405070;
+}
+
+/* ─────────────────────────────────────
+   GBAR
+───────────────────────────────────── */
+#wf-gbar{
+  height:84px;position:relative;
+  border:1px solid #5a6a9a;background:rgba(22,34,64,.5);
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;padding:3px;
+}
+.wf-gbar-col{
+  border:1px solid #4a5a7a;background:rgba(18,28,55,.4);
+  display:flex;align-items:center;gap:3px;padding:0 6px;
+  font-size:7.5px;color:#6a7aaa;flex-wrap:wrap;
+}
+.wf-gbar-tab{
+  height:18px;padding:0 8px;border:1px solid #4a5a7a;
+  font-size:7.5px;display:flex;align-items:center;letter-spacing:.5px;color:#6a8aaa;
+}
+.wf-gbar-tab.on{background:rgba(50,80,160,.25);color:#90b0e0;border-color:#6a8aaa;}
+.wf-gbar-info{
+  flex-shrink:0;height:18px;padding:0 8px;
+  border:1px solid #3a4a6a;font-size:7px;color:#4a6a8a;
+  display:flex;align-items:center;gap:3px;
+}
+.wf-mode-row{
+  display:flex;gap:2px;align-items:center;
+}
+.wf-mb{
+  height:18px;padding:0 8px;border:1px solid #4a5a7a;
+  font-size:7.5px;display:flex;align-items:center;color:#6a8aaa;cursor:pointer;
+  letter-spacing:.5px;
+}
+.wf-mb.on{background:rgba(50,80,160,.3);color:#a0c0f0;border-color:#7a9aca;}
+
+/* ─────────────────────────────────────
+   BOT-ROW
+───────────────────────────────────── */
+#wf-bot-row{
+  display:grid;grid-template-columns:1fr 2fr;gap:5px;min-height:0;position:relative;
+  overflow:hidden;
+}
+.wf-bot-left{
+  display:flex;flex-direction:column;gap:4px;
+  border:1px solid #4a5a7a;padding:3px;background:rgba(18,28,55,.4);position:relative;
+}
+.wf-bl-split{
+  display:grid;grid-template-columns:1fr 1fr;gap:3px;flex-shrink:0;height:100px;
+}
+.wf-pnl-dim{
+  border:1px solid #3a4a6a;background:rgba(16,24,50,.4);
+  display:flex;flex-direction:column;position:relative;
+}
+.wf-pnl-dim-in{
+  flex:1;border:1px solid #2a3a5a;margin:2px;background:rgba(12,18,40,.4);
+  display:flex;flex-direction:column;padding:4px;gap:3px;
+}
+
+/* PC — Processing Console */
+.wf-pc{
+  flex:1;min-height:0;
+  border:1px solid #4a5a7a;background:rgba(18,28,55,.4);
+  display:flex;flex-direction:column;position:relative;
+}
+.wf-pc-in{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  border:1px solid #3a4a6a;margin:2px;background:rgba(14,22,45,.45);
+}
+.wf-pc-title{
+  flex-shrink:0;padding:6px 8px;
+  border-bottom:1px solid #3a4a6a;
+}
+.wf-pc-t{font-size:9px;color:#7090c0;letter-spacing:1.5px;}
+.wf-pc-sub{font-size:7px;color:#405060;margin-top:2px;letter-spacing:.5px;}
+.wf-pc-roombar{
+  flex-shrink:0;height:22px;border-bottom:1px solid #2a3a5a;
+  display:flex;align-items:center;gap:3px;padding:0 6px;
+}
+.wf-pc-rb-cell{
+  flex:1;height:14px;border:1px solid #2a3a5a;
+  display:flex;align-items:center;justify-content:center;
+  font-size:6.5px;color:#3a4a6a;
+}
+.wf-pc-main{
+  flex:1;min-height:0;display:grid;grid-template-columns:1fr 100px;gap:3px;padding:3px;
+}
+.wf-pc-log{
+  border:1px solid #2a3a5a;background:rgba(10,16,36,.5);
+  display:flex;flex-direction:column;gap:2px;padding:3px;overflow:hidden;
+}
+.wf-pc-row{
+  height:14px;border:1px solid #2a3a5a;font-size:6.5px;
+  display:flex;align-items:center;padding:0 4px;color:#3a5070;gap:4px;
+}
+.wf-pc-row.divider{border-style:dashed;border-color:#2a3a5a;justify-content:center;}
+.wf-pc-side{
+  border:1px solid #2a3a5a;background:rgba(10,16,36,.4);
+  display:flex;flex-direction:column;gap:2px;padding:3px;
+}
+.wf-pc-side-sec{
+  border:1px solid #2a3a5a;flex:1;padding:2px;display:flex;flex-direction:column;gap:1px;
+}
+.wf-pc-sh{font-size:6.5px;color:#3a4a6a;border-bottom:1px solid #2a3a5a;padding:0 2px;height:12px;display:flex;align-items:center;}
+.wf-pc-user{height:12px;border:1px solid #2a3a5a;font-size:6px;color:#2a3a5a;display:flex;align-items:center;padding:0 3px;}
+.wf-pc-input{
+  flex-shrink:0;height:22px;border-top:1px solid #2a3a5a;
+  display:flex;align-items:center;padding:0 8px;gap:4px;
+  font-size:7.5px;color:#4a6a8a;letter-spacing:.5px;
+}
+.wf-pc-fkeys{
+  flex-shrink:0;height:18px;border-top:1px solid #2a3a5a;
+  display:flex;align-items:center;padding:0 4px;gap:2px;
+}
+.wf-fk{
+  height:12px;padding:0 4px;border:1px solid #2a3a5a;
+  font-size:6.5px;color:#3a4a6a;display:flex;align-items:center;
+}
+
+/* ─────────────────────────────────────
+   BOTBAR
+───────────────────────────────────── */
+#wf-botbar{
+  height:28px;
+  border:1px solid #5a6a9a;background:rgba(20,30,60,.6);
+  display:flex;align-items:center;gap:2px;padding:0 4px;position:relative;
+}
+.wf-binfo{
+  height:20px;padding:0 10px;border:1px solid #3a4a6a;
+  font-size:7px;color:#4a6080;display:flex;align-items:center;gap:4px;
+}
+.wf-binfo.mode{flex:0 0 auto;}
+
+/* ─────────────────────────────────────
+   HIDDEN ELEMENTS SECTION
+───────────────────────────────────── */
+.hidden-section{
+  margin-top:30px;
+  border:1px dashed #6a3a5a;background:rgba(40,15,35,.4);
+  padding:12px;position:relative;
+}
+.hidden-section-title{
+  position:absolute;top:-10px;left:8px;background:#1a1a2e;
+  font-size:8px;letter-spacing:2px;color:#8a4a7a;padding:0 6px;
+}
+.hidden-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.wf-modal{
+  border:1px dashed #8a4a6a;background:rgba(50,20,40,.4);
+  padding:6px;position:relative;
+}
+.wf-modal-title{font-size:8px;color:#9a5a7a;letter-spacing:1px;margin-bottom:6px;}
+.wf-modal-head{
+  height:24px;border:1px solid #6a3a5a;background:rgba(60,25,50,.4);
+  display:flex;align-items:center;padding:0 8px;font-size:7.5px;color:#8a5a7a;
+  margin-bottom:3px;
+}
+.wf-modal-body{
+  border:1px solid #5a3a5a;min-height:60px;background:rgba(40,16,36,.4);
+  padding:4px;font-size:7px;color:#6a4a6a;letter-spacing:.5px;
+}
+
+/* bg-lights hidden */
+.wf-bg-lights{
+  border:1px dashed #8a4a6a;background:rgba(50,20,40,.3);
+  padding:4px 8px;font-size:7.5px;color:#8a4a6a;letter-spacing:.5px;
+  display:flex;align-items:center;gap:6px;
+}
+.wf-vl-window{
+  border:1px solid #5a3a6a;padding:4px;
+}
+.wf-vl-head{height:18px;border:1px solid #4a3a5a;display:flex;align-items:center;padding:0 6px;font-size:7px;color:#6a4a7a;margin-bottom:2px;}
+.wf-vl-body{border:1px solid #3a2a4a;min-height:40px;padding:3px;display:flex;flex-direction:column;gap:1px;}
+.wf-vl-row{height:12px;border:1px solid #3a2a4a;font-size:6.5px;color:#4a3a5a;display:flex;align-items:center;padding:0 3px;}
+
+/* Access overlay */
+.wf-access{
+  position:absolute;inset:0;
+  border:1px dashed #4a8a6a;background:rgba(20,50,35,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:7px;color:#5a9a7a;letter-spacing:1px;pointer-events:none;
+}
+
+/* Collapsed rail panel */
+.wf-lr-dp.collapsed{
+  border-style:dashed;opacity:.6;
+}
+
+/* stmt scroll */
+.wf-stmt{
+  border:1px solid #4a5a7a;background:rgba(16,24,50,.4);
+  flex:0 0 60px;padding:6px 8px;
+  font-size:7.5px;color:#4a6080;line-height:1.8;letter-spacing:.3px;
+}
+
+/* Scatter sub-elements */
+.wf-scatter-dots{
+  width:100%;height:100%;position:relative;
+}
+.wf-dot{
+  position:absolute;width:5px;height:5px;border:1px solid #6a8aaa;border-radius:50%;
+}
+
+/* ─────────────────────────────────────
+   TOOLTIP on hover
+───────────────────────────────────── */
+[data-tip]{cursor:help;}
+[data-tip]:hover::after{
+  content:attr(data-tip);
+  position:absolute;z-index:9999;
+  bottom:calc(100% + 4px);left:0;
+  background:#0a1020;border:1px solid #4a6080;
+  font-size:8px;color:#90b0e0;padding:3px 6px;
+  white-space:nowrap;pointer-events:none;letter-spacing:.5px;
+}
+</style>
+</head>
+<body>
+
+<h1>SET-OS.HTML — WIREFRAME</h1>
+<div class="meta">note-a.github.io/set-os.html &nbsp;·&nbsp; 모든 DOM 요소 포함 (hidden 포함) &nbsp;·&nbsp; 실제 레이아웃 기반</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="lg"><div class="lg-box bg-layer"></div>배경 레이어</div>
+  <div class="lg"><div class="lg-box shell-layer"></div>#shell 메인</div>
+  <div class="lg"><div class="lg-box rail-layer"></div>사이드 레일</div>
+  <div class="lg"><div class="lg-box panel-layer"></div>패널(.pnl)</div>
+  <div class="lg"><div class="lg-box inner-layer"></div>패널 내부</div>
+  <div class="lg"><div class="lg-box sub-layer"></div>서브 요소</div>
+  <div class="lg"><div class="lg-box hidden-layer"></div>display:none (hidden)</div>
+  <div class="lg"><div class="lg-box overlay-layer"></div>오버레이</div>
+</div>
+
+<!-- ══ BACKGROUND LAYER ══ -->
+<div style="position:relative;margin-bottom:6px;">
+  <div style="font-size:8px;color:#304050;letter-spacing:2px;margin-bottom:3px;">▸ #bg — 배경 컨테이너 (position:fixed; inset:0; z-index:0)</div>
+  <div class="bg-section bg-layer">
+    <div class="lbl"><span class="id">#bg</span></div>
+    <div class="bg-block" style="border-color:#8a4a6a;color:#7a3a5a;" data-tip="#bg-lights · display:none · position:absolute">
+      <span class="id">#bg-lights</span>&nbsp;<span style="color:#7a3a5a;">[display:none]</span>
+    </div>
+    <div class="bg-block" style="border-color:#4a5a7a;color:#506080;">
+      <span class="id">#bg-grid</span>&nbsp;<span class="cls">.bg-grid</span>
+    </div>
+    <div class="bg-block" style="border-color:#3a4a6a;color:#406070;">
+      <span class="id">#bg-vignette</span>
+    </div>
+  </div>
+  <div style="font-size:7.5px;color:#304050;letter-spacing:1px;margin-top:3px;padding-left:4px;">
+    ▸ <span class="id" style="color:#405060;">.crt</span> — CRT 스캔라인 오버레이 (position:fixed; pointer-events:none; z-index:9999)
+  </div>
+</div>
+
+<!-- ══ SHELL ══ -->
+<div style="position:relative;margin-bottom:4px;">
+  <div style="font-size:8px;color:#304050;letter-spacing:2px;margin-bottom:3px;">▸ #shell — 메인 셸 (display:flex; gap:5px)</div>
+</div>
+
+<div id="wf-shell" style="min-height:620px;">
+  <div class="lbl" style="position:absolute;top:-4px;left:0;"><span class="id">#shell</span></div>
+
+  <!-- ════ LEFT RAIL ════ -->
+  <aside class="wf-rail rail-layer" style="width:155px;">
+    <div class="lbl"><span class="id">aside</span><br><span class="cls">.lr-rail</span><br><span class="note">hidden &lt;1560px</span></div>
+
+    <!-- F.01 SET MAP -->
+    <div class="wf-lr-dp panel-layer" style="flex:1.2;" data-tip=".lr-dp.teal — SET MAP panel F.01">
+      <div class="wf-lr-h">F.01 · SET MAP</div>
+      <div class="wf-lr-b inner-layer">
+        <div class="wf-gfx">SVG<br>GRAPH</div>
+      </div>
+    </div>
+
+    <!-- F.02 CONTOUR FIELD -->
+    <div class="wf-lr-dp panel-layer" style="flex:1;" data-tip=".lr-dp — CONTOUR FIELD F.02">
+      <div class="wf-lr-h">F.02 · CONTOUR FIELD</div>
+      <div class="wf-lr-b inner-layer" style="flex-direction:column;justify-content:center;gap:3px;">
+        <div class="wf-gfx" style="height:55%;">SVG GFX</div>
+        <div style="border:1px solid #3a4a6a;height:28%;display:flex;align-items:center;justify-content:center;font-size:7px;color:#4a5a7a;">.lr-profile</div>
+      </div>
+    </div>
+
+    <!-- F.03 DATA -->
+    <div class="wf-lr-dp panel-layer" style="flex:1.2;" data-tip=".lr-dp.data — DATA F.03">
+      <div class="wf-lr-h">F.03 · DATA</div>
+      <div class="wf-lr-b inner-layer" style="flex-direction:column;justify-content:flex-start;padding:2px;gap:1px;">
+        <div class="wf-lr-dcol">.lr-dcol CARDINALITY</div>
+        <div class="wf-lr-dcol">.lr-dcol PERIM<br><div style="height:4px;background:rgba(60,80,140,.4);margin-top:2px;width:70%;">[.lr-minibar]</div></div>
+        <div class="wf-lr-dcol">.lr-dcol ELEV BANDS<br><span id="cont-bands" style="color:#3a4a6a;">#cont-bands</span></div>
+        <div class="wf-lr-dcol">.lr-dcol GRADIENT</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════ WRAP (MAIN GRID) ════ -->
+  <div id="wf-wrap">
+    <div class="lbl" style="top:0;left:0;"><span class="id">#wrap</span><br><span class="cls">grid-rows: 1fr 84px 1fr 28px</span></div>
+
+    <!-- TOP ROW -->
+    <div id="wf-top-row">
+      <div class="lbl"><span class="id">#top-row</span> <span class="cls">grid-cols: 1fr 1fr 1fr</span></div>
+
+      <!-- ── PANEL 1: GALLERY ── -->
+      <div class="wf-pnl panel-layer" data-tip=".pnl — 갤러리 / 분석 패널">
+        <div class="lbl"><span class="cls">.pnl</span></div>
+        <div class="wf-pnl-in inner-layer">
+          <!-- panel header -->
+          <div class="wf-ph sub-layer">
+            <div class="wf-ph-row1">
+              <div style="font-size:7px;color:#6a8aaa;">.ph-arrow</div>
+              <div style="font-size:7px;color:#8090b0;margin-left:4px;">.ph-wt GALLERY</div>
+              <div class="wf-ph-wc">
+                <div class="wf-wc-b"></div><div class="wf-wc-b"></div><div class="wf-wc-b cl"></div>
+              </div>
+            </div>
+            <div class="wf-ph-row2">
+              <div class="wf-tab active">ANALYSIS</div>
+              <div class="wf-tab">CONTACT</div>
+              <div class="wf-tab">FILMSTRIP</div>
+            </div>
+          </div>
+
+          <!-- VIEW AREA -->
+          <div class="wf-view-area">
+            <!-- gly-1 ANALYSIS (active) -->
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:3px;gap:2px;">
+              <div style="font-size:7px;color:#507090;padding:1px 3px;letter-spacing:.5px;">#gly-1.view.active</div>
+              <div class="wf-gva" style="position:relative;flex:1;">
+                <!-- gva-wrap -->
+                <div class="wf-gva-main sub-layer" data-tip="#gva-wrap — 분석 이미지 영역">
+                  <div style="font-size:7px;color:#3a5a7a;text-align:center;line-height:1.5;">#gva-bg (img)<br>#gva-grid<br>#gva-crosshair (svg)<br>#gva-measure-svg</div>
+                  <!-- overlay indicators -->
+                  <div class="wf-ov-item overlay-layer" style="top:4px;left:4px;width:40px;height:14px;border-color:#6a8a4a;color:#5a7a3a;">#gva-ping</div>
+                  <div class="wf-ov-item overlay-layer" style="top:4px;right:4px;width:46px;height:14px;border-color:#6a8a4a;color:#5a7a3a;">#gva-tick</div>
+                  <div class="wf-ov-item overlay-layer" style="bottom:4px;left:4px;width:52px;height:14px;border-color:#6a8a4a;color:#5a7a3a;">#gva-target</div>
+                  <div class="wf-ov-item hidden-layer" style="bottom:4px;right:4px;width:56px;height:14px;color:#c07090;">#gva-access<br>[anim]</div>
+                </div>
+                <div class="wf-scatter sub-layer" style="grid-column:1/2;grid-row:2/3;">
+                  <svg id="gl-scatter" style="width:60%;height:80%;" viewBox="0 0 60 40">
+                    <circle cx="10" cy="30" r="2" fill="none" stroke="#4a6a8a" stroke-width="1"/>
+                    <circle cx="20" cy="20" r="2" fill="none" stroke="#4a6a8a" stroke-width="1"/>
+                    <circle cx="35" cy="25" r="2" fill="none" stroke="#4a6a8a" stroke-width="1"/>
+                    <circle cx="45" cy="15" r="2" fill="none" stroke="#4a6a8a" stroke-width="1"/>
+                    <circle cx="55" cy="10" r="2" fill="none" stroke="#8a6a4a" stroke-width="1"/>
+                  </svg>
+                  <div style="font-size:6.5px;color:#4a5a7a;">#gl-scatter</div>
+                </div>
+                <div class="wf-sidebar-r sub-layer">
+                  <div class="wf-sr-block">신호 바<br>.signal</div>
+                  <div class="wf-sr-block">범례<br>.legend</div>
+                  <div class="wf-sr-block" style="flex:1;">.pc-side-stat<br>data</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- gly-2 hidden indicator -->
+            <div style="position:absolute;top:2px;right:3px;font-size:6.5px;color:#7a4a6a;border:1px dashed #6a3a5a;padding:1px 3px;">#gly-2 [none]</div>
+            <div style="position:absolute;top:12px;right:3px;font-size:6.5px;color:#7a4a6a;border:1px dashed #6a3a5a;padding:1px 3px;">#gly-3 [none]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PANEL 2: HUD ── -->
+      <div class="wf-pnl panel-layer" id="wf-hud-pnl" data-tip="#hud-pnl.pnl — HUD 패널 (목록 / 폴더)">
+        <div class="lbl"><span class="id">#hud-pnl</span> <span class="cls">.pnl</span></div>
+        <div class="wf-pnl-in inner-layer" style="padding:0;">
+          <!-- h-title -->
+          <div class="wf-h-title sub-layer">
+            <div class="wf-h-title-row1">
+              <div class="wf-logo">LOGO BLOCK</div>
+              <div class="wf-badges">
+                <div class="wf-badge"></div>
+                <div class="wf-badge" style="width:40px;"></div>
+              </div>
+              <div class="wf-ph-wc" style="margin-left:auto;">
+                <div class="wf-wc-b"></div><div class="wf-wc-b"></div><div class="wf-wc-b cl"></div>
+              </div>
+            </div>
+            <div class="wf-h-title-row2">
+              <div class="wf-hmenu-item">MENU</div>
+              <div class="wf-hmenu-item">FILTER</div>
+              <div class="wf-hmenu-item">SORT</div>
+              <div class="wf-hsearch">[ SEARCH ▸ ]</div>
+            </div>
+          </div>
+
+          <!-- h-list -->
+          <div class="wf-h-list" style="flex:1;min-height:0;">
+            <div class="wf-h-cols">
+              <div style="width:20px;">#</div>
+              <div style="width:14px;">✓</div>
+              <div style="flex:1;">NAME</div>
+              <div style="width:30px;">THUMB</div>
+              <div style="width:36px;">DATE</div>
+              <div style="width:22px;">SYS</div>
+              <div style="width:12px;">×</div>
+            </div>
+            <div class="wf-h-rows">
+              <div class="wf-h-row sel">
+                <div class="wf-r-cell" style="width:18px;"></div>
+                <div class="wf-r-cell" style="width:12px;"></div>
+                <div class="wf-r-cell" style="flex:1;"></div>
+                <div class="wf-r-cell" style="width:28px;height:16px;background:rgba(40,55,90,.4);"></div>
+                <div class="wf-r-cell" style="width:34px;"></div>
+                <div class="wf-r-cell" style="width:20px;"></div>
+              </div>
+              <div class="wf-h-row">
+                <div class="wf-r-cell" style="width:18px;"></div>
+                <div class="wf-r-cell" style="width:12px;"></div>
+                <div class="wf-r-cell" style="flex:1;"></div>
+                <div class="wf-r-cell" style="width:28px;height:16px;"></div>
+                <div class="wf-r-cell" style="width:34px;"></div>
+                <div class="wf-r-cell" style="width:20px;"></div>
+              </div>
+              <div class="wf-h-row">
+                <div class="wf-r-cell" style="width:18px;"></div>
+                <div class="wf-r-cell" style="width:12px;"></div>
+                <div class="wf-r-cell" style="flex:1;"></div>
+                <div class="wf-r-cell" style="width:28px;height:16px;"></div>
+                <div class="wf-r-cell" style="width:34px;"></div>
+                <div class="wf-r-cell" style="width:20px;"></div>
+              </div>
+              <div class="wf-h-row">
+                <div class="wf-r-cell" style="width:18px;"></div>
+                <div class="wf-r-cell" style="width:12px;"></div>
+                <div class="wf-r-cell" style="flex:1;"></div>
+                <div class="wf-r-cell" style="width:28px;height:16px;"></div>
+                <div class="wf-r-cell" style="width:34px;"></div>
+                <div class="wf-r-cell" style="width:20px;"></div>
+              </div>
+              <div class="wf-h-row">
+                <div class="wf-r-cell" style="width:18px;"></div>
+                <div class="wf-r-cell" style="width:12px;"></div>
+                <div class="wf-r-cell" style="flex:1;"></div>
+                <div class="wf-r-cell" style="width:28px;height:16px;"></div>
+                <div class="wf-r-cell" style="width:34px;"></div>
+                <div class="wf-r-cell" style="width:20px;"></div>
+              </div>
+            </div>
+            <!-- h-folders -->
+            <div class="wf-h-folders sub-layer" style="flex-shrink:0;height:72px;">
+              <div class="lbl"><span class="cls">.h-folders</span></div>
+              <div class="wf-fld">📁<br>FOLDER</div>
+              <div class="wf-fld">📁<br>FOLDER</div>
+              <div class="wf-fld">📁<br>FOLDER</div>
+              <div class="wf-fld">📁<br>FOLDER</div>
+              <div class="wf-fld">📁<br>FOLDER</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── PANEL 3: CONTROL ── -->
+      <div class="wf-pnl panel-layer" data-tip=".pnl — 세 번째 패널 (컨트롤)">
+        <div class="lbl"><span class="cls">.pnl</span> (3rd)</div>
+        <div class="wf-pnl-in inner-layer">
+          <div class="wf-ph sub-layer">
+            <div class="wf-ph-row1">
+              <div style="font-size:7px;color:#8090b0;">.ph-wt CONTROL</div>
+              <div class="wf-ph-wc">
+                <div class="wf-wc-b"></div><div class="wf-wc-b"></div><div class="wf-wc-b cl"></div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;font-size:8px;color:#304050;">
+            콘텐츠 영역
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ GBAR ════ -->
+    <div id="wf-gbar" class="panel-layer">
+      <div class="lbl"><span class="id">#gbar</span> <span class="cls">height:84px · 네비게이션 바</span></div>
+      <!-- col-l: tabs -->
+      <div class="wf-gbar-col inner-layer" data-tip="#nb-col-l — 왼쪽 탭 영역">
+        <div class="lbl"><span class="id">#nb-col-l</span></div>
+        <div style="display:flex;flex-direction:column;gap:3px;padding-top:16px;">
+          <div style="display:flex;gap:2px;flex-wrap:wrap;">
+            <div class="wf-gbar-tab on">SET</div>
+            <div class="wf-gbar-tab">INCLUSION</div>
+            <div class="wf-gbar-tab">LOG</div>
+          </div>
+          <div class="wf-mode-row">
+            <div class="wf-mb on">S SET</div>
+            <div class="wf-mb">I INCLUSION</div>
+            <div class="wf-mb">L LOG</div>
+            <div class="wf-mb">R REF</div>
+            <div class="wf-mb">M MEASURE</div>
+            <div class="wf-mb">A ABOUT</div>
+          </div>
+        </div>
+      </div>
+      <!-- col-c: center -->
+      <div class="wf-gbar-col inner-layer" data-tip="#nb-col-c — 중앙 탭">
+        <div class="lbl"><span class="id">#nb-col-c</span></div>
+        <div style="display:flex;flex-direction:column;gap:3px;padding-top:16px;">
+          <div class="wf-gbar-info">#content-title &nbsp;·&nbsp; #section-tag</div>
+          <div class="wf-gbar-info">#rdo-head &nbsp;·&nbsp; #stat-mode</div>
+        </div>
+      </div>
+      <!-- col-r: info cells -->
+      <div class="wf-gbar-col inner-layer" style="flex-wrap:wrap;gap:2px;" data-tip="#nb-col-r — 정보 셀">
+        <div class="lbl"><span class="id">#nb-col-r</span></div>
+        <div class="wf-gbar-info">.binfo</div>
+        <div class="wf-gbar-info">.binfo</div>
+        <div class="wf-gbar-info">.activate btn</div>
+        <div class="wf-gbar-info">#clk2</div>
+      </div>
+    </div>
+
+    <!-- ════ BOT-ROW ════ -->
+    <div id="wf-bot-row">
+      <div class="lbl"><span class="id">#bot-row</span> <span class="cls">grid-cols: 1fr 2fr</span></div>
+
+      <!-- BOT-LEFT -->
+      <div class="wf-bot-left rail-layer">
+        <div class="lbl"><span class="cls">.bot-left</span></div>
+
+        <!-- bl-split: 2x2 grid -->
+        <div class="wf-bl-split" style="flex-shrink:0;height:110px;">
+          <!-- pnl dim 1: ceb -->
+          <div class="wf-pnl-dim panel-layer" data-tip=".pnl.dim — CEB 패널">
+            <div class="lbl"><span class="cls">.pnl.dim</span></div>
+            <div class="wf-pnl-dim-in inner-layer">
+              <div style="font-size:7px;color:#5a7a9a;letter-spacing:.5px;">.ceb-title</div>
+              <div style="flex:1;border:1px solid #2a3a5a;display:flex;align-items:center;justify-content:center;font-size:6.5px;color:#3a5070;">.ceb-main</div>
+              <div style="font-size:6.5px;color:#3a4a6a;">.ceb-sub / .ceb-go</div>
+            </div>
+          </div>
+
+          <!-- pnl dim 2: vlWindow -->
+          <div class="wf-pnl-dim panel-layer" data-tip=".pnl.dim — vlWindow 패널">
+            <div class="lbl"><span class="cls">.pnl.dim</span></div>
+            <div class="wf-pnl-dim-in inner-layer">
+              <div class="wf-vl-window sub-layer">
+                <div class="wf-vl-head">#vlWindow</div>
+                <div class="wf-vl-body" id="vlBody">
+                  <div class="wf-vl-row">#vlList row</div>
+                  <div class="wf-vl-row">#vlList row</div>
+                  <div class="wf-vl-row">#vlList row</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- pnl dim 3 -->
+          <div class="wf-pnl-dim panel-layer">
+            <div class="lbl"><span class="cls">.pnl.dim</span> (3)</div>
+            <div class="wf-pnl-dim-in inner-layer">
+              <div style="font-size:6.5px;color:#3a4a6a;">콘텐츠 영역</div>
+            </div>
+          </div>
+
+          <!-- pnl dim 4 -->
+          <div class="wf-pnl-dim panel-layer">
+            <div class="lbl"><span class="cls">.pnl.dim</span> (4)</div>
+            <div class="wf-pnl-dim-in inner-layer">
+              <div style="font-size:6.5px;color:#3a4a6a;">콘텐츠 영역</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- pnl dim: main left bottom -->
+        <div class="wf-pnl-dim panel-layer" style="flex:1;min-height:0;">
+          <div class="lbl"><span class="cls">.pnl.dim</span> (하단)</div>
+          <div class="wf-pnl-dim-in inner-layer" style="flex:1;">
+            <div style="font-size:6.5px;color:#3a4a6a;">하단 좌측 콘텐츠</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT: stmt + pc -->
+      <div class="wf-pc panel-layer">
+        <div class="lbl"><span class="cls">.pnl.dim</span> 메인 콘텐츠</div>
+        <div class="wf-pc-in">
+          <!-- stmt scroll -->
+          <div class="wf-stmt sub-layer" style="flex-shrink:0;height:50px;">
+            <div class="lbl" style="position:relative;top:0;left:0;display:inline;font-size:7px;"><span class="id">#stmt</span> <span class="cls">.stmt-scroll</span></div><br>
+            <span style="font-size:7px;color:#3a5060;">— 스테이트먼트 텍스트 스크롤 영역 —</span>
+          </div>
+
+          <!-- pc: processing console -->
+          <div style="flex:1;min-height:0;display:flex;flex-direction:column;border:1px solid #3a4a6a;margin:2px;background:rgba(12,18,40,.4);">
+            <div class="wf-pc-title">
+              <div class="wf-pc-t">.pc-title — PROCESSING CONSOLE</div>
+              <div class="wf-pc-sub">.pc-subtitle</div>
+            </div>
+            <div class="wf-pc-roombar sub-layer">
+              <div class="wf-pc-rb-cell">.pc-roombar-cell</div>
+              <div class="wf-pc-rb-cell">.pc-roombar-cell</div>
+              <div class="wf-pc-rb-cell">.pc-roombar-cell</div>
+              <div class="wf-pc-rb-cell">.pc-roombar-cell</div>
+              <div style="width:40px;height:14px;border:1px solid #3a4a6a;display:flex;align-items:center;justify-content:center;font-size:6px;color:#3a4a6a;">#pc-clk</div>
+            </div>
+            <div class="wf-pc-main" style="flex:1;min-height:0;">
+              <!-- pc-log -->
+              <div class="wf-pc-log sub-layer">
+                <div class="lbl"><span class="id">#pc-log</span> <span class="cls">.pc-log-inner</span></div>
+                <div class="wf-pc-row divider">— row-divider —</div>
+                <div class="wf-pc-row"><span style="color:#4a6a4a;">▸</span> .row CMD output</div>
+                <div class="wf-pc-row"><span style="color:#4a6a4a;">▸</span> .row log entry</div>
+                <div class="wf-pc-row"><span style="color:#6a4a4a;">!</span> .row warning</div>
+                <div class="wf-pc-row"><span style="color:#4a6a4a;">▸</span> .row data</div>
+                <div class="wf-pc-row divider">— divider —</div>
+                <div class="wf-pc-row"><span style="color:#4a6a4a;">▸</span> .row entry</div>
+                <div class="wf-pc-row"><span style="color:#4a6a4a;">▸</span> .row entry</div>
+              </div>
+              <!-- pc-side -->
+              <div class="wf-pc-side sub-layer">
+                <div class="lbl"><span class="cls">.pc-side</span></div>
+                <div class="wf-pc-side-sec inner-layer">
+                  <div class="wf-pc-sh">USERS</div>
+                  <div class="wf-pc-user">.pc-side-user</div>
+                  <div class="wf-pc-user">.pc-side-user</div>
+                  <div class="wf-pc-user">.pc-side-user</div>
+                </div>
+                <div class="wf-pc-side-sec inner-layer">
+                  <div class="wf-pc-sh">STAT</div>
+                  <div class="wf-pc-user">.pc-side-stat-row</div>
+                  <div class="wf-pc-user">.pc-side-stat-row</div>
+                </div>
+                <div style="flex:1;border:1px solid #2a3a5a;font-size:6.5px;color:#2a3a5a;display:flex;align-items:center;justify-content:center;">.pc-side-fill</div>
+                <div style="height:16px;border:1px solid #2a3a5a;font-size:6.5px;color:#2a3a5a;display:flex;align-items:center;padding:0 3px;">.pc-side-conn</div>
+              </div>
+            </div>
+            <div class="wf-pc-input sub-layer">
+              <span style="color:#3a5a7a;">&gt;&nbsp;</span>
+              <span style="color:#5a7a9a;">.pc-input-label</span>
+              <span style="color:#2a3a5a;margin-left:auto;">_</span>
+            </div>
+            <div class="wf-pc-fkeys sub-layer">
+              <div class="wf-fk">F1</div>
+              <div class="wf-fk">F2</div>
+              <div class="wf-fk">F3</div>
+              <div class="wf-fk">F4</div>
+              <div class="wf-fk">F5</div>
+              <div class="wf-fk">F6</div>
+              <div style="flex:1;"></div>
+              <div class="wf-fk">ESC</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ BOTBAR ════ -->
+    <div id="wf-botbar" class="panel-layer">
+      <div class="lbl"><span class="id">#botbar</span> <span class="cls">height:28px</span></div>
+      <div class="wf-binfo">.binfo</div>
+      <div class="wf-binfo">.binfo · #clk</div>
+      <div class="wf-binfo mode" style="flex:1;">
+        <div class="wf-mb on" style="height:16px;font-size:6.5px;">S SET</div>
+        <div class="wf-mb" style="height:16px;font-size:6.5px;">I INCLUSION</div>
+        <div class="wf-mb" style="height:16px;font-size:6.5px;">L LOG</div>
+        <div class="wf-mb" style="height:16px;font-size:6.5px;">R REF</div>
+        <div class="wf-mb" style="height:16px;font-size:6.5px;">M MEASURE</div>
+        <div class="wf-mb" style="height:16px;font-size:6.5px;">A ABOUT</div>
+        <span class="cls" style="margin-left:4px;">.mode-row</span>
+      </div>
+      <div class="wf-binfo">.binfo · XT2</div>
+    </div>
+
+  </div><!-- /wf-wrap -->
+
+  <!-- ════ RIGHT RAIL ════ -->
+  <aside class="wf-rail rail-layer" style="width:155px;">
+    <div class="lbl"><span class="id">aside</span><br><span class="cls">.rr-rail</span><br><span class="note">hidden &lt;1560px</span></div>
+
+    <!-- F.04 SVA RADAR -->
+    <div class="wf-lr-dp panel-layer" style="flex:1.2;" data-tip=".lr-dp.teal — SVA RADAR F.04">
+      <div class="wf-lr-h">F.04 · SVA RADAR</div>
+      <div class="wf-lr-b inner-layer">
+        <div class="wf-gfx" style="border-radius:50%;width:70%;height:70%;">RADAR<br>SVG</div>
+      </div>
+    </div>
+
+    <!-- ANALYSIS panel -->
+    <div class="wf-lr-dp panel-layer" style="flex:1.4;" data-tip=".lr-dp.teal.data — ANALYSIS 패널">
+      <div class="wf-lr-h">ANALYSIS</div>
+      <div class="wf-lr-b inner-layer" style="flex-direction:column;padding:2px;gap:1px;">
+        <div class="wf-lr-dcol">.lr-dcol SPECIMEN</div>
+        <div class="wf-lr-dcol">.lr-dcol AXES</div>
+        <div class="wf-lr-dcol">.lr-dcol VERDICT</div>
+        <div style="flex:1;border:1px solid #3a4a6a;display:flex;align-items:center;justify-content:center;font-size:7px;color:#3a4a6a;margin-top:2px;">.lr-data</div>
+      </div>
+    </div>
+  </aside>
+
+</div><!-- /wf-shell -->
+
+<!-- ══════════════════════════════════════
+     HIDDEN / display:none ELEMENTS
+══════════════════════════════════════ -->
+<div class="hidden-section">
+  <div class="hidden-section-title">HIDDEN ELEMENTS — display:none (평소에 드러나지 않는 DOM)</div>
+  <div class="hidden-grid">
+
+    <!-- stmt-modal -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">#stmt-modal .stmt-modal &nbsp;<span style="font-size:7px;color:#6a3a5a;">[display:none → .open 시 표시]</span></div>
+      <div style="border:1px dashed #6a3a5a;padding:6px;background:rgba(40,15,35,.4);">
+        <div style="font-size:7px;color:#7a4a6a;margin-bottom:4px;">.sm-box</div>
+        <div class="wf-modal-head">.sm-head · STATEMENT 제목 + 닫기</div>
+        <div class="wf-modal-body">
+          #sm-body .sm-body<br>
+          스테이트먼트 전문 텍스트<br>
+          스크롤 가능 영역
+        </div>
+      </div>
+    </div>
+
+    <!-- docs-modal -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">#docs-modal .docs-modal &nbsp;<span style="font-size:7px;color:#6a3a5a;">[display:none → .open 시 표시]</span></div>
+      <div style="border:1px dashed #6a3a5a;padding:6px;background:rgba(40,15,35,.4);">
+        <div style="font-size:7px;color:#7a4a6a;margin-bottom:4px;">.docs-box</div>
+        <div class="wf-modal-head">.docs-head · DOCS 제목 + 닫기</div>
+        <div class="wf-modal-body">
+          .docs-body<br>
+          문서 내용 영역<br>
+          스크롤 가능
+        </div>
+      </div>
+    </div>
+
+    <!-- bg-lights -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">#bg-lights &nbsp;<span style="font-size:7px;color:#6a3a5a;">[display:none · 조명 애니메이션]</span></div>
+      <div class="wf-bg-lights hidden-layer">
+        <div style="width:60px;height:30px;border:1px dashed #7a3a5a;display:flex;align-items:center;justify-content:center;font-size:7px;color:#7a3a5a;">light-1</div>
+        <div style="width:60px;height:30px;border:1px dashed #7a3a5a;display:flex;align-items:center;justify-content:center;font-size:7px;color:#7a3a5a;">light-2</div>
+        <span style="font-size:7px;">— 동적 배경 조명 효과 —</span>
+      </div>
+    </div>
+
+    <!-- gly-2 / gly-3 hidden views -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">갤러리 숨김 뷰 (탭 전환 시 표시)</div>
+
+      <div style="margin-bottom:8px;">
+        <div style="font-size:7.5px;color:#8a5a7a;margin-bottom:3px;">#gly-2.view &nbsp;[display:none] — CONTACT SHEET</div>
+        <div style="border:1px dashed #6a4a7a;padding:4px;background:rgba(35,18,38,.4);">
+          <div style="font-size:7px;color:#5a3a6a;margin-bottom:2px;">.cs2-wrap → #cs2-grid.cs2-grid (6열)</div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:2px;">
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+            <div style="aspect-ratio:1;border:1px solid #4a3a6a;background:rgba(30,14,30,.5);"></div>
+          </div>
+          <div style="font-size:6.5px;color:#4a3a5a;margin-top:2px;">.cs2-cell (.cs2-img + .cs2-bar)</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:7.5px;color:#8a5a7a;margin-bottom:3px;">#gly-3.view &nbsp;[display:none] — FILMSTRIP</div>
+        <div style="border:1px dashed #6a4a7a;padding:4px;background:rgba(35,18,38,.4);">
+          <div style="font-size:7px;color:#5a3a6a;margin-bottom:2px;">.gv-fs → .gv-fs-main + .gv-fs-strip</div>
+          <div style="border:1px solid #4a3a6a;height:28px;display:flex;align-items:center;gap:1px;padding:2px;">
+            <div style="height:4px;border:1px dashed #4a3a6a;flex:1;font-size:5.5px;color:#3a2a5a;display:flex;align-items:center;justify-content:center;">.gv-fs-perf (상단천공)</div>
+          </div>
+          <div style="border:1px solid #4a3a6a;height:20px;display:flex;gap:1px;padding:2px;" id="gvc-frames">
+            <div style="width:24px;border:1px solid #3a2a5a;background:rgba(25,12,28,.5);"></div>
+            <div style="width:24px;border:1px solid #3a2a5a;background:rgba(25,12,28,.5);"></div>
+            <div style="width:24px;border:1px solid #3a2a5a;background:rgba(25,12,28,.5);"></div>
+            <div style="width:24px;border:1px solid #3a2a5a;background:rgba(25,12,28,.5);"></div>
+            <div style="width:24px;border:1px solid #3a2a5a;background:rgba(25,12,28,.5);"></div>
+            <div style="font-size:6px;color:#3a2a5a;margin-left:2px;">#gvc-frames</div>
+          </div>
+          <div style="border:1px solid #4a3a6a;height:8px;margin-top:1px;font-size:5.5px;color:#3a2a5a;display:flex;align-items:center;justify-content:center;">.gv-fs-perf (하단천공)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- gva-access / gva-glitch overlays -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">gva-wrap 숨김 오버레이 요소들</div>
+      <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="wf-modal-head" style="border-color:#4a8a6a;color:#5a9a7a;">#gva-access &nbsp;[display:none] — ACCESS GRANTED 오버레이</div>
+        <div class="wf-modal-head" style="border-color:#4a8a6a;color:#5a9a7a;">#gva-glitch &nbsp;[display:none] — 글리치 효과</div>
+        <div class="wf-modal-head" style="border-color:#4a8a6a;color:#5a9a7a;">#gva-scan-texture — 스캔라인 텍스처</div>
+        <div class="wf-modal-head" style="border-color:#5a6a4a;color:#6a7a5a;">#sc-lock-msg &nbsp;[display:none] — scatter lock 메시지</div>
+      </div>
+    </div>
+
+    <!-- lr-dp collapsed -->
+    <div class="wf-modal">
+      <div class="wf-modal-title">.lr-dp.collapsed &nbsp;<span style="font-size:7px;color:#6a3a5a;">[JS 토글 클래스]</span></div>
+      <div style="border:1px dashed #6a3a5a;padding:4px;background:rgba(35,15,30,.4);">
+        <div class="wf-lr-dp panel-layer wf-lr-dp-collapsed" style="height:30px;border-style:dashed;opacity:.5;">
+          <div class="wf-lr-h" style="height:100%;border:none;color:#6a3a5a;">F.01 · SET MAP &nbsp;[collapsed]</div>
+        </div>
+        <div style="font-size:7px;color:#5a3a5a;margin-top:3px;">클릭 시 .collapsed 토글 → 패널 최소화</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- footnote -->
+<div style="margin-top:20px;font-size:7.5px;color:#304050;letter-spacing:1px;border-top:1px solid #1e2a40;padding-top:8px;">
+  WIREFRAME · set-os.html · note-a.github.io &nbsp;·&nbsp; 모든 div 포함 (visible + hidden) &nbsp;·&nbsp; 레이아웃 비례는 실제 CSS 기반
+</div>
+
+</body>
+</html>
