@@ -1478,6 +1478,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   </div>
 </aside>
 
+<div id="lr-bridge-t" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
+<div id="lr-bridge-b" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
+<div id="rr-bridge-t" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
+<div id="rr-bridge-b" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
+
 <div id="wrap">
   <div class="wc-bl"></div><div class="wc-br"></div>
 
@@ -3596,14 +3601,21 @@ document.addEventListener('keydown',function(e){
 
   /* ── 레일을 메인(#wrap) 왼쪽 가장자리에 붙이기 (wrap과 동일 배율) ── */
   (function(){
-    const rail=document.querySelector('.lr-rail'),wrap=$('wrap'),railH=392;
+    const rail=document.querySelector('.lr-rail'),wrap=$('wrap');
     function place(){
       if(!rail||!wrap)return;
       const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
       const r=wrap.getBoundingClientRect();
-      rail.style.transform='scale('+(s*1.2)+')';  // 내용 120% 확대
-      rail.style.top=r.top+'px';  // wrap 상단 기준 정렬
+      rail.style.transform='scale('+(s*1.2)+')';
+      rail.style.top=r.top+'px';
       rail.style.right=(window.innerWidth-r.left+6)+'px';
+      requestAnimationFrame(()=>{
+        const rb=rail.getBoundingClientRect();
+        const show=window.innerWidth>1560;
+        const bt=$('lr-bridge-t'),bb=$('lr-bridge-b');
+        if(bt){bt.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+rb.right+'px;top:'+rb.top+'px;width:'+(r.left-rb.right)+'px;';}
+        if(bb){bb.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+rb.right+'px;top:'+rb.bottom+'px;width:'+(r.left-rb.right)+'px;';}
+      });
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
@@ -3697,6 +3709,13 @@ document.addEventListener('keydown',function(e){
       rail.style.transform='scale('+(s*1.2)+')';
       rail.style.top=r.top+'px';
       rail.style.left=(r.right+6)+'px';
+      requestAnimationFrame(()=>{
+        const rb=rail.getBoundingClientRect();
+        const show=window.innerWidth>1560;
+        const bt=$('rr-bridge-t'),bb=$('rr-bridge-b');
+        if(bt){bt.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+r.right+'px;top:'+rb.top+'px;width:'+(rb.left-r.right)+'px;';}
+        if(bb){bb.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+r.right+'px;top:'+rb.bottom+'px;width:'+(rb.left-r.right)+'px;';}
+      });
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
