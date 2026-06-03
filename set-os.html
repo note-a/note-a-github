@@ -50,11 +50,13 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .wc-br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
 
 /* ── LEFT RAIL : 집합도 / 등고선 ── */
-.lr-rail{position:fixed;z-index:3;width:300px;height:757px;transform-origin:top right;
+.lr-rail{position:fixed;z-index:3;width:296px;height:392px;transform-origin:top right;
   display:flex;flex-direction:column;gap:6px;pointer-events:none;}
-.lr-dp{flex:1 1 0;min-height:0;background:#050302;border:1px solid var(--g4);
-  display:flex;flex-direction:column;overflow:hidden;position:relative;
-  box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 30px rgba(255,74,22,.05);}
+.lr-dp{flex:1 1 0;min-height:0;background:linear-gradient(180deg,#ff7a4a,#5e2a12);
+  padding:1px;display:flex;overflow:hidden;position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,.6),0 0 24px rgba(255,74,22,.06);}
+.lr-dp-in{flex:1 1 auto;min-width:0;min-height:0;background:#050302;
+  display:flex;flex-direction:column;overflow:hidden;}
 .lr-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;height:17px;padding:0 8px;
   background:linear-gradient(90deg,rgba(255,74,22,.10),transparent);border-bottom:1px solid var(--g4);
   font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--g2);}
@@ -1366,6 +1368,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 <aside class="lr-rail">
   <!-- F.01 집합도 -->
   <div class="lr-dp teal">
+   <div class="lr-dp-in">
     <div class="lr-h"><span class="arr">▶</span>SET MAP<span class="no">F.01</span><span class="tag">집합도</span></div>
     <div class="lr-b">
       <div class="lr-gfx"><svg id="svg-set" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet"></svg></div>
@@ -1386,9 +1389,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
         </div>
       </div>
     </div>
+   </div>
   </div>
   <!-- F.02 등고선 -->
   <div class="lr-dp">
+   <div class="lr-dp-in">
     <div class="lr-h"><span class="arr">▶</span>CONTOUR FIELD<span class="no">F.02</span><span class="tag">등고선</span></div>
     <div class="lr-b" style="flex-direction:column">
       <div style="flex:1 1 auto;display:flex;min-height:0">
@@ -1405,6 +1410,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
       </div>
       <div class="lr-profile"><div class="plbl">SECTION A–A′</div><svg id="svg-prof" viewBox="0 0 300 30" preserveAspectRatio="none"></svg></div>
     </div>
+   </div>
   </div>
 </aside>
 
@@ -3526,13 +3532,13 @@ document.addEventListener('keydown',function(e){
 
   /* ── 레일을 메인(#wrap) 왼쪽 가장자리에 붙이기 (wrap과 동일 배율) ── */
   (function(){
-    const rail=document.querySelector('.lr-rail'),wrap=$('wrap');
+    const rail=document.querySelector('.lr-rail'),wrap=$('wrap'),railH=392;
     function place(){
       if(!rail||!wrap)return;
       const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+s+')';
-      rail.style.top=r.top+'px';
+      rail.style.top=(r.top + (r.height - railH*s)/2)+'px';  // wrap 기준 세로 중앙
       rail.style.right=(window.innerWidth-r.left+6)+'px';
     }
     window.addEventListener('resize',place);
