@@ -3,202 +3,207 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>set-os — annotated</title>
+<title>set-os — annotated wireframe</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+iframe#site{width:100%;height:100%;border:none;display:block;}
 
-#container{position:relative;width:100%;height:100%;}
-
-iframe#site{
-  width:100%;height:100%;
-  border:none;display:block;
+/* ── 우상단 토글 버튼 ── */
+#ann-btn{
+  position:fixed;top:10px;right:10px;z-index:99999;
+  background:rgba(0,0,0,.9);color:#ffd700;
+  border:1px solid rgba(255,215,0,.7);
+  font-family:'Courier New',monospace;font-size:10px;
+  padding:5px 14px;cursor:pointer;letter-spacing:1.5px;
+  transition:background .15s;
 }
-
-#ann-layer{
-  position:absolute;inset:0;
-  pointer-events:none;
-  z-index:9999;
-  font-family:'Courier New',monospace;
-}
-
-.ann{
-  position:absolute;
-  pointer-events:none;
-  box-sizing:border-box;
-}
-
-.ann-lbl{
-  position:absolute;
-  font-size:10px;
-  font-weight:bold;
-  color:#ffd700;
-  background:rgba(0,0,0,.88);
-  padding:2px 7px;
-  letter-spacing:.6px;
-  white-space:nowrap;
-  line-height:17px;
-  z-index:1;
-  border-bottom:1px solid currentColor;
-}
-.ann-lbl.tl{top:-19px;left:0;}
-.ann-lbl.tr{top:-19px;right:0;}
-.ann-lbl.bl{bottom:-19px;left:0;}
-.ann-lbl.br{bottom:-19px;right:0;}
-.ann-lbl.in{top:3px;left:4px;}
-.ann-lbl.in-br{bottom:3px;right:4px;}
-
-/* color variants */
-.ann.yellow{border:2px solid rgba(255,200,0,.75);}
-.ann.cyan  {border:2px solid rgba(0,220,200,.65);}
-.ann.green {border:2px solid rgba(80,220,80,.65);}
-.ann.pink  {border:2px solid rgba(220,80,160,.65);}
-.ann.blue  {border:2px solid rgba(80,140,255,.65);}
-.ann.orange{border:2px solid rgba(255,140,40,.65);}
-.ann.gray  {border:1px dashed rgba(160,160,160,.4);}
-.ann.red   {border:2px dashed rgba(255,80,80,.65);}
-
-.ann-lbl.yellow{color:#ffd700;}
-.ann-lbl.cyan  {color:#00dcc8;}
-.ann-lbl.green {color:#50dc50;}
-.ann-lbl.pink  {color:#dc50a0;}
-.ann-lbl.blue  {color:#508fff;}
-.ann-lbl.orange{color:#ff8c28;}
-.ann-lbl.gray  {color:#aaaaaa;}
-.ann-lbl.red   {color:#ff5050;}
-
-/* corner tick marks */
-.ann.yellow::before,.ann.cyan::before,.ann.green::before,
-.ann.pink::before,.ann.blue::before,.ann.orange::before{
-  content:'';
-  position:absolute;
-  top:-3px;left:-3px;
-  width:5px;height:5px;
-  border-top:1px solid currentColor;
-  border-left:1px solid currentColor;
+#ann-btn:hover{background:rgba(40,30,0,.95);}
+#ann-count{
+  position:fixed;top:10px;right:130px;z-index:99999;
+  color:#ffd700;font-family:'Courier New',monospace;font-size:9px;
+  background:rgba(0,0,0,.8);padding:4px 8px;letter-spacing:.5px;
 }
 </style>
 </head>
 <body>
-<div id="container">
-  <iframe id="site" src="set-os.html"></iframe>
-  <div id="ann-layer"></div>
-</div>
+<iframe id="site" src="set-os.html"></iframe>
+<button id="ann-btn">⟳ ANNOTATE</button>
+<div id="ann-count"></div>
 
 <script>
-const site  = document.getElementById('site');
-const layer = document.getElementById('ann-layer');
+const site     = document.getElementById('site');
+const annBtn   = document.getElementById('ann-btn');
+const annCount = document.getElementById('ann-count');
 
-/* ─── annotation config ─── */
+/* ─── annotation definitions ─── */
 const TARGETS = [
-  /* ── OUTERMOST ── */
-  { s:'#shell',      lbl:'#shell',                   pos:'bl', c:'gray' },
-  { s:'#wrap',       lbl:'div#wrap',                 pos:'bl', c:'yellow' },
+  /* structure */
+  { s:'#shell',    lbl:'#shell',                              pos:'bl', c:'#888' },
+  { s:'#wrap',     lbl:'div#wrap',                            pos:'bl', c:'#ffd700' },
 
-  /* ── RAILS ── */
-  { s:'.lr-rail',    lbl:'aside.lr-rail (hidden <1560px)',  pos:'tl', c:'cyan' },
-  { s:'.rr-rail',    lbl:'aside.rr-rail (hidden <1560px)',  pos:'tl', c:'cyan' },
+  /* rails */
+  { s:'.lr-rail',  lbl:'aside.lr-rail  (hidden <1560px)',     pos:'tl', c:'#00dcc8' },
+  { s:'.rr-rail',  lbl:'aside.rr-rail  (hidden <1560px)',     pos:'tl', c:'#00dcc8' },
 
-  /* ── TOP ROW ── */
-  { s:'#top-row',    lbl:'#top-row (grid-cols: 1fr 1fr 1fr)', pos:'tl', c:'yellow' },
+  /* top row */
+  { s:'#top-row',  lbl:'#top-row  ·  grid-cols: 1fr 1fr 1fr',pos:'tl', c:'#ffd700' },
 
-  /* Panel 1: gallery */
-  { s:'#top-row > .pnl:first-child',         lbl:'.pnl', pos:'tl', c:'orange' },
-  { s:'#top-row > .pnl:first-child .ph',     lbl:'.ph (헤더: .ph-row1 / .ph-row2 / .ph-nav)', pos:'tl', c:'orange' },
-  { s:'#gly-1',      lbl:'#gly-1 .view.active — ANALYSIS', pos:'tl', c:'green' },
-  { s:'#gva-wrap',   lbl:'#gva-wrap', pos:'tl', c:'green' },
-  { s:'#gl-scatter', lbl:'#gl-scatter (svg)', pos:'bl', c:'green' },
-  { s:'#gly-2',      lbl:'#gly-2 .view [display:none]',     pos:'tl', c:'red' },
-  { s:'#gly-3',      lbl:'#gly-3 .view [display:none]',     pos:'tl', c:'red' },
+  /* panel 1 */
+  { s:'#top-row > .pnl:first-child .ph',
+                   lbl:'.ph  (헤더: .ph-row1 / .ph-row2 / .ph-nav)', pos:'tl', c:'#ff8c28' },
+  { s:'#gly-1',    lbl:'#gly-1 .view.active — ANALYSIS',     pos:'tl', c:'#50dc50' },
+  { s:'#gva-wrap', lbl:'#gva-wrap',                           pos:'tl', c:'#50dc50' },
+  { s:'#gly-2',    lbl:'#gly-2  [display:none]',              pos:'in', c:'#ff5050', dash:true },
+  { s:'#gly-3',    lbl:'#gly-3  [display:none]',              pos:'in-br', c:'#ff5050', dash:true },
+  { s:'#gl-scatter',lbl:'#gl-scatter  (svg)',                 pos:'bl', c:'#50dc50' },
+  { s:'#gva-access',lbl:'#gva-access  [hidden anim]',         pos:'in', c:'#ff5050', dash:true },
 
-  /* Panel 2: HUD */
-  { s:'#hud-pnl',    lbl:'#hud-pnl .pnl ▸ <HUD.XT2>', pos:'tl', c:'orange' },
-  { s:'.h-title',    lbl:'.h-title (.h-logo / .h-badges / .h-menu / .h-search)', pos:'tl', c:'cyan' },
-  { s:'.h-folders',  lbl:'.h-folders ▸ .fld-item × 14', pos:'bl', c:'cyan' },
-  { s:'.h-list',     lbl:'.h-list (.h-cols + .h-rows)', pos:'tl', c:'blue' },
+  /* panel 2: HUD */
+  { s:'#hud-pnl',  lbl:'#hud-pnl .pnl  ▸  <HUD.XT2>',       pos:'tl', c:'#ff8c28' },
+  { s:'.h-title',  lbl:'.h-title  (.h-logo / .h-badges / .h-menu / .h-search)', pos:'tl', c:'#00dcc8' },
+  { s:'.h-list',   lbl:'.h-list  (.h-cols + .h-rows)',        pos:'tl', c:'#508fff' },
+  { s:'.h-folders',lbl:'.h-folders  ▸  .fld-item × 14',      pos:'bl', c:'#00dcc8' },
 
-  /* Panel 3 */
-  { s:'#top-row > .pnl:last-child', lbl:'.pnl ▸ .ctrl-btn × 3 (UP/EXIT/DOWN)', pos:'tr', c:'orange' },
+  /* panel 3 */
+  { s:'#top-row > .pnl:last-child',
+                   lbl:'.pnl  ▸  .ctrl-btn × 3  (UP/EXIT/DOWN)', pos:'tr', c:'#ff8c28' },
 
-  /* ── GBAR ── */
-  { s:'#gbar',       lbl:'div#gbar ▸ iframe(gbar) · SET.OS바', pos:'tl', c:'yellow' },
-  { s:'.mode-row',   lbl:'.mode-row ▸ .mb × 6', pos:'bl', c:'yellow' },
-  { s:'button.activate', lbl:'button.activate', pos:'br', c:'yellow' },
+  /* gbar */
+  { s:'#gbar',     lbl:'div#gbar  ▸  iframe(gbar) · SET.OS바', pos:'tl', c:'#ffd700' },
+  { s:'.mode-row', lbl:'.mode-row  ▸  .mb × 6',               pos:'bl', c:'#ffd700' },
 
-  /* ── BOT ROW ── */
-  { s:'#bot-row',    lbl:'#bot-row (grid-cols: 1fr 2fr)', pos:'tl', c:'yellow' },
-  { s:'.bot-left',   lbl:'.bot-left', pos:'tl', c:'orange' },
-  { s:'.bl-split',   lbl:'.bl-split ▼', pos:'tl', c:'cyan' },
-
-  /* bl-split panels */
-  { s:'#vlWindow',   lbl:'iframe(id-card) ID카드', pos:'tl', c:'pink' },
+  /* bot row */
+  { s:'#bot-row',  lbl:'#bot-row  ·  grid-cols: 1fr 2fr',     pos:'tl', c:'#ffd700' },
+  { s:'.bot-left', lbl:'.bot-left',                            pos:'tl', c:'#ff8c28' },
+  { s:'.bl-split', lbl:'.bl-split  ▼  id-cols: 1fr 2fr',      pos:'tl', c:'#00dcc8' },
+  { s:'#vlWindow', lbl:'iframe(id-card)  ID카드',              pos:'tl', c:'#dc50a0' },
 
   /* stmt + pc */
-  { s:'#stmt',       lbl:'#stmt .stmt-scroll (SET.TEXT)', pos:'tr', c:'green' },
-  { s:'.pc',         lbl:'.pc — 프로세싱 콘솔', pos:'tl', c:'blue' },
-  { s:'.pc-log',     lbl:'.pc-log', pos:'tl', c:'blue' },
-  { s:'.pc-input',   lbl:'.pc-input', pos:'bl', c:'blue' },
-  { s:'.pc-fkeys',   lbl:'.pc-fkeys', pos:'bl', c:'blue' },
+  { s:'#stmt',     lbl:'#stmt .stmt-scroll  (SET.TEXT)',       pos:'tr', c:'#50dc50' },
+  { s:'.pc',       lbl:'.pc  —  프로세싱 콘솔',                pos:'tl', c:'#508fff' },
+  { s:'#pc-log',   lbl:'#pc-log  .pc-log-inner',               pos:'tl', c:'#508fff' },
+  { s:'.pc-input', lbl:'.pc-input',                            pos:'bl', c:'#508fff' },
+  { s:'.pc-fkeys', lbl:'.pc-fkeys',                            pos:'bl', c:'#508fff' },
 
-  /* ── BOTBAR ── */
-  { s:'#botbar',     lbl:'div#botbar (상태바)', pos:'tl', c:'yellow' },
+  /* botbar */
+  { s:'#botbar',   lbl:'div#botbar  (상태바)',                  pos:'tl', c:'#ffd700' },
 
-  /* ── MODALS (hidden) ── */
-  { s:'#stmt-modal', lbl:'#stmt-modal [display:none]', pos:'tl', c:'red' },
-  { s:'#docs-modal', lbl:'#docs-modal [display:none]', pos:'tl', c:'red' },
-
-  /* ── GVA overlays ── */
-  { s:'#gva-access', lbl:'#gva-access [hidden]', pos:'in', c:'red' },
-  { s:'#gva-glitch', lbl:'#gva-glitch [hidden]', pos:'in-br', c:'red' },
+  /* hidden modals */
+  { s:'#stmt-modal',lbl:'#stmt-modal  [display:none]',         pos:'in', c:'#ff5050', dash:true },
+  { s:'#docs-modal',lbl:'#docs-modal  [display:none]',         pos:'in', c:'#ff5050', dash:true },
 ];
 
-function addAnn(rect, lbl, pos, c) {
-  const frameRect = site.getBoundingClientRect();
-  const x = frameRect.left + rect.left;
-  const y = frameRect.top  + rect.top;
-
-  const box = document.createElement('div');
-  box.className = `ann ${c}`;
-  box.style.cssText = `left:${x}px;top:${y}px;width:${rect.width}px;height:${rect.height}px;`;
-
-  const tag = document.createElement('div');
-  tag.className = `ann-lbl ${pos} ${c}`;
-  tag.textContent = lbl;
-  box.appendChild(tag);
-  layer.appendChild(box);
+/* ─── CSS injected into iframe ─── */
+const ANN_CSS = `
+#__ann-layer{
+  position:fixed;inset:0;pointer-events:none;z-index:99999;
+  font-family:'Courier New',monospace;
 }
+.__ann{
+  position:absolute;pointer-events:none;box-sizing:border-box;
+}
+.__ann-lbl{
+  position:absolute;
+  font-size:10px;font-weight:bold;
+  background:rgba(0,0,0,.88);
+  padding:2px 8px;letter-spacing:.6px;
+  white-space:nowrap;line-height:18px;
+  border-bottom:1px solid;
+}
+.__ann-lbl.tl{top:-19px;left:0;}
+.__ann-lbl.tr{top:-19px;right:0;}
+.__ann-lbl.bl{bottom:-19px;left:0;}
+.__ann-lbl.br{bottom:-19px;right:0;}
+.__ann-lbl.in{top:3px;left:4px;}
+.__ann-lbl.in-br{bottom:3px;right:4px;}
+`;
 
-function runAnnotation() {
-  layer.innerHTML = '';
-  const iDoc = site.contentDocument;
-  if (!iDoc) return;
+let annotated = false;
 
-  TARGETS.forEach(({ s, lbl, pos, c }) => {
+function injectAnnotations(iDoc) {
+  /* remove old layer if any */
+  const old = iDoc.getElementById('__ann-layer');
+  if (old) old.remove();
+  const oldStyle = iDoc.getElementById('__ann-style');
+  if (oldStyle) oldStyle.remove();
+
+  /* inject CSS */
+  const style = iDoc.createElement('style');
+  style.id = '__ann-style';
+  style.textContent = ANN_CSS;
+  iDoc.head.appendChild(style);
+
+  /* create layer */
+  const layer = iDoc.createElement('div');
+  layer.id = '__ann-layer';
+  iDoc.body.appendChild(layer);
+
+  let count = 0;
+
+  TARGETS.forEach(({ s, lbl, pos, c, dash }) => {
     const el = iDoc.querySelector(s);
     if (!el) return;
+
     const r = el.getBoundingClientRect();
-    if (r.width < 1 || r.height < 1) return;
-    addAnn(r, lbl, pos, c);
+    if (r.width < 2 || r.height < 2) return;
+
+    /* scroll offset */
+    const sx = iDoc.documentElement.scrollLeft || 0;
+    const sy = iDoc.documentElement.scrollTop  || 0;
+
+    const box = iDoc.createElement('div');
+    box.className = '__ann';
+    box.style.cssText = [
+      `left:${r.left + sx}px`,
+      `top:${r.top + sy}px`,
+      `width:${r.width}px`,
+      `height:${r.height}px`,
+      `border:2px ${dash ? 'dashed' : 'solid'} ${c}`,
+    ].join(';');
+
+    const tag = iDoc.createElement('div');
+    tag.className = `__ann-lbl ${pos}`;
+    tag.style.cssText = `color:${c};border-color:${c};`;
+    tag.textContent = lbl;
+    box.appendChild(tag);
+    layer.appendChild(box);
+    count++;
   });
+
+  annotated = true;
+  annCount.textContent = `✓ ${count} elements`;
+  annBtn.textContent = '✕ CLEAR';
+  setTimeout(() => { annCount.style.opacity='0'; }, 3000);
 }
+
+function clearAnnotations(iDoc) {
+  const old = iDoc.getElementById('__ann-layer');
+  if (old) old.remove();
+  annotated = false;
+  annBtn.textContent = '⟳ ANNOTATE';
+  annCount.textContent = '';
+}
+
+function dismissIntro(iDoc) {
+  const intro = iDoc.getElementById('intro');
+  if (!intro) return;
+  intro.classList.add('exit');
+  intro.style.pointerEvents = 'none';
+  setTimeout(() => { intro.style.display = 'none'; }, 350);
+}
+
+annBtn.addEventListener('click', () => {
+  const iDoc = site.contentDocument;
+  if (!iDoc) { annCount.textContent = '⚠ 접근 불가'; return; }
+  annotated ? clearAnnotations(iDoc) : injectAnnotations(iDoc);
+});
 
 site.addEventListener('load', () => {
   const iDoc = site.contentDocument;
-
-  /* auto-dismiss intro */
-  const intro = iDoc.getElementById('intro');
-  if (intro) {
-    intro.classList.add('exit');
-    setTimeout(() => { intro.style.display = 'none'; }, 800);
-  }
-
-  /* wait for layout, then annotate */
-  setTimeout(runAnnotation, 1400);
-
-  /* re-annotate on resize */
-  site.contentWindow.addEventListener('resize', () => {
-    setTimeout(runAnnotation, 200);
-  });
+  dismissIntro(iDoc);
+  /* auto-annotate after layout settles */
+  setTimeout(() => injectAnnotations(iDoc), 1800);
 });
 </script>
 </body>
