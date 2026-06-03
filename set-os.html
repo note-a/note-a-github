@@ -4,19 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SET — HUD XT2</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
 <style>
 :root{
   --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
-  --acc:#ff5e16; --ac2:#ff6f61; --ac3:#ff7a2e; --ac4:#3fb09a; --ac5:#b07bff; --gl:#ffd3c2; --gd:#9e4420; --pnl:#000000; --hd:#000000; --bd:#ff4a16;
+  --acc:#ff5e16; --ac2:#ff6f61; --ac3:#ff7a2e; --ac4:#ff7a2e; --ac5:#b07bff; --gl:#ffd3c2; --gd:#9e4420; --pnl:#000000; --hd:#000000; --bd:#ff4a16;
   --amb:#ff6a1e; --red:#ff3b1f;
-  --mono:'IBM Plex Mono',monospace;
-  --term:'VT323',monospace;
-  --px:'Press Start 2P',monospace;
+  --mono:'Courier Prime','Galmuri11','Share Tech Mono',monospace;
+  --term:'Share Tech Mono','Galmuri11',monospace;
+  --px:'Courier Prime','Galmuri11','Share Tech Mono',monospace;
   --hud-bg:#000000; --hud-bd:rgba(255,74,22,.18);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-family:'Press Start 2P',monospace;}
+html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;}
 .crt{position:fixed;inset:0;z-index:100;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);}
 
@@ -52,18 +55,24 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 /* ── LEFT RAIL : 집합도 / 등고선 ── */
 .lr-rail{position:fixed;z-index:3;width:240px;height:448px;transform-origin:top right;
   display:flex;flex-direction:column;gap:14px;pointer-events:none;}
-.lr-dp{flex:1 1 0;min-height:0;background:#5c3200;
-  padding:1px;display:flex;overflow:hidden;position:relative;
+.lr-dp{flex:1 1 0;min-height:0;background:#050302;
+  border:0.1px solid #b05018;padding:0;display:flex;overflow:hidden;position:relative;
   box-shadow:0 1px 3px rgba(0,0,0,.6),0 0 24px rgba(255,74,22,.06);}
 .lr-dp-in{flex:1 1 auto;min-width:0;min-height:0;background:#050302;
   display:flex;flex-direction:column;overflow:hidden;}
 .lr-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;height:17px;padding:0 8px;
   background:linear-gradient(90deg,rgba(255,74,22,.10),transparent);border-bottom:1px solid var(--g4);
-  font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--g2);}
-.lr-h .arr{font-size:5px;color:var(--ac3);}
+  font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--g2);cursor:pointer;user-select:none;pointer-events:auto;}
+.lr-h .arr{font-size:5px;color:var(--ac3);transition:transform .15s;transform:rotate(90deg);}
+.lr-dp.collapsed .lr-h .arr{transform:rotate(0deg);}
+.lr-dp{transition:width .15s ease;width:100%;}
+.lr-dp.collapsed{width:14px!important;overflow:hidden;}
+.lr-dp.collapsed .lr-b{visibility:hidden;}
+.lr-rail .lr-dp.collapsed{margin-left:auto;}
+.rr-rail .lr-dp.collapsed{margin-right:auto;}
 .lr-h .no{font-size:5.5px;color:var(--g3);}
 .lr-h .tag{margin-left:auto;font-size:6px;color:var(--g3);}
-.lr-dp.teal .lr-h{color:#3fb09a;}.lr-dp.teal .lr-h .arr{color:#3fb09a;}
+.lr-dp.teal .lr-h{color:#ff7a2e;}.lr-dp.teal .lr-h .arr{color:#ff7a2e;}
 .lr-b{flex:1 1 auto;min-height:0;position:relative;display:flex;overflow:hidden;}
 .lr-gfx{flex:1 1 auto;min-width:0;position:relative;overflow:hidden;}
 .lr-gfx svg{position:absolute;inset:0;width:100%;height:100%;}
@@ -73,7 +82,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-tbl{padding:3px 6px;display:flex;flex-direction:column;gap:1px;}
 .lr-tbl .tr{display:flex;justify-content:space-between;font-size:6.5px;line-height:1.5;}
 .lr-tbl .tr .k{color:var(--g3);}.lr-tbl .tr .v{color:var(--g2);font-variant-numeric:tabular-nums;}
-.lr-tbl .tr .v.hi{color:#ffcf4a;}.lr-tbl .tr .v.tl{color:#3fb09a;}.lr-tbl .tr .v.vl{color:#b07bff;}
+.lr-tbl .tr .v.hi{color:#ffcf4a;}.lr-tbl .tr .v.tl{color:#ff7a2e;}.lr-tbl .tr .v.vl{color:#b07bff;}
 .lr-minibar{height:4px;margin:2px 6px;background:rgba(255,74,22,.08);border:1px solid var(--g4);position:relative;overflow:hidden;}
 .lr-minibar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--acc),var(--ac3));}
 .lr-slbl{font-size:5px;color:var(--g3);padding:0 6px;letter-spacing:.5px;}
@@ -353,7 +362,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   border:2px solid rgba(255,74,22,.9);
   box-shadow:0 0 24px rgba(255,74,22,.5);
   background:rgba(8,4,0,.82);
-  font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:700;
+  font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;font-size:22px;font-weight:700;
   color:rgba(255,74,22,.95);letter-spacing:4px;white-space:nowrap;
   opacity:0;
   animation:none;
@@ -372,7 +381,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 #gva-lock-msg{
   position:absolute;left:50%;bottom:36px;transform:translateX(-50%);
   z-index:15;pointer-events:none;
-  font-family:'IBM Plex Mono',monospace;font-size:6.5px;
+  font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;font-size:6.5px;
   color:rgba(255,74,22,.95);letter-spacing:2px;white-space:nowrap;
   padding:3px 8px;border:1px solid rgba(255,74,22,.35);
   background:rgba(6,3,0,.8);
@@ -594,7 +603,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;
 }
 #nb-logo{
-  font-family:'Press Start 2P',monospace;font-size:13px;
+  font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;font-size:13px;
   color:var(--g);letter-spacing:4px;
   text-shadow:none;line-height:1;
   padding:3px 0;
@@ -990,7 +999,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 @keyframes vlSlideIn{from{opacity:0;}to{opacity:1;}}
 
 /* ── PC통신 채팅 (measure-chat-sample) ── */
-.pc{width:100%;height:100%;display:flex;flex-direction:column;background:#000;font-family:'VT323',monospace;font-size:18px;line-height:1.3;color:#ff4a16;}
+.pc{width:100%;height:100%;display:flex;flex-direction:column;background:#000;font-family:'Share Tech Mono','Galmuri11',monospace;font-size:18px;line-height:1.3;color:#ff4a16;}
 .pc-title{flex-shrink:0;background:#000;border-bottom:1px solid #ff4a16;padding:2px 0;text-align:center;}
 .pc-title-inner{display:inline-block;font-size:22px;letter-spacing:2px;color:#000;background:#ff4a16;padding:0 16px;}
 .pc-subtitle{font-size:14px;color:rgba(255,74,22,.3);letter-spacing:1px;margin-top:1px;}
@@ -1040,14 +1049,14 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 /* 입력 */
 .pc-input{flex-shrink:0;border-top:1px solid #ff4a16;display:flex;align-items:center;background:#000;height:30px;}
 .pc-input-label{padding:0 8px;color:#ff4a16;font-size:17px;border-right:1px solid rgba(255,74,22,.3);white-space:nowrap;height:100%;display:flex;align-items:center;flex-shrink:0;}
-.pc-input-field{flex:1;background:transparent;border:none;outline:none;color:#ff4a16;font-family:'VT323',monospace;font-size:18px;padding:0 8px;caret-color:#ff4a16;height:100%;}
+.pc-input-field{flex:1;background:transparent;border:none;outline:none;color:#ff4a16;font-family:'Share Tech Mono','Galmuri11',monospace;font-size:18px;padding:0 8px;caret-color:#ff4a16;height:100%;}
 .pc-input-field::placeholder{color:rgba(255,74,22,.22);}
-.pc-input-btn{height:100%;padding:0 12px;background:rgba(255,74,22,.08);border:none;border-left:1px solid rgba(255,74,22,.3);color:#ff4a16;font-family:'VT323',monospace;font-size:18px;cursor:pointer;flex-shrink:0;transition:background .1s;}
+.pc-input-btn{height:100%;padding:0 12px;background:rgba(255,74,22,.08);border:none;border-left:1px solid rgba(255,74,22,.3);color:#ff4a16;font-family:'Share Tech Mono','Galmuri11',monospace;font-size:18px;cursor:pointer;flex-shrink:0;transition:background .1s;}
 .pc-input-btn:hover{background:rgba(255,74,22,.18);}
 /* F키 */
 .pc-fkeys{flex-shrink:0;display:flex;border-top:1px solid rgba(255,74,22,.3);background:rgba(255,74,22,.03);height:22px;overflow:hidden;}
 .fk{display:flex;align-items:center;font-size:14px;letter-spacing:.5px;border-right:1px solid rgba(255,74,22,.1);height:100%;}
-.fk-key{background:rgba(255,74,22,.3);color:#000;padding:0 4px;height:100%;display:flex;align-items:center;font-size:13px;font-family:'IBM Plex Mono',monospace;}
+.fk-key{background:rgba(255,74,22,.3);color:#000;padding:0 4px;height:100%;display:flex;align-items:center;font-size:13px;font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;}
 .fk-lbl{padding:0 6px;color:rgba(255,74,22,.35);}
 .fk:last-child{border-right:none;}
 .fk-spacer{flex:1;}
@@ -1463,7 +1472,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
             <div class="tr"><span class="k">SA</span><span class="v" id="rr-sa">0.0</span></div>
             <div class="tr"><span class="k">KV</span><span class="v hi" id="rr-kv">0.0</span></div>
           </div>
-          <div class="lr-slbl">KV WEIGHT</div><div class="lr-minibar"><i id="rr-kvbar" style="width:0%;background:#3fb09a"></i></div>
+          <div class="lr-slbl">KV WEIGHT</div><div class="lr-minibar"><i id="rr-kvbar" style="width:0%;background:#ff7a2e"></i></div>
         </div>
         <div class="lr-dcol">
           <div class="sh">VERDICT</div>
@@ -1551,7 +1560,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
                 stroke="rgba(255,74,22,.45)" stroke-width="1"
                 stroke-dasharray="4 4"/>
               <rect id="gva-mdist-bg" width="0" height="7" fill="rgba(6,3,0,.85)" rx="1"/>
-              <text id="gva-mdist" font-family="'IBM Plex Mono',monospace" font-size="5.5"
+              <text id="gva-mdist" font-family="'Courier Prime','Galmuri11','Share Tech Mono',monospace" font-size="5.5"
                 fill="rgba(255,74,22,.9)" text-anchor="middle" dominant-baseline="middle"
                 style="letter-spacing:1px"></text>
             </svg>
@@ -1618,7 +1627,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
             <div style="flex:1;position:relative;overflow:hidden;min-height:0;">
               <svg id="gl-scatter" style="position:absolute;inset:0;width:100%;height:100%;"></svg>
               <div id="sc-lock-msg" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-                font-family:'IBM Plex Mono',monospace;font-size:5.5px;color:rgba(255,74,22,.95);
+                font-family:'Courier Prime','Galmuri11','Share Tech Mono',monospace;font-size:5.5px;color:rgba(255,74,22,.95);
                 letter-spacing:1.5px;white-space:nowrap;padding:3px 7px;
                 border:1px solid rgba(255,74,22,.3);background:rgba(6,3,0,.85);
                 pointer-events:none;opacity:0;z-index:10;"></div>
@@ -2360,7 +2369,7 @@ function buildGlScatter(){
     g.appendChild(ring); g.appendChild(dot);
     if(d.n>=9){
       const lbl=document.createElementNS('http://www.w3.org/2000/svg','text');
-      lbl.setAttribute('font-family',"'IBM Plex Mono',monospace");
+      lbl.setAttribute('font-family',"'Courier Prime','Galmuri11','Share Tech Mono',monospace");
       lbl.setAttribute('font-size','5');
       lbl.setAttribute('fill',lblCol);
       lbl.setAttribute('text-anchor','middle');
@@ -3013,8 +3022,8 @@ function buildScatter(){
   html+=`<line x1="${PAD}" y1="${H-PAD}" x2="${W-PAD}" y2="${H-PAD}" stroke="rgba(255,74,22,.18)" stroke-width="1"/>`;
   html+=`<line x1="${PAD}" y1="${PAD}" x2="${PAD}" y2="${H-PAD}" stroke="rgba(255,74,22,.18)" stroke-width="1"/>`;
   // axis labels
-  html+=`<text x="${W/2}" y="${H-4}" font-family="'Share Tech Mono',monospace" font-size="7" fill="rgba(255,74,22,.28)" text-anchor="middle">TEMPORAL AXIS →</text>`;
-  html+=`<text x="9" y="${H/2}" font-family="'Share Tech Mono',monospace" font-size="7" fill="rgba(255,74,22,.28)" text-anchor="middle" transform="rotate(-90,9,${H/2})">FORMAL DEPTH</text>`;
+  html+=`<text x="${W/2}" y="${H-4}" font-family="'Courier Prime','Galmuri11','Share Tech Mono',monospace" font-size="7" fill="rgba(255,74,22,.28)" text-anchor="middle">TEMPORAL AXIS →</text>`;
+  html+=`<text x="9" y="${H/2}" font-family="'Courier Prime','Galmuri11','Share Tech Mono',monospace" font-size="7" fill="rgba(255,74,22,.28)" text-anchor="middle" transform="rotate(-90,9,${H/2})">FORMAL DEPTH</text>`;
 
   // dots per dir
   dirData.forEach((d,di)=>{
@@ -3036,7 +3045,7 @@ function buildScatter(){
     html+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(spread*.55).toFixed(1)}" fill="none" stroke="${col}" stroke-width=".5" opacity=".2" stroke-dasharray="3 3"/>`;
     // label
     const lblY=(cy-spread-5).toFixed(1);
-    html+=`<text x="${cx.toFixed(1)}" y="${lblY}" font-family="'Share Tech Mono',monospace" font-size="7.5" fill="${col}" text-anchor="middle" opacity=".85">${d.code}</text>`;
+    html+=`<text x="${cx.toFixed(1)}" y="${lblY}" font-family="'Courier Prime','Galmuri11','Share Tech Mono',monospace" font-size="7.5" fill="${col}" text-anchor="middle" opacity=".85">${d.code}</text>`;
   });
 
   svg.innerHTML=html;
@@ -3616,28 +3625,28 @@ document.addEventListener('keydown',function(e){
     const svg=$('svg-set');let grid='';
     for(let x=20;x<=200;x+=20)grid+='<line x1="'+x+'" y1="14" x2="'+x+'" y2="186" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
     for(let y=20;y<=180;y+=20)grid+='<line x1="14" y1="'+y+'" x2="206" y2="'+y+'" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
-    let axt='';for(let x=20;x<=200;x+=40)axt+='<text x="'+(x-3)+'" y="194" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+((x-100)/2)+'</text>';
+    let axt='';for(let x=20;x<=200;x+=40)axt+='<text x="'+(x-3)+'" y="194" fill="rgba(255,74,22,.35)" font-size="5" font-family="Courier Prime,Galmuri11,Share Tech Mono">'+((x-100)/2)+'</text>';
     svg.innerHTML=`<defs>
       <radialGradient id="lrig" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,122,46,.34)"/><stop offset="100%" stop-color="rgba(255,122,46,0)"/></radialGradient>
-      <pattern id="lrhatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(63,176,154,.25)" stroke-width="0.5"/></pattern></defs>
+      <pattern id="lrhatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(255,122,46,.25)" stroke-width="0.5"/></pattern></defs>
       <g>${grid}</g><g>${axt}</g>
       <line x1="14" y1="100" x2="206" y2="100" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
       <line x1="103" y1="14" x2="103" y2="186" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
       <circle id="lrhA" cx="84" cy="100" r="50" fill="url(#lrhatch)" opacity=".5"/>
       <ellipse cx="103" cy="100" rx="22" ry="36" fill="url(#lrig)"/>
-      <circle id="lrcA" cx="84" cy="100" r="50" fill="none" stroke="#3fb09a" stroke-width="1.1" stroke-dasharray="3 4"/>
+      <circle id="lrcA" cx="84" cy="100" r="50" fill="none" stroke="#ff7a2e" stroke-width="1.1" stroke-dasharray="3 4"/>
       <circle id="lrcB" cx="122" cy="100" r="50" fill="none" stroke="#b07bff" stroke-width="1.1" stroke-dasharray="3 4"/>
-      <circle cx="84" cy="100" r="1.6" fill="#3fb09a"/><circle cx="122" cy="100" r="1.6" fill="#b07bff"/>
-      <line id="lrdimA" x1="84" y1="100" x2="34" y2="100" stroke="#3fb09a" stroke-width="0.5" opacity=".6"/>
-      <text id="lrdimAt" x="40" y="96" fill="#3fb09a" font-size="6" font-family="IBM Plex Mono">r=50</text>
-      <text x="34" y="42" fill="#3fb09a" font-size="9" font-family="VT323,monospace">SET (A)</text>
-      <text x="128" y="168" fill="#b07bff" font-size="9" font-family="VT323,monospace">INCL (B)</text>
+      <circle cx="84" cy="100" r="1.6" fill="#ff7a2e"/><circle cx="122" cy="100" r="1.6" fill="#b07bff"/>
+      <line id="lrdimA" x1="84" y1="100" x2="34" y2="100" stroke="#ff7a2e" stroke-width="0.5" opacity=".6"/>
+      <text id="lrdimAt" x="40" y="96" fill="#ff7a2e" font-size="6" font-family="Courier Prime,Galmuri11,Share Tech Mono">r=50</text>
+      <text x="34" y="42" fill="#ff7a2e" font-size="9" font-family="Share Tech Mono,Galmuri11,monospace">SET (A)</text>
+      <text x="128" y="168" fill="#b07bff" font-size="9" font-family="Share Tech Mono,Galmuri11,monospace">INCL (B)</text>
       <line x1="103" y1="100" x2="160" y2="60" stroke="rgba(255,122,46,.5)" stroke-width="0.5"/>
       <circle cx="103" cy="100" r="1.6" fill="#ff7a2e"/>
-      <text x="162" y="58" fill="#ff7a2e" font-size="8" font-family="VT323,monospace">A∩B = 32</text>
-      <text x="34" y="118" fill="rgba(63,176,154,.5)" font-size="5" font-family="IBM Plex Mono">A\\B</text>
+      <text x="162" y="58" fill="#ff7a2e" font-size="8" font-family="Share Tech Mono,Galmuri11,monospace">A∩B = 32</text>
+      <text x="34" y="118" fill="rgba(255,122,46,.5)" font-size="5" font-family="Courier Prime,Galmuri11,Share Tech Mono">A\\B</text>
       <circle id="lrtrace" r="2.4" fill="#ff7a2e"><animate attributeName="opacity" values="1;.3;1" dur="1.3s" repeatCount="indefinite"/></circle>
-      <text id="lrtraceXY" fill="#ff7a2e" font-size="5.5" font-family="IBM Plex Mono"></text>`;
+      <text id="lrtraceXY" fill="#ff7a2e" font-size="5.5" font-family="Courier Prime,Galmuri11,Share Tech Mono"></text>`;
     const q=s=>svg.querySelector(s);const cA=q('#lrcA'),cB=q('#lrcB'),hA=q('#lrhA'),trace=q('#lrtrace'),tXY=q('#lrtraceXY'),dimA=q('#lrdimA'),dimAt=q('#lrdimAt');
     let t=0,pm=314.2,intc=32;
     setInterval(()=>{t+=0.05;
@@ -3662,12 +3671,12 @@ document.addEventListener('keydown',function(e){
     function buildPaths(t){let p='';for(let i=0;i<NC;i++){const r=10+i*9.5,op=(0.55-i*0.03).toFixed(2),sw=(i%3===0)?1.0:0.6;
       p+='<path d="'+blob(r,i*0.9,t)+'" fill="none" stroke="rgba(255,106,30,'+op+')" stroke-width="'+sw+'"/>';}return p;}
     let labels='';for(let i=0;i<NC;i++){if(i%3===0&&i>0){const r=10+i*9.5;
-      labels+='<text x="'+(cx-2)+'" y="'+(cy-r*0.9+2)+'" fill="rgba(255,106,30,.55)" font-size="5.5" font-family="IBM Plex Mono">+'+(i*12)+'</text>';elevs.push(i*12);}}
+      labels+='<text x="'+(cx-2)+'" y="'+(cy-r*0.9+2)+'" fill="rgba(255,106,30,.55)" font-size="5.5" font-family="Courier Prime,Galmuri11,Share Tech Mono">+'+(i*12)+'</text>';elevs.push(i*12);}}
     let ticks='';for(let x=20;x<=200;x+=30)ticks+='<line x1="'+x+'" y1="186" x2="'+x+'" y2="190" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
     for(let y=20;y<=170;y+=30)ticks+='<line x1="4" y1="'+y+'" x2="8" y2="'+y+'" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
     svg.innerHTML=`<g id="lrcg">${buildPaths(0)}</g><g>${labels}</g><g>${ticks}</g>
-      <g><line x1="${cx-4}" y1="${cy}" x2="${cx+4}" y2="${cy}" stroke="#ffcf4a" stroke-width="0.8"/><line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+4}" stroke="#ffcf4a" stroke-width="0.8"/><text x="${cx+6}" y="${cy-4}" fill="#ffcf4a" font-size="6" font-family="VT323,monospace">PK +148</text></g>
-      <g transform="translate(198,24)"><line x1="0" y1="8" x2="0" y2="-8" stroke="rgba(255,74,22,.5)" stroke-width="0.7"/><path d="M0,-8 L-2.5,-3 L2.5,-3 Z" fill="rgba(255,74,22,.7)"/><text x="-2.5" y="-10" fill="rgba(255,74,22,.6)" font-size="6" font-family="IBM Plex Mono">N</text></g>
+      <g><line x1="${cx-4}" y1="${cy}" x2="${cx+4}" y2="${cy}" stroke="#ffcf4a" stroke-width="0.8"/><line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+4}" stroke="#ffcf4a" stroke-width="0.8"/><text x="${cx+6}" y="${cy-4}" fill="#ffcf4a" font-size="6" font-family="Share Tech Mono,Galmuri11,monospace">PK +148</text></g>
+      <g transform="translate(198,24)"><line x1="0" y1="8" x2="0" y2="-8" stroke="rgba(255,74,22,.5)" stroke-width="0.7"/><path d="M0,-8 L-2.5,-3 L2.5,-3 Z" fill="rgba(255,74,22,.7)"/><text x="-2.5" y="-10" fill="rgba(255,74,22,.6)" font-size="6" font-family="Courier Prime,Galmuri11,Share Tech Mono">N</text></g>
       <line id="lrcscan" x1="0" y1="40" x2="220" y2="40" stroke="rgba(255,207,74,.5)" stroke-width="0.8"/>`;
     $('cont-bands').innerHTML=elevs.map((e,i)=>'<div class="tr"><span class="k">+'+e+'</span><span class="v" style="color:rgba(255,106,30,'+(0.9-i*0.12)+')">▓▓</span></div>').join('');
     const pf=$('svg-prof');
@@ -3712,14 +3721,14 @@ document.addEventListener('keydown',function(e){
     const ang=i=>-Math.PI/2+i*Math.PI/2;const depth={x:13,y:-12};
     let rings='';for(let k=1;k<=4;k++){let p='';for(let i=0;i<4;i++)p+=(cx+Math.cos(ang(i))*R*k/4).toFixed(1)+','+(cy+Math.sin(ang(i))*R*k/4).toFixed(1)+' ';
       rings+='<polygon points="'+p+'" fill="none" stroke="rgba(255,74,22,.12)" stroke-width="0.6"/>';
-      rings+='<text x="'+(cx+2)+'" y="'+(cy-R*k/4+3).toFixed(1)+'" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+(k/4).toFixed(2)+'</text>';}
+      rings+='<text x="'+(cx+2)+'" y="'+(cy-R*k/4+3).toFixed(1)+'" fill="rgba(255,74,22,.35)" font-size="5" font-family="Courier Prime,Galmuri11,Share Tech Mono">'+(k/4).toFixed(2)+'</text>';}
     let spokes='',labels='';for(let i=0;i<4;i++){const a=ang(i);
       spokes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(a)*R).toFixed(1)+'" y2="'+(cy+Math.sin(a)*R).toFixed(1)+'" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>';
-      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)).toFixed(1)+'" fill="#3fb09a" font-size="8" font-family="VT323,monospace" text-anchor="middle">'+axes[i][0]+'</text>';
-      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)+7).toFixed(1)+'" fill="rgba(63,176,154,.5)" font-size="4.5" font-family="IBM Plex Mono" text-anchor="middle">'+axes[i][1]+'</text>';}
+      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)).toFixed(1)+'" fill="#ff7a2e" font-size="8" font-family="Share Tech Mono,Galmuri11,monospace" text-anchor="middle">'+axes[i][0]+'</text>';
+      labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)+7).toFixed(1)+'" fill="rgba(255,122,46,.5)" font-size="4.5" font-family="Courier Prime,Galmuri11,Share Tech Mono" text-anchor="middle">'+axes[i][1]+'</text>';}
     svg.innerHTML=rings+spokes+labels
       +'<circle cx="'+cx+'" cy="'+cy+'" r="1.5" fill="rgba(255,74,22,.4)"/>'
-      +'<polygon id="rr-ghost" fill="none" stroke="rgba(63,176,154,.22)" stroke-width="0.8" stroke-dasharray="2 2"/>'
+      +'<polygon id="rr-ghost" fill="none" stroke="rgba(255,122,46,.22)" stroke-width="0.8" stroke-dasharray="2 2"/>'
       +'<g id="rr-3d"></g><g id="rr-dots"></g>';
     const ghost=svg.querySelector('#rr-ghost'),box=svg.querySelector('#rr-3d'),dots=svg.querySelector('#rr-dots');
     let cur=[0.6,0.5,0.7,0.9],tgt=[...cur],prev=[...cur],id='img_000',rnd='1차',n=0;
@@ -3731,14 +3740,14 @@ document.addEventListener('keydown',function(e){
     setInterval(()=>{
       cur=cur.map((v,i)=>v+(tgt[i]-v)*0.08);
       const f=verts(cur),b=f.map(p=>[p[0]+depth.x,p[1]+depth.y]);
-      let s='<polygon points="'+ptsStr(b)+'" fill="rgba(63,176,154,.07)" stroke="rgba(63,176,154,.3)" stroke-width="0.8"/>';
+      let s='<polygon points="'+ptsStr(b)+'" fill="rgba(255,122,46,.07)" stroke="rgba(255,122,46,.3)" stroke-width="0.8"/>';
       const shades=[.10,.20,.15,.06];
-      for(let i=0;i<4;i++){const j=(i+1)%4;s+='<polygon points="'+ptsStr([f[i],f[j],b[j],b[i]])+'" fill="rgba(63,176,154,'+shades[i]+')" stroke="rgba(63,176,154,.32)" stroke-width="0.6"/>';}
-      s+='<polygon points="'+ptsStr(f)+'" fill="rgba(63,176,154,.22)" stroke="#3fb09a" stroke-width="1.4"/>';
+      for(let i=0;i<4;i++){const j=(i+1)%4;s+='<polygon points="'+ptsStr([f[i],f[j],b[j],b[i]])+'" fill="rgba(255,122,46,'+shades[i]+')" stroke="rgba(255,122,46,.32)" stroke-width="0.6"/>';}
+      s+='<polygon points="'+ptsStr(f)+'" fill="rgba(255,122,46,.22)" stroke="#ff7a2e" stroke-width="1.4"/>';
       box.innerHTML=s;
       let d='';for(let i=0;i<4;i++){const a=ang(i),x=f[i][0],y=f[i][1];
-        d+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.2" fill="#3fb09a"/>';
-        d+='<text x="'+(x+Math.cos(a)*7).toFixed(1)+'" y="'+(y+Math.sin(a)*7+2).toFixed(1)+'" fill="#3fb09a" font-size="5" font-family="IBM Plex Mono" text-anchor="middle">'+cur[i].toFixed(2)+'</text>';}
+        d+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.2" fill="#ff7a2e"/>';
+        d+='<text x="'+(x+Math.cos(a)*7).toFixed(1)+'" y="'+(y+Math.sin(a)*7+2).toFixed(1)+'" fill="#ff7a2e" font-size="5" font-family="Courier Prime,Galmuri11,Share Tech Mono" text-anchor="middle">'+cur[i].toFixed(2)+'</text>';}
       dots.innerHTML=d;
       const score=(cur[0]*0.2+cur[1]*0.2+cur[2]*0.25+cur[3]*0.35);
       $('rr-id').textContent=id;$('rr-rnd').textContent=rnd;$('rr-n').textContent=String(n).padStart(3,'0')+'/438';
@@ -3748,6 +3757,12 @@ document.addEventListener('keydown',function(e){
     },50);
   })();
 })();
+</script>
+
+<script>
+document.querySelectorAll('.lr-h').forEach(h=>{
+  h.addEventListener('click',()=>h.closest('.lr-dp').classList.toggle('collapsed'));
+});
 </script>
 
 </body>
