@@ -106,9 +106,114 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
 
 /* ─── canvas ─── */
 #cv{flex:1;min-width:0;display:block;cursor:none;}
+
+/* ════════════════════════════════════
+   인트로
+════════════════════════════════════ */
+#intro{
+  position:fixed;inset:0;z-index:500;
+  background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  /* 스캔라인 */
+  background-image:repeating-linear-gradient(
+    0deg,transparent 0,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
+}
+/* 세이프라이트 글로우 */
+#intro::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:100%;height:70%;
+  background:radial-gradient(ellipse 55% 55% at 50% 0%,
+    rgba(220,8,0,.55) 0%, rgba(140,4,0,.28) 35%, transparent 70%);
+  animation:sl-on 3s ease forwards;
+  opacity:0;pointer-events:none;
+}
+@keyframes sl-on{
+  0%{opacity:0}
+  10%{opacity:.6} 12%{opacity:.2} 15%{opacity:.8}  /* 깜빡임 */
+  17%{opacity:.3} 20%{opacity:.95}
+  100%{opacity:1}
+}
+
+/* 램프 */
+#intro-lamp{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;
+  animation:sl-on 3s ease forwards;opacity:0;
+}
+.lamp-wire{width:1px;height:22px;background:rgba(120,6,0,.5);}
+.lamp-body{width:56px;height:16px;background:#150000;border:1px solid rgba(160,10,0,.5);
+  display:flex;align-items:center;justify-content:center;}
+.lamp-bulb{
+  width:22px;height:8px;border-radius:50%;
+  background:rgba(240,10,0,.9);
+  box-shadow:0 0 10px 3px rgba(220,6,0,.5),0 0 30px 8px rgba(160,4,0,.25);
+  animation:bulb-flicker 3s ease forwards;opacity:0;
+}
+@keyframes bulb-flicker{
+  0%{opacity:0} 10%{opacity:.8} 12%{opacity:.1} 15%{opacity:.9}
+  17%{opacity:.2} 20%{opacity:1} 100%{opacity:1}
+}
+
+/* 제목 — 사진이 현상액에서 나타나듯 */
+#intro-title{
+  font-size:clamp(72px,10vw,120px);
+  font-weight:600;
+  letter-spacing:-.02em;
+  line-height:.9;
+  text-align:center;
+  color:#c01000;
+  animation:develop 3.5s 0.8s cubic-bezier(.2,0,.4,1) both;
+  position:relative;z-index:1;
+}
+@keyframes develop{
+  0%  {opacity:0;   color:#0a0000; filter:blur(8px);}
+  15% {opacity:.12; color:#1a0000; filter:blur(6px);}
+  35% {opacity:.35; color:#3a0000; filter:blur(3px);}
+  55% {opacity:.6;  color:#700400; filter:blur(1px);}
+  75% {opacity:.85; color:#a00800; filter:blur(.3px);}
+  100%{opacity:1;   color:#c01000; filter:none;}
+}
+
+/* 서브 */
+#intro-sub{
+  margin-top:18px;
+  font-size:7.5px;letter-spacing:4px;
+  color:rgba(150,20,8,.7);
+  animation:fade-up 1s 3.8s both;
+  position:relative;z-index:1;
+}
+/* 엔터 */
+#intro-enter{
+  position:absolute;bottom:52px;
+  font-size:6.5px;letter-spacing:3px;
+  color:rgba(180,22,10,.55);
+  animation:fade-up .8s 4.4s both, blink 1.8s 5.2s ease-in-out infinite;
+}
+@keyframes fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes blink{0%,100%{opacity:.25} 50%{opacity:.8}}
+
+/* 종료 — 위로 올라가며 사라짐 */
+#intro.exit{
+  transform:translateY(-100%);
+  transition:transform .85s cubic-bezier(.76,0,.24,1);
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
+<!-- ══ 인트로 ══ -->
+<div id="intro" onclick="enterMain()">
+  <div id="intro-lamp">
+    <div class="lamp-wire"></div>
+    <div class="lamp-body"></div>
+    <div class="lamp-bulb"></div>
+  </div>
+  <div id="intro-title">DARK<br>ROOM</div>
+  <div id="intro-sub">REFERENCE · 암실 서재 · 2026</div>
+  <div id="intro-enter">— click to enter —</div>
+</div>
+
 <div class="nav">
   <a class="nb" href="set-os.html">← SET·OS</a>
   <div class="nt">REFERENCE · DARKROOM</div>
@@ -732,6 +837,12 @@ function resize(){
   const fh=Math.round(window.innerHeight*.82);
   cvs.width=Math.max(1,fw-220);  // 프레임 너비 - 사이드바
   cvs.height=Math.max(1,fh);
+}
+
+function enterMain(){
+  const intro=document.getElementById('intro');
+  intro.classList.add('exit');
+  intro.addEventListener('transitionend',()=>intro.remove(),{once:true});
 }
 
 init();
