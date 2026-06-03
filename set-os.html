@@ -162,6 +162,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
 .pl-stat .dot{width:4px;height:4px;background:#ff4a16;animation:pbl .9s step-end infinite;}
 @keyframes pbl{50%{opacity:0}}
 .pl-stat .v{color:rgba(255,74,22,0.7);margin-left:auto;}
+.pl-goto{display:block;width:100%;padding:5px 7px;font-size:6.5px;letter-spacing:2px;
+  text-align:center;cursor:pointer;border:none;background:rgba(255,74,22,0.07);
+  color:rgba(255,74,22,0.6);border-top:1px solid rgba(255,74,22,0.14);
+  font-family:inherit;transition:.15s;}
+.pl-goto:hover{background:rgba(255,74,22,0.18);color:#ff4a16;}
 .pilot-pnl.can-transition{transition:width .15s ease;}
 .pilot-pnl.collapsed{width:14px!important;overflow:hidden;}
 .pilot-pnl.collapsed .pl-nav,.pilot-pnl.collapsed .pl-intro,.pilot-pnl.collapsed .pl-view,.pilot-pnl.collapsed .pl-stat{visibility:hidden;}
@@ -1602,6 +1607,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
       <span id="pt-lbl">NULL.LOG</span>
       <span class="v" id="pt-v">0 REC</span>
     </div>
+    <button class="pl-goto" onclick="navigate('pilot.html')">▶ OPEN PILOT.EXP</button>
   </div>
 </aside>
 
