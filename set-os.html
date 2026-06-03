@@ -1415,8 +1415,6 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
   #bot-row > .pnl.dim,                /* SET.TEXT */
   #botbar .binfo,
   #botbar .activate,
-  .mode-row .mb:nth-of-type(2),       /* INCLUSION */
-  .mode-row .mb:nth-of-type(4),       /* REF */
   .mode-row .mb:nth-of-type(6){       /* ABOUT */
     display:none !important;
   }
@@ -1436,10 +1434,45 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
   .bl-split{display:block;min-height:0;}
   .bl-split > .pnl:first-child{min-height:120px;}
 
-  /* 하단 내비: SET / LOG / MEASURE 만 (다른 페이지로 이동) */
+  /* 하단 내비: 5개 메뉴 (SET / SET:inclusion / LOG / Reference / MEASURE) */
   #botbar{height:auto;padding:10px 6px;border-top:1px solid var(--g4);}
-  .mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:0;}
-  .mode-row .mb{height:40px;flex:1;min-width:96px;justify-content:center;font-size:10px;
+  .mode-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:0;}
+  .mode-row .mb{height:40px;flex:1;min-width:75px;justify-content:center;font-size:9px;
+    clip-path:none;border-radius:3px;}
+}
+
+/* 태블릿 최적화 (768px 이상) */
+@media (min-width:821px) and (max-width:1024px){
+  html,body{overflow-x:hidden;overflow-y:auto;height:auto;min-height:100vh;}
+  .crt,#bg-vignette{display:none;}
+  #shell{position:static;display:block;height:auto;min-height:0;padding:10px 10px 20px;}
+  #wrap{
+    width:100%;max-width:100%;margin:0 auto;height:auto;min-height:0;
+    transform:none !important;
+    display:flex;flex-direction:column;gap:12px;padding:10px;
+  }
+  #wrap::before,#wrap::after,.wc-bl,.wc-br{display:none;}
+  #top-row > .pnl:last-child,#gbar,.bl-split > .pnl:nth-of-type(2),
+  .bot-left > .pnl.dim,#bot-row > .pnl.dim,#botbar .binfo,#botbar .activate,
+  .mode-row .mb:nth-of-type(6){display:none !important;}
+
+  #top-row{display:flex;flex-direction:column;gap:12px;min-height:0;}
+  #top-row > .pnl{width:100%;right:auto !important;}
+  #top-row > .pnl:first-child .pnl-in{height:auto;}
+  #gly-1.view.active{min-height:320px;}
+  #hud-pnl{width:100%;min-height:0;}
+  #hud-pnl .pnl-in{height:auto;}
+  .h-folders{max-height:none;overflow:visible;}
+
+  #bot-row{display:block;min-height:0;}
+  .bot-left{display:block;min-height:0;}
+  .bl-split{display:block;min-height:0;}
+  .bl-split > .pnl:first-child{min-height:140px;}
+
+  /* 태블릿 메뉴: 5개 한 줄 */
+  #botbar{height:auto;padding:12px 8px;border-top:1px solid var(--g4);}
+  .mode-row{display:flex;gap:8px;justify-content:center;flex-wrap:nowrap;padding:0;}
+  .mode-row .mb{height:45px;flex:1;min-width:auto;justify-content:center;font-size:11px;
     clip-path:none;border-radius:3px;}
 }
 </style>
@@ -2175,9 +2208,9 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
     </div>
     <div class="mode-row">
       <button class="mb on" onclick="location.href='gallery1.html'"><span class="k">S</span>SET</button>
-      <button class="mb" data-sec="inclusion"><span class="k">I</span>INCLUSION</button>
+      <button class="mb" data-sec="inclusion"><span class="k">I</span>SET:inclusion</button>
       <button class="mb" onclick="location.href='page-log.html'"><span class="k">L</span>LOG</button>
-      <button class="mb" onclick="location.href='reference.html'"><span class="k">R</span>REF</button>
+      <button class="mb" onclick="location.href='reference.html'"><span class="k">R</span>Reference</button>
       <button class="mb" onclick="location.href='measure.html'"><span class="k">M</span>MEASURE</button>
       <button class="mb" data-sec="about"><span class="k">A</span>ABOUT</button>
     </div>
