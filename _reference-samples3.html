@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>REFERENCE — Samples K·L·M·N·O</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--mono:'IBM Plex Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#000;font-family:var(--mono);overflow:hidden;height:100%;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);}
+.nav{display:flex;align-items:center;border-bottom:1px solid #1a1a1a;background:#000;
+  position:fixed;top:0;left:0;right:0;z-index:200;height:30px;}
+.nav-lbl{padding:0 14px;font-size:7px;letter-spacing:2px;color:#333;
+  border-right:1px solid #1a1a1a;height:100%;display:flex;align-items:center;}
+.nav-tab{padding:0 18px;font-size:7px;letter-spacing:1.5px;cursor:pointer;height:100%;
+  border-right:1px solid #1a1a1a;color:#333;display:flex;align-items:center;transition:color .12s;}
+.nav-tab:hover{color:#666;}
+.nav-tab.on{color:#ffd23d;box-shadow:inset 0 -2px 0 #ffd23d;}
+.sec{display:none;position:fixed;inset:30px 0 0;overflow:hidden;}
+.sec.on{display:flex;}
+</style>
+</head>
+<body>
+<div class="nav">
+  <div class="nav-lbl">REF</div>
+  <div class="nav-tab on"  onclick="show('k',this)">K. CONTACT SHEET</div>
+  <div class="nav-tab"     onclick="show('l',this)">L. DARKROOM</div>
+  <div class="nav-tab"     onclick="show('m',this)">M. SET DIAGRAM</div>
+  <div class="nav-tab"     onclick="show('n',this)">N. SPECTROGRAPH</div>
+  <div class="nav-tab"     onclick="show('o',this)">O. ISOMETRIC</div>
+</div>
+
+<!-- ═══ K. CONTACT SHEET ═══ -->
+<div class="sec on" id="sec-k" style="background:#0e0b07;flex-direction:row;">
+  <canvas id="k-canvas" style="flex:1;cursor:crosshair;"></canvas>
+  <div id="k-panel" style="width:220px;border-left:1px solid #2a1f0f;background:#080604;
+    display:flex;flex-direction:column;padding:0;">
+    <div style="padding:8px 12px;border-bottom:1px solid #1a1208;font-size:6.5px;
+      letter-spacing:1.5px;color:#5a3a18;">▶ FRAME INFO</div>
+    <div id="k-info" style="padding:12px;flex:1;font-size:7px;color:#5a3a18;">
+      <div style="margin-top:10px;">— 프레임을 선택하세요 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ L. DARKROOM ═══ -->
+<div class="sec" id="sec-l" style="background:#000;position:relative;">
+  <canvas id="l-canvas" style="position:absolute;inset:0;width:100%;height:100%;cursor:none;"></canvas>
+</div>
+
+<!-- ═══ M. SET / VENN ═══ -->
+<div class="sec" id="sec-m" style="background:#020106;flex-direction:row;">
+  <canvas id="m-canvas" style="flex:1;cursor:default;"></canvas>
+  <div id="m-panel" style="width:220px;border-left:1px solid #1a1428;background:#040210;
+    display:flex;flex-direction:column;">
+    <div style="padding:8px 12px;border-bottom:1px solid #1a1428;font-size:6.5px;
+      letter-spacing:1.5px;color:#5050a0;">▶ NODE INFO</div>
+    <div id="m-info" style="padding:12px;flex:1;font-size:7px;color:#505080;">
+      <div style="margin-top:10px;">— 노드를 선택하세요 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ N. SPECTROGRAPH ═══ -->
+<div class="sec" id="sec-n" style="background:#000;flex-direction:column;">
+  <canvas id="n-canvas" style="flex:1;width:100%;cursor:crosshair;"></canvas>
+  <div id="n-info-bar" style="flex-shrink:0;height:80px;border-top:1px solid #111;
+    background:#020202;display:flex;align-items:center;padding:0 24px;gap:20px;">
+    <div style="font-size:7px;letter-spacing:1.5px;color:#333;">— 스펙트럼 선을 클릭하세요 —</div>
+  </div>
+</div>
+
+<!-- ═══ O. ISOMETRIC ═══ -->
+<div class="sec" id="sec-o" style="background:#030208;flex-direction:row;">
+  <canvas id="o-canvas" style="flex:1;cursor:pointer;"></canvas>
+  <div id="o-panel" style="width:220px;border-left:1px solid #0e0e20;background:#020208;
+    display:flex;flex-direction:column;">
+    <div style="padding:8px 12px;border-bottom:1px solid #0e0e20;font-size:6.5px;
+      letter-spacing:1.5px;color:#404060;">▶ BOOK INFO</div>
+    <div id="o-info" style="padding:12px;flex:1;font-size:7px;color:#404060;">
+      <div style="margin-top:10px;">— 책을 클릭하세요 —</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── TAB ── */
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  el.classList.add('on');
+  ({k:initK,l:initL,m:initM,n:initN,o:initO})[id]();
+}
+
+/* ══════════════════════
+   K. CONTACT SHEET
+══════════════════════ */
+const KBOOKS=[
+  {num:'01',title:'밝은 방',author:'R. Barthes',year:'1980',type:'book',
+   excerpt:'punctum — 나를 찌르는 세부'},
+  {num:'02',title:'사진에 관하여',author:'S. Sontag',year:'1977',type:'book',
+   excerpt:'사진 = 이미지 전유'},
+  {num:'03',title:'눈의 문법',author:'J. Szarkowski',year:'1966',type:'book',
+   excerpt:'사진의 가장자리는 선택이다'},
+  {num:'04',title:'Ways of Seeing',author:'J. Berger',year:'1972',type:'book',
+   excerpt:'보는 방식은 선택이다'},
+  {num:'05',title:'선택과 배제',author:'작업 메모',year:'2026',type:'idea',
+   excerpt:'셀렉션 = 집합 연산'},
+  {num:'06',title:'New Topographics',author:'1975',year:'1975',type:'ref',
+   excerpt:'평범한 풍경의 날카로움'},
+  {num:'07',title:'The Ongoing Moment',author:'G. Dyer',year:'2005',type:'book',
+   excerpt:'이미지는 이미지를 낳는다'},
+  {num:'08',title:'집합론',author:'G. Cantor',year:'1874',type:'ref',
+   excerpt:'부분이 전체와 같은 크기'},
+  {num:'09',title:'프레임의 정치',author:'연구 노트',year:'2024',type:'idea',
+   excerpt:'찍히지 않은 것이 찍힌 것을 정의'},
+];
+
+let kCvs,kCtx,kFrames=[],kLoupe=null,kSelected=-1,kInited=false;
+
+function initK(){
+  if(kInited)return; kInited=true;
+  kCvs=document.getElementById('k-canvas');
+  kCtx=kCvs.getContext('2d');
+  function resize(){
+    kCvs.width=kCvs.offsetWidth; kCvs.height=kCvs.offsetHeight;
+    buildKFrames(); drawK();
+  }
+  resize(); window.addEventListener('resize',resize);
+  kCvs.addEventListener('mousemove',e=>{
+    const r=kCvs.getBoundingClientRect();
+    kLoupe={x:e.clientX-r.left,y:e.clientY-r.top};
+    const hit=kFrames.findIndex(f=>
+      kLoupe.x>f.x&&kLoupe.x<f.x+f.w&&kLoupe.y>f.y&&kLoupe.y<f.y+f.h);
+    kCvs.style.cursor=hit>=0?'pointer':'crosshair';
+  });
+  kCvs.addEventListener('mouseleave',()=>{kLoupe=null;});
+  kCvs.addEventListener('click',e=>{
+    const r=kCvs.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    const hit=kFrames.findIndex(f=>mx>f.x&&mx<f.x+f.w&&my>f.y&&my<f.y+f.h);
+    kSelected=hit;
+    const info=document.getElementById('k-info');
+    if(hit>=0){
+      const b=KBOOKS[hit];
+      const tc={book:'#d96a0e',idea:'#b07bff',ref:'#3fb09a'}[b.type];
+      info.innerHTML=`<div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:5px">${b.type.toUpperCase()} · FRAME ${b.num}</div>
+        <div style="font-size:11px;color:#c8883a;margin-bottom:3px">${b.title}</div>
+        <div style="font-size:7px;color:#5a3a18;margin-bottom:10px">${b.author} · ${b.year}</div>
+        <div style="font-size:7.5px;color:#8a5a28;line-height:1.65;border-left:2px solid #3a2010;padding-left:8px">"${b.excerpt}"</div>`;
+    } else info.innerHTML='<div style="margin-top:10px;color:#3a2010">— 프레임을 선택하세요 —</div>';
+  });
+  (function loop(){drawK();requestAnimationFrame(loop);})();
+}
+function buildKFrames(){
+  kFrames=[];
+  const W=kCvs.width,H=kCvs.height;
+  const COLS=3,pad=50,gap=12,perfH=28;
+  const avail=H-pad*2-perfH*2;
+  const rows=Math.ceil(KBOOKS.length/COLS);
+  const fw=(W-pad*2-gap*(COLS-1))/COLS;
+  const fh=(avail-gap*(rows-1))/rows;
+  KBOOKS.forEach((_,i)=>{
+    const c=i%COLS,r=Math.floor(i/COLS);
+    kFrames.push({x:pad+c*(fw+gap),y:pad+perfH+r*(fh+gap),w:fw,h:fh,i});
+  });
+}
+function drawK(){
+  if(!kCvs)return;
+  const W=kCvs.width,H=kCvs.height;
+  const ctx=kCtx;
+
+  // film base
+  ctx.fillStyle='#0d0a06'; ctx.fillRect(0,0,W,H);
+
+  // film grain
+  ctx.save();
+  for(let i=0;i<3000;i++){
+    const gx=Math.random()*W,gy=Math.random()*H;
+    ctx.fillStyle=`rgba(${180+Math.random()*40},${140+Math.random()*40},${80+Math.random()*20},${Math.random()*.03})`;
+    ctx.fillRect(gx,gy,1,1);
+  }
+  ctx.restore();
+
+  // perforation rows
+  const perfH=28,pad=50,perfW=16,perfH2=20,perfGap=26;
+  [[10],[H-10-perfH]].forEach(([py])=>{
+    ctx.fillStyle='#060402';
+    ctx.fillRect(0,py,W,perfH);
+    for(let x=20;x<W-20;x+=perfGap){
+      ctx.fillStyle='#1a1208';
+      ctx.strokeStyle='#2a1e0c';
+      ctx.lineWidth=1;
+      const ph=perfH2,pw=perfW,px=x-pw/2,ppy=py+(perfH-ph)/2;
+      ctx.fillRect(px,ppy,pw,ph);
+      ctx.strokeRect(px,ppy,pw,ph);
+    }
+  });
+
+  // film edge numbers
+  ctx.font='300 7px IBM Plex Mono';
+  ctx.fillStyle='#ff4a16';
+  ctx.textAlign='center';
+  for(let i=0;i<KBOOKS.length;i++){
+    if(kFrames[i]){
+      ctx.fillText(KBOOKS[i].num,kFrames[i].x+kFrames[i].w/2,pad+14);
+    }
+  }
+
+  // frames
+  kFrames.forEach((f,i)=>{
+    const b=KBOOKS[i];
+    const hi=kSelected===i;
+    const tc={book:'#d96a0e',idea:'#6040a0',ref:'#206050'}[b.type];
+
+    // frame bg
+    ctx.fillStyle=hi?'#1a120a':'#100c06';
+    ctx.fillRect(f.x,f.y,f.w,f.h);
+
+    // inner pattern (unique per book)
+    ctx.save();ctx.beginPath();ctx.rect(f.x,f.y,f.w,f.h);ctx.clip();
+    const seed=i*137;const rng=lcg(seed);
+    ctx.strokeStyle=tc+'20';ctx.lineWidth=.8;
+    for(let li=0;li<5;li++){
+      ctx.beginPath();
+      ctx.moveTo(f.x+rng()*f.w,f.y);
+      ctx.lineTo(f.x+rng()*f.w,f.y+f.h);
+      ctx.stroke();
+    }
+    // book "image" — abstract lines
+    ctx.strokeStyle=tc+'30';
+    for(let li=0;li<8;li++){
+      const ly=f.y+f.h*.2+li*(f.h*.6/8);
+      ctx.beginPath();ctx.moveTo(f.x+f.w*.08,ly);
+      ctx.lineTo(f.x+f.w*(0.92-rng()*.3),ly);ctx.stroke();
+    }
+    // type indicator
+    ctx.fillStyle=tc+'50';
+    ctx.fillRect(f.x+f.w*.7,f.y,f.w*.3,f.h*.08);
+    ctx.restore();
+
+    // title text
+    ctx.font='500 9px IBM Plex Mono';
+    ctx.fillStyle=hi?'#c88840':'#7a5028';
+    ctx.textAlign='center';
+    const short=b.title.length>16?b.title.slice(0,15)+'…':b.title;
+    ctx.fillText(short,f.x+f.w/2,f.y+f.h*.5+4);
+    ctx.font='300 7px IBM Plex Mono';
+    ctx.fillStyle=hi?'#8a5a28':'#4a3018';
+    ctx.fillText(b.author+' '+b.year,f.x+f.w/2,f.y+f.h*.5+16);
+
+    // frame border
+    ctx.strokeStyle=hi?'rgba(255,140,50,.6)':'rgba(60,40,16,.8)';
+    ctx.lineWidth=hi?1.5:1;
+    ctx.strokeRect(f.x,f.y,f.w,f.h);
+
+    // frame corner marks
+    if(hi){
+      const cs=8;
+      [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([dx,dy])=>{
+        const cx2=dx<0?f.x:f.x+f.w, cy2=dy<0?f.y:f.y+f.h;
+        ctx.strokeStyle='rgba(255,180,80,.8)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(cx2,cy2+dy*cs);ctx.lineTo(cx2,cy2);ctx.lineTo(cx2-dx*cs,cy2);ctx.stroke();
+      });
+    }
+  });
+
+  // LOUPE
+  if(kLoupe){
+    const lx=kLoupe.x,ly=kLoupe.y,lr=60;
+    const hit=kFrames.findIndex(f=>lx>f.x&&lx<f.x+f.w&&ly>f.y&&ly<f.y+f.h);
+    if(hit>=0){
+      ctx.save();
+      ctx.beginPath();ctx.arc(lx,ly,lr,0,Math.PI*2);ctx.clip();
+      // draw magnified version
+      const f=kFrames[hit],scale=2.2;
+      const srcX=lx-(lx-f.x)/scale,srcY=ly-(ly-f.y)/scale;
+      ctx.drawImage(kCvs,srcX,srcY,lr*2/scale,lr*2/scale,lx-lr,ly-lr,lr*2,lr*2);
+      ctx.restore();
+      // loupe ring
+      ctx.beginPath();ctx.arc(lx,ly,lr,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,180,80,.5)';ctx.lineWidth=2;ctx.stroke();
+      ctx.beginPath();ctx.arc(lx,ly,lr+4,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,180,80,.15)';ctx.lineWidth=3;ctx.stroke();
+    }
+  }
+}
+
+/* ══════════════════════
+   L. DARKROOM
+══════════════════════ */
+const LBOOKS=[
+  {title:'밝은 방',author:'Roland Barthes · 1980',excerpt:'punctum — 나를 찌르는 세부',x:.15,y:.2,type:'book'},
+  {title:'사진에 관하여',author:'Susan Sontag · 1977',excerpt:'사진 = 이미지를 전유하는 행위',x:.55,y:.15,type:'book'},
+  {title:'눈의 문법',author:'John Szarkowski · 1966',excerpt:'가장자리는 선택이다',x:.28,y:.55,type:'book'},
+  {title:'Ways of Seeing',author:'John Berger · 1972',excerpt:'보는 방식은 선택이다',x:.7,y:.45,type:'book'},
+  {title:'선택과 배제',author:'작업 메모 · 2026',excerpt:'배제되지 않은 것이 살아남는다',x:.45,y:.72,type:'idea'},
+  {title:'New Topographics',author:'1975 exhibition',excerpt:'평범함이 날카롭다',x:.8,y:.28,type:'ref'},
+  {title:'집합론',author:'G. Cantor · 1874',excerpt:'부분 = 전체의 크기',x:.12,y:.72,type:'ref'},
+  {title:'The Ongoing Moment',author:'Geoff Dyer · 2005',excerpt:'이미지는 이미지를 낳는다',x:.62,y:.68,type:'book'},
+];
+
+let lMx=null,lMy=null,lTime=0,lLoopL=false,lCvs=null,lCtx=null;
+const LOUPE_R=130;
+
+function initL(){
+  lCvs=document.getElementById('l-canvas');
+  lCtx=lCvs.getContext('2d');
+  lCvs.width=window.innerWidth;
+  lCvs.height=window.innerHeight-30;
+  window.addEventListener('resize',()=>{
+    lCvs.width=window.innerWidth;
+    lCvs.height=window.innerHeight-30;
+  });
+  // document 레벨 이벤트 — sec가 visible인지 체크
+  document.addEventListener('mousemove',e=>{
+    const sec=document.getElementById('sec-l');
+    if(!sec.classList.contains('on')){return;}
+    lMx=e.clientX;
+    lMy=e.clientY-30; // sec-l은 top:30px에서 시작, 캔버스 좌표계로 변환
+  });
+  if(lLoopL)return;
+  lLoopL=true;
+  (function loop(){
+    lTime+=.012;
+    drawL();
+    requestAnimationFrame(loop);
+  })();
+}
+
+function drawL(){
+  if(!lCvs)return;
+  const cvs=lCvs,ctx=lCtx;
+  const W=cvs.width,H=cvs.height;
+  if(!W||!H)return;
+
+  // 완전 암흑 베이스
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+
+  // 암실 세이프라이트 — 네 모서리 붉은 앰비언스
+  [[0,0],[W,0],[0,H],[W,H]].forEach(([cx2,cy2])=>{
+    const g=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,W*.32);
+    g.addColorStop(0,'rgba(160,8,0,.14)');g.addColorStop(1,'transparent');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  });
+
+  // 마우스 없을 때 안내
+  if(lMx===null){
+    ctx.font='300 11px IBM Plex Mono';ctx.fillStyle='rgba(255,55,10,.2)';
+    ctx.textAlign='center';
+    ctx.fillText('루페를 움직여 현상하세요',W/2,H/2);
+    ctx.font='300 7px IBM Plex Mono';ctx.fillStyle='rgba(255,30,10,.09)';
+    ctx.fillText('DARKROOM  ·  MOVE LOUPE TO DEVELOP',W/2,H/2+18);
+    return;
+  }
+
+  const mx=lMx,my=lMy;
+
+  // 루페 바깥 — 아이템 극히 희미하게 (존재 암시)
+  LBOOKS.forEach(b=>{
+    const bx=b.x*W,by=b.y*H;
+    const tc={book:'#ff9040',idea:'#b07bff',ref:'#3fb09a'}[b.type];
+    ctx.save();
+    ctx.globalAlpha=.04;
+    ctx.strokeStyle=tc;ctx.lineWidth=.5;
+    ctx.strokeRect(bx-90,by-36,180,72);
+    ctx.restore();
+  });
+
+  // ─── 루페 원 클리핑 ───
+  ctx.save();
+  ctx.beginPath();ctx.arc(mx,my,LOUPE_R,0,Math.PI*2);ctx.clip();
+
+  // 루페 내부 배경 — 현상액 담긴 인화지 색
+  const loupeBg=ctx.createRadialGradient(mx,my,0,mx,my,LOUPE_R);
+  loupeBg.addColorStop(0,'rgba(22,13,6,1)');
+  loupeBg.addColorStop(.8,'rgba(12,7,3,1)');
+  loupeBg.addColorStop(1,'rgba(6,3,1,1)');
+  ctx.fillStyle=loupeBg;ctx.fillRect(mx-LOUPE_R,my-LOUPE_R,LOUPE_R*2,LOUPE_R*2);
+
+  // 돋보기 배율 — 마우스 중심 기준 1.8x 확대
+  const ZOOM=1.8;
+  ctx.translate(mx,my);ctx.scale(ZOOM,ZOOM);ctx.translate(-mx,-my);
+
+  // 루페 내부 아이템 — 완전 현상
+  LBOOKS.forEach((b,i)=>{
+    const bx=b.x*W,by=b.y*H;
+    const tc={book:'#ff9040',idea:'#b07bff',ref:'#3fb09a'}[b.type];
+    const flicker=.93+Math.sin(lTime*1.5+i*1.3)*.07;
+
+    ctx.save();
+    // 인화지 카드 배경
+    ctx.globalAlpha=.88*flicker;
+    ctx.fillStyle='#0d0906';
+    ctx.fillRect(bx-90,by-36,180,72);
+    // 에지 번 효과
+    const burn=ctx.createRadialGradient(bx,by+36,0,bx,by+36,110);
+    burn.addColorStop(0,'transparent');burn.addColorStop(1,'rgba(80,25,0,.45)');
+    ctx.fillStyle=burn;ctx.fillRect(bx-90,by-36,180,72);
+    // 카드 테두리
+    ctx.globalAlpha=.7*flicker;
+    ctx.strokeStyle=tc;ctx.lineWidth=.8/ZOOM;ctx.strokeRect(bx-90,by-36,180,72);
+    // TYPE 태그
+    ctx.globalAlpha=.65*flicker;
+    ctx.font=`500 ${6/ZOOM*1.5}px IBM Plex Mono`;ctx.fillStyle=tc;ctx.textAlign='left';
+    ctx.fillText(b.type.toUpperCase(),bx-82,by-22);
+    // 제목
+    ctx.globalAlpha=flicker;
+    ctx.font=`500 ${12/ZOOM*1.5}px IBM Plex Mono`;
+    ctx.fillStyle='rgba(220,168,82,1)';
+    ctx.textAlign='center';ctx.fillText(b.title,bx,by+2);
+    // 저자
+    ctx.globalAlpha=.72*flicker;
+    ctx.font=`300 ${7.5/ZOOM*1.5}px IBM Plex Mono`;ctx.fillStyle='rgba(158,108,48,1)';
+    ctx.fillText(b.author,bx,by+16);
+    // 발췌
+    ctx.globalAlpha=.6*flicker;
+    ctx.font=`300 ${7/ZOOM*1.5}px IBM Plex Mono`;ctx.fillStyle='rgba(185,148,76,1)';
+    ctx.fillText('"'+b.excerpt+'"',bx,by+30);
+    ctx.restore();
+  });
+
+  ctx.restore(); // 클립 해제
+
+  // ─── 루페 링 ───
+  ctx.save();
+  // 외곽 링
+  ctx.beginPath();ctx.arc(mx,my,LOUPE_R,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,200,130,.55)';ctx.lineWidth=1.5;ctx.stroke();
+  // 내부 링
+  ctx.beginPath();ctx.arc(mx,my,LOUPE_R-4,0,Math.PI*2);
+  ctx.strokeStyle='rgba(255,175,95,.12)';ctx.lineWidth=.8;ctx.stroke();
+  // 유리 반사 (상단 하이라이트)
+  ctx.beginPath();
+  ctx.arc(mx-LOUPE_R*.22,my-LOUPE_R*.28,LOUPE_R*.18,Math.PI*1.1,Math.PI*1.85);
+  ctx.strokeStyle='rgba(255,248,220,.13)';ctx.lineWidth=3;ctx.stroke();
+  ctx.restore();
+
+  // 십자선
+  ctx.save();
+  ctx.strokeStyle='rgba(255,190,120,.15)';ctx.lineWidth=.5;
+  ctx.beginPath();ctx.moveTo(mx-LOUPE_R+14,my);ctx.lineTo(mx+LOUPE_R-14,my);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(mx,my-LOUPE_R+14);ctx.lineTo(mx,my+LOUPE_R-14);ctx.stroke();
+  ctx.restore();
+}
+
+/* ══════════════════════
+   M. SET / VENN DIAGRAM
+══════════════════════ */
+const MCIRCLES=[
+  {label:'PHOTOGRAPHY',col:'#ff8040',x:.35,y:.42,r:.26},
+  {label:'THEORY',col:'#b07bff',x:.6,y:.3,r:.22},
+  {label:'SET / MATH',col:'#3fb09a',x:.6,y:.6,r:.2},
+];
+const MNODES=[
+  {label:'밝은 방',circles:[0,1],sub:'Barthes · 1980',type:'book'},
+  {label:'사진에 관하여',circles:[0,1],sub:'Sontag · 1977',type:'book'},
+  {label:'눈의 문법',circles:[0],sub:'Szarkowski · 1966',type:'book'},
+  {label:'Ways of Seeing',circles:[0,1],sub:'Berger · 1972',type:'book'},
+  {label:'New Topographics',circles:[0],sub:'1975 exhibition',type:'ref'},
+  {label:'punctum',circles:[1],sub:'Barthes 개념',type:'idea'},
+  {label:'프레임의 정치',circles:[0,1],sub:'작업 메모',type:'idea'},
+  {label:'선택과 배제',circles:[0,2],sub:'집합적 셀렉션',type:'idea'},
+  {label:'집합론',circles:[2],sub:'Cantor · 1874',type:'ref'},
+  {label:'위상수학',circles:[1,2],sub:'공간 구조',type:'ref'},
+  {label:'인덱스성',circles:[0,1,2],sub:'사진·이론·집합 교차',type:'idea'},
+];
+
+let mCvs,mCtx,mTime=0,mHover=-1,mSelected=-1,mInited=false;
+
+function initM(){
+  if(mInited)return; mInited=true;
+  mCvs=document.getElementById('m-canvas');
+  mCtx=mCvs.getContext('2d');
+  function resize(){mCvs.width=mCvs.offsetWidth||window.innerWidth-220;mCvs.height=mCvs.offsetHeight||window.innerHeight-30;}
+  setTimeout(resize,0);window.addEventListener('resize',resize);
+  mCvs.addEventListener('mousemove',e=>{
+    const r=mCvs.getBoundingClientRect();
+    const mx=e.clientX-r.left,my=e.clientY-r.top;
+    mHover=getMNode(mx,my);
+    mCvs.style.cursor=mHover>=0?'pointer':'default';
+  });
+  mCvs.addEventListener('click',e=>{
+    const r=mCvs.getBoundingClientRect();
+    const hit=getMNode(e.clientX-r.left,e.clientY-r.top);
+    mSelected=hit;
+    const info=document.getElementById('m-info');
+    if(hit>=0){
+      const n=MNODES[hit];
+      const cats=n.circles.map(c=>MCIRCLES[c].label).join(' ∩ ');
+      const tc={book:'#ff8040',idea:'#b07bff',ref:'#3fb09a'}[n.type];
+      info.innerHTML=`<div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:5px">${n.type.toUpperCase()}</div>
+        <div style="font-size:11px;color:#a0a0e0;margin-bottom:3px">${n.label}</div>
+        <div style="font-size:7px;color:#606080;margin-bottom:8px">${n.sub}</div>
+        <div style="font-size:6.5px;color:#505070;line-height:1.6;">영역: ${cats}</div>`;
+    } else info.innerHTML='<div style="margin-top:10px;color:#2a2a50">— 노드를 선택하세요 —</div>';
+  });
+  (function loop(){mTime+=.008;drawM();requestAnimationFrame(loop);})();
+}
+
+function getMNodePos(n,W,H){
+  // centroid of member circles
+  const cs=n.circles.map(ci=>MCIRCLES[ci]);
+  let x=cs.reduce((s,c)=>s+c.x,0)/cs.length*W;
+  let y=cs.reduce((s,c)=>s+c.y,0)/cs.length*H;
+  // slight jitter per node
+  const hash=(n.label.split('').reduce((a,c)=>a+c.charCodeAt(0),0));
+  const angle=hash*.618*Math.PI*2;
+  const dist=n.circles.length===3?0:30+hash%20;
+  x+=Math.cos(angle)*dist; y+=Math.sin(angle)*dist;
+  return{x,y};
+}
+function getMNode(mx,my){
+  const W=mCvs.width,H=mCvs.height;
+  return MNODES.findIndex(n=>{
+    const p=getMNodePos(n,W,H);
+    return Math.sqrt((mx-p.x)**2+(my-p.y)**2)<16;
+  });
+}
+function drawM(){
+  if(!mCvs)return;
+  const W=mCvs.width,H=mCvs.height;
+  const ctx=mCtx;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#020106';ctx.fillRect(0,0,W,H);
+
+  // background grid
+  ctx.strokeStyle='rgba(80,80,160,.04)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // circles
+  ctx.globalCompositeOperation='source-over';
+  MCIRCLES.forEach((c,ci)=>{
+    const cx2=c.x*W,cy2=c.y*H,cr=c.r*Math.min(W,H);
+    const pulse=1+Math.sin(mTime+ci*2.1)*.015;
+
+    // fill
+    ctx.globalAlpha=.06;
+    ctx.fillStyle=c.col;
+    ctx.beginPath();ctx.arc(cx2,cy2,cr*pulse,0,Math.PI*2);ctx.fill();
+
+    // stroke
+    ctx.globalAlpha=.35;
+    ctx.strokeStyle=c.col;ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(cx2,cy2,cr*pulse,0,Math.PI*2);ctx.stroke();
+
+    // label
+    ctx.globalAlpha=.6;
+    ctx.font='500 8px IBM Plex Mono';ctx.fillStyle=c.col;
+    ctx.textAlign='center';
+    const lx=cx2+Math.cos(ci*2.1)*cr*.7,ly=cy2+Math.sin(ci*2.1)*cr*.7;
+    ctx.fillText(c.label,lx,ly);
+    ctx.globalAlpha=1;
+  });
+
+  // intersection highlight (all 3)
+  ctx.globalAlpha=.12;
+  ctx.fillStyle='#ffffff';
+  const p0=MCIRCLES[0],p1=MCIRCLES[1],p2=MCIRCLES[2];
+  // approximate center of triple intersection
+  const ix=(p0.x+p1.x+p2.x)/3*W, iy=(p0.y+p1.y+p2.y)/3*H;
+  ctx.beginPath();ctx.arc(ix,iy,16,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+
+  // nodes
+  MNODES.forEach((n,ni)=>{
+    const {x,y}=getMNodePos(n,W,H);
+    const hi=mHover===ni||mSelected===ni;
+    const tc={book:'#ff8040',idea:'#c090ff',ref:'#50c0a0'}[n.type];
+
+    if(hi){
+      ctx.beginPath();ctx.arc(x,y,20,0,Math.PI*2);
+      ctx.fillStyle=tc+'18';ctx.fill();
+    }
+    ctx.shadowBlur=hi?12:5;ctx.shadowColor=tc;
+    ctx.beginPath();ctx.arc(x,y,hi?7:5,0,Math.PI*2);
+    ctx.fillStyle=hi?tc:tc+'aa';ctx.fill();
+    ctx.shadowBlur=0;
+
+    ctx.font=(hi?'500 ':'300 ')+'8px IBM Plex Mono';
+    ctx.fillStyle=hi?'rgba(255,255,255,.9)':'rgba(200,200,220,.55)';
+    ctx.textAlign='center';
+    ctx.fillText(n.label,x,y-12);
+  });
+}
+
+/* ══════════════════════
+   N. SPECTROGRAPH
+══════════════════════ */
+const NLINES=[
+  {wl:380,label:'집합론',sub:'G. Cantor · 1874',excerpt:'부분이 전체와 같은 크기를 가질 수 있다',type:'ref'},
+  {wl:420,label:'위상수학',sub:'수학적 구조',excerpt:'연속적 변환 아래 보존되는 성질',type:'ref'},
+  {wl:460,label:'Ways of Seeing',sub:'J. Berger · 1972',excerpt:'보는 방식은 선택이다',type:'book'},
+  {wl:490,label:'프레임의 정치',sub:'연구 노트 · 2024',excerpt:'찍히지 않은 것이 찍힌 것을 정의한다',type:'idea'},
+  {wl:520,label:'New Topographics',sub:'1975 exhibition',excerpt:'평범한 풍경. 이 거리가 날카롭다',type:'ref'},
+  {wl:555,label:'선택과 배제',sub:'작업 메모 · 2026',excerpt:'셀렉션은 집합 연산이다',type:'idea'},
+  {wl:590,label:'눈의 문법',sub:'J. Szarkowski · 1966',excerpt:'사진의 가장자리는 선택이다',type:'book'},
+  {wl:620,label:'사진에 관하여',sub:'S. Sontag · 1977',excerpt:'사진을 찍는다는 것은 이미지를 전유하는 것이다',type:'book'},
+  {wl:660,label:'밝은 방',sub:'R. Barthes · 1980',excerpt:'punctum — 나를 찌르는 세부',type:'book'},
+  {wl:700,label:'The Ongoing Moment',sub:'G. Dyer · 2005',excerpt:'이미지는 이미지를 낳는다',type:'book'},
+];
+
+let nCvs,nCtx,nSelected=-1,nTime=0,nInited=false;
+
+function initN(){
+  if(nInited)return; nInited=true;
+  nCvs=document.getElementById('n-canvas');
+  nCtx=nCvs.getContext('2d');
+  function resize(){nCvs.width=nCvs.offsetWidth||window.innerWidth;nCvs.height=nCvs.offsetHeight||window.innerHeight-110;drawN();}
+  setTimeout(resize,0);window.addEventListener('resize',resize);
+  nCvs.addEventListener('click',e=>{
+    const r=nCvs.getBoundingClientRect();
+    const mx=e.clientX-r.left;
+    const W=nCvs.width,H=nCvs.height;
+    const WLMIN=360,WLMAX=720;
+    const hit=NLINES.findIndex(l=>{
+      const px=((l.wl-WLMIN)/(WLMAX-WLMIN))*W;
+      return Math.abs(mx-px)<12;
+    });
+    nSelected=hit;
+    const bar=document.getElementById('n-info-bar');
+    if(hit>=0){
+      const l=NLINES[hit];
+      const tc={book:'#ff8040',idea:'#b07bff',ref:'#3fb09a'}[l.type];
+      bar.innerHTML=`<div style="width:3px;height:50px;flex-shrink:0;background:${wlToColor(l.wl)};
+        box-shadow:0 0 12px ${wlToColor(l.wl)}"></div>
+        <div>
+          <div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:4px">${l.type.toUpperCase()} · λ = ${l.wl}nm</div>
+          <div style="font-size:13px;color:#ddd;margin-bottom:3px">${l.label}</div>
+          <div style="font-size:7px;color:#555;margin-bottom:6px">${l.sub}</div>
+          <div style="font-size:7.5px;color:#888;font-style:italic">"${l.excerpt}"</div>
+        </div>`;
+    } else {
+      bar.innerHTML='<div style="font-size:7px;letter-spacing:1.5px;color:#333">— 스펙트럼 선을 클릭하세요 —</div>';
+    }
+  });
+  nCvs.addEventListener('mousemove',e=>{
+    const r=nCvs.getBoundingClientRect();
+    const mx=e.clientX-r.left;
+    const W=nCvs.width;
+    const WLMIN=360,WLMAX=720;
+    const hit=NLINES.findIndex(l=>{
+      const px=((l.wl-WLMIN)/(WLMAX-WLMIN))*W;
+      return Math.abs(mx-px)<10;
+    });
+    nCvs.style.cursor=hit>=0?'pointer':'crosshair';
+  });
+  (function loop(){nTime+=.01;drawN();requestAnimationFrame(loop);})();
+}
+function wlToColor(wl){
+  if(wl<380)return'#6000ff';
+  if(wl<440){const t=(wl-380)/60;return`rgb(${Math.round(t*30)},0,255)`;}
+  if(wl<490){const t=(wl-440)/50;return`rgb(0,${Math.round(t*200)},255)`;}
+  if(wl<510){const t=(wl-490)/20;return`rgb(0,200,${Math.round(255-t*255)})`;}
+  if(wl<580){const t=(wl-510)/70;return`rgb(${Math.round(t*255)},200,0)`;}
+  if(wl<645){const t=(wl-580)/65;return`rgb(255,${Math.round(200-t*200)},0)`;}
+  return`rgb(255,0,0)`;
+}
+function drawN(){
+  if(!nCvs)return;
+  const W=nCvs.width,H=nCvs.height;
+  const ctx=nCtx;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
+
+  const WLMIN=360,WLMAX=720;
+
+  // spectrum gradient band
+  const specY=H*.35,specH=H*.3;
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  for(let wl=WLMIN;wl<=WLMAX;wl+=5){
+    const t=(wl-WLMIN)/(WLMAX-WLMIN);
+    grad.addColorStop(t,wlToColor(wl));
+  }
+  ctx.fillStyle=grad;
+  ctx.fillRect(0,specY,W,specH);
+
+  // spectrum fade top/bottom
+  [[specY,'top'],[specY+specH,'bottom']].forEach(([y,dir])=>{
+    const fg=ctx.createLinearGradient(0,dir==='top'?y-30:y,0,dir==='top'?y:y+30);
+    fg.addColorStop(0,'rgba(0,0,0,1)');fg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=fg;ctx.fillRect(0,dir==='top'?y-30:y,W,30);
+  });
+
+  // dark overlay to make it look like absorption spectrum
+  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,specY,W,specH);
+
+  // wavelength axis
+  ctx.font='300 7px IBM Plex Mono';ctx.fillStyle='rgba(255,255,255,.2)';ctx.textAlign='center';
+  [400,450,500,550,600,650,700].forEach(wl=>{
+    const px=((wl-WLMIN)/(WLMAX-WLMIN))*W;
+    ctx.fillText(wl+'nm',px,specY+specH+14);
+    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(px,specY);ctx.lineTo(px,specY+specH);ctx.stroke();
+  });
+
+  // emission lines
+  NLINES.forEach((l,i)=>{
+    const px=((l.wl-WLMIN)/(WLMAX-WLMIN))*W;
+    const hi=nSelected===i;
+    const lineCol=wlToColor(l.wl);
+
+    // line through spectrum
+    ctx.save();
+    ctx.strokeStyle=hi?'rgba(255,255,255,.95)':'rgba(255,255,255,.5)';
+    ctx.lineWidth=hi?2:1;
+    ctx.shadowBlur=hi?16:6;ctx.shadowColor=lineCol;
+    ctx.beginPath();ctx.moveTo(px,specY-2);ctx.lineTo(px,specY+specH+2);ctx.stroke();
+    ctx.restore();
+
+    // label above
+    const ty=specY-20-((i%3)*18);
+    ctx.save();
+    ctx.font=(hi?'500 ':'300 ')+'8px IBM Plex Mono';
+    ctx.fillStyle=hi?'rgba(255,255,255,.95)':lineCol+'cc';
+    ctx.textAlign='center';
+    ctx.shadowBlur=hi?8:0;ctx.shadowColor=lineCol;
+    // rotate label
+    ctx.translate(px,ty);ctx.rotate(-Math.PI/6);
+    ctx.fillText(l.label,0,0);
+    ctx.restore();
+
+    // tick below
+    ctx.strokeStyle=hi?lineCol:'rgba(255,255,255,.2)';ctx.lineWidth=hi?2:1;
+    ctx.beginPath();ctx.moveTo(px,specY+specH+2);ctx.lineTo(px,specY+specH+8);ctx.stroke();
+
+    // dot
+    ctx.beginPath();ctx.arc(px,specY+specH+12,hi?4:2.5,0,Math.PI*2);
+    ctx.fillStyle=hi?lineCol:lineCol+'88';
+    ctx.shadowBlur=hi?10:0;ctx.shadowColor=lineCol;ctx.fill();ctx.shadowBlur=0;
+  });
+
+  // axis label
+  ctx.font='300 7px IBM Plex Mono';ctx.fillStyle='rgba(255,255,255,.15)';
+  ctx.textAlign='left';ctx.fillText('λ (WAVELENGTH / CONCEPTUAL SPECTRUM)',8,specY-40);
+  ctx.textAlign='right';ctx.fillText('UV ←                                        → IR',W-8,specY-40);
+}
+
+/* ══════════════════════
+   O. ISOMETRIC BOOKS
+══════════════════════ */
+const OBOOKS=[
+  {title:'밝은 방',author:'R. Barthes',year:'1980',col:'#6a1a8a',
+   excerpt:'punctum — 나를 찌르는 세부. 찌름, 구멍, 자국.',type:'book'},
+  {title:'사진에 관하여',author:'S. Sontag',year:'1977',col:'#8a3a00',
+   excerpt:'사진 = 이미지를 전유하는 것.',type:'book'},
+  {title:'눈의 문법',author:'J. Szarkowski',year:'1966',col:'#1a3a6a',
+   excerpt:'사진의 가장자리는 선택이다.',type:'book'},
+  {title:'Ways of Seeing',author:'J. Berger',year:'1972',col:'#003a3a',
+   excerpt:'보는 방식은 선택이다.',type:'book'},
+  {title:'선택과 배제',author:'작업 메모',year:'2026',col:'#5a2a7a',
+   excerpt:'셀렉션은 집합 연산이다.',type:'idea'},
+  {title:'집합론',author:'G. Cantor',year:'1874',col:'#1a4a2a',
+   excerpt:'부분이 전체와 같은 크기.',type:'ref'},
+  {title:'New Topographics',author:'1975',year:'1975',col:'#4a2a00',
+   excerpt:'평범함이 날카롭다.',type:'ref'},
+  {title:'The Ongoing Moment',author:'G. Dyer',year:'2005',col:'#3a0a0a',
+   excerpt:'이미지는 이미지를 낳는다.',type:'book'},
+];
+
+let oCvs,oCtx,oSelected=-1,oHover=-1,oTime=0,oInited=false,oTilts=[];
+
+function initO(){
+  if(oInited)return; oInited=true;
+  oCvs=document.getElementById('o-canvas');
+  oCtx=oCvs.getContext('2d');
+  oTilts=OBOOKS.map(()=>0);
+  function resize(){oCvs.width=oCvs.offsetWidth||window.innerWidth-220;oCvs.height=oCvs.offsetHeight||window.innerHeight-30;}
+  setTimeout(resize,0);window.addEventListener('resize',resize);
+  oCvs.addEventListener('mousemove',e=>{
+    const r=oCvs.getBoundingClientRect();
+    oHover=getOHit(e.clientX-r.left,e.clientY-r.top);
+    oCvs.style.cursor=oHover>=0?'pointer':'default';
+  });
+  oCvs.addEventListener('click',e=>{
+    const r=oCvs.getBoundingClientRect();
+    const hit=getOHit(e.clientX-r.left,e.clientY-r.top);
+    oSelected=oSelected===hit?-1:hit;
+    const info=document.getElementById('o-info');
+    if(oSelected>=0){
+      const b=OBOOKS[oSelected];
+      const tc={book:'#ff8040',idea:'#b07bff',ref:'#3fb09a'}[b.type];
+      info.innerHTML=`<div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:5px">${b.type.toUpperCase()}</div>
+        <div style="font-size:11px;color:#a0a0d0;margin-bottom:3px">${b.title}</div>
+        <div style="font-size:7px;color:#505080;margin-bottom:10px">${b.author} · ${b.year}</div>
+        <div style="font-size:7.5px;color:#606090;line-height:1.65;border-left:2px solid #1a1a40;padding-left:8px">"${b.excerpt}"</div>`;
+    } else info.innerHTML='<div style="margin-top:10px;color:#2a2a50">— 책을 클릭하세요 —</div>';
+  });
+  (function loop(){
+    oTime+=.016;
+    oTilts=oTilts.map((t,i)=>i===oHover||i===oSelected?Math.min(t+.1,1):Math.max(t-.07,0));
+    drawO();requestAnimationFrame(loop);
+  })();
+}
+
+let oHitBoxes=[];
+function getOHit(mx,my){
+  return oHitBoxes.findIndex(b=>b&&mx>b.x&&mx<b.x+b.w&&my>b.y&&my<b.y+b.h);
+}
+
+function drawO(){
+  if(!oCvs)return;
+  const W=oCvs.width,H=oCvs.height;
+  const ctx=oCtx;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#030208';ctx.fillRect(0,0,W,H);
+
+  // isometric grid
+  const ISO=30;
+  ctx.strokeStyle='rgba(80,80,160,.04)';ctx.lineWidth=1;
+  for(let i=-20;i<40;i++){
+    ctx.beginPath();ctx.moveTo(i*ISO,0);ctx.lineTo(i*ISO+H*.6,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(W+i*ISO,0);ctx.lineTo(W+i*ISO-H*.6,H);ctx.stroke();
+  }
+
+  // books
+  const COLS=4;
+  const bw=70,bh=90,bd=14,gap=20;
+  const totalW=COLS*(bw+gap)-gap;
+  const startX=(W-totalW)/2+bw/2;
+  const startY=H/2-20;
+  oHitBoxes=new Array(OBOOKS.length).fill(null);
+
+  OBOOKS.forEach((b,i)=>{
+    const col=i%COLS,row=Math.floor(i/COLS);
+    // isometric offset
+    const bx=startX+col*(bw+gap)-row*10;
+    const by=startY+row*(bh*.35+gap/2)-col*10;
+    const tilt=oTilts[i];
+    const hi=oHover===i||oSelected===i;
+
+    // book dimensions
+    const W2=bw,H2=bh*(1-tilt*.15),D=bd;
+
+    // isometric top face (lighter)
+    const topPts=[[bx-W2/2,by-H2/2],[bx+W2/2,by-H2/2],[bx+W2/2+D/2,by-H2/2-D/2],[bx-W2/2+D/2,by-H2/2-D/2]];
+    ctx.beginPath();topPts.forEach(([px,py],i)=>i?ctx.lineTo(px,py):ctx.moveTo(px,py));ctx.closePath();
+    ctx.fillStyle=lighten(b.col,.3);ctx.fill();
+
+    // front face (main)
+    const frontPts=[[bx-W2/2,by-H2/2],[bx+W2/2,by-H2/2],[bx+W2/2,by+H2/2],[bx-W2/2,by+H2/2]];
+    ctx.beginPath();frontPts.forEach(([px,py],i)=>i?ctx.lineTo(px,py):ctx.moveTo(px,py));ctx.closePath();
+    const fg=ctx.createLinearGradient(bx-W2/2,0,bx+W2/2,0);
+    fg.addColorStop(0,lighten(b.col,.1));fg.addColorStop(1,b.col);
+    ctx.fillStyle=fg;ctx.fill();
+    if(hi){ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;ctx.stroke();}
+
+    // side face (darker)
+    const sidePts=[[bx+W2/2,by-H2/2],[bx+W2/2+D/2,by-H2/2-D/2],[bx+W2/2+D/2,by+H2/2-D/2],[bx+W2/2,by+H2/2]];
+    ctx.beginPath();sidePts.forEach(([px,py],i)=>i?ctx.lineTo(px,py):ctx.moveTo(px,py));ctx.closePath();
+    ctx.fillStyle=darken(b.col,.4);ctx.fill();
+
+    // title on spine
+    ctx.save();ctx.beginPath();
+    frontPts.forEach(([px,py],i)=>i?ctx.lineTo(px,py):ctx.moveTo(px,py));
+    ctx.closePath();ctx.clip();
+    ctx.translate(bx,by);
+    ctx.font='300 7px IBM Plex Mono';
+    ctx.fillStyle='rgba(255,255,255,.7)';
+    ctx.textAlign='center';
+    const lines=wrapText(b.title,8);
+    lines.forEach((line,li)=>ctx.fillText(line,0,-H2*.15+(li-lines.length/2+.5)*11));
+    ctx.font='300 5.5px IBM Plex Mono';
+    ctx.fillStyle='rgba(255,255,255,.35)';
+    ctx.fillText(b.year,0,H2*.35);
+    ctx.restore();
+
+    // glow if selected
+    if(oSelected===i){
+      ctx.save();
+      ctx.shadowBlur=20;ctx.shadowColor=b.col;
+      ctx.strokeStyle=lighten(b.col,.5);ctx.lineWidth=1.5;
+      ctx.beginPath();frontPts.forEach(([px,py],i)=>i?ctx.lineTo(px,py):ctx.moveTo(px,py));
+      ctx.closePath();ctx.stroke();ctx.restore();
+    }
+
+    // hit box
+    oHitBoxes[i]={x:bx-W2/2,y:by-H2/2,w:W2,h:H2};
+  });
+}
+function lighten(hex,amt){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b2=parseInt(hex.slice(5,7),16);
+  return`rgb(${Math.min(255,r+Math.round(amt*200))},${Math.min(255,g+Math.round(amt*200))},${Math.min(255,b2+Math.round(amt*200))})`;
+}
+function darken(hex,amt){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b2=parseInt(hex.slice(5,7),16);
+  return`rgb(${Math.max(0,r-Math.round(amt*150))},${Math.max(0,g-Math.round(amt*150))},${Math.max(0,b2-Math.round(amt*150))})`;
+}
+function wrapText(text,maxLen){
+  const words=text.split(' ');const lines=[];let cur='';
+  words.forEach(w=>{if((cur+w).length>maxLen){if(cur)lines.push(cur.trim());cur=w+' ';}else cur+=w+' ';});
+  if(cur.trim())lines.push(cur.trim());
+  return lines;
+}
+function lcg(seed){let s=seed*9301+49297;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
+
+// init first tab
+initK();
+</script>
+</body>
+</html>
