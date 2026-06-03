@@ -494,6 +494,34 @@ function drawRoom(){
     ctx.restore();
   });
 
+  // ── 가로선 사이 불규칙 세로선 ─────────────────────────────
+  {
+    const ly1=H*LY_R, ly2=H*LY2_R;
+    // 미리 시드 고정 위치로 불규칙 배치
+    const vlines=[
+      {x:.09, y1:ly1, y2:ly2,        a:.38, w:.8},
+      {x:.17, y1:ly1, y2:ly1+H*.18,  a:.22, w:.6},
+      {x:.24, y1:ly2, y2:H*.72,      a:.3,  w:.7},
+      {x:.33, y1:ly1, y2:ly2,        a:.25, w:.5},
+      {x:.41, y1:ly1+H*.04, y2:ly2,  a:.35, w:.9},
+      {x:.50, y1:ly1, y2:H*.68,      a:.2,  w:.6},
+      {x:.57, y1:ly2, y2:ly2+H*.22,  a:.32, w:.7},
+      {x:.64, y1:ly1, y2:ly2,        a:.28, w:.5},
+      {x:.72, y1:ly1+H*.02, y2:H*.7, a:.22, w:.8},
+      {x:.80, y1:ly1, y2:ly2,        a:.33, w:.6},
+    ];
+    vlines.forEach(vl=>{
+      ctx.save();
+      ctx.strokeStyle=`rgba(100,12,0,${vl.a})`;
+      ctx.lineWidth=vl.w;
+      ctx.beginPath();
+      ctx.moveTo(W*vl.x, vl.y1);
+      ctx.lineTo(W*vl.x + (Math.sin(vl.x*17)*3), vl.y2);
+      ctx.stroke();
+      ctx.restore();
+    });
+  }
+
   // ── Counter ───────────────────────────────────────────
   const cY=H*.78;
   const cg=ctx.createLinearGradient(0,cY,0,H);
@@ -501,12 +529,36 @@ function drawRoom(){
   cg.addColorStop(1,'#030000');
   ctx.fillStyle=cg;
   ctx.fillRect(0,cY,W,H-cY);
-  ctx.strokeStyle='rgba(100,8,0,.4)';
-  ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(0,cY); ctx.lineTo(W,cY); ctx.stroke();
-  ctx.strokeStyle='rgba(50,4,0,.14)';
-  ctx.lineWidth=.5;
-  ctx.beginPath(); ctx.moveTo(0,cY+2); ctx.lineTo(W,cY+2); ctx.stroke();
+
+  // 테이블 엣지 라인 (트레이/카운터와 독립적으로 위치)
+  const tY=H*.88;
+  const tg=ctx.createLinearGradient(0,tY,0,tY+10);
+  tg.addColorStop(0,'rgba(140,18,0,.55)');
+  tg.addColorStop(.4,'rgba(80,10,0,.3)');
+  tg.addColorStop(1,'rgba(30,4,0,.0)');
+  ctx.fillStyle=tg;
+  ctx.fillRect(0,tY,W,10);
+
+  const ef=ctx.createLinearGradient(0,tY,0,tY+14);
+  ef.addColorStop(0,'rgba(100,14,0,.9)');
+  ef.addColorStop(1,'rgba(45,6,0,.9)');
+  ctx.fillStyle=ef;
+  ctx.fillRect(0,tY,W,14);
+
+  ctx.strokeStyle='rgba(200,30,0,.7)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(0,tY); ctx.lineTo(W,tY); ctx.stroke();
+  ctx.strokeStyle='rgba(60,6,0,.5)';
+  ctx.lineWidth=.8;
+  ctx.beginPath(); ctx.moveTo(0,tY+14); ctx.lineTo(W,tY+14); ctx.stroke();
+
+  // Table surface fill below the line
+  const sfg=ctx.createLinearGradient(0,tY,0,H);
+  sfg.addColorStop(0,'rgba(140,18,0,.8)');
+  sfg.addColorStop(.35,'rgba(90,10,0,.6)');
+  sfg.addColorStop(1,'rgba(40,5,0,.35)');
+  ctx.fillStyle=sfg;
+  ctx.fillRect(0,tY,W,H-tY);
 
   // Counter drawers
   ctx.strokeStyle='rgba(55,5,0,.18)';
@@ -566,9 +618,9 @@ function drawRoom(){
     ctx.lineWidth=.5;
     ctx.strokeRect(tr.x+pad,ty2+pad,tr.w-pad*2,th-pad*2);
     const lg=ctx.createLinearGradient(0,ty2+pad,0,ty2+th-pad);
-    lg.addColorStop(0,'rgba(110,12,0,.18)');
-    lg.addColorStop(.4,'rgba(60,5,0,.09)');
-    lg.addColorStop(1,'rgba(10,0,0,.04)');
+    lg.addColorStop(0,'rgba(160,18,0,.45)');
+    lg.addColorStop(.5,'rgba(100,10,0,.28)');
+    lg.addColorStop(1,'rgba(40,4,0,.14)');
     ctx.fillStyle=lg;
     ctx.fillRect(tr.x+pad+1,ty2+pad+1,tr.w-pad*2-2,th-pad*2-2);
     ctx.fillStyle='rgba(160,18,0,.1)';
@@ -594,6 +646,29 @@ function drawRoom(){
 
 function drawEnlarger(cx,baseY){
   const colH=H*.66, colW=6, colTop=baseY-colH;
+  const D=5; // 3D 깊이 오프셋
+
+  // 3D 헬퍼
+  function front(x,y,w,h,fc,sc){
+    ctx.fillStyle=fc; ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle=sc; ctx.lineWidth=.7; ctx.strokeRect(x,y,w,h);
+  }
+  function sideR(x,y,w,h,fc){
+    ctx.fillStyle=fc;
+    ctx.beginPath();
+    ctx.moveTo(x+w,y); ctx.lineTo(x+w+D,y-D);
+    ctx.lineTo(x+w+D,y-D+h); ctx.lineTo(x+w,y+h);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(80,8,0,.4)'; ctx.lineWidth=.5; ctx.stroke();
+  }
+  function topF(x,y,w,fc){
+    ctx.fillStyle=fc;
+    ctx.beginPath();
+    ctx.moveTo(x,y); ctx.lineTo(x+D,y-D);
+    ctx.lineTo(x+w+D,y-D); ctx.lineTo(x+w,y);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(90,10,0,.4)'; ctx.lineWidth=.5; ctx.stroke();
+  }
 
   // Ambient glow
   ctx.save();
@@ -605,113 +680,81 @@ function drawEnlarger(cx,baseY){
   ctx.restore();
 
   // ── Baseboard ──────────────────────────────────────
-  ctx.fillStyle='rgba(32,4,0,.97)';
-  ctx.fillRect(cx-36,baseY-8,72,8);
-  ctx.strokeStyle='rgba(155,20,0,.55)';
-  ctx.lineWidth=.7;
-  ctx.strokeRect(cx-36,baseY-8,72,8);
-  ctx.strokeStyle='rgba(110,13,0,.28)';
-  ctx.lineWidth=.4;
-  ctx.strokeRect(cx-26,baseY-6,52,4);
+  front(cx-36,baseY-8,72,8,'rgba(38,5,0,.97)','rgba(155,20,0,.55)');
+  sideR(cx-36,baseY-8,72,8,'rgba(22,3,0,.97)');
+  topF(cx-36,baseY-8,72,'rgba(60,9,0,.9)');
+  ctx.strokeStyle='rgba(110,13,0,.28)'; ctx.lineWidth=.4;
+  ctx.strokeRect(cx-24,baseY-6,48,3);
 
   // ── Column ─────────────────────────────────────────
-  ctx.fillStyle='rgba(42,6,0,.98)';
-  ctx.fillRect(cx-colW/2,colTop,colW,colH);
-  ctx.strokeStyle='rgba(175,22,0,.65)';
-  ctx.lineWidth=.8;
-  ctx.strokeRect(cx-colW/2,colTop,colW,colH);
+  front(cx-colW/2,colTop,colW,colH,'rgba(42,6,0,.98)','rgba(175,22,0,.65)');
+  sideR(cx-colW/2,colTop,colW,colH,'rgba(24,3,0,.98)');
+  topF(cx-colW/2,colTop,colW,'rgba(65,9,0,.9)');
+  // Column highlight
   ctx.fillStyle='rgba(110,12,0,.2)';
   ctx.fillRect(cx-1,colTop,2,colH);
-  // Rack teeth on right side
-  ctx.strokeStyle='rgba(130,15,0,.32)';
-  ctx.lineWidth=.4;
+  // Rack teeth
+  ctx.strokeStyle='rgba(130,15,0,.32)'; ctx.lineWidth=.4;
   for(let i=0;i<22;i++){
     const ry=colTop+i*(colH/22);
     ctx.beginPath(); ctx.moveTo(cx+colW/2,ry); ctx.lineTo(cx+colW/2+3,ry); ctx.stroke();
   }
 
   // Top ceiling mount
-  ctx.fillStyle='rgba(50,7,0,.97)';
-  ctx.fillRect(cx-18,colTop-7,36,10);
-  ctx.strokeStyle='rgba(160,20,0,.6)';
-  ctx.lineWidth=.8;
-  ctx.strokeRect(cx-18,colTop-7,36,10);
+  front(cx-18,colTop-7,36,10,'rgba(50,7,0,.97)','rgba(160,20,0,.6)');
+  sideR(cx-18,colTop-7,36,10,'rgba(30,4,0,.97)');
+  topF(cx-18,colTop-7,36,'rgba(75,11,0,.9)');
 
   // ── Head carrier arm ───────────────────────────────
   const armY=baseY-H*.49;
-  ctx.fillStyle='rgba(45,6,0,.96)';
-  ctx.fillRect(cx-26,armY-5,52,9);
-  ctx.strokeStyle='rgba(155,18,0,.55)';
-  ctx.lineWidth=.6;
-  ctx.strokeRect(cx-26,armY-5,52,9);
-  // Lock knob
-  ctx.fillStyle='rgba(155,20,0,.88)';
-  ctx.beginPath(); ctx.arc(cx-30,armY,5,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='rgba(200,28,0,.7)';
-  ctx.lineWidth=.7;
-  ctx.beginPath(); ctx.arc(cx-30,armY,5,0,Math.PI*2); ctx.stroke();
-  ctx.strokeStyle='rgba(200,28,0,.4)';
-  ctx.lineWidth=.4;
-  ctx.beginPath(); ctx.moveTo(cx-30,armY-3); ctx.lineTo(cx-30,armY+3); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx-33,armY); ctx.lineTo(cx-27,armY); ctx.stroke();
+  front(cx-26,armY-5,52,9,'rgba(45,6,0,.96)','rgba(155,18,0,.55)');
+  sideR(cx-26,armY-5,52,9,'rgba(26,4,0,.96)');
+  topF(cx-26,armY-5,52,'rgba(68,10,0,.9)');
 
   // ── Lamphouse ──────────────────────────────────────
   const lhY=armY+5, lhW=46, lhH=28;
-  ctx.fillStyle='rgba(36,5,0,.97)';
-  ctx.fillRect(cx-lhW/2,lhY,lhW,lhH);
-  ctx.strokeStyle='rgba(185,24,0,.72)';
-  ctx.lineWidth=1;
-  ctx.strokeRect(cx-lhW/2,lhY,lhW,lhH);
-  // Lamphouse top cap
-  ctx.fillStyle='rgba(28,4,0,.97)';
-  ctx.fillRect(cx-20,lhY-9,40,11);
-  ctx.strokeStyle='rgba(140,17,0,.5)';
-  ctx.lineWidth=.6;
-  ctx.strokeRect(cx-20,lhY-9,40,11);
+  front(cx-lhW/2,lhY,lhW,lhH,'rgba(36,5,0,.97)','rgba(185,24,0,.72)');
+  sideR(cx-lhW/2,lhY,lhW,lhH,'rgba(20,3,0,.97)');
+  topF(cx-lhW/2,lhY,lhW,'rgba(58,8,0,.92)');
+  // Lamp housing cap
+  front(cx-20,lhY-9,40,11,'rgba(28,4,0,.97)','rgba(140,17,0,.5)');
+  sideR(cx-20,lhY-9,40,11,'rgba(16,2,0,.97)');
+  topF(cx-20,lhY-9,40,'rgba(50,7,0,.9)');
   // Ventilation slits
-  ctx.strokeStyle='rgba(120,14,0,.4)';
-  ctx.lineWidth=.5;
+  ctx.strokeStyle='rgba(120,14,0,.4)'; ctx.lineWidth=.5;
   for(let i=0;i<4;i++){
     const sy=lhY+5+i*5;
     ctx.beginPath(); ctx.moveTo(cx-lhW/2+3,sy); ctx.lineTo(cx-lhW/2+10,sy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(cx+lhW/2-10,sy); ctx.lineTo(cx+lhW/2-3,sy); ctx.stroke();
   }
-  // Red power LED
-  ctx.save();
-  ctx.shadowColor='rgba(255,30,0,1)'; ctx.shadowBlur=18;
-  ctx.fillStyle='rgba(255,35,0,1)';
-  ctx.beginPath(); ctx.arc(cx+lhW/2-8,lhY+7,4.5,0,Math.PI*2); ctx.fill();
-  ctx.restore();
 
   // ── Negative stage ────────────────────────────────
   const nsY=lhY+lhH, nsW=50, nsH=13;
-  ctx.fillStyle='rgba(40,5,0,.97)';
-  ctx.fillRect(cx-nsW/2,nsY,nsW,nsH);
-  ctx.strokeStyle='rgba(170,22,0,.65)';
-  ctx.lineWidth=.8;
-  ctx.strokeRect(cx-nsW/2,nsY,nsW,nsH);
-  // Film opening
-  ctx.strokeStyle='rgba(140,16,0,.42)';
-  ctx.lineWidth=.5;
+  front(cx-nsW/2,nsY,nsW,nsH,'rgba(40,5,0,.97)','rgba(170,22,0,.65)');
+  sideR(cx-nsW/2,nsY,nsW,nsH,'rgba(22,3,0,.97)');
+  topF(cx-nsW/2,nsY,nsW,'rgba(62,9,0,.9)');
+  ctx.strokeStyle='rgba(140,16,0,.42)'; ctx.lineWidth=.5;
   ctx.strokeRect(cx-14,nsY+3,28,nsH-6);
-  // Carrier handle tab
-  ctx.fillStyle='rgba(125,15,0,.75)';
-  ctx.fillRect(cx+nsW/2,nsY+3,7,nsH-6);
-  ctx.strokeStyle='rgba(170,22,0,.5)';
-  ctx.lineWidth=.4;
-  ctx.strokeRect(cx+nsW/2,nsY+3,7,nsH-6);
+  // Carrier handle
+  front(cx+nsW/2,nsY+3,7,nsH-6,'rgba(125,15,0,.75)','rgba(170,22,0,.5)');
+  sideR(cx+nsW/2,nsY+3,7,nsH-6,'rgba(80,9,0,.75)');
 
   // ── Bellows ────────────────────────────────────────
   const bTop=nsY+nsH, bBot=bTop+26, bW0=18, bW1=13;
-  ctx.strokeStyle='rgba(105,12,0,.78)';
-  ctx.lineWidth=.7;
+  // Bellows right shadow face
+  ctx.fillStyle='rgba(18,2,0,.6)';
+  ctx.beginPath();
+  ctx.moveTo(cx+bW0,bTop); ctx.lineTo(cx+bW0+D,bTop-D);
+  ctx.lineTo(cx+bW1+D,bBot-D); ctx.lineTo(cx+bW1,bBot);
+  ctx.closePath(); ctx.fill();
+  // Bellows folds
+  ctx.strokeStyle='rgba(105,12,0,.78)'; ctx.lineWidth=.7;
   for(let i=0;i<=11;i++){
     const by=bTop+i*(26/11);
     const hw=bW0+(bW1-bW0)*(i/11);
     ctx.beginPath(); ctx.moveTo(cx-hw,by); ctx.lineTo(cx+hw,by); ctx.stroke();
   }
-  ctx.strokeStyle='rgba(75,9,0,.48)';
-  ctx.lineWidth=.5;
+  ctx.strokeStyle='rgba(75,9,0,.48)'; ctx.lineWidth=.5;
   ctx.beginPath();
   ctx.moveTo(cx-bW0,bTop); ctx.lineTo(cx-bW1,bBot);
   ctx.moveTo(cx+bW0,bTop); ctx.lineTo(cx+bW1,bBot);
@@ -719,48 +762,35 @@ function drawEnlarger(cx,baseY){
 
   // ── Lens board ─────────────────────────────────────
   const lbY=bBot, lbW=30, lbH=9;
-  ctx.fillStyle='rgba(32,4,0,.97)';
-  ctx.fillRect(cx-lbW/2,lbY,lbW,lbH);
-  ctx.strokeStyle='rgba(160,20,0,.6)';
-  ctx.lineWidth=.7;
-  ctx.strokeRect(cx-lbW/2,lbY,lbW,lbH);
+  front(cx-lbW/2,lbY,lbW,lbH,'rgba(32,4,0,.97)','rgba(160,20,0,.6)');
+  sideR(cx-lbW/2,lbY,lbW,lbH,'rgba(18,2,0,.97)');
+  topF(cx-lbW/2,lbY,lbW,'rgba(55,8,0,.9)');
 
-  // ── Lens box (사각형) ────────────────────────────────
+  // ── Lens box ────────────────────────────────────────
   const lcy=lbY+lbH+2;
-  ctx.fillStyle='rgba(32,4,0,.97)';
-  ctx.fillRect(cx-13,lcy,26,18);
-  ctx.strokeStyle='rgba(170,20,0,.62)';
-  ctx.lineWidth=.8;
-  ctx.strokeRect(cx-13,lcy,26,18);
-  // Inner glass panel
+  front(cx-13,lcy,26,18,'rgba(32,4,0,.97)','rgba(170,20,0,.62)');
+  sideR(cx-13,lcy,26,18,'rgba(18,2,0,.97)');
+  topF(cx-13,lcy,26,'rgba(52,7,0,.9)');
   ctx.fillStyle='rgba(8,1,0,.95)';
   ctx.fillRect(cx-8,lcy+3,16,12);
-  ctx.strokeStyle='rgba(120,14,0,.35)';
-  ctx.lineWidth=.4;
+  ctx.strokeStyle='rgba(120,14,0,.35)'; ctx.lineWidth=.4;
   ctx.strokeRect(cx-8,lcy+3,16,12);
-  // Glint streak
   ctx.fillStyle='rgba(220,25,0,.1)';
   ctx.fillRect(cx-6,lcy+4,5,2);
 
   // ── Red filter swing arm ────────────────────────────
   ctx.save();
-  ctx.strokeStyle='rgba(175,20,0,.6)';
-  ctx.lineWidth=.8;
+  ctx.strokeStyle='rgba(175,20,0,.6)'; ctx.lineWidth=.8;
   ctx.beginPath(); ctx.moveTo(cx+11,lcy+14); ctx.lineTo(cx+24,lcy+22); ctx.stroke();
-  ctx.fillStyle='rgba(140,8,0,.6)';
-  ctx.fillRect(cx+22,lcy+18,16,10);
-  ctx.strokeStyle='rgba(190,22,0,.5)';
-  ctx.lineWidth=.5;
-  ctx.strokeRect(cx+22,lcy+18,16,10);
+  front(cx+22,lcy+18,16,10,'rgba(140,8,0,.6)','rgba(190,22,0,.5)');
+  sideR(cx+22,lcy+18,16,10,'rgba(90,5,0,.6)');
   ctx.restore();
 
-  // ── Projected light cone ───────────────────────────
+  // ── Light cone ─────────────────────────────────────
   ctx.save();
   ctx.beginPath();
-  ctx.moveTo(cx-7,lcy+20);
-  ctx.lineTo(cx-30,baseY-2);
-  ctx.lineTo(cx+30,baseY-2);
-  ctx.lineTo(cx+7,lcy+14);
+  ctx.moveTo(cx-7,lcy+20); ctx.lineTo(cx-30,baseY-2);
+  ctx.lineTo(cx+30,baseY-2); ctx.lineTo(cx+7,lcy+14);
   ctx.closePath();
   const lc=ctx.createLinearGradient(0,lcy+14,0,baseY-2);
   lc.addColorStop(0,'rgba(180,14,0,.1)');
