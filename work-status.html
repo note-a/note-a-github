@@ -92,10 +92,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000;font-family:
   </div>
 
   <div class="f-stats">
-    <div class="f-stat core"><span class="k">CORE</span><span class="v" id="s-core">32</span></div>
-    <div class="f-stat sup"><span class="k">SUP</span><span class="v" id="s-sup">0</span></div>
-    <div class="f-stat drop"><span class="k">DROP</span><span class="v" id="s-drop">263</span></div>
-    <div class="f-stat q"><span class="k">QUEUE</span><span class="v" id="s-q">143</span></div>
+    <div class="f-stat core"><span class="k">POSTS</span><span class="v" id="s-core">—</span></div>
+    <div class="f-stat sup"><span class="k">COMMITS</span><span class="v" id="s-sup">—</span></div>
+    <div class="f-stat drop"><span class="k">THIS WK</span><span class="v" id="s-drop">—</span></div>
+    <div class="f-stat q"><span class="k">LAST</span><span class="v" id="s-q">—</span></div>
   </div>
 
   <div class="f-now">
@@ -115,80 +115,108 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000;font-family:
   <div class="feed-list" id="f-list"></div>
 
   <div class="feed-ftr">
-    <span>FOCUS <span class="cur">최종 셀렉션</span></span>
-    <span>진행 <b id="f-prog">62%</b></span>
+    <span>REPO <span class="cur">note-a/note-a-github</span></span>
+    <span>최신 <b id="f-prog">—</b></span>
   </div>
 </div>
 
 <script>
 (function(){
   const $=id=>document.getElementById(id);
-  const list=$('f-list');
   const p2=n=>String(n).padStart(2,'0');
-  const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-  const pick=a=>a[Math.floor(Math.random()*a.length)];
   const nowT=()=>{const d=new Date();return p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds());};
 
-  const CODES=['MONOLITH','STRATA','DISSOLVE','FOGDIS','BACKPOSE','TONEDIS','MATCOV','RUPTURE'];
-  const EVENTS=[
-    ['scan','SCAN', ()=>`DIR_${p2(ri(1,45))} 검토중`],
-    ['cull','CULL', ()=>`셀렉션 ${ri(3,18)}장 처리`],
-    ['core','CORE', ()=>`CORE 판정 +${ri(1,4)}`],
-    ['drop','DROP', ()=>`DROP ${ri(1,7)}장 제외`],
-    ['tag','TAG',   ()=>`그래머 ${pick(CODES)} 태깅`],
-    ['sync','SYNC', ()=>`MEASURE 검색 동기화`],
-    ['scan','SCAN', ()=>`메타데이터 ${ri(2,9)}건 갱신`],
-    ['cull','CULL', ()=>`0345/${p2(ri(1,40))} 인덱싱`],
-  ];
-  const NOWS=['0345/12 셀렉션 검토','DIR_07 그래머 태깅','0346/Y 메타 동기화','9355/Z CORE 판정','STRATA 배치 처리','0321/A2 인덱싱'];
+  setInterval(()=>{ $('f-clk').textContent=nowT(); },1000);
+  $('f-clk').textContent=nowT();
 
-  // ── live stats ──
-  let core=32, sup=0, drop=263, queue=143, progress=62, total=0;
-  function renderStats(){ $('s-core').textContent=core; $('s-sup').textContent=sup; $('s-drop').textContent=drop; $('s-q').textContent=queue; $('f-prog').textContent=progress+'%'; }
-  renderStats();
-
-  // ── throughput sparkline ──
-  const NB=28; const spk=$('spk'); const sdata=Array.from({length:NB},()=>ri(0,3));
-  const bars=[];
-  for(let i=0;i<NB;i++){ const b=document.createElement('div'); b.className='sb'; spk.appendChild(b); bars.push(b); }
-  let recent=0, peak=0;
-  function renderSpark(){
-    const mx=Math.max(3,...sdata);
-    sdata.forEach((v,i)=>{ bars[i].style.height=Math.max(1,Math.round(v/mx*20))+'px'; bars[i].className='sb'+(i===NB-1?' hi':''); });
-    if(recent>peak)peak=recent; $('spk-peak').textContent='peak '+peak;
+  // ── 커밋 메시지 분류 ──
+  function classify(msg){
+    const m=msg.toLowerCase();
+    if(/fix|bug|revert|error/.test(m)) return ['drop','FIX'];
+    if(/add|feat|new|creat/.test(m))   return ['core','ADD'];
+    if(/update|upd|sync|push/.test(m)) return ['sync','UPD'];
+    if(/rename|move|refactor/.test(m)) return ['tag','MOV'];
+    if(/style|design|css|ui|font/.test(m)) return ['cull','STY'];
+    return ['scan','LOG'];
   }
-  setInterval(()=>{ sdata.shift(); sdata.push(recent); $('f-rate').textContent=Math.round(recent*20); recent=0; renderSpark(); },3000);
+
+  // ── 시간 경과 표시 ──
+  function timeAgo(dateStr){
+    const diff=Date.now()-new Date(dateStr).getTime();
+    const m=Math.floor(diff/60000);
+    if(m<1) return 'just now';
+    if(m<60) return m+'m ago';
+    const h=Math.floor(m/60);
+    if(h<24) return h+'h ago';
+    return Math.floor(h/24)+'d ago';
+  }
+
+  // ── 스파크라인 ──
+  const NB=28; const spk=$('spk'); const sdata=Array(NB).fill(0); const bars=[];
+  for(let i=0;i<NB;i++){ const b=document.createElement('div'); b.className='sb'; spk.appendChild(b); bars.push(b); }
+  function renderSpark(){
+    const mx=Math.max(1,...sdata);
+    sdata.forEach((v,i)=>{ bars[i].style.height=Math.max(1,Math.round(v/mx*20))+'px'; bars[i].className='sb'+(i===NB-1?' hi':''); });
+    $('spk-peak').textContent='peak '+Math.max(...sdata);
+  }
   renderSpark();
 
-  // ── NOW processing ──
-  let nowPct=0;
-  function setNow(){ $('now-tgt').textContent=pick(NOWS); }
-  setNow();
-  setInterval(()=>{
-    nowPct+=ri(4,13);
-    if(nowPct>=100){ nowPct=0; setNow(); }
-    $('now-bar').style.width=nowPct+'%'; $('now-pct').textContent=nowPct+'%';
-  },420);
-
-  // ── activity feed ──
-  function addEvent(){
-    const e=pick(EVENTS);
-    const row=document.createElement('div'); row.className='frow';
-    row.innerHTML='<span class="ft">'+nowT()+'</span><span class="fy '+e[0]+'">'+e[1]+'</span><span class="fx">'+e[2]()+'</span>';
-    list.insertBefore(row,list.firstChild);
-    while(list.children.length>7) list.lastElementChild.remove();
-    [...list.children].forEach((r,i)=>{ r.style.opacity=Math.max(0.3,1-i*0.12).toFixed(2); });
-    total++; recent++;
-    // stat 반영
-    if(e[0]==='core'){ core+=ri(1,3); queue=Math.max(0,queue-ri(1,3)); }
-    else if(e[0]==='drop'){ drop+=ri(1,5); queue=Math.max(0,queue-ri(1,4)); }
-    else if(e[0]==='cull'){ queue=Math.max(0,queue-ri(2,6)); if(Math.random()<0.3) sup+=1; }
-    if(Math.random()<0.35){ progress=Math.min(99,progress+1); }
-    renderStats();
+  // ── 커밋 피드 렌더 ──
+  function renderFeed(commits){
+    const list=$('f-list'); list.innerHTML='';
+    commits.slice(0,14).forEach((c,i)=>{
+      const msg=c.commit.message.split('\n')[0];
+      const [cls,lbl]=classify(msg);
+      const row=document.createElement('div'); row.className='frow';
+      row.style.opacity=Math.max(0.28,1-i*0.06).toFixed(2);
+      row.innerHTML='<span class="ft">'+timeAgo(c.commit.author.date)+'</span>'
+        +'<span class="fy '+cls+'">'+lbl+'</span>'
+        +'<span class="fx">'+msg.slice(0,52)+'</span>';
+      list.appendChild(row);
+    });
   }
-  setInterval(()=>{ $('f-clk').textContent=nowT(); },1000);
-  let seed=0; const si=setInterval(()=>{ addEvent(); if(++seed>=6) clearInterval(si); },240);
-  setTimeout(()=>{ setInterval(addEvent, 2100); },1500);
+
+  // ── 데이터 fetch ──
+  const GH='https://api.github.com/repos/note-a/note-a-github/commits?per_page=50';
+  const PP='https://raw.githubusercontent.com/note-a/note-a-github/main/published-posts.json';
+
+  Promise.all([
+    fetch(GH).then(r=>r.json()).catch(()=>[]),
+    fetch(PP+'?t='+Date.now()).then(r=>r.json()).catch(()=>[])
+  ]).then(([commits, posts])=>{
+    if(!Array.isArray(commits)||!commits.length){ $('now-tgt').textContent='GitHub API 대기중'; return; }
+
+    // 스탯
+    const now=Date.now(), week=7*24*60*60*1000;
+    const rulePosts=(Array.isArray(posts)?posts:[]).filter(p=>p&&p.publishedSection==='rule').length;
+    const weekCommits=commits.filter(c=>now-new Date(c.commit.author.date)<week).length;
+    const lastDate=new Date(commits[0].commit.author.date);
+    $('s-core').textContent=rulePosts;
+    $('s-sup').textContent=commits.length;
+    $('s-drop').textContent=weekCommits;
+    $('s-q').textContent=p2(lastDate.getMonth()+1)+'/'+p2(lastDate.getDate());
+    $('f-rate').textContent=weekCommits;
+    $('f-prog').textContent=timeAgo(commits[0].commit.author.date);
+
+    // 최신 커밋 → NOW
+    const latest=commits[0].commit.message.split('\n')[0];
+    $('now-tgt').textContent=latest.slice(0,38);
+    const freshPct=Math.max(2,100-Math.min(100,Math.round((now-lastDate.getTime())/week*100)));
+    $('now-bar').style.width=freshPct+'%'; $('now-pct').textContent=freshPct+'%';
+
+    // 스파크라인 — 날짜별 커밋 수
+    commits.forEach(c=>{
+      const daysAgo=Math.floor((now-new Date(c.commit.author.date))/(24*60*60*1000));
+      if(daysAgo>=0&&daysAgo<NB) sdata[NB-1-daysAgo]++;
+    });
+    renderSpark();
+
+    // 피드
+    renderFeed(commits);
+
+    // 1분마다 "N ago" 갱신
+    setInterval(()=>renderFeed(commits), 60000);
+  });
 })();
 </script>
 </body>
