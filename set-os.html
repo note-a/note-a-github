@@ -173,6 +173,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
 .rr-rail .pilot-pnl.collapsed{margin-right:auto;}
 @media (max-width:767px){.lr-rail,.rr-rail{display:none;}}
 @media (min-width:1025px) and (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
+/* 터치 기기(태블릿): 768~1560px 어느 방향이든 좌우 레일 표시 */
+@media (pointer:coarse) and (min-width:768px) and (max-width:1560px){.lr-rail,.rr-rail{display:flex !important;}}
 
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
 .pnl{
@@ -1607,8 +1609,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
       <span id="pt-lbl">NULL.LOG</span>
       <span class="v" id="pt-v">0 REC</span>
     </div>
-    <button class="pl-goto" onclick="navigate('pilot.html')">▶ OPEN PILOT.EXP</button>
   </div>
+  <button class="pl-goto" onclick="navigate('pilot.html')">▶ OPEN PILOT.EXP</button>
 </aside>
 
 <script>
