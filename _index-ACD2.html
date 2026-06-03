@@ -96,11 +96,13 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .spec .lbl .c{color:var(--gl);}
 .bars{flex:1;overflow:hidden;padding:0 16px;}
 .navlist{flex:1;overflow:auto;min-height:0;padding:4px 16px 14px;}
-.navitem{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);transition:padding-left .15s;}
+.navitem{padding:12px 12px 12px 0;border-bottom:1px solid rgba(255,255,255,.1);transition:padding-left .15s,background .15s;cursor:pointer;}
 .navitem:last-child{border-bottom:none;}
-.navitem:hover{padding-left:7px;}
+.navitem:hover{padding-left:9px;background:rgba(255,255,255,.04);}
 .navitem .nh{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:1px;color:var(--gl);display:flex;align-items:baseline;gap:9px;}
-.navitem .nh .ns{font-size:8px;font-weight:400;letter-spacing:1px;color:var(--g3);}
+.navitem:hover .nh::after{content:'▸';margin-left:auto;color:var(--g2);font-size:11px;}
+.navitem .nh .ns{font-size:8px;font-weight:400;letter-spacing:1px;color:var(--g3);cursor:pointer;}
+.navitem .nh .ns:hover{color:var(--gl);text-decoration:underline;}
 .navitem .nd{font-family:var(--mono);font-size:10px;line-height:1.6;color:#767676;margin-top:6px;}
 .teaminfo{border-top:1px solid rgba(255,255,255,.65);padding:13px 16px 15px;background:rgba(255,255,255,.02);}
 .teaminfo .thd{font-family:var(--px);font-size:8px;letter-spacing:2px;color:var(--acc);margin-bottom:8px;}
@@ -182,21 +184,25 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
     </div>
 
     <div class="spec">
-      <div class="lbl"><span>▣ INDEX</span><span class="c">04 NODES</span></div>
+      <div class="lbl"><span>▣ INDEX</span><span class="c">05 NODES</span></div>
       <div class="navlist">
-        <div class="navitem">
-          <div class="nh">SET <span class="ns">/ SET:Inclusion</span></div>
+        <div class="navitem" onclick="go('gallery1.html')">
+          <div class="nh">SET</div>
           <div class="nd">The world as a set — what belongs, what doesn't.</div>
         </div>
-        <div class="navitem">
+        <div class="navitem" onclick="go('page-inclusion.html')">
+          <div class="nh">SET:Inclusion</div>
+          <div class="nd">Membership — the line between in and out.</div>
+        </div>
+        <div class="navitem" onclick="go('page-log.html')">
           <div class="nh">LOG</div>
           <div class="nd">Each recurrence, recorded as it surfaces.</div>
         </div>
-        <div class="navitem">
+        <div class="navitem" onclick="go('page-reference.html')">
           <div class="nh">Reference</div>
           <div class="nd">Learned shapes the eye can't unlearn.</div>
         </div>
-        <div class="navitem">
+        <div class="navitem" onclick="go('measure.html')">
           <div class="nh">MEASURE</div>
           <div class="nd">What you measure, you enter.</div>
         </div>
@@ -364,19 +370,24 @@ draw();
   var pre=document.getElementById('pixbanner');
   if(pre)pre.textContent=rows.join('\n');
 })();
-// line-by-line reveal for transmission paragraphs
+// line-by-line reveal for transmission paragraphs (hard-cut + flicker)
 (function(){
   const ps=[].slice.call(document.querySelectorAll('.stream p.tw'));
   if(!ps.length)return;
-  ps.forEach(p=>{p.style.opacity='0';p.style.transform='translateY(3px)';p.style.transition='opacity .4s ease, transform .4s ease';});
+  ps.forEach(p=>{p.style.opacity='0';});
   let i=0;
   function reveal(){
     if(i>=ps.length)return;
-    ps[i].style.opacity='1';ps[i].style.transform='none';
+    const p=ps[i];
+    p.style.opacity='1';
+    setTimeout(()=>{p.style.opacity='0.25';},45);
+    setTimeout(()=>{p.style.opacity='1';},90);
+    setTimeout(()=>{p.style.opacity='0.55';},140);
+    setTimeout(()=>{p.style.opacity='1';},180);
     i++;
-    setTimeout(reveal,700);
+    setTimeout(reveal,560);
   }
-  setTimeout(reveal,600);
+  setTimeout(reveal,520);
 })();
 function go(u){if(parent!==window)return;location.href=u;}
 </script>

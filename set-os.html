@@ -56,7 +56,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-rail{position:fixed;z-index:3;width:240px;height:448px;transform-origin:top right;
   display:flex;flex-direction:column;gap:14px;pointer-events:none;}
 .lr-dp{flex:1 1 0;min-height:0;background:#050302;
-  border:0.1px solid #b05018;padding:0;display:flex;overflow:hidden;position:relative;
+  border:0.1px solid var(--g);padding:0;display:flex;overflow:hidden;position:relative;
   box-shadow:0 1px 3px rgba(0,0,0,.6),0 0 24px rgba(255,74,22,.06);}
 .lr-dp-in{flex:1 1 auto;min-width:0;min-height:0;background:#050302;
   display:flex;flex-direction:column;overflow:hidden;}
@@ -96,8 +96,70 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-profile{flex:0 0 32px;border-top:1px solid var(--g4);position:relative;background:rgba(0,0,0,.3);}
 .lr-profile svg{position:absolute;inset:0;width:100%;height:100%;}
 .lr-profile .plbl{position:absolute;left:3px;top:1px;font-size:5px;color:var(--g3);z-index:2;}
-.rr-rail{position:fixed;z-index:3;width:240px;height:330px;transform-origin:top left;
+.rr-rail{position:fixed;z-index:3;width:240px;height:620px;transform-origin:top left;
   display:flex;flex-direction:column;gap:14px;pointer-events:none;}
+
+/* ── PILOT 패널 ── */
+.pilot-pnl{background:#050302;border:1px solid rgba(255,74,22,0.35);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  box-shadow:0 1px 3px rgba(0,0,0,.6),0 0 16px rgba(255,74,22,.05);
+  pointer-events:auto;height:180px;flex-shrink:0;}
+.pilot-pnl::before{content:'PILOT';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) rotate(-30deg);
+  font-size:28px;letter-spacing:8px;color:rgba(255,74,22,0.04);
+  pointer-events:none;z-index:0;white-space:nowrap;}
+.pilot-pnl .lr-h{border-bottom:1px solid rgba(255,74,22,0.14);}
+.pilot-badge{font-size:5px;letter-spacing:1.5px;color:rgba(255,74,22,0.4);
+  border:0.5px solid rgba(255,74,22,0.35);padding:1px 4px;margin-left:auto;}
+.pl-nav{display:flex;border-bottom:1px solid rgba(255,74,22,0.14);}
+.pl-nav span{flex:1;text-align:center;padding:3px 0;font-size:6px;letter-spacing:1px;
+  color:rgba(255,74,22,0.4);cursor:pointer;border-right:1px solid rgba(255,74,22,0.14);
+  transition:color .1s,background .1s;pointer-events:auto;}
+.pl-nav span:last-child{border-right:none;}
+.pl-nav span:hover{color:#ff4a16;background:rgba(255,74,22,0.06);}
+.pl-nav span.on{color:#ff5e16;background:rgba(255,74,22,0.10);
+  border-bottom:1.5px solid #ff5e16;margin-bottom:-1px;}
+.pl-view{display:none;position:relative;z-index:1;}
+.pl-view.on{display:block;}
+.pl-body{padding:5px 7px;font-size:6.5px;line-height:1.8;color:rgba(255,74,22,0.7);}
+.pl-nl-head{display:flex;gap:4px;font-size:5.5px;letter-spacing:1px;
+  color:rgba(255,74,22,0.4);padding:2px 0;border-bottom:1px solid rgba(255,74,22,0.14);margin-bottom:3px;}
+.pl-nl-head .gc{flex:0 0 42px;}.pl-nl-head .gq{flex:1;}.pl-nl-head .gn{text-align:right;flex:0 0 18px;}
+.pl-nl-row{display:flex;gap:4px;font-size:6px;padding:2px 0;
+  border-bottom:1px solid rgba(255,74,22,0.06);color:rgba(255,74,22,0.7);}
+.pl-nl-row.cand{color:#ffcf4a;}
+.pl-nl-row .gc{flex:0 0 42px;color:rgba(255,74,22,0.4);}
+.pl-nl-row .gq{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pl-nl-row .gn{text-align:right;flex:0 0 18px;color:#ff7a2e;}
+.pl-cand-tag{font-size:5px;border:1px solid #ffcf4a;padding:0 2px;color:#ffcf4a;margin-left:3px;}
+.pl-nl-empty{color:rgba(255,74,22,0.35);font-size:6px;padding:8px 0;text-align:center;letter-spacing:1px;}
+.pl-nl-foot{font-size:5.5px;color:rgba(255,74,22,0.35);padding-top:4px;
+  border-top:1px solid rgba(255,74,22,0.14);line-height:1.9;margin-top:3px;}
+.pl-at-dz{border:1px solid rgba(255,74,22,0.14);background:rgba(255,74,22,0.03);
+  padding:10px 8px;text-align:center;cursor:pointer;margin:4px 0;transition:border-color .1s,background .1s;}
+.pl-at-dz:hover{border-color:rgba(255,74,22,0.4);background:rgba(255,74,22,0.07);}
+.pl-at-dz-icon{font-size:14px;color:rgba(255,74,22,0.4);line-height:1;}
+.pl-at-dz-label{font-size:6px;letter-spacing:1.5px;color:rgba(255,74,22,0.4);margin-top:4px;}
+.pl-at-dz-ext{font-size:5.5px;color:rgba(255,74,22,0.2);margin-top:2px;}
+.pl-at-stat{font-size:5.5px;color:rgba(255,74,22,0.4);padding:2px 0;}
+.pl-at-stat .ok{color:#4aff88;}
+.pl-mn-sec{font-size:5.5px;letter-spacing:1.5px;color:rgba(255,74,22,0.4);
+  padding:4px 0 2px;border-bottom:1px solid rgba(255,74,22,0.14);margin-bottom:2px;}
+.pl-mn-row{display:flex;gap:6px;font-size:6px;padding:2px 0;
+  border-bottom:1px solid rgba(255,74,22,0.06);line-height:1.7;}
+.pl-mn-k{color:rgba(255,74,22,0.4);flex:0 0 46px;font-size:5.5px;}
+.pl-mn-v{color:rgba(255,74,22,0.7);flex:1;}
+.pl-intro{padding:4px 7px 3px;font-size:5.5px;letter-spacing:.8px;line-height:1.7;
+  color:rgba(255,74,22,0.4);border-bottom:1px solid rgba(255,74,22,0.1);
+  background:rgba(255,74,22,0.02);}
+.pl-intro .hi{color:rgba(255,74,22,0.65);}
+.pl-stat{height:15px;display:flex;align-items:center;gap:6px;
+  padding:0 7px;font-size:5.5px;letter-spacing:1px;
+  color:rgba(255,74,22,0.4);border-top:1px solid rgba(255,74,22,0.14);
+  background:rgba(255,74,22,0.03);position:relative;z-index:1;}
+.pl-stat .dot{width:4px;height:4px;background:#ff4a16;animation:pbl .9s step-end infinite;}
+@keyframes pbl{50%{opacity:0}}
+.pl-stat .v{color:rgba(255,74,22,0.7);margin-left:auto;}
 @media (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
 
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
@@ -1486,7 +1548,88 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
     </div>
    </div>
   </div>
+
+  <!-- PILOT PANEL -->
+  <div class="pilot-pnl">
+    <div class="lr-h">
+      <span class="arr">▶</span>SET-NULL.CHANNEL
+      <span class="pilot-badge">PILOT</span>
+    </div>
+    <div class="pl-intro">귀속 불가 이미지 실험소 — <span class="hi">공집합 채널</span> PILOT EXP</div>
+    <div class="pl-nav">
+      <span class="on" data-ptab="log">NULL.LOG</span>
+      <span data-ptab="attr">ATTR.TEST</span>
+      <span data-ptab="manual">MANUAL</span>
+    </div>
+    <div class="pl-view on" id="pt-log">
+      <div class="pl-body">
+        <div class="pl-nl-head"><span class="gc">DATE</span><span class="gq">QUERY</span><span class="gn">×</span></div>
+        <div class="pl-nl-empty" id="pt-log-empty">— 기록 없음 <span style="animation:pbl .8s step-end infinite;display:inline-block;">_</span></div>
+        <div id="pt-log-list"></div>
+        <div class="pl-nl-foot">결과 없는 검색어 자동 누적. 3회↑ = 지시문 후보</div>
+      </div>
+    </div>
+    <div class="pl-view" id="pt-attr">
+      <div class="pl-body">
+        <div class="pl-at-dz" onclick="document.getElementById('pt-file').click()">
+          <div class="pl-at-dz-icon">⊞</div>
+          <div class="pl-at-dz-label">DROP IMAGE / CLICK</div>
+          <div class="pl-at-dz-ext">JPG · PNG · WEBP</div>
+        </div>
+        <div class="pl-at-stat">STATUS: <span class="ok" id="pt-stat">READY</span></div>
+        <input type="file" id="pt-file" accept="image/*" style="display:none">
+      </div>
+    </div>
+    <div class="pl-view" id="pt-manual">
+      <div class="pl-body">
+        <div class="pl-mn-sec">① NULL.LOG</div>
+        <div class="pl-mn-row"><span class="pl-mn-k">이게 뭔가요</span><span class="pl-mn-v">검색 결과 없던 단어 자동 기록</span></div>
+        <div class="pl-mn-row"><span class="pl-mn-k">지시문 후보</span><span class="pl-mn-v">3회↑ 누적 = 후보 분류</span></div>
+        <div class="pl-mn-sec">② ATTR.TEST</div>
+        <div class="pl-mn-row"><span class="pl-mn-k">이게 뭔가요</span><span class="pl-mn-v">이미지 → 문법 코드 귀속 분석</span></div>
+        <div class="pl-mn-row"><span class="pl-mn-k">어떻게 써요</span><span class="pl-mn-v">드래그 또는 클릭 업로드</span></div>
+      </div>
+    </div>
+    <div class="pl-stat">
+      <span class="dot"></span>
+      <span id="pt-lbl">NULL.LOG</span>
+      <span class="v" id="pt-v">0 REC</span>
+    </div>
+  </div>
 </aside>
+
+<script>
+(function(){
+  const statMap={log:{lbl:'NULL.LOG',v:'0 REC'},attr:{lbl:'ATTR.TEST',v:'83 CODES'},manual:{lbl:'MANUAL.TXT',v:'안내'}};
+  document.querySelectorAll('.pl-nav span').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const key=tab.dataset.ptab;
+      tab.closest('.pl-nav').querySelectorAll('span').forEach(t=>t.classList.remove('on'));
+      document.querySelectorAll('.pilot-pnl .pl-view').forEach(v=>v.classList.remove('on'));
+      tab.classList.add('on');
+      document.getElementById('pt-'+key).classList.add('on');
+      document.getElementById('pt-lbl').textContent=statMap[key].lbl;
+      document.getElementById('pt-v').textContent=statMap[key].v;
+    });
+  });
+  function renderLog(){
+    try{
+      const log=JSON.parse(localStorage.getItem('set_null_log')||'{}');
+      const entries=Object.entries(log).sort((a,b)=>b[1]-a[1]);
+      const list=document.getElementById('pt-log-list');
+      const empty=document.getElementById('pt-log-empty');
+      if(!entries.length){empty.style.display='';list.innerHTML='';return;}
+      empty.style.display='none';
+      list.innerHTML=entries.map(([w,c])=>{
+        const cand=c>=3;
+        return `<div class="pl-nl-row${cand?' cand':''}"><span class="gc">—</span><span class="gq">${w}${cand?'<span class="pl-cand-tag">후보</span>':''}</span><span class="gn">×${c}</span></div>`;
+      }).join('');
+      document.getElementById('pt-v').textContent=entries.length+' REC';
+    }catch(e){}
+  }
+  renderLog();
+})();
+</script>
 
 
 <div id="wrap">

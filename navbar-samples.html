@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>NAVBAR SAMPLES v3</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#060606;color:#00ff00;font-family:'IBM Plex Mono',monospace;padding:40px;overflow-x:hidden;}
+.section{margin-bottom:60px;}
+.label{font-size:7px;letter-spacing:4px;color:rgba(0,255,0,.2);margin-bottom:16px;text-transform:uppercase;padding-bottom:8px;border-bottom:1px solid rgba(0,255,0,.05);}
+
+/* ══════════════════════════════════════════════
+   E — 오실로스코프 실시간 파형
+══════════════════════════════════════════════ */
+.e-bar{
+  width:100%;height:54px;background:#000;
+  border-top:1px solid rgba(0,255,0,.45);
+  border-bottom:1px solid rgba(0,255,0,.1);
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+}
+/* CRT 스캔라인 */
+.e-bar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.18) 3px,rgba(0,0,0,.18) 4px);
+}
+#e-canvas{position:absolute;left:0;top:0;width:100%;height:100%;opacity:.35;pointer-events:none;}
+.e-sig{width:3px;height:100%;background:#00ff00;box-shadow:0 0 10px #00ff00;flex-shrink:0;position:relative;z-index:2;}
+.e-logo-block{position:relative;z-index:2;padding:0 22px;flex-shrink:0;}
+.e-logo{font-family:'Press Start 2P',monospace;font-size:9px;color:#00ff00;letter-spacing:4px;
+  text-shadow:0 0 14px rgba(0,255,0,.7);animation:elogoglitch 6s step-end infinite;}
+@keyframes elogoglitch{
+  0%,94%{text-shadow:0 0 14px rgba(0,255,0,.7);transform:none;}
+  95%{text-shadow:3px 0 0 rgba(255,0,80,.8),-3px 0 0 rgba(0,255,255,.5);transform:skewX(-4deg);}
+  96%{text-shadow:0 0 14px rgba(0,255,0,.7);transform:none;}
+  97%{text-shadow:-2px 0 0 rgba(255,0,80,.6),2px 0 0 rgba(0,255,255,.4);transform:skewX(2deg);}
+  98%,100%{text-shadow:0 0 14px rgba(0,255,0,.7);transform:none;}
+}
+.e-tagline{font-size:5px;letter-spacing:4px;color:rgba(0,255,0,.28);margin-top:4px;}
+.e-divider{width:1px;height:26px;background:rgba(0,255,0,.15);flex-shrink:0;position:relative;z-index:2;}
+.e-tabs{display:flex;align-items:center;padding:0 16px;position:relative;z-index:2;}
+.e-tab{font-size:6px;letter-spacing:2px;color:rgba(0,255,0,.3);padding:0 14px;height:54px;
+  display:flex;align-items:center;border-right:1px solid rgba(0,255,0,.06);cursor:pointer;
+  position:relative;transition:color .2s;}
+.e-tab::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:transparent;transition:all .2s;}
+.e-tab.on{color:#aaff00;}
+.e-tab.on::after{background:#aaff00;box-shadow:0 0 10px #aaff00,0 0 20px rgba(170,255,0,.4);}
+.e-sp{flex:1;}
+/* EQ 바 */
+.e-eq{display:flex;align-items:flex-end;gap:3px;padding:0 18px;height:54px;
+  position:relative;z-index:2;border-left:1px solid rgba(0,255,0,.1);}
+.e-eq-bar{width:4px;background:rgba(0,255,0,.5);transition:height .08s;}
+.e-status{position:relative;z-index:2;padding:0 16px;border-left:1px solid rgba(0,255,0,.1);}
+.e-stat-row{font-size:5px;letter-spacing:1.5px;color:rgba(0,255,0,.3);line-height:1.9;}
+.e-stat-row b{color:rgba(0,255,0,.75);font-weight:400;}
+.e-freq{position:relative;z-index:2;padding:0 18px;border-left:1px solid rgba(0,255,0,.1);
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:2px;}
+.e-freq-num{font-family:'VT323',monospace;font-size:28px;color:#00ff00;letter-spacing:2px;line-height:1;}
+.e-freq-unit{font-size:5px;letter-spacing:3px;color:rgba(0,255,0,.28);}
+
+/* ══════════════════════════════════════════════
+   F — 필름 스트립 (주행 애니메이션)
+══════════════════════════════════════════════ */
+.f-bar{
+  width:100%;height:54px;background:#000;
+  border:1px solid rgba(0,255,0,.12);
+  display:flex;align-items:stretch;
+  position:relative;overflow:hidden;
+}
+/* 상하 필름 트랙 */
+.f-track-top,.f-track-bot{
+  position:absolute;left:0;right:0;height:10px;
+  overflow:hidden;
+}
+.f-track-top{top:0;border-bottom:1px solid rgba(0,255,0,.18);}
+.f-track-bot{bottom:0;border-top:1px solid rgba(0,255,0,.18);}
+.f-holes{
+  display:flex;gap:14px;padding:2px 0;
+  animation:froll 2s linear infinite;
+  white-space:nowrap;
+}
+@keyframes froll{from{transform:translateX(0)}to{transform:translateX(-84px)}}
+.f-hole-cell{
+  width:8px;height:6px;flex-shrink:0;
+  border:1px solid rgba(0,255,0,.3);
+  background:rgba(0,255,0,.05);
+}
+.f-content{
+  flex:1;display:flex;align-items:center;
+  padding:10px 24px;gap:0;
+}
+.f-logo{font-family:'Press Start 2P',monospace;font-size:8px;color:#00ff00;letter-spacing:5px;
+  text-shadow:0 0 12px rgba(0,255,0,.5);flex-shrink:0;}
+.f-sep{color:rgba(0,255,0,.15);font-size:14px;margin:0 18px;flex-shrink:0;}
+.f-tabs{display:flex;gap:4px;flex-shrink:0;}
+.f-tab{font-size:6px;letter-spacing:1.5px;color:rgba(0,255,0,.3);
+  padding:4px 10px;border:1px solid rgba(0,255,0,.1);cursor:pointer;transition:all .15s;}
+.f-tab.on{color:#000;background:#aaff00;border-color:#aaff00;}
+.f-sp{flex:1;}
+/* 주행 프레임 카운터 */
+.f-counter-wrap{border-left:1px solid rgba(0,255,0,.12);padding:0 20px;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:2px;flex-shrink:0;}
+.f-cnt-label{font-size:5px;letter-spacing:3px;color:rgba(0,255,0,.2);}
+.f-cnt-num{font-family:'VT323',monospace;font-size:30px;color:#aaff00;letter-spacing:3px;line-height:1;}
+.f-meta{border-left:1px solid rgba(0,255,0,.1);padding:0 16px;
+  display:flex;flex-direction:column;justify-content:center;gap:4px;flex-shrink:0;}
+.f-meta-row{font-size:5px;letter-spacing:1.5px;color:rgba(0,255,0,.28);}
+.f-meta-row span{color:rgba(0,255,0,.65);}
+
+/* ══════════════════════════════════════════════
+   G — 레이더 스윕 / 타겟 추적
+══════════════════════════════════════════════ */
+.g-bar{
+  width:100%;height:54px;background:#000;
+  border:1px solid rgba(0,255,0,.15);
+  display:flex;align-items:stretch;
+  position:relative;overflow:hidden;
+}
+.g-bar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,0,.4) 20%,rgba(170,255,0,.6) 50%,rgba(0,255,0,.4) 80%,transparent);
+  animation:gscan 3s ease-in-out infinite;
+}
+@keyframes gscan{0%,100%{opacity:.4}50%{opacity:1}}
+/* 좌측 레이더 */
+.g-radar-zone{
+  width:60px;flex-shrink:0;
+  border-right:1px solid rgba(0,255,0,.15);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:#000802;
+}
+#g-radar{position:absolute;}
+.g-main{flex:1;display:flex;align-items:center;padding:0 20px;gap:20px;}
+.g-logo{font-family:'Press Start 2P',monospace;font-size:10px;
+  color:#00ff00;letter-spacing:4px;text-shadow:0 0 14px rgba(0,255,0,.5);flex-shrink:0;}
+.g-divider{width:1px;height:24px;background:rgba(0,255,0,.12);flex-shrink:0;}
+.g-tabs{display:flex;align-items:center;gap:2px;}
+.g-tab{font-size:6px;letter-spacing:1.5px;color:rgba(0,255,0,.28);
+  padding:0 12px;height:54px;display:flex;align-items:center;
+  border-right:1px solid rgba(0,255,0,.06);cursor:pointer;
+  position:relative;transition:color .15s;}
+.g-tab.on{color:#aaff00;}
+.g-tab.on::before{content:'▶';position:absolute;left:3px;font-size:5px;color:#aaff00;}
+.g-sp{flex:1;}
+/* 타겟 추적 정보 */
+.g-track{padding:0 20px;border-left:1px solid rgba(0,255,0,.1);
+  display:flex;flex-direction:column;justify-content:center;gap:5px;flex-shrink:0;}
+.g-track-row{display:flex;align-items:center;gap:8px;}
+.g-track-lbl{font-size:5px;letter-spacing:2px;color:rgba(0,255,0,.2);width:28px;}
+.g-track-bar{flex:1;width:80px;height:3px;background:rgba(0,255,0,.08);position:relative;}
+.g-track-fill{position:absolute;left:0;top:0;height:100%;background:#00ff00;
+  box-shadow:0 0 4px rgba(0,255,0,.5);transition:width .4s;}
+.g-track-fill.ac{background:#aaff00;box-shadow:0 0 4px rgba(170,255,0,.6);}
+.g-track-val{font-size:6px;letter-spacing:1px;color:rgba(0,255,0,.5);width:28px;text-align:right;}
+/* 우측 상태 */
+.g-right{padding:0 16px;border-left:1px solid rgba(0,255,0,.1);
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:3px;flex-shrink:0;}
+.g-clock{font-family:'VT323',monospace;font-size:26px;color:#00ff00;letter-spacing:2px;line-height:1;}
+.g-status{display:flex;align-items:center;gap:6px;}
+.g-dot{width:5px;height:5px;border-radius:50%;background:#aaff00;
+  box-shadow:0 0 6px #aaff00;animation:gdot 1.5s ease-in-out infinite;}
+@keyframes gdot{0%,100%{opacity:1;box-shadow:0 0 6px #aaff00}50%{opacity:.2;box-shadow:none}}
+.g-online{font-size:5.5px;letter-spacing:2px;color:rgba(0,255,0,.4);}
+
+/* ══════════════════════════════════════════════
+   H — 브로드캐스트 / 긴급 경보 스타일
+══════════════════════════════════════════════ */
+.h-bar{width:100%;display:flex;flex-direction:column;border:1px solid rgba(0,255,0,.12);overflow:hidden;}
+.h-top{height:38px;background:#000;display:flex;align-items:stretch;}
+/* 점멸 로고 플레이트 */
+.h-logo-plate{background:#00ff00;padding:0 16px;display:flex;align-items:center;flex-shrink:0;
+  position:relative;}
+.h-logo-plate::after{content:'';position:absolute;inset:0;background:#000;
+  animation:hblink 4s step-end infinite;opacity:0;}
+@keyframes hblink{0%,89%,91%,93%,100%{opacity:0}90%,92%{opacity:.15}}
+.h-logo-text{font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:2px;color:#000;}
+.h-alert-tag{background:#aaff00;padding:0 10px;display:flex;align-items:center;flex-shrink:0;}
+.h-alert-text{font-size:5.5px;letter-spacing:2px;color:#000;font-weight:600;}
+.h-nav-row{display:flex;align-items:stretch;}
+.h-navitem{padding:0 14px;font-size:6px;letter-spacing:1.5px;
+  color:rgba(0,255,0,.3);display:flex;align-items:center;
+  border-right:1px solid rgba(0,255,0,.06);cursor:pointer;}
+.h-navitem.on{color:#00ff00;}
+.h-sp{flex:1;}
+.h-sys{display:flex;align-items:center;padding:0 16px;gap:12px;border-left:1px solid rgba(0,255,0,.1);}
+.h-sys-val{font-size:6px;letter-spacing:1.5px;color:rgba(0,255,0,.28);}
+.h-sys-val b{color:rgba(0,255,0,.7);font-weight:400;}
+.h-dot{width:6px;height:6px;border-radius:50%;background:#aaff00;
+  box-shadow:0 0 8px #aaff00;animation:gdot 2s ease-in-out infinite;}
+.h-clock{font-family:'VT323',monospace;font-size:24px;color:#00ff00;
+  padding:0 16px;border-left:1px solid rgba(0,255,0,.1);display:flex;align-items:center;}
+/* 틱커 */
+.h-ticker{height:16px;background:rgba(0,10,5,1);border-top:1px solid rgba(0,255,0,.2);
+  display:flex;align-items:center;overflow:hidden;position:relative;}
+.h-ticker::before{content:'';position:absolute;left:0;top:0;bottom:0;width:60px;
+  background:linear-gradient(90deg,#000,transparent);z-index:2;}
+.h-ticker::after{content:'';position:absolute;right:0;top:0;bottom:0;width:60px;
+  background:linear-gradient(270deg,#000,transparent);z-index:2;}
+.h-ticker-label{background:#00ff00;color:#000;font-size:5px;letter-spacing:2px;
+  padding:0 8px;height:100%;display:flex;align-items:center;flex-shrink:0;font-weight:600;z-index:3;}
+.h-ticker-inner{flex:1;overflow:hidden;}
+.h-ticker-text{font-size:6px;letter-spacing:2.5px;color:rgba(0,255,0,.5);
+  white-space:nowrap;display:inline-block;animation:htick 30s linear infinite;}
+@keyframes htick{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+
+/* ══════════════════════════════════════════════
+   I — 분할 바 + 실시간 수치 카운팅
+══════════════════════════════════════════════ */
+.i-bar{
+  width:100%;height:56px;background:#000;
+  display:flex;align-items:stretch;
+  position:relative;overflow:hidden;
+}
+/* 상단 하이라이트 라인 */
+.i-bar::before{
+  content:'';position:absolute;top:0;left:220px;right:0;height:1px;
+  background:linear-gradient(90deg,rgba(170,255,0,.8),transparent 60%);
+  animation:iscan 4s ease-in-out infinite;
+}
+@keyframes iscan{0%,100%{opacity:.5}50%{opacity:1}}
+.i-bar::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,0,.25) 30%,rgba(0,255,0,.1) 70%,transparent);
+}
+.i-logo-zone{
+  width:220px;flex-shrink:0;
+  background:rgba(0,8,3,.9);
+  border-right:2px solid rgba(170,255,0,.5);
+  display:flex;align-items:center;padding:0 20px;gap:10px;
+  position:relative;
+}
+.i-logo-zone::after{
+  content:'';position:absolute;right:-2px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(180deg,transparent,#aaff00,transparent);
+  box-shadow:0 0 10px rgba(170,255,0,.6);
+  animation:iglow 2s ease-in-out infinite;
+}
+@keyframes iglow{0%,100%{opacity:.6}50%{opacity:1;box-shadow:0 0 18px rgba(170,255,0,.9)}}
+.i-bracket{font-family:'VT323',monospace;font-size:38px;color:rgba(0,255,0,.25);line-height:1;}
+.i-logo-text{display:flex;flex-direction:column;gap:3px;}
+.i-logo-main{font-family:'Press Start 2P',monospace;font-size:9px;
+  color:#00ff00;letter-spacing:4px;text-shadow:0 0 16px rgba(0,255,0,.5);}
+.i-logo-sub{font-size:5px;letter-spacing:4px;color:rgba(0,255,0,.25);}
+.i-tab-zone{display:flex;align-items:stretch;}
+.i-tab{padding:0 18px;font-size:6px;letter-spacing:2px;color:rgba(0,255,0,.25);
+  display:flex;align-items:center;cursor:pointer;
+  border-right:1px solid rgba(0,255,0,.05);
+  position:relative;transition:color .15s;}
+.i-tab::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:transparent;transition:all .2s;}
+.i-tab.on{color:#aaff00;}
+.i-tab.on::before{background:#aaff00;box-shadow:0 0 12px rgba(170,255,0,.7);}
+.i-sp{flex:1;}
+.i-info-zone{display:flex;align-items:stretch;border-left:1px solid rgba(0,255,0,.08);}
+/* 카운팅 블록 */
+.i-count-block{
+  padding:0 18px;border-right:1px solid rgba(0,255,0,.06);
+  display:flex;flex-direction:column;justify-content:center;gap:4px;
+}
+.i-count-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+.i-count-label{font-size:5px;letter-spacing:2px;color:rgba(0,255,0,.2);}
+.i-count-val{font-family:'VT323',monospace;font-size:20px;color:rgba(0,255,0,.75);letter-spacing:1px;line-height:1;}
+.i-count-val.em{color:#aaff00;}
+/* 게이지 블록 */
+.i-gauge-block{
+  padding:0 16px;border-right:1px solid rgba(0,255,0,.06);
+  display:flex;flex-direction:column;justify-content:center;gap:7px;
+  min-width:120px;
+}
+.i-gauge-row{display:flex;align-items:center;gap:8px;}
+.i-gauge-lbl{font-size:5px;letter-spacing:2px;color:rgba(0,255,0,.2);width:24px;}
+.i-gauge-track{flex:1;height:3px;background:rgba(0,255,0,.08);position:relative;}
+.i-gauge-fill{position:absolute;left:0;top:0;height:100%;
+  background:#00ff00;box-shadow:0 0 4px rgba(0,255,0,.5);transition:width .6s ease;}
+.i-gauge-fill.ac{background:#aaff00;box-shadow:0 0 5px rgba(170,255,0,.6);}
+/* 시계 블록 */
+.i-clock-block{
+  padding:0 18px;
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:3px;
+}
+.i-clock{font-family:'VT323',monospace;font-size:28px;color:#00ff00;letter-spacing:3px;line-height:1;}
+.i-date{font-size:5px;letter-spacing:2.5px;color:rgba(0,255,0,.22);}
+.i-online-row{display:flex;align-items:center;gap:5px;}
+.i-pulse{width:5px;height:5px;border-radius:50%;background:#aaff00;
+  box-shadow:0 0 6px #aaff00;animation:gdot 2s ease-in-out infinite;}
+.i-online-txt{font-size:5px;letter-spacing:2px;color:rgba(0,255,0,.35);}
+
+</style>
+</head>
+<body>
+
+<!-- ──── E ──── -->
+<div class="section">
+<div class="label">E — 오실로스코프 / 실시간 파형 + 글리치 로고</div>
+<div class="e-bar">
+  <canvas id="e-canvas"></canvas>
+  <div class="e-sig"></div>
+  <div class="e-logo-block">
+    <div class="e-logo">PROJECT SET</div>
+    <div class="e-tagline">S E T _ N U L L _ C H A I N</div>
+  </div>
+  <div class="e-divider"></div>
+  <div class="e-tabs">
+    <div class="e-tab on">FILE</div>
+    <div class="e-tab">EDIT</div>
+    <div class="e-tab">OBJECT</div>
+    <div class="e-tab">SCREEN</div>
+  </div>
+  <div class="e-sp"></div>
+  <div class="e-eq" id="e-eq">
+    <div class="e-eq-bar" style="height:14px"></div>
+    <div class="e-eq-bar" style="height:22px"></div>
+    <div class="e-eq-bar" style="height:34px"></div>
+    <div class="e-eq-bar" style="height:28px"></div>
+    <div class="e-eq-bar" style="height:18px"></div>
+    <div class="e-eq-bar" style="height:38px"></div>
+    <div class="e-eq-bar" style="height:24px"></div>
+    <div class="e-eq-bar" style="height:16px"></div>
+    <div class="e-eq-bar" style="height:10px"></div>
+    <div class="e-eq-bar" style="height:30px"></div>
+    <div class="e-eq-bar" style="height:20px"></div>
+  </div>
+  <div class="e-status">
+    <div class="e-stat-row">REC <b id="e-rec">6,421</b> · SEL <b>438</b></div>
+    <div class="e-stat-row">DIRS <b>45</b> · SYS <b style="color:#aaff00;">ONLINE</b></div>
+  </div>
+  <div class="e-freq">
+    <div class="e-freq-num" id="e-clock">00:00:00</div>
+    <div class="e-freq-unit">H H : M M : S S</div>
+  </div>
+</div>
+</div>
+
+<!-- ──── F ──── -->
+<div class="section">
+<div class="label">F — 필름 스트립 / 주행 퍼포레이션 + 프레임 카운터</div>
+<div class="f-bar">
+  <div class="f-track-top">
+    <div class="f-holes" id="f-holes-top">
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+    </div>
+  </div>
+  <div class="f-track-bot">
+    <div class="f-holes" style="animation-delay:-.5s">
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+      <div class="f-hole-cell"></div><div class="f-hole-cell"></div><div class="f-hole-cell"></div>
+    </div>
+  </div>
+  <div class="f-content">
+    <div class="f-logo">PROJECT SET</div>
+    <div class="f-sep">/</div>
+    <div class="f-tabs">
+      <div class="f-tab on">FILE</div>
+      <div class="f-tab">EDIT</div>
+      <div class="f-tab">OBJECT</div>
+      <div class="f-tab">SCREEN</div>
+    </div>
+    <div class="f-sp"></div>
+    <div class="f-meta">
+      <div class="f-meta-row">ARCHIVE <span>6,421 REC</span></div>
+      <div class="f-meta-row">SELECT&nbsp; <span>438 / 45 DIR</span></div>
+    </div>
+    <div class="f-counter-wrap">
+      <div class="f-cnt-label">FRAME</div>
+      <div class="f-cnt-num" id="f-counter">438</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──── G ──── -->
+<div class="section">
+<div class="label">G — 레이더 스윕 / 타겟 게이지 추적</div>
+<div class="g-bar">
+  <div class="g-radar-zone">
+    <canvas id="g-radar" width="60" height="54"></canvas>
+  </div>
+  <div class="g-main">
+    <div class="g-logo">PROJECT SET</div>
+    <div class="g-divider"></div>
+    <div class="g-tabs">
+      <div class="g-tab on">FILE</div>
+      <div class="g-tab">EDIT</div>
+      <div class="g-tab">OBJECT</div>
+      <div class="g-tab">SCREEN</div>
+    </div>
+  </div>
+  <div class="g-sp"></div>
+  <div class="g-track">
+    <div class="g-track-row">
+      <div class="g-track-lbl">REC</div>
+      <div class="g-track-bar"><div class="g-track-fill ac" id="g-fill-rec" style="width:72%"></div></div>
+      <div class="g-track-val" id="g-val-rec">6421</div>
+    </div>
+    <div class="g-track-row">
+      <div class="g-track-lbl">SEL</div>
+      <div class="g-track-bar"><div class="g-track-fill" id="g-fill-sel" style="width:48%"></div></div>
+      <div class="g-track-val" id="g-val-sel">438</div>
+    </div>
+    <div class="g-track-row">
+      <div class="g-track-lbl">IDX</div>
+      <div class="g-track-bar"><div class="g-track-fill" id="g-fill-idx" style="width:91%"></div></div>
+      <div class="g-track-val">91%</div>
+    </div>
+  </div>
+  <div class="g-right">
+    <div class="g-clock" id="g-clock">00:00:00</div>
+    <div class="g-status">
+      <div class="g-dot"></div>
+      <div class="g-online">SYS ONLINE</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──── H ──── -->
+<div class="section">
+<div class="label">H — 브로드캐스트 / 긴급 로고 점멸 + 틱커</div>
+<div class="h-bar">
+  <div class="h-top">
+    <div class="h-logo-plate"><span class="h-logo-text">PROJECT SET</span></div>
+    <div class="h-alert-tag"><span class="h-alert-text">● REC</span></div>
+    <div class="h-nav-row">
+      <div class="h-navitem on">FILE</div>
+      <div class="h-navitem">EDIT</div>
+      <div class="h-navitem">OBJECT</div>
+      <div class="h-navitem">SCREEN</div>
+    </div>
+    <div class="h-sp"></div>
+    <div class="h-sys">
+      <span class="h-sys-val">REC <b>6,421</b></span>
+      <span class="h-sys-val">SEL <b>438</b></span>
+      <span class="h-sys-val">DIR <b>45</b></span>
+      <div class="h-dot"></div>
+    </div>
+    <div class="h-clock" id="h-clock">00:00:00</div>
+  </div>
+  <div class="h-ticker">
+    <div class="h-ticker-label">LIVE</div>
+    <div class="h-ticker-inner">
+      <span class="h-ticker-text">
+        PROJECT&nbsp;SET &nbsp;·&nbsp; ARCHIVE&nbsp;IN&nbsp;PROGRESS &nbsp;·&nbsp; 6,421&nbsp;RECORDS&nbsp;INDEXED &nbsp;·&nbsp; 438&nbsp;SELECTED &nbsp;·&nbsp; 45&nbsp;DIRECTORIES&nbsp;SCANNED &nbsp;·&nbsp; SET_NULL_CHAIN &nbsp;·&nbsp; STATUS:&nbsp;ONLINE &nbsp;·&nbsp; 2026.06.01 &nbsp;·&nbsp; ALL&nbsp;SYSTEMS&nbsp;NOMINAL &nbsp;·&nbsp; AWAITING&nbsp;INPUT &nbsp;·&nbsp;
+      </span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──── I ──── -->
+<div class="section">
+<div class="label">I — 분할 바 / 게이지 + 실시간 카운팅</div>
+<div class="i-bar">
+  <div class="i-logo-zone">
+    <div class="i-bracket">[</div>
+    <div class="i-logo-text">
+      <div class="i-logo-main">PROJECT SET</div>
+      <div class="i-logo-sub">S E T _ N U L L _ C H A I N</div>
+    </div>
+    <div class="i-bracket">]</div>
+  </div>
+  <div class="i-tab-zone">
+    <div class="i-tab on">FILE</div>
+    <div class="i-tab">EDIT</div>
+    <div class="i-tab">OBJECT</div>
+    <div class="i-tab">SCREEN</div>
+  </div>
+  <div class="i-sp"></div>
+  <div class="i-info-zone">
+    <div class="i-count-block">
+      <div class="i-count-row">
+        <span class="i-count-label">REC</span>
+        <span class="i-count-val em" id="i-rec">6421</span>
+      </div>
+      <div class="i-count-row">
+        <span class="i-count-label">SEL</span>
+        <span class="i-count-val" id="i-sel">438</span>
+      </div>
+      <div class="i-count-row">
+        <span class="i-count-label">DIR</span>
+        <span class="i-count-val" id="i-dir">45</span>
+      </div>
+    </div>
+    <div class="i-gauge-block">
+      <div class="i-gauge-row">
+        <div class="i-gauge-lbl">SEL</div>
+        <div class="i-gauge-track"><div class="i-gauge-fill ac" id="i-g1" style="width:68%"></div></div>
+      </div>
+      <div class="i-gauge-row">
+        <div class="i-gauge-lbl">IDX</div>
+        <div class="i-gauge-track"><div class="i-gauge-fill" id="i-g2" style="width:92%"></div></div>
+      </div>
+      <div class="i-gauge-row">
+        <div class="i-gauge-lbl">SYN</div>
+        <div class="i-gauge-track"><div class="i-gauge-fill" id="i-g3" style="width:44%"></div></div>
+      </div>
+    </div>
+    <div class="i-clock-block">
+      <div class="i-clock" id="i-clock">00:00:00</div>
+      <div class="i-date">2026.06.01</div>
+      <div class="i-online-row"><div class="i-pulse"></div><span class="i-online-txt">ONLINE</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+/* ─── 공통 시계 ─── */
+function updateClocks(){
+  const now = new Date();
+  const t = [now.getHours(),now.getMinutes(),now.getSeconds()]
+    .map(n=>String(n).padStart(2,'0')).join(':');
+  ['e-clock','g-clock','h-clock','i-clock'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=t;
+  });
+}
+setInterval(updateClocks,1000); updateClocks();
+
+/* ─── E: 오실로스코프 캔버스 ─── */
+(function(){
+  const canvas=document.getElementById('e-canvas');
+  if(!canvas)return;
+  const parent=canvas.parentElement;
+  function resize(){canvas.width=parent.offsetWidth;canvas.height=parent.offsetHeight;}
+  resize(); window.addEventListener('resize',resize);
+  const ctx=canvas.getContext('2d');
+  let t=0;
+  function draw(){
+    const w=canvas.width,h=canvas.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle='#00ff00';
+    ctx.lineWidth=1.2;
+    ctx.shadowColor='#00ff00';
+    ctx.shadowBlur=4;
+    ctx.beginPath();
+    for(let x=0;x<w;x++){
+      const freq1=2.2, freq2=5.1, freq3=0.8;
+      const y=h/2
+        +Math.sin((x/w)*Math.PI*2*freq1+t)*8
+        +Math.sin((x/w)*Math.PI*2*freq2+t*1.7)*4
+        +Math.sin((x/w)*Math.PI*2*freq3+t*0.5)*5;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    t+=0.04;
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* EQ 바 랜덤 */
+  const bars=document.querySelectorAll('.e-eq-bar');
+  function animEQ(){
+    bars.forEach(b=>{
+      const h=Math.random()*36+6;
+      b.style.height=h+'px';
+      const g=Math.floor(h/42*155+100);
+      b.style.background=h>30?`rgba(170,255,0,.8)`:`rgba(0,${g},0,.6)`;
+    });
+  }
+  setInterval(animEQ,120);
+})();
+
+/* ─── F: 프레임 카운터 랜덤 점프 ─── */
+(function(){
+  const el=document.getElementById('f-counter');
+  if(!el)return;
+  let base=438;
+  setInterval(()=>{
+    const delta=Math.floor(Math.random()*3)-1;
+    base=Math.max(430,Math.min(445,base+delta));
+    el.textContent=base;
+    el.style.color=delta>0?'#aaff00':'#00ff00';
+    setTimeout(()=>el.style.color='#aaff00',200);
+  },800);
+})();
+
+/* ─── G: 레이더 캔버스 ─── */
+(function(){
+  const canvas=document.getElementById('g-radar');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=60,H=54,cx=30,cy=27,R=22;
+  let angle=0;
+  const blips=[];
+  for(let i=0;i<4;i++){
+    const a=Math.random()*Math.PI*2;
+    const r=Math.random()*R*.8+4;
+    blips.push({x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,age:0,maxAge:60+Math.random()*60});
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    /* 배경 원 */
+    ctx.strokeStyle='rgba(0,255,0,.15)';ctx.lineWidth=.5;
+    for(let r=R*.33;r<=R;r+=R*.33){
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke();
+    }
+    /* 십자선 */
+    ctx.strokeStyle='rgba(0,255,0,.1)';
+    ctx.beginPath();ctx.moveTo(cx-R,cy);ctx.lineTo(cx+R,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx,cy-R);ctx.lineTo(cx,cy+R);ctx.stroke();
+    /* 스윕 */
+    const grad=ctx.createConicalGradient?null:null;
+    ctx.save();
+    ctx.translate(cx,cy);
+    for(let i=0;i<60;i++){
+      const a=angle-i*0.04;
+      const alpha=Math.max(0,(60-i)/60)*0.5;
+      ctx.strokeStyle=`rgba(0,255,0,${alpha})`;
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.lineTo(Math.cos(a)*R,Math.sin(a)*R);
+      ctx.stroke();
+    }
+    ctx.restore();
+    /* 블립 */
+    blips.forEach(b=>{
+      if(b.age>0){
+        const a=Math.max(0,1-b.age/b.maxAge);
+        ctx.fillStyle=`rgba(170,255,0,${a})`;
+        ctx.shadowColor='#aaff00';ctx.shadowBlur=4*a;
+        ctx.beginPath();ctx.arc(b.x,b.y,2,0,Math.PI*2);ctx.fill();
+        ctx.shadowBlur=0;
+      }
+      b.age++;
+      if(b.age>b.maxAge){
+        b.age=0;
+        const na=Math.random()*Math.PI*2;
+        const nr=Math.random()*R*.8+4;
+        b.x=cx+Math.cos(na)*nr;b.y=cy+Math.sin(na)*nr;
+        b.maxAge=60+Math.random()*60;
+      }
+      /* 스윕이 지나갈 때 블립 활성화 */
+      const bAngle=Math.atan2(b.y-cy,b.x-cx);
+      const diff=((bAngle-angle)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+      if(diff<0.12) b.age=1;
+    });
+    angle+=0.04;
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* 게이지 흔들림 */
+  const fills=[
+    {el:document.getElementById('g-fill-rec'),base:72},
+    {el:document.getElementById('g-fill-sel'),base:48},
+    {el:document.getElementById('g-fill-idx'),base:91},
+  ];
+  setInterval(()=>{
+    fills.forEach(f=>{
+      if(!f.el)return;
+      const v=Math.max(10,Math.min(99,f.base+(Math.random()*6-3)));
+      f.el.style.width=v+'%';
+    });
+  },600);
+})();
+
+/* ─── I: 게이지 + 카운터 애니메이션 ─── */
+(function(){
+  const gauges=[
+    {id:'i-g1',base:68},{id:'i-g2',base:92},{id:'i-g3',base:44}
+  ];
+  setInterval(()=>{
+    gauges.forEach(g=>{
+      const el=document.getElementById(g.id);
+      if(!el)return;
+      const v=Math.max(5,Math.min(99,g.base+(Math.random()*8-4)));
+      el.style.width=v+'%';
+    });
+  },700);
+
+  /* 카운터 가끔 점프 */
+  const recEl=document.getElementById('i-rec');
+  let rec=6421;
+  setInterval(()=>{
+    if(Math.random()<0.3){
+      rec+=Math.floor(Math.random()*3);
+      if(recEl) recEl.textContent=rec.toLocaleString();
+    }
+  },1200);
+})();
+</script>
+
+</body>
+</html>

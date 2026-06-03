@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>FOLDER PREVIEW — SAMPLE</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #000;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── 상단 폴더 그리드 ── */
+#folderArea {
+  padding: 28px 36px 20px;
+  flex-shrink: 0;
+}
+#folderGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 6px;
+}
+.folder-cell {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  outline: none;
+}
+.folder-thumb {
+  aspect-ratio: 3/2;
+  background: #0d0d0d;
+  border: 1px solid rgba(0,255,0,0.25);
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.1s, box-shadow 0.1s;
+}
+.folder-cell:hover .folder-thumb,
+.folder-cell.active .folder-thumb {
+  border-color: #00ff00;
+  box-shadow: 0 0 8px rgba(0,255,0,0.4);
+}
+.folder-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);
+  transition: filter 0.15s;
+}
+.folder-cell:hover .folder-thumb img,
+.folder-cell.active .folder-thumb img {
+  filter: brightness(0.75) saturate(0.15) sepia(0.5) hue-rotate(90deg);
+}
+.folder-label {
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  font-size: 6px; font-family: monospace; color: rgba(0,255,0,0.55); letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.folder-label .cnt { opacity: 0.5; }
+
+/* ── 하단 프리뷰 패널 ── */
+#previewPanel {
+  flex: 1;
+  border-top: 1px solid #00ff00;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#previewPanel.visible { opacity: 1; }
+
+#previewHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 14px;
+  border-bottom: 1px dashed rgba(0,255,0,0.2);
+  flex-shrink: 0;
+  background: rgba(0,255,0,0.03);
+}
+#previewTitle { font-size: 13px; letter-spacing: 2px; }
+#previewMeta  { font-size: 11px; color: rgba(0,255,0,0.45); }
+#previewStats { margin-left: auto; font-size: 11px; color: rgba(0,255,0,0.4); letter-spacing: 1px; }
+
+#previewGrid {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 14px;
+}
+.preview-thumb {
+  flex-shrink: 0;
+  height: calc(100% - 24px);
+  aspect-ratio: 3/2;
+  overflow: hidden;
+  border: 1px solid rgba(0,255,0,0.2);
+  position: relative;
+  background: #0d0d0d;
+  cursor: pointer;
+  transition: border-color 0.1s;
+}
+.preview-thumb:hover { border-color: #00ff00; }
+.preview-thumb img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);
+}
+.preview-thumb.is-core img  { filter: none; }
+.preview-thumb.is-sup img   { filter: brightness(0.9) saturate(0.6); }
+.preview-thumb .verdict-tag {
+  position: absolute; top: 2px; right: 2px;
+  font-size: 6px; font-family: monospace; padding: 1px 3px; letter-spacing: 0.5px;
+}
+  </style>
+</head>
+<body>
+
+<div id="folderArea">
+  <div id="folderGrid"></div>
+</div>
+
+<div id="previewPanel">
+  <div id="previewHeader">
+    <span id="previewTitle">—</span>
+    <span id="previewMeta"></span>
+    <span id="previewStats"></span>
+  </div>
+  <div id="previewGrid"></div>
+</div>
+
+<script>
+const BASE = 'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev';
+
+// 샘플 폴더 데이터 (실제는 admin-contents.json에서 읽음)
+const folders = [
+  {
+    id: '2025/09', title: '2025/09', date: '0928',
+    total: 401, core: 32, support: 8,
+    preview: [
+      { url: `${BASE}/2025/09/0928/DSCF7162.jpg`,  verdict: 'core' },
+      { url: `${BASE}/2025/09/0928/DSCF7227.jpg`,  verdict: 'core' },
+      { url: `${BASE}/2025/09/0928/DSCF7275.jpg`,  verdict: 'core' },
+      { url: `${BASE}/2025/09/0928/DSCF7289.jpg`,  verdict: 'core' },
+      { url: `${BASE}/2025/09/0928/DSCF7300.jpg`,  verdict: 'support' },
+      { url: `${BASE}/2025/09/0928/DSCF7320.jpg`,  verdict: 'support' },
+      { url: `${BASE}/2025/09/0928/DSCF7340.jpg`,  verdict: 'drop' },
+      { url: `${BASE}/2025/09/0928/DSCF7360.jpg`,  verdict: 'drop' },
+      { url: `${BASE}/2025/09/0928/DSCF7380.jpg`,  verdict: 'drop' },
+      { url: `${BASE}/2025/09/0928/DSCF7400.jpg`,  verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2025/09/0928/DSCF7162.jpg`
+  },
+  {
+    id: '2025/10', title: '2025/10', date: '1003–1025',
+    total: 722, core: 20, support: 34,
+    preview: [
+      { url: `${BASE}/2025/10/1003/DSCF7693.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/10/1003/DSCF7694.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/10/1003/DSCF7696.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/10/1003/DSCF7686.jpg`, verdict: 'support' },
+      { url: `${BASE}/2025/10/1003/DSCF7748.jpg`, verdict: 'support' },
+      { url: `${BASE}/2025/10/1003/DSCF7640.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/10/1003/DSCF7650.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/10/1003/DSCF7660.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/10/1003/DSCF7670.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2025/10/1003/DSCF7693.jpg`
+  },
+  {
+    id: '2025/11', title: '2025/11', date: '1101–1122',
+    total: 1175, core: 15, support: 51,
+    preview: [
+      { url: `${BASE}/2025/11/1102/DSCF9493.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/11/1101/DSCF9062.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/11/1102/DSCF9510.jpg`, verdict: 'support' },
+      { url: `${BASE}/2025/11/1104/DSCF9612.jpg`, verdict: 'support' },
+      { url: `${BASE}/2025/11/1102/DSCF9500.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/11/1102/DSCF9520.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/11/1102/DSCF9540.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/11/1115/DSCF9700.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2025/11/1102/DSCF9493.jpg`
+  },
+  {
+    id: '2025/12', title: '2025/12', date: '1206–1227',
+    total: 668, core: 7, support: 57,
+    preview: [
+      { url: `${BASE}/2025/12/1225/DSCF3118.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/12/1225/DSCF3220.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/12/1225/DSCF3237.jpg`, verdict: 'core' },
+      { url: `${BASE}/2025/12/1206/DSCF2100.jpg`, verdict: 'support' },
+      { url: `${BASE}/2025/12/1225/DSCF3050.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/12/1225/DSCF3070.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2025/12/1225/DSCF3090.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2025/12/1225/DSCF3118.jpg`
+  },
+  {
+    id: '2026/01', title: '2026/01', date: '0104–0216',
+    total: 822, core: 53, support: 110,
+    preview: [
+      { url: `${BASE}/2026/01/0104/DSCF3440.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/01/0111/DSCF3600.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/01/0117/DSCF3800.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/01/0201/DSCF4350.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/01/0207/DSCF4600.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/01/0104/DSCF3450.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/01/0104/DSCF3460.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/01/0201/DSCF4360.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2026/01/0104/DSCF3440.jpg`
+  },
+  {
+    id: '2026/02', title: '2026/02', date: '0217–0316',
+    total: 1442, core: 25, support: 77,
+    preview: [
+      { url: `${BASE}/2026/02/0221/DSCF5300.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/02/0227/DSCF5787.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/02/0304/DSCF5890.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/02/0221/DSCF5350.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/02/0217/DSCF5230.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/02/0221/DSCF5240.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/02/0227/DSCF5670.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/02/0301/DSCF5660.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2026/02/0227/DSCF5787.jpg`
+  },
+  {
+    id: '2026/03', title: '2026/03', date: '0301–0322',
+    total: 1199, core: 15, support: 37,
+    preview: [
+      { url: `${BASE}/2026/03/0304/DSCF5882.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/03/0304/DSCF5890.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/03/0304/DSCF5897.jpg`, verdict: 'core' },
+      { url: `${BASE}/2026/03/0304/DSCF5889.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/03/0304/DSCF5892.jpg`, verdict: 'support' },
+      { url: `${BASE}/2026/03/0304/DSCF5878.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/03/0304/DSCF5880.jpg`, verdict: 'drop' },
+      { url: `${BASE}/2026/03/0322/DSCF9230.jpg`, verdict: 'drop' },
+    ],
+    coverUrl: `${BASE}/2026/03/0304/DSCF5882.jpg`
+  },
+];
+
+// ── 폴더 그리드 렌더 ──
+const grid = document.getElementById('folderGrid');
+folders.forEach((f, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'folder-cell';
+  cell.innerHTML = `
+    <div class="folder-thumb">
+      <img src="${f.coverUrl}" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="folder-label">
+      <span>${f.title}</span>
+      <span class="cnt">(${f.total})</span>
+    </div>`;
+  cell.addEventListener('mouseenter', () => showPreview(f, cell));
+  cell.addEventListener('click', () => showPreview(f, cell));
+  grid.appendChild(cell);
+});
+
+// ── 프리뷰 패널 ──
+let activeCell = null;
+function showPreview(folder, cell) {
+  if (activeCell) activeCell.classList.remove('active');
+  activeCell = cell;
+  cell.classList.add('active');
+
+  document.getElementById('previewTitle').textContent = folder.title;
+  document.getElementById('previewMeta').textContent = folder.date;
+  document.getElementById('previewStats').textContent =
+    `CORE ${folder.core}  SUP ${folder.support}  DROP ${folder.total - folder.core - folder.support}  /  TOTAL ${folder.total}`;
+
+  const pg = document.getElementById('previewGrid');
+  pg.innerHTML = '';
+
+  // CORE/SUP 먼저, DROP 뒤에
+  const sorted = [...folder.preview].sort((a, b) => {
+    const order = { core: 0, support: 1, drop: 2 };
+    return (order[a.verdict] ?? 2) - (order[b.verdict] ?? 2);
+  });
+
+  sorted.forEach(({ url, verdict }) => {
+    const div = document.createElement('div');
+    div.className = `preview-thumb is-${verdict === 'support' ? 'sup' : verdict}`;
+    div.innerHTML = `
+      <img src="${url}" alt="" onerror="this.style.opacity='0.2'">
+      ${verdict !== 'drop' ? `<div class="verdict-tag" style="background:${verdict==='core'?'#00ff00':'#ffb000'};color:#000;">${verdict==='core'?'CORE':'SUP'}</div>` : ''}`;
+    pg.appendChild(div);
+  });
+
+  const panel = document.getElementById('previewPanel');
+  panel.classList.add('visible');
+}
+</script>
+</body>
+</html>

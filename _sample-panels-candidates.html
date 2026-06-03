@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAMPLE — PANEL CANDIDATES</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
+  --acc:#ff5e16; --ac3:#ff7a2e; --teal:#3fb09a; --viol:#b07bff; --amb:#ff6a1e; --red:#ff3b1f;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100vh;background:#000;font-family:var(--mono);color:var(--g2);padding:20px;}
+#bg-grid{position:fixed;inset:-40px;z-index:-1;
+  background-image:linear-gradient(rgba(255,74,22,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.04) 1px,transparent 1px);background-size:56px 56px;}
+.title{font-size:11px;letter-spacing:3px;color:var(--g);margin-bottom:4px;}
+.sub{font-size:8px;letter-spacing:1px;color:var(--g3);margin-bottom:18px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:14px;}
+
+.dp{background:#050302;border:1px solid var(--g4);display:flex;flex-direction:column;overflow:hidden;height:300px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 30px rgba(255,74,22,.05);}
+.dp-h{flex:0 0 auto;display:flex;align-items:center;gap:6px;height:20px;padding:0 9px;
+  background:linear-gradient(90deg,rgba(255,74,22,.12),transparent);border-bottom:1px solid var(--g4);
+  font-size:8px;letter-spacing:2px;color:var(--g2);}
+.dp-h .arr{font-size:6px;color:var(--ac3);}.dp-h .no{font-size:6px;color:var(--g3);}
+.dp-h .tag{margin-left:auto;font-size:6.5px;color:var(--g3);}
+.dp.teal .dp-h{color:var(--teal);}.dp.teal .dp-h .arr{color:var(--teal);}
+.dp.viol .dp-h{color:var(--viol);}.dp.viol .dp-h .arr{color:var(--viol);}
+.dp-b{flex:1 1 auto;min-height:0;position:relative;display:flex;overflow:hidden;}
+.gfx{flex:1 1 auto;min-width:0;position:relative;overflow:hidden;}.gfx svg{position:absolute;inset:0;width:100%;height:100%;}
+.side{flex:0 0 100px;border-left:1px solid var(--g4);display:flex;flex-direction:column;min-height:0;background:rgba(255,74,22,.02);}
+.side .sh{font-size:6px;letter-spacing:1px;color:var(--g3);padding:3px 7px 2px;border-bottom:1px solid var(--g4);}
+.tbl{padding:3px 7px;display:flex;flex-direction:column;gap:1px;}
+.tbl .tr{display:flex;justify-content:space-between;font-size:7px;line-height:1.5;}
+.tbl .tr .k{color:var(--g3);}.tbl .tr .v{color:var(--g2);font-variant-numeric:tabular-nums;}
+.tbl .tr .v.hi{color:#ffcf4a;}.tbl .tr .v.tl{color:var(--teal);}.tbl .tr .v.vl{color:var(--viol);}
+.slbl{font-size:5.5px;color:var(--g3);padding:0 7px;letter-spacing:.5px;}
+
+/* compiler log */
+.clog{position:absolute;left:0;right:0;bottom:0;height:40px;border-top:1px solid var(--g4);
+  font-size:6.5px;line-height:1.5;color:var(--g3);padding:3px 8px;overflow:hidden;background:rgba(0,0,0,.4);}
+.clog .ok{color:var(--teal);}.clog .wr{color:var(--amb);}
+</style>
+</head>
+<body>
+<div id="bg-grid"></div>
+<div class="title">▶ PANEL CANDIDATES — 불합격 3칸 교체용</div>
+<div class="sub">A SVA 레이더 · B 관계망 · C 모아레 간섭 · D 벡터 흐름장 · E 문법 컴파일러 — 마음에 드는 것 알려줘</div>
+
+<div class="grid">
+
+  <!-- A. SVA RADAR -->
+  <div class="dp teal">
+    <div class="dp-h"><span class="arr">▶</span>SVA RADAR<span class="no">CAND.A</span><span class="tag">4축 형태학</span></div>
+    <div class="dp-b">
+      <div class="gfx"><svg id="radar" viewBox="0 0 210 210" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="side">
+        <div class="sh">SPECIMEN</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">id</span><span class="v tl" id="rad-id">img_000</span></div>
+          <div class="tr"><span class="k">round</span><span class="v" id="rad-rnd">1차</span></div>
+          <div class="tr"><span class="k">n</span><span class="v" id="rad-n">000/438</span></div>
+        </div>
+        <div class="sh" style="border-top:1px solid var(--g4)">AXES [0–1]</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">DS 지배</span><span class="v" id="rad-ds">0.0</span></div>
+          <div class="tr"><span class="k">SD 배치</span><span class="v" id="rad-sd">0.0</span></div>
+          <div class="tr"><span class="k">SA 표면</span><span class="v" id="rad-sa">0.0</span></div>
+          <div class="tr"><span class="k">KV 변칙</span><span class="v hi" id="rad-kv">0.0</span></div>
+        </div>
+        <div class="slbl">KV WEIGHT</div><div class="minibar"><i id="rad-kvbar" style="width:0%;background:#3fb09a"></i></div>
+        <div class="sh" style="margin-top:auto;border-top:1px solid var(--g4)">VERDICT</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">score</span><span class="v hi" id="rad-score">0.00</span></div>
+          <div class="tr"><span class="k">cut</span><span class="v" id="rad-cut">DROP</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B. NODE GRAPH -->
+  <div class="dp">
+    <div class="dp-h"><span class="arr">▶</span>RELATION GRAPH<span class="no">CAND.B</span><span class="tag">관계망</span></div>
+    <div class="dp-b">
+      <div class="gfx"><svg id="graph" viewBox="0 0 260 240" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="side">
+        <div class="sh">NODES</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">RULE</span><span class="v">1</span></div>
+          <div class="tr"><span class="k">SVA</span><span class="v">2</span></div>
+          <div class="tr"><span class="k">GRAM</span><span class="v">2</span></div>
+          <div class="tr"><span class="k">DIR</span><span class="v">2</span></div>
+        </div>
+        <div class="sh" style="border-top:1px solid var(--g4)">EDGES</div>
+        <div class="tbl"><div class="tr"><span class="k">links</span><span class="v hi" id="gr-e">0</span></div>
+          <div class="tr"><span class="k">flow</span><span class="v tl" id="gr-f">●</span></div></div>
+        <div class="slbl" style="margin-top:auto">집합 교차</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. MOIRÉ -->
+  <div class="dp teal">
+    <div class="dp-h"><span class="arr">▶</span>MOIRÉ INTERFERENCE<span class="no">CAND.C</span><span class="tag">두 시선 충돌</span></div>
+    <div class="dp-b">
+      <div class="gfx"><svg id="moire" viewBox="0 0 260 240" preserveAspectRatio="xMidYMid slice"></svg></div>
+      <div class="side">
+        <div class="sh">GRATING</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">G1 ang</span><span class="v" id="mo-a1">0°</span></div>
+          <div class="tr"><span class="k">G2 ang</span><span class="v vl" id="mo-a2">0°</span></div>
+          <div class="tr"><span class="k">Δθ</span><span class="v hi" id="mo-d">0°</span></div>
+          <div class="tr"><span class="k">beat</span><span class="v" id="mo-b">0.0</span></div>
+        </div>
+        <div class="slbl" style="margin-top:auto">불일치=구조</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. VECTOR FLOW -->
+  <div class="dp">
+    <div class="dp-h"><span class="arr">▶</span>VECTOR FLOW<span class="no">CAND.D</span><span class="tag">시선 궤도</span></div>
+    <div class="dp-b">
+      <div class="gfx"><svg id="flow" viewBox="0 0 260 240" preserveAspectRatio="xMidYMid slice"></svg></div>
+      <div class="side">
+        <div class="sh">FIELD</div>
+        <div class="tbl">
+          <div class="tr"><span class="k">∇x</span><span class="v" id="fl-x">0.0</span></div>
+          <div class="tr"><span class="k">∇y</span><span class="v" id="fl-y">0.0</span></div>
+          <div class="tr"><span class="k">curl</span><span class="v hi" id="fl-c">0.0</span></div>
+        </div>
+        <div class="slbl" style="margin-top:auto">시선은 곡선</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. GRAMMAR COMPILER -->
+  <div class="dp viol">
+    <div class="dp-h"><span class="arr">▶</span>GRAMMAR COMPILER<span class="no">CAND.E</span><span class="tag">문법→지시문</span></div>
+    <div class="dp-b">
+      <div class="gfx"><svg id="comp" viewBox="0 0 360 200" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="clog" id="clog"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const $=id=>document.getElementById(id);const NS='http://www.w3.org/2000/svg';
+
+/* ════ A. SVA RADAR (구체화: 눈금·축명·정점값·ghost·스윕) ════ */
+(function(){
+  const svg=$('radar');const cx=105,cy=105,R=72;
+  const axes=[['DS','지배구조'],['SD','공간배치'],['SA','표면이상'],['KV','고유변칙']];
+  const cuts=['DROP','DROP','SUPPORT','CORE'];
+  // 평면 동심 그리드(다이아몬드) + 수치
+  const ang=i=>-Math.PI/2+i*Math.PI/2;
+  const depth={x:13,y:-12};   // 압출 깊이(민트 사각형용)
+  let rings='';for(let k=1;k<=4;k++){let p='';for(let i=0;i<4;i++)p+=(cx+Math.cos(ang(i))*R*k/4).toFixed(1)+','+(cy+Math.sin(ang(i))*R*k/4).toFixed(1)+' ';
+    rings+='<polygon points="'+p+'" fill="none" stroke="rgba(255,74,22,.12)" stroke-width="0.6"/>';
+    rings+='<text x="'+(cx+2)+'" y="'+(cy-R*k/4+3).toFixed(1)+'" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+(k/4).toFixed(2)+'</text>';}
+  let spokes='',labels='';for(let i=0;i<4;i++){const a=ang(i);
+    spokes+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(a)*R).toFixed(1)+'" y2="'+(cy+Math.sin(a)*R).toFixed(1)+'" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>';
+    labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)).toFixed(1)+'" fill="#3fb09a" font-size="8" font-family="VT323,monospace" text-anchor="middle">'+axes[i][0]+'</text>';
+    labels+='<text x="'+(cx+Math.cos(a)*(R+12)).toFixed(1)+'" y="'+(cy+Math.sin(a)*(R+12)+7).toFixed(1)+'" fill="rgba(63,176,154,.5)" font-size="4.5" font-family="IBM Plex Mono" text-anchor="middle">'+axes[i][1]+'</text>';}
+  svg.innerHTML=rings+spokes+labels
+    +'<circle cx="'+cx+'" cy="'+cy+'" r="1.5" fill="rgba(255,74,22,.4)"/>'
+    +'<polygon id="rghost" fill="none" stroke="rgba(63,176,154,.22)" stroke-width="0.8" stroke-dasharray="2 2"/>'
+    +'<g id="r3d"></g><g id="rdots"></g>';
+  const ghost=svg.querySelector('#rghost'),box=svg.querySelector('#r3d'),dots=svg.querySelector('#rdots');
+  let cur=[0.6,0.5,0.7,0.9],tgt=[...cur],prev=[...cur],id='img_000',rnd='1차',n=0;
+  const verts=arr=>arr.map((v,i)=>[cx+Math.cos(ang(i))*R*v,cy+Math.sin(ang(i))*R*v]);
+  const ptsStr=v=>v.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  function newTarget(){prev=[...cur];ghost.setAttribute('points',ptsStr(verts(prev)));
+    tgt=axes.map(()=>0.2+Math.random()*0.75);id='img_'+String(Math.floor(Math.random()*900)+100);
+    rnd=Math.random()<0.5?'1차':'2차';n++;}
+  newTarget();setInterval(newTarget,3000);
+  setInterval(()=>{
+    cur=cur.map((v,i)=>v+(tgt[i]-v)*0.08);
+    // 민트 사각형을 압출(뒷면+측면4+윗면)
+    const f=verts(cur),b=f.map(p=>[p[0]+depth.x,p[1]+depth.y]);
+    let s='<polygon points="'+ptsStr(b)+'" fill="rgba(63,176,154,.07)" stroke="rgba(63,176,154,.3)" stroke-width="0.8"/>';
+    const shades=[.10,.20,.15,.06];
+    for(let i=0;i<4;i++){const j=(i+1)%4;
+      s+='<polygon points="'+ptsStr([f[i],f[j],b[j],b[i]])+'" fill="rgba(63,176,154,'+shades[i]+')" stroke="rgba(63,176,154,.32)" stroke-width="0.6"/>';}
+    s+='<polygon points="'+ptsStr(f)+'" fill="rgba(63,176,154,.22)" stroke="#3fb09a" stroke-width="1.4"/>';
+    box.innerHTML=s;
+    let d='';for(let i=0;i<4;i++){const a=ang(i),x=f[i][0],y=f[i][1];
+      d+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.2" fill="#3fb09a"/>';
+      d+='<text x="'+(x+Math.cos(a)*7).toFixed(1)+'" y="'+(y+Math.sin(a)*7+2).toFixed(1)+'" fill="#3fb09a" font-size="5" font-family="IBM Plex Mono" text-anchor="middle">'+cur[i].toFixed(2)+'</text>';}
+    dots.innerHTML=d;
+    const score=(cur[0]*0.2+cur[1]*0.2+cur[2]*0.25+cur[3]*0.35);
+    $('rad-id').textContent=id;$('rad-rnd').textContent=rnd;$('rad-n').textContent=String(n).padStart(3,'0')+'/438';
+    $('rad-ds').textContent=cur[0].toFixed(2);$('rad-sd').textContent=cur[1].toFixed(2);$('rad-sa').textContent=cur[2].toFixed(2);$('rad-kv').textContent=cur[3].toFixed(2);
+    $('rad-kvbar').style.width=(cur[3]*100).toFixed(0)+'%';
+    $('rad-score').textContent=score.toFixed(2);$('rad-cut').textContent=cuts[Math.min(3,Math.floor(score*4))];
+  },50);
+})();
+
+/* ════ B. NODE GRAPH ════ */
+(function(){
+  const svg=$('graph');
+  const nodes=[{id:'RULE',x:130,y:40,c:'#ff6a6a'},{id:'SVA',x:60,y:100,c:'#3fd2ff'},{id:'SVA2',x:200,y:100,c:'#3fd2ff'},
+    {id:'GRAM',x:50,y:170,c:'#4dff7a'},{id:'GRAM2',x:210,y:170,c:'#4dff7a'},{id:'DIR',x:110,y:210,c:'#ffd24a'},{id:'DIR2',x:160,y:210,c:'#ffd24a'}];
+  const edges=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[1,2],[5,6],[0,5],[0,6]];
+  $('gr-e').textContent=edges.length;
+  let t=0;
+  function draw(){t+=0.03;
+    const pos=nodes.map((n,i)=>({x:n.x+Math.sin(t+i)*4,y:n.y+Math.cos(t*0.8+i*1.3)*4,c:n.c,id:n.id}));
+    let e='';edges.forEach((ed,k)=>{const a=pos[ed[0]],b=pos[ed[1]];
+      e+='<line x1="'+a.x.toFixed(1)+'" y1="'+a.y.toFixed(1)+'" x2="'+b.x.toFixed(1)+'" y2="'+b.y.toFixed(1)+'" stroke="rgba(255,74,22,.25)" stroke-width="0.7"/>';
+      const f=(t*0.5+k*0.3)%1;e+='<circle cx="'+(a.x+(b.x-a.x)*f).toFixed(1)+'" cy="'+(a.y+(b.y-a.y)*f).toFixed(1)+'" r="1.6" fill="#ff7a2e"/>';});
+    let n='';pos.forEach(p=>{n+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="9" fill="#050302" stroke="'+p.c+'" stroke-width="1.2"/>'
+      +'<text x="'+p.x.toFixed(1)+'" y="'+(p.y+2.5).toFixed(1)+'" fill="'+p.c+'" font-size="6" font-family="IBM Plex Mono" text-anchor="middle">'+p.id+'</text>';});
+    svg.innerHTML=e+n;}
+  setInterval(draw,50);
+})();
+
+/* ════ C. MOIRÉ ════ */
+(function(){
+  const svg=$('moire');
+  function grating(angle,color,id){let l='';for(let i=-30;i<=60;i++){const x=i*6;
+    l+='<line x1="'+x+'" y1="-60" x2="'+x+'" y2="300" stroke="'+color+'" stroke-width="1.4"/>';}
+    return '<g id="'+id+'" transform="rotate('+angle+' 130 120)">'+l+'</g>';}
+  svg.innerHTML=grating(0,'rgba(110,44,12,.38)','g1')+grating(6,'rgba(70,46,104,.38)','g2');
+  const g1=svg.querySelector('#g1'),g2=svg.querySelector('#g2');let t=0;
+  setInterval(()=>{t+=0.012;const a1=Math.sin(t)*8,a2=-Math.sin(t*0.9)*8+6;
+    g1.setAttribute('transform','rotate('+a1.toFixed(2)+' 130 120)');g2.setAttribute('transform','rotate('+a2.toFixed(2)+' 130 120)');
+    const dth=Math.abs(a2-a1);$('mo-a1').textContent=a1.toFixed(0)+'°';$('mo-a2').textContent=a2.toFixed(0)+'°';$('mo-d').textContent=dth.toFixed(1)+'°';$('mo-b').textContent=(6/(dth+0.5)).toFixed(1);
+  },50);
+})();
+
+/* ════ D. VECTOR FLOW ════ */
+(function(){
+  const svg=$('flow');const GX=14,GY=13,sp=20;let t=0;
+  function draw(){t+=0.02;let s='';let cx=0,cy=0;
+    for(let i=0;i<GX;i++)for(let j=0;j<GY;j++){const x=10+i*sp,y=8+j*sp;
+      const ang=Math.sin(x*0.03+t)*1.4+Math.cos(y*0.04-t*0.8)*1.4+Math.sin((x+y)*0.02+t*1.3);
+      const dx=Math.cos(ang)*7,dy=Math.sin(ang)*7;cx+=Math.cos(ang);cy+=Math.sin(ang);
+      const op=0.25+Math.abs(Math.sin(ang))*0.4;
+      s+='<line x1="'+x+'" y1="'+y+'" x2="'+(x+dx).toFixed(1)+'" y2="'+(y+dy).toFixed(1)+'" stroke="rgba(255,122,46,'+op.toFixed(2)+')" stroke-width="0.9"/>';
+      s+='<circle cx="'+(x+dx).toFixed(1)+'" cy="'+(y+dy).toFixed(1)+'" r="1" fill="rgba(255,122,46,'+op.toFixed(2)+')"/>';}
+    svg.innerHTML=s;
+    $('fl-x').textContent=(cx/(GX*GY)).toFixed(2);$('fl-y').textContent=(cy/(GX*GY)).toFixed(2);$('fl-c').textContent=Math.abs(Math.sin(t*1.5)).toFixed(2);}
+  setInterval(draw,50);
+})();
+
+/* ════ E. GRAMMAR COMPILER ════ */
+(function(){
+  const svg=$('comp');
+  const blocks=[{x:14,t:'SVA',s:'4축 분석'},{x:104,t:'GRAM 1차',s:'허용구조'},{x:194,t:'GRAM 2차',s:'금지구조'},{x:284,t:'DIR',s:'지시문'}];
+  let b='';blocks.forEach((bl,i)=>{const col=['#3fd2ff','#4dff7a','#4dff7a','#ffd24a'][i];
+    b+='<rect x="'+bl.x+'" y="70" width="64" height="40" rx="2" fill="rgba(0,0,0,.5)" stroke="'+col+'" stroke-width="1"/>'
+     +'<text x="'+(bl.x+32)+'" y="88" fill="'+col+'" font-size="9" font-family="VT323,monospace" text-anchor="middle">'+bl.t+'</text>'
+     +'<text x="'+(bl.x+32)+'" y="100" fill="rgba(255,74,22,.5)" font-size="6" font-family="IBM Plex Mono" text-anchor="middle">'+bl.s+'</text>';
+    if(i<3)b+='<line x1="'+(bl.x+64)+'" y1="90" x2="'+(bl.x+90)+'" y2="90" stroke="rgba(255,74,22,.3)" stroke-width="0.8"/>'
+      +'<path d="M'+(bl.x+90)+',90 l-4,-2 v4 z" fill="rgba(255,74,22,.5)"/>';});
+  svg.innerHTML=b+'<g id="tokens"></g>';
+  const tk=svg.querySelector('#tokens');let t=0;
+  const path=[46,136,226,316];   // block centers x (y=90)
+  setInterval(()=>{t+=0.02;let s='';
+    for(let k=0;k<3;k++){const f=(t+k*0.33)%1;const x=path[k]+(path[k+1]-path[k])*f;
+      s+='<rect x="'+(x-3).toFixed(1)+'" y="86" width="6" height="8" fill="#ff7a2e" opacity="'+(1-Math.abs(f-0.5)).toFixed(2)+'"/>';}
+    tk.innerHTML=s;},50);
+  // compile log
+  const logs=[['SVA scan 438 imgs','ok'],['extract DS/SD/SA/KV','ok'],['G1 허용구조 12 rules','ok'],['G2 금지구조 9 rules','wr'],['compile DIR-0110','ok'],['DIR-1119 emitted','ok'],['미학 완성도 = 기각조건','wr']];
+  const cl=$('clog');let li=0;
+  function addlog(){const l=logs[li%logs.length];li++;const d=document.createElement('div');
+    d.innerHTML='<span class="'+l[1]+'">['+(l[1]==='ok'?'OK':'WARN')+']</span> '+l[0];
+    cl.insertBefore(d,cl.firstChild);while(cl.children.length>5)cl.removeChild(cl.lastChild);}
+  for(let i=0;i<5;i++)addlog();setInterval(addlog,1400);
+})();
+</script>
+</body>
+</html>

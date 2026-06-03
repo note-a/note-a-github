@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET.OS — ENTRY</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
+  --gl:#ffd3c2; --acc:#ff8a3a; --teal:#3fb09a; --bd:#ff4a16;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace; --px:'Press Start 2P',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;background:#000;font-family:var(--mono);color:var(--g);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+#bg{position:fixed;inset:-200px;z-index:0;background:radial-gradient(ellipse 180% 200% at 50% 25%, rgba(60,24,5,.32) 0%, rgba(16,8,2,.18) 45%, rgba(0,0,0,.08) 100%);}
+#bgrid{position:fixed;inset:-40px;z-index:0;background-image:linear-gradient(rgba(255,74,22,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.045) 1px,transparent 1px);background-size:52px 52px;animation:drift 16s linear infinite;}
+@keyframes drift{to{transform:translate(52px,52px);}}
+#vig{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 72% 72% at 50% 50%,transparent 28%,rgba(0,0,0,.6) 74%,rgba(0,0,0,.95) 100%);}
+.crt{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
+
+#wrap{position:relative;z-index:1;width:1160px;max-width:97vw;height:744px;max-height:95vh;
+  background:rgba(4,3,1,0.985);border:1px solid var(--bd);
+  box-shadow:inset 0 1px 0 rgba(255,140,40,.14),0 0 0 1px rgba(0,0,0,.95),0 0 90px rgba(255,74,22,0.18),0 28px 100px rgba(0,0,0,.99);
+  display:grid;grid-template-rows:auto auto auto 1fr auto auto auto;gap:6px;padding:9px;overflow:hidden;}
+.tick{position:absolute;width:14px;height:14px;z-index:30;}
+.tick.tl{top:-1px;left:-1px;border-top:1px solid var(--g);border-left:1px solid var(--g);}
+.tick.tr{top:-1px;right:-1px;border-top:1px solid var(--g);border-right:1px solid var(--g);}
+.tick.bl{bottom:-1px;left:-1px;border-bottom:1px solid var(--g);border-left:1px solid var(--g);}
+.tick.br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
+
+.tbar{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;padding:5px 12px;}
+.tbar .ttl{font-family:var(--px);font-size:11px;letter-spacing:1px;}
+.tbar .led{display:flex;gap:5px;}
+.tbar .led b{width:8px;height:8px;background:#1a0a02;display:inline-block;}
+.tbar .led b.on{background:#ffe9dd;}
+.tbar .sp{flex:1;}
+.tbar .clk{font-family:var(--mono);font-size:12px;font-weight:600;}
+
+.menubar{display:flex;gap:0;font-family:var(--mono);font-size:11px;border:1px solid var(--g3);background:rgba(255,74,22,.03);}
+.menubar span{padding:3px 13px;color:var(--g2);border-right:1px solid var(--g4);cursor:default;letter-spacing:1px;}
+.menubar span:hover{background:var(--g);color:#1a0a02;}
+.menubar .r{margin-left:auto;border-right:none;border-left:1px solid var(--g4);color:var(--acc);}
+
+.sub{display:flex;gap:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;}
+.sub .lab{background:var(--g);color:#1a0a02;padding:3px 9px;font-weight:600;}
+.sub .fil{flex:1;border:1px solid var(--g3);border-left:none;padding:3px 10px;color:var(--g2);overflow:hidden;white-space:nowrap;}
+
+.body{display:grid;grid-template-columns:1fr 326px;gap:6px;min-height:0;}
+.col{display:flex;flex-direction:column;gap:6px;min-height:0;}
+.pnl{border:1px solid var(--g3);background:rgba(255,74,22,0.02);display:flex;flex-direction:column;min-height:0;}
+.ph{background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;font-family:var(--px);font-size:8px;letter-spacing:1px;padding:5px 9px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.ph.dim{background:linear-gradient(180deg,#a8561a,#3a1d05);color:#ffd3c2;}
+.pb{padding:10px 12px;overflow:auto;flex:1;min-height:0;}
+
+/* scope */
+#scopeWrap{position:relative;height:172px;flex-shrink:0;}
+#scope{position:absolute;inset:0;width:100%;height:100%;}
+.slab{position:absolute;font-family:var(--mono);font-size:9px;letter-spacing:1px;color:var(--g2);z-index:2;}
+.slab.r{color:var(--acc);}
+
+/* transmission + console */
+.intro p{font-family:var(--mono);font-size:12.5px;line-height:1.66;color:var(--gl);margin-bottom:8px;}
+.intro .attr{font-family:var(--px);font-size:9px;color:var(--g2);margin-top:4px;letter-spacing:1px;}
+.console{background:#0a0502;border:1px solid var(--g3);padding:8px 10px;margin-top:9px;height:118px;overflow:hidden;font-family:var(--mono);font-size:11.5px;line-height:1.75;}
+.console .row{opacity:0;animation:cin .25s forwards;}
+@keyframes cin{to{opacity:1}}
+.console .t{color:var(--g3);} .console .ok{color:var(--acc);} .console .em{color:var(--teal);}
+.cur{display:inline-block;width:8px;height:13px;background:var(--g);vertical-align:-2px;animation:bl .6s steps(1) infinite;}
+@keyframes bl{50%{opacity:0}}
+
+/* channels */
+.chan{flex:1;overflow:hidden;}
+.crow{display:flex;gap:8px;font-family:var(--mono);font-size:11px;color:var(--g2);padding:2px 0;letter-spacing:.4px;border-bottom:1px solid var(--g4);}
+.crow.on{color:var(--gl);background:rgba(255,74,22,.12);}
+.crow .n{color:var(--g3);min-width:20px;} .crow .v{margin-left:auto;color:var(--acc);}
+
+/* status: LED + gauges */
+.ledgrid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-bottom:9px;}
+.ledgrid b{height:9px;background:rgba(255,74,22,0.12);box-shadow:inset 0 0 0 1px rgba(255,74,22,0.25);}
+.ledgrid b.on{background:var(--acc);box-shadow:0 0 5px var(--acc);}
+.meter{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--g2);margin:5px 0;}
+.meter .ml{min-width:30px;}
+.meter .bar{flex:1;height:8px;border:1px solid var(--g3);position:relative;overflow:hidden;}
+.meter .bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--g),var(--acc));transition:width .25s;}
+.meter .bar.teal i{background:linear-gradient(90deg,#2a6a5e,var(--teal));}
+.meter .mv{min-width:34px;text-align:right;color:var(--gl);}
+
+/* register strip */
+.regstrip{border:1px solid var(--g3);background:rgba(255,74,22,0.02);display:flex;align-items:center;overflow:hidden;}
+.regstrip .h{flex-shrink:0;background:var(--g);color:#1a0a02;font-family:var(--term);font-size:17px;padding:6px 10px;letter-spacing:.5px;white-space:pre;z-index:2;}
+.regmarq{flex:1;overflow:hidden;white-space:nowrap;padding:6px 0;}
+.reg{display:inline-block;font-family:var(--term);font-size:17px;color:var(--g);letter-spacing:.5px;padding-left:100%;animation:regscroll 22s linear infinite;}
+
+/* enter button */
+.enter{position:relative;overflow:hidden;font-family:var(--px);font-size:14px;letter-spacing:2px;padding:16px;cursor:pointer;color:#1a0a02;
+  background:linear-gradient(180deg,#ff7a4a,#cf4a18);border:1px solid var(--g);box-shadow:inset 0 1px 0 rgba(255,220,200,.6),inset 0 -2px 0 rgba(0,0,0,.3);transition:.12s;width:100%;}
+.enter:hover{background:linear-gradient(180deg,#ffa070,#ff5e16);}
+.enter::after{content:'';position:absolute;top:0;left:-50%;width:35%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:sweep 3s linear infinite;}
+@keyframes sweep{to{left:130%}}
+@keyframes regscroll{to{transform:translateX(-100%)}}
+
+.foot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--g3);letter-spacing:1px;padding:0 2px;}
+.foot .live{color:var(--acc);}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bgrid"></div><div id="vig"></div><div class="crt"></div>
+<div id="wrap">
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+
+  <div class="tbar"><span class="ttl">SET.OS</span><span style="font-family:var(--mono);font-size:11px;">// ENTRY TERMINAL</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b></span><span class="sp"></span><span style="font-family:var(--mono);font-size:11px;">[ SET_WORLD ]</span><span class="clk" id="clk">00:00:00</span></div>
+
+  <div class="menubar"><span>FILE</span><span>VIEW</span><span>MEASURE</span><span>LOG</span><span>HELP</span><span class="r" id="mstat">● REC ACTIVE</span></div>
+
+  <div class="sub"><span class="lab">INDEX</span><span class="fil">EXTRACT FROM : SET WORLD — ACCUMULATION LOG &nbsp; *** PAGE 1 READY ***</span></div>
+
+  <div class="body">
+    <div class="col">
+      <div class="pnl">
+        <div class="ph"><span>▸ SIGNAL / CH-F</span><span id="peak">PEAK 0.84</span></div>
+        <div id="scopeWrap">
+          <canvas id="scope"></canvas>
+          <span class="slab" style="left:10px;top:7px;">20ms · DIV</span>
+          <span class="slab r" style="right:10px;top:7px;">▲ RECORDING</span>
+          <span class="slab" style="left:10px;bottom:7px;">SECTOR-04</span>
+        </div>
+      </div>
+      <div class="pnl" style="flex:1;">
+        <div class="ph dim"><span>◇ TRANSMISSION</span><span>SET WORLD / 2022—</span></div>
+        <div class="pb">
+          <div class="intro">
+            <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+            <p>This is one answer to that question. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+            <div class="attr">SET WORLD &nbsp;/&nbsp; 2022—</div>
+          </div>
+          <div class="console" id="con"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="pnl" style="flex:1;">
+        <div class="ph"><span>▸ CONDITION CHANNELS</span><span id="cnt">438</span></div>
+        <div class="pb chan" id="chan" style="padding:8px 10px;"></div>
+      </div>
+      <div class="pnl">
+        <div class="ph dim"><span>◇ STATUS</span><span>v.XT2</span></div>
+        <div class="pb" style="padding:10px 12px;">
+          <div class="ledgrid" id="ledgrid"></div>
+          <div class="meter"><span class="ml">SIG</span><span class="bar"><i id="sig" style="width:62%"></i></span><span class="mv" id="sigv">62%</span></div>
+          <div class="meter"><span class="ml">REC</span><span class="bar teal"><i id="rec" style="width:84%"></i></span><span class="mv" id="recv">84%</span></div>
+          <div class="meter"><span class="ml">BUF</span><span class="bar"><i style="width:100%"></i></span><span class="mv">OK</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="regstrip">
+    <span class="h"> REGISTER </span>
+    <div class="regmarq"><span class="reg">A SET_WORLD SYSTEM/MEAS ACTIVE  ·  B VIS+LANG FRAMEWORK OPEN  ·  C OBSERVER PROTOCOL INCOMP  ·  D PERIMTR MEASUREMENT ONGOIN  ·  E CONDITN RECURRENCE REPEAT  ·  F RECORD ACCUM.LOG ACTIVE  ·  </span></div>
+  </div>
+
+  <button class="enter" onclick="go('set-os.html')">[ -&gt; ENTER &nbsp; SET_WORLD / SET.OS ]</button>
+
+  <div class="foot"><span>INPUT : <span class="cur"></span> what you measure, you enter</span><span class="live" id="stat">READY.</span></div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function chan(){document.getElementById('chan').innerHTML=items.map((it,i)=>`<div class="crow${i===idx?' on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span>${i===idx?'▸':''} ${it}<span class="v">${(Math.random()*0.9+0.1).toFixed(2)}</span></div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);chan();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);chan();e.preventDefault();}});
+chan();
+let cnt=438;setInterval(()=>{cnt++;document.getElementById('cnt').textContent=cnt;},1300);
+
+// boot console (line by line)
+const lines=['<span class="t">&gt;</span> INIT SET.OS ............ <span class="ok">OK</span>','<span class="t">&gt;</span> MOUNT /set_world ....... <span class="ok">OK</span>','<span class="t">&gt;</span> LOAD ACCUMULATION.LOG .. <span class="ok">438 REC</span>','<span class="t">&gt;</span> CALIBRATE SENSOR ....... <span class="em">RUNNING</span>','<span class="t">&gt;</span> <span class="em">Someone noticed. Wrote them down. Went looking.</span>','<span class="t">&gt;</span> awaiting operator ▸_'];
+const con=document.getElementById('con');let li=0;
+function type(){if(li>=lines.length){setTimeout(()=>{con.innerHTML='';li=0;type();},3200);return;}
+  const r=document.createElement('div');r.className='row';r.innerHTML=lines[li].replace(/_$/,'<span class="cur"></span>');con.appendChild(r);li++;
+  setTimeout(type,li>=lines.length?0:430);}
+type();
+
+// clock
+function pad(n){return String(n).padStart(2,'0');}
+setInterval(()=>{const d=new Date();document.getElementById('clk').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());},1000);
+
+// LED grid
+const lg=document.getElementById('ledgrid');lg.innerHTML=Array(16).fill('<b></b>').join('');
+// meters + leds jitter
+let sig=62,rec=84;
+function jit(v,amp,lo,hi){return Math.max(lo,Math.min(hi,v+(Math.random()-0.5)*amp));}
+setInterval(()=>{
+  sig=jit(sig,16,32,95);rec=jit(rec,9,62,99);
+  document.getElementById('sig').style.width=sig+'%';document.getElementById('sigv').textContent=Math.round(sig)+'%';
+  document.getElementById('rec').style.width=rec+'%';document.getElementById('recv').textContent=Math.round(rec)+'%';
+  document.getElementById('led').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>0.4));
+  lg.querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>0.55));
+  chan();
+},750);
+const stats=['SCANNING SECTOR 04...','MATCH: STRATA','RECORDING...','SAMPLE +1','IDLE','CALIBRATING...'];
+setInterval(()=>{document.getElementById('stat').textContent=stats[Math.floor(Math.random()*stats.length)];},1500);
+
+// oscilloscope
+const cv=document.getElementById('scope'),cx=cv.getContext('2d');let t=0;
+function draw(){cv.width=cv.clientWidth*devicePixelRatio;cv.height=cv.clientHeight*devicePixelRatio;
+  const w=cv.width,h=cv.height;cx.clearRect(0,0,w,h);
+  cx.strokeStyle='rgba(255,74,22,0.12)';cx.lineWidth=1;
+  for(let x=0;x<w;x+=w/16){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,h);cx.stroke();}
+  for(let y=0;y<h;y+=h/4){cx.beginPath();cx.moveTo(0,y);cx.lineTo(w,y);cx.stroke();}
+  cx.beginPath();cx.strokeStyle='#ff8a3a';cx.lineWidth=2*devicePixelRatio;cx.shadowColor='#ff8a3a';cx.shadowBlur=8;
+  for(let x=0;x<=w;x+=2){const p=x/w*Math.PI*4+t;const y=h/2+Math.sin(p)*h*0.24+Math.sin(p*2.7)*h*0.07+Math.sin(p*0.5+t)*h*0.05;x===0?cx.moveTo(x,y):cx.lineTo(x,y);}
+  cx.stroke();cx.shadowBlur=0;t+=0.04;requestAnimationFrame(draw);}
+draw();
+function go(u){if(parent!==window)return;location.href=u;}
+</script>
+</body>
+</html>

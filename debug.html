@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Debug - localStorage & Markdown</title>
+    <style>
+        body {
+            background: #000;
+            color: #39dc00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            border: 2px solid #39dc00;
+            padding: 15px;
+            margin: 15px 0;
+            background: rgba(57, 220, 0, 0.05);
+        }
+        h2 { color: #39dc00; margin: 20px 0 10px 0; }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            overflow-x: auto;
+            border: 1px solid #39dc00;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { color: #39dc00; }
+        .error { color: #ff3333; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug: localStorage & Markdown Rendering</h1>
+
+    <div class="section">
+        <h2>1. marked.js Status</h2>
+        <div id="markedStatus"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. localStorage Contents (adminContents)</h2>
+        <pre id="adminContentsDisplay">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>3. First Rule Item (Raw)</h2>
+        <pre id="firstRuleItemRaw">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>4. First Rule Item Preview (Raw Text)</h2>
+        <pre id="firstRulePreviewText">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>5. After marked.parse()</h2>
+        <pre id="firstRuleMarked">Loading...</pre>
+    </div>
+
+    <div class="section">
+        <h2>6. Rendered Output</h2>
+        <div id="firstRuleRendered" style="border: 2px dashed #39dc00; padding: 15px; min-height: 100px;">
+            Loading...
+        </div>
+    </div>
+
+    <script src="./marked.min.js"></script>
+    <script>
+        // Check marked
+        const markedStatus = document.getElementById('markedStatus');
+        if (typeof marked !== 'undefined') {
+            markedStatus.innerHTML = '<div class="success">✓ marked.js loaded successfully</div>';
+        } else {
+            markedStatus.innerHTML = '<div class="error">✗ marked.js NOT loaded</div>';
+            markedStatus.innerHTML += '<div class="error">Check console for errors</div>';
+        }
+
+        // Check localStorage
+        const adminContents = JSON.parse(localStorage.getItem('adminContents') || '{}');
+        const adminContentsDisplay = document.getElementById('adminContentsDisplay');
+
+        if (Object.keys(adminContents).length === 0) {
+            adminContentsDisplay.textContent = '(empty - no adminContents in localStorage)';
+        } else {
+            adminContentsDisplay.textContent = JSON.stringify(adminContents, null, 2);
+        }
+
+        // Get first rule item
+        const firstRuleItemRaw = document.getElementById('firstRuleItemRaw');
+        const firstRulePreviewText = document.getElementById('firstRulePreviewText');
+        const firstRuleMarked = document.getElementById('firstRuleMarked');
+        const firstRuleRendered = document.getElementById('firstRuleRendered');
+
+        try {
+            let firstItem = null;
+            let preview = '';
+
+            // Try to get from adminContents.rule
+            if (adminContents.rule) {
+                if (Array.isArray(adminContents.rule) && adminContents.rule.length > 0) {
+                    firstItem = adminContents.rule[0];
+                } else if (adminContents.rule.items && adminContents.rule.items.length > 0) {
+                    firstItem = adminContents.rule.items[0];
+                }
+            }
+
+            if (firstItem) {
+                firstRuleItemRaw.textContent = JSON.stringify(firstItem, null, 2);
+                preview = firstItem.preview || '';
+                firstRulePreviewText.textContent = preview;
+
+                if (typeof marked !== 'undefined' && preview) {
+                    const htmlOutput = marked.parse(preview);
+                    firstRuleMarked.textContent = htmlOutput;
+                    firstRuleRendered.innerHTML = htmlOutput;
+                } else {
+                    firstRuleMarked.textContent = '(marked not available or preview is empty)';
+                    firstRuleRendered.innerHTML = '<div class="error">Cannot render</div>';
+                }
+            } else {
+                firstRuleItemRaw.textContent = '(No rule items found in adminContents)';
+                firstRulePreviewText.textContent = '(No preview field)';
+                firstRuleMarked.textContent = '(No item to test)';
+                firstRuleRendered.innerHTML = '<div class="error">No rule items in adminContents</div>';
+            }
+        } catch (e) {
+            firstRuleItemRaw.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+            firstRuleMarked.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+            firstRuleRendered.innerHTML = '<div class="error">Error: ' + e.message + '</div>';
+        }
+    </script>
+</body>
+</html>

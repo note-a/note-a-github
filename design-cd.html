@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — NULL CHANNEL</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Press Start 2P', monospace !important; }
+
+html {
+  height:100%;
+  background:#00ff00;
+}
+body {
+  background:#00ff00;
+  color:#000;
+  font-family:'Press Start 2P', monospace;
+  font-size:10px;
+  min-height:100vh;
+  overflow:hidden;
+  line-height:1.3;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.25), -1.5px -0.8px rgba(0,100,255,0.2);
+}
+
+/* CRT scanline */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(to bottom,
+    transparent 0px, transparent 3px,
+    rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px);
+}
+
+/* ── CRT 전환 ── */
+@keyframes crt-on {
+  0%  { transform:scaleY(0.003) scaleX(0.7); filter:brightness(10); opacity:0; }
+  22% { transform:scaleY(0.003) scaleX(1.1); filter:brightness(10); opacity:1; }
+  40% { transform:scaleY(1.05); filter:brightness(1.5); }
+  60% { transform:scaleY(0.98); }
+  100%{ transform:scaleY(1) scaleX(1); filter:brightness(1); opacity:1; }
+}
+@keyframes crt-off {
+  0%  { transform:scaleY(1); filter:brightness(1); opacity:1; }
+  35% { transform:scaleY(1.04); filter:brightness(1.5); }
+  55% { transform:scaleY(0.003) scaleX(1.3); filter:brightness(7); }
+  100%{ transform:scaleY(0) scaleX(0); filter:brightness(0); opacity:0; }
+}
+#wrap {
+  animation:crt-on 0.6s ease-out forwards;
+  transform-origin:center;
+  width:960px; height:600px;
+  display:flex; flex-direction:column;
+  background:#00ff00;
+  border:1px solid #009900;
+  outline:2px solid #000;
+  outline-offset:-4px;
+  box-shadow:
+    2px 2px 0 rgba(0,80,0,0.8),
+    -2px -2px 0 rgba(180,255,130,0.5),
+    inset 2px 2px 0 rgba(180,255,130,0.4),
+    inset -2px -2px 0 rgba(0,60,0,0.8),
+    0 0 12px rgba(0,255,0,0.6),
+    0 0 30px rgba(0,255,0,0.3),
+    0 0 60px rgba(0,255,0,0.15);
+  opacity:1; pointer-events:all;
+  transition:opacity 0.35s 0.2s;
+}
+#wrap.visible {
+  opacity:1; pointer-events:all;
+}
+#wrap.off { animation:crt-off 0.45s ease-in forwards; pointer-events:none; }
+
+/* ══════════════════════════════════
+   MENU BAR
+══════════════════════════════════ */
+#menubar {
+  background:#000;
+  color:#00ff00;
+  display:flex;
+  align-items:center;
+  height:22px;
+  padding:0 4px;
+  flex-shrink:0;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  font-size:9px;
+}
+.mb-item {
+  padding:0 10px;
+  cursor:pointer;
+  white-space:nowrap;
+  height:100%;
+  display:flex; align-items:center;
+}
+.mb-item:hover, .mb-item.active { background:#00ff00; color:#000; }
+.mb-item.hi { background:#00ff00; color:#000; text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+#mb-clock { margin-left:auto; padding:0 8px; font-size:9px; letter-spacing:1px; }
+
+/* ══════════════════════════════════
+   MAIN AREA
+══════════════════════════════════ */
+#main {
+  flex:1; display:flex; overflow:hidden; position:relative;
+  padding:6px 6px 0 6px; gap:0;
+}
+
+/* ══════════════════════════════════
+   DOS WINDOW
+══════════════════════════════════ */
+.dos-win {
+  border:1px solid #009900;
+  outline:2px solid #000;
+  outline-offset:-3px;
+  box-shadow:
+    2px 0 0 rgba(180,255,130,0.5),
+    -2px 2px 0 rgba(0,60,0,0.8),
+    inset 2px -2px 0 rgba(180,255,130,0.3),
+    inset -2px 2px 0 rgba(0,60,0,0.8);
+  display:flex; flex-direction:column;
+  background:#00ff00;
+  position:relative;
+}
+
+.dos-titlebar {
+  background:#000; color:#00ff00;
+  padding:2px 6px;
+  font-size:9px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  white-space:nowrap;
+}
+.dos-titlebar .win-btns { display:flex; gap:4px; }
+.win-btn {
+  width:14px; height:14px; border:1px solid #00ff00;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:9px; font-weight:bold;
+  background:#003300; color:#00ff00; text-shadow:none;
+}
+.win-btn:hover { background:#00ff00; color:#000; border-color:#000; }
+
+.dos-menubar {
+  border-bottom:1px solid #009900;
+  padding:2px 6px;
+  font-size:8px;
+  display:flex; gap:0; flex-shrink:0;
+  color:#005500;
+  background:#00ff00;
+}
+.dos-menubar span {
+  padding:0 8px; cursor:pointer;
+}
+.dos-menubar span:hover { background:#000; color:#00ff00; text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+
+.dos-content {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  background:#000;
+  scrollbar-width:thin; scrollbar-color:#005500 #000;
+}
+.dos-content::-webkit-scrollbar { width:8px; }
+.dos-content::-webkit-scrollbar-track { background:#000; border-left:1px solid #005500; }
+.dos-content::-webkit-scrollbar-thumb { background:#005500; }
+
+/* column header row */
+.col-header-row {
+  background:#000; color:#00ff00;
+  display:grid; font-size:8px;
+  padding:2px 6px;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  border-bottom:1px solid #009900;
+  flex-shrink:0;
+}
+
+/* entry rows */
+.entry-row {
+  display:grid;
+  padding:3px 6px;
+  border-bottom:1px solid #003300;
+  cursor:default;
+  align-items:center;
+  min-height:22px;
+  font-size:8px;
+  color:#00cc00;
+}
+.entry-row:hover { background:#003300; }
+.entry-row.selected { background:#00ff00; color:#000; text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+.entry-row.candidate { color:#ffff00; text-shadow:0 0 4px rgba(255,255,0,0.4); }
+.entry-row .tag {
+  font-size:7px; padding:1px 4px; border:1px solid currentColor;
+  white-space:nowrap; display:inline-block; margin-left:4px;
+}
+
+.dos-statusbar {
+  border-top:1px solid #009900;
+  padding:2px 6px; font-size:8px;
+  color:#005500; flex-shrink:0;
+  display:flex; justify-content:space-between;
+  white-space:nowrap;
+  background:#00ff00;
+}
+
+/* ══════════════════════════════════
+   LEFT: NULL LOG WINDOW
+══════════════════════════════════ */
+#win-null {
+  width:55%; flex-shrink:0;
+  margin-right:6px;
+}
+#win-null .col-header-row {
+  grid-template-columns: 80px 1fr 60px;
+  gap:8px;
+}
+#win-null .entry-row {
+  grid-template-columns: 80px 1fr 60px;
+  gap:8px; font-size:12px;
+}
+.ne-date { color:#00cc00; font-size:11px; }
+.ne-count { text-align:right; color:#00aa00; font-size:11px; }
+
+/* ══════════════════════════════════
+   RIGHT: ATTRIBUTION WINDOW
+══════════════════════════════════ */
+#win-attr {
+  flex:1;
+}
+
+/* upload zone */
+.upload-zone {
+  border:1px dashed #005500;
+  margin:8px;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:6px; cursor:pointer; padding:14px 8px;
+  transition:border-color 0.15s;
+  position:relative; overflow:hidden;
+}
+.upload-zone:hover { border-color:#00ff00; }
+.upload-zone.drag-over { border-color:#00ff00; background:rgba(0,255,0,0.03); }
+#prevImg {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; opacity:0.5; display:none;
+  filter:grayscale(0.5) sepia(0.3) hue-rotate(90deg);
+}
+.uz-icon { font-size:9px; color:#005500; }
+.uz-label { font-size:8px; color:#005500; letter-spacing:1px; text-align:center; }
+.uz-hint { font-size:7px; color:#003300; }
+
+/* grammar results */
+.grammar-section { padding:0 8px 8px; }
+.grammar-header { font-size:8px; color:#009900; padding:4px 0 6px; border-bottom:1px solid #003300; margin-bottom:4px; }
+.g-row {
+  display:grid; grid-template-columns:80px 1fr 32px;
+  gap:6px; align-items:center; padding:3px 0;
+  border-bottom:1px solid #001a00; font-size:8px;
+}
+.g-code { color:#00ff00; }
+.g-bar-wrap { height:5px; background:#001a00; border:1px solid #003300; }
+.g-bar { height:100%; background:#00aa00; transition:width 0.9s ease; box-shadow:0 0 4px #00ff00; }
+.g-pct { color:#009900; text-align:right; }
+.g-verdict {
+  margin:8px 0 0; padding:6px 8px;
+  border:1px solid #003300; font-size:8px;
+  color:#009900; line-height:2;
+}
+.g-verdict strong { color:#00ff00; }
+
+/* analyzing overlay */
+.analyzing {
+  display:none; position:absolute; inset:0;
+  background:rgba(0,0,0,0.88); flex-direction:column;
+  align-items:center; justify-content:center; gap:8px; z-index:10;
+}
+.analyzing.on { display:flex; }
+.an-label { font-size:9px; color:#00ff00; letter-spacing:2px; }
+.an-bar { width:180px; height:4px; background:#002200; border:1px solid #005500; }
+.an-fill { height:100%; background:#00ff00; width:0; transition:width 0.1s; box-shadow:0 0 6px #00ff00; }
+
+/* unclassifiable */
+.unc { padding:12px 8px; text-align:center; }
+.unc-title { font-size:10px; color:#ff3300; letter-spacing:3px; margin-bottom:8px;
+  text-shadow:2px 0 #ff0000,-2px 0 rgba(255,100,0,0.8); }
+.unc-body { font-size:8px; color:#993300; line-height:2; }
+
+/* ══════════════════════════════════
+   SIDE PANEL (drive-style)
+══════════════════════════════════ */
+#side-panel {
+  width:52px; flex-shrink:0; margin-left:6px;
+  border:1px solid #009900;
+  outline:2px solid #000;
+  outline-offset:-3px;
+  box-shadow:
+    2px 0 0 rgba(180,255,130,0.5),
+    -2px 2px 0 rgba(0,60,0,0.8),
+    inset 2px -2px 0 rgba(180,255,130,0.3),
+    inset -2px 2px 0 rgba(0,60,0,0.8);
+  display:flex; flex-direction:column;
+  background:#00ff00;
+}
+.side-item {
+  border-bottom:1px solid #009900;
+  padding:6px 0; text-align:center;
+  font-size:8px; cursor:pointer; color:#005500;
+}
+.side-item:hover { background:#ccffcc; color:#000; }
+.side-item.active { background:#000; color:#00ff00; text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+.side-label { font-size:7px; color:#009900; text-align:center; padding:4px 2px; margin-top:auto; line-height:1.6; }
+
+/* ══════════════════════════════════
+   GLOBAL STATUS BAR
+══════════════════════════════════ */
+/* bottom text block */
+#bottom-text {
+  background:#00ff00;
+  border-top:1px solid #009900;
+  padding:6px 12px;
+  flex-shrink:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:20px;
+}
+#bottom-text .bt-body {
+  font-size:7px; color:#004400; line-height:2.2;
+  flex:1;
+}
+#bottom-text .bt-attr {
+  font-size:7px; color:#006600; text-align:right;
+  white-space:nowrap; line-height:2;
+}
+
+#statusbar {
+  background:#000; color:#00ff00;
+  padding:3px 8px; font-size:8px;
+  display:flex; justify-content:space-between;
+  flex-shrink:0;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+}
+
+/* flip anim */
+@keyframes flip {
+  0%  { opacity:0; transform:translateY(-4px); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+.flip-in { animation:flip 0.15s ease-out forwards; }
+
+/* blink cursor */
+@keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+.cur { animation:bl 1s step-end infinite; }
+
+/* ══════════════════════════════════
+   MANUAL POPUP
+══════════════════════════════════ */
+#manualOverlay {
+  position:fixed; inset:0;
+  background:rgba(0,0,0,0.75);
+  z-index:1000;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.35s;
+}
+#manualOverlay.visible {
+  opacity:1; pointer-events:all;
+}
+#manualBox {
+  width:1200px;
+  height:800px;
+  background:#00ff00;
+  border:1px solid #009900;
+  outline:2px solid #000;
+  outline-offset:-3px;
+  box-shadow:
+    4px 4px 0 rgba(0,80,0,0.9),
+    -2px -2px 0 rgba(180,255,130,0.5),
+    0 0 0 1px #000,
+    0 8px 40px rgba(0,0,0,0.5),
+    0 0 60px rgba(0,255,0,0.25);
+  display:flex; flex-direction:column;
+}
+.m-titlebar {
+  background:#000; color:#00ff00;
+  padding:10px 18px; font-size:13px; letter-spacing:3px;
+  display:flex; align-items:center; justify-content:space-between;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+  flex-shrink:0;
+}
+.m-close {
+  width:20px; height:20px; border:1px solid #00ff00;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:13px; background:#003300; color:#00ff00;
+}
+.m-close:hover { background:#00ff00; color:#000; }
+.m-body { padding:32px 40px; font-size:13px; line-height:3.2; color:#003300; overflow-y:auto; letter-spacing:2px; }
+.m-section { margin-bottom:24px; }
+.m-section-title {
+  background:#000; color:#00ff00;
+  padding:7px 18px; font-size:13px; letter-spacing:2px; display:inline-block; margin-bottom:16px;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+}
+.m-row { display:flex; gap:24px; padding:6px 0; border-bottom:1px solid #99ffaa; }
+.m-key { color:#000; min-width:160px; flex-shrink:0; letter-spacing:2px; }
+.m-val { color:#005500; letter-spacing:2px; }
+.m-divider { border:none; border-top:1px solid #009900; margin:24px 0; }
+.m-footer {
+  background:#000; padding:16px 32px;
+  display:flex; align-items:center; justify-content:space-between; font-size:12px; flex-shrink:0;
+}
+.m-note { color:#005500; letter-spacing:2px; text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3); }
+.m-btn {
+  background:#00ff00; color:#000; border:none; padding:12px 36px;
+  font-family:'Press Start 2P',monospace; font-size:12px; letter-spacing:3px; cursor:pointer;
+  outline:1px solid #000; outline-offset:-2px;
+  text-shadow:1.5px 0.8px rgba(255,0,0,0.38), -1.5px -0.8px rgba(0,255,255,0.3);
+}
+.m-btn:hover { background:#ccff00; }
+
+</style>
+</head>
+<body>
+<div id="wrap">
+
+  <!-- ══ MENU BAR ══ -->
+  <div id="menubar">
+    <div class="mb-item" onclick="navigate('portfolio.html')">← Back</div>
+    <div class="mb-item hi">Null Log</div>
+    <div class="mb-item">Attribution</div>
+    <div class="mb-item">View</div>
+    <div class="mb-item">Tools</div>
+    <div id="mb-clock">00:00:00</div>
+  </div>
+
+  <!-- ══ MAIN ══ -->
+  <div id="main">
+
+    <!-- LEFT WINDOW: NULL LOG -->
+    <div class="dos-win" id="win-null">
+      <div class="dos-titlebar">
+        <span>&lt;NULL.LOG&gt; — 공집합 로그</span>
+        <div class="win-btns">
+          <div class="win-btn">▲</div>
+          <div class="win-btn" onclick="navigate('portfolio.html')">✕</div>
+        </div>
+      </div>
+      <div class="dos-menubar">
+        <span>Sort</span><span>Filter</span><span>Export</span><span>Clear</span>
+      </div>
+      <div class="col-header-row">
+        <span>DATE</span><span>QUERY</span><span>COUNT</span>
+      </div>
+      <div class="dos-content" id="null-list"></div>
+      <div class="dos-statusbar">
+        <span id="null-path">NULL.LOG \ MEASURE &gt;</span>
+        <span id="null-stat">0 entries</span>
+      </div>
+    </div>
+
+    <!-- RIGHT WINDOW: ATTRIBUTION -->
+    <div class="dos-win" id="win-attr">
+      <div class="dos-titlebar">
+        <span>&lt;ATTR.TEST&gt; — 외부 이미지 귀속 테스트</span>
+        <div class="win-btns">
+          <div class="win-btn">▲</div>
+          <div class="win-btn">✕</div>
+        </div>
+      </div>
+      <div class="dos-menubar">
+        <span>Upload</span><span>Reset</span><span>History</span>
+      </div>
+      <div class="dos-content" style="position:relative;" id="attr-content">
+
+        <div class="upload-zone" id="dropZone">
+          <img id="prevImg" alt="">
+          <div id="dropInner">
+            <div class="uz-icon">[ ⊕ ]</div>
+            <div class="uz-label">DEPOSIT IMAGE SPECIMEN</div>
+            <div class="uz-hint">drag &amp; drop · or click to select</div>
+            <div class="uz-hint" style="margin-top:4px;">JPG · PNG · WEBP</div>
+          </div>
+          <div class="analyzing" id="analyzing">
+            <div class="an-label">ANALYZING<span class="cur">_</span></div>
+            <div class="an-bar"><div class="an-fill" id="anFill"></div></div>
+            <div id="anStep" style="font-size:10px;color:#009900;">초기화 중</div>
+          </div>
+        </div>
+
+        <div class="grammar-section" id="grammarSection" style="display:none;">
+          <div class="grammar-header" id="grammarHeader">CLASSIFICATION RESULT —</div>
+          <div id="grammarRows"></div>
+          <div class="g-verdict" id="grammarVerdict"></div>
+          <div style="padding:4px 0 0;">
+            <span style="font-size:10px;color:#005500;cursor:pointer;" onclick="resetAttr()">[ 다시 업로드 ]</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="dos-statusbar">
+        <span>ATTR.TEST \ SET &gt;</span>
+        <span id="attr-stat">READY</span>
+      </div>
+    </div>
+
+    <!-- SIDE PANEL -->
+    <div id="side-panel">
+      <div class="side-item active">LOG</div>
+      <div class="side-item">ATTR</div>
+      <div class="side-item">STAT</div>
+      <div class="side-item">HIST</div>
+      <div class="side-label">SET<br>NULL<br>CH.</div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ══ BOTTOM TEXT ══ -->
+  <div id="bottom-text">
+    <div class="bt-body">
+      There are searches that return nothing. Not because the image does not exist —<br>
+      but because it has not yet been named. This channel records those absences.<br>
+      Every null result is a coordinate. Every unclassified image, a boundary condition.
+    </div>
+    <div class="bt-attr">
+      SET NULL CHANNEL<br>
+      PILOT — RESTRICTED
+    </div>
+  </div>
+
+  <!-- ══ GLOBAL STATUSBAR ══ -->
+  <div id="statusbar">
+    <span id="sb-left">SET NULL CHANNEL — 이 집합에 속하지 않는 이미지는 없다</span>
+    <span id="sb-right">Entries: <span id="sb-count">0</span> / Status: ONLINE</span>
+  </div>
+
+</div><!-- /wrap -->
+
+<input type="file" id="fileInput" accept="image/*" style="display:none">
+
+<!-- ══ MANUAL POPUP ══ -->
+<div id="manualOverlay">
+  <div id="manualBox">
+    <div class="m-titlebar">
+      <span>&lt;MANUAL.TXT&gt; — 사용 안내</span>
+      <div class="m-close" onclick="closeManual()">✕</div>
+    </div>
+    <div class="m-body">
+
+      <div class="m-section">
+        <div class="m-section-title">① NULL LOG &nbsp;—&nbsp; 공집합 로그</div>
+        <div class="m-row"><span class="m-key">이게 뭔가요?</span><span class="m-val">MEASURE(사진 검색)에서 아무것도 안 나왔던 단어들을 모아두는 공간이에요.</span></div>
+        <div class="m-row"><span class="m-key">어떻게 쌓여요?</span><span class="m-val">따로 입력할 필요 없이, 검색 결과가 없을 때 자동으로 여기 기록돼요.</span></div>
+        <div class="m-row"><span class="m-key">지시문 후보란?</span><span class="m-val">같은 단어가 3번 이상 검색됐는데도 계속 결과가 없으면 — 그 단어엔 뭔가 있다는 뜻이에요.</span></div>
+      </div>
+
+      <hr class="m-divider">
+
+      <div class="m-section">
+        <div class="m-section-title">② ATTR.TEST &nbsp;—&nbsp; 이미지 귀속 테스트</div>
+        <div class="m-row"><span class="m-key">이게 뭔가요?</span><span class="m-val">외부 이미지를 올리면, 이 사진이 SET의 어떤 문법에 가까운지 분석해줘요.</span></div>
+        <div class="m-row"><span class="m-key">어떻게 써요?</span><span class="m-val">오른쪽 창에 이미지를 드래그하거나 클릭해서 업로드하면 바로 분석이 시작돼요.</span></div>
+        <div class="m-row"><span class="m-key">결과가 뭔가요?</span><span class="m-val">분석 후 이 이미지와 가장 가까운 문법 코드를 점수 순으로 보여줘요.</span></div>
+        <div class="m-row"><span class="m-key">귀속 불가?</span><span class="m-val">아주 가끔 — 어디에도 속하지 않는다는 결과가 나올 수 있어요. 그것도 하나의 답이에요.</span></div>
+      </div>
+
+    </div>
+    <div class="m-footer">
+      <span class="m-note">SET NULL CHANNEL &nbsp;—&nbsp; 파일럿 채널 · 비공개</span>
+      <button class="m-btn" onclick="closeManual()">[ 확인했어요 ]</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CLOCK ──
+function updateClock() {
+  const now = new Date();
+  const p = n => String(n).padStart(2,'0');
+  document.getElementById('mb-clock').textContent =
+    `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ── NAVIGATE ──
+function navigate(url) {
+  document.getElementById('wrap').classList.add('off');
+  setTimeout(() => { window.location.href = url; }, 460);
+}
+
+// ── MANUAL POPUP ──
+function closeManual() {
+  document.getElementById('manualOverlay').classList.remove('visible');
+}
+// ESC 키로도 닫기
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeManual();
+  if (e.key === 'Enter') closeManual();
+});
+// 페이지 로드 시 팝업 자동 표시
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('manualOverlay').classList.add('visible');
+});
+
+// ══════════════════════════════════
+// NULL LOG
+// ══════════════════════════════════
+const NULL_KEY = 'set_null_log';
+
+function getNullLog() {
+  try { return JSON.parse(localStorage.getItem(NULL_KEY) || '{}'); } catch { return {}; }
+}
+
+function renderNullLog() {
+  const log = getNullLog();
+  const entries = Object.entries(log).sort((a,b) => b[1]-a[1]);
+  const list = document.getElementById('null-list');
+  const stat = document.getElementById('null-stat');
+  const sbCount = document.getElementById('sb-count');
+
+  stat.textContent = `${entries.length} entries`;
+  sbCount.textContent = entries.length;
+
+  if (entries.length === 0) {
+    list.innerHTML = `
+      <div class="entry-row" style="grid-template-columns:1fr;color:#005500;font-size:11px;">
+        — 기록 없음. MEASURE에서 결과 없는 검색어가 누적됩니다. <span class="cur">_</span>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = entries.map(([word, count], i) => {
+    const isCandidate = count >= 3;
+    const date = '—';
+    return `<div class="entry-row${isCandidate ? ' candidate' : ''}${i===0?' selected':''}">
+      <span class="ne-date">${date}</span>
+      <span>${word}${isCandidate ? `<span class="tag">지시문 후보</span>` : ''}</span>
+      <span class="ne-count">×${count}</span>
+    </div>`;
+  }).join('');
+
+  // 선택 상태 클릭
+  list.querySelectorAll('.entry-row').forEach(row => {
+    row.addEventListener('click', () => {
+      list.querySelectorAll('.entry-row').forEach(r => r.classList.remove('selected'));
+      row.classList.add('selected');
+    });
+  });
+}
+
+window.addNullEntry = function(query) {
+  if (!query || query.length < 2) return;
+  const log = getNullLog();
+  log[query.toLowerCase().trim()] = (log[query.toLowerCase().trim()] || 0) + 1;
+  localStorage.setItem(NULL_KEY, JSON.stringify(log));
+  renderNullLog();
+};
+
+renderNullLog();
+
+// ══════════════════════════════════
+// ATTRIBUTION TEST
+// ══════════════════════════════════
+const CODES = ['MONOLITH','STRATA','DISSOLVE','LITGRID','VANISH','MIRRORSURF','PEEL','SNOWFILL','OXIDE','ADWRAP','ROADCLASH','WALLTXT','OVERGROW','ISOLATE','RUPTURE','GRID','CLUSTER','FLOAT','SKELETON','BLOOM','WRAP','SURFACE','DUALFRAME','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','FGBG','COLORISO','SKINREP','BODYTXT','BGPAT','SCALE','ATMOFUSE','GLASSDUAL','AEROFLT','ARCHCAP','BACKLIT','SURFILL','BLURABS','HRZLAY','WNDGLO','SPTISO','VANSRC','FUNREV','FOGDIS','EQREP','ISOOBJ','URBREFL','ARTNAT','LGTPAT','UNIDIST','FUNSAT','MATCOV','DMGPAT','TONEDIS','HETOBJ','DOCAGE','LGTSTR','OBJREP','FACBLK','HANDEXT','FOOTEXT','HRZPAS','DRKSPOT','GROUPREP','BGDOM','DUALSPC','PLNTENV','GENPORT','NONSUBS','DRESSIDENT','LIMBACT','REPDOM','REFLMED','SMOKLYR','OPTFUSE','PARTINTR','OBJCOVR','ARCHOP','GLASMED','ATMOSOLV','SCLFIG','HORZERO'];
+
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) processFile(f);
+});
+dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', e => {
+  if (e.target.files[0]) processFile(e.target.files[0]);
+  e.target.value = '';
+});
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      document.getElementById('prevImg').src = e.target.result;
+      document.getElementById('prevImg').style.display = 'block';
+      document.getElementById('dropInner').style.display = 'none';
+      startAnalyzing(img);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function startAnalyzing(img) {
+  const overlay = document.getElementById('analyzing');
+  const fill = document.getElementById('anFill');
+  const step = document.getElementById('anStep');
+  overlay.classList.add('on');
+  document.getElementById('attr-stat').textContent = 'ANALYZING...';
+
+  const steps = ['색상 분포 추출','명도 분석','엣지 밀도','코드 매핑','귀속 판정'];
+  let pct = 0;
+  const iv = setInterval(() => {
+    pct += 3 + Math.random() * 7;
+    if (pct >= 100) pct = 100;
+    fill.style.width = pct + '%';
+    step.textContent = steps[Math.min(steps.length-1, Math.floor(pct/22))];
+    if (pct >= 100) {
+      clearInterval(iv);
+      setTimeout(() => {
+        overlay.classList.remove('on');
+        showResult(analyzeImage(img));
+      }, 300);
+    }
+  }, 70);
+}
+
+function analyzeImage(img) {
+  const canvas = document.createElement('canvas');
+  const MAX = 60;
+  const sc = Math.min(MAX/img.naturalWidth, MAX/img.naturalHeight);
+  canvas.width = Math.round(img.naturalWidth*sc);
+  canvas.height = Math.round(img.naturalHeight*sc);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let br=0, sat=0, edge=0, n=data.length/4;
+  for (let i=0;i<data.length;i+=4) {
+    const b=data[i]*0.299+data[i+1]*0.587+data[i+2]*0.114;
+    const mx=Math.max(data[i],data[i+1],data[i+2]);
+    const mn=Math.min(data[i],data[i+1],data[i+2]);
+    br+=b; sat+=mx>0?(mx-mn)/mx:0;
+    if (i<data.length-4) edge+=Math.abs(data[i]-data[i+4]);
+  }
+  return { br:br/n, sat:sat/n, edge:edge/n, ar:img.naturalWidth/img.naturalHeight };
+}
+
+function scoreCodes(f) {
+  const scores = {};
+  if (f.br<60)          { scores.DRKSPOT=0.9; scores.OXIDE=0.7; scores.STRATA=0.6; }
+  if (f.br>180)         { scores.BACKLIT=0.9; scores.SNOWFILL=0.7; scores.WNDGLO=0.65; }
+  if (f.sat<0.12)       { scores.OXIDE=0.8; scores.TONEDIS=0.75; scores.DMGPAT=0.65; }
+  if (f.sat>0.45)       { scores.COLORISO=0.85; scores.BLOOM=0.7; scores.FUNSAT=0.6; }
+  if (f.edge>22)        { scores.GRID=0.85; scores.RUPTURE=0.7; scores.LITGRID=0.6; }
+  if (f.edge<8)         { scores.FOGDIS=0.8; scores.DISSOLVE=0.7; scores.SURFACE=0.6; }
+  if (f.ar>1.6)         { scores.HRZLAY=0.75; scores.HRZPAS=0.65; }
+  if (f.ar<0.75)        { scores.SCLFIG=0.7; scores.GENPORT=0.65; scores.ISOLATE=0.6; }
+  const keys = Object.keys(scores);
+  if (keys.length < 2) {
+    [...CODES].sort(()=>Math.random()-0.5).slice(0,3).forEach(c => {
+      if (!scores[c]) scores[c] = 0.3+Math.random()*0.35;
+    });
+  }
+  return Object.entries(scores).sort((a,b)=>b[1]-a[1]).slice(0,4)
+    .map(([code,raw]) => ({ code, pct:Math.min(98,Math.round(raw*100)) }));
+}
+
+function isUnclassifiable(f) {
+  return (f.br>110&&f.br<145&&f.sat>0.18&&f.sat<0.28&&f.edge<5) || Math.random()<0.03;
+}
+
+function showResult(features) {
+  document.getElementById('dropZone').style.display = 'none';
+  const gs = document.getElementById('grammarSection');
+  gs.style.display = 'block';
+  document.getElementById('attr-stat').textContent = 'CLASSIFIED';
+
+  if (isUnclassifiable(features)) {
+    document.getElementById('grammarHeader').textContent = 'CLASSIFICATION RESULT — SPECIMEN';
+    document.getElementById('grammarRows').innerHTML = '';
+    document.getElementById('grammarVerdict').innerHTML = `
+      <div class="unc">
+        <div class="unc-title">귀속 불가</div>
+        <div class="unc-body">
+          이 이미지는 현재의 집합 논리로<br>
+          분류되지 않습니다.<br><br>
+          이것은 예외입니다.<br>
+          예외는 집합을 확장하거나<br>
+          집합의 전제를 의심하게 합니다.
+        </div>
+      </div>`;
+    document.getElementById('attr-stat').textContent = 'UNCLASSIFIABLE';
+    return;
+  }
+
+  const results = scoreCodes(features);
+  document.getElementById('grammarHeader').textContent = `CLASSIFICATION RESULT — SPECIMEN`;
+  document.getElementById('grammarRows').innerHTML = results.map(r => `
+    <div class="g-row">
+      <span class="g-code">${r.code}</span>
+      <div class="g-bar-wrap"><div class="g-bar" style="width:0" data-pct="${r.pct}"></div></div>
+      <span class="g-pct">${r.pct}%</span>
+    </div>`).join('');
+  setTimeout(() => {
+    document.querySelectorAll('.g-bar').forEach(b => { b.style.width = b.dataset.pct+'%'; });
+  }, 50);
+  document.getElementById('grammarVerdict').innerHTML =
+    `이 이미지는 <strong>${results[0].code}</strong> 에 귀속됩니다.<br>
+     귀속은 확인이 아니라 선언입니다.`;
+}
+
+function resetAttr() {
+  document.getElementById('dropZone').style.display = '';
+  document.getElementById('prevImg').style.display = 'none';
+  document.getElementById('dropInner').style.display = '';
+  document.getElementById('grammarSection').style.display = 'none';
+  document.getElementById('attr-stat').textContent = 'READY';
+  document.getElementById('fileInput').value = '';
+}
+</script>
+</body>
+</html>

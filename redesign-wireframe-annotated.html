@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>WIREFRAME (실제 이미지 기반) — redesign-mockup-hud</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;background:#0a0a0c;overflow:hidden;font-family:'Courier New',monospace;}
+  #stage{position:relative;width:100vw;height:100vh;}
+  #page{position:absolute;inset:0;width:100%;height:100%;border:none;pointer-events:none;filter:saturate(.7) brightness(.7);}
+  #overlay{position:absolute;inset:0;pointer-events:none;z-index:10;}
+  .box{position:absolute;border:1px solid rgba(60,214,208,.9);box-shadow:0 0 0 1px rgba(0,0,0,.4);}
+  .box.lv1{border-color:rgba(255,210,61,.95);border-width:1.5px;}
+  .box.lv3{border-color:rgba(176,123,255,.85);border-style:dashed;}
+  .tag{position:absolute;left:0;top:0;transform:translateY(-100%);
+    font-size:10px;line-height:1.2;white-space:nowrap;
+    background:rgba(8,12,14,.92);color:#3cd6d0;padding:1px 5px;border:1px solid rgba(60,214,208,.6);}
+  .tag.lv1{color:#ffd23d;border-color:rgba(255,210,61,.7);font-weight:bold;}
+  .tag.lv3{color:#b07bff;border-color:rgba(176,123,255,.6);}
+  .tag.below{transform:none;top:100%;}
+  #hdr{position:absolute;left:14px;top:10px;z-index:20;color:#ccc;font-size:12px;}
+  #hdr b{color:#ffd23d;}
+  #hdr .s{color:#888;font-size:10px;}
+  #legend{position:absolute;right:14px;top:10px;z-index:20;font-size:10px;color:#999;text-align:right;}
+  #legend i{font-style:normal;} .ly{color:#ffd23d;} .lc{color:#3cd6d0;} .lv{color:#b07bff;}
+</style>
+</head>
+<body>
+<div id="hdr"><b>WIREFRAME</b> · set-os.html <span class="s">실제 화면 위 div 라벨</span></div>
+<div id="legend"><i class="ly">노랑</i>=주요 영역 · <i class="lc">청록</i>=구성요소 <span style="color:#666;">(숨김뷰 gly-2/3·h-list·.pc는 상세도 참조)</span></div>
+<div id="stage">
+  <iframe id="page" src="set-os.html?wf=1"></iframe>
+  <div id="overlay"></div>
+</div>
+<script>
+// 라벨링할 요소: [셀렉터, 표시이름, 레벨(1=영역,2=요소,3=숨김), 라벨위치('','below')]
+const ITEMS = [
+  ['#wrap','div#wrap',1,'below'],
+  ['#top-row','div#top-row',1,''],
+  ['#top-row > .pnl:nth-of-type(1)','.pnl ▸ .pnl-in (SET.VIEW)',2,''],
+  ['#gly-1 #gva-wrap','#gva-wrap (스코프)',2,'below'],
+  ['#gly-1 > div > div:last-child','DIST 스캐터',2,'below'],
+  ['.ph','.ph (헤더: .ph-row1/.ph-row2>.ph-nav)',2,''],
+  ['#hud-pnl','#hud-pnl (HUD.XT2)',2,''],
+  ['.h-title','.h-title (.h-logo/.h-badges/.h-menu/.h-search)',2,''],
+  ['.h-folders','.h-folders ▸ .fld-item ×14',2,'below'],
+  ['#top-row > .pnl:last-of-type','.pnl ▸ .ctrl-btn ×3 (UP/EXIT/DOWN)',2,''],
+  ['#gbar','div#gbar ▸ iframe(gbar) · SET.OS바',1,''],
+  ['#bot-row','div#bot-row',1,''],
+  ['.bot-left','.bot-left',2,''],
+  ['.bl-split','.bl-split',2,''],
+  ['.chat-enter-btn','a.chat-enter-btn (입장)',2,'below'],
+  ['#vlWindow','#vlWindow (VIEWER_LOG.EXE)',2,'below'],
+  ['iframe[src*="id-card"]','iframe(id-card) ID카드',2,''],
+  ['#stmt','#stmt.stmt-scroll (SET.TEXT)',2,''],
+  ['#botbar','div#botbar (상태바)',1,''],
+  ['.mode-row','.mode-row ▸ .mb ×6',2,'below'],
+  ['.activate','button.activate',2,'below'],
+];
+function draw(){
+  const ifr=document.getElementById('page');
+  const doc=ifr.contentDocument;
+  if(!doc||!doc.getElementById('wrap')){ return false; }
+  const ov=document.getElementById('overlay'); ov.innerHTML='';
+  const orect=ifr.getBoundingClientRect();
+  ITEMS.forEach(([sel,name,lv,pos])=>{
+    let el; try{ el=doc.querySelector(sel); }catch(e){ return; }
+    if(!el) return;
+    const r=el.getBoundingClientRect();
+    if(r.width<2&&r.height<2 && lv!==3) return;
+    const box=document.createElement('div');
+    box.className='box lv'+lv;
+    box.style.left=(orect.left+r.left)+'px';
+    box.style.top=(orect.top+r.top)+'px';
+    box.style.width=Math.max(r.width,40)+'px';
+    box.style.height=Math.max(r.height,14)+'px';
+    const tag=document.createElement('span');
+    tag.className='tag lv'+lv+(pos==='below'?' below':'');
+    tag.textContent=name;
+    box.appendChild(tag);
+    ov.appendChild(box);
+  });
+  return true;
+}
+function tryDraw(n){ if(draw()) return; if(n>0) setTimeout(()=>tryDraw(n-1),400); }
+document.getElementById('page').addEventListener('load',()=>tryDraw(8));
+window.addEventListener('resize',()=>draw());
+setTimeout(()=>tryDraw(8),600);
+</script>
+</body>
+</html>

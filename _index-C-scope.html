@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — SCOPE CONSOLE (Sample C)</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#00dd55; --g2:rgba(0,221,85,0.6); --g3:rgba(0,221,85,0.28); --g4:rgba(0,221,85,0.12);
+  --acc:#00ff66; --amb:#ffb000; --bg:#000;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--g);font-family:'Space Mono',monospace;display:flex;align-items:center;justify-content:center;}
+.crt{position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,221,85,0.03) 2px,rgba(0,221,85,0.03) 4px);}
+#wrap{
+  position:relative;width:1080px;max-width:96vw;height:720px;max-height:94vh;
+  border:1px solid var(--g3);background:#000;display:grid;
+  grid-template-rows:auto auto 1fr auto;gap:0;overflow:hidden;
+  box-shadow:0 0 0 1px #000,0 0 50px rgba(0,221,85,.10);
+}
+.tb{display:flex;align-items:center;gap:8px;background:#000;border-bottom:1px solid var(--g3);padding:7px 12px;}
+.tb .dot{width:7px;height:7px;background:var(--g);border-radius:50%;box-shadow:0 0 6px var(--g);}
+.tb .dot.amb{background:var(--amb);box-shadow:0 0 6px var(--amb);}
+.tb h1{font-size:12px;letter-spacing:3px;color:var(--g);font-weight:700;}
+.tb .sp{flex:1;}
+.tb .tag{font-size:8px;letter-spacing:1px;border:1px solid var(--g3);padding:3px 8px;color:var(--g2);}
+.tb .tag.on{background:var(--acc);color:#000;border-color:var(--acc);}
+
+.stat{display:flex;gap:0;border-bottom:1px solid var(--g3);font-size:9px;letter-spacing:1px;}
+.stat .seg{padding:5px 12px;border-right:1px solid var(--g4);color:var(--g2);}
+.stat .seg b{color:var(--g);}
+.stat .seg .o{color:var(--amb);}
+
+.body{display:grid;grid-template-columns:1fr 340px;min-height:0;}
+.left{display:flex;flex-direction:column;border-right:1px solid var(--g3);min-height:0;}
+.scope{height:200px;position:relative;background:radial-gradient(ellipse 90% 90% at 50% 50%,rgba(0,221,85,.05),transparent 70%);border-bottom:1px solid var(--g3);overflow:hidden;}
+.scope canvas{position:absolute;inset:0;width:100%;height:100%;}
+.scope .glab{position:absolute;left:10px;top:8px;font-size:8px;letter-spacing:2px;color:var(--g2);}
+.scope .glab.r{left:auto;right:10px;color:var(--amb);}
+.intro{padding:18px 22px;overflow:auto;flex:1;}
+.intro p{font-size:13px;line-height:1.75;color:#bdfdd4;margin-bottom:11px;}
+.intro .attr{font-size:10px;letter-spacing:2px;color:var(--g2);margin-top:6px;}
+
+.right{display:flex;flex-direction:column;min-height:0;}
+.rhead{font-size:9px;letter-spacing:2px;color:var(--amb);padding:8px 12px;border-bottom:1px solid var(--g4);}
+.rows{flex:1;overflow:hidden;padding:4px 0;}
+.row{display:flex;gap:8px;font-size:10px;padding:3px 12px;color:var(--g2);letter-spacing:.5px;cursor:default;}
+.row.on{background:var(--g4);color:var(--acc);}
+.row .n{color:var(--g3);min-width:18px;}
+.row .v{margin-left:auto;color:var(--amb);}
+.read{border-top:1px solid var(--g4);padding:10px 12px;}
+.read .kv{display:flex;justify-content:space-between;font-size:9px;color:var(--g2);margin:4px 0;letter-spacing:1px;}
+.read .kv b{color:var(--g);}
+.bar{height:6px;border:1px solid var(--g3);position:relative;overflow:hidden;margin-top:3px;}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--g);}
+
+.foot{display:flex;border-top:1px solid var(--g3);}
+.foot button{flex:1;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:2px;padding:16px;cursor:pointer;background:#000;color:var(--g);border:none;border-right:1px solid var(--g3);transition:.12s;}
+.foot button:last-child{border-right:none;}
+.foot button:hover{background:var(--acc);color:#000;}
+.foot button.amb{color:var(--amb);}
+.foot button.amb:hover{background:var(--amb);color:#000;}
+.cur{display:inline-block;width:7px;height:13px;background:var(--g);vertical-align:-2px;animation:bl .7s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="crt"></div>
+<div id="wrap">
+  <div class="tb"><span class="dot"></span><span class="dot amb"></span><h1>SET — SCOPE CONSOLE</h1><span class="sp"></span><span class="tag on">INDEX</span><span class="tag">LOG</span><span class="tag">v.XT2</span></div>
+  <div class="stat">
+    <div class="seg">SRC <b>SET_WORLD</b></div>
+    <div class="seg">CH <b>F</b> · ACCUMULATION</div>
+    <div class="seg">REC <span class="o">● ACTIVE</span></div>
+    <div class="seg">SINCE <b>2022</b></div>
+    <div class="seg">SIG <b>62%</b></div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="scope">
+        <canvas id="scope"></canvas>
+        <span class="glab">CH-F / 20ms·DIV</span>
+        <span class="glab r">▲ PEAK 0.84</span>
+      </div>
+      <div class="intro">
+        <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+        <p>This is one answer. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+        <p>Someone noticed. Wrote them down. Went looking. The record has been accumulating since 2022. What you measure, you enter.<span class="cur"></span></p>
+        <div class="attr">SET WORLD &nbsp;//&nbsp; 2022—</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="rhead">▣ CONDITION CHANNELS</div>
+      <div class="rows" id="rows"></div>
+      <div class="read">
+        <div class="kv"><span>SAMPLES</span><b>438</b></div>
+        <div class="kv"><span>BUFFER</span><b>OK</b></div>
+        <div class="bar"><i style="width:84%"></i></div>
+        <div class="kv" style="margin-top:8px;"><span>RECORDING</span><b>ON</b></div>
+        <div class="bar"><i style="width:62%;background:var(--amb)"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <button onclick="go('set-os.html')">▸ ENTER</button>
+    <button class="amb" onclick="go('portfolio.html')">BROWSE ▸</button>
+  </div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function rrender(){document.getElementById('rows').innerHTML=items.map((it,i)=>`<div class="row${i===idx?' on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span>${i===idx?'▸':''} ${it}<span class="v">${(Math.random()*0.9+0.1).toFixed(2)}</span></div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);rrender();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);rrender();e.preventDefault();}});
+rrender();
+// oscilloscope
+const cv=document.getElementById('scope');const cx=cv.getContext('2d');
+function resize(){cv.width=cv.clientWidth*devicePixelRatio;cv.height=cv.clientHeight*devicePixelRatio;}
+resize();addEventListener('resize',resize);
+let t=0;
+function draw(){
+  const w=cv.width,h=cv.height;cx.clearRect(0,0,w,h);
+  cx.strokeStyle='rgba(0,221,85,0.12)';cx.lineWidth=1;
+  for(let x=0;x<w;x+=w/16){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,h);cx.stroke();}
+  for(let y=0;y<h;y+=h/6){cx.beginPath();cx.moveTo(0,y);cx.lineTo(w,y);cx.stroke();}
+  cx.beginPath();cx.strokeStyle='#00ff66';cx.lineWidth=2*devicePixelRatio;cx.shadowColor='#00ff66';cx.shadowBlur=8;
+  for(let x=0;x<=w;x+=2){
+    const p=x/w*Math.PI*4+t;
+    const y=h/2+Math.sin(p)*h*0.22+Math.sin(p*2.7)*h*0.07+Math.sin(p*0.5+t)*h*0.05;
+    x===0?cx.moveTo(x,y):cx.lineTo(x,y);
+  }
+  cx.stroke();cx.shadowBlur=0;t+=0.04;requestAnimationFrame(draw);
+}
+draw();
+function go(u){if(parent!==window)return;location.href=u;}
+</script>
+</body>
+</html>

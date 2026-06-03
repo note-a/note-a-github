@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NULL LOG & ATTRIBUTION TEST — DUAL TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --win-a: rgba(0,255,0,0.92);
+    --win-b: rgba(180,255,80,0.92);
+    --text-a: #00ff00;
+    --text-b: #b4ff50;
+    --dim-a: #005500;
+    --dim-b: #446600;
+    --bevel-light: #005500;
+    --bevel-dark: #003300;
+    --scanline-opacity: 0.10;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    line-height: 1.5;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* CRT scanlines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 1px,
+      rgba(0,0,0,var(--scanline-opacity)) 1px,
+      rgba(0,0,0,var(--scanline-opacity)) 2px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT vignette */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center,
+      transparent 60%,
+      rgba(0,0,0,0.7) 100%
+    );
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* CRT on/off */
+  @keyframes crt-on {
+    0%   { transform: scaleY(0.003) scaleX(0.7); filter: brightness(10); opacity: 0; }
+    25%  { transform: scaleY(0.003) scaleX(1.1); filter: brightness(10); opacity: 1; }
+    40%  { transform: scaleY(1.06)  scaleX(1.0); filter: brightness(1.5); }
+    60%  { transform: scaleY(0.96); filter: brightness(0.85); }
+    80%  { transform: scaleY(1.02); filter: brightness(1.1); }
+    100% { transform: scaleY(1)    scaleX(1);   filter: brightness(1); opacity: 1; }
+  }
+  @keyframes crt-off {
+    0%   { transform: scaleY(1) scaleX(1); filter: brightness(1); opacity: 1; }
+    25%  { transform: scaleY(1.05) scaleX(1); filter: brightness(1.5); }
+    55%  { transform: scaleY(0.003) scaleX(1.3); filter: brightness(6); }
+    80%  { transform: scaleY(0.003) scaleX(0.2); filter: brightness(3); opacity: 0.4; }
+    100% { transform: scaleY(0) scaleX(0); filter: brightness(0); opacity: 0; }
+  }
+
+  #main-wrapper {
+    animation: crt-on 0.65s ease-out forwards;
+    transform-origin: center center;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  #main-wrapper.crt-off {
+    animation: crt-off 0.48s ease-in forwards;
+    pointer-events: none;
+  }
+
+  /* ── TOP ROW ─────────────────────────────────── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: #000;
+    border-bottom: 1px solid #003300;
+  }
+
+  .top-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: #004400;
+    letter-spacing: 0.04em;
+  }
+
+  .btn-back {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    background: transparent;
+    color: #004400;
+    border: 1px solid #003300;
+    padding: 4px 8px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .btn-back:hover { color: #00ff00; border-color: #006600; }
+
+  /* ── DUAL WINDOWS CONTAINER ──────────────────── */
+  .windows-container {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 16px 12px 12px;
+    overflow: hidden;
+  }
+
+  /* ── WINDOW FRAME ────────────────────────────── */
+  .win {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+    /* bevel effect */
+    box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,0.15),
+      inset -1px -1px 0 rgba(0,0,0,0.6),
+      0 0 20px rgba(0,255,0,0.08),
+      0 0 60px rgba(0,255,0,0.04);
+  }
+
+  .win-a {
+    border-color: #00cc00;
+    background: #000800;
+  }
+  .win-b {
+    border-color: #88cc00;
+    background: #020800;
+  }
+
+  /* Window titlebar */
+  .win-titlebar {
+    padding: 0 8px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+  }
+
+  .win-a .win-titlebar {
+    background: linear-gradient(to right, #004400, #002800, #004400);
+    color: var(--text-a);
+    border-bottom: 1px solid #005500;
+  }
+  .win-b .win-titlebar {
+    background: linear-gradient(to right, #334400, #1a2200, #334400);
+    color: var(--text-b);
+    border-bottom: 1px solid #445500;
+  }
+
+  .win-title-text { letter-spacing: 0.04em; }
+
+  .win-controls {
+    display: flex;
+    gap: 4px;
+  }
+  .win-btn {
+    width: 10px; height: 10px;
+    border: 1px solid currentColor;
+    opacity: 0.5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+  }
+
+  /* Window menubar */
+  .win-menubar {
+    height: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+    font-size: 8px;
+    flex-shrink: 0;
+    border-bottom: 1px solid;
+  }
+  .win-a .win-menubar {
+    background: #001400;
+    border-color: #003300;
+    color: #007700;
+  }
+  .win-b .win-menubar {
+    background: #0a1400;
+    border-color: #334400;
+    color: #667700;
+  }
+  .win-menubar span { cursor: default; }
+  .win-menubar span:hover { opacity: 0.7; }
+
+  /* Window content */
+  .win-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 8px;
+    scrollbar-width: thin;
+  }
+  .win-a .win-content { scrollbar-color: #004400 #000800; }
+  .win-b .win-content { scrollbar-color: #446600 #020800; }
+
+  /* scrollbar styling */
+  .win-content::-webkit-scrollbar { width: 8px; }
+  .win-a .win-content::-webkit-scrollbar-track { background: #001200; border-left: 1px solid #002200; }
+  .win-a .win-content::-webkit-scrollbar-thumb { background: #004400; border: 1px solid #002200; }
+  .win-b .win-content::-webkit-scrollbar-track { background: #0a1200; border-left: 1px solid #223300; }
+  .win-b .win-content::-webkit-scrollbar-thumb { background: #446600; border: 1px solid #223300; }
+
+  /* Window statusbar */
+  .win-statusbar {
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    font-size: 7px;
+    flex-shrink: 0;
+    border-top: 1px solid;
+  }
+  .win-a .win-statusbar {
+    background: #001400;
+    border-color: #003300;
+    color: #005500;
+  }
+  .win-b .win-statusbar {
+    background: #0a1400;
+    border-color: #334400;
+    color: #446600;
+  }
+
+  .status-indicator {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+    animation: blink 1.4s infinite;
+  }
+  .win-a .status-indicator { background: #00ff00; }
+  .win-b .status-indicator { background: #b4ff50; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* ── CONTENT ELEMENTS — WIN A ────────────────── */
+  .sys-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid;
+  }
+  .win-a .sys-header { color: #00cc00; border-color: #003300; }
+  .win-b .sys-header { color: #88cc00; border-color: #334400; }
+
+  .null-entry {
+    padding: 4px 0;
+    border-bottom: 1px solid;
+    display: grid;
+    grid-template-columns: 72px 1fr 30px;
+    gap: 6px;
+    align-items: start;
+    font-size: 9px;
+  }
+  .win-a .null-entry { border-color: #001800; color: #00bb00; }
+  .win-b .null-entry { border-color: #111800; color: #99bb00; }
+
+  .ne-date { opacity: 0.5; font-size: 8px; white-space: nowrap; }
+  .ne-query { font-weight: bold; }
+  .win-a .ne-query { color: #00ff00; }
+  .win-b .ne-query { color: #b4ff50; }
+  .ne-count { opacity: 0.5; text-align: right; font-size: 8px; }
+
+  .ne-tag {
+    display: inline-block;
+    font-size: 7px;
+    padding: 1px 3px;
+    border: 1px solid;
+    margin-top: 2px;
+    grid-column: 2 / 4;
+  }
+  .win-a .ne-tag { border-color: #004400; color: #004400; }
+  .win-b .ne-tag { border-color: #445500; color: #667700; }
+
+  /* ── CONTENT ELEMENTS — WIN B ────────────────── */
+  .upload-zone {
+    border: 1px dashed;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    position: relative;
+  }
+  .win-b .upload-zone { border-color: #446600; }
+  .win-b .upload-zone:hover { background: #0a1400; }
+
+  .upload-icon {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .win-b .upload-icon { color: #557700; }
+
+  .upload-text {
+    font-size: 8px;
+    line-height: 2;
+  }
+  .win-b .upload-text { color: #667700; }
+
+  .grammar-result {
+    margin-top: 8px;
+  }
+
+  .grammar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    border-bottom: 1px solid #111800;
+    font-size: 9px;
+  }
+
+  .gr-code {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    min-width: 70px;
+  }
+  .win-b .gr-code { color: #b4ff50; }
+
+  .gr-bar-wrap {
+    flex: 1;
+    height: 5px;
+    background: #0f1800;
+    position: relative;
+  }
+  .gr-bar {
+    height: 100%;
+    background: linear-gradient(to right, #446600, #88cc00);
+  }
+
+  .gr-pct {
+    min-width: 30px;
+    text-align: right;
+    font-size: 8px;
+  }
+  .win-b .gr-pct { color: #667700; }
+
+  .grammar-verdict {
+    margin-top: 8px;
+    padding: 6px;
+    border: 1px solid #334400;
+    font-size: 8px;
+    line-height: 1.8;
+  }
+  .win-b .grammar-verdict { color: #88aa00; background: #060d00; }
+  .verdict-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .win-b .verdict-label { color: #b4ff50; }
+
+  /* aberration on window titles */
+  .aberration {
+    text-shadow:
+      -1px 0 rgba(255,0,0,0.3),
+       1px 0 rgba(0,0,255,0.3);
+  }
+</style>
+</head>
+<body>
+<div id="main-wrapper">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <span class="top-title">SET PHOTOGRAPHY — NULL LOG / ATTRIBUTION TEST &nbsp;|&nbsp; DESIGN SAMPLE B</span>
+    <button class="btn-back" onclick="navigate('portfolio.html')">← PORTFOLIO</button>
+  </div>
+
+  <!-- DUAL WINDOWS -->
+  <div class="windows-container">
+
+    <!-- WINDOW A: SYS_A — NULL.LOG -->
+    <div class="win win-a">
+      <div class="win-titlebar">
+        <span class="win-title-text aberration">SYS_A — NULL.LOG</span>
+        <div class="win-controls">
+          <div class="win-btn">_</div>
+          <div class="win-btn">□</div>
+          <div class="win-btn">×</div>
+        </div>
+      </div>
+      <div class="win-menubar">
+        <span>FILE</span>
+        <span>VIEW</span>
+        <span>SORT</span>
+        <span>EXPORT</span>
+      </div>
+      <div class="win-content">
+
+        <div class="sys-header">공집합 로그 / EMPTY SET LOG — 438 ENTRIES</div>
+
+        <div class="null-entry">
+          <span class="ne-date">2024.03.11</span>
+          <span class="ne-query">무결점</span>
+          <span class="ne-count">×7</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2024.02.28</span>
+          <span class="ne-query">완전한 침묵</span>
+          <span class="ne-count">×3</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2024.02.14</span>
+          <span class="ne-query">경계 없는 빛</span>
+          <span class="ne-count">×12</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2024.01.30</span>
+          <span class="ne-query">지층 없는 기억</span>
+          <span class="ne-count">×5</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2024.01.19</span>
+          <span class="ne-query">dissolution</span>
+          <span class="ne-count">×2</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.12.31</span>
+          <span class="ne-query">empty interval</span>
+          <span class="ne-count">×9</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.12.18</span>
+          <span class="ne-query">흔적 이전</span>
+          <span class="ne-count">×4</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.11.05</span>
+          <span class="ne-query">null surface</span>
+          <span class="ne-count">×6</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.10.22</span>
+          <span class="ne-query">형태 이전의 형태</span>
+          <span class="ne-count">×1</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.09.14</span>
+          <span class="ne-query">grid of nothing</span>
+          <span class="ne-count">×8</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.08.03</span>
+          <span class="ne-query">strata without time</span>
+          <span class="ne-count">×3</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.07.19</span>
+          <span class="ne-query">빈 집합의 경계</span>
+          <span class="ne-count">×11</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.06.01</span>
+          <span class="ne-query">잔상 없는 노출</span>
+          <span class="ne-count">×2</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.05.08</span>
+          <span class="ne-query">pure interval</span>
+          <span class="ne-count">×7</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.04.12</span>
+          <span class="ne-query">잔상의 무게</span>
+          <span class="ne-count">×5</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+        <div class="null-entry">
+          <span class="ne-date">2023.03.29</span>
+          <span class="ne-query">aperture without lens</span>
+          <span class="ne-count">×3</span>
+          <span class="ne-tag">NULL RESULT — SEARCH RETURNED 0</span>
+        </div>
+
+      </div>
+      <div class="win-statusbar">
+        <span><span class="status-indicator"></span>ACTIVE — SYS_A</span>
+        <span>438 / 438 NULL</span>
+        <span>SCROLL ↓</span>
+      </div>
+    </div>
+
+    <!-- WINDOW B: SYS_B — ATTR.TEST -->
+    <div class="win win-b">
+      <div class="win-titlebar">
+        <span class="win-title-text aberration">SYS_B — ATTR.TEST</span>
+        <div class="win-controls">
+          <div class="win-btn">_</div>
+          <div class="win-btn">□</div>
+          <div class="win-btn">×</div>
+        </div>
+      </div>
+      <div class="win-menubar">
+        <span>UPLOAD</span>
+        <span>ANALYZE</span>
+        <span>EXPORT</span>
+        <span>HELP</span>
+      </div>
+      <div class="win-content">
+
+        <div class="sys-header">외부 이미지 귀속 테스트 / ATTRIBUTION TEST</div>
+
+        <div class="upload-zone">
+          <span class="upload-icon">[+]</span>
+          <div class="upload-text">
+            DROP IMAGE FILE HERE<br>
+            OR CLICK TO SELECT<br>
+            ──────────────────<br>
+            JPG / PNG / TIFF / RAW
+          </div>
+        </div>
+
+        <div class="sys-header" style="margin-top:10px">SAMPLE RESULT — SPECIMEN #0042</div>
+
+        <div class="grammar-result">
+          <div class="grammar-row">
+            <span class="gr-code">STRATA</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:87%"></div></div>
+            <span class="gr-pct">87%</span>
+          </div>
+          <div class="grammar-row">
+            <span class="gr-code">DISSOLVE</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:61%"></div></div>
+            <span class="gr-pct">61%</span>
+          </div>
+          <div class="grammar-row">
+            <span class="gr-code">GRID</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:34%"></div></div>
+            <span class="gr-pct">34%</span>
+          </div>
+          <div class="grammar-row">
+            <span class="gr-code">INTERVAL</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:22%"></div></div>
+            <span class="gr-pct">22%</span>
+          </div>
+          <div class="grammar-row">
+            <span class="gr-code">RESIDUE</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:15%"></div></div>
+            <span class="gr-pct">15%</span>
+          </div>
+          <div class="grammar-row">
+            <span class="gr-code">APERTURE</span>
+            <div class="gr-bar-wrap"><div class="gr-bar" style="width:8%"></div></div>
+            <span class="gr-pct">8%</span>
+          </div>
+        </div>
+
+        <div class="grammar-verdict">
+          <span class="verdict-label">PRIMARY CLASSIFICATION:</span>
+          STRATA (87%) — horizontal layering patterns.<br>
+          SECONDARY: DISSOLVE (61%) — temporal compression.<br>
+          Cross-reference: SET/WORK/0031–0047
+        </div>
+
+      </div>
+      <div class="win-statusbar">
+        <span><span class="status-indicator"></span>ACTIVE — SYS_B</span>
+        <span>READY FOR INPUT</span>
+        <span>v2.4</span>
+      </div>
+    </div>
+
+  </div><!-- /windows-container -->
+
+</div><!-- /main-wrapper -->
+
+<script>
+function navigate(url) {
+  const wrapper = document.getElementById('main-wrapper');
+  wrapper.classList.add('crt-off');
+  setTimeout(() => { window.location.href = url; }, 490);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET.OS — LIVE (Sample E)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
+  --gl:#ffd3c2; --acc:#ff8a3a; --teal:#3fb09a; --bd:#ff4a16;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace; --px:'Press Start 2P',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;background:#000;font-family:var(--mono);color:var(--g);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+#bg{position:fixed;inset:-200px;z-index:0;background:radial-gradient(ellipse 180% 200% at 50% 25%, rgba(60,24,5,.34) 0%, rgba(16,8,2,.18) 45%, rgba(0,0,0,.08) 100%);}
+#bgrid{position:fixed;inset:-40px;z-index:0;background-image:linear-gradient(rgba(255,74,22,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.05) 1px,transparent 1px);background-size:48px 48px;animation:drift 14s linear infinite;}
+@keyframes drift{to{transform:translate(48px,48px);}}
+#vig{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,transparent 28%,rgba(0,0,0,.6) 74%,rgba(0,0,0,.95) 100%);}
+.crt{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
+
+#wrap{position:relative;z-index:1;width:1160px;max-width:97vw;height:740px;max-height:95vh;
+  background:rgba(4,3,1,0.985);border:1px solid var(--bd);
+  box-shadow:inset 0 1px 0 rgba(255,140,40,.14),0 0 0 1px rgba(0,0,0,.95),0 0 90px rgba(255,74,22,0.18),0 28px 100px rgba(0,0,0,.99);
+  display:grid;grid-template-rows:auto auto 1fr auto;gap:7px;padding:9px;overflow:hidden;}
+.tick{position:absolute;width:14px;height:14px;z-index:30;}
+.tick.tl{top:-1px;left:-1px;border-top:1px solid var(--g);border-left:1px solid var(--g);}
+.tick.tr{top:-1px;right:-1px;border-top:1px solid var(--g);border-right:1px solid var(--g);}
+.tick.bl{bottom:-1px;left:-1px;border-bottom:1px solid var(--g);border-left:1px solid var(--g);}
+.tick.br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
+
+.tbar{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;padding:5px 12px;}
+.tbar .ttl{font-family:var(--px);font-size:11px;letter-spacing:1px;position:relative;}
+.tbar .ttl.glitch::before,.tbar .ttl.glitch::after{content:'SET.OS';position:absolute;left:0;top:0;opacity:.8;}
+.tbar .ttl.glitch::before{color:#ff0000;animation:gl1 2.6s infinite;}
+.tbar .ttl.glitch::after{color:#00ffff;animation:gl2 2.6s infinite;}
+@keyframes gl1{0%,92%,100%{transform:none;opacity:0}93%{transform:translateX(-2px);opacity:.7}95%{transform:translateX(2px)}}
+@keyframes gl2{0%,92%,100%{transform:none;opacity:0}94%{transform:translateX(2px);opacity:.7}96%{transform:translateX(-2px)}}
+.tbar .ver{margin-left:auto;font-size:11px;font-family:var(--mono);}
+.tbar .led{display:flex;gap:5px;}
+.tbar .led b{width:8px;height:8px;background:#1a0a02;}
+.tbar .led b.on{background:#ffe9dd;}
+
+.ticker{overflow:hidden;white-space:nowrap;border:1px solid var(--g3);background:rgba(255,74,22,.04);}
+.ticker .run{display:inline-block;padding:4px 0;font-family:var(--mono);font-size:11px;color:var(--g2);letter-spacing:1px;animation:scroll 26s linear infinite;}
+.ticker .run b{color:var(--acc);} .ticker .run .t{color:var(--teal);}
+@keyframes scroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+
+.body{display:grid;grid-template-columns:380px 1fr 300px;gap:7px;min-height:0;}
+.pnl{border:1px solid var(--g3);background:rgba(255,74,22,0.02);display:flex;flex-direction:column;min-height:0;}
+.ph{background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;font-family:var(--px);font-size:8px;letter-spacing:1px;padding:5px 9px;display:flex;justify-content:space-between;}
+.ph.dim{background:linear-gradient(180deg,#a8561a,#3a1d05);color:#ffd3c2;}
+.pb{padding:11px 13px;overflow:auto;flex:1;min-height:0;}
+
+#radarWrap{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;}
+#radar{width:100%;height:100%;}
+.rlabel{position:absolute;font-family:var(--mono);font-size:9px;color:var(--g3);letter-spacing:1px;}
+
+.con{font-family:var(--mono);font-size:12px;line-height:1.85;color:var(--gl);}
+.con .t{color:var(--g3);} .con .ok{color:var(--acc);} .con .em{color:var(--teal);}
+.cur{display:inline-block;width:8px;height:14px;background:var(--g);vertical-align:-2px;animation:bl .6s steps(1) infinite;}
+@keyframes bl{50%{opacity:0}}
+@keyframes cin{to{opacity:1}}
+.intro p{font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--gl);margin-bottom:9px;}
+.intro .attr{font-family:var(--px);font-size:9px;color:var(--g2);margin-top:5px;}
+
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.gz{text-align:center;}
+.gz canvas{width:100%;max-width:120px;}
+.gz .lbl{font-family:var(--mono);font-size:9px;color:var(--g2);letter-spacing:1px;margin-top:-6px;}
+.logln{font-family:var(--mono);font-size:11px;color:var(--g2);padding:2px 0;letter-spacing:.4px;border-bottom:1px solid var(--g4);display:flex;gap:8px;}
+.logln.on{color:var(--gl);background:rgba(255,74,22,.10);}
+.logln .n{color:var(--g3);} .logln .v{margin-left:auto;color:var(--acc);}
+
+.acts{display:flex;gap:7px;}
+.acts button{flex:1;font-family:var(--px);font-size:12px;letter-spacing:1px;padding:15px 6px;cursor:pointer;color:#1a0a02;background:linear-gradient(180deg,#ff7a4a,#cf4a18);border:1px solid var(--g);box-shadow:inset 0 1px 0 rgba(255,220,200,.6),inset 0 -2px 0 rgba(0,0,0,.3);transition:.12s;position:relative;overflow:hidden;}
+.acts button:hover{background:linear-gradient(180deg,#ffa070,#ff5e16);}
+.acts button.alt{background:#000;color:var(--g);box-shadow:inset 0 0 0 1px var(--g3);}
+.acts button.alt:hover{background:rgba(255,74,22,.12);}
+.acts button::after{content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:sweep 3s linear infinite;}
+@keyframes sweep{to{left:130%}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bgrid"></div><div id="vig"></div><div class="crt"></div>
+<div id="wrap">
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="tbar"><span class="ttl glitch">SET.OS</span><span style="font-family:var(--mono);font-size:11px;">// ENTRY · LIVE</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b></span><span class="ver">SCAN <span id="ang">000</span>° · v.XT2</span></div>
+
+  <div class="ticker"><span class="run" id="run">▸ SET_WORLD ACCUMULATION LOG — RECORDING SINCE 2022 ····· <b>SAMPLES 438</b> ····· <span class="t">SIG 62%</span> ····· COND: ISOLATE / RUPTURE / GRID / CLUSTER / STRATA ····· <b>WHAT YOU MEASURE, YOU ENTER</b> ····· <span class="t">REC ● ACTIVE</span> ·····</span></div>
+
+  <div class="body">
+    <div class="pnl">
+      <div class="ph"><span>▸ SURVEY RADAR</span><span id="contacts">04 CONTACTS</span></div>
+      <div class="pb" style="display:flex;flex-direction:column;">
+        <div id="radarWrap"><canvas id="radar"></canvas>
+          <span class="rlabel" style="top:6px;left:10px;">N</span>
+          <span class="rlabel" style="bottom:6px;right:10px;">SECTOR-04</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pnl">
+      <div class="ph dim"><span>◇ TRANSMISSION</span><span>SET WORLD / 2022—</span></div>
+      <div class="pb">
+        <div class="intro">
+          <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+          <p>This is one answer to that question. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+        </div>
+        <div class="con" id="con" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="pnl">
+      <div class="ph"><span>▸ TELEMETRY</span></div>
+      <div class="pb">
+        <div class="gauges">
+          <div class="gz"><canvas id="g1" width="120" height="80"></canvas><div class="lbl">SIGNAL</div></div>
+          <div class="gz"><canvas id="g2" width="120" height="80"></canvas><div class="lbl">RECORD</div></div>
+        </div>
+        <div style="margin-top:8px;" id="log"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acts">
+    <button onclick="go('set-os.html')">[ -&gt; ENTER ]</button>
+    <button class="alt" onclick="go('portfolio.html')">[ BROWSE -&gt; ]</button>
+  </div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function log(){document.getElementById('log').innerHTML=items.slice(0,8).map((it,i)=>`<div class="logln${i===idx?' on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span>${it}<span class="v">${(Math.random()*0.9+0.1).toFixed(2)}</span></div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);log();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(7,idx+1);log();e.preventDefault();}});
+log();
+// typewriter console
+const lines=['<span class="t">&gt;</span> boot set.os ......... <span class="ok">OK</span>','<span class="t">&gt;</span> survey active ...... <span class="em">SCANNING</span>','<span class="t">&gt;</span> 438 records loaded','<span class="t">&gt;</span> awaiting operator ▸_'];
+const con=document.getElementById('con');let li=0;
+function type(){
+  if(li>=lines.length){setTimeout(()=>{con.innerHTML='';li=0;type();},3600);return;}
+  const r=document.createElement('div');r.style.animation='cin .25s forwards';r.style.opacity=0;
+  r.innerHTML=lines[li].replace(/_$/,'<span class="cur"></span>');con.appendChild(r);li++;
+  setTimeout(type,li>=lines.length?0:450);
+}
+type();
+// radar
+const rc=document.getElementById('radar');const rx=rc.getContext('2d');
+function rsz(){const s=Math.min(rc.clientWidth,rc.clientHeight);rc.width=s*devicePixelRatio;rc.height=s*devicePixelRatio;}
+let ang=0;const blips=Array.from({length:4},()=>({a:Math.random()*Math.PI*2,r:0.3+Math.random()*0.6,seen:0}));
+function radar(){
+  rsz();const w=rc.width,h=rc.height,cx=w/2,cy=h/2,R=Math.min(w,h)/2-6;
+  rx.clearRect(0,0,w,h);
+  rx.strokeStyle='rgba(255,74,22,0.25)';rx.lineWidth=1;
+  for(let i=1;i<=3;i++){rx.beginPath();rx.arc(cx,cy,R*i/3,0,Math.PI*2);rx.stroke();}
+  rx.beginPath();rx.moveTo(cx-R,cy);rx.lineTo(cx+R,cy);rx.moveTo(cx,cy-R);rx.lineTo(cx,cy+R);rx.stroke();
+  // sweep
+  const grad=rx.createConicGradient?rx.createConicGradient(ang-Math.PI/2,cx,cy):null;
+  rx.save();rx.beginPath();rx.moveTo(cx,cy);rx.arc(cx,cy,R,ang-0.5,ang);rx.closePath();
+  rx.fillStyle='rgba(255,138,58,0.18)';rx.fill();rx.restore();
+  rx.strokeStyle='rgba(255,138,58,0.9)';rx.lineWidth=2;rx.beginPath();rx.moveTo(cx,cy);rx.lineTo(cx+Math.cos(ang)*R,cy+Math.sin(ang)*R);rx.stroke();
+  blips.forEach(b=>{const da=((ang-b.a)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);if(da<0.3)b.seen=1;b.seen*=0.985;
+    const x=cx+Math.cos(b.a)*R*b.r,y=cy+Math.sin(b.a)*R*b.r;
+    rx.fillStyle=`rgba(255,211,194,${0.2+b.seen*0.8})`;rx.beginPath();rx.arc(x,y,3*devicePixelRatio*(0.6+b.seen),0,Math.PI*2);rx.fill();});
+  ang+=0.03;if(ang>Math.PI*2)ang-=Math.PI*2;
+  document.getElementById('ang').textContent=String(Math.round(ang*180/Math.PI)).padStart(3,'0');
+  requestAnimationFrame(radar);
+}
+radar();
+// gauges
+function gauge(id,getv,col){const c=document.getElementById(id),x=c.getContext('2d');
+  function d(){const w=c.width,h=c.height,cx=w/2,cy=h-6,R=h-14;const v=getv();
+    x.clearRect(0,0,w,h);x.lineWidth=8;x.strokeStyle='rgba(255,74,22,0.18)';
+    x.beginPath();x.arc(cx,cy,R,Math.PI,0);x.stroke();
+    x.strokeStyle=col;x.beginPath();x.arc(cx,cy,R,Math.PI,Math.PI+Math.PI*v/100);x.stroke();
+    x.fillStyle=col;x.font='16px IBM Plex Mono';x.textAlign='center';x.fillText(Math.round(v)+'%',cx,cy-4);
+    requestAnimationFrame(d);}d();}
+let sig=62,rec=84;
+setInterval(()=>{sig=Math.max(30,Math.min(95,sig+(Math.random()-0.5)*14));rec=Math.max(60,Math.min(99,rec+(Math.random()-0.5)*8));log();
+  document.getElementById('led').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>0.4));},800);
+gauge('g1',()=>sig,'#ff8a3a');gauge('g2',()=>rec,'#3fb09a');
+function go(u){if(parent!==window)return;location.href=u;}
+</script>
+</body>
+</html>

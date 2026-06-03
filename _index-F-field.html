@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — DEEP FIELD (Sample F)</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#00dd55; --g2:rgba(0,221,85,0.6); --g3:rgba(0,221,85,0.28); --g4:rgba(0,221,85,0.12);
+  --acc:#00ff66; --amb:#ffb000; --vio:#b07bff; --cy:#36e0ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--g);font-family:'Space Mono',monospace;display:flex;align-items:center;justify-content:center;}
+#field{position:fixed;inset:0;z-index:0;}
+.crt{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,221,85,0.03) 2px,rgba(0,221,85,0.03) 4px);}
+#wrap{position:relative;z-index:1;width:1120px;max-width:97vw;height:730px;max-height:95vh;
+  border:1px solid var(--g3);background:rgba(0,6,2,0.78);backdrop-filter:blur(2px);
+  display:grid;grid-template-rows:auto auto 1fr auto;gap:0;overflow:hidden;
+  box-shadow:0 0 0 1px #000,0 0 60px rgba(0,221,85,.12),inset 0 0 80px rgba(0,221,85,.03);}
+.corner{position:absolute;width:18px;height:18px;z-index:5;}
+.corner.tl{top:-1px;left:-1px;border-top:2px solid var(--acc);border-left:2px solid var(--acc);}
+.corner.tr{top:-1px;right:-1px;border-top:2px solid var(--acc);border-right:2px solid var(--acc);}
+.corner.bl{bottom:-1px;left:-1px;border-bottom:2px solid var(--acc);border-left:2px solid var(--acc);}
+.corner.br{bottom:-1px;right:-1px;border-bottom:2px solid var(--acc);border-right:2px solid var(--acc);}
+
+.tb{display:flex;align-items:center;gap:8px;padding:8px 13px;border-bottom:1px solid var(--g3);background:rgba(0,0,0,.5);}
+.tb .dot{width:7px;height:7px;border-radius:50%;background:var(--g);box-shadow:0 0 7px var(--g);animation:pulse 2s infinite;}
+.tb .dot.a{background:var(--amb);box-shadow:0 0 7px var(--amb);animation-delay:.5s;}
+.tb .dot.v{background:var(--vio);box-shadow:0 0 7px var(--vio);animation-delay:1s;}
+@keyframes pulse{50%{opacity:.35}}
+.tb h1{font-size:13px;letter-spacing:4px;font-weight:700;}
+.tb h1 .sub{font-size:9px;letter-spacing:2px;color:var(--g2);margin-left:8px;}
+.tb .sp{flex:1;}
+.tb .tag{font-size:8px;letter-spacing:1px;border:1px solid var(--g3);padding:3px 9px;color:var(--g2);}
+.tb .tag.on{background:var(--acc);color:#000;border-color:var(--acc);}
+
+.stat{display:flex;border-bottom:1px solid var(--g3);font-size:9px;letter-spacing:1px;background:rgba(0,0,0,.35);}
+.stat .seg{padding:5px 13px;border-right:1px solid var(--g4);color:var(--g2);}
+.stat .seg b{color:var(--g);} .stat .seg .o{color:var(--amb);}
+.stat .marq{flex:1;overflow:hidden;white-space:nowrap;padding:5px 0;}
+.stat .marq span{display:inline-block;animation:mv 22s linear infinite;color:var(--cy);}
+@keyframes mv{from{transform:translateX(40%)}to{transform:translateX(-100%)}}
+
+.body{display:grid;grid-template-columns:1fr 320px;min-height:0;}
+.left{display:flex;flex-direction:column;border-right:1px solid var(--g3);min-height:0;}
+.scopes{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--g3);}
+.sc{position:relative;height:150px;border-right:1px solid var(--g4);overflow:hidden;}
+.sc:last-child{border-right:none;}
+.sc canvas{position:absolute;inset:0;width:100%;height:100%;}
+.sc .l{position:absolute;left:8px;top:6px;font-size:8px;letter-spacing:1px;color:var(--g2);z-index:2;}
+.sc .l.r{left:auto;right:8px;color:var(--amb);}
+.intro{padding:18px 22px;overflow:auto;flex:1;min-height:0;}
+.intro p{font-size:13px;line-height:1.78;color:#bdfdd4;margin-bottom:11px;}
+.intro .con{font-size:11px;line-height:1.8;color:var(--g2);margin-top:6px;}
+.intro .con .ok{color:var(--acc);} .intro .con .em{color:var(--cy);}
+.intro .attr{font-size:10px;letter-spacing:2px;color:var(--g2);margin-top:8px;}
+.cur{display:inline-block;width:7px;height:13px;background:var(--g);vertical-align:-2px;animation:bl .7s steps(1) infinite;}
+@keyframes bl{50%{opacity:0}}
+@keyframes cin{to{opacity:1}}
+
+.right{display:flex;flex-direction:column;min-height:0;}
+.rh{font-size:9px;letter-spacing:2px;color:var(--amb);padding:8px 13px;border-bottom:1px solid var(--g4);display:flex;justify-content:space-between;}
+.stream{flex:1;overflow:hidden;font-size:10px;line-height:1.7;padding:6px 0;}
+.srow{display:flex;gap:8px;padding:2px 13px;color:var(--g2);letter-spacing:.4px;}
+.srow.on{background:var(--g4);color:var(--acc);}
+.srow.new{animation:flash .8s;}
+@keyframes flash{from{background:rgba(0,255,102,.25);color:#fff}}
+.srow .n{color:var(--g3);min-width:30px;} .srow .v{margin-left:auto;color:var(--amb);}
+.nodes{height:160px;border-top:1px solid var(--g4);position:relative;}
+.nodes canvas{position:absolute;inset:0;width:100%;height:100%;}
+.nodes .l{position:absolute;left:8px;top:6px;font-size:8px;letter-spacing:1px;color:var(--g2);z-index:2;}
+
+.foot{display:flex;border-top:1px solid var(--g3);}
+.foot button{flex:1;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;letter-spacing:2px;padding:16px;cursor:pointer;background:rgba(0,0,0,.4);color:var(--g);border:none;border-right:1px solid var(--g3);transition:.12s;position:relative;overflow:hidden;}
+.foot button:last-child{border-right:none;}
+.foot button:hover{background:var(--acc);color:#000;}
+.foot button.amb{color:var(--amb);} .foot button.amb:hover{background:var(--amb);color:#000;}
+.foot button::after{content:'';position:absolute;top:0;left:-50%;width:35%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,102,.25),transparent);animation:sw 3.4s linear infinite;}
+.foot button.amb::after{background:linear-gradient(90deg,transparent,rgba(255,176,0,.25),transparent);}
+@keyframes sw{to{left:130%}}
+</style>
+</head>
+<body>
+<canvas id="field"></canvas>
+<div class="crt"></div>
+<div id="wrap">
+  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+  <div class="tb"><span class="dot"></span><span class="dot a"></span><span class="dot v"></span><h1>SET<span class="sub">DEEP FIELD // ACCUMULATION LOG</span></h1><span class="sp"></span><span class="tag on">INDEX</span><span class="tag">SCOPE</span><span class="tag">v.XT2</span></div>
+  <div class="stat">
+    <div class="seg">SRC <b>SET_WORLD</b></div>
+    <div class="seg">REC <span class="o">● ACTIVE</span></div>
+    <div class="seg">SINCE <b>2022</b></div>
+    <div class="marq"><span id="marq">▸ scanning field · 438 samples buffered · what you measure, you enter · conditions recur · ▸</span></div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="scopes">
+        <div class="sc"><canvas id="sc1"></canvas><span class="l">CH-F / SINE</span><span class="l r" id="p1">0.84</span></div>
+        <div class="sc"><canvas id="sc2"></canvas><span class="l">CH-B / NOISE</span><span class="l r" id="p2">0.41</span></div>
+      </div>
+      <div class="intro">
+        <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+        <p>This is one answer. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+        <div class="con" id="con"></div>
+        <div class="attr">SET WORLD &nbsp;//&nbsp; 2022—</div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="rh"><span>▣ DATA STREAM</span><span id="cnt">438</span></div>
+      <div class="stream" id="stream"></div>
+      <div class="nodes"><canvas id="net"></canvas><span class="l">▣ CONDITION GRAPH</span></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <button onclick="go('set-os.html')">▸ ENTER</button>
+    <button class="amb" onclick="go('portfolio.html')">BROWSE ▸</button>
+  </div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function stream(){document.getElementById('stream').innerHTML=items.map((it,i)=>`<div class="srow${i===idx?' on':''}"><span class="n">${String(i+1).padStart(2,'0')}</span>${it}<span class="v">${(Math.random()*0.9+0.1).toFixed(2)}</span></div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);stream();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);stream();e.preventDefault();}});
+stream();
+let cnt=438;setInterval(()=>{cnt++;document.getElementById('cnt').textContent=cnt;
+  const rows=document.getElementById('stream').children;if(rows.length){const r=rows[Math.floor(Math.random()*rows.length)];r.classList.add('new');setTimeout(()=>r.classList.remove('new'),800);}
+},1100);
+// typewriter
+const lines=['<span>&gt; field scan ..... <span class="ok">OK</span></span>','<span>&gt; <span class="em">Someone noticed. Wrote them down.</span></span>','<span>&gt; what you measure, you enter._</span>'];
+const con=document.getElementById('con');let li=0;
+function type(){if(li>=lines.length){setTimeout(()=>{con.innerHTML='';li=0;type();},4000);return;}
+  const r=document.createElement('div');r.style.animation='cin .25s forwards';r.style.opacity=0;
+  r.innerHTML=lines[li].replace(/_$/,'<span class="cur"></span>');con.appendChild(r);li++;
+  setTimeout(type,li>=lines.length?0:480);}
+type();
+// starfield
+const fc=document.getElementById('field'),fx=fc.getContext('2d');
+function frs(){fc.width=innerWidth;fc.height=innerHeight;}frs();addEventListener('resize',frs);
+const stars=Array.from({length:140},()=>({x:Math.random(),y:Math.random(),z:Math.random()*0.8+0.2,s:Math.random()}));
+function field(){fx.fillStyle='#000';fx.fillRect(0,0,fc.width,fc.height);
+  stars.forEach(p=>{p.y+=0.0006*p.z;if(p.y>1)p.y=0;const x=p.x*fc.width,y=p.y*fc.height;
+    fx.fillStyle=`rgba(0,221,85,${0.15+p.z*0.5*(0.5+0.5*Math.sin(Date.now()*0.003*p.s+p.x*10))})`;
+    fx.fillRect(x,y,p.z*2,p.z*2);});
+  requestAnimationFrame(field);}field();
+// scopes
+function scope(id,pid,fn,col){const c=document.getElementById(id),x=c.getContext('2d');let t=Math.random()*10;
+  function d(){c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;const w=c.width,h=c.height;
+    x.clearRect(0,0,w,h);x.strokeStyle='rgba(0,221,85,0.1)';x.lineWidth=1;
+    for(let gx=0;gx<w;gx+=w/12){x.beginPath();x.moveTo(gx,0);x.lineTo(gx,h);x.stroke();}
+    for(let gy=0;gy<h;gy+=h/4){x.beginPath();x.moveTo(0,gy);x.lineTo(w,gy);x.stroke();}
+    x.beginPath();x.strokeStyle=col;x.lineWidth=2*devicePixelRatio;x.shadowColor=col;x.shadowBlur=6;
+    for(let px=0;px<=w;px+=2){const y=h/2+fn(px/w,t)*h*0.32;px===0?x.moveTo(px,y):x.lineTo(px,y);}
+    x.stroke();x.shadowBlur=0;t+=0.05;
+    if(pid)document.getElementById(pid).textContent=(0.5+0.45*Math.sin(t)).toFixed(2);
+    requestAnimationFrame(d);}d();}
+scope('sc1','p1',(u,t)=>Math.sin(u*Math.PI*4+t)+0.3*Math.sin(u*Math.PI*9+t*1.5),'#00ff66');
+scope('sc2','p2',(u,t)=>(Math.sin(u*Math.PI*7+t*2)+(Math.random()-0.5)*0.7)*0.7,'#ffb000');
+// network nodes
+const nc=document.getElementById('net'),nx=nc.getContext('2d');
+let nodes=[];function initN(){nc.width=nc.clientWidth*devicePixelRatio;nc.height=nc.clientHeight*devicePixelRatio;
+  nodes=Array.from({length:7},()=>({x:Math.random(),y:Math.random(),ph:Math.random()*6}));}initN();
+function net(){const w=nc.width,h=nc.height;nx.clearRect(0,0,w,h);const T=Date.now()*0.002;
+  for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];
+    const d=Math.hypot(a.x-b.x,a.y-b.y);if(d<0.45){nx.strokeStyle=`rgba(0,221,85,${(0.45-d)*0.6})`;nx.lineWidth=1;
+      nx.beginPath();nx.moveTo(a.x*w,a.y*h);nx.lineTo(b.x*w,b.y*h);nx.stroke();}}
+  nodes.forEach(n=>{const r=(2+1.5*Math.sin(T+n.ph))*devicePixelRatio;
+    nx.fillStyle='#00ff66';nx.shadowColor='#00ff66';nx.shadowBlur=8;nx.beginPath();nx.arc(n.x*w,n.y*h,r,0,Math.PI*2);nx.fill();nx.shadowBlur=0;});
+  requestAnimationFrame(net);}net();
+function go(u){if(parent!==window)return;location.href=u;}
+</script>
+</body>
+</html>

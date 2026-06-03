@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NULL LOG & ATTRIBUTION TEST — CASE FILE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0f0e8;
+    --bg2: #e4e9da;
+    --fg: #111111;
+    --fg2: #333333;
+    --fg3: #555555;
+    --accent: #005500;
+    --accent2: #00aa00;
+    --badge: #004400;
+    --badge-bg: #d0e8d0;
+    --border: #9aaa9a;
+    --border2: #c4cec4;
+    --line: #b0bcb0;
+    --warn: #885500;
+    --warn-bg: #f5eedc;
+    --scanline-opacity: 0.025;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* CRT scanlines — very subtle on light bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,var(--scanline-opacity)) 2px,
+      rgba(0,0,0,var(--scanline-opacity)) 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT on/off */
+  @keyframes crt-on {
+    0%   { transform: scaleY(0.004) scaleX(0.8); filter: brightness(8); opacity: 0; }
+    20%  { transform: scaleY(0.004) scaleX(1.0); filter: brightness(8); opacity: 1; }
+    35%  { transform: scaleY(1.04) scaleX(1.0); filter: brightness(1.3); }
+    55%  { transform: scaleY(0.97); filter: brightness(0.9); }
+    75%  { transform: scaleY(1.01); filter: brightness(1.05); }
+    100% { transform: scaleY(1)    scaleX(1);   filter: brightness(1);   opacity: 1; }
+  }
+  @keyframes crt-off {
+    0%   { transform: scaleY(1)    scaleX(1);   filter: brightness(1);   opacity: 1; }
+    30%  { transform: scaleY(1.04) scaleX(1.0); filter: brightness(1.3); }
+    50%  { transform: scaleY(0.004) scaleX(1.2); filter: brightness(5); }
+    80%  { transform: scaleY(0.004) scaleX(0.3); filter: brightness(2); opacity: 0.5; }
+    100% { transform: scaleY(0)    scaleX(0);   filter: brightness(0);   opacity: 0; }
+  }
+
+  #main-wrapper {
+    animation: crt-on 0.6s ease-out forwards;
+    transform-origin: center center;
+  }
+  #main-wrapper.crt-off {
+    animation: crt-off 0.45s ease-in forwards;
+    pointer-events: none;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  .site-header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--accent);
+    padding: 10px 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .header-left { flex: 1; }
+
+  .case-number {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .site-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+    line-height: 1.5;
+  }
+
+  .site-subtitle {
+    font-size: 9px;
+    color: var(--fg3);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 9px;
+    color: var(--fg3);
+    line-height: 1.8;
+    border-left: 1px solid var(--border);
+    padding-left: 14px;
+    min-width: 160px;
+  }
+
+  .stamp {
+    display: inline-block;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    padding: 3px 7px;
+    letter-spacing: 0.1em;
+    transform: rotate(-3deg);
+    margin-top: 4px;
+  }
+
+  /* ── NAV BAR ─────────────────────────────────── */
+  .nav-bar {
+    background: var(--accent);
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--bg);
+  }
+  .nav-bar span { opacity: 0.6; }
+  .nav-bar a {
+    color: var(--bg);
+    text-decoration: none;
+    opacity: 0.9;
+    cursor: pointer;
+  }
+  .nav-bar a:hover { opacity: 1; text-decoration: underline; }
+  .nav-sep { opacity: 0.3; }
+
+  /* ── MAIN GRID ───────────────────────────────── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    height: calc(100vh - 120px);
+  }
+
+  .panel {
+    padding: 16px 20px;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+  }
+  .panel:last-child { border-right: none; }
+
+  /* Panel header */
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+  }
+
+  .panel-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--fg);
+    letter-spacing: 0.04em;
+  }
+
+  .panel-id {
+    font-size: 9px;
+    color: var(--fg3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── LEFT PANEL: CASE LOG ────────────────────── */
+  .case-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    font-size: 9px;
+    color: var(--fg3);
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .case-meta dt { color: var(--fg); font-weight: bold; }
+  .case-meta dd { color: var(--accent2); }
+
+  .log-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+  .log-table thead th {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    padding: 4px 6px;
+    text-align: left;
+    font-size: 7px;
+    font-weight: bold;
+    color: var(--fg3);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .log-table tbody tr {
+    border-bottom: 1px solid var(--border2);
+    transition: background 0.1s;
+  }
+  .log-table tbody tr:hover { background: var(--bg2); }
+  .log-table tbody td {
+    padding: 5px 6px;
+    vertical-align: top;
+    color: var(--fg2);
+    border-left: 1px solid var(--border2);
+  }
+  .log-table tbody td:first-child { border-left: none; }
+
+  .td-date { color: var(--fg3) !important; white-space: nowrap; font-size: 8px; }
+  .td-query { font-weight: bold; color: var(--fg) !important; }
+  .td-count { text-align: center; color: var(--warn) !important; }
+
+  .badge-unresolved {
+    display: inline-block;
+    background: var(--warn-bg);
+    color: var(--warn);
+    border: 1px solid var(--warn);
+    font-size: 7px;
+    padding: 1px 4px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+  .badge-resolved {
+    display: inline-block;
+    background: var(--badge-bg);
+    color: var(--badge);
+    border: 1px solid var(--badge);
+    font-size: 7px;
+    padding: 1px 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .log-note {
+    margin-top: 10px;
+    padding: 8px;
+    background: var(--bg2);
+    border-left: 3px solid var(--accent);
+    font-size: 9px;
+    color: var(--fg3);
+  }
+
+  /* ── RIGHT PANEL: SPECIMEN ANALYSIS ─────────── */
+  .specimen-meta {
+    font-size: 9px;
+    color: var(--fg3);
+    margin-bottom: 12px;
+    line-height: 2;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 8px;
+  }
+
+  .specimen-tray {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 14px;
+    position: relative;
+    cursor: pointer;
+  }
+  .specimen-tray::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed var(--line);
+    pointer-events: none;
+  }
+
+  .tray-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .tray-icon {
+    font-size: 28px;
+    opacity: 0.5;
+  }
+
+  .tray-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--fg3);
+    letter-spacing: 0.06em;
+  }
+
+  .tray-sub {
+    font-size: 8px;
+    color: var(--fg3);
+    opacity: 0.7;
+  }
+
+  .tray-ref {
+    font-size: 8px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 2px 6px;
+    margin-top: 4px;
+  }
+
+  .section-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--fg3);
+    letter-spacing: 0.1em;
+    margin: 12px 0 6px;
+    border-bottom: 1px solid var(--border2);
+    padding-bottom: 4px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .result-card {
+    border: 1px solid var(--border);
+    padding: 8px;
+    background: var(--bg);
+  }
+
+  .result-code {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .result-bar-wrap {
+    height: 6px;
+    background: var(--border2);
+    margin-top: 4px;
+  }
+  .result-bar {
+    height: 100%;
+    background: var(--accent2);
+  }
+
+  .result-pct {
+    font-size: 9px;
+    color: var(--fg3);
+    text-align: right;
+    display: block;
+  }
+
+  .result-verdict {
+    margin-top: 10px;
+    padding: 8px;
+    background: var(--badge-bg);
+    border: 1px solid var(--badge);
+    font-size: 9px;
+  }
+  .result-verdict strong {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ── STATUS BAR ──────────────────────────────── */
+  .status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 4px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 8px;
+    color: var(--fg3);
+    z-index: 100;
+  }
+
+  .status-left { display: flex; gap: 20px; align-items: center; }
+  .status-file {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--accent);
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent2);
+    display: inline-block;
+    margin-right: 5px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .btn-back {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+  }
+  .btn-back:hover { background: var(--accent2); }
+
+  /* grid lines overlay */
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(0,80,0,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,80,0,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+    z-index: 0;
+  }
+</style>
+</head>
+<body>
+<div class="grid-overlay"></div>
+
+<div id="main-wrapper">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-left">
+      <div class="case-number">CASE NO. SET-2024-NULL-001 &nbsp;/&nbsp; FORENSIC DOCUMENTATION UNIT</div>
+      <div class="site-title">NULL LOG &amp; ATTRIBUTION TEST</div>
+      <div class="site-subtitle">공집합 로그 / 외부 이미지 귀속 테스트 — SET PHOTOGRAPHY PROJECT</div>
+    </div>
+    <div class="header-right">
+      CLASSIFICATION: OPEN<br>
+      FILED: 2024-01-01<br>
+      ANALYST: SET/UNIT-A<br>
+      REV: 004<br>
+      <div class="stamp">CASE FILE: OPEN</div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <nav class="nav-bar">
+    <a onclick="navigate('portfolio.html')">← BACK TO PORTFOLIO</a>
+    <span class="nav-sep">|</span>
+    <span>NULL LOG</span>
+    <span class="nav-sep">|</span>
+    <span>SPECIMEN ANALYSIS</span>
+    <span class="nav-sep">|</span>
+    <span>DESIGN SAMPLE A — FORENSIC REPORT</span>
+  </nav>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT: CASE LOG -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">CASE LOG — 공집합 로그</span>
+        <span class="panel-id">PANEL-A / SYS:NULL</span>
+      </div>
+
+      <dl class="case-meta">
+        <dt>TOTAL QUERIES</dt><dd>438</dd>
+        <dt>UNRESOLVED</dt><dd>438</dd>
+        <dt>DATE RANGE</dt><dd>2021–2024</dd>
+        <dt>STATUS</dt><dd>ONGOING</dd>
+      </dl>
+
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>QUERY / 검색어</th>
+            <th>#</th>
+            <th>STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-date">24.03.11</td><td class="td-query">무결점</td><td class="td-count">7</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">24.02.28</td><td class="td-query">완전한 침묵</td><td class="td-count">3</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">24.02.14</td><td class="td-query">경계 없는 빛</td><td class="td-count">12</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">24.01.30</td><td class="td-query">지층 없는 기억</td><td class="td-count">5</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">24.01.19</td><td class="td-query">dissolution</td><td class="td-count">2</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.12.31</td><td class="td-query">empty interval</td><td class="td-count">9</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.12.18</td><td class="td-query">흔적 이전</td><td class="td-count">4</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.11.05</td><td class="td-query">null surface</td><td class="td-count">6</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.10.22</td><td class="td-query">형태 이전의 형태</td><td class="td-count">1</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.09.14</td><td class="td-query">grid of nothing</td><td class="td-count">8</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.08.03</td><td class="td-query">strata without time</td><td class="td-count">3</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.07.19</td><td class="td-query">빈 집합의 경계</td><td class="td-count">11</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.06.01</td><td class="td-query">잔상 없는 노출</td><td class="td-count">2</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+          <tr><td class="td-date">23.05.08</td><td class="td-query">pure interval</td><td class="td-count">7</td><td><span class="badge-unresolved">UNRESOLVED</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="log-note">
+        NOTE: All 438 search queries returned zero results. Each query represents a photographic concept
+        that could not be located in existing image databases. This absence is the subject of the work.
+      </div>
+    </div>
+
+    <!-- RIGHT: SPECIMEN ANALYSIS -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">SPECIMEN ANALYSIS — 귀속 테스트</span>
+        <span class="panel-id">PANEL-B / SYS:ATTR</span>
+      </div>
+
+      <div class="specimen-meta">
+        PROTOCOL: Upload external image → system classifies visual grammar<br>
+        OUTPUT: Grammar code assignment + confidence matrix<br>
+        REFERENCE SET: SET photographic grammar taxonomy v2.4
+      </div>
+
+      <div class="specimen-tray">
+        <div class="tray-inner">
+          <div class="tray-icon">⬡</div>
+          <div class="tray-label">SPECIMEN TRAY — DEPOSIT IMAGE</div>
+          <div class="tray-sub">click or drag file to analyze</div>
+          <div class="tray-ref">SPECIMEN ID: PENDING</div>
+        </div>
+      </div>
+
+      <!-- Sample result -->
+      <div class="section-label">SAMPLE RESULT — SPECIMEN #0042</div>
+
+      <div class="result-grid">
+        <div class="result-card">
+          <span class="result-code">STRATA</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:87%"></div></div>
+          <span class="result-pct">87%</span>
+        </div>
+        <div class="result-card">
+          <span class="result-code">DISSOLVE</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:61%"></div></div>
+          <span class="result-pct">61%</span>
+        </div>
+        <div class="result-card">
+          <span class="result-code">GRID</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:34%"></div></div>
+          <span class="result-pct">34%</span>
+        </div>
+        <div class="result-card">
+          <span class="result-code">INTERVAL</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:22%"></div></div>
+          <span class="result-pct">22%</span>
+        </div>
+        <div class="result-card">
+          <span class="result-code">RESIDUE</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:15%"></div></div>
+          <span class="result-pct">15%</span>
+        </div>
+        <div class="result-card">
+          <span class="result-code">APERTURE</span>
+          <div class="result-bar-wrap"><div class="result-bar" style="width:8%"></div></div>
+          <span class="result-pct">8%</span>
+        </div>
+      </div>
+
+      <div class="result-verdict">
+        <strong>PRIMARY CLASSIFICATION: STRATA</strong>
+        The specimen exhibits strong horizontal layering patterns consistent with
+        SET grammar code STRATA. Secondary attribution to DISSOLVE suggests temporal
+        compression artifacts. Cross-reference: SET/WORK/0031–0047.
+      </div>
+
+      <div class="section-label">EVIDENCE NOTES</div>
+      <div class="log-note">
+        Attribution test determines whether an external image shares visual grammar
+        with SET project works. Classification is non-exclusive — multiple codes may apply.
+        High STRATA + DISSOLVE correlation: characteristic of geological-temporal imagery.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-left">
+      <span class="status-file">CASE FILE: OPEN</span>
+      <span><span class="status-dot"></span>SYSTEM ACTIVE</span>
+      <span>NULL ENTRIES: 438 / 438</span>
+      <span>LAST QUERY: 24.03.11</span>
+    </div>
+    <button class="btn-back" onclick="navigate('portfolio.html')">← PORTFOLIO</button>
+  </div>
+
+</div><!-- /main-wrapper -->
+
+<script>
+function navigate(url) {
+  const wrapper = document.getElementById('main-wrapper');
+  wrapper.classList.add('crt-off');
+  setTimeout(() => { window.location.href = url; }, 460);
+}
+</script>
+</body>
+</html>

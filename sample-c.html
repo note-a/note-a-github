@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCF-2025-0731 · TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #010201;
+    color: #00aa33;
+    font-family: 'Press Start 2P', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-wrap {
+    width: 1360px;
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid rgba(0,170,51,0.1);
+    border-right: 1px solid rgba(0,170,51,0.1);
+  }
+
+  /* ── 터미널 타이틀바 ── */
+  .titlebar {
+    height: 26px;
+    background: #020502;
+    border-bottom: 1px solid rgba(0,170,51,0.2);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .titlebar-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0,170,51,0.2);
+  }
+  .titlebar-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 7px;
+    color: rgba(0,170,51,0.6);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+  .titlebar-ts {
+    margin-left: auto;
+    font-size: 6px;
+    color: rgba(0,170,51,0.35);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── 커맨드 프롬프트 줄 ── */
+  .prompt-line {
+    height: 26px;
+    border-bottom: 1px solid rgba(0,170,51,0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    flex-shrink: 0;
+    background: #010201;
+  }
+  .prompt-text {
+    font-size: 7px;
+    color: #00aa33;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .prompt-dollar {
+    color: rgba(0,170,51,0.5);
+    margin-right: 8px;
+  }
+  .cursor {
+    display: inline-block;
+    color: #00aa33;
+    animation: blink 0.8s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── 출력 헤더 줄 ── */
+  .output-line {
+    height: 20px;
+    border-bottom: 1px solid rgba(0,170,51,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    flex-shrink: 0;
+  }
+  .output-text {
+    font-size: 6px;
+    color: rgba(0,170,51,0.55);
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .output-text .arrow {
+    color: rgba(0,170,51,0.35);
+    margin-right: 6px;
+  }
+  .output-text .hl {
+    color: #00dd44;
+  }
+
+  /* ── 갤러리 플레이스홀더 ── */
+  .gallery-placeholder {
+    flex: 1;
+    background: #050905;
+    border: 1px dashed rgba(0,170,51,0.2);
+    border-left: none;
+    border-right: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .gallery-placeholder span {
+    font-size: 9px;
+    color: rgba(0,170,51,0.25);
+    letter-spacing: 0.2em;
+  }
+
+  /* ── 하단 세션 바 ── */
+  .session-bar {
+    height: 20px;
+    border-top: 1px solid rgba(0,170,51,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    flex-shrink: 0;
+  }
+  .session-text {
+    font-size: 6px;
+    color: rgba(0,170,51,0.4);
+    letter-spacing: 0.08em;
+  }
+  .session-text .arrow {
+    color: rgba(0,170,51,0.25);
+    margin-right: 6px;
+  }
+</style>
+<script>
+  function pad2(n) { return String(n).padStart(2,'0'); }
+  function getTs() {
+    var now = new Date();
+    return now.getFullYear() + '.' +
+           pad2(now.getMonth()+1) + '.' +
+           pad2(now.getDate()) + ' ' +
+           pad2(now.getHours()) + ':' +
+           pad2(now.getMinutes()) + ':' +
+           pad2(now.getSeconds());
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    var tsEl = document.getElementById('titlebar-ts');
+    if (tsEl) tsEl.textContent = getTs();
+    setInterval(function() {
+      var el = document.getElementById('titlebar-ts');
+      if (el) el.textContent = getTs();
+    }, 1000);
+  });
+</script>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- 터미널 타이틀바 -->
+  <div class="titlebar">
+    <div class="titlebar-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <span class="titlebar-title">SCF-2025-0731 :: PROJECT_SET</span>
+    <span class="titlebar-ts" id="titlebar-ts">----.--.-- --:--:--</span>
+  </div>
+
+  <!-- 커맨드 프롬프트 줄 -->
+  <div class="prompt-line">
+    <span class="prompt-text">
+      <span class="prompt-dollar">$</span>
+      query --case SCF-2025-0731 --type photo --view gallery<span class="cursor">▌</span>
+    </span>
+  </div>
+
+  <!-- 출력 헤더 줄 -->
+  <div class="output-line">
+    <span class="output-text">
+      <span class="arrow">&gt;</span>
+      RETURNING <span class="hl">5900</span> RECORDS
+      &nbsp;[CORE: <span class="hl">167</span> / SUP: <span class="hl">374</span> / DROP: <span class="hl">5659</span>]
+    </span>
+  </div>
+
+  <!-- 갤러리 플레이스홀더 -->
+  <div class="gallery-placeholder">
+    <span>[ GALLERY AREA ]</span>
+  </div>
+
+  <!-- 하단 세션 바 -->
+  <div class="session-bar">
+    <span class="session-text">
+      <span class="arrow">&gt;</span>
+      SESSION B3F2A1C0 ACTIVE &nbsp;·&nbsp; ACCESS LOGGED &nbsp;·&nbsp; 2026.05.31 15:03:55
+    </span>
+  </div>
+
+</div>
+</body>
+</html>

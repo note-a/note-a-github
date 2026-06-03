@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ID Card Horizontal Sample</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #00ff00;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 16px;
+    }
+
+    h1 { font-size: 6px; color: rgba(0,255,0,0.3); letter-spacing: 2px; }
+
+    /* ── HORIZONTAL CARD ── */
+    .hcard {
+      width: 310px;
+      background: #000;
+      border-top: 2px solid #80ff80;
+      border-left: 2px solid #80ff80;
+      border-bottom: 2px solid #003300;
+      border-right: 2px solid #003300;
+      box-shadow: 0 0 10px rgba(0,255,0,0.5), 0 0 24px rgba(0,255,0,0.12),
+                  inset 0 0 20px rgba(0,255,0,0.03);
+      overflow: hidden;
+      position: relative;
+    }
+    .hcard::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom, transparent 0px, transparent 3px,
+        rgba(0,255,0,0.02) 3px, rgba(0,255,0,0.02) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .hcard-titlebar {
+      background: #00ff00;
+      color: #000;
+      font-size: 5.5px;
+      padding: 3px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.5px;
+    }
+    .tb-right { display: flex; align-items: center; gap: 6px; }
+    .card-dot { width: 5px; height: 5px; background: #000; border-radius: 50%; animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* horizontal body */
+    .hcard-body {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+    }
+
+    .vdiv {
+      width: 1px;
+      background: rgba(0,255,0,0.15);
+      flex-shrink: 0;
+      margin: 5px 0;
+    }
+
+    .hcol {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      padding: 6px 8px;
+      flex-shrink: 0;
+    }
+    .hcol.flex1 { flex: 1; }
+
+    .slabel {
+      font-size: 4px;
+      color: rgba(0,255,0,0.25);
+      letter-spacing: 1px;
+      margin-bottom: 1px;
+    }
+
+    .irow {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 5px;
+      color: rgba(0,255,0,0.45);
+    }
+    .irow .v { color: #00ff00; white-space: nowrap; }
+    .irow .g { color: #00ff88; white-space: nowrap; }
+    .irow .y { color: #ffcc00; white-space: nowrap; }
+
+    .pbar-wrap {
+      height: 3px;
+      background: rgba(0,255,0,0.08);
+      border: 1px solid rgba(0,255,0,0.18);
+      margin: 1px 0;
+    }
+    .pbar-fill { height: 100%; transition: width 0.9s ease, background 0.3s; }
+
+    .badge {
+      font-size: 4.5px;
+      padding: 2px 4px;
+      border: 1px solid;
+      letter-spacing: 0.3px;
+    }
+    .badge-ok { color: #00ff88; border-color: #00ff88; background: rgba(0,255,136,0.07); }
+
+    .hcard-footer {
+      background: rgba(0,255,0,0.03);
+      border-top: 1px solid rgba(0,255,0,0.1);
+      padding: 2px 8px;
+      font-size: 4px;
+      color: rgba(0,255,0,0.22);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+
+<h1>▶ VISITOR BADGE — HORIZONTAL SAMPLE</h1>
+
+<div class="hcard">
+  <div class="hcard-titlebar">
+    <span>[ VISITOR.ID ]</span>
+    <div class="tb-right">
+      <span>LVL1</span>
+      <div class="card-dot"></div>
+    </div>
+  </div>
+
+  <div class="hcard-body">
+
+    <!-- AVATAR -->
+    <div class="hcol" style="padding:5px 6px;">
+      <canvas id="c1" width="114" height="60"
+        style="width:82px;height:43px;display:block;border:1px solid rgba(0,255,0,0.18)"></canvas>
+    </div>
+
+    <div class="vdiv"></div>
+
+    <!-- IDENTITY -->
+    <div class="hcol" style="width:76px;">
+      <div class="slabel">── IDENTITY ──</div>
+      <div class="irow"><span>NAME</span><span class="v" id="v-name">UNKNOWN</span></div>
+      <div class="irow"><span>ID</span><span class="v" id="v-id">VIS-###</span></div>
+      <div class="irow"><span>ROLE</span><span class="v" id="v-role">OBSERVER</span></div>
+      <div class="irow"><span>CLR</span><span class="g" id="v-clr">GUEST</span></div>
+    </div>
+
+    <div class="vdiv"></div>
+
+    <!-- ACCESS LOG -->
+    <div class="hcol" style="width:76px;">
+      <div class="slabel">── ACCESS LOG ──</div>
+      <div class="irow"><span>ENTRY</span><span class="v" id="v-entry">--:--:--</span></div>
+      <div class="irow"><span>SESSION</span><span class="y" id="v-sess">00:00:00</span></div>
+      <div class="irow"><span>STATUS</span><span class="g" id="v-status">● ACTIVE</span></div>
+    </div>
+
+    <div class="vdiv"></div>
+
+    <!-- BARCODE + AUTH -->
+    <div class="hcol flex1" style="gap:4px;">
+      <canvas id="bc1" width="114" height="20"
+        style="width:100%;height:13px;display:block;"></canvas>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="badge badge-ok" id="v-auth">● AUTH</span>
+        <canvas id="holo1" width="24" height="24" style="width:17px;height:17px;"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="hcard-footer">
+    <span>SET PROJECT</span>
+    <span id="v-now">2026.01.01</span>
+  </div>
+</div>
+
+<script>
+setTimeout(() => {
+
+// ── BUST ──────────────────────────────────────────────────
+(function(){
+  const c = document.getElementById('c1');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let tick = 0;
+
+  const S = 0.40;
+  const hcx = W / 2, hcy = 27;
+  const BOT = (H - hcy) / S;
+
+  const bc = document.getElementById('bc1');
+  const bctx = bc.getContext('2d');
+  const BW = bc.width, BH = bc.height;
+  const bars = Array.from({length: 50}, () => ({
+    w: Math.random() > 0.55 ? 2 : 1,
+    h: BH * (0.5 + Math.random()*0.5)
+  }));
+
+  const holo = document.getElementById('holo1');
+  const hctx = holo.getContext('2d');
+  const HS = holo.width;
+
+  const particles = Array.from({length: 22}, () => {
+    const a = Math.random() * Math.PI * 2;
+    return { r: 12+Math.random()*18, a, spd:(Math.random()-0.5)*0.014,
+             sz:0.4+Math.random()*0.8, lf:Math.random(), lit:Math.cos(a)>0 };
+  });
+
+  function headPath() {
+    ctx.beginPath();
+    ctx.moveTo(0,42); ctx.bezierCurveTo(-24,36,-30,14,-27,-6);
+    ctx.bezierCurveTo(-25,-22,-16,-34,-10,-38);
+    ctx.bezierCurveTo(-4,-41,4,-41,10,-38);
+    ctx.bezierCurveTo(16,-34,25,-22,27,-6);
+    ctx.bezierCurveTo(30,14,24,36,0,42); ctx.closePath();
+  }
+  function hairPath() {
+    ctx.beginPath();
+    ctx.moveTo(-24,-12); ctx.bezierCurveTo(-29,-40,-15,-58,0,-61);
+    ctx.bezierCurveTo(15,-58,29,-40,24,-12);
+    ctx.bezierCurveTo(18,-38,6,-47,0,-47);
+    ctx.bezierCurveTo(-6,-47,-18,-38,-24,-12); ctx.closePath();
+  }
+
+  function drawBust(pulse) {
+    ctx.save();
+    ctx.translate(hcx, hcy); ctx.scale(S, S);
+
+    ctx.shadowColor='#00ff00'; ctx.shadowBlur=8;
+    ctx.fillStyle='rgba(0,20,0,1)'; hairPath(); ctx.fill();
+    ctx.save(); hairPath(); ctx.clip();
+    const hl=ctx.createRadialGradient(14,-48,0,14,-48,36);
+    hl.addColorStop(0,'rgba(0,110,25,0.65)'); hl.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=hl; ctx.fillRect(-8,-68,55,62); ctx.restore();
+
+    ctx.shadowBlur=12; ctx.fillStyle='rgba(0,18,0,0.98)'; headPath(); ctx.fill();
+
+    ctx.save(); headPath(); ctx.clip();
+    const ml=ctx.createRadialGradient(20,-25,0,20,-25,72);
+    ml.addColorStop(0,'rgba(0,170,42,0.85)'); ml.addColorStop(0.28,'rgba(0,110,24,0.55)');
+    ml.addColorStop(0.58,'rgba(0,50,10,0.22)'); ml.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ml; ctx.fillRect(-35,-52,80,105); ctx.restore();
+
+    ctx.save(); headPath(); ctx.clip();
+    const rl=ctx.createLinearGradient(-32,0,-8,0);
+    rl.addColorStop(0,`rgba(0,255,90,${0.52*pulse})`);
+    rl.addColorStop(0.45,'rgba(0,160,40,0.18)'); rl.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=rl; ctx.fillRect(-36,-52,30,105); ctx.restore();
+
+    ctx.save(); headPath(); ctx.clip();
+    const sp=ctx.createRadialGradient(11,-27,0,11,-27,20);
+    sp.addColorStop(0,`rgba(120,255,150,${0.3*pulse})`);
+    sp.addColorStop(0.5,'rgba(40,180,60,0.12)'); sp.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=sp; ctx.fillRect(-5,-52,48,38); ctx.restore();
+
+    ctx.save(); headPath(); ctx.clip();
+    const cs=ctx.createLinearGradient(0,28,0,44);
+    cs.addColorStop(0,'rgba(0,0,0,0)'); cs.addColorStop(1,'rgba(0,0,0,0.55)');
+    ctx.fillStyle=cs; ctx.fillRect(-35,24,70,24); ctx.restore();
+
+    ctx.shadowBlur=4; ctx.strokeStyle='rgba(0,100,25,0.38)'; ctx.lineWidth=1.2;
+    headPath(); ctx.stroke();
+    ctx.shadowBlur=10; ctx.strokeStyle=`rgba(0,255,80,${0.65*pulse})`; ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(10,-38); ctx.bezierCurveTo(16,-34,25,-22,27,-6);
+    ctx.bezierCurveTo(30,14,24,36,0,42); ctx.stroke();
+
+    ctx.lineCap='round'; ctx.shadowBlur=6;
+    ctx.strokeStyle=`rgba(0,240,65,${0.72*pulse})`; ctx.lineWidth=1.6;
+    ctx.beginPath(); ctx.moveTo(5,-18); ctx.quadraticCurveTo(13,-22,20,-17); ctx.stroke();
+    ctx.strokeStyle='rgba(0,140,35,0.45)'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(-20,-17); ctx.quadraticCurveTo(-13,-22,-5,-18); ctx.stroke();
+
+    ctx.shadowBlur=7; ctx.fillStyle='rgba(0,170,45,0.72)';
+    ctx.beginPath(); ctx.ellipse(-12,-9,5.5,3.8,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=14; ctx.fillStyle=`rgba(0,255,80,${0.92+Math.sin(tick*0.03)*0.06})`;
+    ctx.beginPath(); ctx.ellipse(12,-9,5.5,3.8,0,0,Math.PI*2); ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(190,255,215,0.65)';
+    ctx.beginPath(); ctx.ellipse(14,-11,1.6,1.1,-0.3,0,Math.PI*2); ctx.fill();
+
+    ctx.shadowBlur=2; ctx.strokeStyle='rgba(0,160,38,0.28)'; ctx.lineWidth=0.9;
+    ctx.beginPath(); ctx.moveTo(-1,-2); ctx.lineTo(-3,8);
+    ctx.bezierCurveTo(-3,12,3,12,3,8); ctx.lineTo(1,-2); ctx.stroke();
+
+    ctx.shadowBlur=5;
+    const ng=ctx.createLinearGradient(-13,0,13,0);
+    ng.addColorStop(0,'rgba(0,10,0,0.96)'); ng.addColorStop(0.65,'rgba(0,48,12,0.92)');
+    ng.addColorStop(1,'rgba(0,28,6,0.94)');
+    ctx.fillStyle=ng;
+    ctx.beginPath(); ctx.moveTo(-9,43); ctx.lineTo(9,43);
+    ctx.lineTo(12,62); ctx.lineTo(-12,62); ctx.closePath(); ctx.fill();
+
+    ctx.shadowBlur=10*pulse;
+    const shg=ctx.createLinearGradient(-78,0,78,0);
+    shg.addColorStop(0,'rgba(0,8,0,0.96)'); shg.addColorStop(0.42,'rgba(0,18,4,0.96)');
+    shg.addColorStop(0.62,'rgba(0,58,14,0.92)'); shg.addColorStop(1,'rgba(0,28,6,0.94)');
+    ctx.fillStyle=shg;
+    ctx.beginPath(); ctx.moveTo(-13,62); ctx.lineTo(13,62);
+    ctx.lineTo(78,BOT+2); ctx.lineTo(-78,BOT+2); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle=`rgba(0,255,80,${0.48*pulse})`; ctx.lineWidth=1.5; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.moveTo(13,62); ctx.bezierCurveTo(36,66,60,78,78,BOT+2); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawBarcode(t) {
+    bctx.fillStyle='#000'; bctx.fillRect(0,0,BW,BH);
+    let x=2;
+    bars.forEach(b => {
+      bctx.fillStyle = Math.random()>0.97 ? '#80ff80' : '#00ff00';
+      bctx.fillRect(x,(BH-b.h)/2,b.w,b.h);
+      x += b.w+1;
+    });
+    const sp=((t*0.7)%(BW+10))-5;
+    const sg=bctx.createLinearGradient(sp-4,0,sp+4,0);
+    sg.addColorStop(0,'rgba(0,255,0,0)'); sg.addColorStop(0.5,'rgba(0,255,0,0.6)'); sg.addColorStop(1,'rgba(0,255,0,0)');
+    bctx.fillStyle=sg; bctx.fillRect(sp-4,0,8,BH);
+  }
+
+  function drawHolo(t) {
+    hctx.clearRect(0,0,HS,HS);
+    const cx=HS/2,cy=HS/2,r=HS/2-2,shift=(t*0.02)%1;
+    const g=hctx.createRadialGradient(cx,cy,0,cx,cy,r);
+    g.addColorStop((0+shift)%1,'rgba(57,220,120,0.6)');
+    g.addColorStop((0.33+shift)%1,'rgba(80,120,255,0.5)');
+    g.addColorStop((0.66+shift)%1,'rgba(200,0,255,0.5)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    hctx.fillStyle=g; hctx.beginPath(); hctx.arc(cx,cy,r,0,Math.PI*2); hctx.fill();
+    hctx.strokeStyle='rgba(57,220,120,0.5)'; hctx.lineWidth=0.8;
+    hctx.beginPath(); hctx.arc(cx,cy,r,0,Math.PI*2); hctx.stroke();
+  }
+
+  function draw() {
+    ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.fillRect(0,0,W,H);
+    const pulse=0.9+Math.sin(tick*0.035)*0.1;
+
+    particles.forEach(p => {
+      p.a+=p.spd; p.lf=(p.lf+0.008)%1;
+      const px=hcx+Math.cos(p.a)*p.r, py=hcy+Math.sin(p.a)*p.r*0.52;
+      const al=Math.sin(p.lf*Math.PI)*(p.lit?0.65:0.28);
+      ctx.save(); ctx.shadowColor='#00ff00'; ctx.shadowBlur=p.lit?4:1;
+      ctx.fillStyle=`rgba(0,${p.lit?255:150},${p.lit?80:40},${al})`;
+      ctx.beginPath(); ctx.arc(px,py,p.sz*(p.lit?1:0.65),0,Math.PI*2); ctx.fill(); ctx.restore();
+    });
+
+    drawBust(pulse);
+
+    ctx.fillStyle='rgba(0,0,0,0.09)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+
+    const sy=(tick*1.4)%(H+8)-4;
+    const sw=ctx.createLinearGradient(0,sy-4,0,sy+4);
+    sw.addColorStop(0,'rgba(0,255,0,0)'); sw.addColorStop(0.5,'rgba(0,255,0,0.09)'); sw.addColorStop(1,'rgba(0,255,0,0)');
+    ctx.fillStyle=sw; ctx.fillRect(0,sy-4,W,8);
+
+    const bk=6;
+    ctx.strokeStyle='rgba(0,255,0,0.55)'; ctx.lineWidth=1.2;
+    [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,sx,sy2])=>{
+      ctx.beginPath(); ctx.moveTo(x+sx*bk,y); ctx.lineTo(x,y); ctx.lineTo(x,y+sy2*bk); ctx.stroke();
+    });
+
+    ctx.font="4px 'Press Start 2P',monospace";
+    ctx.fillStyle=tick%30<20?'#00ff00':'#003300';
+    ctx.textAlign='left'; ctx.fillText('SCAN',3,H-3);
+
+    drawBarcode(tick); drawHolo(tick); tick++;
+  }
+
+  const now=new Date(), pad=n=>String(n).padStart(2,'0');
+  document.getElementById('v-entry').textContent=now.toTimeString().slice(0,8);
+  document.getElementById('v-now').textContent=`${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())}`;
+
+  let sec=0;
+  setInterval(()=>{ sec++; document.getElementById('v-sess').textContent=
+    `${pad(Math.floor(sec/3600))}:${pad(Math.floor((sec%3600)/60))}:${pad(sec%60)}`; },1000);
+
+  setInterval(draw,40);
+})();
+
+// ── DYNAMIC DATA ──────────────────────────────────────────
+(function(){
+  const CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?><';
+  const rnd=()=>CHARS[Math.floor(Math.random()*CHARS.length)];
+  const rndStr=n=>Array.from({length:n},rnd).join('');
+
+  function glitch(el,finalVal,rounds,interval,finalColor){
+    let i=0; const orig=el.style.color;
+    const t=setInterval(()=>{
+      el.textContent=rndStr(finalVal.length); el.style.color='#80ff80'; i++;
+      if(i>=rounds){ clearInterval(t); el.textContent=finalVal;
+        el.style.color=finalColor||orig; }
+    },interval);
+  }
+
+  setInterval(()=>{ glitch(document.getElementById('v-name'),'UNKNOWN',6,60); },4700);
+
+  const idSuf=['###','4A2','F91','C0D','E38']; let idIdx=0;
+  setInterval(()=>{ idIdx=(idIdx+1)%idSuf.length;
+    glitch(document.getElementById('v-id'),`VIS-${idSuf[idIdx]}`,8,50); },3200);
+
+  const roles=['OBSERVER','VISITOR','UNKNOWN','ANALYST']; let rIdx=0;
+  setInterval(()=>{ rIdx=(rIdx+1)%roles.length;
+    glitch(document.getElementById('v-role'),roles[rIdx],7,55); },5800);
+
+  const clrEl=document.getElementById('v-clr'); let clrB=true;
+  setInterval(()=>{ clrB=!clrB; clrEl.style.color=clrB?'#00ff88':'rgba(0,255,136,0.3)'; },900);
+
+  const stEl=document.getElementById('v-status');
+  setInterval(()=>{
+    if(window._anomalyActive) return;
+    stEl.textContent='◌ SCAN'; stEl.style.color='#ffff00';
+    setTimeout(()=>{ if(window._anomalyActive) return;
+      stEl.textContent='● ACTIVE'; stEl.style.color='#00ff88'; },800);
+  },4800);
+
+  const depts=['WORLD-01','KR-09-A','NODE-77','WORLD-01']; let dIdx=0;
+  setInterval(()=>{ dIdx=(dIdx+1)%depts.length;
+    glitch(document.getElementById('v-dept'),depts[dIdx],5,60); },6500);
+
+  const authEl=document.getElementById('v-auth');
+  setInterval(()=>{
+    if(window._anomalyActive) return;
+    authEl.textContent='◌ VRF'; authEl.style.color='#ffff00'; authEl.style.borderColor='#ffff00';
+    setTimeout(()=>{ if(window._anomalyActive) return;
+      authEl.textContent='● AUTH'; authEl.style.color='#00ff88'; authEl.style.borderColor='#00ff88'; },1100);
+  },7200);
+
+  const bcodes=['4E5C · A92D','F3A1 · B04E','9C2F · D17B']; let bIdx=0;
+  setInterval(()=>{ bIdx=(bIdx+1)%bcodes.length;
+    glitch(document.getElementById('v-bcode'),bcodes[bIdx]+' · VIS · 2026',5,55); },5200);
+})();
+
+// ── SYS MONITOR ──────────────────────────────────────────
+(function(){
+  window._anomalyActive=false;
+  const stEl=document.getElementById('v-status');
+  const authEl=document.getElementById('v-auth');
+
+  function triggerAnomaly(){
+    window._anomalyActive=true;
+    stEl.textContent='⚠ ANOMALY'; stEl.style.color='#ff4444';
+    authEl.textContent='◌ VRF'; authEl.style.color='#ffff00'; authEl.style.borderColor='#ffff00';
+    setTimeout(()=>{
+      stEl.textContent='● ACTIVE'; stEl.style.color='#00ff88';
+      authEl.textContent='● AUTH'; authEl.style.color='#00ff88'; authEl.style.borderColor='#00ff88';
+      window._anomalyActive=false;
+    }, 2800+Math.random()*1000);
+  }
+
+  setInterval(()=>{ if(!window._anomalyActive && Math.random()<0.007) triggerAnomaly(); },550);
+})();
+
+},100);
+</script>
+</body>
+</html>

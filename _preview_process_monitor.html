@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Process Monitor Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #39dc00;
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* 배경 터미널 시뮬레이션 */
+    .bg-terminal {
+      position: fixed;
+      inset: 0;
+      padding: 24px;
+      opacity: 0.25;
+      font-size: 11px;
+      line-height: 1.8;
+      overflow: hidden;
+      color: #39dc00;
+    }
+
+    /* 플로팅 프로세스 모니터 창 */
+    .pm-window {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      width: 320px;
+      background: #000;
+      border-top: 2px solid #7fff4f;
+      border-left: 2px solid #7fff4f;
+      border-bottom: 2px solid #1a5500;
+      border-right: 2px solid #1a5500;
+      box-shadow: 0 0 24px rgba(57,220,0,0.18);
+      z-index: 100;
+      user-select: none;
+    }
+
+    .pm-titlebar {
+      background: #39dc00;
+      color: #000;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      letter-spacing: 1px;
+    }
+
+    .pm-titlebar-btns {
+      display: flex;
+      gap: 3px;
+    }
+
+    .pm-btn {
+      width: 14px;
+      height: 14px;
+      background: #000;
+      border: 1px solid #000;
+      color: #39dc00;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .pm-menubar {
+      border-bottom: 1px solid #39dc00;
+      padding: 3px 8px;
+      font-size: 10px;
+      display: flex;
+      gap: 14px;
+      color: #39dc00;
+      opacity: 0.7;
+    }
+
+    .pm-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      padding: 4px 10px;
+      font-size: 9px;
+      color: #39dc00;
+      border-bottom: 1px solid #1a5500;
+      opacity: 0.6;
+      letter-spacing: 0.5px;
+    }
+
+    .pm-body {
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .pm-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      padding: 5px 10px;
+      font-size: 10px;
+      border-bottom: 1px dashed #0d2e00;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .pm-row:hover {
+      background: rgba(57,220,0,0.08);
+    }
+
+    .pm-row.active-row {
+      background: rgba(57,220,0,0.12);
+    }
+
+    .pm-row .proc-name {
+      color: #e0e0e0;
+      font-weight: bold;
+    }
+
+    .pm-row .proc-name.running {
+      color: #39dc00;
+    }
+
+    .pm-row .proc-name.suspended {
+      color: #555;
+    }
+
+    .pm-row .proc-pid {
+      color: #888;
+      font-size: 9px;
+    }
+
+    .pm-row .proc-cpu {
+      color: #ffb000;
+      font-size: 10px;
+    }
+
+    .pm-row .proc-status {
+      font-size: 9px;
+    }
+
+    .status-running { color: #39dc00; }
+    .status-suspended { color: #555; }
+    .status-standby { color: #ffb000; }
+
+    .pm-statusbar {
+      border-top: 1px solid #39dc00;
+      padding: 5px 10px;
+      font-size: 9px;
+      display: flex;
+      justify-content: space-between;
+      color: #39dc00;
+      opacity: 0.7;
+    }
+
+    /* CPU 바 */
+    .cpu-bar-wrap {
+      width: 36px;
+      height: 8px;
+      border: 1px solid #39dc00;
+      background: #000;
+      display: inline-block;
+      vertical-align: middle;
+      overflow: hidden;
+    }
+    .cpu-bar-fill {
+      height: 100%;
+      background: #39dc00;
+      transition: width 0.8s;
+    }
+
+    /* 스크롤바 */
+    .pm-body::-webkit-scrollbar { width: 6px; }
+    .pm-body::-webkit-scrollbar-track { background: #000; border-left: 1px solid #1a5500; }
+    .pm-body::-webkit-scrollbar-thumb { background: #39dc00; }
+
+    /* 깜빡이는 커서 */
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .blink { animation: blink 1s infinite; }
+
+    /* 애니메이션 */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pm-window { animation: slideUp 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <!-- 배경 터미널 텍스트 -->
+  <div class="bg-terminal">
+    Instructions, coerced body, suspended gaze. Archiving the structure of photography by halting reproduction.<br><br>
+    Set is the world. I'm measuring the perimeter of the set.<br>
+    But the scale I hold is already contaminated by the world itself.<br><br>
+    [00:00:01.004] INITIATING SYSTEM KERNEL v.1.4.0 (MASTERPIECE_V2)<br>
+    [00:00:01.089] MOUNTING VIRTUAL ARCHIVE: /DEV/WORLD_ARCHIVE... SUCCESS<br>
+    [00:00:01.201] ALLOCATING MEMORY FOR CONCEPTUAL FRAMEWORK...<br>
+    [00:00:01.404] [WARN] 0x7F8C: MEMORY_OVERFLOW. CONCEPT EXCEEDS PHYSICAL BOUNDARIES.<br>
+    [00:00:01.890] INITIALIZING PERIMETER_SCAN.EXE --TARGET="SET"<br>
+    [00:00:02.100] SCANNING SPATIAL COORDINATES... 12%... 45%... 94.2%...<br>
+    [00:00:02.405] [FATAL] BOUNDARY_COLLISION AT SECTOR 4. OVERLAP DETECTED.<br>
+    [00:00:02.550] DIAGNOSTIC LOG: SCALE_CONTAMINATED.<br>
+    [00:00:03.000] RE-CALIBRATING OBSERVER PROTOCOL...<br>
+    [00:00:03.112] STATUS: WE ARE NOT THE OBSERVER. WE ARE THE OBSERVED.<br>
+  </div>
+
+  <!-- 프로세스 모니터 창 -->
+  <div class="pm-window" id="pmWindow">
+    <div class="pm-titlebar" id="pmTitlebar">
+      <span>TASK MANAGER — SET.EXE</span>
+      <div class="pm-titlebar-btns">
+        <div class="pm-btn">_</div>
+        <div class="pm-btn">□</div>
+        <div class="pm-btn" onclick="document.getElementById('pmWindow').style.display='none'">✕</div>
+      </div>
+    </div>
+
+    <div class="pm-menubar">
+      <span>File</span><span>Options</span><span>View</span><span>Help</span>
+    </div>
+
+    <div class="pm-header">
+      <span>Process</span>
+      <span>PID</span>
+      <span>CPU</span>
+      <span>Status</span>
+    </div>
+
+    <div class="pm-body">
+      <div class="pm-row active-row">
+        <span class="proc-name running">SET.EXE</span>
+        <span class="proc-pid">0x001</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:72%"></span></span>
+        </span>
+        <span class="proc-status status-running">RUNNING</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name running">INCLUSION.EXE</span>
+        <span class="proc-pid">0x002</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:38%"></span></span>
+        </span>
+        <span class="proc-status status-running">RUNNING</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name running">LOG.DLL</span>
+        <span class="proc-pid">0x003</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:15%"></span></span>
+        </span>
+        <span class="proc-status status-running">RUNNING</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name standby">REFERENCE.SYS</span>
+        <span class="proc-pid">0x004</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:5%;background:#ffb000"></span></span>
+        </span>
+        <span class="proc-status status-standby">STANDBY</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name running">MEASURE.EXE</span>
+        <span class="proc-pid">0x005</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:91%"></span></span>
+        </span>
+        <span class="proc-status status-running">RUNNING</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name suspended">ARCHIVE.DLL</span>
+        <span class="proc-pid">0x006</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:0%"></span></span>
+        </span>
+        <span class="proc-status status-suspended">SUSPENDED</span>
+      </div>
+      <div class="pm-row">
+        <span class="proc-name suspended">ABOUT.TXT</span>
+        <span class="proc-pid">0x007</span>
+        <span class="proc-cpu">
+          <span class="cpu-bar-wrap"><span class="cpu-bar-fill" style="width:0%"></span></span>
+        </span>
+        <span class="proc-status status-suspended">NOT FOUND</span>
+      </div>
+    </div>
+
+    <div class="pm-statusbar">
+      <span>Processes: 7</span>
+      <span>CPU: <span id="totalCpu">42</span>%</span>
+      <span>MEM: 64.2 MB <span class="blink">█</span></span>
+    </div>
+  </div>
+
+  <script>
+    // 드래그
+    const win = document.getElementById('pmWindow');
+    const bar = document.getElementById('pmTitlebar');
+    let dragging = false, ox = 0, oy = 0;
+
+    bar.addEventListener('mousedown', e => {
+      dragging = true;
+      const r = win.getBoundingClientRect();
+      ox = e.clientX - r.left;
+      oy = e.clientY - r.top;
+      win.style.bottom = 'auto';
+      win.style.right = 'auto';
+    });
+    document.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      win.style.left = (e.clientX - ox) + 'px';
+      win.style.top  = (e.clientY - oy) + 'px';
+    });
+    document.addEventListener('mouseup', () => dragging = false);
+
+    // CPU 바 랜덤 변동 애니메이션
+    const rows = document.querySelectorAll('.pm-row');
+    const targets = [72, 38, 15, 5, 91, 0, 0];
+    function animateCpu() {
+      rows.forEach((row, i) => {
+        const bar = row.querySelector('.cpu-bar-fill');
+        if (!bar || targets[i] === 0) return;
+        const delta = (Math.random() - 0.5) * 14;
+        const newVal = Math.max(2, Math.min(99, targets[i] + delta));
+        bar.style.width = newVal + '%';
+      });
+      document.getElementById('totalCpu').textContent = Math.floor(35 + Math.random() * 20);
+    }
+    setInterval(animateCpu, 1200);
+  </script>
+</body>
+</html>

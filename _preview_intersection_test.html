@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Intersection — Outside Test</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #39dc00;
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 배경 텍스트 */
+    .bg {
+      position: fixed; inset: 0;
+      font-size: 10px; line-height: 1.8;
+      color: #39dc00; opacity: 0.07;
+      padding: 20px; overflow: hidden;
+      pointer-events: none; word-break: break-all;
+    }
+
+    /* ── 메인 포트폴리오 창 (mock) ── */
+    .main-window {
+      width: 680px;
+      height: 520px;
+      background: #000;
+      border-top: 2px solid #7fff4f;
+      border-left: 2px solid #7fff4f;
+      border-bottom: 2px solid #1a5500;
+      border-right: 2px solid #1a5500;
+      box-shadow: 0 0 30px rgba(57,220,0,0.12);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .main-titlebar {
+      background: #39dc00;
+      color: #000;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .main-nav {
+      border-bottom: 1px solid #1a5500;
+      padding: 5px 12px;
+      font-size: 9px;
+      color: #555;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .main-nav .nav-sep { color: #1a5500; }
+    .main-nav .nav-frame { color: #39dc00; font-weight: bold; }
+
+    .main-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* 사진 영역 */
+    .photo-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid #0d2e00;
+      padding: 16px;
+      background: #020202;
+    }
+
+    .photo-frame {
+      border: 1px solid #1a5500;
+      width: 320px;
+      height: 380px;
+      overflow: hidden;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-frame svg {
+      width: 100%; height: 100%;
+    }
+
+    /* 사이드 정보 */
+    .photo-info {
+      width: 180px;
+      flex-shrink: 0;
+      padding: 14px;
+      font-size: 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .info-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .info-label { color: #2a5500; font-size: 8px; letter-spacing: 1px; }
+    .info-value { color: #39dc00; font-weight: bold; font-size: 10px; }
+    .info-value.amber { color: #ffb000; }
+
+    .info-divider { height: 1px; background: #0d2e00; }
+
+    .info-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .kw-tag {
+      border: 1px solid #1a5500;
+      color: #2a5500;
+      font-size: 8px;
+      padding: 1px 5px;
+    }
+
+    .main-statusbar {
+      border-top: 1px solid #0d2e00;
+      padding: 5px 12px;
+      font-size: 8px;
+      display: flex;
+      justify-content: space-between;
+      color: #2a5500;
+      flex-shrink: 0;
+    }
+
+    /* ── 교집합 플로팅 창 (메인 창 바깥 고정) ── */
+    .ix-float {
+      position: fixed;
+      top: 140px;
+      left: 16px; /* JS로 덮어씀 */
+      width: 196px;
+      background: #000;
+      border-top: 2px solid #7fff4f;
+      border-left: 2px solid #7fff4f;
+      border-bottom: 2px solid #1a5500;
+      border-right: 2px solid #1a5500;
+      box-shadow: 0 0 18px rgba(57,220,0,0.18), 0 0 40px rgba(255,176,0,0.04);
+      z-index: 200;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .ix-float.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .ix-titlebar {
+      background: #39dc00;
+      color: #000;
+      padding: 4px 8px;
+      font-size: 9px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ix-btns { display: flex; gap: 2px; }
+    .ix-btn {
+      width: 11px; height: 11px;
+      background: #39dc00; border: 1px solid #000;
+      color: #000; font-size: 7px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    .ix-body { padding: 7px; }
+
+    /* 단일 매칭 사진 */
+    .ix-match {
+      position: relative;
+      border: 1px solid #ffb000;
+      overflow: hidden;
+      background: #050505;
+      margin-bottom: 6px;
+      transition: opacity 0.4s;
+    }
+
+    .ix-match img {
+      width: 100%; height: auto;
+      display: block;
+      opacity: 0.88;
+    }
+
+    .ix-match .ix-lbl {
+      position: absolute;
+      top: 4px; left: 4px;
+      font-size: 7px; font-weight: bold;
+      color: #000; background: #ffb000;
+      padding: 1px 5px; letter-spacing: 0.5px;
+    }
+
+    .ix-match .ix-name {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.82);
+      color: #ffb000;
+      font-size: 7px;
+      padding: 3px 5px;
+    }
+
+    /* 공유 코드 태그들 */
+    .ix-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 2px 0 4px;
+    }
+
+    .ix-tag {
+      color: #ffb000;
+      border: 1px solid #5a3800;
+      font-size: 7px;
+      padding: 1px 5px;
+      letter-spacing: 0.5px;
+    }
+
+    .ix-tag-label {
+      font-size: 7px;
+      color: #333;
+      margin-bottom: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    /* 진행바 */
+    .ix-progress { height: 2px; background: #0d2e00; }
+    .ix-progress-fill {
+      height: 100%;
+      background: #39dc00;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    .ix-statusbar {
+      border-top: 1px solid #0d2e00;
+      padding: 3px 8px;
+      font-size: 7px;
+      display: flex;
+      justify-content: space-between;
+      color: #1e5500;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .blink { animation: blink 1s infinite; color: #ffb000; }
+
+    /* 열기 버튼 */
+    .open-btn {
+      background: #000;
+      border-top: 2px solid #7fff4f;
+      border-left: 2px solid #7fff4f;
+      border-bottom: 2px solid #1a5500;
+      border-right: 2px solid #1a5500;
+      color: #39dc00;
+      padding: 6px 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+    .open-btn:hover { background: #39dc00; color: #000; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg">
+CRASH WALL ISOLATION VANISH REFLECT SKINREP OVERLAP SURFACE DECAY STRUCTURE DUPLICATE OVERLAY BLOOM FACBLK OBJREP MIRROR ZERO SKELETON ARCHIVE MEASURE BOUNDARY OBSERVER COERCED GAZE SUSPENDED SCALE CONTAMINATED STRATA AEROFIT DSCF VERDICT FRAME NOTE LOG INCLUSION SET WORLD PERIMETER
+</div>
+
+<!-- 메인 포트폴리오 창 (mock) -->
+<div class="main-window">
+  <div class="main-titlebar">
+    <span>Project SET › 2025.01 › 01.16</span>
+    <div style="display:flex;gap:4px;">
+      <span onclick="toggleIx()" style="background:#000;border:1px solid #39dc00;color:#39dc00;padding:2px 8px;font-size:8px;cursor:pointer;letter-spacing:1px;" title="교집합 창 열기">∩ IX</span>
+      <span>✕</span>
+    </div>
+  </div>
+  <div class="main-nav">
+    <span>← GRID</span>
+    <span class="nav-sep">│</span>
+    <span class="nav-frame">DSCF6302</span>
+    <span class="nav-sep" style="margin-left:auto;">2 / 188</span>
+  </div>
+
+  <div class="main-body">
+    <!-- 사진 -->
+    <div class="photo-area">
+      <div class="photo-frame">
+        <svg viewBox="0 0 320 380" xmlns="http://www.w3.org/2000/svg">
+          <rect width="320" height="380" fill="#060606"/>
+          <!-- 하늘 -->
+          <rect x="0" y="0" width="320" height="140" fill="#0a0f0a"/>
+          <!-- 산/숲 실루엣 -->
+          <polygon points="0,140 40,90 80,110 130,70 180,95 220,80 270,100 320,85 320,140" fill="#0d1a0d"/>
+          <!-- 안개 -->
+          <rect x="0" y="100" width="320" height="60" fill="#080f08" opacity="0.5"/>
+          <!-- 수면 -->
+          <rect x="0" y="200" width="320" height="180" fill="#060c06"/>
+          <line x1="0" y1="210" x2="320" y2="210" stroke="#1a3a1a" stroke-width="0.5" opacity="0.5"/>
+          <line x1="0" y1="230" x2="320" y2="230" stroke="#1a3a1a" stroke-width="0.3" opacity="0.4"/>
+          <!-- 지평선 -->
+          <rect x="0" y="195" width="320" height="10" fill="#0a150a"/>
+          <!-- 빛 반사 -->
+          <line x1="140" y1="200" x2="130" y2="380" stroke="#2a5500" stroke-width="1" opacity="0.2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 정보 패널 -->
+    <div class="photo-info">
+      <div class="info-row">
+        <div class="info-label">VERDICT</div>
+        <div class="info-value amber">SUP</div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-label">FRAME</div>
+        <div class="info-value">DSCF6302</div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-label">DATE</div>
+        <div class="info-value" style="font-size:9px;font-weight:normal;">2025.01.16</div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-row">
+        <div class="info-label">KEYWORDS</div>
+        <div class="info-keywords">
+          <span class="kw-tag">surface</span>
+          <span class="kw-tag">depth</span>
+          <span class="kw-tag">reflection</span>
+          <span class="kw-tag">isolation</span>
+          <span class="kw-tag">float</span>
+        </div>
+      </div>
+      <div class="info-divider"></div>
+      <div style="margin-top:auto;">
+        <button class="open-btn" onclick="toggleIx()" style="width:100%;font-size:8px;padding:5px;">
+          ∩ 교집합 보기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-statusbar">
+    <span>6 Files</span>
+    <span>SELECT FILE</span>
+    <span>NEXT ›</span>
+  </div>
+</div>
+
+<!-- 교집합 플로팅 창 (메인 창 바깥, 왼쪽) -->
+<div class="ix-float" id="ixFloat">
+  <div class="ix-titlebar">
+    <span>∩ MATCHED</span>
+    <div class="ix-btns">
+      <div class="ix-btn">_</div>
+      <div class="ix-btn" onclick="closeIx()">✕</div>
+    </div>
+  </div>
+
+  <div class="ix-body">
+    <!-- Inclusion 매칭 사진 단독 -->
+    <div class="ix-match" id="ixMatch">
+      <img id="ixImg" src="" alt="">
+      <div class="ix-lbl">INCLUSION</div>
+      <div class="ix-name" id="ixTitle">—</div>
+    </div>
+
+    <!-- 공유 코드 -->
+    <div class="ix-tag-label">SHARED CODES</div>
+    <div class="ix-tags" id="ixTags"></div>
+  </div>
+
+  <div class="ix-progress">
+    <div class="ix-progress-fill" id="ixFill"></div>
+  </div>
+
+  <div class="ix-statusbar">
+    <span>IN INCLUSION</span>
+    <span id="ixIdx">1 / 4</span>
+    <span class="blink">█</span>
+  </div>
+</div>
+
+<script>
+  /* ── 교집합 데이터 — Inclusion 매칭 사진만 ── */
+  // orient: 'portrait' = 세로, 'landscape' = 가로
+  const pairs = [
+    { incl: 'INCL_S03', codes: ['surface', 'depth'],      inclClr:'#0d0800', orient:'portrait'  },
+    { incl: 'INCL_F07', codes: ['isolation', 'float'],    inclClr:'#0a0600', orient:'landscape' },
+    { incl: 'INCL_C01', codes: ['crash', 'wall'],         inclClr:'#100800', orient:'portrait'  },
+    { incl: 'INCL_SH2', codes: ['gaze', 'suspended'],     inclClr:'#0d0600', orient:'landscape' },
+  ];
+
+  // w, h로 비율 조정 가능 (세로사진: w=160 h=240, 가로사진: w=160 h=110)
+  function makeSvgIncl(clr, w, h) {
+    return `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'%3E%3Crect width='${w}' height='${h}' fill='${encodeURIComponent(clr)}'/%3E%3Crect x='12' y='12' width='${w-24}' height='${h-24}' fill='%230d0800' stroke='%23ffb000' stroke-width='0.5' opacity='0.35'/%3E%3Ccircle cx='${w/2}' cy='${h/2}' r='${Math.min(w,h)*0.18}' fill='%231a1000' stroke='%23ffb000' stroke-width='0.5' opacity='0.45'/%3E%3Cline x1='20' y1='${h/2}' x2='${w-20}' y2='${h/2}' stroke='%23ffb000' stroke-width='0.3' opacity='0.25'/%3E%3C/svg%3E`;
+  }
+
+  let cur = 0, prog = 0, timer = null;
+  const DUR = 3000;
+
+  function updateIxDOM(idx) {
+    const p = pairs[idx];
+    // 세로사진: 160×240, 가로사진: 160×107 (3:2 landscape)
+    const isPortrait = p.orient === 'portrait';
+    const w = 160, h = isPortrait ? 240 : 107;
+    document.getElementById('ixImg').src = makeSvgIncl(p.inclClr, w, h);
+    document.getElementById('ixTitle').textContent = p.incl;
+    document.getElementById('ixIdx').textContent = (idx + 1) + ' / ' + pairs.length;
+    const tagsEl = document.getElementById('ixTags');
+    tagsEl.innerHTML = p.codes.map(c => `<span class="ix-tag">${c}</span>`).join('');
+  }
+
+  function startCycle() {
+    clearInterval(timer);
+    prog = 0;
+    timer = setInterval(() => {
+      prog += 100 / (DUR / 100);
+      if (prog >= 100) {
+        prog = 0;
+        cur = (cur + 1) % pairs.length;
+        const match = document.getElementById('ixMatch');
+        match.style.opacity = '0';
+        setTimeout(() => { updateIxDOM(cur); match.style.opacity = '1'; }, 350);
+      }
+      document.getElementById('ixFill').style.width = prog + '%';
+    }, 100);
+  }
+
+  function stopCycle() { clearInterval(timer); timer = null; }
+
+  let ixOpen = false;
+
+  function toggleIx() {
+    if (ixOpen) { closeIx(); } else { openIx(); }
+  }
+
+  function openIx() {
+    ixOpen = true;
+    updateIxDOM(cur);
+    document.getElementById('ixFloat').classList.add('visible');
+    startCycle();
+  }
+
+  function closeIx() {
+    ixOpen = false;
+    document.getElementById('ixFloat').classList.remove('visible');
+    stopCycle();
+  }
+
+  // 교집합 창을 메인 창 왼쪽에 붙여서 위치 잡기
+  function positionIx() {
+    const main = document.querySelector('.main-window');
+    const ix = document.getElementById('ixFloat');
+    if (!main || !ix) return;
+    const r = main.getBoundingClientRect();
+    const ixW = ix.offsetWidth || 196;
+    const gap = 8;
+    const left = r.left - ixW - gap;
+    ix.style.left = Math.max(4, left) + 'px';
+    ix.style.top  = r.top + 'px';
+  }
+
+  window.addEventListener('resize', positionIx);
+
+  // 페이지 로드 시 0.8초 후 자동으로 열기 (데모용)
+  setTimeout(() => { positionIx(); openIx(); }, 800);
+</script>
+</body>
+</html>

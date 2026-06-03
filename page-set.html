@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — PROJECT SET</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g:   #00aa33;
+  --g2:  rgba(0,170,51,0.5);
+  --g3:  rgba(0,170,51,0.22);
+  --g4:  rgba(0,170,51,0.09);
+  --red: #cc2200;
+  --bg:  #010201;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  background:#000;
+  display:flex; justify-content:center;
+}
+
+/* ── pageWrap + CRT 효과 ── */
+#pageWrap {
+  width:1360px; max-width:100%; height:100vh;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  font-family:'Press Start 2P', monospace;
+  position:relative; overflow:hidden;
+}
+#pageWrap::before {
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(0,0,0,0.10) 2px, rgba(0,0,0,0.10) 4px
+  );
+}
+#pageWrap::after {
+  content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(ellipse 130% 110% at 50% 50%,
+    transparent 35%, rgba(0,0,0,0.60) 100%);
+}
+#pageWrap > * { position:relative; z-index:1; }
+
+/* ── CLASSIFICATION BAR ── */
+#classBar {
+  height:24px; flex-shrink:0;
+  background:#000;
+  border-bottom:1px solid rgba(204,34,0,0.4);
+  display:flex; align-items:stretch;
+}
+#clsLabel {
+  padding:0 14px; display:flex; align-items:center; flex-shrink:0;
+  background:var(--red); color:#fff;
+  font-size:7px; letter-spacing:2px; white-space:nowrap;
+}
+.cls-seg {
+  padding:0 12px; display:flex; align-items:center;
+  font-size:6px; letter-spacing:1px; color:rgba(204,34,0,0.45);
+  border-right:1px solid rgba(204,34,0,0.12); white-space:nowrap;
+}
+.cls-spacer { flex:1; }
+.cls-status {
+  padding:0 14px; display:flex; align-items:center;
+  font-size:6px; letter-spacing:1.5px; color:rgba(204,34,0,0.55);
+  white-space:nowrap;
+}
+
+/* ── FILE HEADER ── */
+#fileHeader {
+  height:44px; flex-shrink:0;
+  background:#000;
+  border-bottom:1px solid var(--g4);
+  display:flex; align-items:stretch;
+}
+#fhLeft {
+  padding:0 16px; flex-shrink:0;
+  border-right:1px solid var(--g4);
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+  min-width:220px;
+}
+#fhSubLabel {
+  font-size:6px; color:var(--g3); letter-spacing:2px;
+}
+#csOverlayTitle {
+  font-size:12px; color:var(--g); letter-spacing:3px;
+}
+#csWaveform {
+  flex:1; font-size:8px; color:var(--g4);
+  overflow:hidden; white-space:nowrap;
+  display:flex; align-items:center;
+  padding:0 10px; letter-spacing:0;
+}
+#fhRight {
+  flex-shrink:0; display:flex; align-items:stretch;
+  border-left:1px solid var(--g4);
+}
+#csTimestamp {
+  padding:0 14px; min-width:160px;
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+  border-right:1px solid var(--g4);
+}
+.ts-label { font-size:5px; color:var(--g3); letter-spacing:2px; }
+.ts-val   { font-size:8px; color:var(--g2); letter-spacing:1px; font-variant-numeric:tabular-nums; }
+#csLocalFolderLabel {
+  cursor:pointer; display:flex; align-items:center;
+  padding:0 14px; border-right:1px solid var(--g4);
+}
+#csLocalFolder { display:none; }
+#csLoadBtn {
+  font-family:'Press Start 2P',monospace; font-size:5px;
+  padding:4px 10px; border:1px solid var(--g3);
+  color:var(--g3); white-space:nowrap; cursor:pointer;
+  background:transparent; letter-spacing:1px; transition:border-color 0.12s,color 0.12s;
+}
+#csLoadBtn:hover { color:var(--g); border-color:var(--g2); }
+#csLoadStatus {
+  font-size:5px; color:var(--g3);
+  flex-shrink:0; padding:0 12px;
+  display:flex; align-items:center; letter-spacing:1px;
+}
+
+/* ── PATH BAR ── */
+#pathBar {
+  height:22px; flex-shrink:0;
+  background:#000; border-bottom:1px solid var(--g4);
+  display:flex; align-items:center; overflow:hidden;
+  padding:0 14px; gap:0;
+}
+.pb-seg {
+  font-size:6px; letter-spacing:1px; color:var(--g3);
+  white-space:nowrap; padding:0 8px;
+  border-right:1px solid var(--g4);
+}
+.pb-seg:first-child { padding-left:0; }
+.pb-seg.cur { color:var(--g2); }
+.pb-spacer { flex:1; }
+.pb-warn {
+  font-size:5px; letter-spacing:1px;
+  color:rgba(204,34,0,0.3); white-space:nowrap;
+}
+
+/* ── CONTENT ROW ── */
+#contentRow { flex:1; display:flex; overflow:hidden; min-height:0; }
+
+/* ── LEFT PANEL ── */
+#leftPanel {
+  width:340px; flex-shrink:0;
+  background:#000; border-right:1px solid var(--g4);
+  overflow-y:auto; overflow-x:hidden;
+  display:flex; flex-direction:column;
+  scrollbar-width:none;
+}
+#leftPanel::-webkit-scrollbar { display:none; }
+
+/* ── RIGHT PANEL ── */
+#rightPanel {
+  width:300px; flex-shrink:0;
+  background:#000; border-left:1px solid var(--g4);
+  overflow-y:auto; overflow-x:hidden;
+  display:flex; flex-direction:column;
+  scrollbar-width:none;
+}
+#rightPanel::-webkit-scrollbar { display:none; }
+
+/* ── PANEL 공통 ── */
+.p-sec { padding:12px 14px; }
+.p-hd {
+  font-size:7px; letter-spacing:1.5px; color:var(--g);
+  margin-bottom:8px; padding-bottom:6px;
+  border-bottom:1px solid var(--g4);
+}
+.p-div { height:1px; background:var(--g4); margin:0 14px; }
+.p-row { display:flex; gap:0; margin-bottom:7px; align-items:baseline; }
+.p-k {
+  font-size:7px; letter-spacing:0.5px; color:var(--g3);
+  flex-shrink:0; width:75px;
+}
+.p-v { font-size:7px; letter-spacing:0.5px; color:var(--g2); }
+
+/* ── 인덱스 항목 (도트 리더) ── */
+.lp-idx {
+  display:flex; align-items:baseline; padding:4px 0;
+  font-size:7px; letter-spacing:0.5px; cursor:pointer;
+  color:var(--g3); gap:4px;
+}
+.lp-idx:hover { color:var(--g2); }
+.lp-idx .lp-iname { flex-shrink:0; }
+.lp-idx .lp-idots {
+  flex:1; border-bottom:1px dotted var(--g4);
+  margin:0 4px; position:relative; top:-2px;
+}
+.lp-idx .lp-icnt { flex-shrink:0; color:var(--g3); }
+.lp-idx.sel { color:var(--g2); }
+/* JS 생성 구조 호환 */
+.lp-idx .arr { flex-shrink:0; color:var(--g4); }
+.lp-idx .cnt { margin-left:auto; flex-shrink:0; color:var(--g3); }
+
+/* ── 관련 케이스 ── */
+.lp-related {
+  font-size:7px; color:var(--g3); padding:3px 0;
+  border-bottom:1px solid var(--g4); letter-spacing:0.5px;
+}
+
+/* ── 우측 로그 ── */
+.rp-log { display:flex; gap:7px; margin-bottom:5px; align-items:baseline; font-size:7px; }
+.rp-log .tm { color:var(--g3); flex-shrink:0; }
+.rp-log .tx { color:var(--g2); line-height:1.6; }
+
+/* ── 갤러리 본문 ── */
+#csOverlayBody {
+  flex:1; overflow:hidden; min-height:0;
+  font-family:'DotGothic16', monospace;
+  background:var(--bg);
+}
+#csOverlayBody, #csOverlayBody * { font-family:'DotGothic16',monospace !important; text-shadow:none !important; }
+#csOverlayTitle { font-family:'Press Start 2P',monospace !important; }
+
+/* ── RECORD BAR ── */
+#csBotStats {
+  flex-shrink:0; background:#000;
+  border-top:1px solid var(--g4);
+  height:24px; display:flex; align-items:stretch;
+}
+#csBotStats span {
+  font-size:6px; font-family:'Press Start 2P',monospace;
+  color:var(--g3); letter-spacing:1px;
+  padding:0 12px; border-right:1px solid var(--g4);
+  display:flex; align-items:center;
+}
+#csBotStats .bs-spacer { flex:1; border:none; }
+#csBotStats .bs-sep { padding:0 5px; border:none; color:var(--g4); }
+#csStat4 { color:var(--g4) !important; font-size:5px !important; }
+
+/* ── MONITOR TAG ── */
+#monitorTag {
+  position:fixed; bottom:25px; right:0; z-index:200;
+  background:#000; border:1px solid var(--g4);
+  border-right:none; padding:5px 10px 5px 12px;
+  display:flex; flex-direction:column; gap:3px;
+}
+#monitorTag .mt-row {
+  font-size:6px; letter-spacing:1px;
+  color:var(--g3); font-family:'Press Start 2P',monospace;
+}
+
+/* ── RECORD COUNT 숨김 span (JS 호환) ── */
+#rpProgBar, #rpProgPct, #rpFlagBar, #rpFlagged { display:none; }
+
+/* no-scrollbar */
+.no-scrollbar { scrollbar-width:none; }
+.no-scrollbar::-webkit-scrollbar { display:none; }
+@keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<div id="pageWrap">
+
+  <!-- 1. CLASSIFICATION BAR -->
+  <div id="classBar">
+    <div id="clsLabel">CLASSIFICATION: RESTRICTED</div>
+    <div class="cls-seg">CASE NO: SCF-2025-0731</div>
+    <div class="cls-seg">JURISDICTION: SET NULL CHANNEL</div>
+    <div class="cls-seg">CLEARANCE: LEVEL-2</div>
+    <div class="cls-spacer"></div>
+    <div class="cls-status">SESSION: ACTIVE</div>
+  </div>
+
+  <!-- 2. FILE HEADER -->
+  <div id="fileHeader">
+    <div id="fhLeft">
+      <div id="fhSubLabel">SUBJECT FILE / VISUAL RECORD</div>
+      <span id="csOverlayTitle">PROJECT_SET</span>
+    </div>
+    <span id="csWaveform"></span>
+    <div id="fhRight">
+      <div id="csTimestamp">
+        <div class="ts-label">ACCESS TIME</div>
+        <div class="ts-val" id="tsVal">--:--:--</div>
+      </div>
+      <label id="csLocalFolderLabel">
+        <input type="file" id="csLocalFolder" multiple accept="image/*">
+        <span id="csLoadBtn">LOAD LOCAL</span>
+      </label>
+      <span id="csLoadStatus"></span>
+    </div>
+  </div>
+
+  <!-- 3. PATH BAR -->
+  <div id="pathBar">
+    <span class="pb-seg">CASE ARCHIVE</span>
+    <span class="pb-seg">SCF-2025-0731</span>
+    <span class="pb-seg">PHOTOGRAPHIC_RECORDS</span>
+    <span class="pb-seg cur">FIELD OBSERVATIONS</span>
+    <span class="pb-spacer"></span>
+    <span class="pb-warn">AUTHORIZED ACCESS ONLY — UNAUTHORIZED USE IS A CRIMINAL OFFENSE</span>
+  </div>
+
+  <!-- 4. CONTENT ROW -->
+  <div id="contentRow">
+
+    <!-- LEFT PANEL -->
+    <div id="leftPanel">
+
+      <div class="p-sec">
+        <div class="p-hd">>  CASE FILE</div>
+        <div class="p-row"><span class="p-k">REF.</span><span class="p-v">SCF-2025-0731</span></div>
+        <div class="p-row"><span class="p-k">TYPE</span><span class="p-v">PHOTOGRAPHIC</span></div>
+        <div class="p-row"><span class="p-k">SUBJECT</span><span class="p-v">SET_NULL_CHANNEL</span></div>
+        <div class="p-row"><span class="p-k">STATUS</span><span class="p-v">ACTIVE</span></div>
+        <div class="p-row"><span class="p-k">UNIT</span><span class="p-v">FIELD_OBS</span></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  RECORD INDEX</div>
+        <div id="lpIndex"></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  COLLECTION PERIOD</div>
+        <div class="p-row"><span class="p-k">FROM</span><span class="p-v">2025.09.01</span></div>
+        <div class="p-row"><span class="p-k">TO</span><span class="p-v">2026.03.31</span></div>
+        <div class="p-row"><span class="p-k">SPAN</span><span class="p-v">7 MONTHS</span></div>
+        <div class="p-row"><span class="p-k">METHOD</span><span class="p-v">FIELD OBSERVATION</span></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  RELATED CASES</div>
+        <div class="lp-related">SCF-2024-0412</div>
+        <div class="lp-related">SCF-2025-0209</div>
+        <div class="lp-related">ARV-2025-1103</div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  OBSERVER</div>
+        <div class="p-row"><span class="p-k">CLEARANCE</span><span class="p-v">LEVEL-2</span></div>
+        <div class="p-row"><span class="p-k">ACCESS</span><span class="p-v">READ ONLY</span></div>
+        <div class="p-row"><span class="p-k">AUTH.</span><span class="p-v">OBSERVER</span></div>
+        <div class="p-row"><span class="p-k">SESSION</span><span class="p-v" id="lpSessId">----</span></div>
+      </div>
+
+    </div>
+
+    <!-- GALLERY -->
+    <div id="csOverlayBody"></div>
+
+    <!-- RIGHT PANEL -->
+    <div id="rightPanel">
+
+      <div class="p-sec">
+        <div class="p-hd">>  RECORD COUNT</div>
+        <div class="p-row"><span class="p-k">TOTAL</span><span class="p-v">----</span></div>
+        <div class="p-row"><span class="p-k">CORE</span><span class="p-v" id="rpCoreN">----</span></div>
+        <div class="p-row"><span class="p-k">SUPPORT</span><span class="p-v" id="rpSupN">----</span></div>
+        <div class="p-row"><span class="p-k">DROP</span><span class="p-v" id="rpDropN">----</span></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  ACCESS LOG</div>
+        <div id="rpLog"></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  ANALYST NOTE</div>
+        <div class="p-row" style="display:block;line-height:2;"><span class="p-v">SYSTEMATIC VISUAL<br>DOCUMENTATION OVER<br>7-MONTH PERIOD.<br>PATTERN: DELIBERATE.<br>METHOD: CONSISTENT.<br>RISK ASSESSMENT:<br>MODERATE</span></div>
+      </div>
+
+      <div class="p-div"></div>
+
+      <div class="p-sec">
+        <div class="p-hd">>  JURISDICTION</div>
+        <div class="p-row"><span class="p-k">ORG.</span><span class="p-v">SET NULL CHANNEL</span></div>
+        <div class="p-row"><span class="p-k">PROTOCOL</span><span class="p-v">CONTACT_SHEET_V2</span></div>
+        <div class="p-row"><span class="p-k">VERSION</span><span class="p-v">2.1</span></div>
+      </div>
+
+      <!-- JS 호환 숨김 요소 -->
+      <span id="rpProgBar" style="display:none"></span>
+      <span id="rpProgPct" style="display:none"></span>
+      <span id="rpFlagBar" style="display:none"></span>
+      <span id="rpFlagged" style="display:none"></span>
+
+    </div>
+  </div>
+
+  <!-- 5. RECORD BAR -->
+  <div id="csBotStats">
+    <span id="csStat1"></span>
+    <span class="bs-sep">·</span>
+    <span id="csStat2"></span>
+    <span class="bs-sep">·</span>
+    <span id="csStat3"></span>
+    <span class="bs-spacer"></span>
+    <span id="csStat4"></span>
+  </div>
+
+</div>
+
+<!-- MONITOR TAG -->
+<div id="monitorTag">
+  <div class="mt-row">SESSION  <span id="monSessId">----</span></div>
+  <div class="mt-row" id="monTime">----</div>
+</div>
+
+<script>
+// ── 페이지 이동 ──
+function navigate(url) {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity 0.3s';
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+
+// ── 세션 ID + 감시 타이머 ──
+const _sessId = Math.random().toString(16).slice(2,10).toUpperCase();
+document.querySelectorAll('#monSessId,#lpSessId').forEach(el => el.textContent = _sessId);
+function _updateClock() {
+  const now = new Date();
+  const hms = now.toTimeString().slice(0,8);
+  const iso = now.toISOString().slice(0,19).replace('T',' ');
+  const tsEl = document.getElementById('tsVal');
+  const monEl = document.getElementById('monTime');
+  if (tsEl) tsEl.textContent = hms;
+  if (monEl) monEl.textContent = iso;
+}
+_updateClock();
+setInterval(_updateClock, 1000);
+
+// ── 우측 패널: 액세스 로그 ──
+(function() {
+  const events = [
+    'SESSION INIT',
+    'AUTH: OBSERVER',
+    'CONNECTING...',
+    'RECORDS FETCHED',
+    'SCHEMA VERIFIED',
+    'VIEW: ACTIVE',
+    'LOGGING ENABLED'
+  ];
+  const log = document.getElementById('rpLog');
+  if (!log) return;
+  let i = 0;
+  function addEntry() {
+    if (i >= events.length) return;
+    const now = new Date().toTimeString().slice(0,8);
+    const div = document.createElement('div');
+    div.className = 'rp-log';
+    div.innerHTML = `<span class="tm">${now}</span><span class="tx">${events[i]}</span>`;
+    log.appendChild(div);
+    i++;
+    if (i < events.length) setTimeout(addEntry, 600 + Math.random() * 800);
+  }
+  setTimeout(addEntry, 300);
+})();
+
+// ── 좌측 패널: 레코드 인덱스 / 우측: CORE/SUP/DROP 바 업데이트 ──
+function updateSidePanels(photos) {
+  // 레코드 인덱스 (날짜별 폴더)
+  const byDate = {};
+  photos.forEach(p => {
+    const d = (p.dir || '').slice(0,7).replace(/\//g,'.') || 'OTHER';
+    byDate[d] = (byDate[d] || 0) + 1;
+  });
+  const idx = document.getElementById('lpIndex');
+  if (idx) {
+    idx.innerHTML = Object.entries(byDate).map(([d,n]) =>
+      `<div class="lp-idx"><span class="arr">▸</span><span>${d}</span><span class="cnt">[${String(n).padStart(3,'0')}]</span></div>`
+    ).join('');
+  }
+  // 레코드 상태 바
+  const core = photos.filter(p=>p.verdict==='core').length;
+  const sup  = photos.filter(p=>p.verdict==='support').length;
+  const drop = photos.filter(p=>!p.verdict||p.verdict==='drop').length;
+  const total= photos.length || 1;
+  const set = (id, n, pct) => {
+    const el = document.getElementById(id);
+    if (el) el.style.width = pct + '%';
+    const cnt = document.getElementById(id.replace('Bar','N'));
+    if (cnt) cnt.textContent = String(n).padStart(2,'0');
+  };
+  set('rpCoreBar', core, (core/total*100).toFixed(0));
+  set('rpSupBar',  sup,  (sup/total*100).toFixed(0));
+  set('rpDropBar', drop, (drop/total*100).toFixed(0));
+  // 리뷰 진행률
+  const reviewed = core + sup;
+  const progPct = (reviewed/total*100).toFixed(0);
+  const progEl = document.getElementById('rpProgBar');
+  if (progEl) progEl.style.width = progPct + '%';
+  const progPctEl = document.getElementById('rpProgPct');
+  if (progPctEl) progPctEl.textContent = progPct + '%';
+  const flagEl = document.getElementById('rpFlagBar');
+  if (flagEl) flagEl.style.width = (core/total*100).toFixed(0) + '%';
+  const flaggedEl = document.getElementById('rpFlagged');
+  if (flaggedEl) flaggedEl.textContent = String(core).padStart(3,'0');
+}
+
+// ── 파형 애니메이션 ──
+const BARS = ['▁','▂','▃','▄','▅','▆','▇','█'];
+const BAR_COUNT = 80;
+let waveOffset = 0;
+function renderWave() {
+  const el = document.getElementById('csWaveform');
+  if (!el) return;
+  let s = '';
+  for (let i = 0; i < BAR_COUNT; i++) {
+    const val = Math.sin((i + waveOffset) * 0.45) * 0.5 + Math.sin((i + waveOffset) * 0.9) * 0.3 + Math.sin((i + waveOffset * 1.3) * 0.3) * 0.2;
+    const idx = Math.round((val + 1) / 2 * (BARS.length - 1));
+    s += BARS[Math.max(0, Math.min(BARS.length - 1, idx))];
+  }
+  el.textContent = s;
+  waveOffset += 0.4;
+}
+setInterval(renderWave, 60);
+
+// ── 로컬 폴더 이미지 로드 ──
+const pageEl = document.getElementById('pageWrap');
+pageEl._blobMap = {};
+pageEl._blobUrls = [];
+
+document.getElementById('csLocalFolder').addEventListener('change', function(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const statusEl = document.getElementById('csLoadStatus');
+  statusEl.textContent = `${files.length}개 파일 로딩 중...`;
+  // 기존 blob URL 해제
+  pageEl._blobUrls.forEach(u => URL.revokeObjectURL(u));
+  pageEl._blobUrls = [];
+  pageEl._blobMap = {};
+  files.forEach(f => {
+    const url = URL.createObjectURL(f);
+    pageEl._blobUrls.push(url);
+    const name = f.name.replace(/\.[^.]+$/, '');
+    const num = name.replace(/\D/g, '');
+    pageEl._blobMap[name.toUpperCase()] = url;
+    if (num) pageEl._blobMap[num] = url;
+  });
+  // 현재 화면의 img에 적용
+  document.querySelectorAll('img[data-fname]').forEach(img => {
+    const fname = img.getAttribute('data-fname');
+    const num = fname.replace(/\D/g, '');
+    const url = pageEl._blobMap[fname.toUpperCase()] || pageEl._blobMap[num];
+    if (url) { img.style.opacity = '1'; img.src = url; }
+  });
+  statusEl.textContent = `✓ ${files.length}장`;
+});
+
+// ── 가짜 썸네일 스타일 ──
+function fakeThumbnailStyle(frameNum) {
+  const n = parseInt(String(frameNum).replace(/\D/g,'')) || 0;
+  const h1 = (n * 137.508) % 360;
+  const h2 = (h1 + 30 + (n % 7) * 12) % 360;
+  const s  = 12 + (n % 6) * 4;
+  const l1 = 6  + (n % 9) * 3;
+  const l2 = l1 + 8 + (n % 5) * 4;
+  const angle = (n * 73) % 180;
+  return `background: linear-gradient(${angle}deg, hsl(${h1},${s}%,${l1}%) 0%, hsl(${h2},${s}%,${l2}%) 60%, hsl(${h1},${s}%,${Math.max(l1-4,3)}%) 100%);`;
+}
+
+// ── renderContactSheet ──
+function renderContactSheet(content, container, titleEl, overlayEl) {
+  const COLORS = { core:'#009933', support:'#ffb000', drop:'#1a3a0a' };
+  const LABELS = { core:'CORE', support:'SUP', drop:'DROP' };
+  const SHOW_BORDER = ['core','support'];
+
+  let csNavStack = [];
+  let currentPhotos = [];
+  let currentLevelTitle = '';
+
+  function showLightbox(leafPhotos, startIdx) {
+    let idx = startIdx;
+    function renderLb() {
+      const existing = container.querySelector('#csLightbox');
+      if (existing) existing.remove();
+      const p = leafPhotos[idx];
+      const v = p.verdict || 'drop';
+      const color = COLORS[v] || '#333';
+      const num = (p.id || '').replace(/\D/g, '');
+      const bm = overlayEl && overlayEl._blobMap;
+      const fname = (p.id || '').toUpperCase();
+      const blobSrc = bm && (bm[fname] || bm[num]);
+      const imgSrc = blobSrc || p.filename || p.url || '';
+      const lb = document.createElement('div');
+      lb.id = 'csLightbox';
+      lb.style.cssText = "position:absolute;inset:0;z-index:50;background:#000;display:flex;flex-direction:column;font-family:'Press Start 2P',monospace;";
+      const isMobLb = window.innerWidth < 768;
+      lb.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 12px;border-bottom:1px solid #009933;flex-shrink:0;background:#000;">
+          <button id="lbBackBtn" style="font-size:5px;padding:2px 8px;border:1px solid rgba(0,153,51,0.5);background:transparent;color:rgba(0,153,51,0.7);cursor:pointer;font-family:'Press Start 2P',monospace;letter-spacing:1px;">↩ GRID</button>
+          <span style="font-size:8px;color:#009933;flex:1;letter-spacing:1px;">${p.id || ''}</span>
+          <span style="font-size:7px;color:#444;font-family:'Press Start 2P',monospace;">${idx + 1} / ${leafPhotos.length}</span>
+          <button id="lbPrevBtn" style="font-size:11px;padding:2px 10px;border:1px solid rgba(0,153,51,0.3);background:transparent;color:rgba(0,153,51,0.7);cursor:pointer;font-family:'Press Start 2P',monospace;">←</button>
+          <button id="lbNextBtn" style="font-size:11px;padding:2px 10px;border:1px solid rgba(0,153,51,0.3);background:transparent;color:rgba(0,153,51,0.7);cursor:pointer;font-family:'Press Start 2P',monospace;">→</button>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:${isMobLb ? 'column' : 'row'};gap:${isMobLb ? '0' : '14px'};padding:${isMobLb ? '8px' : '14px'};background:#000;min-height:0;overflow-y:${isMobLb ? 'auto' : 'hidden'};">
+          <div style="flex:${isMobLb ? '0 0 auto' : '1'};height:${isMobLb ? '200px' : 'auto'};display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;padding:${isMobLb ? '8px' : '24px 20px'};overflow:hidden;">
+            <img src="${imgSrc}" data-fname="${fname}" style="max-width:100%;max-height:100%;object-fit:contain;display:block;border:1px solid #009933;padding:${isMobLb ? '12px' : '32px'};box-shadow:0 0 12px rgba(0,153,51,0.15);" loading="lazy">
+          </div>
+          <div style="${isMobLb ? 'width:100%;padding:8px;' : 'width:320px;flex-shrink:0;padding-right:52px;'}display:flex;flex-direction:column;justify-content:${isMobLb ? 'flex-start' : 'center'};gap:${isMobLb ? '10px' : '28px'};font-family:'Press Start 2P',monospace;">
+            <div style="border:1px solid #009933;padding:10px 14px;display:flex;flex-direction:column;gap:8px;${isMobLb ? 'width:100%;' : 'width:180px;align-self:flex-end;'}min-height:80px;justify-content:space-between;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:9px;color:#777;letter-spacing:2px;">VERDICT</span>
+                <span style="font-size:8px;padding:2px 9px;border:1px solid ${color};color:${color};letter-spacing:1px;">${LABELS[v]||v}</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:9px;color:#777;letter-spacing:2px;">FRAME</span>
+                <span style="font-size:12px;color:#009933;">${p.id || ''}</span>
+              </div>
+              ${p.dir ? `<div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:9px;color:#777;letter-spacing:2px;">DIR</span>
+                <span style="font-size:8px;color:#ffe94d;letter-spacing:1px;">${p.dir}</span>
+              </div>` : ''}
+            </div>
+            <div style="border:1px solid #009933;padding:14px;display:flex;flex-direction:column;gap:10px;${isMobLb ? 'width:100%;min-height:80px;' : 'min-height:200px;width:280px;'}">
+              ${p.category ? `<div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:9px;color:#777;letter-spacing:2px;">CATEGORY</span>
+                <span style="font-size:8px;color:#009933;letter-spacing:1px;">${p.category}</span>
+              </div>` : ''}
+              ${p.category ? `<div style="border-top:1px solid #009933;"></div>` : ''}
+              <div style="font-size:11px;color:#777;letter-spacing:2px;">${v === 'drop' ? 'REASON' : 'NOTE'}</div>
+              <div style="font-size:11px !important;color:#ccc;line-height:1.9;">${
+                (p.reason || '—').split('\n-----\n').map((part, i) =>
+                  (i > 0 ? '<div style="border-top:1px solid #00993355;margin:6px 0;"></div>' : '') +
+                  '<div style="white-space:pre-wrap;font-size:11px !important;">' + part + '</div>'
+                ).join('')
+              }</div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.style.position = 'relative';
+      container.appendChild(lb);
+      lb.querySelector('#lbBackBtn').addEventListener('click', () => { lb.remove(); document.removeEventListener('keydown', onKey); });
+      lb.querySelector('#lbPrevBtn').addEventListener('click', () => { idx = (idx - 1 + leafPhotos.length) % leafPhotos.length; renderLb(); });
+      lb.querySelector('#lbNextBtn').addEventListener('click', () => { idx = (idx + 1) % leafPhotos.length; renderLb(); });
+    }
+    function onKey(e) {
+      if (!container.querySelector('#csLightbox')) { document.removeEventListener('keydown', onKey); return; }
+      if (e.key === 'ArrowRight') { idx = (idx + 1) % leafPhotos.length; renderLb(); }
+      if (e.key === 'ArrowLeft') { idx = (idx - 1 + leafPhotos.length) % leafPhotos.length; renderLb(); }
+      if (e.key === 'Escape') { container.querySelector('#csLightbox')?.remove(); document.removeEventListener('keydown', onKey); }
+    }
+    document.addEventListener('keydown', onKey);
+    renderLb();
+  }
+
+  function updateTitle(levelTitle) {
+    if (!titleEl) return;
+    const path = csNavStack.length > 0
+      ? csNavStack.map(l => l.title).join(' › ') + ' › ' + levelTitle
+      : levelTitle;
+    titleEl.textContent = path;
+  }
+
+  // 통계 타이머
+  const statsTimer = setInterval(function() {
+    const total = currentPhotos ? currentPhotos.filter(p => p.type !== 'sheet').length : 0;
+    const cells = document.querySelectorAll('#csCells .cs-cell[data-type="photo"]');
+    const rendered = cells.length;
+    const imgLoaded = Array.from(cells).filter(c => { const img = c.querySelector('img'); return img && img.complete && img.naturalWidth > 0; }).length;
+    const estMem = (imgLoaded * 42 / 1024).toFixed(1);
+    const pad = n => String(n).padStart(3, '0');
+    const s1 = document.getElementById('csStat1');
+    const s2 = document.getElementById('csStat2');
+    const s3 = document.getElementById('csStat3');
+    const s4 = document.getElementById('csStat4');
+    if (s1) s1.textContent = `TOTAL: ${pad(total)} FILES`;
+    if (s2) s2.textContent = `LOADED: ${pad(imgLoaded)}/${pad(rendered)}`;
+    if (s3) s3.textContent = `MEM: ${estMem}MB`;
+    if (s4) s4.textContent = currentLevelTitle ? currentLevelTitle.toUpperCase() : '';
+  }, 400);
+
+  // ── 폴더 프리뷰 ──
+  let _fpCell = null, _fpShowTimer = null, _fpHideTimer = null;
+
+  function fpGetPhotos(node, max) {
+    if (!node) return [];
+    if (node.type !== 'sheet') return [node];
+    const r = [];
+    for (const c of (node.children || [])) {
+      if (r.length >= max) break;
+      r.push(...fpGetPhotos(c, max - r.length));
+    }
+    return r;
+  }
+
+  function fpCountStats(node) {
+    if (!node) return { core:0, sup:0, drop:0, total:0 };
+    if (node.type !== 'sheet') {
+      const v = node.verdict || '';
+      return { core:v==='core'?1:0, sup:v==='support'?1:0, drop:(v==='drop'||v==='hold'||!v)?1:0, total:1 };
+    }
+    const r = { core:0, sup:0, drop:0, total:0 };
+    for (const c of (node.children || [])) {
+      const s = fpCountStats(c);
+      r.core+=s.core; r.sup+=s.sup; r.drop+=s.drop; r.total+=s.total;
+    }
+    return r;
+  }
+
+  function showFolderPreview(folder) {
+    const fpPhotos = document.getElementById('fpPhotos');
+    const fpInfo   = document.getElementById('fpInfo');
+    const fpEmpty  = document.getElementById('fpEmpty');
+    if (!fpPhotos || !fpInfo) return;
+    const photos = fpGetPhotos(folder, 8);
+    const statsLeaves = fpGetPhotos(folder, 200);
+    const { core, sup, drop, total } = fpCountStats(folder);
+    const subs = (folder.children || []).filter(c => c.type === 'sheet');
+    let dateRange = '';
+    if (subs.length > 0) {
+      const f = subs[0].id || '', l = subs[subs.length-1].id || '';
+      dateRange = f === l ? f : `${f} – ${l}`;
+    }
+    const title = (folder.title || folder.id || '').toUpperCase().replace(/\./g, '/');
+    const pC = total ? +(core/total*100).toFixed(0) : 0;
+    const pS = total ? +(sup /total*100).toFixed(0) : 0;
+    const pD = total ? +(drop/total*100).toFixed(0) : 0;
+    const dirCounts = {};
+    statsLeaves.forEach(p => { if (p.dir) dirCounts[p.dir] = (dirCounts[p.dir]||0)+1; });
+    const topDirs = Object.entries(dirCounts).sort((a,b)=>b[1]-a[1]).slice(0,14);
+    const maxDir  = topDirs[0] ? topDirs[0][1] : 1;
+    const feed = statsLeaves.filter(p => p.verdict==='core'||p.verdict==='support').slice(0,8);
+    function imgDiv(p, style, border) {
+      const url = p ? (p.filename || p.url || '') : '';
+      const thumb = url.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg');
+      return `<div style="${style}overflow:hidden;background:#0d0d0d;${border !== undefined ? border : 'border:1px solid #009933;'}">${
+        url ? `<img src="${thumb}" data-full="${url}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}" alt="">` : ''
+      }</div>`;
+    }
+    const main   = photos[0];
+    const thumbs = photos.slice(1, 6);
+    const THUMB_H = 56, THUMB_W = Math.round(THUMB_H * 3/2), THUMB_GAP = 4;
+    const FRAME_PAD = 3, FRAME_BORDER = 1;
+    const stripW = thumbs.length * THUMB_W + (thumbs.length - 1) * THUMB_GAP + 2 * (FRAME_PAD + FRAME_BORDER);
+    fpPhotos.innerHTML = `
+      <div style="height:100%;display:flex;flex-direction:column;gap:4px;width:${stripW}px;flex-shrink:0;">
+        ${imgDiv(main, `flex:1;width:100%;`)}
+        <div style="height:${THUMB_H}px;flex-shrink:0;display:flex;gap:${THUMB_GAP}px;border:1px solid #009933;padding:3px;">
+          ${thumbs.map(p => imgDiv(p, `width:${THUMB_W}px;height:100%;flex-shrink:0;`, '')).join('')}
+        </div>
+      </div>`;
+    const batchInfo = subs.map(s => {
+      const sc = fpCountStats(s);
+      return `<div style="display:flex;align-items:center;gap:6px;font-size:8px;">
+        <span style="color:rgba(0,153,51,0.5);width:36px;flex-shrink:0;">${s.id||''}</span>
+        <div style="flex:1;height:2px;background:#0a0a0a;position:relative;">
+          <div style="position:absolute;left:0;top:0;height:100%;width:${sc.total?+(sc.core/sc.total*100).toFixed(0):0}%;background:#009933;"></div>
+        </div>
+        <span style="color:rgba(0,153,51,0.3);font-size:7px;">${sc.total}</span>
+      </div>`;
+    }).join('');
+    fpInfo.innerHTML = `
+      <div style="padding-bottom:6px;border-bottom:1px solid rgba(0,153,51,0.2);margin-bottom:8px;">
+        <div style="font-size:9px;letter-spacing:2px;color:#009933;">${title}</div>
+        ${dateRange ? `<div style="font-size:7px;color:rgba(0,153,51,0.35);letter-spacing:1px;margin-top:2px;">${dateRange} · ${subs.length} BATCH${subs.length>1?'ES':''}</div>` : ''}
+      </div>
+      <div style="margin-bottom:9px;">
+        <div style="font-size:9px;letter-spacing:2px;color:rgba(0,153,51,0.35);margin-bottom:4px;">A  VERDICT</div>
+        ${[['CORE',core,'#009933',pC],['SUP',sup,'#ffb000',pS],['DROP',drop,'rgba(0,153,51,0.25)',pD]].map(([lbl,cnt,clr,pct])=>`
+        <div style="display:flex;align-items:center;gap:5px;font-size:9px;margin-bottom:3px;">
+          <span style="width:28px;color:${clr};letter-spacing:0.5px;">${lbl}</span>
+          <div style="flex:1;height:5px;background:#0a0a0a;border:1px solid #001a00;">
+            <div style="width:${pct}%;height:100%;background:${clr};"></div>
+          </div>
+          <span style="width:22px;text-align:right;color:${clr};">${cnt}</span>
+          <span style="width:28px;text-align:right;color:rgba(0,153,51,0.2);font-size:9px;">${pct}%</span>
+        </div>`).join('')}
+        <div style="font-size:9px;color:rgba(0,153,51,0.18);text-align:right;margin-top:1px;">TOTAL ${total}</div>
+      </div>
+      ${subs.length ? `<div style="margin-bottom:9px;"><div style="font-size:9px;letter-spacing:2px;color:rgba(0,153,51,0.35);margin-bottom:4px;">BATCHES</div><div style="display:flex;flex-direction:column;gap:2px;">${batchInfo}</div></div>` : ''}
+      ${topDirs.length ? `<div style="margin-bottom:9px;"><div style="font-size:9px;letter-spacing:2px;color:rgba(0,153,51,0.35);margin-bottom:4px;">B  DIR FREQUENCY</div><div style="display:flex;flex-wrap:wrap;gap:3px;">${topDirs.map(([dir,cnt]) => { const r=cnt/maxDir; const op=(0.3+r*0.7).toFixed(2); return `<span style="font-size:9px;border:1px solid rgba(0,153,51,${op});color:rgba(0,153,51,${op});padding:1px 4px;letter-spacing:0.5px;white-space:nowrap;">${dir}<span style="font-size:9px;opacity:0.5;"> ${cnt}</span></span>`; }).join('')}</div></div>` : ''}
+      ${feed.length ? `<div><div style="font-size:9px;letter-spacing:2px;color:rgba(0,153,51,0.35);margin-bottom:4px;">C  SELECTIONS</div><div style="display:flex;flex-direction:column;gap:3px;">${feed.map(p => { const clr=p.verdict==='core'?'#009933':'#ffb000'; const vid=p.verdict==='core'?'CORE':'SUP'; return `<div style="display:flex;align-items:baseline;gap:4px;font-size:9px;line-height:1.4;"><div style="width:5px;height:5px;border-radius:50%;background:${clr};flex-shrink:0;margin-top:4px;"></div><span style="color:${clr};width:28px;flex-shrink:0;font-size:9px;">${vid}</span><span style="color:rgba(0,153,51,0.5);flex-shrink:0;">${(p.id||'').toUpperCase()}</span>${p.dir?`<span style="color:#ffb000;flex-shrink:0;font-size:9px;"> ${p.dir}</span>`:''}${p.reason?`<span style="color:rgba(255,255,255,0.25);font-size:9px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;"> ${p.reason}</span>`:''}</div>`; }).join('')}</div></div>` : ''}`;
+    if (fpEmpty) fpEmpty.style.display = 'none';
+  }
+
+  function hideFolderPreview() {
+    const fpPhotos = document.getElementById('fpPhotos');
+    const fpInfo   = document.getElementById('fpInfo');
+    const fpEmpty  = document.getElementById('fpEmpty');
+    if (fpPhotos) fpPhotos.innerHTML = '';
+    if (fpInfo)   fpInfo.innerHTML   = '';
+    if (fpEmpty)  fpEmpty.style.display = 'flex';
+    _fpCell = null;
+  }
+
+  function renderLevel(photos, levelTitle) {
+    currentPhotos = photos;
+    currentLevelTitle = levelTitle;
+    updateTitle(levelTitle);
+    container.style.transition = 'opacity 0.25s ease';
+    container.style.opacity = '0';
+    setTimeout(function() {
+      if (!photos || photos.length === 0) {
+        container.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;opacity:0.5;"><div style="font-size:4px;font-family:'Press Start 2P',monospace;color:#009933;">[ NO PHOTOS ]</div></div>`;
+        requestAnimationFrame(function() { container.style.opacity = '1'; });
+        return;
+      }
+      const leafPhotos = photos.filter(p => p.type !== 'sheet');
+      const counts = {};
+      leafPhotos.forEach(p => { counts[p.verdict] = (counts[p.verdict]||0) + 1; });
+      const filterBtns = leafPhotos.length > 0
+        ? ['all', ...Object.keys(counts)].map(v => {
+            const label = v === 'all' ? `ALL (${leafPhotos.length})` : `${LABELS[v]||v} (${counts[v]})`;
+            const active = v === 'all';
+            const color = v === 'all' ? '#009933' : (COLORS[v]||'#666');
+            return `<button class="cs-fb" data-f="${v}" style="font-size:7px;padding:2px 8px;border:1px solid ${color};background:${active?color:'transparent'};color:${active?'#000':color};cursor:pointer;font-family:'Press Start 2P',monospace;letter-spacing:1px;">${label}</button>`;
+          }).join('')
+        : '';
+      const breadcrumbPath = csNavStack.length > 0 ? csNavStack.map(l => l.title).join(' › ') + ' › ' + levelTitle : '';
+      const PAGE = 80;
+      const cells = photos.slice(0, PAGE).map((p, i) => {
+        if (p.type === 'sheet') {
+          const childCount = (p.children || []).length;
+          const firstChild = (p.children || []).flatMap(c => c.type === 'sheet' ? (c.children||[]) : [c])[0];
+          const _pFull = (firstChild && (firstChild.filename || firstChild.url)) || '';
+          const previewSrc = _pFull ? _pFull.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+          return `<div class="cs-cell cs-folder" data-idx="${i}" data-type="sheet" style="cursor:pointer;display:flex;flex-direction:column;gap:4px;">
+            <div style="aspect-ratio:3/2;background:#0d0d0d;overflow:hidden;flex-shrink:0;border:1px solid #009933;">
+              <img src="${previewSrc}" data-full="${_pFull}" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:4px;padding:0 2px;">
+              <span style="font-size:9px;font-family:'Press Start 2P',monospace;color:#009933;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:0.5px;">${(p.title||p.id).toUpperCase().replace(/\./g,'/')}</span>
+              <span style="font-size:7px;font-family:'Press Start 2P',monospace;color:rgba(0,153,51,0.4);">(${childCount})</span>
+            </div>
+          </div>`;
+        } else {
+          const v = p.verdict || 'drop';
+          const color = COLORS[v] || '#333';
+          const isKey = SHOW_BORDER.includes(v);
+          const fname = (p.id || '').toUpperCase();
+          const num = fname.replace(/\D/g,'');
+          const blobMap = overlayEl && overlayEl._blobMap;
+          const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
+          const fullSrc = p.filename || p.url || '';
+          const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+          const imgSrc = blobSrc || thumbSrc || fullSrc;
+          return `<div class="cs-cell" data-idx="${i}" data-v="${v}" data-type="photo" style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;background:#0d0d0d;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);`}">
+            ${imgSrc ? `<img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="eager" decoding="async" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
+            ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:1px;font-family:'Press Start 2P',monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
+          </div>`;
+        }
+      }).join('');
+
+      container.innerHTML = `
+        <div class="no-scrollbar" style="display:flex;flex-direction:column;height:100%;overflow-y:auto;overflow-x:hidden;">
+          ${csNavStack.length > 0 ? `
+          <div style="padding:5px 10px;border-bottom:1px dashed rgba(0,153,51,0.2);display:flex;align-items:center;gap:8px;flex-shrink:0;background:#000;position:sticky;top:0;z-index:1;">
+            <button id="csBackBtn" style="font-size:9px;font-family:'Press Start 2P',monospace;padding:3px 10px;border:1px solid #009933;background:transparent;color:#009933;cursor:pointer;letter-spacing:1px;flex-shrink:0;">← BACK</button>
+            <span style="font-size:7px;color:rgba(0,153,51,0.45);font-family:'Press Start 2P',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${breadcrumbPath}</span>
+          </div>` : ''}
+          <div style="padding:7px 12px;border-bottom:1px solid #009933;display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0;align-items:center;min-height:34px;position:sticky;top:${csNavStack.length > 0 ? '28' : '0'}px;z-index:1;background:#000;">
+            ${filterBtns}
+          </div>
+          <div id="csGrid" style="flex-shrink:0;padding:18px ${window.innerWidth <= 768 ? '12px' : '48px'} 20px;width:100%;box-sizing:border-box;">
+            <div id="csCells" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:5px;content-visibility:auto;">
+              ${cells}
+            </div>
+            ${photos.length > PAGE ? `<div style="text-align:center;padding:16px 0;"><button id="csLoadMore" data-loaded="${PAGE}" style="font-family:'Press Start 2P',monospace;font-size:7px;padding:5px 18px;border:1px solid rgba(0,153,51,0.5);background:transparent;color:#009933;cursor:pointer;letter-spacing:1px;">더 보기 (${photos.length - PAGE}장 남음)</button></div>` : ''}
+          </div>
+          ${csNavStack.length < 2 && window.innerWidth > 768 ? `
+          <div id="fpPanel" style="flex-shrink:0;height:340px;background:#000;width:calc(100% - 96px);max-width:860px;border:1px solid #009933;margin:0px 48px 40px;position:relative;overflow:hidden;">
+            <div id="fpInner" style="display:flex;height:100%;padding:16px 18px;gap:0;">
+              <div id="fpPhotos" style="flex:0 0 auto;display:flex;overflow:hidden;"></div>
+              <div id="fpInfo" style="flex:1;min-width:0;border-left:1px solid rgba(0,153,51,0.15);padding:12px 16px;display:flex;flex-direction:column;overflow-y:auto;"></div>
+            </div>
+            <div id="fpEmpty" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;">
+              <span style="font-size:5px;font-family:'Press Start 2P',monospace;color:rgba(0,153,51,0.18);letter-spacing:3px;">— HOVER A FOLDER TO PREVIEW —</span>
+            </div>
+          </div>` : ''}
+          <div id="csDetail" style="display:none;border-top:1px solid #009933;flex-shrink:0;">
+            <div style="display:flex;gap:0;">
+              <div id="csDetImg" style="width:110px;flex-shrink:0;aspect-ratio:4/3;background:#111;border-right:1px solid #009933;display:flex;align-items:center;justify-content:center;overflow:hidden;"><span style="font-size:7px;color:#444;font-family:'Press Start 2P',monospace;">no img</span></div>
+              <div style="padding:8px 12px;flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;">
+                <div id="csDetName" style="font-size:6px;font-weight:bold;font-family:'Press Start 2P',monospace;color:#009933;"></div>
+                <div id="csDetTags" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+              </div>
+            </div>
+            <div id="csDetReason" style="padding:7px 12px;font-size:10px;line-height:1.6;color:#aaa;border-top:1px dashed rgba(0,153,51,0.25);word-break:break-word;"></div>
+          </div>
+        </div>`;
+
+      // 폴더 호버 프리뷰
+      const isMobileGallery = window.innerWidth <= 768;
+      if (csNavStack.length < 2) {
+        if (!isMobileGallery) {
+          const firstFolder = currentPhotos.find(p => p.type === 'sheet');
+          if (firstFolder) showFolderPreview(firstFolder);
+        }
+        if (!isMobileGallery) container.querySelectorAll('.cs-folder').forEach(function(cell) {
+          cell.addEventListener('mouseenter', function() {
+            clearTimeout(_fpHideTimer);
+            if (cell === _fpCell) return;
+            _fpCell = cell;
+            clearTimeout(_fpShowTimer);
+            const idx = parseInt(cell.getAttribute('data-idx'));
+            const folder = currentPhotos[idx];
+            if (!folder || folder.type !== 'sheet') return;
+            _fpShowTimer = setTimeout(function() { showFolderPreview(folder); }, 60);
+          });
+          cell.addEventListener('mouseleave', function() {
+            if (cell !== _fpCell) return;
+            clearTimeout(_fpShowTimer);
+            _fpCell = null;
+            _fpHideTimer = setTimeout(function() {
+              const first = currentPhotos.find(p => p.type === 'sheet');
+              if (first) showFolderPreview(first);
+            }, 150);
+          });
+        });
+      }
+
+      setTimeout(function() { container.style.opacity = '1'; }, 20);
+    }, 250);
+  }
+
+  // 이벤트 위임
+  container.addEventListener('click', function(e) {
+    if (e.target.closest('#csLoadMore')) {
+      const btn = e.target.closest('#csLoadMore');
+      const loaded = parseInt(btn.dataset.loaded);
+      const PAGE = 80;
+      const next = currentPhotos.slice(loaded, loaded + PAGE);
+      const moreCells = next.map((p, i) => {
+        const v = p.verdict || 'drop';
+        const color = COLORS[v] || '#333';
+        const isKey = SHOW_BORDER.includes(v);
+        const fname = (p.id || '').toUpperCase();
+        const num = fname.replace(/\D/g,'');
+        const blobMap = overlayEl && overlayEl._blobMap;
+        const blobSrc = blobMap && (blobMap[fname] || blobMap[num]);
+        const fullSrc = p.filename || p.url || '';
+        const thumbSrc = fullSrc ? fullSrc.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+        const imgSrc = blobSrc || thumbSrc || fullSrc;
+        return `<div class="cs-cell" data-idx="${loaded + i}" data-v="${v}" data-type="photo" style="aspect-ratio:3/2;cursor:pointer;position:relative;overflow:hidden;background:#0d0d0d;${isKey ? `outline:2px solid ${color};outline-offset:-2px;` : `filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);`}">
+          ${imgSrc ? `<img src="${imgSrc}" data-fname="${fname}" data-full="${fullSrc}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="if(!this._fb){this._fb=1;this.src=this.dataset.full}">` : ''}
+          ${isKey ? `<div style="position:absolute;top:2px;right:2px;font-size:1px;font-family:'Press Start 2P',monospace;padding:1px 3px;background:${color};color:#000;">${LABELS[v]}</div>` : ''}
+        </div>`;
+      }).join('');
+      const cellsEl = document.getElementById('csCells');
+      if (cellsEl) cellsEl.insertAdjacentHTML('beforeend', moreCells);
+      const newLoaded = loaded + PAGE;
+      const remaining = currentPhotos.length - newLoaded;
+      if (remaining <= 0) btn.parentElement.remove();
+      else { btn.dataset.loaded = newLoaded; btn.textContent = `더 보기 (${remaining}장 남음)`; }
+      return;
+    }
+    if (e.target.closest('#csBackBtn')) {
+      if (csNavStack.length > 0) { const prev = csNavStack.pop(); renderLevel(prev.photos, prev.title); }
+      return;
+    }
+    const fb = e.target.closest('.cs-fb');
+    if (fb) {
+      const f = fb.getAttribute('data-f');
+      container.querySelectorAll('.cs-fb').forEach(b => {
+        const bv = b.getAttribute('data-f');
+        const bc = bv === 'all' ? '#009933' : (COLORS[bv] || '#666');
+        b.style.background = b === fb ? bc : 'transparent';
+        b.style.color = b === fb ? '#000' : bc;
+      });
+      container.querySelectorAll('.cs-cell').forEach(cell => {
+        if (cell.getAttribute('data-type') === 'sheet') { cell.style.display = f === 'all' ? '' : 'none'; return; }
+        const v = cell.getAttribute('data-v') || 'drop';
+        if (f === 'all' || v === f) { cell.style.display = ''; cell.style.opacity = SHOW_BORDER.includes(v) ? '1' : '0.35'; }
+        else { cell.style.display = 'none'; }
+      });
+      return;
+    }
+    const cell = e.target.closest('.cs-cell');
+    if (!cell) return;
+    const idx = parseInt(cell.getAttribute('data-idx'));
+    const p = currentPhotos[idx];
+    if (!p) return;
+    if (p.type === 'sheet') {
+      csNavStack.push({ title: currentLevelTitle, photos: currentPhotos });
+      renderLevel(p.children || [], p.title || p.id);
+      if (overlayEl && overlayEl._blobMap) {
+        const bm = overlayEl._blobMap;
+        container.querySelectorAll('img[data-fname]').forEach(img => {
+          const fn = img.getAttribute('data-fname');
+          const u = bm[fn] || bm[fn.replace(/\D/g, '')];
+          if (u) { img.style.opacity = '1'; img.src = u; }
+        });
+      }
+      return;
+    }
+    const leafPhotos = currentPhotos.filter(pp => pp.type !== 'sheet');
+    const leafIdx = leafPhotos.indexOf(p);
+    if (leafIdx >= 0) showLightbox(leafPhotos, leafIdx);
+  });
+
+  container.addEventListener('click', function(e) {
+    if (e.target.closest('.cs-folder')) { clearTimeout(_fpShowTimer); clearTimeout(_fpHideTimer); hideFolderPreview(); }
+  }, true);
+
+  renderLevel(content.photos || [], content.title || 'PROJECT SET');
+}
+
+// ── 메인 초기화 ──
+const projectContent = { title: 'PROJECT SET', isContactSheet: true, photos: [] };
+const container = document.getElementById('csOverlayBody');
+const titleEl = document.getElementById('csOverlayTitle');
+
+// 로딩 상태 표시
+container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#009933;font-family:\'Press Start 2P\',monospace;font-size:10px;letter-spacing:3px;gap:12px;"><span>LOADING</span><span style="animation:bl .7s infinite">_</span></div>';
+
+// admin-contents.json fetch
+const ts = Date.now();
+const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+fetch(base + 'admin-contents.json?t=' + ts)
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .catch(() => fetch('./admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}))
+  .then(data => {
+    if (data && data.project && data.project.photos && data.project.photos.some(p => p.type === 'sheet')) {
+      projectContent.photos = data.project.photos;
+    }
+    renderContactSheet(projectContent, container, titleEl, pageEl);
+    // 사이드 패널 업데이트
+    const flat = [];
+    function _flat(node) {
+      if (!node) return;
+      if (node.type !== 'sheet') { flat.push(node); return; }
+      (node.children||[]).forEach(_flat);
+    }
+    (projectContent.photos||[]).forEach(_flat);
+    updateSidePanels(flat);
+  })
+  .catch(() => {
+    renderContactSheet(projectContent, container, titleEl, pageEl);
+  });
+</script>
+</body>
+</html>

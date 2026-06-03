@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Measure — TV Surveillance Sample</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#080808;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      min-height:100vh; gap:20px;
+    }
+    canvas { display:block; }
+  </style>
+</head>
+<body>
+<canvas id="tv"></canvas>
+
+<script>
+const dpr = window.devicePixelRatio || 1;
+const c   = document.getElementById('tv');
+const ctx = c.getContext('2d');
+
+const TW = 560, TH = 420;
+c.width  = TW * dpr; c.height = TH * dpr;
+c.style.width = TW+'px'; c.style.height = TH+'px';
+ctx.scale(dpr, dpr);
+const W=TW, H=TH;
+
+// ── 레이아웃 상수 ──
+const BZ  = 30;                        // 베젤 두께
+const SX=BZ, SY=BZ, SW=W-BZ*2, SH=H-BZ*2;  // 스크린 영역
+
+const SB_H  = 22;                      // 상단 스테이터스 바
+const SUB_H = 68;                      // 자막 바
+const CAM_Y = SY + SB_H;
+const CAM_H = SH - SB_H - SUB_H;
+const CAM_W = SW;
+const SUB_Y = CAM_Y + CAM_H;
+
+const FLOOR_Y = CAM_Y + Math.floor(CAM_H * 0.70);
+
+// ── 픽셀 인물 (PS=3) ──
+const PS = 3;
+const FIG_FRAMES = [
+  [                          // 프레임 A: 걸음 벌림
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,1,1,1,1,1,0],
+    [0,1,1,1,1,1,0],
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,1,1,0,1,1,0],
+    [0,1,0,0,0,1,0],
+    [1,1,0,0,0,1,1],
+  ],
+  [                          // 프레임 B: 걸음 모음
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,1,1,1,1,1,0],
+    [0,1,1,1,1,1,0],
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,0,1,1,1,0,0],
+    [0,1,0,0,0,1,0],
+  ],
+];
+const FIG_W = 7*PS, FIG_H = 9*PS;
+let figX = SX + 60, figDir = 1, figFrame = 0, figFrameT = 0;
+const FIG_SPEED = 0.75, FIG_INTERVAL = 15;
+
+// ── 자막 ──
+const POEM = [
+  'They started keeping count.',
+  'Not from fixation, but from a theory:',
+  'that what recurs without reason',
+  'is probably evidence of a reason not yet named.',
+  'The record reaches back,',
+  'but experience does not accumulate.',
+  'The thing that keeps returning to your periphery —',
+  'bring it here.',
+  'The record will tell you how many times',
+  'it had already arrived before you began to look.',
+  'Search for anything.',
+];
+let subIdx=0, subT=0, subAlpha=0;
+const SUB_HOLD = 95, SUB_FADE = 18;
+
+// ── 시작 시각 ──
+const startMs = Date.now() - Math.floor(Math.random()*3600000);
+
+// ── 정적 노이즈 파티클 ──
+const NOISE = Array.from({length:300}, ()=>({
+  x:Math.random(), y:Math.random()
+}));
+
+let tick = 0;
+
+// ── 타임스탬프 ──
+function timestamp(){
+  const d = new Date(startMs + tick*33);
+  const pad=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}  ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+function draw(){
+
+  // ════════════ TV 베젤 ════════════
+  // 외곽
+  ctx.fillStyle='#0e0e0e'; ctx.fillRect(0,0,W,H);
+  // 외곽 테두리
+  ctx.fillStyle='#1c1c1c'; ctx.fillRect(1,1,W-2,H-2);
+  // 베젤 내부면
+  ctx.fillStyle='#161616'; ctx.fillRect(BZ-5,BZ-5,SW+10,SH+10);
+  // 상단/좌측 하이라이트
+  ctx.fillStyle='#242424'; ctx.fillRect(BZ-5,BZ-5,SW+10,2); ctx.fillRect(BZ-5,BZ-5,2,SH+10);
+  // 하단/우측 그림자
+  ctx.fillStyle='#0a0a0a'; ctx.fillRect(BZ-3,BZ+SH+3,SW+6,2); ctx.fillRect(BZ+SW+3,BZ-3,2,SH+6);
+
+  // 베젤 나사 4개
+  for(const [cx,cy] of [[14,14],[W-14,14],[14,H-14],[W-14,H-14]]){
+    ctx.fillStyle='#111'; ctx.fillRect(cx-4,cy-4,8,8);
+    ctx.fillStyle='#252525'; ctx.fillRect(cx-3,cy-3,6,6);
+    ctx.fillStyle='#0d0d0d'; ctx.fillRect(cx-1,cy-1,3,3);
+  }
+
+  // TV 하단 라벨
+  ctx.font='6px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(70,70,70,0.7)';
+  ctx.fillText('SET-TV  MODEL-01', W/2, H-15);
+  // 파워 LED
+  const pow = Math.floor(tick/25)%10!==0;
+  ctx.fillStyle=pow?'#002800':'#001200';
+  ctx.fillRect(W-44, H-20, 8, 8);
+  ctx.fillStyle=pow?'#00cc00':'#004400';
+  ctx.fillRect(W-43, H-19, 6, 6);
+
+  // ════════════ 스크린 배경 ════════════
+  ctx.fillStyle='#050e07'; ctx.fillRect(SX,SY,SW,SH);
+
+  // ════════════ 스테이터스 바 ════════════
+  ctx.fillStyle='#020a03'; ctx.fillRect(SX,SY,SW,SB_H);
+  ctx.strokeStyle='rgba(0,180,60,0.28)'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(SX,SY+SB_H); ctx.lineTo(SX+SW,SY+SB_H); ctx.stroke();
+
+  // REC 점
+  const recOn = Math.floor(tick/18)%2===0;
+  ctx.fillStyle = recOn ? '#ff3030' : '#4a0000';
+  ctx.fillRect(SX+10, SY+7, 7, 7);
+  ctx.font='7px monospace'; ctx.textBaseline='middle'; ctx.textAlign='left';
+  ctx.fillStyle = recOn ? 'rgba(255,100,100,0.9)' : 'rgba(120,40,40,0.6)';
+  ctx.fillText('● REC', SX+10, SY+SB_H/2);
+
+  ctx.fillStyle='rgba(160,210,160,0.75)';
+  ctx.fillText('CAM-01  /  B1-CORRIDOR', SX+68, SY+SB_H/2);
+
+  ctx.textAlign='right';
+  ctx.fillStyle='rgba(160,210,160,0.65)';
+  ctx.fillText(timestamp(), SX+SW-8, SY+SB_H/2);
+
+  // ════════════ 감시카메라 장면 ════════════
+  // 배경: 어두운 복도
+  ctx.fillStyle='#040c06'; ctx.fillRect(SX, CAM_Y, CAM_W, CAM_H);
+
+  // 뒷벽 (약간 밝음)
+  ctx.fillStyle='#060f08'; ctx.fillRect(SX, CAM_Y, CAM_W, FLOOR_Y-CAM_Y);
+
+  // 벽 수평 텍스처선
+  ctx.strokeStyle='rgba(0,70,25,0.22)'; ctx.lineWidth=0.5;
+  for(let i=1;i<6;i++){
+    const ly = CAM_Y + (FLOOR_Y-CAM_Y)*i/6;
+    ctx.beginPath(); ctx.moveTo(SX,ly); ctx.lineTo(SX+CAM_W,ly); ctx.stroke();
+  }
+
+  // 바닥 (약간 다른 톤)
+  ctx.fillStyle='#050d07'; ctx.fillRect(SX, FLOOR_Y, CAM_W, CAM_H-(FLOOR_Y-CAM_Y));
+
+  // 바닥/벽 경계선
+  ctx.strokeStyle='rgba(0,130,50,0.4)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(SX,FLOOR_Y); ctx.lineTo(SX+CAM_W,FLOOR_Y); ctx.stroke();
+
+  // 바닥 투시 격자
+  ctx.strokeStyle='rgba(0,90,35,0.18)'; ctx.lineWidth=0.5;
+  const VP_X = SX+CAM_W/2, VP_Y = FLOOR_Y;
+  for(let i=-4;i<=12;i++){
+    const bx = SX + i*(CAM_W/8);
+    ctx.beginPath(); ctx.moveTo(VP_X,VP_Y); ctx.lineTo(bx, CAM_Y+CAM_H); ctx.stroke();
+  }
+  for(let i=1;i<5;i++){
+    const ly = FLOOR_Y + (CAM_H-(FLOOR_Y-CAM_Y))*i/5;
+    ctx.beginPath(); ctx.moveTo(SX,ly); ctx.lineTo(SX+CAM_W,ly); ctx.stroke();
+  }
+
+  // 뒷벽 문
+  const DX=SX+CAM_W-100, DY=FLOOR_Y-60, DW=30, DH=60;
+  ctx.fillStyle='#030803'; ctx.fillRect(DX,DY,DW,DH);
+  ctx.strokeStyle='rgba(0,110,40,0.45)'; ctx.lineWidth=1;
+  ctx.strokeRect(DX,DY,DW,DH);
+  // 문 손잡이
+  ctx.fillStyle='rgba(0,120,50,0.5)';
+  ctx.fillRect(DX+4, DY+DH/2-2, 4, 4);
+
+  // 천장 경계
+  ctx.strokeStyle='rgba(0,100,40,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(SX,CAM_Y+1); ctx.lineTo(SX+CAM_W,CAM_Y+1); ctx.stroke();
+
+  // ── 인물 이동 ──
+  figX += FIG_SPEED * figDir;
+  if(figX > SX+CAM_W-FIG_W-24) figDir=-1;
+  if(figX < SX+24) figDir=1;
+  figFrameT++;
+  if(figFrameT>=FIG_INTERVAL){ figFrame=1-figFrame; figFrameT=0; }
+
+  const figY = FLOOR_Y - FIG_H;
+  const fmap = FIG_FRAMES[figFrame];
+
+  ctx.save();
+  if(figDir < 0){
+    ctx.translate(figX+FIG_W, 0); ctx.scale(-1,1);
+    fmap.forEach((row,ry)=>row.forEach((cell,rx)=>{
+      if(!cell) return;
+      ctx.fillStyle='rgba(200,235,205,0.92)';
+      ctx.fillRect(rx*PS, figY+ry*PS, PS-1, PS-1);
+    }));
+  } else {
+    ctx.translate(figX, 0);
+    fmap.forEach((row,ry)=>row.forEach((cell,rx)=>{
+      if(!cell) return;
+      ctx.fillStyle='rgba(200,235,205,0.92)';
+      ctx.fillRect(rx*PS, figY+ry*PS, PS-1, PS-1);
+    }));
+  }
+  ctx.restore();
+
+  // 인물 그림자
+  ctx.fillStyle='rgba(0,0,0,0.45)';
+  ctx.fillRect(figX+3, FLOOR_Y, FIG_W-4, 4);
+
+  // ── 모션 디텍션 박스 ──
+  const MDX=figX-5, MDY=figY-5, MDW=FIG_W+10, MDH=FIG_H+10;
+  const mdA = 0.45 + Math.sin(tick*0.18)*0.35;
+  ctx.strokeStyle=`rgba(0,255,90,${mdA})`; ctx.lineWidth=1;
+  ctx.strokeRect(MDX, MDY, MDW, MDH);
+  // 코너 마크
+  const mk=7;
+  ctx.strokeStyle=`rgba(0,255,90,${mdA+0.25})`; ctx.lineWidth=1.5;
+  [[MDX,MDY,mk,0,0,mk],[MDX+MDW,MDY,-mk,0,0,mk],[MDX,MDY+MDH,mk,0,0,-mk],[MDX+MDW,MDY+MDH,-mk,0,0,-mk]]
+    .forEach(([x,y,dx1,dy1,dx2,dy2])=>{
+      ctx.beginPath(); ctx.moveTo(x,y+dy1); ctx.lineTo(x,y); ctx.lineTo(x+dx1,y); ctx.stroke();
+      if(dx2||dy2){ ctx.beginPath(); ctx.moveTo(x+dx2,y); ctx.lineTo(x,y); ctx.lineTo(x,y+dy2); ctx.stroke(); }
+    });
+
+  // MOTION 라벨
+  ctx.font='6px monospace'; ctx.textAlign='left'; ctx.textBaseline='bottom';
+  ctx.fillStyle=`rgba(0,255,90,${mdA+0.1})`;
+  ctx.fillText('● MOTION', MDX, MDY-2);
+
+  // ── HUD 요소들 ──
+  // 우상단 줌 레벨
+  ctx.textAlign='right'; ctx.textBaseline='top';
+  ctx.fillStyle='rgba(140,200,150,0.55)'; ctx.font='6px monospace';
+  ctx.fillText('ZOOM: 100%', SX+CAM_W-8, CAM_Y+6);
+
+  // 좌하단 크로스헤어
+  const CX=SX+18, CY=CAM_Y+CAM_H-18;
+  ctx.strokeStyle='rgba(0,180,70,0.4)'; ctx.lineWidth=0.5;
+  ctx.beginPath(); ctx.moveTo(CX-10,CY); ctx.lineTo(CX+10,CY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(CX,CY-10); ctx.lineTo(CX,CY+10); ctx.stroke();
+  ctx.strokeRect(CX-3,CY-3,7,7);
+
+  // 우하단 녹화 길이
+  const recSec = Math.floor(tick*33/1000);
+  const rh=String(Math.floor(recSec/3600)).padStart(2,'0');
+  const rm=String(Math.floor(recSec%3600/60)).padStart(2,'0');
+  const rs=String(recSec%60).padStart(2,'0');
+  ctx.textAlign='right'; ctx.textBaseline='bottom';
+  ctx.fillStyle='rgba(140,200,150,0.5)'; ctx.font='6px monospace';
+  ctx.fillText(`REC ${rh}:${rm}:${rs}`, SX+CAM_W-8, CAM_Y+CAM_H-5);
+
+  // ── 노이즈 / 글리치 ──
+  NOISE.forEach(n=>{
+    if(Math.random()>0.28) return;
+    const a = Math.random()*0.12;
+    ctx.fillStyle=`rgba(200,235,205,${a})`;
+    ctx.fillRect(SX+n.x*CAM_W, CAM_Y+n.y*CAM_H, 1, 1);
+  });
+  if(Math.random()>0.965){
+    const gy=CAM_Y+Math.random()*CAM_H;
+    ctx.fillStyle='rgba(200,240,210,0.06)';
+    ctx.fillRect(SX,gy,CAM_W,Math.random()*3+1);
+  }
+
+  // 스캔라인
+  ctx.fillStyle='rgba(0,0,0,0.13)';
+  for(let y=CAM_Y;y<CAM_Y+CAM_H;y+=2) ctx.fillRect(SX,y,CAM_W,1);
+
+  // 포스포 비네팅
+  const vg=ctx.createRadialGradient(SX+CAM_W/2,CAM_Y+CAM_H/2,CAM_W*0.2, SX+CAM_W/2,CAM_Y+CAM_H/2,CAM_W*0.72);
+  vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.32)');
+  ctx.fillStyle=vg; ctx.fillRect(SX,CAM_Y,CAM_W,CAM_H);
+
+  // ════════════ 자막 바 ════════════
+  ctx.fillStyle='rgba(0,0,0,0.92)'; ctx.fillRect(SX,SUB_Y,SW,SUB_H);
+  ctx.strokeStyle='rgba(0,200,70,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(SX,SUB_Y); ctx.lineTo(SX+SW,SUB_Y); ctx.stroke();
+
+  // CC 배지
+  ctx.font='7px monospace'; ctx.textBaseline='top'; ctx.textAlign='left';
+  ctx.fillStyle='rgba(200,200,200,0.4)';
+  ctx.fillText('[CC]', SX+10, SUB_Y+8);
+
+  // 자막 업데이트
+  subT++;
+  const hold = subIdx===POEM.length-1 ? SUB_HOLD*2 : SUB_HOLD;
+  if(subT<SUB_FADE)           subAlpha = subT/SUB_FADE;
+  else if(subT>hold-SUB_FADE) subAlpha = Math.max(0,(hold-subT)/SUB_FADE);
+  else                        subAlpha = 1;
+  if(subT>=hold){ subT=0; subIdx=(subIdx+1)%POEM.length; }
+
+  const isSearch = POEM[subIdx]==='Search for anything.';
+  ctx.font='11px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle = isSearch
+    ? `rgba(0,255,120,${subAlpha})`
+    : `rgba(235,245,235,${subAlpha*0.95})`;
+  ctx.fillText(POEM[subIdx], SX+SW/2, SUB_Y+SUB_H/2);
+
+  // 자막 하단 장식선
+  ctx.strokeStyle=`rgba(0,180,60,${subAlpha*0.3})`; ctx.lineWidth=1;
+  const tw=ctx.measureText(POEM[subIdx]).width;
+  ctx.beginPath(); ctx.moveTo(SX+SW/2-tw/2-10,SUB_Y+SUB_H-8); ctx.lineTo(SX+SW/2+tw/2+10,SUB_Y+SUB_H-8); ctx.stroke();
+
+  // ════════════ 전체 스크린 효과 ════════════
+  ctx.fillStyle='rgba(0,0,0,0.05)';
+  for(let y=SY;y<SY+SH;y+=2) ctx.fillRect(SX,y,SW,1);
+
+  const sv=ctx.createRadialGradient(SX+SW/2,SY+SH/2,SW*0.3,SX+SW/2,SY+SH/2,SW*0.75);
+  sv.addColorStop(0,'rgba(0,0,0,0)'); sv.addColorStop(1,'rgba(0,0,0,0.22)');
+  ctx.fillStyle=sv; ctx.fillRect(SX,SY,SW,SH);
+
+  ctx.strokeStyle='rgba(0,80,30,0.35)'; ctx.lineWidth=1;
+  ctx.strokeRect(SX,SY,SW,SH);
+
+  tick++;
+}
+setInterval(draw, 33);
+</script>
+</body>
+</html>

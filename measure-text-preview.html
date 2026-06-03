@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Measure — Text Display Concepts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background:#060606; color:#00ff00;
+      font-family:'Press Start 2P',monospace;
+      padding:40px 24px;
+      display:flex; flex-direction:column; align-items:center; gap:48px;
+    }
+    h1 { font-size:8px; letter-spacing:2px; text-shadow:0 0 10px #00ff00; }
+    .label {
+      font-size:6px; color:rgba(0,255,0,0.5); letter-spacing:1px;
+      margin-bottom:8px;
+    }
+    .desc {
+      font-size:5px; color:rgba(0,255,0,0.3); letter-spacing:1px;
+      font-family:monospace; margin-bottom:16px;
+    }
+    .panel {
+      width:540px;
+      background:#000;
+      border:1px solid #003300;
+    }
+    .banner-area {
+      display:flex; flex-direction:column; align-items:center;
+      padding:20px 20px 0; gap:0;
+    }
+    canvas { display:block; }
+    .search-sim {
+      display:flex; border-top:1px solid #003300;
+      padding:12px 16px; gap:10px;
+    }
+    .search-sim input {
+      flex:1; background:#000; border:1px solid #004400;
+      color:#00ff00; padding:8px 10px;
+      font-family:'Press Start 2P',monospace; font-size:7px; outline:none;
+    }
+    .search-sim button {
+      background:#003800; border:1px solid #00ff00;
+      color:#00ff00; padding:8px 14px;
+      font-family:'Press Start 2P',monospace; font-size:7px; cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>▶ TEXT DISPLAY CONCEPTS</h1>
+
+<!-- ① TYPING ON SCREEN -->
+<div>
+  <div class="label">① TYPING ON SCREEN</div>
+  <div class="desc">문구가 모니터 화면 안에서 한 글자씩 타이핑됨 → 마지막에 "Search for anything" 커서 깜빡</div>
+  <div class="panel">
+    <div class="banner-area">
+      <canvas id="c1top"></canvas>
+      <canvas id="c1bot"></canvas>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search for anything..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ② SCROLL + HIGHLIGHT -->
+<div>
+  <div class="label">② SLOW SCROLL + HIGHLIGHT</div>
+  <div class="desc">문구가 천천히 위로 올라감. 핵심 단어(recurs / periphery / reason)만 밝게 강조</div>
+  <div class="panel">
+    <div class="banner-area">
+      <canvas id="c2top"></canvas>
+      <canvas id="c2bot"></canvas>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search for anything..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<!-- ③ SPLIT: 한 줄씩 페이드인 -->
+<div>
+  <div class="label">③ LINE-BY-LINE FADE IN</div>
+  <div class="desc">줄마다 순서대로 나타남. 마지막 "Search for anything." 은 별도 색상 강조</div>
+  <div class="panel">
+    <div class="banner-area">
+      <canvas id="c3top"></canvas>
+      <canvas id="c3bot"></canvas>
+    </div>
+    <div class="search-sim">
+      <input placeholder="Search for anything..." readonly>
+      <button>SEARCH</button>
+    </div>
+  </div>
+</div>
+
+<script>
+setTimeout(()=>{
+
+const dpr = window.devicePixelRatio || 1;
+const LW=495, TOP_H=240, BOT_H=105;
+
+// 공통 문구
+const POEM = [
+  'They started keeping count.',
+  'Not from fixation, but from',
+  'a theory: that what recurs',
+  'without reason is probably',
+  'evidence of a reason not',
+  'yet named.',
+  '',
+  'The record reaches back,',
+  'but experience does not',
+  'accumulate.',
+  '',
+  'The thing that keeps returning',
+  'to your periphery — bring it here.',
+  '',
+  'The record will tell you how',
+  'many times it had already',
+  'arrived before you began to look.',
+  '',
+  'Search for anything.',
+];
+
+// ── 공통 터미널 하단 ──
+function makeTermCanvas(id){
+  const c = document.getElementById(id);
+  const ctx = c.getContext('2d');
+  c.width = LW*dpr; c.height = BOT_H*dpr;
+  c.style.width = LW+'px'; c.style.height = BOT_H+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=BOT_H;
+  let tick=0;
+  const FS=7, LHt=16;
+  const LINES=[
+    { prefix:'SYS>  ', text:'MEASURE.DB  [2847 FILES READY]', delay:0   },
+    { prefix:'SCAN> ', text:'INDEXING KEYWORDS...',           delay:45  },
+    { prefix:'Q>    ', text:'ENTER KEYWORD TO SEARCH',        delay:100 },
+    { prefix:'TIP>  ', text:'crash / shadow / float / scale', delay:170 },
+    { prefix:'TIP>  ', text:'yellow / border / distance',     delay:240 },
+    { prefix:'_     ', text:'',                               delay:310, isCursor:true },
+  ];
+  let typeState=0;
+  const TOTAL=LINES.reduce((s,l)=>s+l.prefix.length+l.text.length,0);
+  function draw(){
+    ctx.fillStyle='rgba(0,3,0,0.96)'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,30,0,0.4)'; ctx.lineWidth=0.5;
+    for(let y=0;y<H;y+=LHt){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    if(typeState < TOTAL+80) typeState += 0.88; else typeState = 0;
+    LINES.forEach((line,li)=>{
+      if(typeState < line.delay) return;
+      const y = 14 + li*LHt;
+      if(y > H-4) return;
+      const full = line.prefix + line.text;
+      const typed = Math.min(full.length, Math.floor(typeState - line.delay));
+      const display = full.slice(0, typed);
+      ctx.font=`${FS}px 'Press Start 2P',monospace`; ctx.textAlign='left';
+      ctx.fillStyle='rgba(0,180,0,0.55)';
+      ctx.fillText(display.slice(0, line.prefix.length), 12, y);
+      ctx.fillStyle = line.isCursor ? 'rgba(0,255,0,0.9)' : 'rgba(0,255,80,0.82)';
+      ctx.fillText(display.slice(line.prefix.length), 12 + line.prefix.length*FS*0.62, y);
+      if(!line.isCursor && typed < full.length && typed > 0){
+        const cx2 = 12 + Math.min(typed,line.prefix.length)*FS*0.62
+                       + Math.max(0,typed-line.prefix.length)*FS*0.62;
+        if(Math.floor(tick/9)%2===0){ ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(cx2,y-FS+2,4,FS); }
+      }
+      if(line.isCursor && typed>0 && Math.floor(tick/16)%2===0){
+        ctx.fillStyle='rgba(0,255,0,0.9)'; ctx.fillRect(12,y-FS+2,FS*0.62,FS);
+      }
+    });
+    ctx.fillStyle='rgba(0,255,0,0.18)'; ctx.fillRect(8,0,1,H);
+    ctx.fillStyle='rgba(0,0,0,0.08)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,H-bk); ctx.lineTo(0,H); ctx.lineTo(bk,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-bk,H); ctx.lineTo(W,H); ctx.lineTo(W,H-bk); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W,H); ctx.stroke();
+    tick++;
+  }
+  setInterval(draw, 40);
+}
+makeTermCanvas('c1bot');
+makeTermCanvas('c2bot');
+makeTermCanvas('c3bot');
+
+// ── 공통 모니터 쉘 그리기 ──
+function drawMonShell(ctx, W, H, tick){
+  // M 배경 — 각 호출마다 새로 계산하지 않으므로 매번 전달받은 grid 사용
+}
+
+// ────────────────────────────────────
+// ① TYPING ON SCREEN
+// ────────────────────────────────────
+(function(){
+  const c = document.getElementById('c1top');
+  const ctx = c.getContext('2d');
+  c.width = LW*dpr; c.height = TOP_H*dpr;
+  c.style.width = LW+'px'; c.style.height = TOP_H+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=TOP_H;
+  let tick=0;
+
+  const CW=6,CH=10;
+  const GCOLS=Math.ceil(W/CW)+1, GROWS=Math.ceil(H/CH)+1;
+  const bg=[];
+  for(let r=0;r<GROWS;r++){
+    bg.push([]);
+    for(let col=0;col<GCOLS;col++) bg[r].push({ch:'M',t:Math.random()*100});
+  }
+
+  const MON_W=290,MON_H=185;
+  const MON_X=Math.floor((W-MON_W)/2), MON_Y=Math.floor((H-MON_H)/2)-8;
+  const BZ=18;
+  const SCR_X=MON_X+BZ, SCR_Y=MON_Y+BZ;
+  const SCR_W=MON_W-BZ*2, SCR_H=MON_H-BZ*2;
+  const ST_W=56,ST_H=18,ST_X=Math.floor((W-56)/2),ST_Y=MON_Y+MON_H;
+  const BS_W=88,BS_H=8,BS_X=Math.floor((W-88)/2),BS_Y=ST_Y+ST_H;
+
+  // 타이핑 상태
+  const FULL_TEXT = POEM.join('\n');
+  let charIdx = 0;
+  let charTimer = 0;
+  const CHAR_SPEED = 2; // 프레임당 1자 (tick 기준)
+  let displayed = '';
+  let done = false;
+  let restartTimer = 0;
+
+  function drawMon(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.font=`bold ${CH}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    for(let r=0;r<GROWS;r++) for(let col=0;col<GCOLS;col++){
+      const cell=bg[r][col]; cell.t+=0.005;
+      if(Math.random()>0.9997) cell.ch='?+;=`~'.charAt(Math.floor(Math.random()*6));
+      else if(Math.random()>0.9993) cell.ch='M';
+      const br=22+Math.sin(cell.t)*8;
+      ctx.fillStyle=`rgba(0,${Math.floor(br)},0,0.5)`;
+      ctx.fillText(cell.ch, col*CW, r*CH);
+    }
+    ctx.fillStyle='#0d1a0d'; ctx.fillRect(MON_X,MON_Y,MON_W,MON_H);
+    ctx.fillStyle='#1a3d1a'; ctx.fillRect(MON_X+2,MON_Y+2,MON_W-4,3);
+    ctx.fillRect(MON_X+2,MON_Y+2,3,MON_H-4);
+    ctx.fillStyle='#050f05'; ctx.fillRect(MON_X+4,MON_Y+MON_H-5,MON_W-8,3);
+    ctx.fillRect(MON_X+MON_W-5,MON_Y+4,3,MON_H-8);
+    ctx.strokeStyle='#1f4d1f'; ctx.lineWidth=1; ctx.strokeRect(MON_X+.5,MON_Y+.5,MON_W-1,MON_H-1);
+    ctx.fillStyle='#040a04';
+    ctx.fillRect(SCR_X-4,SCR_Y-4,SCR_W+8,4); ctx.fillRect(SCR_X-4,SCR_Y-4,4,SCR_H+8);
+    ctx.fillStyle='#00050a'; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+  }
+
+  function drawContent(){
+    // 타이핑 진행
+    if(!done){
+      charTimer++;
+      if(charTimer >= CHAR_SPEED){
+        charTimer=0;
+        if(charIdx < FULL_TEXT.length){
+          displayed = FULL_TEXT.slice(0, ++charIdx);
+        } else {
+          done=true;
+        }
+      }
+    } else {
+      restartTimer++;
+      if(restartTimer > 140){ charIdx=0; displayed=''; done=false; restartTimer=0; }
+    }
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(SCR_X+4, SCR_Y+4, SCR_W-8, SCR_H-8); ctx.clip();
+
+    const FS=6.5, LH=12;
+    ctx.font=`${FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+
+    const lines = displayed.split('\n');
+    // 마지막 줄이 화면 아래로 넘어가면 스크롤
+    const visibleLines = Math.floor((SCR_H-8) / LH);
+    const startLine = Math.max(0, lines.length - visibleLines);
+
+    lines.slice(startLine).forEach((line, i)=>{
+      const y = SCR_Y+6 + i*LH;
+      const isLast = line === 'Search for anything.';
+      ctx.fillStyle = isLast
+        ? `rgba(0,255,100,${0.9+Math.sin(tick*0.12)*0.1})`
+        : 'rgba(0,200,70,0.8)';
+      ctx.fillText(line, SCR_X+8, y);
+    });
+
+    // 커서
+    if(!done && Math.floor(tick/8)%2===0){
+      const lastLine = lines[lines.length-1];
+      const lw = ctx.measureText(lastLine).width;
+      const ly = SCR_Y+6 + (lines.length-1-startLine)*LH;
+      ctx.fillStyle='rgba(0,255,0,0.9)';
+      ctx.fillRect(SCR_X+8+lw, ly, 5, FS);
+    }
+
+    ctx.restore();
+  }
+
+  function drawFinish(){
+    // 스캔라인 + 비네팅
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    for(let y=SCR_Y;y<SCR_Y+SCR_H;y+=2) ctx.fillRect(SCR_X,y,SCR_W,1);
+    const vg=ctx.createRadialGradient(SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.25,SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.72);
+    vg.addColorStop(0,'rgba(0,40,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.35)');
+    ctx.fillStyle=vg; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+    ctx.strokeStyle='rgba(0,160,40,0.35)'; ctx.lineWidth=1; ctx.strokeRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+    // LED
+    const ledOn=Math.floor(tick/22)%2===0;
+    ctx.shadowColor='#00ff44'; ctx.shadowBlur=ledOn?8:0;
+    ctx.fillStyle=ledOn?'#00ff44':'#003322';
+    ctx.fillRect(MON_X+MON_W-11,MON_Y+MON_H-14,5,5); ctx.shadowBlur=0;
+    // 스탠드
+    ctx.fillStyle='#0d1a0d';
+    ctx.fillRect(ST_X+6,ST_Y,ST_W-12,4); ctx.fillRect(ST_X+4,ST_Y+4,ST_W-8,4);
+    ctx.fillRect(ST_X+2,ST_Y+8,ST_W-4,6); ctx.fillRect(ST_X,ST_Y+14,ST_W,4);
+    ctx.fillStyle='#0a150a'; ctx.fillRect(BS_X,BS_Y,BS_W,BS_H);
+    ctx.fillStyle='#162d16'; ctx.fillRect(BS_X+2,BS_Y+1,BS_W-4,2);
+    ctx.fillStyle='rgba(0,0,0,0.07)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,bk); ctx.lineTo(0,0); ctx.lineTo(bk,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-bk,0); ctx.lineTo(W,0); ctx.lineTo(W,bk); ctx.stroke();
+    tick++;
+  }
+
+  function draw(){ drawMon(); drawContent(); drawFinish(); }
+  setInterval(draw, 33);
+})();
+
+
+// ────────────────────────────────────
+// ② SLOW SCROLL + KEYWORD HIGHLIGHT
+// ────────────────────────────────────
+(function(){
+  const c = document.getElementById('c2top');
+  const ctx = c.getContext('2d');
+  c.width = LW*dpr; c.height = TOP_H*dpr;
+  c.style.width = LW+'px'; c.style.height = TOP_H+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=TOP_H;
+  let tick=0;
+
+  const CW=6,CH=10;
+  const GCOLS=Math.ceil(W/CW)+1, GROWS=Math.ceil(H/CH)+1;
+  const bg=[];
+  for(let r=0;r<GROWS;r++){
+    bg.push([]);
+    for(let col=0;col<GCOLS;col++) bg[r].push({ch:'M',t:Math.random()*100});
+  }
+
+  const MON_W=290,MON_H=185;
+  const MON_X=Math.floor((W-MON_W)/2), MON_Y=Math.floor((H-MON_H)/2)-8;
+  const BZ=18;
+  const SCR_X=MON_X+BZ, SCR_Y=MON_Y+BZ;
+  const SCR_W=MON_W-BZ*2, SCR_H=MON_H-BZ*2;
+  const ST_W=56,ST_H=18,ST_X=Math.floor((W-56)/2),ST_Y=MON_Y+MON_H;
+  const BS_W=88,BS_H=8,BS_X=Math.floor((W-88)/2),BS_Y=ST_Y+ST_H;
+
+  // 강조 키워드
+  const KEYWORDS = ['recurs','periphery','reason','record','evidence','count','accumulate'];
+  let scrollOffset = 0;
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.font=`bold ${CH}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    for(let r=0;r<GROWS;r++) for(let col=0;col<GCOLS;col++){
+      const cell=bg[r][col]; cell.t+=0.005;
+      if(Math.random()>0.9997) cell.ch='?+;=`~'.charAt(Math.floor(Math.random()*6));
+      else if(Math.random()>0.9993) cell.ch='M';
+      const br=22+Math.sin(cell.t)*8;
+      ctx.fillStyle=`rgba(0,${Math.floor(br)},0,0.5)`;
+      ctx.fillText(cell.ch, col*CW, r*CH);
+    }
+    ctx.fillStyle='#0d1a0d'; ctx.fillRect(MON_X,MON_Y,MON_W,MON_H);
+    ctx.fillStyle='#1a3d1a'; ctx.fillRect(MON_X+2,MON_Y+2,MON_W-4,3); ctx.fillRect(MON_X+2,MON_Y+2,3,MON_H-4);
+    ctx.fillStyle='#050f05'; ctx.fillRect(MON_X+4,MON_Y+MON_H-5,MON_W-8,3); ctx.fillRect(MON_X+MON_W-5,MON_Y+4,3,MON_H-8);
+    ctx.strokeStyle='#1f4d1f'; ctx.lineWidth=1; ctx.strokeRect(MON_X+.5,MON_Y+.5,MON_W-1,MON_H-1);
+    ctx.fillStyle='#040a04';
+    ctx.fillRect(SCR_X-4,SCR_Y-4,SCR_W+8,4); ctx.fillRect(SCR_X-4,SCR_Y-4,4,SCR_H+8);
+    ctx.fillStyle='#00050a'; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+
+    // 스크롤
+    scrollOffset += 0.18;
+    const FS=6.5, LH=13;
+    const totalH = (POEM.length+4) * LH; // 위아래 여백 포함
+    const baseY = SCR_Y + SCR_H - (scrollOffset % (totalH + SCR_H));
+
+    ctx.save();
+    ctx.beginPath(); ctx.rect(SCR_X+4, SCR_Y+4, SCR_W-8, SCR_H-8); ctx.clip();
+    ctx.font=`${FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+
+    POEM.forEach((line, i)=>{
+      const y = baseY + i*LH;
+      if(y < SCR_Y-LH || y > SCR_Y+SCR_H) return;
+
+      // 줄 안에서 키워드 색상 분리
+      const isSearch = line === 'Search for anything.';
+      if(isSearch){
+        ctx.fillStyle=`rgba(0,255,100,${0.9+Math.sin(tick*0.1)*0.1})`;
+        ctx.fillText(line, SCR_X+8, y);
+        return;
+      }
+
+      // 일반 줄: 키워드 강조
+      let x = SCR_X+8;
+      const words = line.split(' ');
+      words.forEach((word, wi)=>{
+        const bare = word.replace(/[^a-zA-Z]/g,'').toLowerCase();
+        const isKey = KEYWORDS.includes(bare);
+        ctx.fillStyle = isKey
+          ? `rgba(0,255,120,${0.95+Math.sin(tick*0.08+i)*0.05})`
+          : 'rgba(0,170,50,0.7)';
+        const txt = (wi>0?' ':'')+word;
+        ctx.fillText(txt, x, y);
+        x += ctx.measureText(txt).width;
+      });
+    });
+    ctx.restore();
+
+    // 위아래 페이드 마스크
+    const topGrd=ctx.createLinearGradient(0,SCR_Y,0,SCR_Y+28);
+    topGrd.addColorStop(0,'rgba(0,5,10,1)'); topGrd.addColorStop(1,'rgba(0,5,10,0)');
+    ctx.fillStyle=topGrd; ctx.fillRect(SCR_X,SCR_Y,SCR_W,28);
+    const botGrd=ctx.createLinearGradient(0,SCR_Y+SCR_H-28,0,SCR_Y+SCR_H);
+    botGrd.addColorStop(0,'rgba(0,5,10,0)'); botGrd.addColorStop(1,'rgba(0,5,10,1)');
+    ctx.fillStyle=botGrd; ctx.fillRect(SCR_X,SCR_Y+SCR_H-28,SCR_W,28);
+
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    for(let y=SCR_Y;y<SCR_Y+SCR_H;y+=2) ctx.fillRect(SCR_X,y,SCR_W,1);
+    const vg=ctx.createRadialGradient(SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.25,SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.72);
+    vg.addColorStop(0,'rgba(0,40,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.35)');
+    ctx.fillStyle=vg; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+    ctx.strokeStyle='rgba(0,160,40,0.35)'; ctx.lineWidth=1; ctx.strokeRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+
+    const ledOn=Math.floor(tick/22)%2===0;
+    ctx.shadowColor='#00ff44'; ctx.shadowBlur=ledOn?8:0;
+    ctx.fillStyle=ledOn?'#00ff44':'#003322';
+    ctx.fillRect(MON_X+MON_W-11,MON_Y+MON_H-14,5,5); ctx.shadowBlur=0;
+    ctx.fillStyle='#0d1a0d';
+    ctx.fillRect(ST_X+6,ST_Y,ST_W-12,4); ctx.fillRect(ST_X+4,ST_Y+4,ST_W-8,4);
+    ctx.fillRect(ST_X+2,ST_Y+8,ST_W-4,6); ctx.fillRect(ST_X,ST_Y+14,ST_W,4);
+    ctx.fillStyle='#0a150a'; ctx.fillRect(BS_X,BS_Y,BS_W,BS_H);
+    ctx.fillStyle='#162d16'; ctx.fillRect(BS_X+2,BS_Y+1,BS_W-4,2);
+    ctx.fillStyle='rgba(0,0,0,0.07)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,bk); ctx.lineTo(0,0); ctx.lineTo(bk,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-bk,0); ctx.lineTo(W,0); ctx.lineTo(W,bk); ctx.stroke();
+    tick++;
+  }
+  setInterval(draw, 33);
+})();
+
+
+// ────────────────────────────────────
+// ③ LINE-BY-LINE FADE IN
+// ────────────────────────────────────
+(function(){
+  const c = document.getElementById('c3top');
+  const ctx = c.getContext('2d');
+  c.width = LW*dpr; c.height = TOP_H*dpr;
+  c.style.width = LW+'px'; c.style.height = TOP_H+'px';
+  ctx.scale(dpr, dpr);
+  const W=LW, H=TOP_H;
+  let tick=0;
+
+  const CW=6,CH=10;
+  const GCOLS=Math.ceil(W/CW)+1, GROWS=Math.ceil(H/CH)+1;
+  const bg=[];
+  for(let r=0;r<GROWS;r++){
+    bg.push([]);
+    for(let col=0;col<GCOLS;col++) bg[r].push({ch:'M',t:Math.random()*100});
+  }
+
+  const MON_W=290,MON_H=185;
+  const MON_X=Math.floor((W-MON_W)/2), MON_Y=Math.floor((H-MON_H)/2)-8;
+  const BZ=18;
+  const SCR_X=MON_X+BZ, SCR_Y=MON_Y+BZ;
+  const SCR_W=MON_W-BZ*2, SCR_H=MON_H-BZ*2;
+  const ST_W=56,ST_H=18,ST_X=Math.floor((W-56)/2),ST_Y=MON_Y+MON_H;
+  const BS_W=88,BS_H=8,BS_X=Math.floor((W-88)/2),BS_Y=ST_Y+ST_H;
+
+  const FS=6.2, LH=12.5;
+  // 줄별 딜레이 (tick 기준)
+  let lineAlphas = POEM.map(()=>0);
+  let phase = 0; // 0=페이드인, 1=대기, 2=페이드아웃
+  let phaseTimer = 0;
+  const FADE_SPEED = 0.022;
+  const HOLD = 160; // 완성 후 대기 프레임
+  const LINE_INTERVAL = 14; // 줄 사이 딜레이 (tick)
+
+  function draw(){
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+    ctx.font=`bold ${CH}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+    for(let r=0;r<GROWS;r++) for(let col=0;col<GCOLS;col++){
+      const cell=bg[r][col]; cell.t+=0.005;
+      if(Math.random()>0.9997) cell.ch='?+;=`~'.charAt(Math.floor(Math.random()*6));
+      else if(Math.random()>0.9993) cell.ch='M';
+      const br=22+Math.sin(cell.t)*8;
+      ctx.fillStyle=`rgba(0,${Math.floor(br)},0,0.5)`;
+      ctx.fillText(cell.ch, col*CW, r*CH);
+    }
+    ctx.fillStyle='#0d1a0d'; ctx.fillRect(MON_X,MON_Y,MON_W,MON_H);
+    ctx.fillStyle='#1a3d1a'; ctx.fillRect(MON_X+2,MON_Y+2,MON_W-4,3); ctx.fillRect(MON_X+2,MON_Y+2,3,MON_H-4);
+    ctx.fillStyle='#050f05'; ctx.fillRect(MON_X+4,MON_Y+MON_H-5,MON_W-8,3); ctx.fillRect(MON_X+MON_W-5,MON_Y+4,3,MON_H-8);
+    ctx.strokeStyle='#1f4d1f'; ctx.lineWidth=1; ctx.strokeRect(MON_X+.5,MON_Y+.5,MON_W-1,MON_H-1);
+    ctx.fillStyle='#040a04';
+    ctx.fillRect(SCR_X-4,SCR_Y-4,SCR_W+8,4); ctx.fillRect(SCR_X-4,SCR_Y-4,4,SCR_H+8);
+    ctx.fillStyle='#00050a'; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+
+    // 알파 업데이트
+    phaseTimer++;
+    if(phase===0){
+      const lineIdx = Math.floor(phaseTimer / LINE_INTERVAL);
+      for(let i=0; i<POEM.length; i++){
+        if(i <= lineIdx) lineAlphas[i] = Math.min(1, lineAlphas[i]+FADE_SPEED*1.5);
+      }
+      if(lineIdx >= POEM.length && lineAlphas[POEM.length-1] >= 1){
+        phase=1; phaseTimer=0;
+      }
+    } else if(phase===1){
+      if(phaseTimer > HOLD){ phase=2; phaseTimer=0; }
+    } else {
+      for(let i=0;i<POEM.length;i++) lineAlphas[i]=Math.max(0,lineAlphas[i]-FADE_SPEED);
+      if(lineAlphas[0]<=0){ phase=0; phaseTimer=0; lineAlphas=POEM.map(()=>0); }
+    }
+
+    // 줄 렌더
+    ctx.save();
+    ctx.beginPath(); ctx.rect(SCR_X+4,SCR_Y+4,SCR_W-8,SCR_H-8); ctx.clip();
+    ctx.font=`${FS}px monospace`; ctx.textBaseline='top'; ctx.textAlign='left';
+
+    // 세로 중앙 정렬
+    const totalTxtH = POEM.length * LH;
+    const startY = SCR_Y + (SCR_H - totalTxtH)/2;
+
+    POEM.forEach((line,i)=>{
+      const a = lineAlphas[i];
+      if(a<=0) return;
+      const y = startY + i*LH;
+      const isSearch = line==='Search for anything.';
+      const isEmpty = line==='';
+      if(isEmpty) return;
+
+      if(isSearch){
+        // 마지막 줄: 강조색 + 깜빡임
+        const blink = phase===1 ? 0.7+Math.sin(tick*0.15)*0.3 : 1;
+        ctx.fillStyle=`rgba(0,255,100,${a*blink})`;
+      } else {
+        ctx.fillStyle=`rgba(0,200,70,${a*0.82})`;
+      }
+      ctx.fillText(line, SCR_X+8, y);
+    });
+    ctx.restore();
+
+    ctx.fillStyle='rgba(0,0,0,0.18)';
+    for(let y=SCR_Y;y<SCR_Y+SCR_H;y+=2) ctx.fillRect(SCR_X,y,SCR_W,1);
+    const vg=ctx.createRadialGradient(SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.25,SCR_X+SCR_W/2,SCR_Y+SCR_H/2,SCR_W*.72);
+    vg.addColorStop(0,'rgba(0,40,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.35)');
+    ctx.fillStyle=vg; ctx.fillRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+    ctx.strokeStyle='rgba(0,160,40,0.35)'; ctx.lineWidth=1; ctx.strokeRect(SCR_X,SCR_Y,SCR_W,SCR_H);
+
+    const ledOn=Math.floor(tick/22)%2===0;
+    ctx.shadowColor='#00ff44'; ctx.shadowBlur=ledOn?8:0;
+    ctx.fillStyle=ledOn?'#00ff44':'#003322';
+    ctx.fillRect(MON_X+MON_W-11,MON_Y+MON_H-14,5,5); ctx.shadowBlur=0;
+    ctx.fillStyle='#0d1a0d';
+    ctx.fillRect(ST_X+6,ST_Y,ST_W-12,4); ctx.fillRect(ST_X+4,ST_Y+4,ST_W-8,4);
+    ctx.fillRect(ST_X+2,ST_Y+8,ST_W-4,6); ctx.fillRect(ST_X,ST_Y+14,ST_W,4);
+    ctx.fillStyle='#0a150a'; ctx.fillRect(BS_X,BS_Y,BS_W,BS_H);
+    ctx.fillStyle='#162d16'; ctx.fillRect(BS_X+2,BS_Y+1,BS_W-4,2);
+    ctx.fillStyle='rgba(0,0,0,0.07)';
+    for(let y=0;y<H;y+=2) ctx.fillRect(0,y,W,1);
+    const bk=12; ctx.strokeStyle='rgba(0,255,0,0.45)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(0,bk); ctx.lineTo(0,0); ctx.lineTo(bk,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-bk,0); ctx.lineTo(W,0); ctx.lineTo(W,bk); ctx.stroke();
+    tick++;
+  }
+  setInterval(draw, 33);
+})();
+
+}, 500);
+</script>
+</body>
+</html>

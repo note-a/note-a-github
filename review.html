@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>REVIEW — SET WORLD</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #000;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── header ─── */
+#hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px;
+  border-bottom: 2px solid #00ff00;
+  flex-shrink: 0;
+  font-size: 13px;
+  background: #00ff00;
+  color: #000;
+}
+#hdr .title { font-size: 17px; letter-spacing: 2px; font-weight: bold; }
+#hdr .prog  { margin-left: auto; letter-spacing: 1px; }
+
+/* ─── filter bar ─── */
+#fbar {
+  display: flex;
+  gap: 6px;
+  padding: 5px 14px;
+  border-bottom: 1px solid #003300;
+  flex-shrink: 0;
+  font-size: 13px;
+  align-items: center;
+}
+#fbar button {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  padding: 1px 10px;
+  border: 1px solid rgba(0,255,0,0.4);
+  background: transparent;
+  color: rgba(0,255,0,0.6);
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+#fbar button.active { background: #00ff00; color: #000; border-color: #00ff00; }
+#fbar label { font-size: 12px; color: rgba(0,255,0,0.5); margin-left: 8px; }
+#fbar input[type=text] {
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  background: #000;
+  border: 1px solid rgba(0,255,0,0.3);
+  color: #00ff00;
+  padding: 1px 8px;
+  width: 200px;
+  outline: none;
+}
+#fbar input[type=text]:focus { border-color: #00ff00; }
+#expBtn {
+  margin-left: auto;
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  padding: 1px 14px;
+  border: 1px solid #00ff00;
+  background: transparent;
+  color: #00ff00;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+#expBtn:hover { background: #00ff00; color: #000; }
+
+/* ─── main layout ─── */
+#main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* ─── image panel ─── */
+#imgPanel {
+  flex-shrink: 0;
+  width: 52%;
+  border-right: 2px solid #003300;
+  background: #050505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+#imgPanel img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+#imgPath {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-size: 10px;
+  color: rgba(0,255,0,0.3);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+#navBtns {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+}
+#navBtns button {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  padding: 1px 10px;
+  border: 1px solid rgba(0,255,0,0.4);
+  background: rgba(0,0,0,0.7);
+  color: #00ff00;
+  cursor: pointer;
+}
+#navBtns button:hover { background: #00ff00; color: #000; }
+
+/* ─── edit panel ─── */
+#editPanel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.field-label {
+  font-size: 11px;
+  color: rgba(0,255,0,0.45);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.field-value {
+  font-size: 15px;
+  color: #00ff00;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+}
+.field-value.dim { color: rgba(0,255,0,0.5); font-size: 13px; }
+
+#verdictBtns {
+  display: flex;
+  gap: 6px;
+}
+#verdictBtns button {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  padding: 3px 18px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.1s;
+}
+#verdictBtns .v-drop  { border-color: #1a3a0a; color: #1a3a0a; }
+#verdictBtns .v-core  { border-color: #00ff00; color: #00ff00; }
+#verdictBtns .v-sup   { border-color: #ffb000; color: #ffb000; }
+#verdictBtns .v-drop.sel  { background: #1a3a0a; color: #00ff00; }
+#verdictBtns .v-core.sel  { background: #00ff00; color: #000; }
+#verdictBtns .v-sup.sel   { background: #ffb000; color: #000; }
+#verdictBtns .v-drop:not(.sel):hover { background: #0d1f05; }
+#verdictBtns .v-core:not(.sel):hover { background: #003300; }
+#verdictBtns .v-sup:not(.sel):hover  { background: #332200; }
+
+#reasonInput {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  background: #000;
+  border: 1px solid rgba(0,255,0,0.35);
+  color: #00ff00;
+  padding: 8px 10px;
+  resize: vertical;
+  min-height: 90px;
+  width: 100%;
+  outline: none;
+  line-height: 1.5;
+}
+#reasonInput:focus { border-color: #00ff00; }
+
+#saveBtn {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  padding: 5px 0;
+  background: #00ff00;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 2px;
+  width: 100%;
+}
+#saveBtn:hover { background: #80ff80; }
+#saveMsg {
+  font-size: 12px;
+  color: rgba(0,255,0,0.5);
+  text-align: center;
+  min-height: 16px;
+}
+
+.divider { border-top: 1px dashed rgba(0,255,0,0.15); }
+
+#keyhints {
+  font-size: 11px;
+  color: rgba(0,255,0,0.3);
+  line-height: 1.8;
+  letter-spacing: 0.5px;
+}
+
+/* ─── empty state ─── */
+#emptyState {
+  display: none;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: rgba(0,255,0,0.4);
+  letter-spacing: 2px;
+  flex-direction: column;
+  gap: 12px;
+}
+  </style>
+</head>
+<body>
+
+<div id="hdr">
+  <span class="title">SET REVIEW</span>
+  <span id="hdrPath" style="font-size:12px;opacity:0.6;"></span>
+  <span class="prog" id="hdrProg">— / —</span>
+</div>
+
+<div id="fbar">
+  <span style="font-size:12px;opacity:0.6;margin-right:4px;">FILTER</span>
+  <button class="active" data-f="unprocessed" onclick="setFilter('unprocessed',this)">미판정 (no verdict)</button>
+  <button data-f="no_reason" onclick="setFilter('no_reason',this)">사유 없음 (drop)</button>
+  <button data-f="drop" onclick="setFilter('drop',this)">전체 drop</button>
+  <button data-f="all" onclick="setFilter('all',this)">전체</button>
+  <label>경로 검색</label>
+  <input type="text" id="pathSearch" placeholder="e.g. 2025/09" oninput="applyFilter()">
+  <button id="expBtn" onclick="exportJSON()">↓ EXPORT JSON</button>
+</div>
+
+<div id="main">
+  <div id="imgPanel">
+    <img id="photoImg" src="" alt="">
+    <div id="imgPath"></div>
+    <div id="navBtns">
+      <button onclick="go(-1)">← PREV</button>
+      <button onclick="go(1)">NEXT →</button>
+    </div>
+  </div>
+
+  <div id="editPanel">
+    <div>
+      <div class="field-label">ID / PATH</div>
+      <div class="field-value" id="fId">—</div>
+      <div class="field-value dim" id="fPath">—</div>
+    </div>
+    <div class="divider"></div>
+    <div>
+      <div class="field-label">DIR</div>
+      <div class="field-value" id="fDir">—</div>
+    </div>
+    <div class="divider"></div>
+    <div>
+      <div class="field-label">VERDICT  <span style="opacity:0.4;font-size:11px;">[1] drop  [2] support  [3] core</span></div>
+      <div id="verdictBtns">
+        <button class="v-drop" onclick="setVerdict('drop')">DROP</button>
+        <button class="v-sup"  onclick="setVerdict('support')">SUPPORT</button>
+        <button class="v-core" onclick="setVerdict('core')">CORE</button>
+      </div>
+    </div>
+    <div>
+      <div class="field-label">REASON  <span style="opacity:0.4;font-size:11px;">Ctrl+Enter → 저장 후 다음</span></div>
+      <textarea id="reasonInput" placeholder="드롭 사유 입력..."></textarea>
+    </div>
+    <button id="saveBtn" onclick="saveAndNext()">SAVE + NEXT →</button>
+    <div id="saveMsg"></div>
+    <div class="divider"></div>
+    <div id="keyhints">
+      ← → : 이전/다음 &nbsp;|&nbsp; 1/2/3 : verdict &nbsp;|&nbsp; Ctrl+Enter : 저장+다음<br>
+      Tab : reason 필드로 이동
+    </div>
+  </div>
+
+  <div id="emptyState">
+    <div>[ 해당하는 사진 없음 ]</div>
+    <div style="font-size:13px;">필터를 바꾸거나 검색어를 수정해보세요</div>
+  </div>
+</div>
+
+<script>
+// ─── 데이터 로드 ───────────────────────────────────────────────
+let adminData = null;
+let flatList = [];    // {photo, pathArr} — 현재 필터 결과
+let allFlat  = [];    // 전체 flatList (필터 전)
+let idx = 0;
+let currentFilter = 'unprocessed';
+let dirty = false;
+
+function loadData() {
+  let raw = null;
+  try { raw = localStorage.getItem('adminContents'); } catch(e) {}
+  if (raw) {
+    try { adminData = JSON.parse(raw); } catch(e) { adminData = null; }
+  }
+  if (!adminData) {
+    // GitHub에서 직접 fetch
+    const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+    fetch(base + 'admin-contents.json?t=' + Date.now())
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (d) { adminData = d; init(); }
+        else showError('admin-contents.json 로드 실패. 포트폴리오 먼저 열어주세요.');
+      })
+      .catch(() => showError('admin-contents.json 로드 실패.'));
+    return;
+  }
+  init();
+}
+
+function showError(msg) {
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('emptyState').innerHTML = `<div>${msg}</div>`;
+  document.getElementById('main').querySelector('#imgPanel').style.display = 'none';
+  document.getElementById('editPanel').style.display = 'none';
+}
+
+// 계층구조를 평탄화
+function flattenPhotos(photos, pathArr) {
+  const result = [];
+  for (const p of photos) {
+    if (p.type === 'sheet') {
+      result.push(...flattenPhotos(p.children || [], [...pathArr, p.title || p.id]));
+    } else {
+      result.push({ photo: p, pathArr });
+    }
+  }
+  return result;
+}
+
+function init() {
+  const photos = adminData?.project?.photos || [];
+  allFlat = flattenPhotos(photos, []);
+  applyFilter();
+}
+
+function applyFilter() {
+  const search = document.getElementById('pathSearch').value.trim().toLowerCase();
+  flatList = allFlat.filter(({photo, pathArr}) => {
+    const pathStr = pathArr.join('/').toLowerCase();
+    if (search && !pathStr.includes(search) && !(photo.id||'').toLowerCase().includes(search)) return false;
+    const v = photo.verdict || '';
+    const r = (photo.reason || '').trim();
+    if (currentFilter === 'unprocessed') return !v;
+    if (currentFilter === 'no_reason')   return v === 'drop' && !r;
+    if (currentFilter === 'drop')        return !v || v === 'drop';
+    return true; // all
+  });
+
+  idx = 0;
+  updateProgress();
+  if (flatList.length === 0) {
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('imgPanel').style.display = 'none';
+    document.getElementById('editPanel').style.display = 'none';
+  } else {
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('imgPanel').style.display = 'flex';
+    document.getElementById('editPanel').style.display = 'flex';
+    render();
+  }
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('#fbar button[data-f]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+// ─── 렌더 ───────────────────────────────────────────────────────
+function render() {
+  if (!flatList[idx]) return;
+  const { photo, pathArr } = flatList[idx];
+  const fullPath = pathArr.join(' › ') + ' › ' + (photo.id || '');
+
+  document.getElementById('fId').textContent = photo.id || '—';
+  document.getElementById('fPath').textContent = pathArr.join(' / ');
+  document.getElementById('fDir').textContent = photo.dir || '—';
+  document.getElementById('hdrPath').textContent = fullPath;
+
+  const imgEl = document.getElementById('photoImg');
+  const src = photo.filename || photo.url || '';
+  imgEl.src = src;
+  imgEl.onerror = () => { imgEl.src = ''; };
+  document.getElementById('imgPath').textContent = src.split('/').slice(-1)[0] || '';
+
+  document.getElementById('reasonInput').value = photo.reason || '';
+  renderVerdictBtns(photo.verdict || '');
+  updateProgress();
+}
+
+function renderVerdictBtns(v) {
+  document.querySelectorAll('#verdictBtns button').forEach(b => b.classList.remove('sel'));
+  const map = { drop: '.v-drop', support: '.v-sup', core: '.v-core' };
+  if (map[v]) document.querySelector(map[v])?.classList.add('sel');
+}
+
+function updateProgress() {
+  document.getElementById('hdrProg').textContent = flatList.length
+    ? `${idx + 1} / ${flatList.length}`
+    : '0 / 0';
+}
+
+// ─── 편집 ───────────────────────────────────────────────────────
+function setVerdict(v) {
+  if (!flatList[idx]) return;
+  flatList[idx].photo.verdict = v;
+  renderVerdictBtns(v);
+  dirty = true;
+}
+
+function saveAndNext() {
+  if (!flatList[idx]) return;
+  const photo = flatList[idx].photo;
+  photo.reason = document.getElementById('reasonInput').value;
+  if (!photo.verdict) photo.verdict = 'drop';
+  persist();
+  flashMsg('SAVED');
+  setTimeout(() => go(1), 80);
+}
+
+function persist() {
+  if (!adminData) return;
+  try {
+    localStorage.setItem('adminContents', JSON.stringify(adminData));
+  } catch(e) {
+    try {
+      // LZString이 있으면 압축
+      if (typeof LZString !== 'undefined') {
+        localStorage.setItem('adminContents', LZString.compress(JSON.stringify(adminData)));
+      }
+    } catch(e2) {}
+  }
+  dirty = false;
+}
+
+function flashMsg(msg) {
+  const el = document.getElementById('saveMsg');
+  el.textContent = msg;
+  setTimeout(() => { el.textContent = ''; }, 1200);
+}
+
+function go(dir) {
+  // 현재 reason 자동 저장
+  if (flatList[idx]) {
+    flatList[idx].photo.reason = document.getElementById('reasonInput').value;
+    if (!flatList[idx].photo.verdict) flatList[idx].photo.verdict = 'drop';
+    persist();
+  }
+  idx = Math.max(0, Math.min(flatList.length - 1, idx + dir));
+  render();
+}
+
+// ─── Export JSON ─────────────────────────────────────────────
+function exportJSON() {
+  if (!adminData) return;
+  // 현재 편집 중인 것 저장
+  if (flatList[idx]) {
+    flatList[idx].photo.reason = document.getElementById('reasonInput').value;
+    if (!flatList[idx].photo.verdict) flatList[idx].photo.verdict = 'drop';
+    persist();
+  }
+  const blob = new Blob([JSON.stringify(adminData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'admin-contents.json';
+  a.click();
+  flashMsg('EXPORTED');
+}
+
+// ─── 키보드 ─────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const inTextarea = document.activeElement === document.getElementById('reasonInput');
+
+  if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); saveAndNext(); return; }
+  if (inTextarea) return;
+
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); go(-1); }
+  if (e.key === '1') setVerdict('drop');
+  if (e.key === '2') setVerdict('support');
+  if (e.key === '3') setVerdict('core');
+  if (e.key === 'Tab') { e.preventDefault(); document.getElementById('reasonInput').focus(); }
+});
+
+// ─── 시작 ────────────────────────────────────────────────────────
+loadData();
+</script>
+</body>
+</html>

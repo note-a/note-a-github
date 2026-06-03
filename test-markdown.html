@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Markdown Test - file:// Protocol</title>
+    <style>
+        body {
+            background: #000;
+            color: #39dc00;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        table {
+            border: 1px solid #39dc00;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #39dc00;
+            padding: 10px;
+            text-align: left;
+        }
+        th { background: #39dc00; color: #000; font-weight: bold; }
+        blockquote { border-left: 3px solid #39dc00; padding-left: 15px; margin: 20px 0; }
+        .alert { border: 2px solid #ff3333; padding: 15px; margin: 20px 0; background: rgba(255,51,51,0.1); }
+        h1, h2, h3 { color: #39dc00; }
+        .status {
+            padding: 20px;
+            border: 2px dashed #39dc00;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>✓ Markdown Test via file:// Protocol</h1>
+
+    <div id="status" class="status">
+        <div>Checking marked.js...</div>
+    </div>
+
+    <script src="./marked.min.js"></script>
+    <script>
+        // Check marked.js loading
+        const statusDiv = document.getElementById('status');
+
+        if (typeof marked === 'undefined') {
+            statusDiv.innerHTML = '<div style="color: #ff3333;">✗ FAILED: marked.js not loaded</div>';
+        } else {
+            // Test markdown parsing
+            const testMd = `### 마크다운 테스트
+
+> 이것은 blockquote 입니다.
+
+| 버전 | 변경 내용 |
+|---|---|
+| 1.0 | 최초 작성 |
+| 2.0 | KV 정의 수정 |
+| 2.3 | 필드 추가 |
+
+<div style="border: 2px solid #ff3333; padding: 15px; background: rgba(255,51,51,0.1);">
+[!] SYSTEM_ALERT: 커스텀 HTML도 작동합니다.
+</div>`;
+
+            const parsed = marked.parse(testMd);
+            const hasTable = parsed.includes('<table>');
+            const hasH3 = parsed.includes('<h3>');
+            const hasBlockquote = parsed.includes('<blockquote>');
+
+            if (hasTable && hasH3 && hasBlockquote) {
+                statusDiv.innerHTML = `<div style="color: #39dc00; font-size: 18px;">✓ SUCCESS: marked.js loaded and working!</div>`;
+                document.body.innerHTML += `<h2>렌더링된 콘텐츠:</h2>` + parsed;
+            } else {
+                statusDiv.innerHTML = `<div style="color: #ff3333;">✗ FAILED: Parsing incomplete</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

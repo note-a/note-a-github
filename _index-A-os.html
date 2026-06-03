@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET.OS — ENTRY (Sample A)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
+  --gl:#ffd3c2; --gd:#9e4420; --bd:#ff4a16;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace; --px:'Press Start 2P',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;background:#000;font-family:var(--mono);color:var(--g);overflow:hidden;display:flex;align-items:center;justify-content:center;}
+#bg{position:fixed;inset:-200px;z-index:0;background:radial-gradient(ellipse 180% 200% at 50% 30%, rgba(48,20,4,.30) 0%, rgba(16,8,2,.18) 45%, rgba(2,1,0,.08) 100%);}
+#bg-grid{position:fixed;inset:-40px;z-index:0;background-image:linear-gradient(rgba(255,74,22,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.045) 1px,transparent 1px);background-size:56px 56px;}
+#bg-vig{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 72% 72% at 50% 50%,transparent 30%,rgba(0,0,0,.6) 75%,rgba(0,0,0,.94) 100%);}
+.crt{position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
+
+#wrap{
+  position:relative;z-index:1;width:1100px;max-width:96vw;height:720px;max-height:94vh;
+  background:rgba(4,3,1,0.985);border:1px solid var(--bd);
+  box-shadow:inset 0 1px 0 rgba(255,140,40,.14),0 0 0 1px rgba(0,0,0,0.95),0 0 90px rgba(255,74,22,0.16),0 28px 100px rgba(0,0,0,0.99);
+  display:grid;grid-template-rows:auto auto 1fr auto auto;padding:9px;gap:7px;overflow:hidden;
+}
+#wrap::before,#wrap::after,.wc-bl,.wc-br{content:'';position:absolute;width:16px;height:16px;z-index:30;}
+#wrap::before{top:-1px;left:-1px;border-top:1px solid var(--g);border-left:1px solid var(--g);}
+#wrap::after{top:-1px;right:-1px;border-top:1px solid var(--g);border-right:1px solid var(--g);}
+.wc-bl{bottom:-1px;left:-1px;border-bottom:1px solid var(--g);border-left:1px solid var(--g);}
+.wc-br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
+
+.tbar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;padding:5px 12px;font-family:var(--px);font-size:9px;letter-spacing:1px;}
+.tbar .dots{display:flex;gap:5px;}
+.tbar .dots b{width:8px;height:8px;background:#1a0a02;display:inline-block;}
+.tbar .dots b.live{background:#ffe9dd;animation:bl .9s step-end infinite;}
+
+.sub{display:flex;gap:0;font-family:var(--mono);font-size:11px;letter-spacing:1px;}
+.sub .lab{background:var(--g);color:#1a0a02;padding:3px 9px;font-weight:600;}
+.sub .fil{flex:1;border:1px solid var(--g3);border-left:none;padding:3px 10px;color:var(--g2);overflow:hidden;white-space:nowrap;}
+
+.body{display:grid;grid-template-columns:1fr 320px;gap:7px;min-height:0;}
+.col{display:flex;flex-direction:column;gap:7px;min-height:0;}
+.pnl{border:1px solid var(--g3);background:rgba(255,74,22,0.02);display:flex;flex-direction:column;min-height:0;}
+.ph{background:linear-gradient(180deg,#ff7a4a,#5e2a12);color:#1a0a02;font-family:var(--px);font-size:8px;letter-spacing:1px;padding:5px 9px;}
+.ph.dim{background:linear-gradient(180deg,#a8561a,#3a1d05);color:#ffd3c2;}
+.pb{padding:11px 13px;overflow:auto;}
+
+.intro p{font-family:var(--mono);font-size:13px;line-height:1.65;color:var(--gl);margin-bottom:9px;}
+.intro .attr{font-family:var(--px);font-size:9px;color:var(--g2);letter-spacing:1px;margin-top:4px;}
+
+.reg{font-family:var(--term);font-size:18px;line-height:1.15;color:var(--g);white-space:pre;}
+.reg .h{background:var(--g);color:#1a0a02;}
+
+.scroll{flex:1;overflow:hidden;}
+.logln{font-family:var(--mono);font-size:11px;color:var(--g2);padding:2px 0;letter-spacing:.5px;}
+.logln.on{color:var(--gl);background:rgba(255,74,22,0.10);}
+.logln .t{color:var(--g3);}
+
+.meter{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--g2);margin:5px 0;}
+.meter .bar{flex:1;height:8px;border:1px solid var(--g3);position:relative;overflow:hidden;}
+.meter .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--g);}
+
+.acts{display:flex;gap:7px;}
+.acts button{flex:1;font-family:var(--px);font-size:12px;letter-spacing:1px;padding:15px 6px;cursor:pointer;color:#1a0a02;background:linear-gradient(180deg,#ff7a4a,#cf4a18);border:1px solid var(--g);box-shadow:inset 0 1px 0 rgba(255,220,200,.6),inset 0 -2px 0 rgba(0,0,0,.3);transition:.12s;}
+.acts button:hover{background:linear-gradient(180deg,#ffa070,#ff5e16);}
+.acts button.alt{background:#000;color:var(--g);box-shadow:inset 0 0 0 1px var(--g3);}
+.acts button.alt:hover{background:rgba(255,74,22,.12);}
+
+.foot{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--g3);letter-spacing:1px;padding:0 2px;}
+.cur{display:inline-block;width:8px;height:14px;background:var(--g);vertical-align:-2px;animation:bl .7s infinite;}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bg-grid"></div><div id="bg-vig"></div><div class="crt"></div>
+<div id="wrap">
+  <div class="wc-bl"></div><div class="wc-br"></div>
+  <div class="tbar"><span>SET.OS // ENTRY TERMINAL</span><span class="dots"><b class="live"></b><b></b><b></b></span></div>
+  <div class="sub"><span class="lab">INDEX</span><span class="fil">EXTRACT FROM : SET WORLD — ACCUMULATION LOG &nbsp; *** PAGE 1 READY ***</span></div>
+
+  <div class="body">
+    <div class="col">
+      <div class="pnl" style="flex:1;">
+        <div class="ph">▸ TRANSMISSION</div>
+        <div class="pb intro">
+          <p>There are things that keep appearing. In different cities, different light, different hands. The same thing, almost. Close enough to ask why.</p>
+          <p>This is one answer to that question. It took years. It is still going. Some conditions repeat. Not because they are chosen, but because the world keeps producing them.</p>
+          <p>Someone noticed. Wrote them down. Went looking. The record has been accumulating since 2022. What you measure, you enter.</p>
+          <div class="attr">SET WORLD &nbsp;/&nbsp; 2022—</div>
+        </div>
+      </div>
+      <div class="pnl">
+        <div class="ph dim">◇ REGISTER CONTROL</div>
+        <div class="pb">
+<div class="reg"><span class="h"> REG  ADDRESS    TYPE                STAT </span>
+  A   SET_WORLD  SYSTEM/MEASURE      ACTIVE
+  B   VIS+LANG   FRAMEWORK           OPEN
+  C   OBSERVER   PROTOCOL            INCOMP
+  D   PERIMTR    MEASUREMENT         ONGOIN
+  E   CONDITN    RECURRENCE          REPEAT
+  F   RECORD     ACCUMULATION LOG    ACTIVE</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="pnl" style="flex:1;">
+        <div class="ph">▸ ACCUMULATION LOG</div>
+        <div class="pb scroll" id="logpanel"></div>
+      </div>
+      <div class="pnl">
+        <div class="ph dim">◇ STATUS</div>
+        <div class="pb">
+          <div class="meter">REC<span class="bar"><i style="width:84%"></i></span>84%</div>
+          <div class="meter">IDX<span class="bar"><i style="width:100%"></i></span>OK</div>
+          <div class="meter">SIG<span class="bar"><i style="width:62%"></i></span>62%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acts">
+    <button onclick="go('set-os.html')">[ -&gt; ENTER ]</button>
+    <button class="alt" onclick="go('portfolio.html')">[ BROWSE -&gt; ]</button>
+  </div>
+  <div class="foot"><span>INPUT : <span class="cur"></span></span><span>SET_WORLD / SET.OS &nbsp; v.XT2</span></div>
+</div>
+<script>
+const items=['ISOLATE','RUPTURE','GRID','CLUSTER','HEADOBJ','BACKPOSE','DUALFIG','DIPTYCH','STRATA','MATCOV','DMGPAT','TONEDIS','HETOBJ'];
+let idx=0;
+function render(){document.getElementById('logpanel').innerHTML=items.map((it,i)=>`<div class="logln${i===idx?' on':''}"><span class="t">${String(i+1).padStart(2,'0')}</span> ${i===idx?'▸':' '} ${it}</div>`).join('');}
+addEventListener('keydown',e=>{if(e.key==='ArrowUp'){idx=Math.max(0,idx-1);render();e.preventDefault();}if(e.key==='ArrowDown'){idx=Math.min(items.length-1,idx+1);render();e.preventDefault();}});
+render();
+function go(u){if(parent!==window){return;}location.href=u;}
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>GALLERY EXTRAS — SAMPLE</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #000;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+h2 {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: #00ff00;
+  background: #00ff00;
+  color: #000;
+  padding: 3px 12px;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.section { border: 1px solid #003300; padding: 16px; }
+.label { font-size: 11px; color: rgba(0,255,0,0.4); letter-spacing: 2px; margin-bottom: 8px; }
+
+/* ── A. 판정 통계 ── */
+.stat-grid { display: flex; flex-direction: column; gap: 4px; }
+.stat-row { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.stat-label { width: 80px; color: rgba(0,255,0,0.6); font-size: 12px; }
+.bar-track { flex: 1; height: 14px; background: #0a0a0a; border: 1px solid #001a00; position: relative; }
+.bar-core    { height: 100%; background: #00ff00; }
+.bar-support { height: 100%; background: #ffb000; }
+.bar-drop    { height: 100%; background: #1a3a0a; }
+.stat-nums { font-size: 12px; color: rgba(0,255,0,0.5); width: 120px; text-align: right; white-space: nowrap; }
+
+.legend { display: flex; gap: 16px; font-size: 12px; margin-top: 8px; }
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.leg-dot { width: 10px; height: 10px; }
+
+/* ── B. DIR 빈도 ── */
+.dir-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.dir-tag {
+  font-size: 13px;
+  padding: 2px 8px;
+  border: 1px solid;
+  letter-spacing: 1px;
+  cursor: default;
+}
+
+/* ── C. 최근 판정 피드 ── */
+.feed { font-size: 13px; display: flex; flex-direction: column; gap: 2px; max-height: 280px; overflow: hidden; }
+.feed-row { display: flex; align-items: baseline; gap: 8px; opacity: 0.9; }
+.feed-v { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.feed-id { color: rgba(0,255,0,0.5); width: 100px; flex-shrink: 0; font-size: 12px; }
+.feed-dir { color: #ffb000; width: 80px; flex-shrink: 0; font-size: 11px; }
+.feed-reason { color: #888; font-size: 11px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* ── D. 랜덤 코어 샘플 ── */
+.core-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; }
+.core-cell { position: relative; aspect-ratio: 3/2; overflow: hidden; border: 1px solid #00ff00; }
+.core-cell img { width: 100%; height: 100%; object-fit: cover; }
+.core-cell .core-dir {
+  position: absolute; bottom: 2px; left: 3px;
+  font-size: 9px; color: #00ff00; background: rgba(0,0,0,0.7); padding: 1px 4px; letter-spacing: 0.5px;
+}
+  </style>
+</head>
+<body>
+
+<!-- ── A. 판정 통계 시각화 ── -->
+<div>
+  <h2>A. 판정 통계 시각화 — 폴더별 core/support/drop 바 차트</h2>
+  <div class="section">
+    <div class="label">VERDICT DISTRIBUTION BY BATCH</div>
+    <div class="stat-grid" id="statGrid"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="leg-dot" style="background:#00ff00"></div> CORE</div>
+      <div class="legend-item"><div class="leg-dot" style="background:#ffb000"></div> SUPPORT</div>
+      <div class="legend-item"><div class="leg-dot" style="background:#1a3a0a;border:1px solid #2a5a1a"></div> DROP</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── B. DIR 빈도 맵 ── -->
+<div>
+  <h2>B. DIR 빈도 맵 — 출현 빈도에 따른 태그 크기/밝기</h2>
+  <div class="section">
+    <div class="label">DIR FREQUENCY MAP</div>
+    <div class="dir-grid" id="dirGrid"></div>
+  </div>
+</div>
+
+<!-- ── C. 최근 판정 피드 ── -->
+<div>
+  <h2>C. 최근 판정 피드 — core/support 선정 사진 로그</h2>
+  <div class="section">
+    <div class="label">RECENT SELECTIONS — CORE + SUPPORT</div>
+    <div class="feed" id="feed"></div>
+  </div>
+</div>
+
+<!-- ── D. 랜덤 코어 샘플 ── -->
+<div>
+  <h2>D. 랜덤 코어 샘플 — CORE 사진 그리드 하이라이트</h2>
+  <div class="section">
+    <div class="label">CORE SELECTIONS — RANDOM SAMPLE</div>
+    <div class="core-grid" id="coreGrid"></div>
+  </div>
+</div>
+
+<script>
+// ── 데이터 (admin-contents.json에서 집계) ──
+const folderStats = [
+  { label:'2025/09', core:32, support:8,  drop:361 },
+  { label:'2025/10', core:20, support:34, drop:668 },
+  { label:'2025/11', core:15, support:51, drop:1109 },
+  { label:'2025/12', core:7,  support:57, drop:604 },
+  { label:'2026/01', core:53, support:110, drop:651 },
+  { label:'2026/02', core:25, support:77, drop:1340 },
+  { label:'2026/03', core:15, support:37, drop:1147 },
+];
+
+const topDirs = [
+  {dir:'SKELETON',cnt:71},{dir:'OVERGROW',cnt:68},{dir:'GRID',cnt:53},
+  {dir:'VANISH',cnt:41},{dir:'SURFILL',cnt:40},{dir:'STRATA',cnt:39},
+  {dir:'SURFACE',cnt:38},{dir:'MIRROR',cnt:36},{dir:'PEEL',cnt:35},
+  {dir:'INFIL',cnt:34},{dir:'FLOAT',cnt:30},{dir:'WRAP',cnt:29},
+  {dir:'GLASSDUAL',cnt:28},{dir:'ISOOBJ',cnt:24},{dir:'OBJREP',cnt:21},
+  {dir:'LGTPAT',cnt:19},{dir:'MATCOV',cnt:18},{dir:'FUNSAT',cnt:14},
+  {dir:'BLOOM',cnt:13},{dir:'ARTNAT',cnt:11},{dir:'EQREP',cnt:9},
+  {dir:'REFLMED',cnt:8},{dir:'LGTSTR',cnt:7},{dir:'OXIDE',cnt:6},
+];
+
+const feedData = [
+  { id:'DSCF5890', v:'core',    dir:'FUNSAT',    reason:'수리점 앞 실외기 대량 집적, 기능 포화' },
+  { id:'DSCF5882', v:'core',    dir:'LGTPAT',    reason:'건물 외벽 나무 그림자 패턴 압도' },
+  { id:'DSCF5897', v:'core',    dir:'OBJREP',    reason:'줄무늬 포대 대량 집적, 질감 면 전환' },
+  { id:'DSCF5889', v:'support', dir:'OBJREP',    reason:'타이어 2개 배열, 하단 보도블록 간섭' },
+  { id:'DSCF5892', v:'support', dir:'LGTPAT',    reason:'반투명 유리 사선 그림자, 측면 간섭' },
+  { id:'DSCF3118', v:'core',    dir:'WRAP',      reason:'황색 PP 마대자루 프레임 전체 클로즈업' },
+  { id:'DSCF3220', v:'core',    dir:'OXIDE',     reason:'교량 철재 모서리 전면 녹 부식' },
+  { id:'DSCF3237', v:'core',    dir:'GRID',      reason:'마름모 격자 펜스 프레임 전체 점유' },
+  { id:'DSCF7693', v:'core',    dir:'GRID+STRATA', reason:'볼라드 4개 일렬·개체 차이 + 층 분절' },
+  { id:'DSCF7686', v:'support', dir:'STRATA',    reason:'나무/강/도시/하늘 4개 층, 경계 날카로움' },
+  { id:'DSCF7835', v:'support', dir:'SKELETON',  reason:'죽은 가지 끝 + 황혼 하늘, 잎 없음' },
+  { id:'DSCF5787', v:'core',    dir:'LGTPAT',    reason:'전봇대 그림자 보도블록 화면 75%+ 압도' },
+];
+
+const corePhotos = [
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/09/0928/DSCF7162.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/09/0928/DSCF7227.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/10/1003/DSCF7693.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/10/1003/DSCF7694.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/10/1003/DSCF7696.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/11/1102/DSCF9493.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/12/1225/DSCF3118.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2025/12/1225/DSCF3220.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2026/03/0227/DSCF5787.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2026/03/0304/DSCF5882.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2026/03/0304/DSCF5890.jpg',
+  'https://pub-ffca45bf1c204526a3de1b2315e479b3.r2.dev/2026/03/0304/DSCF5897.jpg',
+];
+const coreDirs = ['space-06','','GRID+STRATA','GRID+STRATA','GRID+STRATA','OVERGROW','WRAP','OXIDE','LGTPAT','LGTPAT','FUNSAT','OBJREP'];
+
+// ── A 렌더 ──
+const sg = document.getElementById('statGrid');
+folderStats.forEach(({ label, core, support, drop }) => {
+  const total = core + support + drop;
+  const pC = (core / total * 100).toFixed(1);
+  const pS = (support / total * 100).toFixed(1);
+  const pD = (drop / total * 100).toFixed(1);
+  sg.innerHTML += `
+    <div class="stat-row">
+      <div class="stat-label">${label}</div>
+      <div class="bar-track">
+        <div style="display:flex;height:100%;width:100%;">
+          <div style="width:${pC}%;background:#00ff00;" title="CORE ${core}"></div>
+          <div style="width:${pS}%;background:#ffb000;" title="SUP ${support}"></div>
+          <div style="width:${pD}%;background:#1a3a0a;" title="DROP ${drop}"></div>
+        </div>
+      </div>
+      <div class="stat-nums">${core}C / ${support}S / ${drop}D</div>
+    </div>`;
+});
+
+// ── B 렌더 ──
+const maxCnt = topDirs[0].cnt;
+const dg = document.getElementById('dirGrid');
+topDirs.forEach(({ dir, cnt }) => {
+  const ratio = cnt / maxCnt;
+  const opacity = 0.3 + ratio * 0.7;
+  const fontSize = 11 + Math.round(ratio * 7);
+  const borderColor = `rgba(0,255,0,${opacity})`;
+  const textColor = ratio > 0.6 ? '#00ff00' : `rgba(0,255,0,${opacity})`;
+  dg.innerHTML += `<div class="dir-tag" style="font-size:${fontSize}px;border-color:${borderColor};color:${textColor};" title="${cnt}회">
+    ${dir} <span style="font-size:9px;opacity:0.5;">${cnt}</span>
+  </div>`;
+});
+
+// ── C 렌더 ──
+const feed = document.getElementById('feed');
+feedData.forEach(({ id, v, dir, reason }) => {
+  const color = v === 'core' ? '#00ff00' : '#ffb000';
+  feed.innerHTML += `
+    <div class="feed-row">
+      <div class="feed-v" style="background:${color};flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:5px;"></div>
+      <div class="feed-id">${id}</div>
+      <div class="feed-dir">${dir}</div>
+      <div class="feed-reason">${reason}</div>
+    </div>`;
+});
+
+// ── D 렌더 ──
+const cg = document.getElementById('coreGrid');
+corePhotos.forEach((url, i) => {
+  cg.innerHTML += `
+    <div class="core-cell">
+      <img src="${url}" alt="" onerror="this.parentElement.style.background='#0d0d0d'">
+      <div class="core-dir">${coreDirs[i] || ''}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>

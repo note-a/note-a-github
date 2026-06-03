@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>REFERENCE — Samples F·G·H·I·J</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#d96a0e;--g2:rgba(217,106,14,.7);--g3:rgba(217,106,14,.38);--g4:rgba(217,106,14,.12);
+  --acc:#ff7e00;--ac3:#ffd23d;--ac4:#3fb09a;--ac5:#b07bff;--ac2:#ff6f61;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#030201;font-family:var(--mono);color:var(--g2);min-height:100vh;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);}
+
+.nav{display:flex;align-items:center;border-bottom:1px solid var(--g4);background:#000;
+  position:fixed;top:0;left:0;right:0;z-index:200;height:30px;}
+.nav-lbl{padding:0 14px;font-size:7px;letter-spacing:2px;color:var(--g3);
+  border-right:1px solid var(--g4);height:100%;display:flex;align-items:center;}
+.nav-tab{padding:0 16px;font-size:7px;letter-spacing:1.5px;cursor:pointer;height:100%;
+  border-right:1px solid var(--g4);color:var(--g3);display:flex;align-items:center;
+  transition:color .12s,background .12s;}
+.nav-tab:hover{color:var(--g2);}
+.nav-tab.on{color:var(--ac3);box-shadow:inset 0 -2px 0 var(--ac3);}
+.sec{display:none;position:fixed;inset:30px 0 0;overflow:hidden;}
+.sec.on{display:flex;}
+
+/* ══════════════════════════════
+   F. RADAR SCOPE
+══════════════════════════════ */
+#sec-f{background:#000;flex-direction:row;}
+#f-canvas{flex:1;}
+.f-panel{width:220px;border-left:1px solid rgba(255,160,0,.15);
+  display:flex;flex-direction:column;background:#000;}
+.f-panel-hdr{padding:8px 12px;border-bottom:1px solid rgba(255,160,0,.12);
+  font-size:6.5px;letter-spacing:1.5px;color:rgba(255,160,0,.5);}
+.f-info{padding:10px 12px;flex:1;}
+.f-info .fi-empty{font-size:7px;color:rgba(255,160,0,.25);margin-top:20px;}
+.f-info .fi-type{font-size:5.5px;letter-spacing:2px;margin-bottom:5px;}
+.f-info .fi-title{font-size:11px;line-height:1.2;margin-bottom:3px;}
+.f-info .fi-sub{font-size:7px;margin-bottom:10px;}
+.f-info .fi-excerpt{font-size:7px;line-height:1.65;border-left:2px solid;
+  padding-left:8px;opacity:.8;}
+.f-legend{padding:10px 12px;border-top:1px solid rgba(255,160,0,.12);}
+.f-leg-item{display:flex;align-items:center;gap:6px;font-size:6.5px;
+  color:rgba(255,160,0,.45);margin-bottom:4px;}
+.f-leg-dot{width:7px;height:7px;border-radius:50%;}
+
+/* ══════════════════════════════
+   G. STRATUM
+══════════════════════════════ */
+#sec-g{background:#05040a;flex-direction:column;}
+.g-hdr{flex-shrink:0;height:30px;border-bottom:1px solid var(--g4);background:#000;
+  display:flex;align-items:center;padding:0 16px;gap:16px;}
+.g-hdr .title{font-size:7.5px;letter-spacing:2px;color:var(--g2);}
+.g-hdr .sub{font-size:6.5px;color:var(--g3);}
+.g-wrap{flex:1;overflow-y:auto;display:flex;}
+.g-wrap::-webkit-scrollbar{width:3px;}
+.g-wrap::-webkit-scrollbar-thumb{background:var(--g4);}
+.g-axis{width:60px;flex-shrink:0;position:sticky;left:0;z-index:10;}
+.g-strata{flex:1;position:relative;}
+
+.g-layer{display:flex;align-items:center;min-height:52px;border-bottom:1px solid rgba(255,255,255,.03);
+  position:relative;cursor:default;}
+.g-year{width:60px;flex-shrink:0;font-size:7px;color:rgba(255,255,255,.18);
+  padding:0 10px;text-align:right;letter-spacing:.5px;position:sticky;left:0;
+  z-index:5;display:flex;align-items:center;justify-content:flex-end;}
+.g-row{flex:1;padding:6px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+.g-fossil{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;
+  border:1px solid;cursor:pointer;position:relative;
+  transition:box-shadow .2s;}
+.g-fossil:hover{z-index:10;}
+.g-fossil .gf-label{font-size:8px;white-space:nowrap;}
+.g-fossil .gf-type{font-size:5.5px;letter-spacing:1px;opacity:.6;}
+.g-fossil.book{color:#ff9040;border-color:rgba(255,144,64,.35);background:rgba(255,144,64,.04);}
+.g-fossil.book:hover{box-shadow:0 0 16px rgba(255,144,64,.25);border-color:rgba(255,144,64,.7);}
+.g-fossil.idea{color:#c090ff;border-color:rgba(192,144,255,.3);background:rgba(192,144,255,.04);}
+.g-fossil.idea:hover{box-shadow:0 0 16px rgba(192,144,255,.2);border-color:rgba(192,144,255,.6);}
+.g-fossil.ref{color:#50c0a0;border-color:rgba(80,192,160,.28);background:rgba(80,192,160,.04);}
+.g-fossil.ref:hover{box-shadow:0 0 16px rgba(80,192,160,.2);border-color:rgba(80,192,160,.6);}
+
+.g-popup{position:fixed;z-index:100;background:rgba(5,4,10,.97);
+  border:1px solid var(--g4);padding:12px 14px;min-width:240px;max-width:300px;
+  display:none;box-shadow:0 0 30px rgba(0,0,0,.8);}
+.g-popup .gp-type{font-size:5.5px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;}
+.g-popup .gp-title{font-size:11px;color:var(--g);margin-bottom:3px;}
+.g-popup .gp-sub{font-size:7px;color:var(--g3);margin-bottom:8px;}
+.g-popup .gp-text{font-size:7.5px;color:var(--g2);line-height:1.65;
+  border-left:2px solid var(--g4);padding-left:8px;}
+
+/* ══════════════════════════════
+   H. TERMINAL
+══════════════════════════════ */
+#sec-h{background:#000;flex-direction:column;font-family:var(--mono);}
+.h-bar{flex-shrink:0;height:28px;background:#0a0a0a;border-bottom:1px solid #1a1a1a;
+  display:flex;align-items:center;padding:0 12px;gap:6px;}
+.h-bar .dot{width:9px;height:9px;border-radius:50%;}
+.h-bar .bar-title{font-size:7px;color:#444;margin-left:8px;letter-spacing:1px;}
+.h-body{flex:1;overflow-y:auto;padding:12px 16px;font-size:11.5px;line-height:1.7;color:#c8c8c8;}
+.h-body::-webkit-scrollbar{width:3px;}
+.h-body::-webkit-scrollbar-thumb{background:#222;}
+.h-line{white-space:pre-wrap;word-break:break-all;}
+.h-line .p{color:#50c878;}   /* prompt green */
+.h-line .p2{color:#5090ff;}  /* path blue */
+.h-line .cmd{color:#fff;}
+.h-line .out{color:#aaa;}
+.h-line .err{color:#ff5555;}
+.h-line .hi{color:#ffd23d;}
+.h-line .tl{color:#3fb09a;}
+.h-line .pu{color:#b07bff;}
+.h-line .dim{color:#444;}
+.h-input-row{display:flex;align-items:center;gap:0;padding:2px 0 12px 16px;flex-shrink:0;}
+.h-prompt{font-size:11.5px;color:#50c878;white-space:nowrap;}
+.h-input{flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--mono);font-size:11.5px;color:#fff;caret-color:#50c878;}
+
+/* ══════════════════════════════
+   I. BLUEPRINT
+══════════════════════════════ */
+#sec-i{background:#06101e;flex-direction:column;}
+.i-hdr{flex-shrink:0;height:30px;border-bottom:1px solid rgba(120,160,255,.15);
+  display:flex;align-items:center;padding:0 16px;
+  font-size:7px;letter-spacing:2px;color:rgba(140,180,255,.45);}
+.i-hdr .i-sub{margin-left:auto;font-size:6px;color:rgba(140,180,255,.25);}
+#i-canvas{flex:1;width:100%;}
+
+/* ══════════════════════════════
+   J. WAVEFORM
+══════════════════════════════ */
+#sec-j{background:#020202;flex-direction:column;}
+.j-hdr{flex-shrink:0;height:30px;border-bottom:1px solid var(--g4);background:#000;
+  display:flex;align-items:center;padding:0 16px;gap:12px;}
+.j-hdr .title{font-size:7.5px;letter-spacing:2px;color:var(--g2);}
+.j-body{flex:1;overflow-y:auto;padding:8px 0;}
+.j-body::-webkit-scrollbar{width:3px;}
+.j-body::-webkit-scrollbar-thumb{background:var(--g4);}
+
+.j-track{border-bottom:1px solid rgba(217,106,14,.06);display:flex;
+  align-items:stretch;cursor:pointer;transition:background .15s;}
+.j-track:hover{background:rgba(217,106,14,.02);}
+.j-track.on{background:rgba(217,106,14,.04);}
+.j-num{width:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:8px;color:var(--g3);border-right:1px solid rgba(217,106,14,.07);}
+.j-track.on .j-num{color:var(--ac3);}
+.j-meta{width:180px;flex-shrink:0;padding:10px 14px;border-right:1px solid rgba(217,106,14,.07);}
+.j-meta .jm-title{font-size:9px;color:var(--g);line-height:1.2;margin-bottom:2px;}
+.j-track.on .jm-title{color:var(--ac3);}
+.j-meta .jm-author{font-size:6.5px;color:var(--g3);}
+.j-meta .jm-year{font-size:10px;color:rgba(255,255,255,.08);font-weight:600;margin-top:3px;}
+.j-wave-wrap{flex:1;position:relative;height:60px;display:flex;align-items:center;}
+.j-wave-wrap canvas{position:absolute;inset:0;width:100%;height:100%;}
+.j-type-tag{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:5.5px;letter-spacing:1.5px;padding:2px 6px;border:1px solid currentColor;}
+.j-type-tag.book{color:var(--acc);}
+.j-type-tag.idea{color:var(--ac5);}
+.j-type-tag.ref{color:var(--ac4);}
+
+.j-expand{overflow:hidden;max-height:0;transition:max-height .35s ease;
+  border-bottom:1px solid rgba(217,106,14,.06);background:rgba(217,106,14,.02);}
+.j-expand.on{max-height:120px;}
+.j-expand-inner{padding:10px 14px 10px 222px;display:flex;gap:20px;align-items:flex-start;}
+.j-expand-inner .je-text{font-size:7.5px;color:var(--g2);line-height:1.7;
+  border-left:2px solid var(--g4);padding-left:10px;flex:1;font-style:italic;}
+.j-expand-inner .je-tags{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+.j-expand-inner .je-tag{font-size:5.5px;padding:2px 6px;border:1px solid currentColor;letter-spacing:1px;}
+.je-tag.ph{color:var(--ac4);} .je-tag.th{color:var(--ac5);} .je-tag.sc{color:var(--ac3);}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-lbl">REF</div>
+  <div class="nav-tab on"  onclick="show('f',this)">F. RADAR SCOPE</div>
+  <div class="nav-tab"     onclick="show('g',this)">G. STRATUM</div>
+  <div class="nav-tab"     onclick="show('h',this)">H. TERMINAL</div>
+  <div class="nav-tab"     onclick="show('i',this)">I. BLUEPRINT</div>
+  <div class="nav-tab"     onclick="show('j',this)">J. WAVEFORM</div>
+</div>
+
+<!-- ══ F. RADAR ══ -->
+<div class="sec on" id="sec-f">
+  <canvas id="f-canvas"></canvas>
+  <div class="f-panel">
+    <div class="f-panel-hdr">▶ SIGNAL INFO</div>
+    <div class="f-info" id="f-info">
+      <div class="fi-empty">— 신호를 선택하세요 —</div>
+    </div>
+    <div class="f-legend">
+      <div class="f-leg-item"><div class="f-leg-dot" style="background:#ff9040"></div>BOOK</div>
+      <div class="f-leg-item"><div class="f-leg-dot" style="background:#b07bff"></div>IDEA</div>
+      <div class="f-leg-item"><div class="f-leg-dot" style="background:#3fb09a"></div>REF</div>
+      <div style="font-size:6px;color:rgba(255,160,0,.3);margin-top:8px;line-height:1.6;">
+        거리 → 연대 (멀수록 오래됨)<br>각도 → 카테고리 영역
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ G. STRATUM ══ -->
+<div class="sec" id="sec-g">
+  <div class="g-hdr">
+    <span class="title">▶ REFERENCE.STRATUM</span>
+    <span class="sub">시간 지층 — 클릭하여 발굴</span>
+  </div>
+  <div class="g-wrap" id="g-wrap"></div>
+  <div class="g-popup" id="g-popup"></div>
+</div>
+
+<!-- ══ H. TERMINAL ══ -->
+<div class="sec" id="sec-h">
+  <div class="h-bar">
+    <div class="dot" style="background:#ff5f57"></div>
+    <div class="dot" style="background:#ffbd2e"></div>
+    <div class="dot" style="background:#28c840"></div>
+    <div class="bar-title">NOTE-A REFERENCE SYSTEM  v1.0</div>
+  </div>
+  <div class="h-body" id="h-body"></div>
+  <div class="h-input-row">
+    <span class="h-prompt" id="h-prompt">visitor@note-a:~/ref$ </span>
+    <input class="h-input" id="h-input" autocomplete="off" spellcheck="false" autofocus>
+  </div>
+</div>
+
+<!-- ══ I. BLUEPRINT ══ -->
+<div class="sec" id="sec-i">
+  <div class="i-hdr">
+    <span>▶ REFERENCE.BLUEPRINT — 참조 공간 배치도</span>
+    <span class="i-sub">SCALE 1:∞ · PROJECTION AXONOMETRIC</span>
+  </div>
+  <canvas id="i-canvas"></canvas>
+</div>
+
+<!-- ══ J. WAVEFORM ══ -->
+<div class="sec" id="sec-j">
+  <div class="j-hdr">
+    <span class="title">▶ READING WAVEFORM</span>
+    <span style="font-size:6.5px;color:var(--g3);">클릭하여 재생</span>
+  </div>
+  <div class="j-body" id="j-body"></div>
+</div>
+
+<script>
+/* ══ TAB ══ */
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  el.classList.add('on');
+  if(id==='f') initF();
+  if(id==='i') initI();
+}
+
+/* ══════════════════════════════════════════
+   F. RADAR SCOPE
+══════════════════════════════════════════ */
+const RDATA=[
+  {type:'book',label:'밝은 방',sub:'Roland Barthes · 1980',excerpt:'사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다.',col:'#ff9040',angle:15,dist:.25},
+  {type:'book',label:'사진에 관하여',sub:'Susan Sontag · 1977',excerpt:'사진을 찍는다는 것은 이미지를 전유하는 것이다.',col:'#ff9040',angle:30,dist:.3},
+  {type:'book',label:'눈의 문법',sub:'John Szarkowski · 1966',excerpt:'사진의 가장자리는 선택이다.',col:'#ff9040',angle:50,dist:.5},
+  {type:'book',label:'Ways of Seeing',sub:'John Berger · 1972',excerpt:'보는 방식은 선택이다.',col:'#ff9040',angle:340,dist:.42},
+  {type:'book',label:'The Ongoing Moment',sub:'Geoff Dyer · 2005',excerpt:'동일한 주제가 사진가들 사이를 여행한다.',col:'#ff9040',angle:5,dist:.18},
+  {type:'idea',label:'선택과 배제',sub:'셀렉션 로직',excerpt:'438장 중 배제되지 않은 것이 살아남는다.',col:'#b07bff',angle:135,dist:.22},
+  {type:'idea',label:'punctum',sub:'Barthes · 찌름',excerpt:'나를 찌르는 세부. 선택하지 않았는데 달려든다.',col:'#b07bff',angle:160,dist:.28},
+  {type:'idea',label:'프레임의 정치',sub:'frame & power',excerpt:'찍히지 않은 것이 찍힌 것을 정의한다.',col:'#b07bff',angle:175,dist:.35},
+  {type:'idea',label:'인덱스성',sub:'index / trace',excerpt:'사진은 현실의 흔적이다.',col:'#b07bff',angle:200,dist:.3},
+  {type:'ref',label:'집합론',sub:'Cantor · 1874',excerpt:'부분이 전체와 같은 크기를 가질 수 있다.',col:'#3fb09a',angle:255,dist:.55},
+  {type:'ref',label:'New Topographics',sub:'1975 exhibition',excerpt:'평범한 풍경. 이 거리가 오히려 날카롭다.',col:'#3fb09a',angle:280,dist:.45},
+  {type:'ref',label:'Decisive Moment',sub:'Cartier-Bresson',excerpt:'결정적 순간 — 형태와 의미가 만나는 찰나.',col:'#3fb09a',angle:300,dist:.38},
+];
+
+let fCvs,fCtx,fAngle=0,fAnim=null,fSelected=null,fBlips=[];
+
+function initF(){
+  fCvs=document.getElementById('f-canvas');
+  fCtx=fCvs.getContext('2d');
+  resizeF();
+  window.addEventListener('resize',resizeF);
+  fCvs.addEventListener('click',fClick);
+  fCvs.addEventListener('mousemove',fHover);
+  if(!fAnim) loopF();
+}
+function resizeF(){if(!fCvs)return;fCvs.width=fCvs.offsetWidth;fCvs.height=fCvs.offsetHeight;buildBlips();}
+function buildBlips(){
+  if(!fCvs)return;
+  const cx=fCvs.width/2,cy=fCvs.height/2,R=Math.min(cx,cy)*.82;
+  fBlips=RDATA.map(d=>{
+    const a=d.angle*Math.PI/180;
+    return{...d,x:cx+Math.cos(a)*R*d.dist,y:cy+Math.sin(a)*R*d.dist,
+      ang:d.angle,bright:0,hover:false};
+  });
+}
+function loopF(){
+  fAngle=(fAngle+.4)%360; drawF(); fAnim=requestAnimationFrame(loopF);
+}
+function drawF(){
+  if(!fCvs)return;
+  const cx=fCvs.width/2,cy=fCvs.height/2,R=Math.min(cx,cy)*.82;
+  fCtx.fillStyle='rgba(0,0,0,.18)'; fCtx.fillRect(0,0,fCvs.width,fCvs.height);
+
+  // rings
+  fCtx.strokeStyle='rgba(0,200,80,.08)'; fCtx.lineWidth=1;
+  [.25,.5,.75,1].forEach(r=>{
+    fCtx.beginPath();fCtx.arc(cx,cy,R*r,0,Math.PI*2);fCtx.stroke();
+  });
+  // crosshairs
+  fCtx.strokeStyle='rgba(0,200,80,.06)';
+  fCtx.beginPath();fCtx.moveTo(cx-R,cy);fCtx.lineTo(cx+R,cy);fCtx.stroke();
+  fCtx.beginPath();fCtx.moveTo(cx,cy-R);fCtx.lineTo(cx,cy+R);fCtx.stroke();
+  // diagonal
+  [45,135].forEach(a=>{
+    const ra=a*Math.PI/180;
+    fCtx.beginPath();fCtx.moveTo(cx+Math.cos(ra)*R,cy+Math.sin(ra)*R);
+    fCtx.lineTo(cx+Math.cos(ra+Math.PI)*R,cy+Math.sin(ra+Math.PI)*R);fCtx.stroke();
+  });
+
+  // sweep
+  const sa=fAngle*Math.PI/180;
+  const grad=fCtx.createConicalGradient?null:null;
+  for(let i=0;i<60;i++){
+    const a=sa-i*Math.PI/180;
+    fCtx.beginPath();fCtx.moveTo(cx,cy);fCtx.lineTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);
+    fCtx.strokeStyle=`rgba(0,255,80,${(60-i)/60*.18})`;fCtx.lineWidth=1;fCtx.stroke();
+  }
+  // sweep arm
+  fCtx.beginPath();fCtx.moveTo(cx,cy);fCtx.lineTo(cx+Math.cos(sa)*R,cy+Math.sin(sa)*R);
+  fCtx.strokeStyle='rgba(0,255,80,.7)';fCtx.lineWidth=1.5;fCtx.stroke();
+
+  // center dot
+  fCtx.beginPath();fCtx.arc(cx,cy,3,0,Math.PI*2);
+  fCtx.fillStyle='rgba(0,255,80,.6)';fCtx.fill();
+
+  // blips — illuminate when sweep passes
+  fBlips.forEach(b=>{
+    const diff=((fAngle-b.ang)%360+360)%360;
+    if(diff<3) b.bright=1;
+    else b.bright=Math.max(0,b.bright-.008);
+    const hi=b.hover||b===fSelected;
+    const a=hi?.9:.15+b.bright*.75;
+
+    if(b.bright>.01||hi){
+      const gr=fCtx.createRadialGradient(b.x,b.y,0,b.x,b.y,hi?22:16);
+      gr.addColorStop(0,b.col+(hi?'60':'30'));gr.addColorStop(1,'transparent');
+      fCtx.beginPath();fCtx.arc(b.x,b.y,hi?22:16,0,Math.PI*2);
+      fCtx.fillStyle=gr;fCtx.fill();
+    }
+    fCtx.shadowBlur=hi?16:8;fCtx.shadowColor=b.col;
+    fCtx.beginPath();fCtx.arc(b.x,b.y,hi?5:3.5,0,Math.PI*2);
+    fCtx.fillStyle=b.col.replace(')',`,${a})`).replace('rgb','rgba')||b.col;
+    fCtx.fillStyle=b.col;fCtx.globalAlpha=a;fCtx.fill();fCtx.globalAlpha=1;
+    fCtx.shadowBlur=0;
+
+    if((b.bright>.3||hi)&&b.bright>.01){
+      fCtx.font=(hi?'500 ':'300 ')+'8px IBM Plex Mono';
+      fCtx.fillStyle=`rgba(255,255,255,${Math.min(1,b.bright*.8+(hi?.5:0))})`;
+      fCtx.textAlign='left';fCtx.fillText(b.label,b.x+9,b.y+3);
+    }
+  });
+  // scanline text
+  fCtx.font='8px IBM Plex Mono';fCtx.fillStyle='rgba(0,255,80,.35)';
+  fCtx.textAlign='left';fCtx.fillText('AZ '+Math.round(fAngle).toString().padStart(3,'0')+'°',8,20);
+  fCtx.fillText('RNG 0—100 AU',8,32);
+  fCtx.textAlign='right';fCtx.fillText('NOTE-A REF SCAN',fCvs.width-8,20);
+}
+function fClick(e){
+  const rect=fCvs.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const hit=fBlips.find(b=>Math.sqrt((b.x-mx)**2+(b.y-my)**2)<12);
+  fSelected=hit||null;
+  const info=document.getElementById('f-info');
+  if(hit){
+    info.innerHTML=`<div class="fi-type" style="color:${hit.col}">${hit.type.toUpperCase()}</div>
+    <div class="fi-title" style="color:${hit.col}">${hit.label}</div>
+    <div class="fi-sub" style="color:rgba(255,255,255,.35)">${hit.sub}</div>
+    <div class="fi-excerpt" style="border-color:${hit.col}55;color:rgba(255,255,255,.6)">"${hit.excerpt}"</div>`;
+  } else {
+    info.innerHTML='<div class="fi-empty">— 신호를 선택하세요 —</div>';
+  }
+}
+function fHover(e){
+  if(!fBlips.length)return;
+  const rect=fCvs.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  fBlips.forEach(b=>b.hover=Math.sqrt((b.x-mx)**2+(b.y-my)**2)<12);
+  fCvs.style.cursor=fBlips.some(b=>b.hover)?'pointer':'default';
+}
+
+/* ══════════════════════════════════════════
+   G. STRATUM
+══════════════════════════════════════════ */
+const STRATA=[
+  {year:2026,items:[
+    {type:'idea',label:'선택과 배제',sub:'셀렉션 로직',text:'438장 중 배제되지 않은 것이 살아남는다. 셀렉션은 집합 연산이다.'},
+    {type:'idea',label:'프레임의 부정성',sub:'작업 메모',text:'찍히지 않은 것이 찍힌 것을 정의한다.'},
+  ]},
+  {year:2025,items:[
+    {type:'book',label:'The Ongoing Moment',sub:'Geoff Dyer · 2005',text:'동일한 주제가 사진가들 사이를 여행한다. 이미지는 이미지를 낳는다.'},
+  ]},
+  {year:2024,items:[
+    {type:'idea',label:'집합과 시선',sub:'연구 노트',text:'A∩B — 두 시선이 겹치는 지점. 교집합은 합집합보다 작지만 더 정확하다.'},
+    {type:'ref',label:'New Topographics',sub:'1975 exhibition',text:'평범한 풍경의 기록. 극적 연출 없이 사실 그대로.'},
+  ]},
+  {year:1980,items:[
+    {type:'book',label:'밝은 방',sub:'Roland Barthes',text:'사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다. 찌름, 구멍, 자국.'},
+  ]},
+  {year:1977,items:[
+    {type:'book',label:'사진에 관하여',sub:'Susan Sontag',text:'사진을 찍는다는 것은 이미지를 전유하는 것이다.'},
+  ]},
+  {year:1972,items:[
+    {type:'book',label:'Ways of Seeing',sub:'John Berger',text:'보는 방식은 선택이다. 이 선택은 결코 중립적이지 않다.'},
+  ]},
+  {year:1966,items:[
+    {type:'book',label:'눈의 문법',sub:'John Szarkowski',text:'사진의 가장자리는 선택이다. 세계의 일부를 보여줌으로써 나머지를 말한다.'},
+  ]},
+  {year:1952,items:[
+    {type:'ref',label:'Decisive Moment',sub:'Cartier-Bresson',text:'형태와 의미가 만나는 찰나.'},
+  ]},
+  {year:1874,items:[
+    {type:'ref',label:'집합론',sub:'Georg Cantor',text:'무한집합. 부분이 전체와 같은 크기를 가질 수 있다.'},
+  ]},
+];
+
+(function initG(){
+  const wrap=document.getElementById('g-wrap');
+  const layerColors=[
+    '#0d0a18','#0a0d14','#0d0d0a','#140a08','#0a120e',
+    '#100812','#080e14','#0e0e08','#08100a','#100808',
+  ];
+  STRATA.forEach((s,si)=>{
+    const row=document.createElement('div');row.className='g-layer';
+    row.style.background=layerColors[si%layerColors.length];
+    // subtle texture line
+    row.style.borderTop=`1px solid rgba(255,255,255,.${2+si%3})`;
+    row.innerHTML=`<div class="g-year">${s.year}</div><div class="g-row"></div>`;
+    const grow=row.querySelector('.g-row');
+    s.items.forEach(item=>{
+      const el=document.createElement('div');
+      el.className='g-fossil '+item.type;
+      el.innerHTML=`<span class="gf-type">${item.type.toUpperCase()}</span>
+        <span class="gf-label">${item.label}</span>`;
+      el.addEventListener('click',e=>{
+        const pop=document.getElementById('g-popup');
+        pop.style.display='block';
+        pop.style.left=e.clientX+'px';
+        pop.style.top=Math.min(e.clientY+10,window.innerHeight-120)+'px';
+        pop.innerHTML=`<div class="gp-type">${item.type.toUpperCase()} · ${s.year}</div>
+          <div class="gp-title">${item.label}</div>
+          <div class="gp-sub">${item.sub}</div>
+          <div class="gp-text">"${item.text}"</div>`;
+        e.stopPropagation();
+      });
+      grow.appendChild(el);
+    });
+    wrap.appendChild(row);
+  });
+  document.addEventListener('click',()=>{document.getElementById('g-popup').style.display='none';});
+})();
+
+/* ══════════════════════════════════════════
+   H. TERMINAL
+══════════════════════════════════════════ */
+const FS={
+  '/ref/books':{
+    'barthes.txt':{type:'book',title:'밝은 방',author:'Roland Barthes',year:1980,
+      content:`TITLE   : 밝은 방 (La Chambre Claire)\nAUTHOR  : Roland Barthes\nYEAR    : 1980\nTAGS    : theory, photography, semiotics\n\nEXCERPT :\n"사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다.\n 찌름, 구멍, 자국. 나는 이 개념을 라틴어로 불러야겠다."\n\nIDEAS   :\n→ punctum을 셀렉션 기준으로 활용\n→ studium(문화적 관심) vs punctum(개인적 상처)\n→ 사진 = 죽음의 증명, 과거의 흔적`},
+    'sontag.txt':{type:'book',title:'사진에 관하여',author:'Susan Sontag',year:1977,
+      content:`TITLE   : 사진에 관하여 (On Photography)\nAUTHOR  : Susan Sontag\nYEAR    : 1977\nTAGS    : theory, culture, photography\n\nEXCERPT :\n"사진을 찍는다는 것은 이미지를 전유하는 것이다.\n 그것은 소유이며, 동시에 세계의 해석이다."\n\nIDEAS   :\n→ 소유로서의 촬영\n→ 사진 이미지의 정치성\n→ 현실 단편화로서의 프레임`},
+    'szarkowski.txt':{type:'book',title:'눈의 문법',author:'John Szarkowski',year:1966,
+      content:`TITLE   : 눈의 문법 (The Photographer's Eye)\nAUTHOR  : John Szarkowski\nYEAR    : 1966\nTAGS    : photography, composition, theory\n\nEXCERPT :\n"사진의 가장자리는 선택이다. 세계의 일부만을 보여줌으로써\n 나머지 전부를 말한다."\n\nIDEAS   :\n→ 프레임의 부정성 — 찍히지 않은 것\n→ 자르기로서의 시선`},
+    'berger.txt':{type:'book',title:'Ways of Seeing',author:'John Berger',year:1972,
+      content:`TITLE   : Ways of Seeing\nAUTHOR  : John Berger\nYEAR    : 1972\nTAGS    : art_theory, visual_culture\n\nEXCERPT :\n"보는 방식은 선택이다. 그리고 이 선택은\n 결코 중립적이지 않다."\n\nIDEAS   :\n→ 시선의 이데올로기\n→ 어떻게 보느냐 = 무엇을 보느냐`},
+  },
+  '/ref/ideas':{
+    'selection.txt':{type:'idea',title:'선택과 배제',
+      content:`IDEA    : 선택과 배제\nSOURCE  : 작업 메모 · 2026\nTAGS    : selection, set_theory, methodology\n\nNOTE    :\n"438장 중 살아남는 것은 살아남은 것이 아니라\n 배제되지 않은 것이다. 셀렉션은 집합 연산이다."\n\nDERIVED FROM :\n→ Barthes · punctum 개념\n→ 집합론 · A\\B 여집합 개념`},
+    'frame.txt':{type:'idea',title:'프레임의 정치학',
+      content:`IDEA    : 프레임의 정치학\nSOURCE  : 연구 노트 · 2024\nTAGS    : frame, power, semiotics\n\nNOTE    :\n"찍히지 않은 것이 찍힌 것을 정의한다.\n 프레임은 선택이자 배제다."\n\nDERIVED FROM :\n→ Szarkowski · 눈의 문법\n→ Berger · Ways of Seeing`},
+  },
+  '/ref/refs':{
+    'topographics.txt':{type:'ref',title:'New Topographics',
+      content:`REF     : New Topographics\nSOURCE  : 1975 exhibition, George Eastman House\nTAGS    : photography, landscape, documentary\n\nNOTE    :\n평범한 풍경의 기록. 극적 연출 없이 사실 그대로.\n이 거리가 오히려 날카롭다.\n\nARTISTS : Robert Adams, Lewis Baltz, Bernd & Hilla Becher`},
+    'cantor.txt':{type:'ref',title:'집합론',
+      content:`REF     : 집합론 (Set Theory)\nSOURCE  : Georg Cantor · 1874\nTAGS    : mathematics, infinity, set_theory\n\nNOTE    :\n무한집합의 개념. 부분이 전체와 같은 크기를 가질 수 있다.\n가산 무한 vs 비가산 무한.\n\nCONNECT : SET 작업의 수학적 근거`},
+  },
+};
+let hCwd='/ref',hHistory=[],hHistIdx=0;
+
+function initH(){
+  const input=document.getElementById('h-input');
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){hRun(input.value.trim());input.value='';hHistIdx=hHistory.length;}
+    else if(e.key==='ArrowUp'){if(hHistIdx>0){hHistIdx--;input.value=hHistory[hHistIdx];}}
+    else if(e.key==='ArrowDown'){if(hHistIdx<hHistory.length-1){hHistIdx++;input.value=hHistory[hHistIdx];}else{hHistIdx=hHistory.length;input.value='';}}
+    else if(e.key==='Tab'){e.preventDefault();hTab(input);}
+  });
+  // boot
+  hOut([
+    `<span class="dim">╔══════════════════════════════════════╗</span>`,
+    `<span class="dim">║</span>  <span class="hi">NOTE-A REFERENCE SYSTEM</span>  v1.0.0  <span class="dim">║</span>`,
+    `<span class="dim">╚══════════════════════════════════════╝</span>`,
+    ``,
+    `<span class="tl">Ready.</span> type <span class="hi">help</span> for commands.`,
+    `cwd: <span class="p2">${hCwd}</span>`,
+    ``,
+  ]);
+  document.getElementById('sec-h').addEventListener('click',()=>input.focus());
+  input.focus();
+}
+function hPromptStr(){return`<span class="p">visitor@note-a</span>:<span class="p2">${hCwd}</span>$ `;}
+function hOut(lines){
+  const body=document.getElementById('h-body');
+  lines.forEach(l=>{
+    const d=document.createElement('div');d.className='h-line';d.innerHTML=l;
+    body.appendChild(d);
+  });
+  body.scrollTop=body.scrollHeight;
+}
+function hEcho(cmd){
+  hOut([`${hPromptStr()}<span class="cmd">${cmd}</span>`]);
+  if(cmd) hHistory.push(cmd);
+}
+function hRun(cmd){
+  hEcho(cmd);
+  if(!cmd)return;
+  const [c,...args]=cmd.split(' ');
+  const arg=args.join(' ').trim();
+  switch(c){
+    case 'help': hHelp(); break;
+    case 'ls':   hLs(arg); break;
+    case 'cd':   hCd(arg); break;
+    case 'cat':  hCat(arg); break;
+    case 'find': hFind(arg); break;
+    case 'grep': hGrep(args[0],args.slice(1).join(' ')); break;
+    case 'clear':document.getElementById('h-body').innerHTML=''; break;
+    case 'pwd':  hOut([`<span class="out">${hCwd}</span>`,``]); break;
+    case 'tree': hTree(); break;
+    default: hOut([`<span class="err">command not found: ${c}</span>`,
+      `<span class="dim">try: help, ls, cat, cd, find, grep, tree, clear</span>`,``]);
+  }
+}
+function hHelp(){hOut([
+  `<span class="hi">COMMANDS</span>`,
+  `  <span class="tl">ls</span>           <span class="out">— 현재 디렉토리 목록</span>`,
+  `  <span class="tl">ls books</span>     <span class="out">— /ref/books 목록</span>`,
+  `  <span class="tl">cat [file]</span>   <span class="out">— 파일 내용 출력</span>   <span class="dim">ex) cat barthes.txt</span>`,
+  `  <span class="tl">cd [dir]</span>     <span class="out">— 디렉토리 이동</span>     <span class="dim">ex) cd books</span>`,
+  `  <span class="tl">find [query]</span> <span class="out">— 제목/저자 검색</span>    <span class="dim">ex) find sontag</span>`,
+  `  <span class="tl">grep [term]</span>  <span class="out">— 내용 전체 검색</span>    <span class="dim">ex) grep punctum</span>`,
+  `  <span class="tl">tree</span>         <span class="out">— 전체 구조 보기</span>`,
+  `  <span class="tl">clear</span>        <span class="out">— 화면 지우기</span>`,
+  ``,
+]);}
+function hLs(arg){
+  let target=hCwd;
+  if(arg){target=arg.startsWith('/')?arg:hCwd+'/'+arg;}
+  const dir=FS[target];
+  if(target==='/ref'||target===''){
+    hOut([`<span class="out">drwxr-xr-x  <span class="p2">books/</span>   <span class="dim">— 서적</span></span>`,
+      `<span class="out">drwxr-xr-x  <span class="p2">ideas/</span>   <span class="dim">— 아이디어</span></span>`,
+      `<span class="out">drwxr-xr-x  <span class="p2">refs/</span>    <span class="dim">— 레퍼런스</span></span>`,``]);
+  } else if(dir){
+    const lines=Object.entries(dir).map(([f,v])=>
+      `<span class="out">-rw-r--r--  <span class="tl">${f.padEnd(22)}</span><span class="dim">${v.title||f}</span></span>`);
+    hOut([...lines,``]);
+  } else {hOut([`<span class="err">ls: ${target}: No such directory</span>`,``]);}
+}
+function hCd(arg){
+  if(!arg||arg==='..'){hCwd='/ref';document.getElementById('h-input');hOut([``]);return;}
+  const t=arg.startsWith('/')?arg:'/ref/'+arg;
+  if(FS[t]||t==='/ref'){hCwd=t;hOut([``]);}
+  else hOut([`<span class="err">cd: ${arg}: No such directory</span>`,``]);
+}
+function hCat(arg){
+  if(!arg){hOut([`<span class="err">usage: cat [filename]</span>`,``]);return;}
+  let found=null;
+  Object.values(FS).forEach(dir=>{Object.entries(dir).forEach(([f,v])=>{if(f===arg||f===arg+'.txt')found=v;});});
+  if(found){hOut([`<span class="dim">─────────────────────────────────────</span>`,
+    ...found.content.split('\n').map(l=>`<span class="out">${l}</span>`),
+    `<span class="dim">─────────────────────────────────────</span>`,``]);
+  } else hOut([`<span class="err">cat: ${arg}: No such file</span>`,``]);
+}
+function hFind(q){
+  if(!q){hOut([`<span class="err">usage: find [query]</span>`,``]);return;}
+  const results=[];
+  Object.entries(FS).forEach(([path,dir])=>{
+    Object.entries(dir).forEach(([f,v])=>{
+      const s=(v.title||'')+(v.author||'')+(v.content||'');
+      if(s.toLowerCase().includes(q.toLowerCase()))
+        results.push(`  <span class="p2">${path}/</span><span class="tl">${f}</span>  <span class="dim">— ${v.title}</span>`);
+    });
+  });
+  if(results.length) hOut([`<span class="hi">결과 ${results.length}건</span>`,...results,``]);
+  else hOut([`<span class="dim">결과 없음: ${q}</span>`,``]);
+}
+function hGrep(term,file){
+  if(!term){hOut([`<span class="err">usage: grep [term] [file?]</span>`,``]);return;}
+  const results=[];
+  Object.entries(FS).forEach(([path,dir])=>{
+    Object.entries(dir).forEach(([f,v])=>{
+      if(file&&!f.includes(file))return;
+      v.content.split('\n').forEach((line,i)=>{
+        if(line.toLowerCase().includes(term.toLowerCase()))
+          results.push(`<span class="dim">${f}:${i+1}:</span> ${line.replace(new RegExp(term,'gi'),m=>`<span class="hi">${m}</span>`)}`);
+      });
+    });
+  });
+  if(results.length) hOut([`<span class="tl">"${term}" — ${results.length}건</span>`,...results,``]);
+  else hOut([`<span class="dim">"${term}" 없음</span>`,``]);
+}
+function hTree(){hOut([
+  `<span class="p2">/ref</span>`,
+  `├── <span class="p2">books/</span>`,
+  ...Object.keys(FS['/ref/books']).map(f=>`│   ├── <span class="tl">${f}</span>`),
+  `├── <span class="p2">ideas/</span>`,
+  ...Object.keys(FS['/ref/ideas']).map(f=>`│   ├── <span class="tl">${f}</span>`),
+  `└── <span class="p2">refs/</span>`,
+  ...Object.keys(FS['/ref/refs']).map(f=>`    ├── <span class="tl">${f}</span>`),
+  ``,
+]);}
+function hTab(input){
+  const v=input.value;const parts=v.split(' ');
+  if(parts.length<2)return;
+  const prefix=parts[parts.length-1];
+  const all=Object.values(FS).flatMap(d=>Object.keys(d));
+  const match=all.filter(f=>f.startsWith(prefix));
+  if(match.length===1){parts[parts.length-1]=match[0];input.value=parts.join(' ');}
+}
+initH();
+
+/* ══════════════════════════════════════════
+   I. BLUEPRINT
+══════════════════════════════════════════ */
+const ROOMS=[
+  {label:'PHOTOGRAPHY',x:.05,y:.08,w:.42,h:.55,col:'rgba(140,180,255,.12)',
+   books:['밝은 방','눈의 문법','사진에 관하여','New Topographics','Decisive Moment']},
+  {label:'THEORY & CULTURE',x:.53,y:.08,w:.42,h:.35,col:'rgba(180,140,255,.1)',
+   books:['Ways of Seeing','시선의 권력','인덱스성']},
+  {label:'MATHEMATICS',x:.53,y:.5,w:.2,h:.35,col:'rgba(100,220,180,.1)',
+   books:['집합론','위상수학']},
+  {label:'IDEAS',x:.05,y:.7,w:.42,h:.22,col:'rgba(255,180,100,.07)',
+   books:['선택과 배제','프레임의 정치학','punctum']},
+  {label:'ARCHIVE',x:.76,y:.5,w:.19,h:.35,col:'rgba(255,120,120,.07)',
+   books:['The Ongoing Moment','사진론']},
+];
+
+let iCvs,iCtx,iHover=null,iSelected=null;
+function initI(){
+  iCvs=document.getElementById('i-canvas');
+  iCtx=iCvs.getContext('2d');
+  resizeI();
+  window.addEventListener('resize',resizeI);
+  iCvs.addEventListener('mousemove',iMove);
+  iCvs.addEventListener('click',iClick);
+  drawI();
+}
+function resizeI(){if(!iCvs)return;iCvs.width=iCvs.offsetWidth;iCvs.height=iCvs.offsetHeight;drawI();}
+function drawI(){
+  if(!iCvs||!iCtx)return;
+  const W=iCvs.width,H=iCvs.height;
+  iCtx.clearRect(0,0,W,H);
+  iCtx.fillStyle='#060f1c'; iCtx.fillRect(0,0,W,H);
+
+  // grid dots
+  iCtx.fillStyle='rgba(140,180,255,.06)';
+  for(let x=20;x<W;x+=24)for(let y=20;y<H;y+=24){
+    iCtx.beginPath();iCtx.arc(x,y,1,0,Math.PI*2);iCtx.fill();
+  }
+
+  // title block
+  iCtx.strokeStyle='rgba(140,180,255,.25)';iCtx.lineWidth=1;
+  iCtx.strokeRect(W-200,H-50,196,46);
+  iCtx.font='600 7px IBM Plex Mono';iCtx.fillStyle='rgba(140,180,255,.4)';
+  iCtx.textAlign='left';iCtx.fillText('NOTE-A / REFERENCE SYSTEM',W-194,H-34);
+  iCtx.font='300 6px IBM Plex Mono';iCtx.fillStyle='rgba(140,180,255,.25)';
+  iCtx.fillText('DRAWING No. REF-01 · SCALE 1:∞',W-194,H-20);
+
+  ROOMS.forEach((r,ri)=>{
+    const x=r.x*W,y=r.y*H,w=r.w*W,h=r.h*H;
+    const hi=iSelected===ri;
+
+    // room fill
+    iCtx.fillStyle=hi?r.col.replace('.1','0.22').replace('.12','0.25'):r.col;
+    iCtx.fillRect(x,y,w,h);
+
+    // border
+    iCtx.strokeStyle=hi?'rgba(140,180,255,.7)':'rgba(140,180,255,.28)';
+    iCtx.lineWidth=hi?1.5:1;
+    iCtx.strokeRect(x,y,w,h);
+
+    // hatch in corners
+    iCtx.save();iCtx.beginPath();iCtx.rect(x,y,w,h);iCtx.clip();
+    iCtx.strokeStyle='rgba(140,180,255,.04)';iCtx.lineWidth=1;
+    for(let i=-h;i<w+h;i+=10){
+      iCtx.beginPath();iCtx.moveTo(x+i,y);iCtx.lineTo(x+i+h,y+h);iCtx.stroke();
+    }
+    iCtx.restore();
+
+    // room label
+    iCtx.font='500 7.5px IBM Plex Mono';
+    iCtx.fillStyle=hi?'rgba(200,220,255,.9)':'rgba(140,180,255,.5)';
+    iCtx.textAlign='left';
+    iCtx.fillText(r.label,x+8,y+16);
+
+    // dimension lines
+    // top
+    iCtx.strokeStyle='rgba(140,180,255,.2)';iCtx.lineWidth=.8;
+    iCtx.beginPath();iCtx.moveTo(x+4,y-6);iCtx.lineTo(x+w-4,y-6);iCtx.stroke();
+    iCtx.beginPath();iCtx.moveTo(x+4,y-9);iCtx.lineTo(x+4,y-3);iCtx.stroke();
+    iCtx.beginPath();iCtx.moveTo(x+w-4,y-9);iCtx.lineTo(x+w-4,y-3);iCtx.stroke();
+    iCtx.font='300 6px IBM Plex Mono';iCtx.fillStyle='rgba(140,180,255,.3)';
+    iCtx.textAlign='center';iCtx.fillText(Math.round(r.w*100)+'u',x+w/2,y-8);
+
+    // books inside
+    const bw=w/3.2,bh=18;
+    const booksToShow=r.books.slice(0,6);
+    booksToShow.forEach((b,bi)=>{
+      const bx=x+10+(bi%3)*(bw+5);
+      const by=y+26+Math.floor(bi/3)*(bh+6);
+      const bhi=iSelected===ri;
+      iCtx.fillStyle=bhi?'rgba(140,180,255,.12)':'rgba(140,180,255,.06)';
+      iCtx.fillRect(bx,by,bw,bh);
+      iCtx.strokeStyle='rgba(140,180,255,.2)';iCtx.lineWidth=.7;
+      iCtx.strokeRect(bx,by,bw,bh);
+      iCtx.font='300 6.5px IBM Plex Mono';
+      iCtx.fillStyle='rgba(180,210,255,.55)';
+      iCtx.textAlign='left';
+      const short=b.length>14?b.slice(0,13)+'…':b;
+      iCtx.fillText(short,bx+4,by+12);
+    });
+  });
+}
+function iMove(e){
+  const rect=iCvs.getBoundingClientRect();
+  const mx=(e.clientX-rect.left),my=(e.clientY-rect.top);
+  const W=iCvs.width,H=iCvs.height;
+  let found=-1;
+  ROOMS.forEach((r,i)=>{
+    if(mx>r.x*W&&mx<(r.x+r.w)*W&&my>r.y*H&&my<(r.y+r.h)*H)found=i;
+  });
+  iCvs.style.cursor=found>=0?'pointer':'default';
+}
+function iClick(e){
+  const rect=iCvs.getBoundingClientRect();
+  const mx=(e.clientX-rect.left),my=(e.clientY-rect.top);
+  const W=iCvs.width,H=iCvs.height;
+  let found=-1;
+  ROOMS.forEach((r,i)=>{
+    if(mx>r.x*W&&mx<(r.x+r.w)*W&&my>r.y*H&&my<(r.y+r.h)*H)found=i;
+  });
+  iSelected=found>=0?(iSelected===found?null:found):null;
+  drawI();
+}
+
+/* ══════════════════════════════════════════
+   J. WAVEFORM
+══════════════════════════════════════════ */
+const TRACKS=[
+  {type:'book',title:'밝은 방',author:'Roland Barthes',year:'1980',tags:['th'],seed:1,
+   excerpt:'"사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다. 찌름, 구멍, 자국."'},
+  {type:'idea',title:'선택과 배제',author:'작업 메모',year:'2026',tags:['sc'],seed:2,
+   excerpt:'"438장 중 살아남는 것은 살아남은 것이 아니라 배제되지 않은 것이다."'},
+  {type:'book',title:'사진에 관하여',author:'Susan Sontag',year:'1977',tags:['th'],seed:3,
+   excerpt:'"사진을 찍는다는 것은 이미지를 전유하는 것이다."'},
+  {type:'ref',title:'New Topographics',author:'1975 exhibition',year:'1975',tags:['ar'],seed:4,
+   excerpt:'"평범한 풍경의 기록. 극적 연출 없이 사실 그대로."'},
+  {type:'book',title:'눈의 문법',author:'John Szarkowski',year:'1966',tags:['ph'],seed:5,
+   excerpt:'"사진의 가장자리는 선택이다. 세계의 일부로 나머지를 말한다."'},
+  {type:'book',title:'Ways of Seeing',author:'John Berger',year:'1972',tags:['th'],seed:6,
+   excerpt:'"보는 방식은 선택이다. 이 선택은 결코 중립적이지 않다."'},
+  {type:'ref',title:'집합론',author:'Georg Cantor',year:'1874',tags:['sc'],seed:7,
+   excerpt:'"부분이 전체와 같은 크기를 가질 수 있다."'},
+];
+const TCOLS={book:'#ff8040',idea:'#b07bff',ref:'#3fb09a'};
+
+let jSelected=-1,jAnim=null,jCanvases=[],jTime=0;
+
+(function initJ(){
+  const body=document.getElementById('j-body');
+  TRACKS.forEach((t,i)=>{
+    // track row
+    const row=document.createElement('div');row.className='j-track';
+    row.innerHTML=`<div class="j-num">${String(i+1).padStart(2,'0')}</div>
+    <div class="j-meta">
+      <div class="jm-title">${t.title}</div>
+      <div class="jm-author">${t.author}</div>
+      <div class="jm-year">${t.year}</div>
+    </div>
+    <div class="j-wave-wrap">
+      <canvas></canvas>
+      <span class="j-type-tag ${t.type}">${t.type.toUpperCase()}</span>
+    </div>`;
+    body.appendChild(row);
+    const cv=row.querySelector('canvas');
+    jCanvases.push(cv);
+    // expand panel
+    const exp=document.createElement('div');exp.className='j-expand';
+    exp.innerHTML=`<div class="j-expand-inner">
+      <div class="je-text">${t.excerpt}</div>
+      <div class="je-tags">${t.tags.map(tag=>`<span class="je-tag ${tag}">${tag.toUpperCase()}</span>`).join('')}</div>
+    </div>`;
+    body.appendChild(exp);
+    row.addEventListener('click',()=>{
+      const wasSelected=jSelected===i;
+      jSelected=wasSelected?-1:i;
+      document.querySelectorAll('.j-track').forEach((r,j)=>r.classList.toggle('on',j===jSelected));
+      document.querySelectorAll('.j-expand').forEach((e,j)=>e.classList.toggle('on',j===jSelected));
+    });
+  });
+  // resize all canvases
+  function resizeJ(){
+    jCanvases.forEach(cv=>{
+      const p=cv.parentElement;
+      cv.width=p.offsetWidth;cv.height=p.offsetHeight;
+    });
+  }
+  resizeJ();window.addEventListener('resize',resizeJ);
+  function loopJ(){
+    jTime+=.025;
+    jCanvases.forEach((cv,i)=>drawWave(cv,i,jTime));
+    jAnim=requestAnimationFrame(loopJ);
+  }
+  loopJ();
+})();
+
+function drawWave(cv,idx,t){
+  if(!cv.width)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  const track=TRACKS[idx];
+  const col=TCOLS[track.type];
+  const on=jSelected===idx;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='rgba(2,2,2,0)';ctx.fillRect(0,0,W,H);
+  // center line
+  ctx.strokeStyle=on?'rgba(255,255,255,.08)':'rgba(255,255,255,.03)';
+  ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+  // waveform
+  const r=lcg2(track.seed);
+  const freqs=[.8+r()*.4,1.6+r()*.6,3.2+r()*.8,6.4+r()];
+  const amps=[.7,(.3+r()*.2),(.15+r()*.1),(.08+r()*.05)];
+  const phases=[r()*Math.PI*2,r()*Math.PI*2,r()*Math.PI*2,r()*Math.PI*2];
+  ctx.beginPath();
+  const N=W;
+  for(let x=0;x<N;x++){
+    const px=x/N;
+    let y=0;
+    freqs.forEach((f,fi)=>{y+=amps[fi]*Math.sin(px*f*Math.PI*2+phases[fi]+(on?t*(fi+1)*.3:t*fi*.08));});
+    const cy=H/2+y*(H*.36);
+    x===0?ctx.moveTo(x,cy):ctx.lineTo(x,cy);
+  }
+  const g=ctx.createLinearGradient(0,0,W,0);
+  g.addColorStop(0,'transparent');
+  g.addColorStop(.15,col+(on?'dd':'66'));
+  g.addColorStop(.5,col+(on?'ff':'88'));
+  g.addColorStop(.85,col+(on?'dd':'66'));
+  g.addColorStop(1,'transparent');
+  ctx.strokeStyle=g;ctx.lineWidth=on?1.8:1.2;
+  if(on){ctx.shadowBlur=8;ctx.shadowColor=col;}
+  ctx.stroke();ctx.shadowBlur=0;
+  // fill
+  ctx.lineTo(N,H/2);ctx.lineTo(0,H/2);
+  ctx.fillStyle=col.replace(')',',0.04)').replace('rgb','rgba')||col+'08';
+  if(on){const gf=ctx.createLinearGradient(0,0,0,H);gf.addColorStop(0,col+'18');gf.addColorStop(.5,col+'08');gf.addColorStop(1,'transparent');ctx.fillStyle=gf;}
+  ctx.fill();
+  // playhead if selected
+  if(on){
+    const px=((t*.12)%1)*W;
+    ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(px,4);ctx.lineTo(px,H-4);ctx.stroke();
+    ctx.beginPath();ctx.arc(px,H/2,2,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();
+  }
+}
+function lcg2(seed){let s=seed*9301+49297;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
+
+// init radar immediately
+initF();
+</script>
+</body>
+</html>

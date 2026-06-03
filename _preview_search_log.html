@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Log Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #39dc00;
+      font-family: 'Courier New', monospace;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bg {
+      position: fixed; inset: 0;
+      font-size: 10px; line-height: 1.8;
+      color: #39dc00; opacity: 0.1;
+      padding: 20px; overflow: hidden;
+      pointer-events: none;
+    }
+
+    .window {
+      width: 280px;
+      background: #000;
+      border-top: 2px solid #7fff4f;
+      border-left: 2px solid #7fff4f;
+      border-bottom: 2px solid #1a5500;
+      border-right: 2px solid #1a5500;
+      box-shadow: 0 0 20px rgba(57,220,0,0.15), 0 0 40px rgba(255,176,0,0.04);
+      font-family: 'Courier New', monospace;
+    }
+
+    .titlebar {
+      background: #39dc00;
+      color: #000;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tbtn {
+      width: 13px; height: 13px;
+      background: #39dc00; border: 1px solid #000;
+      color: #000; font-size: 8px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; font-weight: bold; margin-left: 3px;
+    }
+
+    .subbar {
+      border-bottom: 1px solid #222;
+      padding: 4px 10px;
+      font-size: 9px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .live-dot {
+      width: 6px; height: 6px;
+      background: #ffb000;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle;
+      animation: livepulse 0.9s infinite;
+      box-shadow: 0 0 4px #ffb000;
+    }
+
+    @keyframes livepulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 4px #ffb000; }
+      50% { opacity: 0.3; box-shadow: none; }
+    }
+
+    .subbar-label { color: #555; font-size: 9px; }
+    .subbar-count { color: #ffb000; font-size: 9px; }
+
+    .log-body {
+      height: 200px;
+      overflow: hidden;
+    }
+
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      padding: 4px 0;
+    }
+
+    .log-entry {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 6px;
+      padding: 4px 10px;
+      font-size: 9px;
+      line-height: 1.5;
+      border-bottom: 1px solid #0a0a0a;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; background: rgba(255,176,0,0.06); }
+      to   { opacity: 1; background: transparent; }
+    }
+
+    /* 항목 나이별 색상 — JS가 data-age 속성으로 관리 */
+    .log-entry[data-age="0"] .log-time  { color: #ffb000; }
+    .log-entry[data-age="0"] .log-query { color: #ffb000; font-weight: bold; }
+
+    .log-entry[data-age="1"] .log-time  { color: #888; }
+    .log-entry[data-age="1"] .log-query { color: #c8c8c8; }
+
+    .log-entry[data-age="2"] .log-time  { color: #555; }
+    .log-entry[data-age="2"] .log-query { color: #888; }
+
+    .log-entry[data-age="3"] .log-time  { color: #333; }
+    .log-entry[data-age="3"] .log-query { color: #444; }
+
+    .log-entry[data-age="4"] .log-time  { color: #222; }
+    .log-entry[data-age="4"] .log-query { color: #2a2a2a; }
+
+    .log-time  { white-space: nowrap; font-size: 8px; padding-top: 1px; }
+    .log-query { word-break: break-all; letter-spacing: 0.3px; }
+
+    .statusbar {
+      border-top: 1px solid #1a1a1a;
+      padding: 5px 10px;
+      font-size: 9px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .statusbar-src  { color: #333; }
+    .statusbar-time { color: #555; }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .blink { animation: blink 1s infinite; color: #ffb000; }
+  </style>
+</head>
+<body>
+
+<div class="bg">
+CRASH FLOATING WALL SHADOW STRUCTURE DECAY SURFACE DOCUMENTATION
+ISOLATION OVERLAY SKINREP VANISH REFLECT DUPLICATE ARCHIVE
+MEASURE SET WORLD BOUNDARY PERIMETER SCAN CONTAMINATED SCALE
+OBSERVER OBSERVED COERCED GAZE INSTRUCTION BODY SUSPENDED
+</div>
+
+<div class="window" id="win">
+  <div class="titlebar">
+    <span>VIEWER_LOG.EXE</span>
+    <div>
+      <span class="tbtn">_</span>
+      <span class="tbtn">□</span>
+      <span class="tbtn">✕</span>
+    </div>
+  </div>
+
+  <div class="subbar">
+    <span><span class="live-dot"></span><span class="subbar-label">MEASURE SEARCH LOG</span></span>
+    <span class="subbar-count" id="logCount">0 queries</span>
+  </div>
+
+  <div class="log-body">
+    <div class="log-list" id="logList"></div>
+  </div>
+
+  <div class="statusbar">
+    <span class="statusbar-src">SRC: /measure/search</span>
+    <span class="statusbar-time" id="lastTime">--:--:--</span>
+    <span class="blink">█</span>
+  </div>
+</div>
+
+<script>
+  const queries = [
+    'crash', 'wall', 'floating', 'shadow', 'surface',
+    'isolation', 'vanish', 'reflect', 'skinrep', 'overlap',
+    'structure', 'decay', 'duplicate', 'overlay', 'bloom',
+    'facblk', 'objrep', 'mirror', 'zero', 'skeleton',
+    'archive', 'measure', 'boundary', 'observer', 'coerced',
+    'gaze suspended', 'scale contaminated', 'crash wall',
+    'floating obj', 'isolation depth'
+  ];
+
+  const list = document.getElementById('logList');
+  const countEl = document.getElementById('logCount');
+  const lastEl = document.getElementById('lastTime');
+  let total = 0;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function timestamp() {
+    const d = new Date();
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function updateAges() {
+    const entries = list.querySelectorAll('.log-entry');
+    entries.forEach((el, i) => {
+      el.setAttribute('data-age', Math.min(i, 4));
+    });
+  }
+
+  function addEntry() {
+    const q = queries[Math.floor(Math.random() * queries.length)];
+    const t = timestamp();
+    total++;
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.setAttribute('data-age', '0');
+    entry.innerHTML = `
+      <span class="log-time">[${t}]</span>
+      <span class="log-query">${q}</span>
+    `;
+
+    list.prepend(entry);
+
+    // 최대 8개 유지
+    while (list.children.length > 8) {
+      list.lastElementChild.remove();
+    }
+
+    updateAges();
+    countEl.textContent = total + ' queries';
+    lastEl.textContent = t;
+  }
+
+  // 초기 채우기
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => addEntry(), i * 80);
+  }
+
+  // 랜덤 간격으로 추가
+  function scheduleNext() {
+    setTimeout(() => { addEntry(); scheduleNext(); }, 900 + Math.random() * 2200);
+  }
+  setTimeout(scheduleNext, 700);
+</script>
+</body>
+</html>

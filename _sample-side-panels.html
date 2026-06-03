@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAMPLE — DESIGN RAILS / ASSEMBLED</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#ff4a16; --g2:rgba(255,74,22,0.7); --g3:rgba(255,74,22,0.4); --g4:rgba(255,74,22,0.14);
+  --acc:#ff5e16; --ac3:#ff7a2e; --teal:#3fb09a; --viol:#b07bff; --amb:#ff6a1e; --red:#ff3b1f;
+  --mono:'IBM Plex Mono',monospace; --term:'VT323',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-family:var(--mono);}
+
+#bg{position:fixed;inset:-200px;z-index:-2;background:radial-gradient(ellipse 180% 200% at 50% 30%, rgba(48,20,4,.22) 0%, rgba(16,8,2,.16) 45%, rgba(2,1,0,.08) 100%);}
+#bg-grid{position:fixed;inset:-40px;z-index:-1;
+  background-image:linear-gradient(rgba(255,74,22,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.04) 1px,transparent 1px);background-size:56px 56px;}
+.crt{position:fixed;inset:0;z-index:100;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.04) 3px,rgba(0,0,0,0.04) 4px);}
+
+#shell{position:fixed;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#000;}
+#wrap-dummy{width:1140px;height:757px;flex:none;background:rgba(4,3,1,0.985);border:1px solid var(--g);
+  box-shadow:inset 0 1px 0 rgba(255,140,40,.14),0 0 0 1px rgba(0,0,0,0.95),0 0 90px rgba(255,74,22,0.16);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--g3);font-size:11px;letter-spacing:3px;}
+#wrap-dummy .xcross{font-family:var(--term);font-size:20px;color:var(--g2);}
+
+.rail{height:757px;flex:1 1 0;min-width:0;max-width:420px;
+  background:linear-gradient(180deg,#ff7a4a,#5e2a12);padding:1px;box-shadow:0 1px 3px rgba(0,0,0,.6);display:flex;position:relative;}
+.rail-in{flex:1;background:#000;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.rail .rc{position:absolute;width:10px;height:10px;z-index:5;pointer-events:none;}
+.rail .rc.tl{top:3px;left:3px;border-top:1px solid var(--g2);border-left:1px solid var(--g2);}
+.rail .rc.tr{top:3px;right:3px;border-top:1px solid var(--g2);border-right:1px solid var(--g2);}
+.rail .rc.bl{bottom:3px;left:3px;border-bottom:1px solid var(--g2);border-left:1px solid var(--g2);}
+.rail .rc.br{bottom:3px;right:3px;border-bottom:1px solid var(--g2);border-right:1px solid var(--g2);}
+
+.rail-hd{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;padding:4px 9px 4px;background:#0a0502;border-bottom:1px solid var(--g4);}
+.rail-hd .r1{display:flex;align-items:center;gap:6px;font-size:8px;letter-spacing:1.5px;color:var(--g2);}
+.rail-hd .r1 .rec{display:flex;align-items:center;gap:4px;color:var(--red);margin-left:auto;font-size:6px;}
+.rail-hd .r1 .rec i{width:5px;height:5px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);animation:bl 1.1s step-end infinite;}
+.rail-hd .r2{display:flex;justify-content:space-between;font-size:5.5px;letter-spacing:.5px;color:var(--g3);}
+.rail-hd .bc{display:flex;gap:1px;height:5px;margin-top:1px;}.rail-hd .bc i{flex:1;background:var(--g4);}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.15}}
+
+.rail-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:5px;padding:5px;}
+.dp{flex:1 1 0;min-height:0;background:#050302;border:1px solid var(--g4);display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.dp-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;height:15px;padding:0 7px;
+  background:linear-gradient(90deg,rgba(255,74,22,.10),transparent);border-bottom:1px solid var(--g4);font-size:6.5px;letter-spacing:1.5px;color:var(--g2);}
+.dp-h .arr{font-size:5px;color:var(--ac3);}.dp-h .no{font-size:5px;color:var(--g3);}
+.dp-h .tag{margin-left:auto;font-size:5.5px;color:var(--g3);}
+.dp.teal .dp-h{color:var(--teal);}.dp.teal .dp-h .arr{color:var(--teal);}
+.dp.viol .dp-h{color:var(--viol);}.dp.viol .dp-h .arr{color:var(--viol);}
+.dp-b{flex:1 1 auto;min-height:0;position:relative;display:flex;overflow:hidden;}
+
+.gfx{flex:1 1 auto;min-width:0;position:relative;overflow:hidden;}.gfx svg{position:absolute;inset:0;width:100%;height:100%;}
+.side{flex:0 0 82px;border-left:1px solid var(--g4);display:flex;flex-direction:column;min-height:0;background:rgba(255,74,22,.02);}
+.side .sh{font-size:5px;letter-spacing:.8px;color:var(--g3);padding:2px 5px 1px;border-bottom:1px solid var(--g4);}
+.tbl{padding:2px 5px;display:flex;flex-direction:column;gap:0px;}
+.tbl .tr{display:flex;justify-content:space-between;font-size:6px;line-height:1.45;}
+.tbl .tr .k{color:var(--g3);}.tbl .tr .v{color:var(--g2);font-variant-numeric:tabular-nums;}
+.tbl .tr .v.hi{color:#ffcf4a;}.tbl .tr .v.tl{color:var(--teal);}.tbl .tr .v.vl{color:var(--viol);}
+.minibar{height:4px;margin:1px 5px;background:rgba(255,74,22,.08);border:1px solid var(--g4);position:relative;overflow:hidden;}
+.minibar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--acc),var(--ac3));}
+.slbl{font-size:4.5px;letter-spacing:.5px;color:var(--g3);padding:0 5px;}
+
+.profile{flex:0 0 30px;border-top:1px solid var(--g4);position:relative;background:rgba(0,0,0,.3);}
+.profile svg{position:absolute;inset:0;width:100%;height:100%;}.profile .plbl{position:absolute;left:3px;top:1px;font-size:4.5px;color:var(--g3);z-index:2;}
+
+/* hexstream */
+.hex{position:absolute;inset:0;overflow:hidden;font-size:6px;line-height:1.55;color:var(--g3);padding:3px 5px;letter-spacing:.3px;}
+.hex .hl{white-space:nowrap;}.hex .hl .ad{color:var(--g3);}.hex .hl .hx{color:var(--g2);}
+.hex .hl .vd{color:rgba(255,74,22,.5);}.hex .hl .vd.c{color:#ffcf4a;}.hex .hl .vd.s{color:var(--ac3);}
+
+/* compiler log */
+.clog{position:absolute;left:0;right:0;bottom:0;height:34px;border-top:1px solid var(--g4);
+  font-size:5.5px;line-height:1.5;color:var(--g3);padding:2px 6px;overflow:hidden;background:rgba(0,0,0,.4);}
+.clog .ok{color:var(--teal);}.clog .wr{color:var(--amb);}
+
+.tblock{flex:0 0 auto;display:grid;grid-template-columns:repeat(5,1fr);background:#0a0502;border-top:1px solid var(--g4);}
+.tblock div{padding:2px 5px;border-right:1px solid var(--g4);font-size:5px;letter-spacing:.5px;color:var(--g3);line-height:1.5;}
+.tblock div:last-child{border-right:none;}.tblock div b{display:block;color:var(--g2);font-size:6.5px;font-weight:400;}
+
+@media (max-width:1700px){.rail{display:none;}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div id="bg-grid"></div><div class="crt"></div>
+
+<div id="shell">
+
+  <!-- ══ LEFT RAIL ══ -->
+  <aside class="rail">
+    <span class="rc tl"></span><span class="rc tr"></span><span class="rc bl"></span><span class="rc br"></span>
+    <div class="rail-in">
+      <div class="rail-hd">
+        <div class="r1"><span>L · SET AXIS</span><span style="color:var(--g3)">타인의 시선</span><span class="rec"><i></i>MEAS</span></div>
+        <div class="r2"><span>MODE SVA-AUTOPSY</span><span>v3.2.1</span><span id="hclk-l">00:00:00.000</span></div>
+        <div class="bc" id="bc-l"></div>
+      </div>
+      <div class="rail-body">
+
+        <!-- F.01 집합도 -->
+        <div class="dp teal">
+          <div class="dp-h"><span class="arr">▶</span>SET MAP<span class="no">F.01</span><span class="tag">집합도</span></div>
+          <div class="dp-b">
+            <div class="gfx"><svg id="svg-set" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet"></svg></div>
+            <div class="side">
+              <div class="sh">CARDINALITY</div>
+              <div class="tbl">
+                <div class="tr"><span class="k">|A|</span><span class="v tl">2,847</span></div>
+                <div class="tr"><span class="k">|B|</span><span class="v vl">2,310</span></div>
+                <div class="tr"><span class="k">|A∩B|</span><span class="v hi" id="set-int">32</span></div>
+                <div class="tr"><span class="k">|A∪B|</span><span class="v">5,125</span></div>
+                <div class="tr"><span class="k">|A\\B|</span><span class="v">2,815</span></div>
+              </div>
+              <div class="slbl">∩ RATIO</div><div class="minibar"><i id="set-ratio" style="width:0.6%"></i></div>
+              <div class="sh" style="margin-top:auto;border-top:1px solid var(--g4)">PERIM</div>
+              <div class="tbl"><div class="tr"><span class="k">∂A</span><span class="v" id="set-pa">314.2</span></div>
+                <div class="tr"><span class="k">Δ</span><span class="v" id="set-pd">+0.0</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- F.02 등고선 -->
+        <div class="dp">
+          <div class="dp-h"><span class="arr">▶</span>CONTOUR FIELD<span class="no">F.02</span><span class="tag">등고선</span></div>
+          <div class="dp-b" style="flex-direction:column">
+            <div style="flex:1 1 auto;display:flex;min-height:0">
+              <div class="gfx"><svg id="svg-cont" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid slice"></svg></div>
+              <div class="side">
+                <div class="sh">ELEV BANDS</div><div class="tbl" id="cont-bands"></div>
+                <div class="sh" style="border-top:1px solid var(--g4)">GRADIENT</div>
+                <div class="tbl">
+                  <div class="tr"><span class="k">∇mag</span><span class="v" id="cont-grad">0.00</span></div>
+                  <div class="tr"><span class="k">azim</span><span class="v" id="cont-az">000°</span></div>
+                  <div class="tr"><span class="k">pk</span><span class="v hi">3</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="profile"><div class="plbl">SECTION A–A′</div><svg id="svg-prof" viewBox="0 0 300 30" preserveAspectRatio="none"></svg></div>
+          </div>
+        </div>
+
+        <!-- CAND.C 모아레 -->
+        <div class="dp teal">
+          <div class="dp-h"><span class="arr">▶</span>MOIRÉ<span class="no">F.07</span><span class="tag">두 시선 충돌</span></div>
+          <div class="dp-b">
+            <div class="gfx"><svg id="svg-moire" viewBox="0 0 260 160" preserveAspectRatio="xMidYMid slice"></svg></div>
+            <div class="side">
+              <div class="sh">GRATING</div>
+              <div class="tbl">
+                <div class="tr"><span class="k">G1°</span><span class="v" id="mo-a1">0</span></div>
+                <div class="tr"><span class="k">G2°</span><span class="v vl" id="mo-a2">0</span></div>
+                <div class="tr"><span class="k">Δθ</span><span class="v hi" id="mo-d">0</span></div>
+                <div class="tr"><span class="k">beat</span><span class="v" id="mo-b">0.0</span></div>
+              </div>
+              <div class="slbl" style="margin-top:auto">불일치=구조</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="tblock"><div>DWG<b>SET-EL-01</b></div><div>SCALE<b>NTS</b></div><div>REV<b>3</b></div><div>DATE<b>26-06-03</b></div><div>SHEET<b>1/2</b></div></div>
+    </div>
+  </aside>
+
+  <!-- 중앙 -->
+  <div id="wrap-dummy">
+    <span>SET — HUD XT2 (1140 × 757)</span><span class="xcross">⊕</span>
+    <span style="font-size:8px;letter-spacing:2px;">누구의 것도 아닌 시선의 구조</span>
+  </div>
+
+  <!-- ══ RIGHT RAIL ══ -->
+  <aside class="rail">
+    <span class="rc tl"></span><span class="rc tr"></span><span class="rc bl"></span><span class="rc br"></span>
+    <div class="rail-in">
+      <div class="rail-hd">
+        <div class="r1"><span>R · INCLUSION AXIS</span><span style="color:var(--g3)">나의 시선</span><span class="rec"><i></i>REJ</span></div>
+        <div class="r2"><span>MODE SELF-LOOP</span><span>v3.2.1</span><span id="hclk-r">00:00:00.000</span></div>
+        <div class="bc" id="bc-r"></div>
+      </div>
+      <div class="rail-body">
+
+        <!-- CAND.B 관계망 -->
+        <div class="dp viol">
+          <div class="dp-h"><span class="arr">▶</span>RELATION GRAPH<span class="no">F.08</span><span class="tag">관계망</span></div>
+          <div class="dp-b">
+            <div class="gfx"><svg id="svg-graph" viewBox="0 0 260 240" preserveAspectRatio="xMidYMid meet"></svg></div>
+            <div class="side">
+              <div class="sh">NODES</div>
+              <div class="tbl">
+                <div class="tr"><span class="k">RULE</span><span class="v">1</span></div>
+                <div class="tr"><span class="k">SVA</span><span class="v">2</span></div>
+                <div class="tr"><span class="k">GRAM</span><span class="v">2</span></div>
+                <div class="tr"><span class="k">DIR</span><span class="v">2</span></div>
+              </div>
+              <div class="sh" style="border-top:1px solid var(--g4)">EDGES</div>
+              <div class="tbl"><div class="tr"><span class="k">links</span><span class="v hi" id="gr-e">0</span></div>
+                <div class="tr"><span class="k">flow</span><span class="v tl">●</span></div></div>
+              <div class="slbl" style="margin-top:auto">집합 교차</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAND.E 문법 컴파일러 -->
+        <div class="dp">
+          <div class="dp-h"><span class="arr">▶</span>GRAMMAR COMPILER<span class="no">F.09</span><span class="tag">문법→지시문</span></div>
+          <div class="dp-b">
+            <div class="gfx"><svg id="svg-comp" viewBox="0 0 360 150" preserveAspectRatio="xMidYMid meet"></svg>
+              <div class="clog" id="clog"></div></div>
+          </div>
+        </div>
+
+        <!-- F.06 기각 스트림 -->
+        <div class="dp viol">
+          <div class="dp-h"><span class="arr">▶</span>REJECT STREAM<span class="no">F.06</span><span class="tag">기각 로그</span></div>
+          <div class="dp-b"><div class="hex" id="hex"></div></div>
+        </div>
+
+      </div>
+      <div class="tblock"><div>DWG<b>INC-EL-02</b></div><div>SCALE<b>NTS</b></div><div>REV<b>3</b></div><div>DATE<b>26-06-03</b></div><div>SHEET<b>2/2</b></div></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+const $=id=>document.getElementById(id);const p2=n=>String(n).padStart(2,'0');
+
+/* ════ F.01 집합도 ════ */
+(function(){
+  const svg=$('svg-set');let grid='';
+  for(let x=20;x<=200;x+=20)grid+='<line x1="'+x+'" y1="14" x2="'+x+'" y2="186" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
+  for(let y=20;y<=180;y+=20)grid+='<line x1="14" y1="'+y+'" x2="206" y2="'+y+'" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
+  let axt='';for(let x=20;x<=200;x+=40)axt+='<text x="'+(x-3)+'" y="194" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+((x-100)/2)+'</text>';
+  svg.innerHTML=`<defs>
+    <radialGradient id="ig" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,122,46,.34)"/><stop offset="100%" stop-color="rgba(255,122,46,0)"/></radialGradient>
+    <pattern id="hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(63,176,154,.25)" stroke-width="0.5"/></pattern></defs>
+    <g>${grid}</g><g>${axt}</g>
+    <line x1="14" y1="100" x2="206" y2="100" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
+    <line x1="103" y1="14" x2="103" y2="186" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
+    <circle id="hA" cx="84" cy="100" r="50" fill="url(#hatch)" opacity=".5"/>
+    <ellipse cx="103" cy="100" rx="22" ry="36" fill="url(#ig)"/>
+    <circle id="cA" cx="84" cy="100" r="50" fill="none" stroke="#3fb09a" stroke-width="1.1" stroke-dasharray="3 4"/>
+    <circle id="cB" cx="122" cy="100" r="50" fill="none" stroke="#b07bff" stroke-width="1.1" stroke-dasharray="3 4"/>
+    <circle cx="84" cy="100" r="1.6" fill="#3fb09a"/><circle cx="122" cy="100" r="1.6" fill="#b07bff"/>
+    <line id="dimA" x1="84" y1="100" x2="34" y2="100" stroke="#3fb09a" stroke-width="0.5" opacity=".6"/>
+    <text id="dimAt" x="40" y="96" fill="#3fb09a" font-size="6" font-family="IBM Plex Mono">r=50</text>
+    <text x="34" y="42" fill="#3fb09a" font-size="9" font-family="VT323,monospace">SET (A)</text>
+    <text x="128" y="168" fill="#b07bff" font-size="9" font-family="VT323,monospace">INCL (B)</text>
+    <line x1="103" y1="100" x2="160" y2="60" stroke="rgba(255,122,46,.5)" stroke-width="0.5"/>
+    <circle cx="103" cy="100" r="1.6" fill="#ff7a2e"/>
+    <text x="162" y="58" fill="#ff7a2e" font-size="8" font-family="VT323,monospace">A∩B = 32</text>
+    <text x="34" y="118" fill="rgba(63,176,154,.5)" font-size="5" font-family="IBM Plex Mono">A\\B</text>
+    <circle id="trace" r="2.4" fill="#ff7a2e"><animate attributeName="opacity" values="1;.3;1" dur="1.3s" repeatCount="indefinite"/></circle>
+    <text id="traceXY" fill="#ff7a2e" font-size="5.5" font-family="IBM Plex Mono"></text>`;
+  const q=s=>svg.querySelector(s);const cA=q('#cA'),cB=q('#cB'),hA=q('#hA'),trace=q('#trace'),tXY=q('#traceXY'),dimA=q('#dimA'),dimAt=q('#dimAt');
+  let t=0,pm=314.2,intc=32;
+  setInterval(()=>{t+=0.05;
+    const rA=50+Math.sin(t)*4,rB=50+Math.cos(t*0.8)*4,cx=84+Math.sin(t*0.5)*3;
+    cA.setAttribute('r',rA.toFixed(1));cB.setAttribute('r',rB.toFixed(1));cA.setAttribute('cx',cx.toFixed(1));
+    hA.setAttribute('r',rA.toFixed(1));hA.setAttribute('cx',cx.toFixed(1));
+    dimA.setAttribute('x1',cx);dimA.setAttribute('x2',(cx-rA).toFixed(1));dimAt.setAttribute('x',(cx-rA+6).toFixed(1));dimAt.textContent='r='+rA.toFixed(0);
+    const ang=t*1.2,x=cx+Math.cos(ang)*rA,y=100+Math.sin(ang)*rA;
+    trace.setAttribute('cx',x.toFixed(1));trace.setAttribute('cy',y.toFixed(1));
+    tXY.setAttribute('x',(x+4).toFixed(1));tXY.setAttribute('y',(y-3).toFixed(1));tXY.textContent='('+(x-103).toFixed(0)+','+(100-y).toFixed(0)+')';
+    pm+=(Math.random()-0.5)*1.6;$('set-pa').textContent=pm.toFixed(1);$('set-pd').textContent=(pm-314.2>=0?'+':'')+(pm-314.2).toFixed(1);
+    if(Math.random()<0.04){intc=30+Math.floor(Math.random()*5);$('set-int').textContent=intc;$('set-ratio').style.width=(intc/5125*100).toFixed(2)+'%';}
+  },60);
+})();
+
+/* ════ F.02 등고선 (실시간 일렁임) ════ */
+(function(){
+  const svg=$('svg-cont');const cx=110,cy=100,NC=12,elevs=[];
+  function blob(r,seed,t){const pts=30;let d='';for(let i=0;i<=pts;i++){const a=i/pts*Math.PI*2;
+    const w=1+Math.sin(a*3+seed+t*1.1)*0.12+Math.cos(a*5+seed*1.7-t*0.8)*0.07+Math.sin(a*2-seed*0.6+t*1.6)*0.05;
+    const rr=r+Math.sin(t*0.9+seed)*3;d+=(i===0?'M':'L')+(cx+Math.cos(a)*rr*w).toFixed(1)+' '+(cy+Math.sin(a)*rr*w*0.9).toFixed(1)+' ';}return d+'Z';}
+  function buildPaths(t){let p='';for(let i=0;i<NC;i++){const r=10+i*9.5,op=(0.55-i*0.03).toFixed(2),sw=(i%3===0)?1.0:0.6;
+    p+='<path d="'+blob(r,i*0.9,t)+'" fill="none" stroke="rgba(255,106,30,'+op+')" stroke-width="'+sw+'"/>';}return p;}
+  let labels='';for(let i=0;i<NC;i++){if(i%3===0&&i>0){const r=10+i*9.5;
+    labels+='<text x="'+(cx-2)+'" y="'+(cy-r*0.9+2)+'" fill="rgba(255,106,30,.55)" font-size="5.5" font-family="IBM Plex Mono">+'+(i*12)+'</text>';elevs.push(i*12);}}
+  let ticks='';for(let x=20;x<=200;x+=30)ticks+='<line x1="'+x+'" y1="186" x2="'+x+'" y2="190" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
+  for(let y=20;y<=170;y+=30)ticks+='<line x1="4" y1="'+y+'" x2="8" y2="'+y+'" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
+  svg.innerHTML=`<g id="cg">${buildPaths(0)}</g><g>${labels}</g><g>${ticks}</g>
+    <g><line x1="${cx-4}" y1="${cy}" x2="${cx+4}" y2="${cy}" stroke="#ffcf4a" stroke-width="0.8"/><line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+4}" stroke="#ffcf4a" stroke-width="0.8"/><text x="${cx+6}" y="${cy-4}" fill="#ffcf4a" font-size="6" font-family="VT323,monospace">PK +148</text></g>
+    <g transform="translate(198,24)"><line x1="0" y1="8" x2="0" y2="-8" stroke="rgba(255,74,22,.5)" stroke-width="0.7"/><path d="M0,-8 L-2.5,-3 L2.5,-3 Z" fill="rgba(255,74,22,.7)"/><text x="-2.5" y="-10" fill="rgba(255,74,22,.6)" font-size="6" font-family="IBM Plex Mono">N</text></g>
+    <line id="cscan" x1="0" y1="40" x2="220" y2="40" stroke="rgba(255,207,74,.5)" stroke-width="0.8"/>`;
+  $('cont-bands').innerHTML=elevs.map((e,i)=>'<div class="tr"><span class="k">+'+e+'</span><span class="v" style="color:rgba(255,106,30,'+(0.9-i*0.12)+')">▓▓</span></div>').join('');
+  const pf=$('svg-prof');
+  function buildProfile(t){let pd='M0 28 ';for(let x=0;x<=300;x+=6){const hh=28-(Math.exp(-Math.pow((x-150)/55,2))*24+Math.sin(x/22+t*1.4)*2.4+Math.sin(x/9-t)*1.1+2);pd+='L'+x+' '+hh.toFixed(1)+' ';}return pd+'L300 30 L0 30 Z';}
+  pf.innerHTML='<path id="pfpath" d="'+buildProfile(0)+'" fill="rgba(255,106,30,.10)" stroke="rgba(255,106,30,.6)" stroke-width="0.8"/><line id="pfscan" x1="150" y1="0" x2="150" y2="30" stroke="rgba(255,207,74,.6)" stroke-width="0.7"/>';
+  const g=svg.querySelector('#cg'),scan=svg.querySelector('#cscan'),pfscan=pf.querySelector('#pfscan'),pfpath=pf.querySelector('#pfpath');let t=0,sy=20;
+  setInterval(()=>{t+=0.05;g.innerHTML=buildPaths(t);g.setAttribute('transform','rotate('+(Math.sin(t*0.2)*4).toFixed(2)+' '+cx+' '+cy+')');
+    pfpath.setAttribute('d',buildProfile(t));sy+=1.3;if(sy>186)sy=14;scan.setAttribute('y1',sy);scan.setAttribute('y2',sy);
+    const px=(sy-14)/172*300;pfscan.setAttribute('x1',px);pfscan.setAttribute('x2',px);
+    $('cont-grad').textContent=(Math.abs(Math.sin(t*0.7))*2.4).toFixed(2);$('cont-az').textContent=p2(Math.floor((t*8)%360)).padStart(3,'0')+'°';},50);
+})();
+
+/* ════ F.07 모아레 ════ */
+(function(){
+  const svg=$('svg-moire');
+  function grating(angle,color,id){let l='';for(let i=-30;i<=70;i++){const x=i*5;
+    l+='<line x1="'+x+'" y1="-80" x2="'+x+'" y2="240" stroke="'+color+'" stroke-width="1.3"/>';}
+    return '<g id="'+id+'" transform="rotate('+angle+' 130 80)">'+l+'</g>';}
+  svg.innerHTML=grating(0,'rgba(150,60,18,.4)','g1')+grating(6,'rgba(96,64,140,.4)','g2');
+  const g1=svg.querySelector('#g1'),g2=svg.querySelector('#g2');let t=0;
+  setInterval(()=>{t+=0.012;const a1=Math.sin(t)*8,a2=-Math.sin(t*0.9)*8+6;
+    g1.setAttribute('transform','rotate('+a1.toFixed(2)+' 130 80)');g2.setAttribute('transform','rotate('+a2.toFixed(2)+' 130 80)');
+    const dth=Math.abs(a2-a1);$('mo-a1').textContent=a1.toFixed(0);$('mo-a2').textContent=a2.toFixed(0);$('mo-d').textContent=dth.toFixed(1);$('mo-b').textContent=(6/(dth+0.5)).toFixed(1);},50);
+})();
+
+/* ════ F.08 관계망 ════ */
+(function(){
+  const svg=$('svg-graph');
+  const nodes=[{id:'RULE',x:130,y:40,c:'#ff6a6a'},{id:'SVA',x:60,y:100,c:'#3fd2ff'},{id:'SVA2',x:200,y:100,c:'#3fd2ff'},
+    {id:'GRAM',x:50,y:170,c:'#4dff7a'},{id:'GRAM2',x:210,y:170,c:'#4dff7a'},{id:'DIR',x:110,y:210,c:'#ffd24a'},{id:'DIR2',x:160,y:210,c:'#ffd24a'}];
+  const edges=[[0,1],[0,2],[1,3],[2,4],[3,5],[4,6],[1,2],[5,6],[0,5],[0,6]];$('gr-e').textContent=edges.length;let t=0;
+  setInterval(()=>{t+=0.03;
+    const pos=nodes.map((n,i)=>({x:n.x+Math.sin(t+i)*4,y:n.y+Math.cos(t*0.8+i*1.3)*4,c:n.c,id:n.id}));
+    let e='';edges.forEach((ed,k)=>{const a=pos[ed[0]],b=pos[ed[1]];
+      e+='<line x1="'+a.x.toFixed(1)+'" y1="'+a.y.toFixed(1)+'" x2="'+b.x.toFixed(1)+'" y2="'+b.y.toFixed(1)+'" stroke="rgba(255,74,22,.25)" stroke-width="0.7"/>';
+      const f=(t*0.5+k*0.3)%1;e+='<circle cx="'+(a.x+(b.x-a.x)*f).toFixed(1)+'" cy="'+(a.y+(b.y-a.y)*f).toFixed(1)+'" r="1.6" fill="#ff7a2e"/>';});
+    let n='';pos.forEach(p=>{n+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="9" fill="#050302" stroke="'+p.c+'" stroke-width="1.2"/>'
+      +'<text x="'+p.x.toFixed(1)+'" y="'+(p.y+2.5).toFixed(1)+'" fill="'+p.c+'" font-size="6" font-family="IBM Plex Mono" text-anchor="middle">'+p.id+'</text>';});
+    svg.innerHTML=e+n;},50);
+})();
+
+/* ════ F.09 문법 컴파일러 ════ */
+(function(){
+  const svg=$('svg-comp');
+  const blocks=[{x:14,t:'SVA',s:'4축 분석'},{x:104,t:'GRAM 1차',s:'허용구조'},{x:194,t:'GRAM 2차',s:'금지구조'},{x:284,t:'DIR',s:'지시문'}];
+  let b='';blocks.forEach((bl,i)=>{const col=['#3fd2ff','#4dff7a','#4dff7a','#ffd24a'][i];
+    b+='<rect x="'+bl.x+'" y="55" width="64" height="40" rx="2" fill="rgba(0,0,0,.5)" stroke="'+col+'" stroke-width="1"/>'
+     +'<text x="'+(bl.x+32)+'" y="73" fill="'+col+'" font-size="9" font-family="VT323,monospace" text-anchor="middle">'+bl.t+'</text>'
+     +'<text x="'+(bl.x+32)+'" y="85" fill="rgba(255,74,22,.5)" font-size="6" font-family="IBM Plex Mono" text-anchor="middle">'+bl.s+'</text>';
+    if(i<3)b+='<line x1="'+(bl.x+64)+'" y1="75" x2="'+(bl.x+90)+'" y2="75" stroke="rgba(255,74,22,.3)" stroke-width="0.8"/><path d="M'+(bl.x+90)+',75 l-4,-2 v4 z" fill="rgba(255,74,22,.5)"/>';});
+  svg.innerHTML=b+'<g id="tokens"></g>';
+  const tk=svg.querySelector('#tokens'),path=[46,136,226,316];let t=0;
+  setInterval(()=>{t+=0.02;let s='';for(let k=0;k<3;k++){const f=(t+k*0.33)%1;const x=path[k]+(path[k+1]-path[k])*f;
+    s+='<rect x="'+(x-3).toFixed(1)+'" y="71" width="6" height="8" fill="#ff7a2e" opacity="'+(1-Math.abs(f-0.5)).toFixed(2)+'"/>';}tk.innerHTML=s;},50);
+  const logs=[['SVA scan 438 imgs','ok'],['extract DS/SD/SA/KV','ok'],['G1 허용 12 rules','ok'],['G2 금지 9 rules','wr'],['compile DIR-0110','ok'],['DIR-1119 emitted','ok'],['미학완성도=기각','wr']];
+  const cl=$('clog');let li=0;
+  function addlog(){const l=logs[li%logs.length];li++;const d=document.createElement('div');
+    d.innerHTML='<span class="'+l[1]+'">['+(l[1]==='ok'?'OK':'WRN')+']</span> '+l[0];
+    cl.insertBefore(d,cl.firstChild);while(cl.children.length>4)cl.removeChild(cl.lastChild);}
+  for(let i=0;i<4;i++)addlog();setInterval(addlog,1500);
+})();
+
+/* ════ F.06 기각 스트림 ════ */
+(function(){
+  const reasons=[['배경 맥락','d'],['오브제 접촉','d'],['미학 초과','d'],['단색 아님','d'],['주체 잔존','d'],['반복차 없음','d'],['클리셰','d'],['SUPPORT','s'],['CORE','c']];
+  const host=$('hex');let addr=0x4471;
+  function hx(){return Math.floor(Math.random()*256).toString(16).padStart(2,'0').toUpperCase();}
+  function add(){addr++;const r=reasons[Math.floor(Math.random()*reasons.length)],w=r[1]==='d';
+    const line=document.createElement('div');line.className='hl';
+    line.innerHTML='<span class="ad">'+addr.toString(16).toUpperCase().padStart(4,'0')+'</span> <span class="hx">'+hx()+' '+hx()+' '+hx()+' '+hx()+'</span> <span class="vd '+r[1]+'">'+(w?'✕':'●')+r[0]+'</span>';
+    host.insertBefore(line,host.firstChild);while(host.children.length>18)host.removeChild(host.lastChild);}
+  for(let i=0;i<18;i++)add();(function s(){setTimeout(()=>{add();s();},500+Math.random()*1100);})();
+})();
+
+/* chrome */
+function bc(el){let h='';for(let i=0;i<48;i++)h+='<i style="opacity:'+(Math.random()<0.5?0.5:0.12)+'"></i>';el.innerHTML=h;}
+bc($('bc-l'));bc($('bc-r'));
+setInterval(()=>{const d=new Date(),t=p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds())+'.'+String(d.getMilliseconds()).padStart(3,'0');$('hclk-l').textContent=t;$('hclk-r').textContent=t;},60);
+setInterval(()=>{bc($('bc-l'));bc($('bc-r'));},1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>MEASURE.DB — PC통신 스타일</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#00ff41;
+  --g2:rgba(0,255,65,.72);
+  --g3:rgba(0,255,65,.38);
+  --g4:rgba(0,255,65,.14);
+  --dim:rgba(0,255,65,.22);
+  --hi:#aaff00;
+  --amb:#ffb800;
+  --cya:#00d4ff;
+  --red:#ff3b1f;
+  --mono:'IBM Plex Mono',monospace;
+  --vt:'VT323',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  background:#000;
+  font-family:var(--vt);
+  font-size:18px;
+  line-height:1.3;
+  color:var(--g);
+}
+
+/* ── 전체 레이아웃 ── */
+.pc{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;
+  background:#000;
+}
+
+/* ── 상단 타이틀 바 ── */
+.pc-title{
+  flex-shrink:0;
+  background:#000;
+  border-bottom:1px solid var(--g);
+  padding:2px 0;
+  text-align:center;
+}
+.pc-title-inner{
+  display:inline-block;
+  font-size:22px;
+  letter-spacing:2px;
+  color:#000;
+  background:var(--g);
+  padding:0 16px;
+}
+.pc-subtitle{
+  font-size:14px;
+  color:var(--dim);
+  letter-spacing:1px;
+  margin-top:1px;
+}
+
+/* ── 상태 바 (방 정보) ── */
+.pc-roombar{
+  flex-shrink:0;
+  display:flex;
+  border-bottom:1px solid var(--g3);
+  font-size:15px;
+  color:var(--g3);
+  background:rgba(0,255,65,.03);
+}
+.pc-roombar-cell{
+  padding:1px 10px;
+  border-right:1px solid var(--g4);
+  white-space:nowrap;
+}
+.pc-roombar-cell em{color:var(--g);font-style:normal;}
+.pc-roombar-cell.hi{color:var(--hi);}
+
+/* ── 메인 영역 ── */
+.pc-main{
+  flex:1;display:flex;overflow:hidden;min-height:0;
+}
+
+/* ── 채팅 로그 ── */
+.pc-log{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;
+  border-right:1px solid var(--g3);
+}
+.pc-log-inner{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:4px 0;
+}
+.pc-log-inner::-webkit-scrollbar{width:2px;}
+.pc-log-inner::-webkit-scrollbar-thumb{background:var(--g3);}
+
+/* 메시지 행 */
+.row{
+  display:flex;
+  align-items:baseline;
+  padding:0 6px;
+  min-height:22px;
+  border-bottom:1px solid rgba(0,255,65,.04);
+  font-size:17px;
+}
+.row:hover{background:rgba(0,255,65,.04);}
+
+.row-ts{
+  width:44px;flex-shrink:0;
+  color:var(--dim);
+  font-size:15px;
+  padding-right:4px;
+}
+.row-id{
+  width:88px;flex-shrink:0;
+  overflow:hidden;white-space:nowrap;
+  padding-right:6px;
+}
+.row-id.sys  { color:var(--g3); }
+.row-id.me   { color:var(--hi); }
+.row-id.user { color:var(--cya); }
+.row-id.guest{ color:var(--amb); }
+.row-id.err  { color:var(--red); }
+
+.row-sep{
+  color:var(--g4);flex-shrink:0;padding-right:6px;
+}
+.row-msg{
+  flex:1;word-break:break-all;
+  white-space:pre-wrap;
+}
+.row-msg.sys-m  { color:var(--g3); }
+.row-msg.me-m   { color:var(--g);  }
+.row-msg.user-m { color:rgba(0,212,255,.8); }
+.row-msg.guest-m{ color:rgba(255,184,0,.75); }
+.row-msg.notice { color:var(--hi); letter-spacing:.5px; }
+.row-msg.err-m  { color:var(--red); }
+
+/* 구분선 */
+.row-divider{
+  padding:1px 6px;
+  color:var(--dim);
+  font-size:14px;
+  letter-spacing:1px;
+  border-top:1px solid var(--g4);
+  border-bottom:1px solid var(--g4);
+  background:rgba(0,255,65,.02);
+}
+.row-divider::before{content:'────── ';}
+.row-divider::after{content:' ──────';}
+
+/* ── 사이드 패널 ── */
+.pc-side{
+  width:148px;flex-shrink:0;
+  display:flex;flex-direction:column;
+  font-size:15px;
+}
+.pc-side-sec{
+  border-bottom:1px solid var(--g4);
+  padding:4px 8px;
+}
+.pc-side-head{
+  color:var(--g3);letter-spacing:1px;
+  font-size:14px;
+  border-bottom:1px solid var(--g4);
+  padding-bottom:2px;margin-bottom:4px;
+}
+.pc-side-user{
+  display:flex;align-items:center;gap:5px;
+  padding:1px 0;
+}
+.pc-side-user .mark{color:var(--g3);}
+.pc-side-user.me .mark{color:var(--hi);}
+.pc-side-user.me .name{color:var(--hi);}
+.pc-side-user.u .name{color:rgba(0,212,255,.7);}
+.pc-side-user.g .name{color:rgba(255,184,0,.65);}
+
+.pc-side-stat{
+  padding:4px 8px;border-bottom:1px solid var(--g4);
+  font-size:14px;
+}
+.pc-side-stat-row{
+  display:flex;justify-content:space-between;
+  color:var(--g3);padding:1px 0;
+}
+.pc-side-stat-row em{color:var(--g);font-style:normal;}
+
+.pc-side-fill{flex:1;}
+
+.pc-side-conn{
+  padding:4px 8px;font-size:13px;
+  color:var(--dim);line-height:1.7;
+  border-top:1px solid var(--g4);
+}
+
+/* ── 입력 영역 ── */
+.pc-input{
+  flex-shrink:0;
+  border-top:1px solid var(--g);
+  display:flex;align-items:center;
+  background:#000;
+  height:30px;
+}
+.pc-input-label{
+  padding:0 8px;
+  color:var(--hi);
+  font-size:17px;
+  border-right:1px solid var(--g3);
+  white-space:nowrap;
+  height:100%;display:flex;align-items:center;
+  flex-shrink:0;
+}
+.pc-input-field{
+  flex:1;background:transparent;border:none;outline:none;
+  color:var(--g);font-family:var(--vt);font-size:18px;
+  padding:0 8px;
+  caret-color:var(--g);
+  height:100%;
+}
+.pc-input-field::placeholder{color:var(--dim);}
+.pc-input-btn{
+  height:100%;padding:0 12px;
+  background:rgba(0,255,65,.08);
+  border:none;border-left:1px solid var(--g3);
+  color:var(--g);font-family:var(--vt);font-size:18px;
+  cursor:pointer;letter-spacing:1px;flex-shrink:0;
+  transition:background .1s;
+}
+.pc-input-btn:hover{background:rgba(0,255,65,.18);}
+
+/* ── F키 바 ── */
+.pc-fkeys{
+  flex-shrink:0;
+  display:flex;
+  border-top:1px solid var(--g3);
+  background:rgba(0,255,65,.03);
+  height:22px;overflow:hidden;
+}
+.fk{
+  display:flex;align-items:center;
+  font-size:14px;letter-spacing:.5px;
+  border-right:1px solid var(--g4);
+  height:100%;
+}
+.fk-key{
+  background:var(--g3);color:#000;
+  padding:0 4px;height:100%;
+  display:flex;align-items:center;
+  font-size:13px;font-family:var(--mono);
+}
+.fk-lbl{
+  padding:0 6px;color:var(--dim);
+}
+.fk:last-child{border-right:none;}
+.fk-spacer{flex:1;}
+
+/* CRT 효과 */
+.pc::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background:repeating-linear-gradient(
+    0deg,transparent 0px,transparent 2px,
+    rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 3px
+  );
+}
+</style>
+</head>
+<body>
+
+<div class="pc">
+
+  <!-- 타이틀 -->
+  <div class="pc-title">
+    <div class="pc-title-inner">■ MEASURE.DB 대화방 ■</div>
+    <div class="pc-subtitle">[ 방번호: 0345 ]  데이터베이스 검색 채팅 시스템  SYS·NET v0.3</div>
+  </div>
+
+  <!-- 방 상태 -->
+  <div class="pc-roombar">
+    <div class="pc-roombar-cell">접속자 <em>5</em>명</div>
+    <div class="pc-roombar-cell">DIR <em>45</em>개</div>
+    <div class="pc-roombar-cell">사진 <em>6,421</em>장</div>
+    <div class="pc-roombar-cell hi">선택 <em>438</em>장</div>
+    <div class="pc-roombar-cell" style="margin-left:auto;" id="clk">00:00:00</div>
+  </div>
+
+  <!-- 메인 -->
+  <div class="pc-main">
+
+    <!-- 로그 -->
+    <div class="pc-log">
+      <div class="pc-log-inner" id="log">
+
+        <div class="row-divider">시스템 접속  2026-06-01</div>
+
+        <div class="row">
+          <span class="row-ts">09:31</span>
+          <span class="row-id sys">[시스템]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg notice">★ MEASURE.DB 대화방에 오신 것을 환영합니다 ★</span>
+        </div>
+        <div class="row">
+          <span class="row-ts"></span>
+          <span class="row-id sys"></span>
+          <span class="row-sep">│</span>
+          <span class="row-msg sys-m">데이터베이스 연결 중... 잠시 기다려 주세요</span>
+        </div>
+        <div class="row">
+          <span class="row-ts">09:31</span>
+          <span class="row-id sys">[시스템]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg sys-m">나(익명) 님이 입장했습니다</span>
+        </div>
+
+        <div class="row-divider">09:35</div>
+
+        <div class="row">
+          <span class="row-ts">09:35</span>
+          <span class="row-id user">[관찰자_01]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg user-m">crash 키워드 검색해봤어요. 21개 나옵니다</span>
+        </div>
+        <div class="row">
+          <span class="row-ts">09:36</span>
+          <span class="row-id guest">[방문자_09]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg guest-m">FOGDIS 디렉토리가 제일 많네요</span>
+        </div>
+        <div class="row">
+          <span class="row-ts">09:37</span>
+          <span class="row-id user">[수집가  ]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg user-m">floating shadow 같이 쳐보면 어떨까요</span>
+        </div>
+        <div class="row">
+          <span class="row-ts">09:38</span>
+          <span class="row-id me">[나(익명)]</span>
+          <span class="row-sep">│</span>
+          <span class="row-msg me-m">네, 한번 검색해볼게요</span>
+        </div>
+
+        <div class="row-divider">검색으로 입장 · MEASURE.DB</div>
+
+      </div>
+    </div>
+
+    <!-- 사이드 -->
+    <div class="pc-side">
+
+      <div class="pc-side-sec">
+        <div class="pc-side-head">◆ 접속자 명단</div>
+        <div class="pc-side-user me">
+          <span class="mark">◆</span><span class="name">나(익명)</span>
+        </div>
+        <div class="pc-side-user u">
+          <span class="mark">·</span><span class="name">관찰자_01</span>
+        </div>
+        <div class="pc-side-user u">
+          <span class="mark">·</span><span class="name">수집가</span>
+        </div>
+        <div class="pc-side-user g">
+          <span class="mark">·</span><span class="name">방문자_09</span>
+        </div>
+        <div class="pc-side-user g">
+          <span class="mark">·</span><span class="name">익명의_이</span>
+        </div>
+      </div>
+
+      <div class="pc-side-stat">
+        <div class="pc-side-head">◆ 현황</div>
+        <div class="pc-side-stat-row"><span>총 사진</span><em>6,421</em></div>
+        <div class="pc-side-stat-row"><span>선택됨</span><em>438</em></div>
+        <div class="pc-side-stat-row"><span>DIR수</span><em>45</em></div>
+        <div class="pc-side-stat-row"><span>CORE</span><em>32</em></div>
+      </div>
+
+      <div class="pc-side-fill"></div>
+
+      <div class="pc-side-conn">
+        검색으로 입장<br>
+        MEASURE.DB<br>
+        [연결완료]
+      </div>
+
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- 입력 -->
+  <div class="pc-input">
+    <div class="pc-input-label">나(익명) ▶</div>
+    <input class="pc-input-field" id="chatInput" type="text"
+      placeholder="메시지 또는 /search 키워드 입력...">
+    <button class="pc-input-btn" id="sendBtn">전송</button>
+  </div>
+
+  <!-- F키 바 -->
+  <div class="pc-fkeys">
+    <div class="fk"><span class="fk-key">F1</span><span class="fk-lbl">도움말</span></div>
+    <div class="fk"><span class="fk-key">F2</span><span class="fk-lbl">접속자</span></div>
+    <div class="fk"><span class="fk-key">F3</span><span class="fk-lbl">검색</span></div>
+    <div class="fk"><span class="fk-key">F5</span><span class="fk-lbl">새로고침</span></div>
+    <div class="fk"><span class="fk-key">F10</span><span class="fk-lbl">나가기</span></div>
+    <div class="fk-spacer"></div>
+    <div class="fk"><span class="fk-lbl" style="color:var(--dim);">/search /who /exit /help</span></div>
+  </div>
+
+</div>
+
+<script>
+const log = document.getElementById('log');
+const input = document.getElementById('chatInput');
+const send = document.getElementById('sendBtn');
+const clkEl = document.getElementById('clk');
+
+// 시계
+function tick(){
+  const d=new Date();
+  clkEl.textContent=
+    String(d.getHours()).padStart(2,'0')+':'+
+    String(d.getMinutes()).padStart(2,'0')+':'+
+    String(d.getSeconds()).padStart(2,'0');
+}
+tick(); setInterval(tick,1000);
+
+function hm(){
+  const d=new Date();
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function addRow(ts, idTxt, idCls, msg, msgCls){
+  const d=document.createElement('div');
+  d.className='row';
+  d.innerHTML=
+    `<span class="row-ts">${ts}</span>`+
+    `<span class="row-id ${idCls}">${idTxt}</span>`+
+    `<span class="row-sep">│</span>`+
+    `<span class="row-msg ${msgCls}">${msg}</span>`;
+  log.appendChild(d);
+  log.scrollTop=log.scrollHeight;
+}
+function addDivider(txt){
+  const d=document.createElement('div');
+  d.className='row-divider';
+  d.textContent=txt;
+  log.appendChild(d);
+}
+function addSys(msg){
+  addRow(hm(),'[시스템]','sys',msg,'sys-text');
+}
+
+// 전송
+function doSend(){
+  const q=input.value.trim(); if(!q) return;
+  if(q.startsWith('/')){
+    const cmd=q.toLowerCase();
+    addRow(hm(),'[나(익명)]','me',q,'me-m');
+    if(cmd.startsWith('/search ')){
+      const kw=q.slice(8).trim();
+      addSys(`"${kw}" 검색 중...`);
+      setTimeout(()=>{
+        const n=Math.floor(Math.random()*18)+3;
+        addSys(`검색 완료 — ${n}개 결과 발견`);
+        try{window.parent.postMessage({type:'measureSearch',query:kw},'*');}catch(e){}
+      },700);
+    } else if(cmd==='/who'){
+      addSys('접속자: 나(익명) 관찰자_01 수집가 방문자_09 익명의_이');
+    } else if(cmd==='/help'){
+      addSys('/search [키워드]  /who  /exit  /help');
+    } else if(cmd==='/exit'){
+      addSys('대화방을 나갑니다...');
+    }
+  } else {
+    addRow(hm(),'[나(익명)]','me',q,'me-m');
+    // 검색어로 처리
+    setTimeout(()=>{
+      const n=Math.floor(Math.random()*18)+3;
+      addSys(`"${q}" 검색 — ${n}개 결과`);
+      try{window.parent.postMessage({type:'measureSearch',query:q},'*');}catch(e){}
+    },600);
+  }
+  input.value='';
+}
+send.onclick=doSend;
+input.addEventListener('keydown',e=>{ if(e.key==='Enter') doSend(); });
+
+// 랜덤 활동
+const USERS=[
+  {id:'[관찰자_01]',cls:'user',mcls:'user-m'},
+  {id:'[수집가  ]',cls:'user',mcls:'user-m'},
+  {id:'[방문자_09]',cls:'guest',mcls:'guest-m'},
+  {id:'[익명의_이]',cls:'guest',mcls:'guest-m'},
+];
+const MSGS=[
+  'DIR 확인해볼게요','이 키워드 흥미롭네요','몇 개나 나왔어요?',
+  'FOGDIS 많이 보이네요','검색 결과 공유 부탁요','crash랑 shadow 같이?',
+  '이미지 보니까 비슷한게 많네요','BLOOM 디렉토리도 봐봐요',
+];
+function randActivity(){
+  const u=USERS[Math.floor(Math.random()*USERS.length)];
+  const m=MSGS[Math.floor(Math.random()*MSGS.length)];
+  addRow(hm(),u.id,u.cls,m,u.mcls);
+  setTimeout(randActivity, 14000+Math.random()*22000);
+}
+setTimeout(randActivity, 9000);
+
+// 부모 통신
+window.addEventListener('message',e=>{
+  if(e.data&&e.data.type==='measurePhotos') addSys('데이터베이스 연결 완료');
+});
+function notifyReady(){
+  try{window.parent.postMessage({type:'measureReady'},'*');}catch(ex){}
+}
+notifyReady(); setTimeout(notifyReady,800);
+</script>
+</body>
+</html>

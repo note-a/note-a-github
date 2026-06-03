@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — SCHEMATIC (Sample B)</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;700&family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0316; --ln:#ff3df0; --dim:#8a2a86; --lbl:#ffd6fb; --red:#ff5a8a;
+  --blue:#36e0ff; --yl:#ffd24a; --hot:#ffffff;
+  --st:'Share Tech Mono','IBM Plex Sans KR',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#04010a;color:var(--lbl);font-family:var(--st);display:flex;align-items:center;justify-content:center;}
+.crt{position:fixed;inset:0;z-index:200;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(255,61,240,0.025) 3px,rgba(255,61,240,0.025) 4px);}
+#frame{
+  position:relative;width:1180px;max-width:96vw;height:740px;max-height:94vh;
+  border:2px solid var(--ln);background:var(--bg);padding:14px;display:grid;
+  grid-template-rows:auto 1fr auto;gap:12px;overflow:hidden;
+  box-shadow:0 0 40px rgba(255,61,240,.18),inset 0 0 60px rgba(255,61,240,.05);
+}
+#frame::before{content:'';position:absolute;inset:5px;border:1px solid var(--dim);pointer-events:none;}
+.rec{position:absolute;right:16px;bottom:9px;font-size:11px;letter-spacing:2px;color:var(--blue);animation:blink 1.4s steps(1,end) infinite;}
+@keyframes blink{50%{opacity:.15}}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid var(--dim);padding-bottom:10px;}
+.head h1{font-size:30px;letter-spacing:3px;color:var(--ln);font-weight:700;text-shadow:0 0 10px rgba(255,61,240,.5);}
+.head h2{font-size:13px;letter-spacing:6px;color:var(--lbl);font-weight:500;margin-top:3px;}
+.head .meta{text-align:right;font-size:11px;color:var(--dim);line-height:1.7;letter-spacing:1px;}
+.head .free{display:inline-block;margin-top:5px;background:var(--ln);color:#1a0118;font-size:10px;letter-spacing:2px;padding:3px 12px;}
+
+.main{display:grid;grid-template-columns:300px 1fr;gap:12px;min-height:0;}
+.panelbox{border:1.5px solid var(--ln);background:#0a0316;display:flex;flex-direction:column;min-height:0;}
+.ptitle{color:#1a0118;font-size:13px;letter-spacing:2px;text-align:center;padding:6px;font-weight:700;background:var(--ln);}
+.ptitle.cy{background:var(--blue);} .ptitle.yl{background:var(--yl);} .ptitle.rd{background:var(--red);color:#200;}
+.pbody{padding:12px;overflow:auto;flex:1;}
+
+.legend p{font-size:12.5px;line-height:1.7;color:var(--lbl);margin-bottom:11px;font-family:'IBM Plex Sans KR',var(--st);}
+.legend .sig{font-size:10px;letter-spacing:2px;color:var(--blue);margin-top:6px;}
+
+.cad{border:1.5px solid var(--blue);background:#010402;position:relative;min-height:0;overflow:hidden;}
+.cadgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(54,224,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(54,224,255,.08) 1px,transparent 1px);background-size:28px 28px;}
+.cad svg{position:relative;width:100%;height:100%;display:block;}
+.nm{fill:var(--lbl);font-family:var(--st);font-size:13px;letter-spacing:.4px;}
+.cn{fill:var(--ln);font-family:var(--st);font-size:18px;}
+.dl{stroke:var(--dim);stroke-width:1;stroke-dasharray:3 3;}
+.box{fill:#150a22;stroke:var(--ln);stroke-width:1.5;transition:.15s;}
+.cmp:hover .box{fill:#26113a;stroke:var(--hot);filter:drop-shadow(0 0 6px rgba(255,61,240,.6));}
+.dtxt{fill:var(--dim);font-family:var(--st);font-size:10px;letter-spacing:.3px;}
+.ttl{fill:var(--blue);font-family:var(--st);font-size:12px;letter-spacing:3px;}
+
+table.sched{width:100%;border-collapse:collapse;font-family:var(--st);}
+table.sched th,table.sched td{border:1px solid #5a1a55;padding:5px 8px;font-size:12px;text-align:left;color:#ffc8fa;}
+table.sched th{background:#2a0726;color:var(--yl);letter-spacing:1px;font-size:10px;}
+table.sched td.gen{color:var(--yl);}
+
+.foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--dim);padding-top:10px;}
+.foot .cls{font-size:10px;letter-spacing:3px;color:var(--red);}
+.btns{display:flex;gap:10px;}
+.btns button{font-family:var(--st);font-size:12px;letter-spacing:2px;padding:9px 22px;cursor:pointer;background:transparent;color:var(--ln);border:1.5px solid var(--ln);transition:.15s;}
+.btns button:hover{background:var(--ln);color:#1a0118;box-shadow:0 0 14px rgba(255,61,240,.5);}
+.btns button.cy{color:var(--blue);border-color:var(--blue);}
+.btns button.cy:hover{background:var(--blue);color:#012;box-shadow:0 0 14px rgba(54,224,255,.5);}
+</style>
+</head>
+<body>
+<div class="crt"></div>
+<div id="frame">
+  <div class="rec">● REC 2022—</div>
+  <div class="head">
+    <div>
+      <h1>SET — WORLD SCHEMATIC</h1>
+      <h2>A C C U M U L A T I O N &nbsp; L O G</h2>
+      <span class="free">DWG&nbsp;No. SET-001</span>
+    </div>
+    <div class="meta">SCALE&nbsp;:&nbsp;1&nbsp;:&nbsp;1<br>SHEET&nbsp;:&nbsp;01 / 06<br>REV&nbsp;:&nbsp;XT2<br>STATUS&nbsp;:&nbsp;OPEN</div>
+  </div>
+
+  <div class="main">
+    <div style="display:flex;flex-direction:column;gap:12px;min-height:0;">
+      <div class="panelbox" style="flex:1;">
+        <div class="ptitle">◷ LEGEND</div>
+        <div class="pbody legend">
+          <p>도시가 달라도, 빛이 달라도, 손이 달라도 — 거의 같은 것이 자꾸 나타난다. 가까워서, 묻게 된다. 왜.</p>
+          <p>이것은 그 물음에 대한 하나의 답이다. 여러 해가 걸렸고, 아직 진행 중이다. 어떤 조건들은 반복된다. 측정한 것을, 기입한다.</p>
+          <div class="sig">— SET WORLD / SINCE 2022</div>
+        </div>
+      </div>
+      <div class="panelbox">
+        <div class="ptitle cy">◷ REGISTER</div>
+        <div class="pbody" style="padding:0;">
+          <table class="sched">
+            <tr><th>REG</th><th>NODE</th><th>STAT</th></tr>
+            <tr><td class="gen">A</td><td>SET_WORLD</td><td>ACTIVE</td></tr>
+            <tr><td class="gen">B</td><td>VIS+LANG</td><td>OPEN</td></tr>
+            <tr><td class="gen">C</td><td>OBSERVER</td><td>INCOMP</td></tr>
+            <tr><td class="gen">F</td><td>RECORD</td><td>ACTIVE</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="cad">
+      <div class="cadgrid"></div>
+      <svg viewBox="0 0 760 470" preserveAspectRatio="xMidYMid meet">
+        <text class="ttl" x="20" y="28">FIG.1 — SYSTEM TOPOLOGY</text>
+        <line class="dl" x1="20" y1="40" x2="740" y2="40"/>
+        <!-- center node -->
+        <g class="cmp">
+          <rect class="box" x="300" y="200" width="160" height="70"/>
+          <text class="cn" x="380" y="232" text-anchor="middle">SET</text>
+          <text class="nm" x="380" y="252" text-anchor="middle">WORLD</text>
+        </g>
+        <!-- satellites -->
+        <line class="dl" x1="300" y1="235" x2="150" y2="110"/>
+        <g class="cmp"><rect class="box" x="60" y="80" width="150" height="58"/><text class="nm" x="135" y="105" text-anchor="middle">MEASUREMENT</text><text class="dtxt" x="135" y="123" text-anchor="middle">PERIMETER · ONGOING</text></g>
+        <line class="dl" x1="460" y1="235" x2="610" y2="110"/>
+        <g class="cmp"><rect class="box" x="555" y="80" width="150" height="58"/><text class="nm" x="630" y="105" text-anchor="middle">FRAMEWORK</text><text class="dtxt" x="630" y="123" text-anchor="middle">VIS + LANG · OPEN</text></g>
+        <line class="dl" x1="300" y1="235" x2="150" y2="360"/>
+        <g class="cmp"><rect class="box" x="60" y="332" width="150" height="58"/><text class="nm" x="135" y="357" text-anchor="middle">PROTOCOL</text><text class="dtxt" x="135" y="375" text-anchor="middle">OBSERVER · INCOMP</text></g>
+        <line class="dl" x1="460" y1="235" x2="610" y2="360"/>
+        <g class="cmp"><rect class="box" x="555" y="332" width="150" height="58"/><text class="nm" x="630" y="357" text-anchor="middle">RECORD</text><text class="dtxt" x="630" y="375" text-anchor="middle">ACCUMULATION · ACTIVE</text></g>
+        <text class="dtxt" x="20" y="455">INPUT ▸ _</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="cls">UNCLASSIFIED // SET_WORLD // ENTRY POINT</div>
+    <div class="btns">
+      <button onclick="go('set-os.html')">▸ ENTER</button>
+      <button class="cy" onclick="go('portfolio.html')">BROWSE ▸</button>
+    </div>
+  </div>
+</div>
+<script>function go(u){if(parent!==window)return;location.href=u;}</script>
+</body>
+</html>

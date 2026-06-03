@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCF-2025-0731 · MONITOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #010201;
+    color: #00aa33;
+    font-family: 'Press Start 2P', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-wrap {
+    width: 1360px;
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── 헤더 영역 (전체 높이의 약 20%) ── */
+  .header-area {
+    flex-shrink: 0;
+  }
+
+  /* 분류 바 */
+  .classification-bar {
+    height: 20px;
+    background: #cc2200;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+  }
+  .classification-bar span {
+    font-size: 7px;
+    color: #fff;
+    letter-spacing: 0.15em;
+  }
+
+  /* 3칼럼 정보 패널 */
+  .info-panel {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    border-bottom: 1px solid rgba(0,170,51,0.2);
+    padding: 20px 24px;
+    gap: 0;
+    min-height: 140px;
+  }
+
+  /* 왼쪽 케이스 블록 */
+  .info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    border-right: 1px solid rgba(0,170,51,0.15);
+    padding-right: 20px;
+  }
+  .kv-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .kv-key {
+    font-size: 6px;
+    color: rgba(0,170,51,0.4);
+    letter-spacing: 0.12em;
+  }
+  .kv-val {
+    font-size: 8px;
+    color: #00dd44;
+    letter-spacing: 0.06em;
+  }
+  .kv-val.red { color: #cc2200; }
+
+  /* 중앙 타이틀 블록 */
+  .info-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 0 16px;
+  }
+  .main-title {
+    font-size: 24px;
+    color: #00aa33;
+    letter-spacing: 0.08em;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .sub-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .sub-line {
+    font-size: 6px;
+    color: rgba(0,170,51,0.45);
+    letter-spacing: 0.15em;
+    text-align: center;
+  }
+
+  /* 오른쪽 통계 블록 */
+  .info-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 12px;
+    border-left: 1px solid rgba(0,170,51,0.15);
+    padding-left: 20px;
+  }
+  .stat-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+  .stat-label {
+    font-size: 6px;
+    color: rgba(0,170,51,0.4);
+    letter-spacing: 0.12em;
+  }
+  .stat-num {
+    font-size: 16px;
+    color: #00dd44;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .stat-num.dim {
+    font-size: 11px;
+    color: rgba(0,170,51,0.55);
+  }
+
+  /* ── 중앙 갤러리 영역 ── */
+  .gallery-wrap {
+    flex: 1;
+    display: flex;
+    padding: 0 2px;
+    min-height: 0;
+  }
+  .gallery-placeholder {
+    flex: 1;
+    background: #050905;
+    border: 1px dashed rgba(0,170,51,0.2);
+    border-top: none;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .gallery-placeholder span {
+    font-size: 9px;
+    color: rgba(0,170,51,0.25);
+    letter-spacing: 0.2em;
+  }
+
+  /* ── 하단 상태 바 ── */
+  .status-bar {
+    height: 20px;
+    border-top: 1px solid rgba(0,170,51,0.2);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .status-bar span {
+    font-size: 6px;
+    color: rgba(0,170,51,0.4);
+    letter-spacing: 0.1em;
+  }
+  .status-bar .live {
+    color: #00dd44;
+  }
+  .status-bar .spacer {
+    flex: 1;
+  }
+</style>
+<script>
+  function pad2(n) { return String(n).padStart(2,'0'); }
+  function updateClock() {
+    var now = new Date();
+    var ts = now.getFullYear() + '.' +
+             pad2(now.getMonth()+1) + '.' +
+             pad2(now.getDate()) + ' ' +
+             pad2(now.getHours()) + ':' +
+             pad2(now.getMinutes()) + ':' +
+             pad2(now.getSeconds());
+    var el = document.getElementById('live-ts');
+    if (el) el.textContent = ts;
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    updateClock();
+    setInterval(updateClock, 1000);
+  });
+</script>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- 헤더 영역 -->
+  <div class="header-area">
+
+    <!-- 분류 바 -->
+    <div class="classification-bar">
+      <span>CLASSIFICATION: RESTRICTED &nbsp;·&nbsp; AUTHORIZED PERSONNEL ONLY</span>
+    </div>
+
+    <!-- 3칼럼 정보 패널 -->
+    <div class="info-panel">
+
+      <!-- 왼쪽: 케이스 정보 -->
+      <div class="info-left">
+        <div class="kv-row">
+          <span class="kv-key">REF</span>
+          <span class="kv-val">SCF-2025-0731</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">TYPE</span>
+          <span class="kv-val">PHOTOGRAPHIC</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">STATUS</span>
+          <span class="kv-val">ACTIVE</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-key">PERIOD</span>
+          <span class="kv-val">2025.09 – 2026.03</span>
+        </div>
+      </div>
+
+      <!-- 중앙: 타이틀 -->
+      <div class="info-center">
+        <div class="main-title">PROJECT_SET</div>
+        <div class="sub-lines">
+          <span class="sub-line">SET NULL CHANNEL</span>
+          <span class="sub-line">FIELD OBSERVATION · UNIT FIELD_OBS</span>
+          <span class="sub-line" style="color:rgba(204,34,0,0.6);">RESTRICTED · CLEARANCE LV-2</span>
+        </div>
+      </div>
+
+      <!-- 오른쪽: 통계 -->
+      <div class="info-right">
+        <div class="stat-row">
+          <span class="stat-label">TOTAL</span>
+          <span class="stat-num">5900</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">CORE</span>
+          <span class="stat-num">167</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">DROP</span>
+          <span class="stat-num dim">5659</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 갤러리 플레이스홀더 (메인 스크린) -->
+  <div class="gallery-wrap">
+    <div class="gallery-placeholder">
+      <span>[ GALLERY AREA ]</span>
+    </div>
+  </div>
+
+  <!-- 하단 상태 바 -->
+  <div class="status-bar">
+    <span class="live" id="live-ts">----.--.-- --:--:--</span>
+    <span>·</span>
+    <span>SESSION B3F2A1C0</span>
+    <span class="spacer"></span>
+    <span>LAST ACCESS: 2026.05.31 15:03:55 · UNIT FIELD_OBS · READ</span>
+  </div>
+
+</div>
+</body>
+</html>

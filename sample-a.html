@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCF-2025-0731 · DOSSIER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #010201;
+    color: #00aa33;
+    font-family: 'Press Start 2P', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-wrap {
+    width: 1360px;
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 상단 분류 바 */
+  .classification-bar {
+    width: 100%;
+    height: 20px;
+    background: #cc2200;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  .classification-bar span {
+    font-size: 7px;
+    color: #fff;
+    letter-spacing: 0.15em;
+  }
+
+  /* 메인 바디: 세로 탭 + 콘텐츠 */
+  .main-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* 세로 탭 바 (서류철 등뼈) */
+  .spine-tab {
+    width: 48px;
+    flex-shrink: 0;
+    background: #020502;
+    border-right: 2px solid rgba(0,170,51,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .spine-text {
+    font-size: 7px;
+    color: rgba(0,170,51,0.55);
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    transform: rotateZ(-90deg);
+    user-select: none;
+  }
+
+  /* 우측 콘텐츠 영역 */
+  .content-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 18px 20px 0 20px;
+  }
+
+  /* 헤더 블록 — 케이스 정보 표 */
+  .case-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid rgba(0,170,51,0.2);
+    flex-shrink: 0;
+    margin-bottom: 18px;
+  }
+  .case-table td {
+    border: 1px solid rgba(0,170,51,0.2);
+    padding: 10px 14px;
+    vertical-align: top;
+    line-height: 1.9;
+  }
+  .cell-key {
+    display: block;
+    color: rgba(0,170,51,0.4);
+    font-size: 6px;
+    letter-spacing: 0.12em;
+    margin-bottom: 4px;
+  }
+  .cell-val {
+    display: block;
+    color: #00aa33;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+  }
+  .cell-val.bright {
+    color: #00dd44;
+  }
+
+  /* 갤러리 플레이스홀더 */
+  .gallery-placeholder {
+    flex: 1;
+    background: #050905;
+    border: 1px dashed rgba(0,170,51,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+  .gallery-placeholder span {
+    font-size: 9px;
+    color: rgba(0,170,51,0.25);
+    letter-spacing: 0.2em;
+  }
+
+  /* 하단 바 */
+  .footer-bar {
+    width: 100%;
+    height: 28px;
+    border-top: 1px solid rgba(0,170,51,0.15);
+    display: flex;
+    align-items: center;
+    padding: 0 20px 0 68px;
+    flex-shrink: 0;
+    margin-top: 12px;
+  }
+  .footer-bar span {
+    font-size: 6px;
+    color: rgba(0,170,51,0.45);
+    letter-spacing: 0.12em;
+  }
+  .footer-bar .sep {
+    margin: 0 10px;
+    color: rgba(0,170,51,0.2);
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- 상단 분류 바 -->
+  <div class="classification-bar">
+    <span>CLASSIFICATION: RESTRICTED</span>
+  </div>
+
+  <!-- 메인 바디 -->
+  <div class="main-body">
+
+    <!-- 서류철 등뼈 탭 -->
+    <div class="spine-tab">
+      <span class="spine-text">PROJECT SET &nbsp;·&nbsp; SCF-2025-0731 &nbsp;·&nbsp; PHOTOGRAPHIC</span>
+    </div>
+
+    <!-- 우측 콘텐츠 -->
+    <div class="content-area">
+
+      <!-- 케이스 정보 표 -->
+      <table class="case-table">
+        <tbody>
+          <tr>
+            <td>
+              <span class="cell-key">CASE NO</span>
+              <span class="cell-val bright">SCF-2025-0731</span>
+            </td>
+            <td>
+              <span class="cell-key">RECORD TYPE</span>
+              <span class="cell-val bright">PHOTOGRAPHIC</span>
+            </td>
+            <td>
+              <span class="cell-key">CLASSIFICATION</span>
+              <span class="cell-val" style="color:#cc2200;">RESTRICTED</span>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <span class="cell-key">SUBJECT</span>
+              <span class="cell-val bright">SET NULL CHANNEL</span>
+            </td>
+            <td>
+              <span class="cell-key">PERIOD</span>
+              <span class="cell-val bright">2025.09 – 2026.03</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="cell-key">STATUS</span>
+              <span class="cell-val" style="color:#00dd44;">ACTIVE</span>
+            </td>
+            <td>
+              <span class="cell-key">UNIT</span>
+              <span class="cell-val">FIELD_OBS</span>
+            </td>
+            <td>
+              <span class="cell-key">CLEARANCE</span>
+              <span class="cell-val">LV-2</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- 갤러리 플레이스홀더 -->
+      <div class="gallery-placeholder">
+        <span>[ GALLERY AREA ]</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 하단 바 -->
+  <div class="footer-bar">
+    <span>RECORDS: 5900</span>
+    <span class="sep">·</span>
+    <span>CORE: 167</span>
+    <span class="sep">·</span>
+    <span>REVIEWED: 2.8%</span>
+  </div>
+
+</div>
+</body>
+</html>

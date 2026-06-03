@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NULL LOG & ATTRIBUTION TEST — FEED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --fg: #00ff00;
+    --fg2: #00cc00;
+    --fg3: #008800;
+    --fg4: #004400;
+    --dim: #005500;
+    --dash: #003300;
+    --scanline: 0.07;
+    --max-w: 680px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* CRT scanlines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 2px,
+      rgba(0,0,0,var(--scanline)) 2px,
+      rgba(0,0,0,var(--scanline)) 3px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT on/off */
+  @keyframes crt-on {
+    0%   { transform: scaleY(0.003) scaleX(0.75); filter: brightness(10); opacity: 0; }
+    22%  { transform: scaleY(0.003) scaleX(1.05); filter: brightness(10); opacity: 1; }
+    38%  { transform: scaleY(1.05)  scaleX(1.0); filter: brightness(1.4); }
+    58%  { transform: scaleY(0.97); filter: brightness(0.88); }
+    78%  { transform: scaleY(1.01); filter: brightness(1.06); }
+    100% { transform: scaleY(1) scaleX(1); filter: brightness(1); opacity: 1; }
+  }
+  @keyframes crt-off {
+    0%   { transform: scaleY(1) scaleX(1); filter: brightness(1); opacity: 1; }
+    30%  { transform: scaleY(1.04) scaleX(1); filter: brightness(1.4); }
+    55%  { transform: scaleY(0.003) scaleX(1.25); filter: brightness(6); }
+    80%  { transform: scaleY(0.003) scaleX(0.2); filter: brightness(3); opacity: 0.5; }
+    100% { transform: scaleY(0) scaleX(0); filter: brightness(0); opacity: 0; }
+  }
+
+  #main-wrapper {
+    animation: crt-on 0.62s ease-out forwards;
+    transform-origin: center center;
+  }
+  #main-wrapper.crt-off {
+    animation: crt-off 0.46s ease-in forwards;
+    pointer-events: none;
+  }
+
+  /* ── LAYOUT ─────────────────────────────────── */
+  .feed-wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  .site-header {
+    padding: 24px 0 16px;
+    border-bottom: 1px dashed var(--dash);
+    margin-bottom: 0;
+  }
+
+  .site-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .site-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--fg);
+    line-height: 1.6;
+    text-shadow: -1px 0 rgba(255,0,0,0.4), 1px 0 rgba(0,0,255,0.4);
+  }
+
+  .btn-back {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    background: transparent;
+    color: var(--fg3);
+    border: 1px solid var(--dim);
+    padding: 5px 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-back:hover { color: var(--fg); border-color: var(--fg3); }
+
+  .site-sub {
+    font-size: 9px;
+    color: var(--dim);
+    line-height: 1.8;
+  }
+
+  /* ── SECTION DIVIDER ─────────────────────────── */
+  .section-div {
+    border: none;
+    border-top: 1px dashed var(--dash);
+    margin: 24px 0;
+  }
+
+  .section-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--fg3);
+    letter-spacing: 0.1em;
+    margin: 20px 0 12px;
+  }
+
+  /* ── ATTRIBUTION SECTION ─────────────────────── */
+  .attr-section { margin-top: 20px; }
+
+  .upload-zone {
+    border: 1px dashed var(--dim);
+    aspect-ratio: 4 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .upload-zone:hover { border-color: var(--fg3); }
+
+  .upload-zone-inner { text-align: center; }
+
+  .upload-plus {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 20px;
+    color: var(--fg4);
+    display: block;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .upload-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--dim);
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .upload-sub {
+    font-size: 9px;
+    color: var(--fg4);
+    line-height: 2;
+  }
+
+  .upload-corners::before, .upload-corners::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+  }
+  .upload-corners::before {
+    top: 6px; left: 6px;
+    border-top: 1px solid var(--dim);
+    border-left: 1px solid var(--dim);
+  }
+  .upload-corners::after {
+    bottom: 6px; right: 6px;
+    border-bottom: 1px solid var(--dim);
+    border-right: 1px solid var(--dim);
+  }
+
+  /* Result inline below image */
+  .attr-result {
+    margin-top: 0;
+    border: 1px dashed var(--dash);
+    border-top: none;
+    padding: 14px;
+  }
+
+  .result-header {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 6px;
+    color: var(--fg3);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .grammar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 3px 0;
+    font-size: 9px;
+    border-bottom: 1px solid #001200;
+  }
+  .gr-code {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--fg);
+    min-width: 80px;
+  }
+  .gr-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--fg4);
+  }
+  .gr-bar {
+    height: 100%;
+    background: var(--fg2);
+  }
+  .gr-pct {
+    min-width: 32px;
+    text-align: right;
+    font-size: 8px;
+    color: var(--fg3);
+  }
+
+  .attr-verdict {
+    margin-top: 10px;
+    font-size: 9px;
+    color: var(--fg3);
+    line-height: 2;
+    border-top: 1px solid var(--dash);
+    padding-top: 8px;
+  }
+  .verdict-code {
+    color: var(--fg);
+    font-weight: bold;
+  }
+
+  /* ── NULL LOG SECTION ────────────────────────── */
+  .null-section { margin-top: 4px; }
+
+  .null-entry {
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--dash);
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 8px;
+    align-items: baseline;
+    font-size: 10px;
+  }
+
+  .ne-date {
+    color: var(--fg3);
+    font-size: 8px;
+    white-space: nowrap;
+  }
+
+  .ne-query {
+    color: var(--fg);
+  }
+
+  .ne-status {
+    font-size: 8px;
+    color: var(--fg4);
+    white-space: nowrap;
+    letter-spacing: 0.05em;
+  }
+
+  .ne-sub {
+    grid-column: 2 / 4;
+    font-size: 8px;
+    color: var(--fg4);
+    margin-top: -2px;
+    padding-bottom: 2px;
+  }
+
+  /* cursor blink */
+  .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 12px;
+    background: var(--fg);
+    vertical-align: middle;
+    animation: cur-blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes cur-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* ── FOOTER ─────────────────────────────────── */
+  .feed-footer {
+    border-top: 1px dashed var(--dash);
+    padding: 14px 0;
+    font-size: 8px;
+    color: var(--fg4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+  }
+
+  .footer-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--fg2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+</style>
+</head>
+<body>
+<div id="main-wrapper">
+<div class="feed-wrap">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="site-header-top">
+      <div class="site-title">NULL LOG &amp;<br>ATTRIBUTION TEST</div>
+      <button class="btn-back" onclick="navigate('portfolio.html')">← PORTFOLIO</button>
+    </div>
+    <div class="site-sub">
+      SET 사진 프로젝트 / 공집합 로그 &amp; 외부 이미지 귀속 테스트<br>
+      DESIGN SAMPLE C — 세로 스크롤 단일 피드 / SINGLE COLUMN FEED
+    </div>
+  </header>
+
+  <!-- ── SECTION 1: ATTRIBUTION TEST ────────── -->
+  <div class="attr-section">
+    <div class="section-label">외부 이미지 귀속 테스트 — EXTERNAL IMAGE ATTRIBUTION TEST</div>
+
+    <div class="upload-zone upload-corners">
+      <div class="upload-zone-inner">
+        <span class="upload-plus">⊕</span>
+        <span class="upload-label">DEPOSIT IMAGE SPECIMEN</span>
+        <div class="upload-sub">
+          drag image here, or click to select<br>
+          system classifies into SET grammar codes<br>
+          ─────────────────────────────<br>
+          JPG · PNG · TIFF · RAW · HEIC
+        </div>
+      </div>
+    </div>
+
+    <!-- Inline result — appears after upload -->
+    <div class="attr-result">
+      <div class="result-header">CLASSIFICATION RESULT — SPECIMEN #0042 / 2024.03.11 14:22</div>
+
+      <div class="grammar-row">
+        <span class="gr-code">STRATA</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:87%"></div></div>
+        <span class="gr-pct">87%</span>
+      </div>
+      <div class="grammar-row">
+        <span class="gr-code">DISSOLVE</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:61%"></div></div>
+        <span class="gr-pct">61%</span>
+      </div>
+      <div class="grammar-row">
+        <span class="gr-code">GRID</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:34%"></div></div>
+        <span class="gr-pct">34%</span>
+      </div>
+      <div class="grammar-row">
+        <span class="gr-code">INTERVAL</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:22%"></div></div>
+        <span class="gr-pct">22%</span>
+      </div>
+      <div class="grammar-row">
+        <span class="gr-code">RESIDUE</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:15%"></div></div>
+        <span class="gr-pct">15%</span>
+      </div>
+      <div class="grammar-row">
+        <span class="gr-code">APERTURE</span>
+        <div class="gr-bar-wrap"><div class="gr-bar" style="width:8%"></div></div>
+        <span class="gr-pct">8%</span>
+      </div>
+
+      <div class="attr-verdict">
+        PRIMARY CLASSIFICATION: <span class="verdict-code">STRATA</span> (87%)<br>
+        SECONDARY: <span class="verdict-code">DISSOLVE</span> (61%) — temporal compression artifacts present<br>
+        Cross-reference: SET/WORK/0031–0047 · Horizontal layering confirmed
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-div">
+
+  <!-- ── SECTION 2: NULL LOG ─────────────────── -->
+  <div class="null-section">
+    <div class="section-label">공집합 로그 — EMPTY SET LOG (438 ENTRIES)</div>
+
+    <div class="null-entry">
+      <span class="ne-date">2024.03.11</span>
+      <span class="ne-query">무결점</span>
+      <span class="ne-status">NULL ×7</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2024.02.28</span>
+      <span class="ne-query">완전한 침묵</span>
+      <span class="ne-status">NULL ×3</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2024.02.14</span>
+      <span class="ne-query">경계 없는 빛</span>
+      <span class="ne-status">NULL ×12</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2024.01.30</span>
+      <span class="ne-query">지층 없는 기억</span>
+      <span class="ne-status">NULL ×5</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2024.01.19</span>
+      <span class="ne-query">dissolution</span>
+      <span class="ne-status">NULL ×2</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.12.31</span>
+      <span class="ne-query">empty interval</span>
+      <span class="ne-status">NULL ×9</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.12.18</span>
+      <span class="ne-query">흔적 이전</span>
+      <span class="ne-status">NULL ×4</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.11.05</span>
+      <span class="ne-query">null surface</span>
+      <span class="ne-status">NULL ×6</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.10.22</span>
+      <span class="ne-query">형태 이전의 형태</span>
+      <span class="ne-status">NULL ×1</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.09.14</span>
+      <span class="ne-query">grid of nothing</span>
+      <span class="ne-status">NULL ×8</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.08.03</span>
+      <span class="ne-query">strata without time</span>
+      <span class="ne-status">NULL ×3</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.07.19</span>
+      <span class="ne-query">빈 집합의 경계</span>
+      <span class="ne-status">NULL ×11</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.06.01</span>
+      <span class="ne-query">잔상 없는 노출</span>
+      <span class="ne-status">NULL ×2</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.05.08</span>
+      <span class="ne-query">pure interval</span>
+      <span class="ne-status">NULL ×7</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.04.12</span>
+      <span class="ne-query">잔상의 무게</span>
+      <span class="ne-status">NULL ×5</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.03.29</span>
+      <span class="ne-query">aperture without lens</span>
+      <span class="ne-status">NULL ×3</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.02.14</span>
+      <span class="ne-query">경계의 소실</span>
+      <span class="ne-status">NULL ×6</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2023.01.07</span>
+      <span class="ne-query">residue of light</span>
+      <span class="ne-status">NULL ×4</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2022.12.20</span>
+      <span class="ne-query">무형의 격자</span>
+      <span class="ne-status">NULL ×9</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">2022.11.11</span>
+      <span class="ne-query">threshold without edge</span>
+      <span class="ne-status">NULL ×2</span>
+      <span class="ne-sub">검색 결과 없음 — returned 0 results across all databases</span>
+    </div>
+    <div class="null-entry">
+      <span class="ne-date">—</span>
+      <span class="ne-query">
+        <span class="cursor"></span>
+      </span>
+      <span class="ne-status"></span>
+      <span class="ne-sub">— 418 more entries below —</span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="feed-footer">
+    <div class="footer-status">
+      <div class="status-dot"></div>
+      <span>438 / 438 NULL RESULTS — SET PHOTOGRAPHY 2021–2024</span>
+    </div>
+    <span>DESIGN C</span>
+  </div>
+
+</div><!-- /feed-wrap -->
+</div><!-- /main-wrapper -->
+
+<script>
+function navigate(url) {
+  const wrapper = document.getElementById('main-wrapper');
+  wrapper.classList.add('crt-off');
+  setTimeout(() => { window.location.href = url; }, 470);
+}
+</script>
+</body>
+</html>

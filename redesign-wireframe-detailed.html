@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>WIREFRAME — redesign-mockup-hud (구조도)</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f4f4f2;font-family:'Courier New',monospace;color:#222;padding:24px;}
+  h1{font-size:15px;margin-bottom:2px;}
+  .sub{font-size:11px;color:#777;margin-bottom:16px;}
+  .legend{font-size:10px;color:#666;margin-bottom:14px;}
+  .legend b{color:#1565c0;} .legend i{color:#c62828;font-style:normal;}
+
+  /* wireframe box */
+  .b{position:relative;border:1px solid #888;background:#fff;margin:0;}
+  .b > .lbl{display:block;font-size:9px;line-height:1.3;color:#1565c0;background:#eef3fb;
+    padding:2px 5px;border-bottom:1px dashed #c5d4ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .b > .lbl .dim{color:#999;}
+  .b > .lbl .sz{color:#aaa;font-size:8px;}
+  .b > .lbl .hid{color:#c62828;font-size:8px;}
+  .inner{padding:5px;display:flex;flex-direction:column;gap:5px;}
+  .row{display:flex;gap:5px;}
+  .row > .b{flex:1;}
+  .note{font-size:9px;color:#888;padding:3px 5px;}
+  .leaf{border-color:#bbb;background:#fafafa;}
+  .leaf > .lbl{background:#f3f3f3;color:#555;border-bottom-color:#e2e2e2;}
+  .rep{border-style:dashed;}
+  .rep > .lbl .cnt{color:#c62828;}
+  .iframe > .lbl{background:#fff7e6;color:#b26a00;border-bottom-color:#f0d9a8;}
+  .scale{width:1160px;}
+</style>
+</head>
+<body>
+<h1>WIREFRAME · set-os.html — 구조도 (가장 작은 단위까지)</h1>
+<div class="sub">div#wrap [1140×757] · grid-rows: 1fr / 84 / 1fr / 28 · 실제 DOM 기준</div>
+<div class="legend"><b>파랑</b>=div 이름(id/class) · <span class="sz" style="color:#aaa;">회색</span>=크기[w×h] · <i>빨강</i>=숨김/대체뷰·반복(×N) · <b style="color:#b26a00;">주황</b>=iframe(별도 파일)</div>
+
+<div class="scale">
+<div class="b"><span class="lbl">div#wrap <span class="sz">[1140×757]</span> · 코너: ::before/::after, .wc-bl, .wc-br</span>
+<div class="inner">
+
+  <!-- ROW 1 -->
+  <div class="b"><span class="lbl">div#top-row <span class="sz">[1122×306]</span> · grid 1fr 1fr 72px</span>
+  <div class="inner"><div class="row">
+
+    <!-- SET.VIEW -->
+    <div class="b"><span class="lbl">div.pnl ▸ div.pnl-in <span class="sz">[520×306]</span> · SET.VIEW</span>
+      <div class="inner">
+        <div class="b"><span class="lbl">div.ph <span class="sz">[518×49]</span> (헤더)</span>
+          <div class="inner">
+            <div class="b"><span class="lbl">div.ph-row1 <span class="sz">[518×30]</span></span>
+              <div class="inner"><div class="row">
+                <div class="b leaf"><span class="lbl">.ph-arrow ▶</span></div>
+                <div class="b leaf"><span class="lbl">.ph-wt &lt;SET.VIEW&gt;</span></div>
+                <div class="b leaf"><span class="lbl">.ph-sep —</span></div>
+                <div class="b leaf"><span class="lbl">.ph-desc 갤러리 분석</span></div>
+                <div class="b leaf"><span class="lbl">.ph-wc · .ph-wc-b<span class="cnt"> ×3</span></span></div>
+              </div></div>
+            </div>
+            <div class="b"><span class="lbl">div.ph-row2 ▸ .ph-nav <span class="sz">[518×18]</span></span>
+              <div class="inner"><div class="row">
+                <div class="b leaf"><span class="lbl">a#gl-tab-1.on ANALYSIS</span></div>
+                <div class="b leaf"><span class="lbl">a#gl-tab-2 CONTACT</span></div>
+                <div class="b leaf"><span class="lbl">a#gl-tab-3 FILMSTRIP</span></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="b"><span class="lbl">div#gly-1.view.active <span class="sz">[518×255]</span> (A: 스코프+스캐터)</span>
+          <div class="inner"><div class="row">
+            <div class="b" style="flex:2"><span class="lbl">div#gva-wrap <span class="sz">[308×235]</span></span>
+              <div class="inner">
+                <div class="note">#gva-grid · .gva-corner.tl/.tr/.bl/.br · #gva-ping · #gva-tick · #gva-target · #gva-detect2 · #gva-access · #gva-glitch · #gva-scan-texture · #gva-code · #gva-coord · #gva-sigbar · .gva-trail</div>
+              </div>
+            </div>
+            <div class="b leaf" style="flex:0 0 18px"><span class="lbl">div (구분선)</span></div>
+            <div class="b" style="flex:1"><span class="lbl">div (DIST 스캐터) <span class="sz">[176×255]</span></span>
+              <div class="inner"><div class="note">헤더 / SVG scatter / legend(CORE·SUP·DROP)</div></div>
+            </div>
+          </div></div>
+        </div>
+        <div class="b leaf rep"><span class="lbl">div#gly-2.view <span class="hid">(숨김: CONTACT 시트)</span> ▸ .cs2-wrap ▸ #cs2-grid</span></div>
+        <div class="b leaf rep"><span class="lbl">div#gly-3.view <span class="hid">(숨김: FILMSTRIP)</span> ▸ .gv-fs ▸ .gv-fs-main / .gv-fs-strip(#gvc-frames)</span></div>
+      </div>
+    </div>
+
+    <!-- HUD.XT2 -->
+    <div class="b"><span class="lbl">div#hud-pnl.pnl ▸ .pnl-in <span class="sz">[520×306]</span> · HUD.XT2</span>
+      <div class="inner">
+        <div class="b"><span class="lbl">div.h-title <span class="sz">[518×49]</span> (헤더)</span>
+          <div class="inner">
+            <div class="b"><span class="lbl">div.h-title-row1</span>
+              <div class="inner"><div class="row">
+                <div class="b leaf"><span class="lbl">.h-logo-block ▸ .h-logo-text</span></div>
+                <div class="b leaf"><span class="lbl">.h-badges ▸ .h-badge<span class="cnt"> ×2</span> (LIVE/ERR)</span></div>
+                <div class="b leaf"><span class="lbl">.h-wc ▸ .h-wc-b<span class="cnt"> ×3</span></span></div>
+              </div></div>
+            </div>
+            <div class="b"><span class="lbl">div.h-title-row2</span>
+              <div class="inner"><div class="row">
+                <div class="b leaf"><span class="lbl">.h-menu ▸ .h-tab.on / .h-tab (ICON/LIST)</span></div>
+                <div class="b leaf"><span class="lbl">.h-search</span></div>
+              </div></div>
+            </div>
+          </div>
+        </div>
+        <div class="b leaf rep"><span class="lbl">div.h-list <span class="hid">(숨김: LIST 뷰)</span> ▸ .h-cols / .h-rows ▸ .h-row<span class="cnt"> ×14</span> [.r-no/.r-chk/.r-name/.r-thumb/.r-date/.r-sys/.r-x]</span></div>
+        <div class="b"><span class="lbl">div.h-folders <span class="sz">[518×255]</span> · grid 5열</span>
+          <div class="inner"><div class="note">div.fld-item<span style="color:#c62828"> ×14</span> (각: svg.fld-ic + span.fld-name)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTRL -->
+    <div class="b" style="flex:0 0 80px"><span class="lbl">div.pnl ▸ .pnl-in <span class="sz">[72×306]</span> · 컨트롤</span>
+      <div class="inner">
+        <div class="b leaf"><span class="lbl">button.ctrl-btn.amber ▲UP</span></div>
+        <div class="b leaf"><span class="lbl">button.ctrl-btn EXIT</span></div>
+        <div class="b leaf"><span class="lbl">button.ctrl-btn.teal ▼DOWN</span></div>
+      </div>
+    </div>
+
+  </div></div>
+  </div>
+
+  <!-- ROW 2 : GBAR -->
+  <div class="b iframe"><span class="lbl">div#gbar <span class="sz">[1122×84]</span> ▸ iframe(gbar-redesign-sample.html)</span>
+    <div class="inner"><div class="note">내부(별도 파일): .bar ▸ .seg-id(SET.OS 글리프+타이틀) · .seg-stmt(STATEMENT) · .seg-nav(.ni ×INTAKE/CULL/RENDER/SYNC) · .seg-stats(.irow ENTRY/SESSION/STATUS/DEPT)</div></div>
+  </div>
+
+  <!-- ROW 3 : BOT-ROW -->
+  <div class="b"><span class="lbl">div#bot-row <span class="sz">[1122×306]</span> · grid 2.6fr 1fr</span>
+  <div class="inner"><div class="row">
+
+    <!-- bot-left -->
+    <div class="b" style="flex:2.6"><span class="lbl">div.bot-left <span class="sz">[808×306]</span> · grid 215px 1fr</span>
+      <div class="inner"><div class="row">
+        <div class="b" style="flex:0 0 200px"><span class="lbl">div.bl-split <span class="sz">[215×306]</span> · grid-rows 1fr 1fr</span>
+          <div class="inner">
+            <div class="b"><span class="lbl">div.pnl.dim ▸ .pnl-in <span class="sz">[215×152]</span> (상)</span>
+              <div class="inner"><div class="b leaf"><span class="lbl">a.chat-enter-btn (SYSTEM NOTICE/입장)<br>· .ceb-title · .ceb-main · .ceb-sub · .ceb-go</span></div></div>
+            </div>
+            <div class="b"><span class="lbl">div.pnl.dim ▸ .pnl-in <span class="sz">[215×152]</span> (하)</span>
+              <div class="inner"><div class="b leaf"><span class="lbl">div#vlWindow VIEWER_LOG.EXE<br>· 헤더 · #vlDot/MEASURE SEARCH LOG/#vlCount · #vlList · 푸터(#vlLastTime)</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="b iframe"><span class="lbl">div.pnl.dim ▸ .pnl-in ▸ iframe(id-card-compact.html)</span>
+          <div class="inner"><div class="note">내부: .card ▸ .photo(canvas#c1 아바타) · .ident(IDENTITY) · .sys(SYS MONITOR) · .ftr(barcode#bc1)</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- SET.TEXT -->
+    <div class="b" style="flex:1"><span class="lbl">div.pnl.dim ▸ .pnl-in <span class="sz">[311×306]</span> · SET.TEXT</span>
+      <div class="inner">
+        <div class="b leaf"><span class="lbl">div#stmt.stmt-scroll (개념 텍스트, p ×5)</span></div>
+        <div class="b leaf rep"><span class="lbl">div.pc <span class="hid">(숨김: 구 PC통신 채팅)</span> ▸ .pc-title/.pc-roombar/.pc-main(.pc-log#pc-log/.pc-side)/.pc-input/.pc-fkeys(.fk ×6)</span></div>
+      </div>
+    </div>
+
+  </div></div>
+  </div>
+
+  <!-- ROW 4 : BOTBAR -->
+  <div class="b"><span class="lbl">div#botbar <span class="sz">[1122×28]</span> (상태바)</span>
+    <div class="inner"><div class="row">
+      <div class="b leaf"><span class="lbl">.binfo \GH.24</span></div>
+      <div class="b leaf"><span class="lbl">.binfo ERR-03</span></div>
+      <div class="b leaf" style="flex:3"><span class="lbl">.mode-row ▸ button.mb.on(SET) + button.mb<span class="cnt"> ×5</span> (INCLUSION/LOG/REF/MEASURE/ABOUT)</span></div>
+      <div class="b leaf"><span class="lbl">button.activate</span></div>
+      <div class="b leaf"><span class="lbl">.binfo SET XT2 #clk2</span></div>
+    </div></div>
+  </div>
+
+</div>
+</div>
+</div>
+</body>
+</html>

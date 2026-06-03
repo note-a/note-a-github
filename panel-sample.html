@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>PANEL SAMPLE</title>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  background: #00ff00;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'VT323', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 페이지 전체 스캔라인 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.12) 3px,
+    rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* 페이지 전체 블러/글로우 */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,255,0,0.15) 0%, transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: 99;
+}
+
+.panel {
+  background: #000;
+  width: 192px;
+  height: 140px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  box-shadow:
+    0 0 30px rgba(0,255,0,0.8),
+    0 0 70px rgba(0,255,0,0.4),
+    0 0 120px rgba(0,255,0,0.15);
+}
+
+/* CRT scanlines — 뚜렷하게 */
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.45) 3px,
+    rgba(0,0,0,0.45) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.panel-hint {
+  font-size: 13px;
+  color: rgba(0,255,0,0.4);
+  text-align: center;
+  padding: 4px 0 2px;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 5;
+}
+
+.list {
+  flex: 1;
+  overflow: hidden;
+  padding: 4px 0;
+  position: relative;
+  z-index: 5;
+}
+
+/* 텍스트 번짐 */
+.item {
+  font-size: 20px;
+  color: rgba(0,255,0,0.85);
+  line-height: 1.45;
+  padding: 0 8px;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  text-shadow:
+    0 0 4px #00ff00,
+    0 0 10px rgba(0,255,0,0.8);
+}
+
+.item.active {
+  background: #00ff00;
+  color: #000;
+  text-shadow: none;
+  box-shadow: 0 0 20px rgba(0,255,0,0.9), inset 0 0 8px rgba(0,255,0,0.3);
+}
+  </style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="panel-hint">▲ ▼ ARROW KEYS</div>
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+const items = [
+  'APPEARING',
+  'RECURRING',
+  'MEASURING',
+  'ACCUMULATING',
+  'OBSERVING',
+  'CONTAMINATING',
+  'DISSOLVING',
+  'INCOMPLETE',
+];
+
+let idx = 0;
+
+function render() {
+  const list = document.getElementById('list');
+  list.innerHTML = items.map((item, i) => {
+    const active = i === idx;
+    return `<div class="item${active ? ' active' : ''}">${active ? '>> ' : '   '}${item}${active ? ' <<' : ''}</div>`;
+  }).join('');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowUp')   { idx = Math.max(0, idx - 1); render(); e.preventDefault(); }
+  if (e.key === 'ArrowDown') { idx = Math.min(items.length - 1, idx + 1); render(); e.preventDefault(); }
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — INDEX REDESIGN SAMPLES</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:'Space Mono',monospace;color:#ccc;}
+#bar{height:46px;display:flex;align-items:center;gap:4px;padding:0 12px;background:#000;border-bottom:1px solid #2a2a2a;}
+#bar .title{font-size:11px;letter-spacing:2px;color:#888;margin-right:14px;white-space:nowrap;}
+#bar button{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;padding:7px 16px;background:#111;color:#aaa;border:1px solid #333;cursor:pointer;transition:.12s;}
+#bar button:hover{background:#1a1a1a;color:#fff;}
+#bar button.on{background:#fff;color:#000;border-color:#fff;}
+#bar .a.on,#bar .e.on{background:#ff4a16;border-color:#ff4a16;color:#fff;}
+#bar .b.on{background:#ff3df0;border-color:#ff3df0;color:#fff;}
+#bar .c.on,#bar .f.on{background:#00dd55;border-color:#00dd55;color:#000;}
+#bar .d.on{background:#0000dd;border-color:#3a3aff;color:#fff;}
+#bar button{padding:7px 12px;font-size:10px;}
+#bar .sp{flex:1;}
+#bar .hint{font-size:9px;color:#555;letter-spacing:1px;}
+#stage{position:absolute;inset:46px 0 0 0;}
+#stage iframe{position:absolute;inset:0;width:100%;height:100%;border:none;background:#000;display:none;}
+#stage iframe.show{display:block;}
+.cap{position:fixed;left:12px;bottom:10px;font-size:9px;color:#666;letter-spacing:1px;z-index:5;background:rgba(0,0,0,.6);padding:4px 8px;}
+</style>
+</head>
+<body>
+<div id="bar">
+  <span class="title">INDEX REDESIGN ▸ SAMPLES</span>
+  <button class="a on" data-i="0">A · SET.OS</button>
+  <button class="b" data-i="1">B · BLUEPRINT</button>
+  <button class="c" data-i="2">C · SCOPE</button>
+  <button class="d" data-i="3">D · MEASURE</button>
+  <button class="e" data-i="4">E · RADAR</button>
+  <button class="f" data-i="5">F · FIELD</button>
+  <span class="sp"></span>
+  <span class="hint">↑/↓ 로그 이동 · 버튼 또는 1~6 키로 시안 전환</span>
+</div>
+<div id="stage">
+  <iframe class="show" src="_index-A-os.html"></iframe>
+  <iframe data-src="_index-B-blueprint.html"></iframe>
+  <iframe data-src="_index-C-scope.html"></iframe>
+  <iframe data-src="_index-D-measure.html"></iframe>
+  <iframe data-src="_index-E-radar.html"></iframe>
+  <iframe data-src="_index-F-field.html"></iframe>
+</div>
+<div class="cap" id="cap">A — 앰버 HUD 부팅형 (set-os 계열)</div>
+<script>
+const btns=[...document.querySelectorAll('#bar button')];
+const ifr=[...document.querySelectorAll('#stage iframe')];
+const caps=['A — 앰버 HUD 부팅형 (set-os 계열)','B — 블루프린트 도식 (page-blueprint 계열)','C — 그린 스코프 콘솔 (gallery1·measure 계열)','D — 측정 OS 데스크탑 · 부팅로그/LED (measure 계열)','E — 레이더 서베이 · 게이지/티커 (set-os 계열, 동적 강화)','F — 딥필드 · 파티클/듀얼스코프/노드그래프 (gallery1+blueprint)'];
+function pick(i){
+  const f=ifr[i];if(f.dataset.src&&!f.src){f.src=f.dataset.src;}
+  btns.forEach((b,j)=>b.classList.toggle('on',j===i));
+  ifr.forEach((f,j)=>f.classList.toggle('show',j===i));
+  document.getElementById('cap').textContent=caps[i];
+}
+btns.forEach(b=>b.addEventListener('click',()=>pick(+b.dataset.i)));
+addEventListener('keydown',e=>{
+  if(e.key>='1'&&e.key<='6')pick(+e.key-1);
+});
+</script>
+</body>
+</html>

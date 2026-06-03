@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET — ABOUT</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Press Start 2P',monospace !important; }
+html, body { width:100%; height:100%; overflow:hidden; background:#000; color:#00ff00; }
+body { opacity:1; transition:opacity 0.3s; }
+body.leaving { opacity:0; }
+#pageWrap { position:fixed; inset:0; display:flex; flex-direction:column; }
+#content { flex:1; overflow:hidden; position:relative; }
+.inner { padding:12px; position:relative; height:100%; box-sizing:border-box; display:flex; flex-direction:column; overflow:hidden; }
+.md-content {
+  flex:1; overflow-y:auto;
+  font-family:'DotGothic16',monospace !important;
+  font-size:12px; color:#00ff00; line-height:1.7; padding:0 16px;
+  text-shadow:none !important;
+}
+.md-content h1,.md-content h2,.md-content h3 { color:#00ff00; margin:12px 0 6px; font-size:12px; border-bottom:1px solid #00ff00; padding-bottom:4px; }
+.md-content p { margin:6px 0; }
+.md-content ul,.md-content ol { margin:6px 0 6px 16px; }
+.md-content li { margin:2px 0; }
+.stmt-btn {
+  position:absolute; bottom:14px; right:14px;
+  background:#000; border-top:2px solid #80ff80; border-left:2px solid #80ff80;
+  border-bottom:2px solid #003300; border-right:2px solid #003300;
+  color:#00ff00; padding:6px 14px;
+  font-family:'Press Start 2P',monospace; font-size:9px; cursor:pointer; letter-spacing:1px;
+}
+.stmt-btn:hover { background:#00ff00; color:#000; }
+</style>
+</head>
+<body>
+<div id="pageWrap">
+  <div id="content">
+    <div class="inner">
+      <div class="md-content" id="mainText"><span style="opacity:0.5">[LOADING...]</span></div>
+      <button class="stmt-btn" id="stmtBtn" style="display:none" onclick="showStatement()">[ ARTIST STATEMENT → ]</button>
+    </div>
+  </div>
+</div>
+<script>
+let aboutData = {};
+let viewingStatement = false;
+
+function navigate(url) {
+  document.body.classList.add('leaving');
+  setTimeout(() => { window.location.href = url; }, 320);
+}
+
+function showStatement() {
+  viewingStatement = true;
+  document.getElementById('headerTitle').textContent = 'ARTIST_STATEMENT.TXT';
+  document.getElementById('backBtn').onclick = () => showAbout();
+  document.getElementById('stmtBtn').style.display = 'none';
+  const text = aboutData.artistStatement || '<span style="opacity:0.5">[아티스트 스테이트먼트가 없습니다]</span>';
+  document.getElementById('mainText').innerHTML = text;
+}
+
+function showAbout() {
+  viewingStatement = false;
+  document.getElementById('headerTitle').textContent = 'ABOUT';
+  document.getElementById('backBtn').onclick = () => navigate('portfolio.html');
+  const text = aboutData.text || '<span style="opacity:0.5">[내용이 없습니다]</span>';
+  document.getElementById('mainText').innerHTML = text;
+  if (aboutData.artistStatement) document.getElementById('stmtBtn').style.display = '';
+}
+
+function render(data) {
+  aboutData = data || {};
+  showAbout();
+}
+
+const ts = Date.now();
+const base = 'https://raw.githubusercontent.com/note-a/note-a-github/main/';
+fetch(base + 'admin-contents.json?t=' + ts)
+  .then(r => r.ok ? r.json() : Promise.reject())
+  .catch(() => fetch('./admin-contents.json?t=' + ts).then(r => r.ok ? r.json() : {}))
+  .then(data => render(data && data.about ? data.about : {}))
+  .catch(() => render({}));
+</script>
+</body>
+</html>

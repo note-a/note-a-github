@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>REFERENCE — Design Samples v2</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --g:#d96a0e;--g2:rgba(217,106,14,.7);--g3:rgba(217,106,14,.38);--g4:rgba(217,106,14,.12);
+  --acc:#ff7e00;--ac3:#ffd23d;--ac4:#3fb09a;--ac5:#b07bff;--ac2:#ff6f61;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{background:#030201;font-family:var(--mono);color:var(--g2);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px);}
+
+/* ── NAV ── */
+.nav{display:flex;align-items:center;border-bottom:1px solid var(--g4);background:#000;
+  position:sticky;top:0;z-index:200;height:32px;}
+.nav-label{padding:0 16px;font-size:7.5px;letter-spacing:2px;color:var(--g3);
+  border-right:1px solid var(--g4);height:100%;display:flex;align-items:center;}
+.nav-tab{padding:0 20px;font-size:7.5px;letter-spacing:1.5px;cursor:pointer;
+  border-right:1px solid var(--g4);color:var(--g3);height:100%;display:flex;align-items:center;
+  transition:color .15s,background .15s;}
+.nav-tab:hover{color:var(--g2);background:rgba(217,106,14,.04);}
+.nav-tab.on{color:var(--ac3);background:rgba(255,210,61,.04);
+  box-shadow:inset 0 -2px 0 var(--ac3);}
+
+.sec{display:none;width:100%;min-height:calc(100vh - 32px);}
+.sec.on{display:flex;}
+
+/* ══════════════════════════════════════════
+   C. CONSTELLATION — ENHANCED
+══════════════════════════════════════════ */
+#sec-c{background:#020101;flex-direction:column;position:relative;overflow:hidden;}
+#c-canvas{position:absolute;inset:0;}
+.c-overlay{position:relative;z-index:5;display:flex;flex-direction:column;height:calc(100vh - 32px);pointer-events:none;}
+
+.c-hdr{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:10px 16px;
+  border-bottom:1px solid var(--g4);background:rgba(0,0,0,.75);pointer-events:auto;
+  backdrop-filter:blur(4px);}
+.c-hdr .title{font-size:8px;letter-spacing:2px;color:var(--g2);}
+.c-stats{display:flex;gap:0;margin-left:16px;}
+.c-stat{padding:0 12px;border-right:1px solid var(--g4);font-size:6.5px;}
+.c-stat:first-child{padding-left:0;}
+.c-stat .k{color:var(--g3);margin-right:5px;}
+.c-stat .v{color:var(--ac3);}
+.c-legend{display:flex;gap:14px;margin-left:auto;}
+.c-leg{display:flex;align-items:center;gap:5px;font-size:7px;color:var(--g3);}
+.c-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+.c-info{position:absolute;bottom:20px;left:20px;z-index:10;
+  background:rgba(3,2,1,.92);border:1px solid var(--g4);
+  padding:12px 14px;min-width:180px;display:none;pointer-events:none;
+  backdrop-filter:blur(4px);}
+.c-info .ci-type{font-size:5.5px;letter-spacing:2px;color:var(--g3);margin-bottom:4px;}
+.c-info .ci-title{font-size:11px;color:#fff;margin-bottom:3px;font-weight:500;}
+.c-info .ci-sub{font-size:7px;color:var(--g3);margin-bottom:8px;}
+.c-info .ci-conn{font-size:6.5px;color:var(--g2);}
+.c-info .ci-conn span{color:var(--ac3);}
+
+.c-ctrl{position:absolute;bottom:20px;right:20px;z-index:10;
+  display:flex;gap:6px;pointer-events:auto;}
+.c-btn{padding:5px 10px;font-size:7px;letter-spacing:1px;
+  border:1px solid var(--g4);background:rgba(0,0,0,.8);color:var(--g3);
+  cursor:pointer;backdrop-filter:blur(4px);}
+.c-btn:hover{border-color:var(--g2);color:var(--g2);}
+
+.c-tip{position:fixed;background:rgba(3,2,1,.95);border:1px solid var(--g4);
+  padding:8px 11px;font-size:7px;pointer-events:none;z-index:300;display:none;
+  min-width:150px;box-shadow:0 0 20px rgba(0,0,0,.8);}
+.c-tip .ct-type{font-size:5.5px;letter-spacing:1.5px;color:var(--g3);margin-bottom:3px;}
+.c-tip .ct-title{color:var(--ac3);font-size:9px;margin-bottom:2px;}
+.c-tip .ct-sub{color:var(--g3);}
+
+/* ══════════════════════════════════════════
+   D. CARD GRID
+══════════════════════════════════════════ */
+#sec-d{flex-direction:column;background:#020100;}
+.d-hdr{flex-shrink:0;display:flex;align-items:center;gap:0;
+  border-bottom:1px solid var(--g4);background:#000;height:32px;}
+.d-hdr .title{padding:0 16px;font-size:7.5px;letter-spacing:2px;color:var(--g2);
+  border-right:1px solid var(--g4);height:100%;display:flex;align-items:center;}
+.d-hdr .d-stat{padding:0 14px;font-size:7px;color:var(--g3);
+  border-right:1px solid var(--g4);height:100%;display:flex;align-items:center;gap:5px;}
+.d-hdr .d-stat b{color:var(--ac3);font-weight:400;}
+.d-filters{flex-shrink:0;display:flex;gap:0;
+  border-bottom:1px solid var(--g4);padding:6px 16px;background:rgba(0,0,0,.5);}
+.d-filter{padding:3px 10px;font-size:6.5px;letter-spacing:1px;cursor:pointer;
+  border:1px solid var(--g4);color:var(--g3);margin-right:5px;}
+.d-filter.on{color:#000;background:var(--acc);border-color:var(--acc);}
+
+.d-grid{flex:1;overflow-y:auto;padding:20px;
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.d-grid::-webkit-scrollbar{width:3px;}
+.d-grid::-webkit-scrollbar-thumb{background:var(--g4);}
+
+.d-card{border:1px solid var(--g4);background:#050301;cursor:pointer;
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;}
+.d-card:hover{border-color:var(--g3);box-shadow:0 0 20px rgba(217,106,14,.08);}
+.d-card.idea{border-color:rgba(176,123,255,.2);}
+.d-card.idea:hover{border-color:rgba(176,123,255,.5);box-shadow:0 0 20px rgba(176,123,255,.08);}
+.d-card.ref{border-color:rgba(63,176,154,.15);}
+.d-card.ref:hover{border-color:rgba(63,176,154,.4);box-shadow:0 0 20px rgba(63,176,154,.08);}
+
+/* 카드 커버 — canvas로 그림 */
+.d-cover{height:130px;position:relative;overflow:hidden;flex-shrink:0;}
+.d-cover canvas{position:absolute;inset:0;width:100%;height:100%;}
+.d-cover-overlay{position:absolute;inset:0;
+  background:linear-gradient(0deg,rgba(5,3,1,.9) 0%,transparent 60%);}
+.d-cover-badge{position:absolute;top:8px;right:8px;
+  font-size:5.5px;letter-spacing:1.5px;padding:2px 6px;
+  border:1px solid currentColor;background:rgba(0,0,0,.7);}
+.d-cover-badge.book{color:var(--acc);}
+.d-cover-badge.idea{color:var(--ac5);}
+.d-cover-badge.ref{color:var(--ac4);}
+.d-cover-year{position:absolute;bottom:8px;right:10px;
+  font-size:18px;color:rgba(255,255,255,.06);font-weight:600;letter-spacing:-1px;}
+
+.d-card-body{padding:10px 12px;flex:1;display:flex;flex-direction:column;}
+.d-card-body .c-title{font-size:10px;color:var(--g);margin-bottom:2px;line-height:1.3;}
+.d-card-body .c-author{font-size:6.5px;color:var(--g3);margin-bottom:8px;}
+.d-card-body .c-excerpt{font-size:7px;color:var(--g2);line-height:1.65;
+  border-left:2px solid var(--g4);padding-left:7px;flex:1;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.d-card-body .c-tags{display:flex;gap:4px;margin-top:8px;}
+.d-card-body .c-tag{font-size:5.5px;padding:1px 5px;border:1px solid currentColor;}
+.d-card-body .c-tag.ph{color:var(--ac4);}
+.d-card-body .c-tag.th{color:var(--ac5);}
+.d-card-body .c-tag.ar{color:var(--acc);}
+.d-card-body .c-tag.sc{color:var(--ac3);}
+
+/* ══════════════════════════════════════════
+   E. SPLIT — VISUAL SHELF
+══════════════════════════════════════════ */
+#sec-e{height:calc(100vh - 32px);}
+.e-shelf{flex:0 0 280px;border-right:1px solid var(--g4);
+  display:flex;flex-direction:column;overflow:hidden;background:#020100;}
+.e-shelf-hdr{flex-shrink:0;padding:0 12px;height:32px;border-bottom:1px solid var(--g4);
+  display:flex;align-items:center;justify-content:space-between;background:#000;
+  font-size:7.5px;letter-spacing:1.5px;color:var(--g2);}
+.e-shelf-hdr .count{font-size:6px;color:var(--g3);}
+
+/* 책 스파인 시각화 */
+.e-spines{flex-shrink:0;height:90px;border-bottom:1px solid var(--g4);
+  display:flex;align-items:flex-end;padding:8px 12px 0;gap:5px;
+  background:#010100;position:relative;overflow:hidden;}
+.e-spines::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g4),transparent);}
+.e-spine{flex:1;min-width:22px;max-width:36px;border-radius:1px 1px 0 0;
+  cursor:pointer;position:relative;overflow:hidden;transition:height .2s;
+  display:flex;align-items:center;justify-content:center;}
+.e-spine .sp-title{font-size:5.5px;writing-mode:vertical-rl;transform:rotate(180deg);
+  color:rgba(0,0,0,.7);letter-spacing:.5px;white-space:nowrap;overflow:hidden;
+  max-height:80%;font-weight:500;}
+.e-spine.on{outline:1px solid #fff;}
+.e-spine::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:rgba(255,255,255,.15);}
+
+.e-cats{flex-shrink:0;display:flex;border-bottom:1px solid var(--g4);}
+.e-cat{flex:1;padding:5px 0;font-size:6.5px;letter-spacing:.8px;text-align:center;
+  cursor:pointer;border-right:1px solid var(--g4);color:var(--g3);}
+.e-cat:last-child{border-right:none;}
+.e-cat.on{color:var(--ac3);background:rgba(255,210,61,.04);}
+
+.e-list{flex:1;overflow-y:auto;}
+.e-list::-webkit-scrollbar{width:2px;}
+.e-list::-webkit-scrollbar-thumb{background:var(--g4);}
+.e-item{padding:7px 12px;border-bottom:1px solid rgba(217,106,14,.06);
+  cursor:pointer;display:flex;align-items:center;gap:9px;}
+.e-item:hover{background:rgba(217,106,14,.03);}
+.e-item.on{background:rgba(217,106,14,.06);border-left:2px solid var(--acc);padding-left:10px;}
+.e-dot{width:10px;height:10px;border-radius:1px;flex-shrink:0;}
+.e-item-text{}
+.e-item-title{font-size:8px;color:var(--g);line-height:1.2;}
+.e-item.on .e-item-title{color:var(--ac3);}
+.e-item-author{font-size:6px;color:var(--g3);margin-top:1px;}
+
+/* 오른쪽 노트 패널 */
+.e-note{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#020100;}
+.e-note-hdr{flex-shrink:0;height:32px;border-bottom:1px solid var(--g4);background:#000;
+  display:flex;align-items:center;padding:0 16px;gap:10px;}
+.e-note-hdr .nh-title{font-size:10px;color:var(--g);}
+.e-note-hdr .nh-author{font-size:7px;color:var(--g3);}
+.e-note-hdr .nh-year{margin-left:auto;font-size:8px;color:var(--ac3);}
+
+.e-note-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0;}
+.e-note-body::-webkit-scrollbar{width:3px;}
+.e-note-body::-webkit-scrollbar-thumb{background:var(--g4);}
+
+/* 커버 배너 */
+.e-cover-banner{flex-shrink:0;height:160px;position:relative;overflow:hidden;}
+.e-cover-banner canvas{position:absolute;inset:0;width:100%;height:100%;}
+.e-cover-banner .ecb-overlay{position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(2,1,0,.0) 40%,rgba(2,1,0,1) 100%);}
+.e-cover-banner .ecb-text{position:absolute;right:24px;top:50%;transform:translateY(-50%);
+  text-align:right;}
+.e-cover-banner .ecb-title{font-size:22px;color:var(--g);font-weight:500;line-height:1.1;margin-bottom:4px;}
+.e-cover-banner .ecb-author{font-size:9px;color:var(--g3);margin-bottom:6px;}
+.e-cover-banner .ecb-meta{display:flex;gap:8px;justify-content:flex-end;}
+.e-cover-banner .ecb-tag{font-size:6px;padding:2px 6px;border:1px solid currentColor;}
+.e-cover-banner .ecb-tag.ph{color:var(--ac4);}
+.e-cover-banner .ecb-tag.th{color:var(--ac5);}
+.e-cover-banner .ecb-tag.ar{color:var(--acc);}
+
+/* 노트 섹션들 */
+.e-sections{padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+.e-quote-big{border-left:3px solid var(--g);padding:12px 16px;
+  background:rgba(217,106,14,.03);position:relative;}
+.e-quote-big .qb-mark{position:absolute;top:-2px;left:12px;
+  font-size:40px;color:rgba(217,106,14,.12);line-height:1;font-family:serif;}
+.e-quote-big .qb-text{font-size:9.5px;color:var(--g2);line-height:1.75;
+  font-style:italic;padding-top:8px;}
+.e-quote-big .qb-src{font-size:6px;color:var(--g3);margin-top:8px;text-align:right;}
+
+.e-ideas-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.e-idea-card{background:rgba(176,123,255,.04);border:1px solid rgba(176,123,255,.15);
+  padding:10px 12px;}
+.e-idea-card .ic-label{font-size:5.5px;letter-spacing:1.5px;color:var(--ac5);margin-bottom:5px;}
+.e-idea-card .ic-text{font-size:7.5px;color:rgba(200,160,255,.8);line-height:1.6;}
+
+.e-conn-row{display:flex;gap:8px;flex-wrap:wrap;}
+.e-conn-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;
+  border:1px solid var(--g4);font-size:7px;color:var(--g2);cursor:pointer;}
+.e-conn-chip:hover{border-color:var(--g2);}
+.e-conn-chip .cc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+.e-sec-label{font-size:5.5px;letter-spacing:2px;color:var(--g3);
+  margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.e-sec-label::after{content:'';flex:1;height:1px;background:var(--g4);}
+
+.e-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;color:var(--g3);}
+.e-empty .big{font-size:40px;opacity:.1;letter-spacing:-2px;}
+.e-empty .small{font-size:7.5px;letter-spacing:1.5px;}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-label">REFERENCE</div>
+  <div class="nav-tab on" onclick="show('c',this)">C. CONSTELLATION</div>
+  <div class="nav-tab" onclick="show('d',this)">D. CARD GRID</div>
+  <div class="nav-tab" onclick="show('e',this)">E. VISUAL SHELF</div>
+</div>
+
+<!-- ══ C ══ -->
+<div class="sec on" id="sec-c">
+  <div class="c-overlay">
+    <div class="c-hdr">
+      <span class="title">▶ REFERENCE.MAP</span>
+      <div class="c-stats">
+        <div class="c-stat"><span class="k">NODES</span><span class="v">16</span></div>
+        <div class="c-stat"><span class="k">EDGES</span><span class="v">23</span></div>
+        <div class="c-stat"><span class="k">BOOKS</span><span class="v">6</span></div>
+        <div class="c-stat"><span class="k">IDEAS</span><span class="v">5</span></div>
+      </div>
+      <div class="c-legend">
+        <div class="c-leg"><div class="c-leg-dot" style="background:#ff8c3a;box-shadow:0 0 6px #ff8c3a"></div>BOOK</div>
+        <div class="c-leg"><div class="c-leg-dot" style="background:#b07bff;box-shadow:0 0 6px #b07bff"></div>IDEA</div>
+        <div class="c-leg"><div class="c-leg-dot" style="background:#3fb09a;box-shadow:0 0 6px #3fb09a"></div>REF</div>
+      </div>
+    </div>
+  </div>
+  <canvas id="c-canvas" style="position:absolute;inset:0;"></canvas>
+  <div class="c-info" id="c-info">
+    <div class="ci-type" id="ci-type">BOOK</div>
+    <div class="ci-title" id="ci-title">—</div>
+    <div class="ci-sub" id="ci-sub">—</div>
+    <div class="ci-conn" id="ci-conn"></div>
+  </div>
+  <div class="c-ctrl">
+    <div class="c-btn" onclick="resetView()">RESET</div>
+    <div class="c-btn" onclick="toggleLabels()">LABELS</div>
+  </div>
+  <div class="c-tip" id="c-tip">
+    <div class="ct-type" id="ct-type"></div>
+    <div class="ct-title" id="ct-title"></div>
+    <div class="ct-sub" id="ct-sub"></div>
+  </div>
+</div>
+
+<!-- ══ D ══ -->
+<div class="sec" id="sec-d">
+  <div class="d-hdr">
+    <span class="title">▶ READING ARCHIVE</span>
+    <span class="d-stat"><b>14</b> BOOKS</span>
+    <span class="d-stat"><b>31</b> IDEAS</span>
+    <span class="d-stat"><b>58</b> EXCERPTS</span>
+  </div>
+  <div class="d-filters">
+    <div class="d-filter on">ALL</div>
+    <div class="d-filter">BOOK</div>
+    <div class="d-filter">IDEA</div>
+    <div class="d-filter">REF</div>
+  </div>
+  <div class="d-grid" id="d-grid"></div>
+</div>
+
+<!-- ══ E ══ -->
+<div class="sec" id="sec-e">
+  <div class="e-shelf">
+    <div class="e-shelf-hdr"><span>▶ SHELF</span><span class="count">5 titles</span></div>
+    <div class="e-spines" id="e-spines"></div>
+    <div class="e-cats">
+      <div class="e-cat on">ALL</div>
+      <div class="e-cat">사진</div>
+      <div class="e-cat">이론</div>
+    </div>
+    <div class="e-list" id="e-list"></div>
+  </div>
+  <div class="e-note" id="e-note">
+    <div class="e-note-hdr" style="display:none" id="e-note-hdr">
+      <span class="nh-title" id="nh-title"></span>
+      <span class="nh-author" id="nh-author"></span>
+      <span class="nh-year" id="nh-year"></span>
+    </div>
+    <div class="e-empty" id="e-empty">
+      <div class="big">▣▣▣</div>
+      <div class="small">서가에서 항목을 선택하세요</div>
+    </div>
+    <div class="e-note-body" id="e-note-body" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+/* ══ TAB ══ */
+function show(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('sec-'+id).classList.add('on');
+  el.classList.add('on');
+  if(id==='c') setTimeout(initC,50);
+}
+
+/* ══════════════════════════════════════════
+   SHARED: cover pattern generator
+══════════════════════════════════════════ */
+function drawCover(canvas, seed, type, w, h){
+  const ctx=canvas.getContext('2d');
+  canvas.width=w; canvas.height=h;
+  const r=lcg(seed);
+  const palettes={
+    book:['#3a1a00','#5c2a00','#ff8c3a','#ffd23d','#ff4a16'],
+    idea:['#1a0030','#2e004a','#b07bff','#7a3aff','#ff6fe8'],
+    ref: ['#001f1a','#003028','#3fb09a','#1a8070','#a0ffe0'],
+  };
+  const pal=palettes[type]||palettes.book;
+
+  // bg
+  ctx.fillStyle=pal[0]; ctx.fillRect(0,0,w,h);
+
+  // grid lines
+  ctx.strokeStyle=pal[1]+'80'; ctx.lineWidth=1;
+  for(let i=0;i<w;i+=20+(r()*10|0)){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,h);ctx.stroke();}
+  for(let i=0;i<h;i+=20+(r()*10|0)){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(w,i);ctx.stroke();}
+
+  // shapes
+  for(let i=0;i<6;i++){
+    const x=r()*w, y=r()*h, s=20+r()*60, a=r()*Math.PI*2;
+    ctx.save(); ctx.translate(x,y); ctx.rotate(a);
+    ctx.globalAlpha=0.06+r()*0.1;
+    ctx.fillStyle=pal[2+(i%3)];
+    ctx.fillRect(-s/2,-s/2,s,s);
+    ctx.restore();
+  }
+  // diagonal accent lines
+  ctx.globalAlpha=0.18; ctx.strokeStyle=pal[2]; ctx.lineWidth=1.5;
+  for(let i=0;i<3;i++){
+    const x1=r()*w,y1=0,x2=r()*w,y2=h;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  // circles
+  ctx.globalAlpha=0.12;
+  for(let i=0;i<2;i++){
+    const x=r()*w,y=r()*h,rad=30+r()*70;
+    ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);
+    ctx.strokeStyle=pal[3]; ctx.lineWidth=1; ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+}
+function lcg(seed){
+  let s=seed*9301+49297;
+  return function(){s=(s*9301+49297)%233280; return s/233280;}
+}
+
+/* ══════════════════════════════════════════
+   C. CONSTELLATION
+══════════════════════════════════════════ */
+const CDATA=[
+  {id:0,type:'book',label:'눈의 문법',sub:'John Szarkowski · 1966',col:'#ff8c3a',r:13},
+  {id:1,type:'book',label:'사진에 관하여',sub:'Susan Sontag · 1977',col:'#ff8c3a',r:14},
+  {id:2,type:'book',label:'밝은 방',sub:'Roland Barthes · 1980',col:'#ff8c3a',r:15},
+  {id:3,type:'book',label:'Ways of Seeing',sub:'John Berger · 1972',col:'#ff8c3a',r:12},
+  {id:4,type:'book',label:'The Ongoing Moment',sub:'Geoff Dyer · 2005',col:'#ff8c3a',r:11},
+  {id:5,type:'book',label:'사진론',sub:'Helmut Gernsheim',col:'#ff8c3a',r:10},
+  {id:6,type:'idea',label:'시선의 권력',sub:'gaze & subject',col:'#b07bff',r:11},
+  {id:7,type:'idea',label:'인덱스성',sub:'index / trace',col:'#b07bff',r:12},
+  {id:8,type:'idea',label:'선택과 배제',sub:'selection logic',col:'#b07bff',r:14},
+  {id:9,type:'idea',label:'punctum',sub:'Barthes · 찌름',col:'#b07bff',r:11},
+  {id:10,type:'idea',label:'프레임의 정치',sub:'frame & power',col:'#b07bff',r:10},
+  {id:11,type:'ref',label:'Decisive Moment',sub:'Cartier-Bresson',col:'#3fb09a',r:9},
+  {id:12,type:'ref',label:'New Topographics',sub:'1975 exhibition',col:'#3fb09a',r:9},
+  {id:13,type:'ref',label:'집합론',sub:'set theory',col:'#3fb09a',r:10},
+  {id:14,type:'ref',label:'위상수학',sub:'topology',col:'#3fb09a',r:9},
+  {id:15,type:'idea',label:'사진적 진실',sub:'documentary',col:'#b07bff',r:9},
+];
+const CEDGES=[[0,8],[0,10],[0,11],[1,6],[1,7],[1,15],[2,9],[2,7],[2,15],
+  [3,6],[3,10],[4,11],[4,12],[5,7],[6,10],[7,9],[8,13],[8,14],
+  [9,2],[10,3],[11,4],[12,5],[13,14],[1,8],[3,8],[0,7],[2,8]];
+
+let cn,pan={x:0,y:0},zoom=1,drag=false,dragNode=null;
+let showLabels=true,animId=null,cCvs,cCtx,time=0,selectedNode=null;
+let pTime=0;
+
+function initC(){
+  cCvs=document.getElementById('c-canvas');
+  cCtx=cCvs.getContext('2d');
+  resizeC();
+  window.addEventListener('resize',resizeC);
+  if(!cn) buildCN();
+  cCvs.onmousemove=cMove; cCvs.onmousedown=cDown; cCvs.onmouseup=cUp;
+  cCvs.onwheel=e=>{zoom=Math.max(.3,Math.min(3,zoom-e.deltaY*.001));};
+  if(!animId) animC();
+}
+function resizeC(){
+  if(!cCvs)return;
+  cCvs.width=cCvs.offsetWidth; cCvs.height=cCvs.offsetHeight;
+}
+function buildCN(){
+  const W=cCvs.width,H=cCvs.height;
+  cn=CDATA.map((n,i)=>{
+    const a=(i/CDATA.length)*Math.PI*2, rad=60+Math.random()*180;
+    return{...n,x:W/2+Math.cos(a)*rad,y:H/2+Math.sin(a)*rad,vx:0,vy:0,hover:false,pulse:Math.random()*Math.PI*2};
+  });
+}
+function screenXY(x,y){
+  const W=cCvs.width,H=cCvs.height;
+  return{x:(x+pan.x)*zoom+W/2*(1-zoom),y:(y+pan.y)*zoom+H/2*(1-zoom)};
+}
+function worldXY(sx,sy){
+  const W=cCvs.width,H=cCvs.height;
+  return{x:(sx-W/2*(1-zoom))/zoom-pan.x,y:(sy-H/2*(1-zoom))/zoom-pan.y};
+}
+function animC(){
+  physC(); drawC(); time+=0.016; animId=requestAnimationFrame(animC);
+}
+function physC(){
+  if(!cn)return;
+  cn.forEach(n=>{
+    cn.forEach(m=>{
+      if(n===m)return;
+      const dx=n.x-m.x,dy=n.y-m.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=1800/(d*d*d)*d;
+      n.vx+=dx/d*f*.1; n.vy+=dy/d*.1*f;
+    });
+  });
+  CEDGES.forEach(([a,b])=>{
+    const n=cn[a],m=cn[b];
+    const dx=m.x-n.x,dy=m.y-n.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+    const t=130,f=(d-t)*0.015;
+    n.vx+=dx/d*f; n.vy+=dy/d*f;
+    m.vx-=dx/d*f; m.vy-=dy/d*f;
+  });
+  const cx=cCvs.width/2,cy=cCvs.height/2;
+  cn.forEach(n=>{
+    if(dragNode===n)return;
+    n.vx+=(cx-n.x)*.0015; n.vy+=(cy-n.y)*.0015;
+    n.vx*=.82; n.vy*=.82;
+    n.x+=n.vx; n.y+=n.vy;
+    n.pulse+=0.02;
+  });
+}
+function drawC(){
+  if(!cn||!cCtx)return;
+  cCtx.clearRect(0,0,cCvs.width,cCvs.height);
+
+  // starfield bg
+  cCtx.fillStyle='rgba(3,2,1,1)'; cCtx.fillRect(0,0,cCvs.width,cCvs.height);
+  if(!cCvs._stars){
+    cCvs._stars=Array.from({length:120},()=>({x:Math.random()*cCvs.width,y:Math.random()*cCvs.height,r:Math.random(),a:Math.random()}));
+  }
+  cCvs._stars.forEach(s=>{
+    const a=.15+.1*Math.sin(time+s.a*10);
+    cCtx.fillStyle=`rgba(255,200,120,${a})`;
+    cCtx.beginPath(); cCtx.arc(s.x,s.y,s.r,0,Math.PI*2); cCtx.fill();
+  });
+
+  // grid
+  cCtx.strokeStyle='rgba(217,106,14,.035)'; cCtx.lineWidth=1;
+  for(let x=0;x<cCvs.width;x+=50){cCtx.beginPath();cCtx.moveTo(x,0);cCtx.lineTo(x,cCvs.height);cCtx.stroke();}
+  for(let y=0;y<cCvs.height;y+=50){cCtx.beginPath();cCtx.moveTo(0,y);cCtx.lineTo(cCvs.width,y);cCtx.stroke();}
+
+  // edges
+  CEDGES.forEach(([a,b])=>{
+    const n=cn[a],m=cn[b];
+    const sn=screenXY(n.x,n.y),sm=screenXY(m.x,m.y);
+    const hi=n.hover||m.hover||(selectedNode&&(selectedNode===n||selectedNode===m));
+    const grad=cCtx.createLinearGradient(sn.x,sn.y,sm.x,sm.y);
+    grad.addColorStop(0,n.col+(hi?'80':'22'));
+    grad.addColorStop(1,m.col+(hi?'80':'22'));
+    cCtx.beginPath(); cCtx.moveTo(sn.x,sn.y); cCtx.lineTo(sm.x,sm.y);
+    cCtx.strokeStyle=grad; cCtx.lineWidth=hi?1.5:.7; cCtx.stroke();
+  });
+
+  // nodes
+  cn.forEach(n=>{
+    const {x,y}=screenXY(n.x,n.y);
+    const r=n.r*zoom;
+    const hi=n.hover||n===selectedNode;
+    const pulse=1+Math.sin(n.pulse)*.12;
+
+    // outer glow ring
+    if(hi){
+      const gr=cCtx.createRadialGradient(x,y,r,x,y,r*3.5);
+      gr.addColorStop(0,n.col+'40'); gr.addColorStop(1,'transparent');
+      cCtx.beginPath(); cCtx.arc(x,y,r*3.5,0,Math.PI*2);
+      cCtx.fillStyle=gr; cCtx.fill();
+    }
+    // pulse ring
+    {
+      const pr=cCtx.createRadialGradient(x,y,r*.8,x,y,r*pulse*2.2);
+      pr.addColorStop(0,n.col+'15'); pr.addColorStop(1,'transparent');
+      cCtx.beginPath(); cCtx.arc(x,y,r*pulse*2.2,0,Math.PI*2);
+      cCtx.fillStyle=pr; cCtx.fill();
+    }
+    // node core
+    const gr2=cCtx.createRadialGradient(x-r*.3,y-r*.3,0,x,y,r);
+    gr2.addColorStop(0,'#fff'); gr2.addColorStop(.4,n.col); gr2.addColorStop(1,n.col+'aa');
+    cCtx.beginPath(); cCtx.arc(x,y,r,0,Math.PI*2);
+    cCtx.fillStyle=gr2; cCtx.fill();
+    cCtx.strokeStyle=hi?n.col:'transparent'; cCtx.lineWidth=1; cCtx.stroke();
+
+    // shadow glow
+    cCtx.shadowBlur=hi?20:8; cCtx.shadowColor=n.col;
+    cCtx.beginPath(); cCtx.arc(x,y,r,0,Math.PI*2); cCtx.fill();
+    cCtx.shadowBlur=0;
+
+    // label
+    if(showLabels||hi){
+      const alpha=hi?1:0.55;
+      cCtx.font=(hi?'500 ':'300 ')+(Math.max(7.5,9*zoom))+'px IBM Plex Mono';
+      cCtx.textAlign='center';
+      cCtx.fillStyle=`rgba(255,255,255,${alpha})`;
+      cCtx.fillText(n.label,x,y+r+11*zoom);
+      if(hi){
+        cCtx.font='300 '+(Math.max(6,7.5*zoom))+'px IBM Plex Mono';
+        cCtx.fillStyle='rgba(255,255,255,.4)';
+        cCtx.fillText(n.sub,x,y+r+21*zoom);
+      }
+    }
+  });
+}
+function getHoverNode(e){
+  if(!cn)return null;
+  const rect=cCvs.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  for(let i=cn.length-1;i>=0;i--){
+    const{x,y}=screenXY(cn[i].x,cn[i].y);
+    if(Math.sqrt((mx-x)**2+(my-y)**2)<cn[i].r*zoom+5)return cn[i];
+  }return null;
+}
+function cMove(e){
+  if(!cn)return;
+  const h=getHoverNode(e);
+  cn.forEach(n=>n.hover=false);
+  const tip=document.getElementById('c-tip');
+  if(h){
+    h.hover=true; cCvs.style.cursor='pointer';
+    tip.style.display='block'; tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-8)+'px';
+    document.getElementById('ct-type').textContent=h.type.toUpperCase();
+    document.getElementById('ct-type').style.color=h.col;
+    document.getElementById('ct-title').textContent=h.label;
+    document.getElementById('ct-sub').textContent=h.sub;
+  } else {
+    cCvs.style.cursor=''; tip.style.display='none';
+  }
+  if(drag&&!dragNode){pan.x+=e.movementX/zoom; pan.y+=e.movementY/zoom;}
+  if(dragNode){
+    const w=worldXY(e.clientX-cCvs.getBoundingClientRect().left,e.clientY-cCvs.getBoundingClientRect().top);
+    dragNode.x=w.x; dragNode.y=w.y; dragNode.vx=0; dragNode.vy=0;
+  }
+}
+function cDown(e){
+  const h=getHoverNode(e);
+  if(h){dragNode=h; selectedNode=h;
+    document.getElementById('c-info').style.display='block';
+    document.getElementById('ci-type').textContent=h.type.toUpperCase();
+    document.getElementById('ci-type').style.color=h.col;
+    document.getElementById('ci-title').textContent=h.label;
+    document.getElementById('ci-sub').textContent=h.sub;
+    const conn=CEDGES.filter(([a,b])=>a===h.id||b===h.id)
+      .map(([a,b])=>cn[a===h.id?b:a].label);
+    document.getElementById('ci-conn').innerHTML=conn.length?'연결: <span>'+conn.join(' · ')+'</span>':'';
+  } else {drag=true;}
+}
+function cUp(){drag=false; dragNode=null;}
+function resetView(){pan={x:0,y:0}; zoom=1;}
+function toggleLabels(){showLabels=!showLabels;}
+
+/* ══════════════════════════════════════════
+   D. CARD GRID
+══════════════════════════════════════════ */
+const CARDS=[
+  {type:'book',title:'밝은 방',author:'Roland Barthes',year:'1980',tags:['th'],seed:1,
+   excerpt:'사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다. 찌름, 구멍, 자국. 나는 이 개념을 라틴어로 불러야겠다.'},
+  {type:'idea',title:'선택과 배제',author:'작업 메모',year:'2026',tags:['sc'],seed:2,
+   excerpt:'438장 중 살아남는 것은 살아남은 것이 아니라 배제되지 않은 것이다. 셀렉션은 집합 연산이다.'},
+  {type:'book',title:'사진에 관하여',author:'Susan Sontag',year:'1977',tags:['th'],seed:3,
+   excerpt:'사진을 찍는다는 것은 이미지를 전유하는 것이다. 그것은 소유이며, 동시에 세계의 해석이다.'},
+  {type:'ref',title:'New Topographics',author:'1975 exhibition',year:'1975',tags:['ar'],seed:4,
+   excerpt:'평범한 풍경의 기록. 극적 연출 없이 사실 그대로. 이 거리가 오히려 날카롭다.'},
+  {type:'book',title:'눈의 문법',author:'John Szarkowski',year:'1966',tags:['ph'],seed:5,
+   excerpt:'사진의 가장자리는 선택이다. 그것은 세계의 일부만을 보여줌으로써 나머지 전부를 말한다.'},
+  {type:'idea',title:'집합과 경계',author:'수학적 은유',year:'2026',tags:['sc'],seed:6,
+   excerpt:'A∩B — 두 시선이 겹치는 지점. 교집합은 합집합보다 작지만 더 정확하다.'},
+  {type:'book',title:'Ways of Seeing',author:'John Berger',year:'1972',tags:['th','ar'],seed:7,
+   excerpt:'보는 방식은 선택이다. 그리고 이 선택은 결코 중립적이지 않다.'},
+  {type:'ref',title:'집합론',author:'Georg Cantor',year:'1874',tags:['sc'],seed:8,
+   excerpt:'무한집합의 개념. 부분이 전체와 같은 크기를 가질 수 있다는 발견.'},
+];
+
+(function initD(){
+  const grid=document.getElementById('d-grid');
+  CARDS.forEach((c,i)=>{
+    const card=document.createElement('div');
+    card.className='d-card '+c.type;
+    const covDiv=document.createElement('div');
+    covDiv.className='d-cover';
+    const cvs=document.createElement('canvas');
+    covDiv.appendChild(cvs);
+    covDiv.innerHTML+=`<div class="d-cover-overlay"></div>
+    <div class="d-cover-badge ${c.type}">${c.type.toUpperCase()}</div>
+    <div class="d-cover-year">${c.year}</div>`;
+    covDiv.prepend(cvs);
+    card.appendChild(covDiv);
+    card.innerHTML+=`<div class="d-card-body">
+      <div class="c-title">${c.title}</div>
+      <div class="c-author">${c.author} · ${c.year}</div>
+      <div class="c-excerpt">"${c.excerpt}"</div>
+      <div class="c-tags">${c.tags.map(t=>`<span class="c-tag ${t}">${t.toUpperCase()}</span>`).join('')}</div>
+    </div>`;
+    grid.appendChild(card);
+    // draw cover after DOM insert
+    requestAnimationFrame(()=>{
+      const cv=covDiv.querySelector('canvas');
+      drawCover(cv,c.seed*137,c.type,covDiv.offsetWidth,130);
+    });
+  });
+})();
+
+/* ══════════════════════════════════════════
+   E. VISUAL SHELF
+══════════════════════════════════════════ */
+const EBOOKS=[
+  {title:'밝은 방',author:'R. Barthes',year:'1980',tags:['th'],col:'#6a2a8a',h:68,
+   excerpt:'사진에서 나를 뚫고 들어오는 것, 그것이 punctum이다. 찌름, 구멍, 자국.',
+   ideas:['punctum을 셀렉션 기준으로 — 보는 이를 불편하게 만드는 사진.','인덱스로서의 사진 — 지시체와의 직접적 연결.'],
+   conn:[{label:'사진에 관하여',col:'#7a3a00'},{label:'인덱스성',col:'#6a2a8a'},{label:'New Topographics',col:'#1a6050'}]},
+  {title:'사진에 관하여',author:'S. Sontag',year:'1977',tags:['th'],col:'#7a3a00',h:72,
+   excerpt:'사진을 찍는다는 것은 이미지를 전유하는 것이다. 소유이며, 동시에 세계의 해석이다.',
+   ideas:['소유로서의 촬영 — 찍힌 것은 포획된다.','현실의 단편화 — 프레임이 세계를 조각낸다.'],
+   conn:[{label:'밝은 방',col:'#6a2a8a'},{label:'Ways of Seeing',col:'#1a3060'}]},
+  {title:'눈의 문법',author:'J. Szarkowski',year:'1966',tags:['ph'],col:'#1a3060',h:60,
+   excerpt:'사진의 가장자리는 선택이다. 세계의 일부만을 보여줌으로써 나머지 전부를 말한다.',
+   ideas:['프레임의 부정성 — 찍히지 않은 것이 찍힌 것을 정의한다.'],
+   conn:[{label:'Decisive Moment',col:'#1a6050'},{label:'New Topographics',col:'#1a6050'}]},
+  {title:'Ways of Seeing',author:'J. Berger',year:'1972',tags:['th','ar'],col:'#003030',h:65,
+   excerpt:'보는 방식은 선택이다. 그리고 이 선택은 결코 중립적이지 않다.',
+   ideas:['시선의 이데올로기 — 어떻게 보느냐가 무엇을 보느냐를 결정한다.'],
+   conn:[{label:'사진에 관하여',col:'#7a3a00'},{label:'시선의 권력',col:'#6a2a8a'}]},
+  {title:'Ongoing Moment',author:'G. Dyer',year:'2005',tags:['ph'],col:'#3a1000',h:55,
+   excerpt:'동일한 주제가 사진가들 사이를 여행한다. 이미지는 이미지를 낳는다.',
+   ideas:['참조의 연쇄 — 사진들이 서로를 인용한다.'],
+   conn:[{label:'눈의 문법',col:'#1a3060'},{label:'Decisive Moment',col:'#1a6050'}]},
+];
+
+(function initE(){
+  // spines
+  const spines=document.getElementById('e-spines');
+  EBOOKS.forEach((b,i)=>{
+    const sp=document.createElement('div');
+    sp.className='e-spine'; sp.style.height=b.h+'px';
+    sp.style.background=b.col;
+    sp.style.boxShadow=`inset -2px 0 4px rgba(0,0,0,.4), 0 0 8px ${b.col}44`;
+    sp.innerHTML=`<span class="sp-title">${b.title}</span>`;
+    sp.addEventListener('click',()=>selectBook(i));
+    spines.appendChild(sp);
+  });
+  // list
+  const list=document.getElementById('e-list');
+  EBOOKS.forEach((b,i)=>{
+    const item=document.createElement('div');
+    item.className='e-item'; item.dataset.i=i;
+    item.innerHTML=`<div class="e-dot" style="background:${b.col};box-shadow:0 0 6px ${b.col}88"></div>
+    <div class="e-item-text">
+      <div class="e-item-title">${b.title}</div>
+      <div class="e-item-author">${b.author} · ${b.year}</div>
+    </div>`;
+    item.addEventListener('click',()=>selectBook(i));
+    list.appendChild(item);
+  });
+})();
+
+function selectBook(i){
+  document.querySelectorAll('.e-item').forEach((el,j)=>el.classList.toggle('on',j===i));
+  document.querySelectorAll('.e-spine').forEach((el,j)=>el.classList.toggle('on',j===i));
+  const b=EBOOKS[i];
+  document.getElementById('e-empty').style.display='none';
+  const hdr=document.getElementById('e-note-hdr');
+  hdr.style.display='flex';
+  document.getElementById('nh-title').textContent=b.title;
+  document.getElementById('nh-author').textContent='/ '+b.author;
+  document.getElementById('nh-year').textContent=b.year;
+
+  const body=document.getElementById('e-note-body');
+  body.style.display='flex';
+
+  // cover banner
+  body.innerHTML=`<div class="e-cover-banner" id="ecb">
+    <canvas id="ecb-cv"></canvas>
+    <div class="ecb-overlay"></div>
+    <div class="ecb-text">
+      <div class="ecb-title">${b.title}</div>
+      <div class="ecb-author">${b.author}</div>
+      <div class="ecb-meta">${b.tags.map(t=>`<span class="ecb-tag ${t}">${t.toUpperCase()}</span>`).join('')}</div>
+    </div>
+  </div>
+  <div class="e-sections">
+    <div>
+      <div class="e-sec-label">EXCERPT</div>
+      <div class="e-quote-big">
+        <div class="qb-mark">"</div>
+        <div class="qb-text">${b.excerpt}</div>
+        <div class="qb-src">— ${b.title}, ${b.year}</div>
+      </div>
+    </div>
+    <div>
+      <div class="e-sec-label">DERIVED IDEAS</div>
+      <div class="e-ideas-row">
+        ${b.ideas.map(id=>`<div class="e-idea-card">
+          <div class="ic-label">◈ IDEA</div>
+          <div class="ic-text">${id}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+    <div>
+      <div class="e-sec-label">CONNECTIONS</div>
+      <div class="e-conn-row">
+        ${b.conn.map(c=>`<div class="e-conn-chip">
+          <div class="cc-dot" style="background:${c.col};box-shadow:0 0 4px ${c.col}"></div>
+          ${c.label}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+
+  requestAnimationFrame(()=>{
+    const cv=document.getElementById('ecb-cv');
+    const banner=document.getElementById('ecb');
+    if(cv&&banner) drawCover(cv,i*137+42,'book',banner.offsetWidth,160);
+  });
+}
+
+// auto-init C
+setTimeout(initC,100);
+</script>
+</body>
+</html>

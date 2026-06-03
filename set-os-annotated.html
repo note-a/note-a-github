@@ -3,208 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>set-os — annotated wireframe</title>
+<title>set-os — DOM 와이어프레임</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;}
-iframe#site{width:100%;height:100%;border:none;display:block;}
+html{background:#0a0a0a;color:#ddd;font-family:'Courier New',monospace;font-size:10px;}
+body{padding:16px;overflow:auto;}
 
-/* ── 우상단 토글 버튼 ── */
-#ann-btn{
-  position:fixed;top:10px;right:10px;z-index:99999;
-  background:rgba(0,0,0,.9);color:#ffd700;
-  border:1px solid rgba(255,215,0,.7);
-  font-family:'Courier New',monospace;font-size:10px;
-  padding:5px 14px;cursor:pointer;letter-spacing:1.5px;
-  transition:background .15s;
+h1{color:#ffd700;font-size:12px;letter-spacing:2px;margin-bottom:8px;}
+.meta{color:#666;font-size:8px;margin-bottom:20px;}
+
+/* ── 레이어 박스 ── */
+.wf-box{
+  position:relative;border:2px solid;margin-bottom:8px;padding:8px;
+  background:rgba(0,0,0,.4);min-height:40px;display:flex;flex-direction:column;
 }
-#ann-btn:hover{background:rgba(40,30,0,.95);}
-#ann-count{
-  position:fixed;top:10px;right:130px;z-index:99999;
-  color:#ffd700;font-family:'Courier New',monospace;font-size:9px;
-  background:rgba(0,0,0,.8);padding:4px 8px;letter-spacing:.5px;
+
+.wf-box-path{
+  position:absolute;top:-14px;left:6px;background:#0a0a0a;
+  color:#aaa;font-size:8px;letter-spacing:.5px;padding:0 4px;
 }
+
+.wf-box-content{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  color:currentColor;font-size:9px;padding:4px;text-align:center;
+  line-height:1.4;letter-spacing:.3px;
+}
+
+.wf-box-label{
+  position:absolute;bottom:-14px;left:2px;background:#0a0a0a;
+  color:currentColor;font-size:8px;letter-spacing:.5px;padding:0 4px;
+  font-weight:bold;
+}
+
+/* ── 색상별 ── */
+.wf-box.yellow {border-color:#ffd700;color:#ffd700;}
+.wf-box.cyan   {border-color:#00dcc8;color:#00dcc8;}
+.wf-box.green  {border-color:#50dc50;color:#50dc50;}
+.wf-box.orange {border-color:#ff8c28;color:#ff8c28;}
+.wf-box.pink   {border-color:#dc50a0;color:#dc50a0;}
+.wf-box.blue   {border-color:#508fff;color:#508fff;}
+.wf-box.red    {border-color:#ff5050;color:#ff5050;border-style:dashed;}
+.wf-box.gray   {border-color:#666;color:#666;}
+
+/* ── 레이아웃 그리드 ── */
+.wf-grid{display:grid;gap:8px;margin-bottom:8px;}
+.wf-grid.cols2{grid-template-columns:1fr 1fr;}
+.wf-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+
+.wf-section-title{
+  color:#999;font-size:8px;letter-spacing:1px;margin-top:20px;
+  margin-bottom:8px;border-bottom:1px dashed #333;padding-bottom:4px;
+}
+
+/* ── hidden 섹션 ── */
+.hidden-section{
+  background:rgba(60,20,20,.3);border:1px dashed #666;
+  padding:8px;margin-top:20px;
+}
+.hidden-section .wf-section-title{color:#8a4a6a;border-color:#444;}
 </style>
 </head>
 <body>
-<iframe id="site" src="set-os.html"></iframe>
-<button id="ann-btn">⟳ ANNOTATE</button>
-<div id="ann-count"></div>
 
-<script>
-const site     = document.getElementById('site');
-const annBtn   = document.getElementById('ann-btn');
-const annCount = document.getElementById('ann-count');
+<h1>SET-OS.HTML — DOM WIREFRAME</h1>
+<div class="meta">실제 레이아웃 구조 시각화 · note-a.github.io/set-os.html</div>
 
-/* ─── annotation definitions ─── */
-const TARGETS = [
-  /* structure */
-  { s:'#shell',    lbl:'#shell',                              pos:'bl', c:'#888' },
-  { s:'#wrap',     lbl:'div#wrap',                            pos:'bl', c:'#ffd700' },
+<!-- ════════════════════════════════════════
+     #SHELL — MAIN CONTAINER
+════════════════════════════════════════ -->
+<div class="wf-box gray" style="min-height:800px;">
+  <div class="wf-box-path">#shell</div>
+  <div class="wf-box-label">#shell (display:flex)</div>
 
-  /* rails */
-  { s:'.lr-rail',  lbl:'aside.lr-rail  (hidden <1560px)',     pos:'tl', c:'#00dcc8' },
-  { s:'.rr-rail',  lbl:'aside.rr-rail  (hidden <1560px)',     pos:'tl', c:'#00dcc8' },
+  <!-- LEFT RAIL -->
+  <div class="wf-box cyan" style="position:absolute;left:16px;top:40px;width:150px;height:700px;">
+    <div class="wf-box-path">aside.lr-rail</div>
+    <div class="wf-box-label">.lr-rail (hidden &lt;1560px)</div>
+    <div style="padding:4px;font-size:7px;line-height:1.6;">
+      .lr-dp teal (F.01 SET MAP)<br>
+      .lr-dp (F.02 CONTOUR)<br>
+      .lr-dp data (F.03 DATA)<br>
+      └─ .lr-dcol × 4
+    </div>
+  </div>
 
-  /* top row */
-  { s:'#top-row',  lbl:'#top-row  ·  grid-cols: 1fr 1fr 1fr',pos:'tl', c:'#ffd700' },
+  <!-- MAIN WRAP -->
+  <div style="margin-left:170px;margin-right:170px;">
+    <div class="wf-box yellow" style="margin-bottom:8px;">
+      <div class="wf-box-path">#wrap · grid-rows: 1fr 84px 1fr 28px</div>
+      <div class="wf-box-label">#wrap</div>
 
-  /* panel 1 */
-  { s:'#top-row > .pnl:first-child .ph',
-                   lbl:'.ph  (헤더: .ph-row1 / .ph-row2 / .ph-nav)', pos:'tl', c:'#ff8c28' },
-  { s:'#gly-1',    lbl:'#gly-1 .view.active — ANALYSIS',     pos:'tl', c:'#50dc50' },
-  { s:'#gva-wrap', lbl:'#gva-wrap',                           pos:'tl', c:'#50dc50' },
-  { s:'#gly-2',    lbl:'#gly-2  [display:none]',              pos:'in', c:'#ff5050', dash:true },
-  { s:'#gly-3',    lbl:'#gly-3  [display:none]',              pos:'in-br', c:'#ff5050', dash:true },
-  { s:'#gl-scatter',lbl:'#gl-scatter  (svg)',                 pos:'bl', c:'#50dc50' },
-  { s:'#gva-access',lbl:'#gva-access  [hidden anim]',         pos:'in', c:'#ff5050', dash:true },
+      <!-- TOP ROW -->
+      <div class="wf-grid cols3" style="margin-bottom:8px;">
+        <!-- Panel 1: Gallery -->
+        <div class="wf-box orange">
+          <div class="wf-box-path">#top-row > .pnl:first-child</div>
+          <div class="wf-box-content">
+            <div style="text-align:left;">
+              <div style="font-weight:bold;margin-bottom:4px;">.ph — 헤더</div>
+              <div>ANALYSIS</div>
+              <div style="color:#50dc50;margin-top:4px;">
+                #gly-1.view.active<br>
+                #gva-wrap (분석 이미지)
+              </div>
+            </div>
+          </div>
+          <div class="wf-box-label">.pnl (갤러리)</div>
+        </div>
 
-  /* panel 2: HUD */
-  { s:'#hud-pnl',  lbl:'#hud-pnl .pnl  ▸  <HUD.XT2>',       pos:'tl', c:'#ff8c28' },
-  { s:'.h-title',  lbl:'.h-title  (.h-logo / .h-badges / .h-menu / .h-search)', pos:'tl', c:'#00dcc8' },
-  { s:'.h-list',   lbl:'.h-list  (.h-cols + .h-rows)',        pos:'tl', c:'#508fff' },
-  { s:'.h-folders',lbl:'.h-folders  ▸  .fld-item × 14',      pos:'bl', c:'#00dcc8' },
+        <!-- Panel 2: HUD -->
+        <div class="wf-box orange">
+          <div class="wf-box-path">#hud-pnl.pnl</div>
+          <div class="wf-box-content">
+            <div style="text-align:left;font-size:8px;">
+              <div style="margin-bottom:3px;">LOGO BADGES</div>
+              <div style="color:#00dcc8;">├─ .h-title</div>
+              <div style="color:#508fff;">├─ .h-list (.h-rows)</div>
+              <div style="color:#00dcc8;">└─ .h-folders</div>
+            </div>
+          </div>
+          <div class="wf-box-label">#hud-pnl</div>
+        </div>
 
-  /* panel 3 */
-  { s:'#top-row > .pnl:last-child',
-                   lbl:'.pnl  ▸  .ctrl-btn × 3  (UP/EXIT/DOWN)', pos:'tr', c:'#ff8c28' },
+        <!-- Panel 3: Control -->
+        <div class="wf-box orange">
+          <div class="wf-box-path">#top-row > .pnl:last-child</div>
+          <div class="wf-box-content">
+            ┃ U ┃<br>┃ P ┃<br>┃ E ┃<br>┃ X ┃<br>┃   ┃<br>┃ D ┃<br>┃ N ┃
+          </div>
+          <div class="wf-box-label">.pnl (ctrl)</div>
+        </div>
+      </div>
 
-  /* gbar */
-  { s:'#gbar',     lbl:'div#gbar  ▸  iframe(gbar) · SET.OS바', pos:'tl', c:'#ffd700' },
-  { s:'.mode-row', lbl:'.mode-row  ▸  .mb × 6',               pos:'bl', c:'#ffd700' },
+      <!-- GBAR -->
+      <div class="wf-box yellow" style="height:80px;margin-bottom:8px;">
+        <div class="wf-box-path">#gbar · iframe(gbar)</div>
+        <div class="wf-box-content" style="font-size:8px;">
+          ┌─ #nb-col-l (탭) ─┬─ #nb-col-c (제목) ─┬─ #nb-col-r (정보) ─┐<br>
+          S·L·R·M·A &nbsp; · &nbsp; #content-title &nbsp; · &nbsp; .binfo × 3
+        </div>
+        <div class="wf-box-label">#gbar</div>
+      </div>
 
-  /* bot row */
-  { s:'#bot-row',  lbl:'#bot-row  ·  grid-cols: 1fr 2fr',     pos:'tl', c:'#ffd700' },
-  { s:'.bot-left', lbl:'.bot-left',                            pos:'tl', c:'#ff8c28' },
-  { s:'.bl-split', lbl:'.bl-split  ▼  id-cols: 1fr 2fr',      pos:'tl', c:'#00dcc8' },
-  { s:'#vlWindow', lbl:'iframe(id-card)  ID카드',              pos:'tl', c:'#dc50a0' },
+      <!-- BOT ROW -->
+      <div class="wf-grid cols2" style="margin-bottom:8px;">
+        <!-- bot-left -->
+        <div class="wf-box orange">
+          <div class="wf-box-path">.bot-left</div>
+          <div class="wf-box-content" style="font-size:8px;">
+            .bl-split (1fr 1fr)<br>
+            ├─ .pnl.dim (CEB)<br>
+            ├─ .pnl.dim (vlWindow)<br>
+            ├─ .pnl.dim<br>
+            └─ .pnl.dim<br><br>
+            + .pnl.dim (하단)
+          </div>
+          <div class="wf-box-label">.bot-left</div>
+        </div>
 
-  /* stmt + pc */
-  { s:'#stmt',     lbl:'#stmt .stmt-scroll  (SET.TEXT)',       pos:'tr', c:'#50dc50' },
-  { s:'.pc',       lbl:'.pc  —  프로세싱 콘솔',                pos:'tl', c:'#508fff' },
-  { s:'#pc-log',   lbl:'#pc-log  .pc-log-inner',               pos:'tl', c:'#508fff' },
-  { s:'.pc-input', lbl:'.pc-input',                            pos:'bl', c:'#508fff' },
-  { s:'.pc-fkeys', lbl:'.pc-fkeys',                            pos:'bl', c:'#508fff' },
+        <!-- main: stmt + pc -->
+        <div class="wf-box blue">
+          <div class="wf-box-path">.pnl.dim (메인)</div>
+          <div class="wf-box-content" style="font-size:8px;text-align:left;">
+            <div style="color:#50dc50;margin-bottom:3px;">
+              #stmt .stmt-scroll<br>(SET.TEXT)
+            </div>
+            <div>.pc — Processing Console</div>
+            <div style="margin-top:3px;font-size:7px;">
+              ├─ .pc-title / .pc-roombar<br>
+              ├─ .pc-main (.pc-log + .pc-side)<br>
+              ├─ .pc-input<br>
+              └─ .pc-fkeys
+            </div>
+          </div>
+          <div class="wf-box-label">.pc (콘솔)</div>
+        </div>
+      </div>
 
-  /* botbar */
-  { s:'#botbar',   lbl:'div#botbar  (상태바)',                  pos:'tl', c:'#ffd700' },
+      <!-- BOTBAR -->
+      <div class="wf-box yellow" style="height:24px;">
+        <div class="wf-box-path">#botbar</div>
+        <div class="wf-box-content" style="font-size:8px;">
+          .binfo · .mode-row (S I L R M A) · .binfo
+        </div>
+        <div class="wf-box-label">#botbar</div>
+      </div>
+    </div>
+  </div>
 
-  /* hidden modals */
-  { s:'#stmt-modal',lbl:'#stmt-modal  [display:none]',         pos:'in', c:'#ff5050', dash:true },
-  { s:'#docs-modal',lbl:'#docs-modal  [display:none]',         pos:'in', c:'#ff5050', dash:true },
-];
+  <!-- RIGHT RAIL -->
+  <div class="wf-box cyan" style="position:absolute;right:16px;top:40px;width:150px;height:700px;">
+    <div class="wf-box-path">aside.rr-rail</div>
+    <div class="wf-box-label">.rr-rail (hidden &lt;1560px)</div>
+    <div style="padding:4px;font-size:7px;line-height:1.6;">
+      .lr-dp teal (F.04 RADAR)<br>
+      .lr-dp teal data<br>
+      (ANALYSIS)<br>
+      └─ .lr-dcol × 3
+    </div>
+  </div>
+</div>
 
-/* ─── CSS injected into iframe ─── */
-const ANN_CSS = `
-#__ann-layer{
-  position:fixed;inset:0;pointer-events:none;z-index:99999;
-  font-family:'Courier New',monospace;
-}
-.__ann{
-  position:absolute;pointer-events:none;box-sizing:border-box;
-}
-.__ann-lbl{
-  position:absolute;
-  font-size:10px;font-weight:bold;
-  background:rgba(0,0,0,.88);
-  padding:2px 8px;letter-spacing:.6px;
-  white-space:nowrap;line-height:18px;
-  border-bottom:1px solid;
-}
-.__ann-lbl.tl{top:-19px;left:0;}
-.__ann-lbl.tr{top:-19px;right:0;}
-.__ann-lbl.bl{bottom:-19px;left:0;}
-.__ann-lbl.br{bottom:-19px;right:0;}
-.__ann-lbl.in{top:3px;left:4px;}
-.__ann-lbl.in-br{bottom:3px;right:4px;}
-`;
+<!-- ════════════════════════════════════════
+     HIDDEN ELEMENTS
+════════════════════════════════════════ -->
+<div class="hidden-section">
+  <div class="wf-section-title">▸ HIDDEN ELEMENTS — display:none</div>
 
-let annotated = false;
+  <div class="wf-grid cols3">
+    <div class="wf-box red">
+      <div class="wf-box-path">#gly-2.view</div>
+      <div class="wf-box-content">
+        #gly-2 .view<br>
+        CONTACT SHEET<br>
+        (.cs2-wrap → #cs2-grid)
+      </div>
+      <div class="wf-box-label">#gly-2 [none]</div>
+    </div>
 
-function injectAnnotations(iDoc) {
-  /* remove old layer if any */
-  const old = iDoc.getElementById('__ann-layer');
-  if (old) old.remove();
-  const oldStyle = iDoc.getElementById('__ann-style');
-  if (oldStyle) oldStyle.remove();
+    <div class="wf-box red">
+      <div class="wf-box-path">#gly-3.view</div>
+      <div class="wf-box-content">
+        #gly-3 .view<br>
+        FILMSTRIP<br>
+        (.gv-fs-strip)
+      </div>
+      <div class="wf-box-label">#gly-3 [none]</div>
+    </div>
 
-  /* inject CSS */
-  const style = iDoc.createElement('style');
-  style.id = '__ann-style';
-  style.textContent = ANN_CSS;
-  iDoc.head.appendChild(style);
+    <div class="wf-box red">
+      <div class="wf-box-path">#gva-access</div>
+      <div class="wf-box-content">
+        #gva-access<br>
+        (anim overlay)
+      </div>
+      <div class="wf-box-label">#gva-access [hidden]</div>
+    </div>
+  </div>
 
-  /* create layer */
-  const layer = iDoc.createElement('div');
-  layer.id = '__ann-layer';
-  iDoc.body.appendChild(layer);
+  <div class="wf-grid cols2" style="margin-top:8px;">
+    <div class="wf-box red">
+      <div class="wf-box-path">#stmt-modal</div>
+      <div class="wf-box-content">
+        #stmt-modal<br>
+        .stmt-modal<br>
+        (Statement 모달)
+      </div>
+      <div class="wf-box-label">#stmt-modal [none]</div>
+    </div>
 
-  let count = 0;
+    <div class="wf-box red">
+      <div class="wf-box-path">#docs-modal</div>
+      <div class="wf-box-content">
+        #docs-modal<br>
+        .docs-modal<br>
+        (Docs 모달)
+      </div>
+      <div class="wf-box-label">#docs-modal [none]</div>
+    </div>
+  </div>
 
-  TARGETS.forEach(({ s, lbl, pos, c, dash }) => {
-    const el = iDoc.querySelector(s);
-    if (!el) return;
+  <div class="wf-box red" style="margin-top:8px;">
+    <div class="wf-box-path">#bg-lights</div>
+    <div class="wf-box-content">
+      #bg-lights [display:none]<br>
+      동적 배경 조명 효과
+    </div>
+    <div class="wf-box-label">#bg-lights [none]</div>
+  </div>
+</div>
 
-    const r = el.getBoundingClientRect();
-    if (r.width < 2 || r.height < 2) return;
+<div style="height:80px;"></div>
 
-    /* scroll offset */
-    const sx = iDoc.documentElement.scrollLeft || 0;
-    const sy = iDoc.documentElement.scrollTop  || 0;
-
-    const box = iDoc.createElement('div');
-    box.className = '__ann';
-    box.style.cssText = [
-      `left:${r.left + sx}px`,
-      `top:${r.top + sy}px`,
-      `width:${r.width}px`,
-      `height:${r.height}px`,
-      `border:2px ${dash ? 'dashed' : 'solid'} ${c}`,
-    ].join(';');
-
-    const tag = iDoc.createElement('div');
-    tag.className = `__ann-lbl ${pos}`;
-    tag.style.cssText = `color:${c};border-color:${c};`;
-    tag.textContent = lbl;
-    box.appendChild(tag);
-    layer.appendChild(box);
-    count++;
-  });
-
-  annotated = true;
-  annCount.textContent = `✓ ${count} elements`;
-  annBtn.textContent = '✕ CLEAR';
-  setTimeout(() => { annCount.style.opacity='0'; }, 3000);
-}
-
-function clearAnnotations(iDoc) {
-  const old = iDoc.getElementById('__ann-layer');
-  if (old) old.remove();
-  annotated = false;
-  annBtn.textContent = '⟳ ANNOTATE';
-  annCount.textContent = '';
-}
-
-function dismissIntro(iDoc) {
-  const intro = iDoc.getElementById('intro');
-  if (!intro) return;
-  intro.classList.add('exit');
-  intro.style.pointerEvents = 'none';
-  setTimeout(() => { intro.style.display = 'none'; }, 350);
-}
-
-annBtn.addEventListener('click', () => {
-  const iDoc = site.contentDocument;
-  if (!iDoc) { annCount.textContent = '⚠ 접근 불가'; return; }
-  annotated ? clearAnnotations(iDoc) : injectAnnotations(iDoc);
-});
-
-site.addEventListener('load', () => {
-  const iDoc = site.contentDocument;
-  dismissIntro(iDoc);
-  /* auto-annotate after layout settles */
-  setTimeout(() => injectAnnotations(iDoc), 1800);
-});
-</script>
 </body>
 </html>

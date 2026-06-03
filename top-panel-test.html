@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>TOP PANEL — A~D SAMPLES</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #040404; color: #39dc00; font-family: 'Courier New', monospace; padding: 24px; }
+    h1 { font-size: 12px; letter-spacing: 3px; margin-bottom: 20px; color: #39dc00; text-shadow: 0 0 10px #39dc00; }
+    .ctrl { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+    button {
+      background: #080f08; color: rgba(57,220,0,0.5); border: 1px solid rgba(57,220,0,0.2);
+      padding: 7px 16px; cursor: pointer; font-family: 'Courier New', monospace;
+      font-size: 11px; letter-spacing: 1px; transition: all 0.1s;
+    }
+    button:hover { border-color: #39dc00; color: #39dc00; }
+    button.active { background: #39dc00; color: #000; border-color: #39dc00; font-weight: bold; }
+    .panel-wrap {
+      border: 1.5px solid #39dc00;
+      box-shadow: 0 0 14px rgba(57,220,0,0.5), 0 0 32px rgba(57,220,0,0.15);
+      position: relative;
+      max-width: 820px;
+    }
+    canvas { display: block; }
+    .label {
+      margin-top: 12px; font-size: 10px; color: rgba(57,220,0,0.4); letter-spacing: 2px;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
+  </style>
+</head>
+<body>
+<h1>► TOP PANEL CANDIDATES  A–D</h1>
+<div class="ctrl">
+  <button id="btnA" class="active">A. FREQ SPECTRUM</button>
+  <button id="btnB">B. SYSTEM SCOPE</button>
+  <button id="btnC">C. SIGNAL INTERCEPT</button>
+  <button id="btnD">D. TOPOLOGY GRID</button>
+</div>
+
+<div id="secA" class="section active">
+  <div class="panel-wrap"><canvas id="cA"></canvas></div>
+  <div class="label">주파수 스펙트럼 분석기 · FFT 이퀄라이저 · 피크홀드 · BPM·Hz 오버레이</div>
+</div>
+<div id="secB" class="section">
+  <div class="panel-wrap"><canvas id="cB"></canvas></div>
+  <div class="label">3채널 스크롤 파형 · CPU / MEM / NET · 실시간 수치 · 알람 임계값</div>
+</div>
+<div id="secC" class="section">
+  <div class="panel-wrap"><canvas id="cC"></canvas></div>
+  <div class="label">신호 인터셉트 · 글리치 문자 스트림 · 텍스트 해독 효과 · 노이즈 버스트</div>
+</div>
+<div id="secD" class="section">
+  <div class="panel-wrap"><canvas id="cD"></canvas></div>
+  <div class="label">투시 토폴로지 그리드 · 3D 격자 플로우 · 노드 데이터 오버레이 · 스캔 레이어</div>
+</div>
+
+<script>
+'use strict';
+const W = 820, H = 110;
+const GA = (a) => `rgba(57,220,0,${a})`;
+let frame = 0;
+let cur = 'A';
+
+// ─── Shared canvas setup ────────────────────────────────────────────────────
+const dpr = Math.min(window.devicePixelRatio || 1, 2);
+['A','B','C','D'].forEach(l => {
+  const c = document.getElementById('c' + l);
+  c.width  = W * dpr; c.height = H * dpr;
+  c.style.width  = W + 'px'; c.style.height = H + 'px';
+  c.getContext('2d').scale(dpr, dpr);
+});
+
+// ─── A. FREQUENCY SPECTRUM ──────────────────────────────────────────────────
+const barCount = 52;
+const barPhases = Array.from({length: barCount}, () => Math.random() * Math.PI * 2);
+const barFreqs  = Array.from({length: barCount}, () => 0.02 + Math.random() * 0.06);
+const barPeaks  = new Float32Array(barCount);
+
+function renderSpectrumA(ctx) {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+  const pad = 10, barArea = W - pad * 2;
+  const bw = barArea / barCount - 1;
+  const maxH = H - 30;
+
+  // Scanline bg
+  ctx.fillStyle = GA(0.025);
+  for (let y = 0; y < H; y += 4) ctx.fillRect(0, y, W, 2);
+
+  // Grid lines
+  ctx.strokeStyle = GA(0.06); ctx.lineWidth = 0.5;
+  for (let g = 0; g <= 4; g++) {
+    const gy = 14 + (maxH / 4) * g;
+    ctx.beginPath(); ctx.moveTo(pad, gy); ctx.lineTo(W - pad, gy); ctx.stroke();
+  }
+
+  // Bars
+  for (let i = 0; i < barCount; i++) {
+    const t = frame * barFreqs[i] + barPhases[i];
+    const raw = (Math.sin(t) * 0.5 + 0.5) * (Math.sin(t * 2.3 + 1) * 0.3 + 0.7)
+              * (0.3 + 0.7 * Math.abs(Math.sin(t * 0.5)));
+    const h2 = Math.max(2, raw * maxH);
+    const x  = pad + i * (bw + 1);
+    const y  = 14 + maxH - h2;
+
+    // Peak hold
+    if (h2 > barPeaks[i]) barPeaks[i] = h2;
+    else barPeaks[i] = Math.max(0, barPeaks[i] - 0.4);
+
+    // Bar gradient
+    const grad = ctx.createLinearGradient(0, y + h2, 0, y);
+    grad.addColorStop(0,   GA(0.85));
+    grad.addColorStop(0.6, GA(0.45));
+    grad.addColorStop(1,   GA(0.15));
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, bw, h2);
+
+    // Peak line
+    ctx.fillStyle = '#39dc00';
+    ctx.fillRect(x, 14 + maxH - barPeaks[i] - 1, bw, 1);
+  }
+
+  // Center glow
+  ctx.save();
+  ctx.shadowColor = '#39dc00'; ctx.shadowBlur = 16;
+  ctx.strokeStyle = GA(0.0); ctx.fillStyle = GA(0);
+  ctx.restore();
+
+  // Labels
+  ctx.font = 'bold 9px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+  ctx.fillStyle = GA(0.6);
+  ctx.fillText('FREQ ANALYSIS', pad, 2);
+  ctx.textAlign = 'right'; ctx.fillStyle = GA(0.4);
+  ctx.fillText(`BPM:${128 + Math.floor(Math.sin(frame*0.01)*8)}  RANGE:20Hz–20kHz`, W - pad, 2);
+
+  // Bottom axis labels
+  ctx.font = '7px monospace'; ctx.textBaseline = 'bottom'; ctx.textAlign = 'center';
+  ctx.fillStyle = GA(0.22);
+  ['20','50','100','200','500','1k','2k','5k','10k','20k'].forEach((l, i) => {
+    ctx.fillText(l, pad + (i / 9) * barArea, H - 1);
+  });
+
+  // dB scale left
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ['0','−12','−24','−36','−48'].forEach((l, i) => {
+    ctx.fillStyle = GA(0.18);
+    ctx.fillText(l, 0, 14 + (maxH / 4) * i);
+  });
+}
+
+// ─── B. SYSTEM SCOPE ────────────────────────────────────────────────────────
+const scopeLen = 200;
+const scopeData = {
+  CPU: { buf: new Float32Array(scopeLen), val: 0.4, label: 'CPU', warn: 0.85, color: GA },
+  MEM: { buf: new Float32Array(scopeLen), val: 0.6, label: 'MEM', warn: 0.80, color: GA },
+  NET: { buf: new Float32Array(scopeLen), val: 0.2, label: 'NET', warn: 0.90, color: GA },
+};
+Object.values(scopeData).forEach(d => d.buf.fill(d.val));
+
+function renderScopeB(ctx) {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+  // Update values
+  const channels = Object.values(scopeData);
+  channels.forEach((d, ci) => {
+    d.val = Math.max(0.02, Math.min(0.98,
+      d.val + (Math.random() - 0.5) * 0.06
+            + Math.sin(frame * [0.023, 0.017, 0.031][ci] + ci) * 0.015));
+    d.buf.copyWithin(0, 1);
+    d.buf[scopeLen - 1] = d.val;
+  });
+
+  const rowH  = H / 3;
+  const labelW = 38, valW = 34, graphW = W - labelW - valW;
+  const pad = 3;
+
+  channels.forEach((d, ci) => {
+    const oy   = ci * rowH;
+    const peak = Math.max(...d.buf);
+    const isWarn = d.val > d.warn;
+
+    // Row bg
+    ctx.fillStyle = GA(isWarn ? 0.06 : 0.025);
+    ctx.fillRect(0, oy, W, rowH);
+    // Divider
+    ctx.fillStyle = GA(0.1);
+    ctx.fillRect(0, oy + rowH - 1, W, 1);
+
+    // Label
+    ctx.font = 'bold 9px monospace'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillStyle = isWarn ? '#ff4400' : GA(0.7);
+    ctx.fillText(d.label, 4, oy + rowH / 2);
+
+    // Waveform
+    const gx = labelW, gy = oy + pad, gh = rowH - pad * 2;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(gx, gy, graphW, gh); ctx.clip();
+    ctx.strokeStyle = isWarn ? 'rgba(255,68,0,0.7)' : GA(0.7);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    for (let i = 0; i < scopeLen; i++) {
+      const px = gx + (i / scopeLen) * graphW;
+      const py = gy + gh - d.buf[i] * gh;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    // Fill under
+    ctx.lineTo(gx + graphW, gy + gh); ctx.lineTo(gx, gy + gh); ctx.closePath();
+    ctx.fillStyle = isWarn ? 'rgba(255,68,0,0.06)' : GA(0.05);
+    ctx.fill();
+    // Warn threshold line
+    ctx.strokeStyle = GA(0.14); ctx.lineWidth = 0.5; ctx.setLineDash([3, 4]);
+    const warnY = gy + gh - d.warn * gh;
+    ctx.beginPath(); ctx.moveTo(gx, warnY); ctx.lineTo(gx + graphW, warnY); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Value readout
+    const pct = Math.round(d.val * 100);
+    ctx.font = `bold 10px monospace`; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = isWarn ? '#ff4400' : '#39dc00';
+    ctx.fillText(`${pct}%`, W - 4, oy + rowH / 2);
+
+    // Mini bar
+    ctx.fillStyle = GA(0.12); ctx.fillRect(W - valW, oy + 2, valW - 4, rowH - 4);
+    ctx.fillStyle = isWarn ? 'rgba(255,68,0,0.6)' : GA(0.55);
+    ctx.fillRect(W - valW, oy + 2, (valW - 4) * d.val, rowH - 4);
+  });
+
+  // Header
+  ctx.fillStyle = GA(0.07); ctx.fillRect(0, 0, labelW, H);
+  ctx.font = '7px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+  ctx.fillStyle = GA(0.3);
+  ctx.fillText('SYS', 4, 1);
+}
+
+// ─── C. SIGNAL INTERCEPT ────────────────────────────────────────────────────
+const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>[]{}\\|';
+const MSGS = [
+  'SET WORLD NODE AUTHENTICATED',
+  'DIRECTORY ACCESS GRANTED',
+  'SCANNING SET PROJECT ARCHIVE',
+  'SIGNAL INTERCEPT ACTIVE',
+  'KR-NODE-2026 ONLINE',
+  'COORDINATE LOCK: 37.5665°N 126.9780°E',
+  'TRANSMISSION ENCRYPTED AES-256',
+];
+const streamCols = 56;
+const streamRows = 5;
+const streamCells = Array.from({length: streamRows * streamCols}, () => ({
+  char: CHARSET[Math.floor(Math.random() * CHARSET.length)],
+  alpha: Math.random() * 0.3,
+  speed: 0.5 + Math.random() * 2,
+  phase: Math.random() * 60,
+}));
+let decodeMsg = '', decodeTarget = MSGS[0], decodeCursor = 0, decodeTimer = 0, decodeMsgIdx = 0;
+let noiseBurst = 0;
+
+function renderInterceptC(ctx) {
+  ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.fillRect(0, 0, W, H);
+
+  const cw = Math.floor(W / streamCols), ch = Math.floor(H / streamRows);
+
+  // Noise burst
+  if (Math.random() < 0.02) noiseBurst = 8 + Math.floor(Math.random() * 12);
+  noiseBurst = Math.max(0, noiseBurst - 1);
+
+  // Background character stream
+  streamCells.forEach((cell, idx) => {
+    const col = idx % streamCols, row = Math.floor(idx / streamCols);
+    if (frame % Math.ceil(cell.speed) === 0) {
+      cell.char  = CHARSET[Math.floor(Math.random() * CHARSET.length)];
+      cell.alpha = 0.06 + Math.abs(Math.sin(frame * 0.03 + cell.phase)) * 0.2;
+      if (noiseBurst > 0 && Math.random() < 0.3) cell.alpha = 0.5 + Math.random() * 0.4;
+    }
+    ctx.font = `${ch - 2}px monospace`;
+    ctx.fillStyle = noiseBurst > 0 && Math.random() < 0.05
+      ? `rgba(255,0,255,${cell.alpha})` : GA(cell.alpha);
+    ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+    ctx.fillText(cell.char, col * cw + 2, row * ch + 1);
+  });
+
+  // Horizontal scan line
+  const scanY = ((frame * 1.2) % (H + 20)) - 10;
+  const scanG = ctx.createLinearGradient(0, scanY - 6, 0, scanY + 6);
+  scanG.addColorStop(0, GA(0)); scanG.addColorStop(0.5, GA(0.18)); scanG.addColorStop(1, GA(0));
+  ctx.fillStyle = scanG; ctx.fillRect(0, scanY, W, 12);
+
+  // Decode animation
+  decodeTimer++;
+  if (decodeTimer % 3 === 0 && decodeCursor < decodeTarget.length) {
+    decodeMsg += decodeTarget[decodeCursor++];
+  }
+  if (decodeCursor >= decodeTarget.length && decodeTimer > 80) {
+    decodeMsg = ''; decodeCursor = 0; decodeTimer = 0;
+    decodeMsgIdx = (decodeMsgIdx + 1) % MSGS.length;
+    decodeTarget = MSGS[decodeMsgIdx];
+  }
+
+  // Decoded message overlay (center)
+  if (decodeMsg) {
+    const msgX = W / 2, msgY = H / 2;
+    ctx.save();
+    ctx.shadowColor = '#39dc00'; ctx.shadowBlur = 12;
+    ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#39dc00';
+    const glitch = noiseBurst > 4 && Math.random() > 0.5;
+    ctx.fillText(decodeMsg + (frame % 20 < 12 ? '█' : ''), msgX + (glitch ? (Math.random()-0.5)*6 : 0), msgY);
+    ctx.restore();
+  }
+
+  // Corner overlays
+  ctx.font = '8px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+  ctx.fillStyle = GA(0.5);
+  ctx.fillText('◈ SIGNAL INTERCEPT', 6, 4);
+  ctx.textAlign = 'right';
+  ctx.fillStyle = GA(0.35);
+  ctx.fillText(`PKT:${(frame * 7 % 9999).toString().padStart(4,'0')}  ERR:${Math.floor(noiseBurst * 3)}`, W - 6, 4);
+
+  ctx.textBaseline = 'bottom';
+  ctx.textAlign = 'left'; ctx.fillStyle = GA(0.3);
+  ctx.fillText(`MSG:${(decodeMsgIdx+1).toString().padStart(2,'0')}/${MSGS.length}  FREQ:2.4GHz`, 6, H - 2);
+  ctx.textAlign = 'right'; ctx.fillStyle = GA(0.25);
+  const blink = frame % 30 < 20;
+  ctx.fillStyle = blink ? GA(0.6) : GA(0.2);
+  ctx.fillText(`● ${blink ? 'RECEIVING' : 'SCANNING'}`, W - 6, H - 2);
+}
+
+// ─── D. TOPOLOGY GRID ───────────────────────────────────────────────────────
+const gridCols = 14, gridRows = 5;
+const nodes = [];
+for (let r = 0; r < gridRows; r++)
+  for (let c = 0; c < gridCols; c++)
+    nodes.push({ r, c, active: Math.random() < 0.35, pulse: Math.random() * 60 });
+
+const VP = { fov: 320, camY: -38, camZ: -80 };
+
+function project(x, y, z) {
+  const dz = z - VP.camZ;
+  const scale = VP.fov / Math.max(dz, 1);
+  return {
+    sx: W / 2 + x * scale,
+    sy: H * 0.82 + (y - VP.camY) * scale,
+    scale,
+  };
+}
+
+function renderTopoD(ctx) {
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+  const speed = 0.008;
+  const scrollZ = (frame * speed) % 6;
+
+  // Scanlines
+  ctx.fillStyle = GA(0.02);
+  for (let y = 0; y < H; y += 3) ctx.fillRect(0, y, W, 1);
+
+  // Grid lines
+  for (let r = 0; r <= gridRows; r++) {
+    const z = (r / gridRows) * 40 - 20 + scrollZ * 8;
+    for (let c = 0; c < gridCols; c++) {
+      const x0 = (c / gridCols - 0.5) * 80;
+      const x1 = ((c + 1) / gridCols - 0.5) * 80;
+      const p0 = project(x0, 0, z);
+      const p1 = project(x1, 0, z);
+      const depth = 1 - Math.min(1, Math.max(0, (z + 20) / 40));
+      ctx.strokeStyle = GA(0.04 + depth * 0.14); ctx.lineWidth = 0.5 + depth * 0.5;
+      ctx.beginPath(); ctx.moveTo(p0.sx, p0.sy); ctx.lineTo(p1.sx, p1.sy); ctx.stroke();
+    }
+  }
+  for (let c = 0; c <= gridCols; c++) {
+    const x = (c / gridCols - 0.5) * 80;
+    const p0 = project(x, 0, -20 + scrollZ * 8);
+    const p1 = project(x, 0,  20 + scrollZ * 8);
+    const depth = 0.6;
+    ctx.strokeStyle = GA(0.06 + depth * 0.1); ctx.lineWidth = 0.5;
+    ctx.beginPath(); ctx.moveTo(p0.sx, p0.sy); ctx.lineTo(p1.sx, p1.sy); ctx.stroke();
+  }
+
+  // Nodes
+  nodes.forEach(n => {
+    n.pulse = (n.pulse + 1) % 80;
+    const z = ((n.r / gridRows) * 40 - 20 + scrollZ * 8 + 40) % 40 - 20;
+    const x = (n.c / (gridCols - 1) - 0.5) * 78;
+    const p = project(x, 0, z);
+    if (p.sy < 0 || p.sy > H || p.sx < 0 || p.sx > W) return;
+    const depth = Math.max(0, 1 - (z + 20) / 40);
+    const size  = p.scale * 0.8 * (n.active ? 1.4 : 0.8);
+
+    if (n.active) {
+      ctx.save();
+      ctx.shadowColor = '#39dc00'; ctx.shadowBlur = 8 * depth;
+      ctx.fillStyle = GA(0.7 * depth);
+      ctx.beginPath(); ctx.arc(p.sx, p.sy, size, 0, Math.PI * 2); ctx.fill();
+      // Pulse ring
+      if (n.pulse < 30) {
+        const pr = size + (n.pulse / 30) * 10 * depth;
+        ctx.strokeStyle = GA((1 - n.pulse / 30) * 0.4 * depth);
+        ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.arc(p.sx, p.sy, pr, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.restore();
+    } else {
+      ctx.fillStyle = GA(0.12 * depth);
+      ctx.beginPath(); ctx.arc(p.sx, p.sy, size * 0.6, 0, Math.PI * 2); ctx.fill();
+    }
+  });
+
+  // Horizon glow
+  const hg = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  hg.addColorStop(0, GA(0.14)); hg.addColorStop(1, GA(0));
+  ctx.fillStyle = hg; ctx.fillRect(0, H * 0.5, W, H * 0.5);
+
+  // Overlay text
+  ctx.font = 'bold 9px monospace'; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+  ctx.fillStyle = GA(0.55);
+  ctx.fillText('TOPOLOGY / NODE MAP', 6, 4);
+  ctx.textAlign = 'right'; ctx.fillStyle = GA(0.35);
+  const actCount = nodes.filter(n => n.active).length;
+  ctx.fillText(`NODES:${actCount}/${nodes.length}  SYNC:${(99.1+Math.sin(frame*0.02)*0.7).toFixed(1)}%`, W - 6, 4);
+
+  ctx.textBaseline = 'bottom'; ctx.textAlign = 'left'; ctx.fillStyle = GA(0.25);
+  ctx.fillText(`GRID:${gridCols}×${gridRows}  Z-SCROLL:${scrollZ.toFixed(2)}`, 6, H - 2);
+  ctx.textAlign = 'right'; ctx.fillStyle = GA(0.2);
+  ctx.fillText(`SET-WORLD / KR-NODE-2026`, W - 6, H - 2);
+}
+
+// ─── render loop ────────────────────────────────────────────────────────────
+const renders = {
+  A: renderSpectrumA,
+  B: renderScopeB,
+  C: renderInterceptC,
+  D: renderTopoD,
+};
+
+function tick() {
+  frame++;
+  const fn  = renders[cur];
+  const ctx = document.getElementById('c' + cur).getContext('2d');
+  fn(ctx);
+  requestAnimationFrame(tick);
+}
+
+// ─── button wiring ──────────────────────────────────────────────────────────
+['A','B','C','D'].forEach(l => {
+  document.getElementById('btn' + l).addEventListener('click', () => {
+    ['A','B','C','D'].forEach(x => {
+      document.getElementById('btn' + x).classList.remove('active');
+      document.getElementById('sec' + x).classList.remove('active');
+    });
+    document.getElementById('btn' + l).classList.add('active');
+    document.getElementById('sec' + l).classList.add('active');
+    cur = l;
+  });
+});
+
+tick();
+</script>
+</body>
+</html>
