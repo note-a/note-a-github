@@ -46,7 +46,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
 .topbar{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;
   padding:16px 24px;font-size:11px;letter-spacing:3px;color:var(--dim);}
 .exit{border:1.3px solid var(--ln);background:transparent;color:var(--ln);
-  font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:11px;letter-spacing:2px;padding:7px 14px;cursor:pointer;transition:.15s;}
+  font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:16px;letter-spacing:2px;padding:0 36px;min-width:160px;min-height:96px;cursor:pointer;transition:.15s;}
 .exit:hover{background:var(--ln);color:var(--bg);}
 
 .stage{position:relative;z-index:5;width:100%;max-width:1760px;margin:0 auto;padding:4px 14px 56px;display:flex;gap:22px;align-items:flex-start;}
@@ -120,49 +120,106 @@ text{fill:var(--lbl);font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
 
 /* ============ CAD ELECTRICAL LAYOUT ============ */
 :root{--cy:#36e0ff;--yl:#ffd24a;--rd:#ff5a7a;--gn:#ff3df0;}
+/* ===== ACTION BAR (top) ===== */
+.actbar{display:flex;gap:12px;justify-content:center;max-width:2020px;margin:0 auto;padding:42px 14px 14px;position:relative;z-index:5;}
+.actbtn{flex:0 0 320px;display:flex;align-items:stretch;padding:0;background:rgba(4,2,18,.82);border:1.5px solid;border-top-width:3px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;cursor:pointer;position:relative;min-height:96px;transition:.15s;}
+.actbtn:hover{filter:brightness(1.35);}
+.actbtn .ico{flex:0 0 60px;display:flex;align-items:center;justify-content:center;font-size:28px;}
+.actbtn .sep{width:1px;align-self:stretch;margin:10px 0;opacity:.3;background:currentColor;}
+.actbtn .lbl{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:14px 20px;}
+.actbtn .ko{font-size:13px;letter-spacing:3px;opacity:.55;}
+.actbtn .en{font-size:22px;letter-spacing:4px;}
+.actbtn.cy{border-color:#36e0ff;color:#36e0ff;} .actbtn.cy .ico{background:rgba(54,224,255,.13);}
+.actbtn.gn{border-color:#ff3df0;color:#ff3df0;} .actbtn.gn .ico{background:rgba(255,61,240,.13);}
+.actbtn.yl{border-color:#ffd24a;color:#ffd24a;} .actbtn.yl .ico{background:rgba(255,210,74,.13);}
+body.fs-mode .sidecol.outside{display:none;}
+body.fs-mode .actbar{display:none;}
+body.fs-mode .cadwrap{padding:0;}
+body.fs-mode #cad{max-width:100%;border:none;padding:0;}
+
 .cadwrap{position:relative;z-index:5;display:flex;gap:18px;align-items:flex-start;justify-content:center;max-width:2020px;margin:0 auto;padding:6px;}
 #cad{flex:1 1 0;min-width:0;max-width:1560px;padding:10px;border:2px solid var(--gn);background:#0a0316;}
 .sidecol.outside{flex:0 0 380px;align-self:flex-start;}
 .sidecol.outside .panelbox{margin-top:12px;}
-.cadhead{display:flex;align-items:center;gap:16px;border:1.5px solid var(--gn);background:linear-gradient(180deg,#1a0726,#0a0316);padding:10px 16px;position:relative;}
-.cadhead .hx{position:absolute;right:10px;top:10px;font-size:10px;}
-.hlogo{display:flex;flex-direction:column;align-items:center;color:var(--gn);font-size:26px;line-height:1;border:1.5px solid var(--gn);padding:6px 10px;}
-.hlogo b{font-size:11px;letter-spacing:2px;}
-.htitles{flex:1;text-align:center;}
-.htitles h1{font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:30px;letter-spacing:3px;color:var(--gn);font-weight:700;text-shadow:0 0 8px rgba(255,61,240,.5);}
-.htitles h2{font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:17px;letter-spacing:6px;color:#ffd6fb;font-weight:500;margin-top:2px;}
-.hfree{display:inline-block;margin-top:6px;background:var(--gn);color:#021;font-size:10px;letter-spacing:2px;padding:3px 12px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
-.hhaz{text-align:center;color:var(--yl);font-size:10px;letter-spacing:1px;line-height:1.4;}
-.hhaz .exb{display:inline-block;border:2px solid var(--yl);color:var(--yl);font-weight:700;font-size:18px;padding:2px 8px;border-radius:6px;margin-bottom:4px;font-style:italic;}
+.cadhead{
+  display:flex;align-items:center;gap:12px;
+  border:1.5px solid var(--gn);
+  background:linear-gradient(180deg,#0d0520 0%,#070410 100%);
+  padding:6px 16px;position:relative;overflow:hidden;
+}
+.hckt{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.cadhead > *:not(.hckt){position:relative;z-index:1;}
+.cadhead::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;z-index:10;
+  background:linear-gradient(90deg,var(--gn) 0%,var(--cy) 50%,transparent 100%);opacity:.4;}
+.cadhead .hx{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;z-index:2;}
+.htitles{display:none;}
+.hstatus{flex:1;font-size:8px;letter-spacing:4px;color:rgba(255,61,240,.28);text-align:center;}
+
+/* ===== 사이드바 타이틀 패널 ===== */
+.sid-title{
+  border:1.5px solid var(--gn);
+  background:linear-gradient(160deg,#0e0524 0%,#070410 100%);
+  position:relative;overflow:hidden;
+  margin-bottom:0;
+  padding:13px 14px 11px 18px;
+}
+.st-ckt{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.sid-title > *:not(.st-ckt){position:relative;z-index:1;}
+.sid-title::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--gn),var(--cy) 55%,transparent);opacity:.45;}
+.sid-title h1{
+  font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
+  font-size:20px;letter-spacing:2px;color:var(--gn);font-weight:700;line-height:1.1;
+  text-shadow:0 0 12px rgba(255,61,240,.65),0 0 26px rgba(255,61,240,.2);
+}
+.sid-title h2{
+  font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
+  font-size:8.5px;letter-spacing:4px;color:rgba(255,214,251,.35);margin-top:5px;
+}
+.sid-title .st-rec{
+  position:absolute;top:10px;right:12px;z-index:2;
+  font-size:8px;letter-spacing:2px;color:var(--blue);
+  animation:blink 1.4s steps(1,end) infinite;
+}
 
 .cadgrid{display:flex;gap:10px;margin-top:10px;}
 .planwrap{flex:1 1 0;min-width:0;border:1.5px solid var(--cy);background:#010402;padding:4px;}
 .planwrap svg{width:100%;height:auto;display:block;}
 .sidecol{flex:0 0 360px;display:flex;flex-direction:column;gap:10px;}
 
-.panelbox{border:1.5px solid var(--gn);background:#0a0316;}
-.ptitle{background:var(--gn);color:#021;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:14px;letter-spacing:2px;text-align:center;padding:6px;font-weight:700;}
-.ptitle.cy{background:var(--cy);} .ptitle.yl{background:var(--yl);} .ptitle.rd{background:var(--rd);color:#200;}
+.panelbox{border:1.5px solid var(--gn);background:#060810;}
+/* ptitle — 기본값, JS가 per-category 색상을 inline style로 오버라이드 */
+.ptitle{
+  font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
+  font-size:13px;letter-spacing:2.5px;padding:7px 12px;font-weight:700;
+  display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(255,61,240,.15);color:var(--gn);
+}
+.ptitle::before{content:'▶';font-size:7px;opacity:.6;flex:0 0 auto;}
+.ptitle.cy{background:rgba(54,224,255,.15);color:var(--cy);}
+.ptitle.yl{background:rgba(255,210,74,.15);color:var(--yl);}
+.ptitle.rd{background:rgba(255,90,122,.15);color:var(--rd);}
 
 table.sched{width:100%;border-collapse:collapse;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
-table.sched th,table.sched td{border:1px solid #5a1a55;padding:5px 7px;font-size:12.5px;text-align:left;color:#9fe8ff;}
-table.sched th{background:#2a0726;color:#ff9e3d;letter-spacing:1px;font-size:11px;}
-table.sched td.gen{color:#ff9e3d;}
-#equipBox table.sched td{color:#ff9e3d;}
-table.sched tr.cl{cursor:pointer;}
-table.sched tr.cl:hover td{background:rgba(255,61,240,.14);color:#fff;}
-table.sched td.no{color:#ff9e3d;width:40px;text-align:center;}
+table.sched th,table.sched td{border:none;border-bottom:1px solid rgba(255,255,255,.05);padding:6px 8px;font-size:14px;text-align:left;color:#b0c8e0;}
+table.sched th{background:rgba(0,0,0,.3);color:rgba(255,255,255,.3);letter-spacing:2px;font-size:11.5px;border-bottom:1px solid rgba(255,255,255,.1);}
+table.sched td.gen{color:#ffd24a;text-align:center;}
+#equipBox table.sched td{color:#ffd24a;}
+table.sched tr.cl{cursor:pointer;transition:.1s;}
+table.sched tr.cl:hover td{color:#fff;}
+table.sched td.no{color:rgba(255,255,255,.25);width:34px;text-align:center;font-size:12px;}
 table.sched td.cat{width:46px;text-align:center;font-weight:700;}
 
-.legrow2{display:flex;align-items:center;gap:9px;font-size:12.5px;color:#ff9e3d;padding:5px 10px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
-.legrow2 i{width:16px;height:16px;display:inline-block;border:1.5px solid;flex:0 0 auto;}
-.notesbody{padding:10px 12px;font-size:12.5px;line-height:1.75;color:#e0a860;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
+.legrow2{display:flex;align-items:center;gap:9px;font-size:13.5px;color:#b0c8e0;padding:6px 12px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
+.legrow2 i{width:14px;height:14px;display:inline-block;border:1.5px solid;flex:0 0 auto;}
+.notesbody{padding:10px 12px;font-size:14px;line-height:1.8;color:#8aabcc;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
 .notesbody b{color:var(--yl);}
 
 .cadbottom{display:flex;gap:10px;margin-top:10px;}
 #equipBox{flex:1 1 0;}
 .titleblock{flex:0 0 460px;}
-.tbgrid{padding:8px 12px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:11px;color:#cfe;}
+.tbgrid{padding:8px 12px;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:13px;color:#cfe;}
 .tbrow{display:flex;border-bottom:1px dashed #5a1a55;padding:5px 0;}
 .tbrow .k{flex:0 0 130px;color:var(--gn);letter-spacing:1px;}
 .tbrow .v{color:#ffd6fb;}
@@ -184,41 +241,87 @@ table.sched td.cat{width:46px;text-align:center;font-weight:700;}
 
 /* ---- doc overlay ---- */
 .modal{position:fixed;inset:0;z-index:300;display:none;align-items:flex-start;justify-content:center;
-  background:rgba(4,1,14,.84);overflow-y:auto;padding:54px 16px;}
+  background:rgba(4,1,14,.88);overflow-y:auto;padding:54px 16px;backdrop-filter:blur(4px);}
 .modal.on{display:flex;}
-.doc{position:relative;width:100%;max-width:1020px;
-  background:linear-gradient(180deg,#0f0828 0%,#0b0d1e 40%,#080b16 100%);
-  border:1.5px solid var(--ln);
-  box-shadow:0 0 64px rgba(255,61,240,.24),0 0 120px rgba(54,224,255,.10);
-  animation:pop .25s ease-out;}
-.doc::-webkit-scrollbar{width:7px;}
-.doc::-webkit-scrollbar-thumb{background:rgba(255,61,240,.35);}
-@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98);}to{opacity:1;transform:none;}}
-.doc .dbr{position:absolute;width:16px;height:16px;border:2px solid var(--ln);}
-.doc .dbr.tl{top:-2px;left:-2px;border-right:none;border-bottom:none;}
-.doc .dbr.tr{top:-2px;right:-2px;border-left:none;border-bottom:none;}
-.doc .dbr.bl{bottom:-2px;left:-2px;border-right:none;border-top:none;}
-.doc .dbr.br2{bottom:-2px;right:-2px;border-left:none;border-top:none;}
-.dochead{padding:20px 24px 16px;
-  border-bottom:1px solid rgba(255,61,240,.28);
-  background:linear-gradient(135deg,rgba(255,61,240,.10) 0%,rgba(54,224,255,.05) 60%,transparent 100%);
-  position:relative;}
-.dochead .mod{font-size:13px;letter-spacing:3px;color:#36e0ff;}
-.dochead h2{font-family:'IBM Plex Sans KR',monospace;font-weight:700;font-size:26px;color:#fff;margin:8px 0 6px;text-shadow:0 0 18px rgba(255,61,240,.45);}
-.dochead .dmeta{font-size:13px;letter-spacing:2px;color:#ffd24a;}
-.close{position:absolute;top:16px;right:18px;width:42px;height:42px;border:1.5px solid var(--ln);z-index:5;
-  background:rgba(255,61,240,.12);color:var(--ln);font-size:24px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;}
-.close:hover{background:var(--ln);color:#0a0316;}
-.docbody{padding:22px 26px 30px;line-height:1.82;font-family:'IBM Plex Sans KR',monospace;font-size:17px;color:#c6d8f2;}
-.docbody h2{font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;font-size:18px;color:#ff3df0;letter-spacing:2px;margin:22px 0 10px;padding-bottom:6px;border-bottom:1px dashed rgba(255,61,240,.32);}
-.docbody h3{font-size:17px;color:#ffd24a;letter-spacing:1px;margin:18px 0 8px;}
+@keyframes pop{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.doc{width:100%;max-width:960px;background:#060810;border:1.5px solid #36e0ff;
+  box-shadow:0 0 0 3px rgba(54,224,255,.06),0 0 50px rgba(54,224,255,.20),0 0 110px rgba(54,224,255,.07);
+  position:relative;animation:pop .3s ease-out;overflow:hidden;}
+.doc::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:200;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.13) 2px 3px);}
+.doc-cbg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.55;}
+.doc-cbg svg{width:100%;height:100%;}
+.close{position:absolute;top:14px;right:14px;z-index:300;width:34px;height:34px;
+  border:1px solid rgba(54,224,255,.5);background:rgba(6,8,16,.9);color:#36e0ff;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);}
+.close:hover{background:#36e0ff;color:#000;box-shadow:0 0 14px rgba(54,224,255,.5);}
+.dochead{position:relative;z-index:10;overflow:hidden;background:linear-gradient(180deg,#0f0622 0%,#080610 100%);border-bottom:1.5px solid #36e0ff;}
+.dochead-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+.dochead-strip{display:flex;align-items:center;gap:14px;padding:10px 100px 9px 22px;border-bottom:1px solid rgba(54,224,255,.12);font-size:12px;letter-spacing:3px;position:relative;z-index:5;overflow:hidden;}
+.dochead-strip::before{content:'';position:absolute;left:-40%;top:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(54,224,255,.09),transparent);animation:pm-hscan 3.5s linear infinite;}
+.dh-mod{color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.6);}
+.dh-sep{color:rgba(54,224,255,.18);}
+.dh-info{color:rgba(54,224,255,.4);}
+.dh-live{margin-left:auto;color:#ffd24a;letter-spacing:3px;text-shadow:0 0 8px rgba(255,210,74,.5);animation:pm-liveblink 1.3s steps(1) infinite;}
+.dochead-main{position:relative;z-index:5;padding:18px 22px 20px;display:flex;align-items:center;}
+.dh-ghost{position:absolute;right:22px;top:50%;transform:translateY(-50%);font-size:88px;line-height:1;font-weight:700;letter-spacing:-3px;color:transparent;-webkit-text-stroke:1px rgba(54,224,255,.13);pointer-events:none;user-select:none;font-family:'Share Tech Mono',monospace;}
+.dh-titles{flex:1;}
+.dh-titles h2{font-family:'IBM Plex Sans KR',monospace;font-weight:700;font-size:28px;color:#fff;text-shadow:0 0 18px rgba(54,224,255,.3);line-height:1.2;margin-bottom:8px;}
+.dh-titles .dh-sub{font-size:13px;letter-spacing:3px;color:#ff3df0;text-shadow:0 0 8px rgba(255,61,240,.4);display:flex;align-items:center;gap:8px;}
+.dh-titles .dh-sub::before{content:'';display:inline-block;width:18px;height:1px;background:#ff3df0;box-shadow:0 0 6px #ff3df0;}
+.doc-tc{display:flex;align-items:center;background:rgba(54,224,255,.06);border-bottom:1px solid rgba(54,224,255,.14);padding:10px 22px;gap:18px;font-size:12px;letter-spacing:2px;position:relative;z-index:10;overflow:hidden;}
+.doc-tc::before{content:'';position:absolute;left:-30%;top:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(54,224,255,.12),transparent);animation:pm-tcscan 3s linear infinite;}
+.doc-tc .tc-main{font-size:18px;letter-spacing:3px;color:#36e0ff;text-shadow:0 0 12px rgba(54,224,255,.55);}
+.doc-tc .tc-sep{color:rgba(54,224,255,.2);font-size:14px;}
+.doc-tc .tc-info{color:rgba(54,224,255,.4);font-size:12px;letter-spacing:2px;}
+.doc-tc .tc-right{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.doc-tc .tc-badge{padding:3px 12px;background:#36e0ff;color:#000;font-size:11px;letter-spacing:3px;font-weight:700;animation:pm-badgepulse 2s ease-in-out infinite;}
+.doc-tc .tc-id{color:rgba(255,210,74,.7);font-size:12px;letter-spacing:2px;}
+.doc-cols{display:grid;grid-template-columns:220px 1fr;min-height:320px;position:relative;z-index:10;}
+.doc-meta{border-right:1px solid rgba(54,224,255,.12);padding:28px 18px 28px 26px;background:rgba(54,224,255,.025);display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;}
+.doc-meta::before{content:'';position:absolute;top:10px;right:10px;width:14px;height:14px;border-top:1.5px solid rgba(54,224,255,.35);border-right:1.5px solid rgba(54,224,255,.35);}
+.doc-meta::after{content:'';position:absolute;bottom:10px;left:10px;width:14px;height:14px;border-bottom:1.5px solid rgba(255,61,240,.25);border-left:1.5px solid rgba(255,61,240,.25);}
+.doc-mb{padding:14px 0;border-bottom:1px dashed rgba(54,224,255,.1);}
+.doc-mb:last-of-type{border-bottom:none;}
+.doc-mk{font-size:11px;letter-spacing:3px;color:rgba(54,224,255,.35);margin-bottom:6px;}
+.doc-mv{font-size:17px;color:#ffd24a;text-shadow:0 0 8px rgba(255,210,74,.2);}
+.doc-mv.cy{color:#ff3df0;text-shadow:0 0 8px rgba(255,61,240,.2);}
+.doc-mv.sm{font-size:15px;color:rgba(255,200,100,.6);}
+.doc-vtrace{position:absolute;right:0;top:0;bottom:0;width:14px;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+.doc-vnode{width:5px;height:5px;border-radius:50%;background:#36e0ff;box-shadow:0 0 6px #36e0ff;margin:auto;flex:0 0 auto;}
+.doc-vline{flex:1;width:1px;background:linear-gradient(180deg,rgba(54,224,255,.1),rgba(54,224,255,.25),rgba(54,224,255,.1));}
+.doc-content{padding:36px 48px 48px;position:relative;overflow:hidden;}
+.doc-reg{position:absolute;width:20px;height:20px;pointer-events:none;}
+.doc-reg.tr{top:10px;right:10px;border-top:1.5px solid rgba(255,61,240,.3);border-right:1.5px solid rgba(255,61,240,.3);}
+.doc-reg.bl{bottom:10px;left:10px;border-bottom:1.5px solid rgba(54,224,255,.2);border-left:1.5px solid rgba(54,224,255,.2);}
+.docbody{line-height:2.1;font-size:18px;color:#c0d0e8;position:relative;z-index:1;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;}
+.docbody h2{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:5px;color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.4);margin:28px 0 14px;}
+.docbody h2 .node{width:6px;height:6px;border-radius:50%;background:#36e0ff;box-shadow:0 0 8px #36e0ff;flex:0 0 auto;display:inline-block;}
+.docbody h2 .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(54,224,255,.4),rgba(54,224,255,.08));display:inline-block;}
+.docbody h2 .lnr{flex:1;height:1px;background:linear-gradient(270deg,rgba(54,224,255,.4),rgba(54,224,255,.08));display:inline-block;}
+.docbody h3{font-size:17px;color:#ff3df0;letter-spacing:1px;margin:20px 0 10px;text-shadow:0 0 8px rgba(255,61,240,.3);display:flex;align-items:center;gap:8px;}
+.docbody h3::before{content:'◈';font-size:11px;color:rgba(255,61,240,.5);}
 .docbody p{margin:10px 0;}
-.docbody ul,.docbody ol{margin:10px 0 10px 22px;}
-.docbody li{margin:5px 0;}
+.docbody ul{list-style:none;margin:12px 0;}
+.docbody li{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(54,224,255,.06);}
+.docbody li::before{content:'▸';color:#36e0ff;flex:0 0 auto;font-size:12px;margin-top:4px;}
 .docbody strong{color:#fff;}
-.docbody blockquote{border-left:3px solid #36e0ff;background:rgba(54,224,255,.07);padding:10px 16px;margin:14px 0;color:#9ecff0;}
+.docbody em{color:#ffd24a;font-style:normal;}
+.docbody blockquote{margin:22px 0;padding:18px 22px;background:rgba(54,224,255,.055);outline:1px solid rgba(54,224,255,.18);color:#b0c4e0;position:relative;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);}
+.docbody blockquote::before{content:'REC ●';position:absolute;top:-9px;left:16px;background:#36e0ff;color:#000;font-size:10px;letter-spacing:3px;padding:1px 9px;animation:pm-recpulse 1.4s steps(1) infinite;}
 .docbody blockquote strong{color:#36e0ff;}
 .docbody a{color:#36e0ff;}
+.doc-foot{display:flex;align-items:stretch;border-top:1px solid rgba(54,224,255,.15);position:relative;z-index:10;overflow:hidden;}
+.doc-foot::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#ff3df0 30%,#36e0ff 70%,transparent);opacity:.4;}
+.doc-fl{flex:0 0 220px;border-right:1px dashed rgba(54,224,255,.12);padding:12px 18px;font-size:11px;letter-spacing:2px;color:rgba(54,224,255,.3);display:flex;align-items:center;gap:8px;}
+.doc-fl .fdot{width:5px;height:5px;border-radius:50%;background:#36e0ff;box-shadow:0 0 6px #36e0ff;flex:0 0 auto;}
+.doc-fr{flex:1;padding:12px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.doc-tag{padding:3px 12px;border:1px solid;font-size:11px;letter-spacing:2px;}
+.doc-tag.mg{border-color:rgba(54,224,255,.4);color:rgba(54,224,255,.7);}
+.doc-tag.cy{border-color:rgba(255,61,240,.4);color:rgba(255,61,240,.7);}
+.doc-tag.yl{border-color:rgba(255,210,74,.4);color:rgba(255,210,74,.7);}
+.doc-foot-id{margin-left:auto;font-size:11px;letter-spacing:2px;color:rgba(255,61,240,.3);}
 
 /* ============ LIVE / DYNAMIC MOTION ============ */
 #sch [stroke-dasharray]{animation:dashflow 16s linear infinite;}
@@ -272,46 +375,331 @@ table.sched td.cat{width:46px;text-align:center;font-weight:700;}
   .tbgrid{font-size:10px;}
   .tbrow .k{flex:0 0 96px;}
 }
+
+/* ===== INFO MODAL (popup-c design) ===== */
+@keyframes pm-appear{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+@keyframes pm-hscan{to{left:140%;}}
+@keyframes pm-liveblink{50%{opacity:.2;}}
+@keyframes pm-tcscan{to{left:130%;}}
+@keyframes pm-badgepulse{0%,100%{opacity:1;box-shadow:0 0 6px rgba(54,224,255,.4);}50%{opacity:.8;box-shadow:0 0 14px rgba(54,224,255,.7);}}
+@keyframes pm-recpulse{50%{background:rgba(54,224,255,.6);color:rgba(0,0,0,.5);}}
+
+#infoModal{position:fixed;inset:0;z-index:9999;background:rgba(4,2,18,.88);display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+#infoModal .pm-doc{width:100%;max-width:960px;background:#060810;border:1.5px solid #36e0ff;box-shadow:0 0 0 3px rgba(54,224,255,.06),0 0 50px rgba(54,224,255,.20),0 0 110px rgba(54,224,255,.07);position:relative;animation:pm-appear .3s ease-out;overflow:hidden;}
+#infoModal .pm-doc::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:200;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.13) 2px 3px);}
+#infoModal .pm-circuit-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.55;}
+#infoModal .pm-circuit-bg svg{width:100%;height:100%;}
+
+#infoModal .pm-close{position:absolute;top:14px;right:14px;z-index:300;width:34px;height:34px;border:1px solid rgba(54,224,255,.5);background:rgba(6,8,16,.9);color:#36e0ff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);}
+#infoModal .pm-close:hover{background:#36e0ff;color:#000;box-shadow:0 0 14px rgba(54,224,255,.5);}
+
+#infoModal .pm-head{position:relative;z-index:10;overflow:hidden;background:linear-gradient(180deg,#0f0622 0%,#080610 100%);border-bottom:1.5px solid #36e0ff;}
+#infoModal .pm-head-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;}
+#infoModal .pm-strip{display:flex;align-items:center;gap:14px;padding:7px 100px 6px 16px;border-bottom:1px solid rgba(54,224,255,.12);font-size:8.5px;letter-spacing:3px;position:relative;z-index:5;overflow:hidden;}
+#infoModal .pm-strip::before{content:'';position:absolute;left:-40%;top:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(54,224,255,.09),transparent);animation:pm-hscan 3.5s linear infinite;}
+#infoModal .hs-mod{color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.6);}
+#infoModal .hs-sep{color:rgba(54,224,255,.18);}
+#infoModal .hs-info{color:rgba(54,224,255,.4);}
+#infoModal .hs-live{margin-left:auto;color:#ffd24a;letter-spacing:3px;text-shadow:0 0 8px rgba(255,210,74,.5);animation:pm-liveblink 1.3s steps(1) infinite;}
+#infoModal .pm-head-main{position:relative;z-index:5;padding:11px 16px 13px 16px;display:flex;align-items:center;}
+#infoModal .pm-ghost{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:72px;line-height:1;font-weight:700;letter-spacing:-3px;color:transparent;-webkit-text-stroke:1px rgba(54,224,255,.13);pointer-events:none;user-select:none;font-family:'Share Tech Mono',monospace;}
+#infoModal .pm-htitles{flex:1;}
+#infoModal .pm-htitles h2{font-family:'IBM Plex Sans KR',monospace;font-weight:700;font-size:20px;color:#fff;text-shadow:0 0 18px rgba(54,224,255,.3);line-height:1.2;margin-bottom:5px;}
+#infoModal .pm-htitles .pm-sub{font-size:9px;letter-spacing:3px;color:#ff3df0;text-shadow:0 0 8px rgba(255,61,240,.4);display:flex;align-items:center;gap:8px;}
+#infoModal .pm-htitles .pm-sub::before{content:'';display:inline-block;width:18px;height:1px;background:#ff3df0;box-shadow:0 0 6px #ff3df0;}
+
+#infoModal .pm-tc{display:flex;align-items:center;background:rgba(54,224,255,.06);border-bottom:1px solid rgba(54,224,255,.14);padding:6px 18px;gap:18px;font-size:9px;letter-spacing:2px;position:relative;z-index:10;overflow:hidden;}
+#infoModal .pm-tc::before{content:'';position:absolute;left:-30%;top:0;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(54,224,255,.12),transparent);animation:pm-tcscan 3s linear infinite;}
+#infoModal .tc-main{font-size:14px;letter-spacing:3px;color:#36e0ff;text-shadow:0 0 12px rgba(54,224,255,.55);}
+#infoModal .tc-sep{color:rgba(54,224,255,.2);font-size:11px;}
+#infoModal .tc-info{color:rgba(54,224,255,.4);font-size:8.5px;letter-spacing:2px;}
+#infoModal .tc-right{margin-left:auto;display:flex;gap:12px;align-items:center;}
+#infoModal .tc-badge{padding:2px 10px;background:#36e0ff;color:#000;font-size:8px;letter-spacing:3px;font-weight:700;animation:pm-badgepulse 2s ease-in-out infinite;}
+#infoModal .tc-id{color:rgba(255,210,74,.7);font-size:9px;letter-spacing:2px;}
+
+#infoModal .pm-cols{display:grid;grid-template-columns:192px 1fr;min-height:320px;position:relative;z-index:10;}
+#infoModal .pm-meta{border-right:1px solid rgba(54,224,255,.12);padding:18px 14px 18px 16px;background:rgba(54,224,255,.025);display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden;}
+#infoModal .pm-meta::before{content:'';position:absolute;top:10px;right:10px;width:14px;height:14px;border-top:1.5px solid rgba(54,224,255,.35);border-right:1.5px solid rgba(54,224,255,.35);}
+#infoModal .pm-meta::after{content:'';position:absolute;bottom:10px;left:10px;width:14px;height:14px;border-bottom:1.5px solid rgba(255,61,240,.25);border-left:1.5px solid rgba(255,61,240,.25);}
+#infoModal .pm-mb{padding:10px 0;border-bottom:1px dashed rgba(54,224,255,.1);}
+#infoModal .pm-mb:last-of-type{border-bottom:none;}
+#infoModal .pm-mk{font-size:7.5px;letter-spacing:3px;color:rgba(54,224,255,.35);margin-bottom:4px;}
+#infoModal .pm-mv{font-size:13px;color:#ffd24a;text-shadow:0 0 8px rgba(255,210,74,.2);}
+#infoModal .pm-mv.cy{color:#ff3df0;text-shadow:0 0 8px rgba(255,61,240,.2);}
+#infoModal .pm-mv.sm{font-size:11px;color:rgba(255,200,100,.6);}
+#infoModal .pm-vtrace{position:absolute;right:0;top:0;bottom:0;width:14px;display:flex;flex-direction:column;align-items:center;pointer-events:none;}
+#infoModal .pm-vnode{width:5px;height:5px;border-radius:50%;background:#36e0ff;box-shadow:0 0 6px #36e0ff;margin:auto;flex:0 0 auto;}
+#infoModal .pm-vline{flex:1;width:1px;background:linear-gradient(180deg,rgba(54,224,255,.1),rgba(54,224,255,.25),rgba(54,224,255,.1));}
+
+#infoModal .pm-content{padding:20px 26px 26px;position:relative;overflow:hidden;}
+#infoModal .pm-reg{position:absolute;width:20px;height:20px;pointer-events:none;}
+#infoModal .pm-reg.tr{top:10px;right:10px;border-top:1.5px solid rgba(255,61,240,.3);border-right:1.5px solid rgba(255,61,240,.3);}
+#infoModal .pm-reg.bl{bottom:10px;left:10px;border-bottom:1.5px solid rgba(54,224,255,.2);border-left:1.5px solid rgba(54,224,255,.2);}
+#infoModal .pm-body{line-height:2.05;font-size:14px;color:#c0d0e8;position:relative;z-index:1;}
+#infoModal .pm-body h2{display:flex;align-items:center;gap:10px;font-size:8.5px;letter-spacing:5px;color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.4);margin:22px 0 11px;position:relative;}
+#infoModal .pm-body h2 .node{width:6px;height:6px;border-radius:50%;background:#36e0ff;box-shadow:0 0 8px #36e0ff;flex:0 0 auto;}
+#infoModal .pm-body h2 .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(54,224,255,.4),rgba(54,224,255,.08));}
+#infoModal .pm-body h2 .lnr{flex:1;height:1px;background:linear-gradient(270deg,rgba(54,224,255,.4),rgba(54,224,255,.08));}
+#infoModal .pm-body h3{font-size:13px;color:#ff3df0;letter-spacing:1px;margin:16px 0 8px;text-shadow:0 0 8px rgba(255,61,240,.3);display:flex;align-items:center;gap:8px;}
+#infoModal .pm-body h3::before{content:'◈';font-size:8px;color:rgba(255,61,240,.5);}
+#infoModal .pm-body p{margin:8px 0;}
+#infoModal .pm-body strong{color:#fff;}
+#infoModal .pm-body em{color:#ffd24a;font-style:normal;text-shadow:0 0 6px rgba(255,210,74,.2);}
+#infoModal .pm-body ul{list-style:none;margin:10px 0;}
+#infoModal .pm-body li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(54,224,255,.06);position:relative;}
+#infoModal .pm-body li::before{content:'▸';color:#36e0ff;flex:0 0 auto;font-size:9px;margin-top:5px;}
+#infoModal .pm-body blockquote{margin:18px 0;padding:14px 18px;background:rgba(54,224,255,.055);outline:1px solid rgba(54,224,255,.18);color:#b0c4e0;position:relative;clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);}
+#infoModal .pm-body blockquote::before{content:'REC ●';position:absolute;top:-9px;left:16px;background:#36e0ff;color:#000;font-size:8px;letter-spacing:3px;padding:1px 9px;animation:pm-recpulse 1.4s steps(1) infinite;}
+#infoModal .pm-body blockquote strong{color:#36e0ff;text-shadow:0 0 8px rgba(54,224,255,.4);}
+
+#infoModal .pm-foot{display:flex;align-items:stretch;border-top:1px solid rgba(54,224,255,.15);position:relative;z-index:10;overflow:hidden;}
+#infoModal .pm-foot::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#ff3df0 30%,#36e0ff 70%,transparent);opacity:.4;}
+#infoModal .pm-fl{flex:0 0 192px;border-right:1px dashed rgba(54,224,255,.12);padding:8px 14px;font-size:8px;letter-spacing:2px;color:rgba(54,224,255,.3);display:flex;align-items:center;gap:8px;}
+#infoModal .pm-fl .fdot{width:5px;height:5px;border-radius:50%;background:#36e0ff;box-shadow:0 0 6px #36e0ff;flex:0 0 auto;}
+#infoModal .pm-fr{flex:1;padding:8px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+#infoModal .pm-tag{padding:2px 9px;border:1px solid;font-size:8px;letter-spacing:2px;transition:.12s;}
+#infoModal .pm-tag.mg{border-color:rgba(54,224,255,.4);color:rgba(54,224,255,.7);}
+#infoModal .pm-tag.cy{border-color:rgba(255,61,240,.4);color:rgba(255,61,240,.7);}
+#infoModal .pm-tag.yl{border-color:rgba(255,210,74,.4);color:rgba(255,210,74,.7);}
+#infoModal .pm-foot-id{margin-left:auto;font-size:8px;letter-spacing:2px;color:rgba(255,61,240,.3);}
 </style>
 </head>
 <body>
+<div class="actbar">
+  <button class="actbtn cy" id="btnAnim" onclick="toggleAnim()"><span class="ico" id="animIco">■</span><span class="sep"></span><span class="lbl"><span class="ko" id="animKo">애니메이션 정지</span><span class="en" id="animEn">PAUSE</span></span></button>
+  <button class="actbtn yl" onclick="toggleFullscreen()"><span class="ico" id="fsIco">⊞</span><span class="sep"></span><span class="lbl"><span class="ko" id="fsKo">전체화면</span><span class="en" id="fsEn">FULLSCREEN</span></span></button>
+  <button class="actbtn gn" onclick="toggleInfo()"><span class="ico">?</span><span class="sep"></span><span class="lbl"><span class="ko">페이지 설명</span><span class="en">ABOUT</span></span></button>
+  <button class="exit" onclick="navigate('set-os.html')">&larr; EXIT</button>
+</div>
+
+<!-- INFO MODAL -->
+<div id="infoModal" onclick="if(event.target===this)toggleInfo()">
+<div class="pm-doc">
+
+  <!-- 회로 배경 -->
+  <div class="pm-circuit-bg">
+    <svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" preserveAspectRatio="xMidYMid slice">
+      <defs><filter id="pm-glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g stroke="rgba(54,224,255,.04)" stroke-width="1"><line x1="192" y1="0" x2="192" y2="600"/><line x1="0" y1="68" x2="960" y2="68"/><line x1="0" y1="110" x2="960" y2="110"/><line x1="0" y1="530" x2="960" y2="530"/></g>
+      <g stroke="rgba(54,224,255,.09)" stroke-width="1" fill="none"><polyline points="820,120 880,120 880,180"/><polyline points="880,440 880,510 820,510"/><polyline points="210,240 280,240 280,280 350,280"/><polyline points="700,320 760,320 760,360 820,360"/></g>
+      <g fill="rgba(54,224,255,.18)" filter="url(#pm-glow)"><circle cx="880" cy="120" r="3"/><circle cx="880" cy="510" r="3"/><circle cx="280" cy="240" r="3"/><circle cx="760" cy="320" r="3"/></g>
+      <g stroke="rgba(255,61,240,.07)" stroke-width="1" fill="none"><polyline points="210,380 260,380 260,420 310,420"/><polyline points="750,140 800,140 800,200"/></g>
+      <g fill="rgba(255,61,240,.15)" filter="url(#pm-glow)"><circle cx="260" cy="380" r="2.5"/><circle cx="800" cy="140" r="2.5"/></g>
+      <circle r="3" fill="rgba(54,224,255,.45)" filter="url(#pm-glow)"><animateMotion dur="8s" repeatCount="indefinite"><mpath href="#pm-trace1"/></animateMotion></circle>
+      <path id="pm-trace1" d="M210,240 L280,240 L280,280 L350,280 L350,360 L600,360 L600,240 L820,240" fill="none"/>
+      <circle r="2.5" fill="rgba(255,61,240,.4)" filter="url(#pm-glow)"><animateMotion dur="11s" begin="-3s" repeatCount="indefinite"><mpath href="#pm-trace2"/></animateMotion></circle>
+      <path id="pm-trace2" d="M820,440 L760,440 L760,380 L500,380 L500,480 L210,480" fill="none"/>
+    </svg>
+  </div>
+
+  <button class="pm-close" onclick="toggleInfo()">&times;</button>
+
+  <!-- 헤더 -->
+  <div class="pm-head">
+    <svg class="pm-head-svg" viewBox="0 0 960 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="pm-hglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <line x1="4" y1="0" x2="4" y2="92" stroke="#36e0ff" stroke-width="3" filter="url(#pm-hglow)" opacity=".9"/>
+      <line x1="4" y1="1" x2="956" y2="1" stroke="#36e0ff" stroke-width="1.2" opacity=".35"/>
+      <line x1="168" y1="1" x2="168" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".3"/><circle cx="168" cy="1" r="2.8" fill="#36e0ff" opacity=".55" filter="url(#pm-hglow)"/><circle cx="168" cy="28" r="2" fill="#36e0ff" opacity=".3"/>
+      <line x1="290" y1="1" x2="290" y2="18" stroke="#36e0ff" stroke-width="1" opacity=".2"/><circle cx="290" cy="1" r="2.2" fill="#36e0ff" opacity=".35"/>
+      <line x1="390" y1="1" x2="390" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".2"/><circle cx="390" cy="1" r="2" fill="#36e0ff" opacity=".3"/>
+      <line x1="4" y1="28" x2="820" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".18"/>
+      <rect x="830" y="6" width="118" height="80" fill="none" stroke="#36e0ff" stroke-width="1.3" opacity=".22"/><rect x="836" y="12" width="106" height="68" fill="none" stroke="#36e0ff" stroke-width=".8" opacity=".12"/>
+      <circle cx="830" cy="6" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#pm-hglow)"/><circle cx="948" cy="6" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#pm-hglow)"/><circle cx="830" cy="86" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#pm-hglow)"/><circle cx="948" cy="86" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#pm-hglow)"/>
+      <polyline points="4,28 4,92" stroke="#36e0ff" stroke-width="1" opacity=".15" fill="none"/>
+      <polyline points="4,72 56,72 56,92" stroke="#ff3df0" stroke-width="1" fill="none" opacity=".25"/><circle cx="56" cy="72" r="2.2" fill="#ff3df0" opacity=".4" filter="url(#pm-hglow)"/>
+      <path d="M4,1 L24,1 M4,1 L4,18" stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+      <path d="M936,1 L956,1 M956,1 L956,18" stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+      <circle r="3" fill="#36e0ff" opacity=".7" filter="url(#pm-hglow)"><animateMotion dur="4s" repeatCount="indefinite"><mpath href="#pm-htrace"/></animateMotion></circle>
+      <path id="pm-htrace" d="M4,1 L390,1 L390,28 L168,28 L168,1 L830,1 L830,6" fill="none"/>
+    </svg>
+    <div class="pm-strip">
+      <span class="hs-mod">EL-01</span><span class="hs-sep">·</span>
+      <span class="hs-info">ARCHIVE</span><span class="hs-sep">·</span>
+      <span class="hs-info">WORKFLOW</span><span class="hs-sep">·</span>
+      <span class="hs-info">REV.0</span>
+      <span class="hs-live">● LIVE</span>
+    </div>
+    <div class="pm-head-main">
+      <div class="pm-ghost">01</div>
+      <div class="pm-htitles">
+        <h2>S.E.T. // LOG STATION</h2>
+        <div class="pm-sub">ARCHIVE WORKFLOW LAYOUT · EL-01</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 타임코드 -->
+  <div class="pm-tc">
+    <span class="tc-main">EL-01 · REV.0</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info">ARCHIVE ELECTRICAL LAYOUT</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info">SCALE NTS</span>
+    <div class="tc-right">
+      <span class="tc-id">NODES <span id="infoNodeCount">—</span></span>
+      <span class="tc-badge">LIVE</span>
+    </div>
+  </div>
+
+  <!-- 본문 2컬럼 -->
+  <div class="pm-cols">
+    <div class="pm-meta">
+      <div class="pm-mb"><div class="pm-mk">PROJECT</div><div class="pm-mv">LOG STATION</div></div>
+      <div class="pm-mb"><div class="pm-mk">TYPE</div><div class="pm-mv cy">WORKFLOW</div></div>
+      <div class="pm-mb"><div class="pm-mk">DRAWING NO</div><div class="pm-mv sm">EL-01</div></div>
+      <div class="pm-mb"><div class="pm-mk">TEAM</div><div class="pm-mv sm">KSS</div></div>
+      <div class="pm-mb"><div class="pm-mk">STATUS</div><div class="pm-mv">LIVE</div></div>
+      <div class="pm-mb"><div class="pm-mk">DATE</div><div class="pm-mv sm">2026-06-03</div></div>
+      <div class="pm-vtrace"><div class="pm-vline"></div><div class="pm-vnode"></div><div class="pm-vline"></div></div>
+    </div>
+    <div class="pm-content">
+      <span class="pm-reg tr"></span><span class="pm-reg bl"></span>
+      <div class="pm-body">
+        <h2><div class="node"></div><span class="ln"></span>개요 OVERVIEW<span class="lnr"></span><div class="node"></div></h2>
+        <p>이 페이지는 <strong>S.E.T. 아카이브 워크플로우</strong>의 전기 배선도 레이아웃입니다. 콘텐츠가 어떤 경로로 선별·분류·저장되는지를 회로도 형식으로 시각화합니다.</p>
+        <h3>처리 순서</h3>
+        <ul>
+          <li><em>SVA · 사진분석</em> — 이미지 구조 분석 및 1차 선별</li>
+          <li><em>GRAMMER · 문법</em> — 시각 문법 도출 및 분류</li>
+          <li><em>DIR · 지시문</em> — 문법 기반 촬영 지시문 생성</li>
+          <li><em>RULE · 규칙</em> — 아카이브 기준 규칙 적용</li>
+        </ul>
+        <blockquote>
+          <strong>핵심 원칙:</strong> 모든 콘텐츠는 EX-PROOF 검증을 통과해야 하며, PUBLISHED-POSTS 섹션 규칙에 따라 기록됩니다.
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- 풋터 -->
+  <div class="pm-foot">
+    <div class="pm-fl"><div class="fdot"></div><span>S.E.T. ARCHIVE · EL-01</span></div>
+    <div class="pm-fr">
+      <span class="pm-tag mg">ARCHIVE</span>
+      <span class="pm-tag cy">WORKFLOW</span>
+      <span class="pm-tag yl">EL-01</span>
+      <span class="pm-tag mg">LIVE</span>
+      <span class="pm-foot-id">REV.0 · 2026</span>
+    </div>
+  </div>
+
+</div>
+</div>
 <div class="cadwrap">
+<aside class="sidecol outside" style="order:-1">
+  <div class="panelbox" id="equipBox" style="margin-top:0"></div>
+  <div class="panelbox" id="titleBlock" style="margin-top:10px"></div>
+  <div class="panelbox" id="legendBox" style="margin-top:10px"></div>
+  <div class="panelbox" id="notesBox" style="margin-top:10px"></div>
+  <div id="opsBox" style="margin-top:10px"></div>
+  <footer class="cadfoot" id="cadFoot" style="margin-top:10px;flex-wrap:wrap"></footer>
+</aside>
 <div id="cad">
-  <header class="cadhead">
-    <button class="exit hx" onclick="navigate('set-os.html')">&larr; EXIT</button>
-    <div class="htitles"><h1>S.E.T. // LOG STATION</h1><h2>ARCHIVE WORKFLOW LAYOUT</h2></div>
-    <span class="rec">● REC · LIVE</span>
-    <span id="cnt" style="display:none"></span>
-  </header>
+  <span id="cnt" style="display:none"></span>
   <div class="cadgrid">
     <section class="planwrap"><svg id="sch" preserveAspectRatio="xMidYMid meet"></svg></section>
   </div>
-  <div class="cadbottom">
-    <div class="panelbox" id="equipBox"></div>
-    <div class="panelbox titleblock" id="titleBlock"></div>
-  </div>
-  <footer class="cadfoot" id="cadFoot"></footer>
 </div>
 <aside class="sidecol outside">
   <div id="schedWrap"></div>
-  <div class="panelbox" id="legendBox"></div>
-  <div class="panelbox" id="notesBox"></div>
 </aside>
 </div>
 <div class="scanbar"></div>
 
 <!-- DOC OVERLAY -->
 <div class="modal" id="modal" onclick="if(event.target===this)closeDoc()">
-  <div class="doc">
-    <span class="dbr tl"></span><span class="dbr tr"></span><span class="dbr bl"></span><span class="dbr br2"></span>
-    <button class="close" onclick="closeDoc()">&times;</button>
-    <div class="dochead">
-      <div class="mod" id="dMod">MOD-00</div>
-      <h2 id="dTitle">—</h2>
-      <div class="dmeta" id="dMeta">—</div>
-    </div>
-    <div class="docbody" id="dBody"></div>
+<div class="doc">
+  <!-- 회로 배경 -->
+  <div class="doc-cbg">
+    <svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" preserveAspectRatio="xMidYMid slice">
+      <defs><filter id="dc-glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <g stroke="rgba(54,224,255,.04)" stroke-width="1"><line x1="192" y1="0" x2="192" y2="600"/><line x1="0" y1="68" x2="960" y2="68"/><line x1="0" y1="110" x2="960" y2="110"/><line x1="0" y1="530" x2="960" y2="530"/></g>
+      <g stroke="rgba(54,224,255,.09)" stroke-width="1" fill="none"><polyline points="820,120 880,120 880,180"/><polyline points="880,440 880,510 820,510"/><polyline points="210,240 280,240 280,280 350,280"/><polyline points="700,320 760,320 760,360 820,360"/></g>
+      <g fill="rgba(54,224,255,.18)" filter="url(#dc-glow)"><circle cx="880" cy="120" r="3"/><circle cx="880" cy="510" r="3"/><circle cx="280" cy="240" r="3"/><circle cx="760" cy="320" r="3"/></g>
+      <g stroke="rgba(255,61,240,.07)" stroke-width="1" fill="none"><polyline points="210,380 260,380 260,420 310,420"/><polyline points="750,140 800,140 800,200"/></g>
+      <g fill="rgba(255,61,240,.15)" filter="url(#dc-glow)"><circle cx="260" cy="380" r="2.5"/><circle cx="800" cy="140" r="2.5"/></g>
+      <circle r="3" fill="rgba(54,224,255,.45)" filter="url(#dc-glow)"><animateMotion dur="8s" repeatCount="indefinite"><mpath href="#dc-trace1"/></animateMotion></circle>
+      <path id="dc-trace1" d="M210,240 L280,240 L280,280 L350,280 L350,360 L600,360 L600,240 L820,240" fill="none"/>
+      <circle r="2.5" fill="rgba(255,61,240,.4)" filter="url(#dc-glow)"><animateMotion dur="11s" begin="-3s" repeatCount="indefinite"><mpath href="#dc-trace2"/></animateMotion></circle>
+      <path id="dc-trace2" d="M820,440 L760,440 L760,380 L500,380 L500,480 L210,480" fill="none"/>
+    </svg>
   </div>
+
+  <button class="close" onclick="closeDoc()">&times;</button>
+
+  <!-- 헤더 -->
+  <div class="dochead">
+    <svg class="dochead-svg" viewBox="0 0 960 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><filter id="dc-hglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+      <line x1="4" y1="0" x2="4" y2="92" stroke="#36e0ff" stroke-width="3" filter="url(#dc-hglow)" opacity=".9"/>
+      <line x1="4" y1="1" x2="956" y2="1" stroke="#36e0ff" stroke-width="1.2" opacity=".35"/>
+      <line x1="168" y1="1" x2="168" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".3"/><circle cx="168" cy="1" r="2.8" fill="#36e0ff" opacity=".55" filter="url(#dc-hglow)"/>
+      <line x1="290" y1="1" x2="290" y2="18" stroke="#36e0ff" stroke-width="1" opacity=".2"/><circle cx="290" cy="1" r="2.2" fill="#36e0ff" opacity=".35"/>
+      <line x1="4" y1="28" x2="820" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".18"/>
+      <rect x="830" y="6" width="118" height="80" fill="none" stroke="#36e0ff" stroke-width="1.3" opacity=".22"/><rect x="836" y="12" width="106" height="68" fill="none" stroke="#36e0ff" stroke-width=".8" opacity=".12"/>
+      <circle cx="830" cy="6" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#dc-hglow)"/><circle cx="948" cy="6" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#dc-hglow)"/><circle cx="830" cy="86" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#dc-hglow)"/><circle cx="948" cy="86" r="2.5" fill="#36e0ff" opacity=".4" filter="url(#dc-hglow)"/>
+      <polyline points="4,72 56,72 56,92" stroke="#ff3df0" stroke-width="1" fill="none" opacity=".25"/><circle cx="56" cy="72" r="2.2" fill="#ff3df0" opacity=".4" filter="url(#dc-hglow)"/>
+      <path d="M4,1 L24,1 M4,1 L4,18" stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+      <path d="M936,1 L956,1 M956,1 L956,18" stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+      <circle r="3" fill="#36e0ff" opacity=".7" filter="url(#dc-hglow)"><animateMotion dur="4s" repeatCount="indefinite"><mpath href="#dc-htrace"/></animateMotion></circle>
+      <path id="dc-htrace" d="M4,1 L390,1 L390,28 L168,28 L168,1 L830,1 L830,6" fill="none"/>
+    </svg>
+    <div class="dochead-strip">
+      <span class="dh-mod" id="dMod">MOD-00</span><span class="dh-sep">·</span>
+      <span class="dh-info" id="dCat">—</span><span class="dh-sep">·</span>
+      <span class="dh-info" id="dYear">—</span><span class="dh-sep">·</span>
+      <span class="dh-info" id="dRev">REV.0</span>
+      <span class="dh-live" id="dLive">● ON AIR</span>
+    </div>
+    <div class="dochead-main">
+      <div class="dh-ghost" id="dGhost">00</div>
+      <div class="dh-titles">
+        <h2 id="dTitle">—</h2>
+        <div class="dh-sub" id="dSub">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 타임코드 -->
+  <div class="doc-tc">
+    <span class="tc-main" id="dTcMain">—</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info" id="dTcCat">—</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info">S.E.T. ARCHIVE</span>
+    <div class="tc-right">
+      <span class="tc-id" id="dTcId">—</span>
+      <span class="tc-badge" id="dBadge">STD</span>
+    </div>
+  </div>
+
+  <!-- 본문 2컬럼 -->
+  <div class="doc-cols">
+    <div class="doc-meta">
+      <div class="doc-mb"><div class="doc-mk">CATEGORY</div><div class="doc-mv" id="mCat">—</div></div>
+      <div class="doc-mb"><div class="doc-mk">STATUS</div><div class="doc-mv cy" id="mStatus">—</div></div>
+      <div class="doc-mb"><div class="doc-mk">YEAR</div><div class="doc-mv sm" id="mYear">—</div></div>
+      <div class="doc-mb"><div class="doc-mk">ID</div><div class="doc-mv sm" id="mId">—</div></div>
+      <div class="doc-vtrace"><div class="doc-vline"></div><div class="doc-vnode"></div><div class="doc-vline"></div></div>
+    </div>
+    <div class="doc-content">
+      <span class="doc-reg tr"></span><span class="doc-reg bl"></span>
+      <div class="docbody" id="dBody"></div>
+    </div>
+  </div>
+
+  <!-- 풋터 -->
+  <div class="doc-foot">
+    <div class="doc-fl"><div class="fdot"></div><span>S.E.T. ARCHIVE · EL-01</span></div>
+    <div class="doc-fr">
+      <span class="doc-tag mg" id="fTagCat">—</span>
+      <span class="doc-tag cy" id="fTagStatus">—</span>
+      <span class="doc-tag yl" id="fTagYear">—</span>
+      <span class="doc-foot-id" id="fFootId">—</span>
+    </div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -378,7 +766,7 @@ function build(items){
   function catCode(i){return META[catOf2(items[i])].code;}
 
   /* ============ PLAN (svg) — faithful LPG site layout ============ */
-  var W=760, H=1160, s='';
+  var W=760, H=1110, s='';
   function TX(x,y,t,col,sz,anc,ls){return '<text x="'+x+'" y="'+y+'" fill="'+col+'" font-size="'+(sz||10)+'" font-family="Share Tech Mono"'+(anc?' text-anchor="'+anc+'"':'')+(ls?' letter-spacing="'+ls+'"':'')+'>'+t+'</text>';}
   function R(x,y,w,h,col,sw,fill){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+(fill||'none')+'" stroke="'+col+'" stroke-width="'+(sw||1.3)+'"/>';}
   function CIR(cx,cy,r,col,dash){return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="1.3"'+(dash?' stroke-dasharray="8 6"':'')+'/>';}
@@ -403,6 +791,21 @@ function build(items){
   s+=TX(sbx,sby+22,'0',CY,8,'middle')+TX(sbx+110,sby+22,'5m',CY,8,'middle');
   // compass
   s+='<g transform="translate(52,66)"><polygon points="0,-26 8,10 0,2 -8,10" fill="'+GN+'"/><line x1="0" y1="-26" x2="0" y2="16" stroke="#a02a96"/></g>'+TX(52,32,'N',GN,14,'middle');
+
+  // ===== S.E.T. TITLE BLOCK (top-left) =====
+  s+=R(20,16,258,46,GN,1.5,'rgba(8,2,20,.92)');
+  s+='<line x1="20" y1="16" x2="278" y2="16" stroke="'+GN+'" stroke-width="3" opacity=".9"/>';
+  s+='<line x1="20" y1="16" x2="20" y2="62" stroke="'+GN+'" stroke-width="1.5" opacity=".4"/>';
+  s+='<line x1="278" y1="16" x2="278" y2="62" stroke="'+GN+'" stroke-width="1.5" opacity=".4"/>';
+  s+='<line x1="20" y1="62" x2="278" y2="62" stroke="'+GN+'" stroke-width="1" opacity=".25"/>';
+  s+=TX(149,36,'S.E.T. // LOG STATION',GN,13,'middle',2);
+  s+=TX(149,54,'ARCHIVE WORKFLOW LAYOUT',CY,8,'middle',3.5);
+  s+='<circle cx="20" cy="16" r="2.5" fill="'+GN+'" opacity=".9"/>';
+  s+='<circle cx="278" cy="16" r="2.5" fill="'+GN+'" opacity=".9"/>';
+  s+='<circle cx="20" cy="62" r="2" fill="'+GN+'" opacity=".4"/>';
+  s+='<circle cx="278" cy="62" r="2" fill="'+GN+'" opacity=".4"/>';
+  s+='<circle cx="252" cy="28" r="3.5" fill="'+RD+'"><animate attributeName="opacity" values="1;0.1;1" dur="1.4s" calcMode="discrete" repeatCount="indefinite"/></circle>';
+  s+='<text x="259" y="32" fill="'+RD+'" font-size="8" font-family="Share Tech Mono" letter-spacing="2"><animate attributeName="opacity" values="1;0.1;1" dur="1.4s" calcMode="discrete" repeatCount="indefinite"/>REC</text>';
 
   // ===== CONTROL / ESD ROOMS (top centre) =====
   s+=R(300,40,360,118,CY,1.5)+LN(480,40,480,158,CY,1.3);
@@ -494,12 +897,6 @@ function build(items){
   s+=lamp(118,200)+TX(118,224,'색인 L1',YL,8,'middle')+lamp(560,210)+TX(560,234,'색인 L2',YL,8,'middle')+lamp(706,840)+TX(706,864,'L3 · 내보내기',YL,8,'middle');
   // (motor symbol removed — label overlapped nodes)
 
-  // ===== bottom hazard band: EXIT / ENTRY / ENTRY GATE =====
-  var hy=H-70, hh=36;
-  s+=R(20,hy,236,hh,BL,1.2,'url(#haz)')+TX(138,hy+hh+15,'내보내기 · EXPORT',CY,11,'middle',2);
-  s+=R(268,hy,224,hh,BL,1.2,'url(#haz)')+TX(380,hy+hh+15,'들이기 · IMPORT',CY,11,'middle',2);
-  s+='<polygon points="350,'+(hy-12)+' 362,'+(hy-12)+' 356,'+(hy-2)+'" fill="'+CY+'"/><polygon points="380,'+(hy-12)+' 392,'+(hy-12)+' 386,'+(hy-2)+'" fill="'+CY+'"/><polygon points="410,'+(hy-12)+' 422,'+(hy-12)+' 416,'+(hy-2)+'" fill="'+CY+'"/>';
-  s+=R(504,hy,232,hh,BL,1.2,'url(#haz)')+TX(620,hy+hh+15,'제출 게이트 · SUBMIT',CY,11,'middle',2);
 
   // ===== moving signal animation along route =====
   var flowD='M120 360 L300 360 L300 560 L484 560 L484 200 L560 200 L560 410 L668 410 L668 760 L420 760 L420 980 L760 980';
@@ -514,17 +911,25 @@ function build(items){
   var svg=document.getElementById('sch'); svg.setAttribute('viewBox','0 0 '+W+' '+H); svg.innerHTML=s;
 
   /* ============ SCHEDULE TABLES ============ */
-  var sw='';
+  var sw='', opsw='';
   order.forEach(function(k){var arr=byCat[k]; if(!arr.length)return; var m=META[k];
-    sw+='<div class="panelbox" style="margin-bottom:10px"><div class="ptitle">'+m.lbl+' SCHEDULE · '+m.ko+'</div>';
-    sw+='<table class="sched"><tr><th>NO</th><th>TITLE</th><th>GEN</th></tr>';
+    var col=m.col;
+    var isOps=(k==='ops');
+    var target=isOps?opsw:sw;
+    var isFirst=(target==='');
+    var block='<div class="panelbox" style="margin-top:'+(isFirst?'0':'10px')+';margin-bottom:0;border-color:'+col+'55">';
+    block+='<div class="ptitle" style="background:'+col+'18;color:'+col+';border-bottom-color:'+col+'33">'+m.lbl+' <span style="opacity:.45;font-size:9px">· '+m.ko+'</span></div>';
+    block+='<table class="sched"><tr><th>NO</th><th>TITLE</th><th>GEN</th></tr>';
     arr.forEach(function(idx){var it=items[idx];
       var t=it.title||'무제'; if(t.length>40)t=t.slice(0,39)+'…';
-      sw+='<tr class="cl" onclick="openDoc('+idx+')"><td class="no">'+pad(idx+1)+'</td><td>'+esc(t)+'</td><td class="gen" style="text-align:center">'+roundOf(it)+'</td></tr>';
+      block+='<tr class="cl" onclick="openDoc('+idx+')" onmouseenter="this.style.background=\''+col+'14\'" onmouseleave="this.style.background=\'\'">';
+      block+='<td class="no">'+pad(idx+1)+'</td><td>'+esc(t)+'</td><td class="gen" style="text-align:center;color:'+col+'">'+roundOf(it)+'</td></tr>';
     });
-    sw+='</table></div>';
+    block+='</table></div>';
+    if(isOps){opsw+=block;}else{sw+=block;}
   });
   document.getElementById('schedWrap').innerHTML=sw;
+  var opsEl=document.getElementById('opsBox'); if(opsEl) opsEl.innerHTML=opsw;
 
   /* ============ LEGEND ============ */
   var lg='<div class="ptitle cy">LEGEND</div>';
@@ -564,10 +969,32 @@ function build(items){
 
 function openDocItem(it, modLabel){
   if(!it)return;
-  document.getElementById('dMod').textContent=(modLabel||'MOD')+' // '+(it.category||'rule').toUpperCase();
+  var mod=modLabel||'MOD-00';
+  var cat=(it.category||'rule').toUpperCase();
+  var status=(it.status||'STD').toUpperCase();
+  var year=it.year||'—';
+  var id=it.id||'—';
+  var num=mod.replace(/[^0-9]/g,'')||'00';
+  document.getElementById('dMod').textContent=mod;
+  document.getElementById('dCat').textContent=cat;
+  document.getElementById('dYear').textContent=year;
+  document.getElementById('dLive').textContent='● '+status;
+  document.getElementById('dGhost').textContent=num.slice(-2).padStart(2,'0');
   document.getElementById('dTitle').textContent=it.title||'무제';
-  document.getElementById('dMeta').textContent='STATUS '+((it.status||'STD').toUpperCase())+'　·　'+(it.year||'—')+'　·　ID '+(it.id||'—');
+  document.getElementById('dSub').textContent=cat+' · S.E.T. ARCHIVE LOG STATION';
+  document.getElementById('dTcMain').textContent=mod+' · '+year;
+  document.getElementById('dTcCat').textContent=cat;
+  document.getElementById('dTcId').textContent='ID '+id;
+  document.getElementById('dBadge').textContent=status;
+  document.getElementById('mCat').textContent=cat;
+  document.getElementById('mStatus').textContent=status;
+  document.getElementById('mYear').textContent=year;
+  document.getElementById('mId').textContent=id;
   document.getElementById('dBody').innerHTML=it.text||it.preview||'<p>내용 없음</p>';
+  document.getElementById('fTagCat').textContent=cat;
+  document.getElementById('fTagStatus').textContent=status;
+  document.getElementById('fTagYear').textContent=year;
+  document.getElementById('fFootId').textContent=mod+' · '+year;
   const md=document.getElementById('modal');md.classList.add('on');md.scrollTop=0;
   const dc=md.querySelector('.doc');if(dc)dc.scrollTop=0;
 }
@@ -607,6 +1034,49 @@ function openFromQuery(){
     build(all.length?all:defaultItems);openFromQuery();
   }).catch(()=>{build(defaultItems);openFromQuery();});
 })();
+
+// ===== UI CONTROLS =====
+var _animPlaying = true;
+function toggleAnim() {
+  _animPlaying = !_animPlaying;
+  document.querySelectorAll('svg').forEach(function(svg) {
+    _animPlaying ? svg.unpauseAnimations() : svg.pauseAnimations();
+  });
+  document.getElementById('animIco').textContent = _animPlaying ? '■' : '▶';
+  document.getElementById('animKo').textContent = _animPlaying ? '애니메이션 정지' : '애니메이션 재생';
+  document.getElementById('animEn').textContent = _animPlaying ? 'PAUSE' : 'PLAY';
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+    document.body.classList.add('fs-mode');
+    document.getElementById('fsIco').textContent = '⊟';
+    document.getElementById('fsKo').textContent = '전체화면 해제';
+    document.getElementById('fsEn').textContent = 'EXIT FS';
+  } else {
+    document.exitFullscreen();
+  }
+}
+document.addEventListener('fullscreenchange', function() {
+  if (!document.fullscreenElement) {
+    document.body.classList.remove('fs-mode');
+    document.getElementById('fsIco').textContent = '⊞';
+    document.getElementById('fsKo').textContent = '전체화면';
+    document.getElementById('fsEn').textContent = 'FULLSCREEN';
+  }
+});
+
+function toggleInfo() {
+  var m = document.getElementById('infoModal');
+  var showing = m.style.display === 'flex';
+  m.style.display = showing ? 'none' : 'flex';
+  if (!showing) {
+    var cnt = document.getElementById('cnt');
+    var nc = document.getElementById('infoNodeCount');
+    if (cnt && nc) nc.textContent = cnt.textContent || '—';
+  }
+}
 </script>
 </body>
 </html>
