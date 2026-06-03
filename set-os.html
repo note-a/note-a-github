@@ -3538,7 +3538,7 @@ document.addEventListener('keydown',function(e){
       const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+s+')';
-      rail.style.top=(r.top + (r.height - railH*s)/2)+'px';  // wrap 기준 세로 중앙
+      rail.style.top=r.top+'px';  // wrap 상단 기준 정렬
       rail.style.right=(window.innerWidth-r.left+6)+'px';
     }
     window.addEventListener('resize',place);
