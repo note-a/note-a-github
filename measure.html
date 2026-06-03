@@ -675,7 +675,7 @@ function initCanvas() {
     if (phase==='pause') { if (phaseT>=55) { phase='wait'; phaseT=0; } }
     else if (phase==='wait') { if (phaseT>=MSGS[mi].wait) { phase='typing'; phaseT=0; dotCount=0; dotT=0; } }
     else if (phase==='typing') { dotT++; if (dotT%7===0) dotCount=(dotCount+1)%4; if (phaseT>=MSGS[mi].typing) { if (revealed<MSGS.length) revealed++; phase=revealed>=MSGS.length?'done':'wait'; phaseT=0; } }
-    else { doneT++; if (doneT>220) { MSGS=buildMsgs(); revealed=0; phase='intro'; phaseT=0; doneT=0; } }
+    else { doneT++; if (doneT>220) { MSGS=buildMsgs(); MSG_DATA=MSGS.map(m=>({...m,enLines:wrapEN(m.en)})); revealed=0; phase='intro'; phaseT=0; doneT=0; } }
     const showTyping=phase==='typing'&&revealed<MSGS.length;
 
     const CTOP=TOP_H+HDR_H+4, CAVAIL=H-BOT_H-CTOP;
@@ -713,7 +713,11 @@ function initCanvas() {
     tick++;
   }
   // 검색 후 즉시 기록 리셋 훅
-  window._refreshCanvas = () => { MSGS = buildMsgs(); revealed = 0; phase = 'pause'; phaseT = 0; doneT = 0; };
+  window._refreshCanvas = () => {
+    MSGS = buildMsgs();
+    MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
+    revealed = 0; phase = 'pause'; phaseT = 0; doneT = 0;
+  };
 
   setInterval(draw, 42);
 }
