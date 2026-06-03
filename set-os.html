@@ -50,8 +50,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .wc-br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
 
 /* ── LEFT RAIL : 집합도 / 등고선 ── */
-.lr-rail{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:3;
-  width:300px;height:min(757px,96vh);display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.lr-rail{position:fixed;z-index:3;width:300px;height:757px;transform-origin:top right;
+  display:flex;flex-direction:column;gap:6px;pointer-events:none;}
 .lr-dp{flex:1 1 0;min-height:0;background:#050302;border:1px solid var(--g4);
   display:flex;flex-direction:column;overflow:hidden;position:relative;
   box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 30px rgba(255,74,22,.05);}
@@ -3523,6 +3523,22 @@ document.addEventListener('keydown',function(e){
 (function(){
   const $=id=>document.getElementById(id);const p2=n=>String(n).padStart(2,'0');
   if(!$('svg-set'))return;
+
+  /* ── 레일을 메인(#wrap) 왼쪽 가장자리에 붙이기 (wrap과 동일 배율) ── */
+  (function(){
+    const rail=document.querySelector('.lr-rail'),wrap=$('wrap');
+    function place(){
+      if(!rail||!wrap)return;
+      const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
+      const r=wrap.getBoundingClientRect();
+      rail.style.transform='scale('+s+')';
+      rail.style.top=r.top+'px';
+      rail.style.right=(window.innerWidth-r.left+6)+'px';
+    }
+    window.addEventListener('resize',place);
+    window.addEventListener('orientationchange',()=>setTimeout(place,200));
+    setTimeout(place,0); setTimeout(place,120);
+  })();
 
   /* ════ F.01 집합도 ════ */
   (function(){
