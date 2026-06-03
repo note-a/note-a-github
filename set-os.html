@@ -88,6 +88,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-profile .plbl{position:absolute;left:3px;top:1px;font-size:5px;color:var(--g3);z-index:2;}
 .rr-rail{position:fixed;z-index:3;width:240px;height:330px;transform-origin:top left;
   display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.lr-rail .lr-dp{padding-right:0;}
+.rr-rail .lr-dp{padding-left:0;}
 @media (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
 
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
@@ -1478,10 +1480,6 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   </div>
 </aside>
 
-<div id="lr-bridge-t" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
-<div id="lr-bridge-b" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
-<div id="rr-bridge-t" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
-<div id="rr-bridge-b" style="position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);display:none;"></div>
 
 <div id="wrap">
   <div class="wc-bl"></div><div class="wc-br"></div>
@@ -3608,14 +3606,7 @@ document.addEventListener('keydown',function(e){
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+(s*1.2)+')';
       rail.style.top=r.top+'px';
-      rail.style.right=(window.innerWidth-r.left+6)+'px';
-      requestAnimationFrame(()=>{
-        const rb=rail.getBoundingClientRect();
-        const show=window.innerWidth>1560;
-        const bt=$('lr-bridge-t'),bb=$('lr-bridge-b');
-        if(bt){bt.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+rb.right+'px;top:'+rb.top+'px;width:'+(r.left-rb.right)+'px;';}
-        if(bb){bb.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+rb.right+'px;top:'+rb.bottom+'px;width:'+(r.left-rb.right)+'px;';}
-      });
+      rail.style.right=(window.innerWidth-r.left)+'px';
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
@@ -3708,14 +3699,7 @@ document.addEventListener('keydown',function(e){
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+(s*1.2)+')';
       rail.style.top=r.top+'px';
-      rail.style.left=(r.right+6)+'px';
-      requestAnimationFrame(()=>{
-        const rb=rail.getBoundingClientRect();
-        const show=window.innerWidth>1560;
-        const bt=$('rr-bridge-t'),bb=$('rr-bridge-b');
-        if(bt){bt.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+r.right+'px;top:'+rb.top+'px;width:'+(rb.left-r.right)+'px;';}
-        if(bb){bb.style.cssText='position:fixed;height:1px;z-index:2;pointer-events:none;background:var(--bd);'+(show?'display:block;':'display:none;')+'left:'+r.right+'px;top:'+rb.bottom+'px;width:'+(rb.left-r.right)+'px;';}
-      });
+      rail.style.left=r.right+'px';
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
