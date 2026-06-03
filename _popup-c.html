@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Popup C — BROADCAST SLATE v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;
+  background:#03060a;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% 50%,rgba(54,224,255,.06),transparent 65%),
+    radial-gradient(ellipse 60% 40% at 20% 80%,rgba(255,61,240,.04),transparent 50%);
+}
+
+/* ===== 팝업 컨테이너 ===== */
+.doc{
+  width:100%;max-width:960px;
+  background:#060810;
+  border:1.5px solid #36e0ff;
+  box-shadow:
+    0 0 0 3px rgba(54,224,255,.06),
+    0 0 50px rgba(54,224,255,.20),
+    0 0 110px rgba(54,224,255,.07);
+  position:relative;
+  animation:appear .3s ease-out;
+  overflow:hidden;
+}
+@keyframes appear{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+
+/* CRT 스캔라인 */
+.doc::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:200;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.13) 2px 3px);
+}
+
+/* 회로 배경 SVG (장식) */
+.circuit-bg{
+  position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+  opacity:.55;
+}
+
+/* ===== 헤더 ===== */
+.slate-head{
+  position:relative;z-index:10;
+  overflow:hidden;
+  background:linear-gradient(180deg,#0f0622 0%,#080610 100%);
+  border-bottom:1.5px solid #36e0ff;
+}
+.head-svg{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;z-index:2;
+}
+/* 상단 메타 스트립 */
+.head-strip{
+  display:flex;align-items:center;gap:14px;
+  padding:7px 100px 6px 16px;
+  border-bottom:1px solid rgba(54,224,255,.12);
+  font-size:8.5px;letter-spacing:3px;
+  position:relative;z-index:5;overflow:hidden;
+}
+.head-strip::before{
+  content:'';position:absolute;left:-40%;top:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(54,224,255,.09),transparent);
+  animation:hscan 3.5s linear infinite;
+}
+@keyframes hscan{to{left:140%;}}
+.hs-mod{color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.6);}
+.hs-sep{color:rgba(54,224,255,.18);}
+.hs-info{color:rgba(54,224,255,.4);}
+.hs-live{
+  margin-left:auto;color:#ffd24a;letter-spacing:3px;
+  text-shadow:0 0 8px rgba(255,210,74,.5);
+  animation:liveblink 1.3s steps(1) infinite;
+}
+@keyframes liveblink{50%{opacity:.2;}}
+/* 타이틀 메인 존 */
+.head-main{
+  position:relative;z-index:5;
+  padding:11px 16px 13px 16px;
+  display:flex;align-items:center;
+}
+.head-ghost{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-size:72px;line-height:1;font-weight:700;letter-spacing:-3px;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(54,224,255,.13);
+  pointer-events:none;user-select:none;
+  font-family:'Share Tech Mono',monospace;
+}
+.head-titles{flex:1;}
+.head-titles h2{
+  font-family:'IBM Plex Sans KR',monospace;font-weight:700;
+  font-size:20px;color:#fff;
+  text-shadow:0 0 18px rgba(54,224,255,.3);
+  line-height:1.2;margin-bottom:5px;
+}
+.head-titles .ht-sub{
+  font-size:9px;letter-spacing:3px;color:#ff3df0;
+  text-shadow:0 0 8px rgba(255,61,240,.4);
+  display:flex;align-items:center;gap:8px;
+}
+.head-titles .ht-sub::before{
+  content:'';display:inline-block;width:18px;height:1px;
+  background:#ff3df0;box-shadow:0 0 6px #ff3df0;
+}
+
+/* 닫기 */
+.close{
+  position:absolute;top:14px;right:14px;z-index:300;
+  width:34px;height:34px;
+  border:1px solid rgba(54,224,255,.5);background:rgba(6,8,16,.9);
+  color:#36e0ff;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,0 100%);
+}
+.close:hover{background:#36e0ff;color:#000;box-shadow:0 0 14px rgba(54,224,255,.5);}
+
+/* ===== 타임코드 바 ===== */
+.timecode{
+  display:flex;align-items:center;
+  background:rgba(54,224,255,.06);
+  border-bottom:1px solid rgba(54,224,255,.14);
+  padding:6px 18px;gap:18px;
+  font-size:9px;letter-spacing:2px;
+  position:relative;z-index:10;
+  overflow:hidden;
+}
+/* 스캔 바 애니메이션 */
+.timecode::before{
+  content:'';position:absolute;left:-30%;top:0;width:30%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(54,224,255,.12),transparent);
+  animation:tcscan 3s linear infinite;
+}
+@keyframes tcscan{to{left:130%;}}
+.tc-main{
+  font-size:14px;letter-spacing:3px;color:#36e0ff;
+  text-shadow:0 0 12px rgba(54,224,255,.55);
+  font-variant-numeric:tabular-nums;
+}
+.tc-sep{color:rgba(54,224,255,.2);font-size:11px;}
+.tc-info{color:rgba(54,224,255,.4);font-size:8.5px;letter-spacing:2px;}
+.tc-right{margin-left:auto;display:flex;gap:12px;align-items:center;}
+.tc-badge{
+  padding:2px 10px;background:#36e0ff;color:#000;
+  font-size:8px;letter-spacing:3px;font-weight:700;
+  animation:badgepulse 2s ease-in-out infinite;
+}
+@keyframes badgepulse{0%,100%{opacity:1;box-shadow:0 0 6px rgba(54,224,255,.4);}50%{opacity:.8;box-shadow:0 0 14px rgba(54,224,255,.7);}}
+.tc-id{color:rgba(255,210,74,.7);font-size:9px;letter-spacing:2px;}
+
+/* ===== 2컬럼 본문 ===== */
+.doc-cols{
+  display:grid;
+  grid-template-columns:192px 1fr;
+  min-height:400px;
+  position:relative;z-index:10;
+}
+
+/* ─── 왼쪽 메타 컬럼 ─── */
+.meta-col{
+  border-right:1px solid rgba(54,224,255,.12);
+  padding:18px 14px 18px 16px;
+  background:rgba(54,224,255,.025);
+  display:flex;flex-direction:column;gap:0;
+  position:relative;overflow:hidden;
+}
+/* 회로 코너 장식 */
+.meta-col::before{
+  content:'';position:absolute;top:10px;right:10px;
+  width:14px;height:14px;
+  border-top:1.5px solid rgba(54,224,255,.35);
+  border-right:1.5px solid rgba(54,224,255,.35);
+}
+.meta-col::after{
+  content:'';position:absolute;bottom:10px;left:10px;
+  width:14px;height:14px;
+  border-bottom:1.5px solid rgba(255,61,240,.25);
+  border-left:1.5px solid rgba(255,61,240,.25);
+}
+
+.meta-block{padding:10px 0;border-bottom:1px dashed rgba(54,224,255,.1);}
+.meta-block:last-of-type{border-bottom:none;}
+.mk{font-size:7.5px;letter-spacing:3px;color:rgba(54,224,255,.35);margin-bottom:4px;}
+.mv{font-size:13px;color:#ffd24a;text-shadow:0 0 8px rgba(255,210,74,.2);}
+.mv.cy{color:#ff3df0;text-shadow:0 0 8px rgba(255,61,240,.2);}
+.mv.sm{font-size:11px;color:rgba(255,200,100,.6);}
+
+/* 진행도 */
+.progress-wrap{margin-top:auto;padding-top:14px;}
+.prog-label-top{font-size:7.5px;letter-spacing:3px;color:rgba(54,224,255,.35);margin-bottom:7px;}
+.prog-track{height:2px;background:rgba(54,224,255,.12);position:relative;margin-bottom:5px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#36e0ff,#ff3df0);width:72%;position:relative;}
+.prog-fill::after{
+  content:'';position:absolute;right:-1px;top:-3px;width:8px;height:8px;
+  border-radius:50%;background:#ff3df0;box-shadow:0 0 8px #ff3df0;
+}
+.prog-pct{font-size:9px;letter-spacing:1px;color:rgba(255,61,240,.5);}
+
+/* 수직 회로 트레이스 */
+.vtrace{
+  position:absolute;right:0;top:0;bottom:0;width:14px;
+  display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;
+}
+.vnode{width:5px;height:5px;border-radius:50%;background:#36e0ff;
+  box-shadow:0 0 6px #36e0ff;margin:auto;flex:0 0 auto;}
+.vline{flex:1;width:1px;background:linear-gradient(180deg,rgba(54,224,255,.1),rgba(54,224,255,.25),rgba(54,224,255,.1));}
+
+/* ─── 오른쪽 콘텐츠 ─── */
+.content-col{
+  padding:20px 26px 26px;
+  position:relative;overflow:hidden;
+}
+/* 코너 등록 마크 */
+.reg{position:absolute;width:20px;height:20px;pointer-events:none;}
+.reg.tr{top:10px;right:10px;border-top:1.5px solid rgba(255,61,240,.3);border-right:1.5px solid rgba(255,61,240,.3);}
+.reg.bl{bottom:10px;left:10px;border-bottom:1.5px solid rgba(54,224,255,.2);border-left:1.5px solid rgba(54,224,255,.2);}
+
+/* ===== 본문 ===== */
+.docbody{line-height:2.05;font-size:16px;color:#c0d0e8;position:relative;z-index:1;}
+
+.docbody h2{
+  display:flex;align-items:center;gap:10px;
+  font-size:8.5px;letter-spacing:5px;
+  color:#36e0ff;text-shadow:0 0 10px rgba(54,224,255,.4);
+  margin:22px 0 11px;
+  position:relative;
+}
+.docbody h2 .node{
+  width:6px;height:6px;border-radius:50%;
+  background:#36e0ff;box-shadow:0 0 8px #36e0ff;
+  flex:0 0 auto;
+}
+.docbody h2 .ln{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(54,224,255,.4),rgba(54,224,255,.08));
+}
+.docbody h2 .lnr{
+  flex:1;height:1px;
+  background:linear-gradient(270deg,rgba(54,224,255,.4),rgba(54,224,255,.08));
+}
+
+.docbody h3{
+  font-size:13px;color:#ff3df0;
+  letter-spacing:1px;margin:16px 0 8px;
+  text-shadow:0 0 8px rgba(255,61,240,.3);
+  display:flex;align-items:center;gap:8px;
+}
+.docbody h3::before{content:'◈';font-size:8px;color:rgba(255,61,240,.5);}
+
+.docbody p{margin:8px 0;}
+.docbody strong{color:#fff;}
+.docbody em{color:#ffd24a;font-style:normal;text-shadow:0 0 6px rgba(255,210,74,.2);}
+
+.docbody ul{list-style:none;margin:10px 0;}
+.docbody li{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:7px 0 7px 0;
+  border-bottom:1px solid rgba(54,224,255,.06);
+  position:relative;
+}
+/* 리스트 왼쪽 회로 트레이스 */
+.docbody li::before{
+  content:'▸';color:#36e0ff;flex:0 0 auto;font-size:9px;margin-top:5px;
+}
+
+.docbody blockquote{
+  margin:18px 0;padding:14px 18px;
+  border:none;
+  background:rgba(54,224,255,.055);
+  outline:1px solid rgba(54,224,255,.18);
+  color:#b0c4e0;
+  position:relative;
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%);
+}
+.docbody blockquote::before{
+  content:'REC ●';
+  position:absolute;top:-9px;left:16px;
+  background:#36e0ff;color:#000;
+  font-size:8px;letter-spacing:3px;padding:1px 9px;
+  animation:recpulse 1.4s steps(1) infinite;
+}
+@keyframes recpulse{50%{background:rgba(54,224,255,.6);color:rgba(0,0,0,.5);}}
+.docbody blockquote strong{color:#36e0ff;text-shadow:0 0 8px rgba(54,224,255,.4);}
+
+/* ===== 하단 회로 풋터 ===== */
+.doc-foot{
+  display:flex;align-items:stretch;
+  border-top:1px solid rgba(54,224,255,.15);
+  position:relative;z-index:10;
+  overflow:hidden;
+}
+/* 풋터 내 흐르는 트레이스 라인 */
+.doc-foot::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#ff3df0 30%,#36e0ff 70%,transparent);
+  opacity:.4;
+}
+.foot-left{
+  flex:0 0 192px;
+  border-right:1px dashed rgba(54,224,255,.12);
+  padding:8px 14px;
+  font-size:8px;letter-spacing:2px;color:rgba(54,224,255,.3);
+  display:flex;align-items:center;gap:8px;
+}
+.foot-left .fdot{width:5px;height:5px;border-radius:50%;background:#36e0ff;box-shadow:0 0 6px #36e0ff;flex:0 0 auto;}
+.foot-right{
+  flex:1;padding:8px 18px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.ftag{
+  padding:2px 9px;
+  border:1px solid;font-size:8px;letter-spacing:2px;
+  transition:.12s;
+}
+.ftag.mg{border-color:rgba(54,224,255,.4);color:rgba(54,224,255,.7);}
+.ftag.cy{border-color:rgba(255,61,240,.4);color:rgba(255,61,240,.7);}
+.ftag.yl{border-color:rgba(255,210,74,.4);color:rgba(255,210,74,.7);}
+.foot-id{margin-left:auto;font-size:8px;letter-spacing:2px;color:rgba(255,61,240,.3);}
+
+/* 회로 배경 SVG */
+.circuit-bg svg{width:100%;height:100%;}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- 회로 배경 -->
+  <div class="circuit-bg">
+    <svg xmlns="http://www.w3.org/2000/svg" width="960" height="600" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- 배경 그리드 -->
+      <g stroke="rgba(54,224,255,.04)" stroke-width="1">
+        <line x1="192" y1="0" x2="192" y2="600"/>
+        <line x1="0" y1="68" x2="960" y2="68"/>
+        <line x1="0" y1="110" x2="960" y2="110"/>
+        <line x1="0" y1="530" x2="960" y2="530"/>
+      </g>
+      <!-- 회로 트레이스 — 오른쪽 콘텐츠 영역 -->
+      <g stroke="rgba(54,224,255,.09)" stroke-width="1" fill="none">
+        <!-- 우상단 L자 -->
+        <polyline points="820,120 880,120 880,180"/>
+        <!-- 우하단 역L자 -->
+        <polyline points="880,440 880,510 820,510"/>
+        <!-- 중간 수평선 -->
+        <polyline points="210,240 280,240 280,280 350,280"/>
+        <polyline points="700,320 760,320 760,360 820,360"/>
+        <!-- 점 (솔더 조인트) -->
+      </g>
+      <!-- 솔더 조인트 -->
+      <g fill="rgba(54,224,255,.18)" filter="url(#glow)">
+        <circle cx="880" cy="120" r="3"/>
+        <circle cx="880" cy="510" r="3"/>
+        <circle cx="280" cy="240" r="3"/>
+        <circle cx="760" cy="320" r="3"/>
+      </g>
+      <!-- 시안 트레이스 -->
+      <g stroke="rgba(255,61,240,.07)" stroke-width="1" fill="none">
+        <polyline points="210,380 260,380 260,420 310,420"/>
+        <polyline points="750,140 800,140 800,200"/>
+        <polyline points="600,490 650,490 650,520"/>
+      </g>
+      <g fill="rgba(255,61,240,.15)" filter="url(#glow)">
+        <circle cx="260" cy="380" r="2.5"/>
+        <circle cx="800" cy="140" r="2.5"/>
+        <circle cx="650" cy="490" r="2.5"/>
+      </g>
+      <!-- 흐르는 신호 점 -->
+      <circle r="3" fill="rgba(54,224,255,.45)" filter="url(#glow)">
+        <animateMotion dur="8s" repeatCount="indefinite">
+          <mpath href="#trace1"/>
+        </animateMotion>
+      </circle>
+      <path id="trace1" d="M210,240 L280,240 L280,280 L350,280 L350,360 L600,360 L600,240 L820,240" fill="none"/>
+      <circle r="2.5" fill="rgba(255,61,240,.4)" filter="url(#glow)">
+        <animateMotion dur="11s" begin="-3s" repeatCount="indefinite">
+          <mpath href="#trace2"/>
+        </animateMotion>
+      </circle>
+      <path id="trace2" d="M820,440 L760,440 L760,380 L500,380 L500,480 L210,480" fill="none"/>
+    </svg>
+  </div>
+
+  <button class="close">&times;</button>
+
+  <!-- 헤더 -->
+  <div class="slate-head">
+
+    <!-- 회로 SVG 오버레이 -->
+    <svg class="head-svg" viewBox="0 0 960 92" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="hglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+
+      <!-- 좌측 세로 엣지 트레이스 -->
+      <line x1="4" y1="0" x2="4" y2="92" stroke="#36e0ff" stroke-width="3" filter="url(#hglow)" opacity=".9"/>
+
+      <!-- 상단 수평 트레이스 -->
+      <line x1="4" y1="1" x2="956" y2="1" stroke="#36e0ff" stroke-width="1.2" opacity=".35"/>
+
+      <!-- 스트립 구간 수직 분기선 + 솔더 조인트 -->
+      <line x1="168" y1="1" x2="168" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".3"/>
+      <circle cx="168" cy="1" r="2.8" fill="#36e0ff" opacity=".55" filter="url(#hglow)"/>
+      <circle cx="168" cy="28" r="2" fill="#36e0ff" opacity=".3"/>
+
+      <line x1="290" y1="1" x2="290" y2="18" stroke="#36e0ff" stroke-width="1" opacity=".2"/>
+      <circle cx="290" cy="1" r="2.2" fill="#36e0ff" opacity=".35"/>
+
+      <line x1="390" y1="1" x2="390" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".2"/>
+      <circle cx="390" cy="1" r="2" fill="#36e0ff" opacity=".3"/>
+
+      <!-- 스트립 하단 트레이스 -->
+      <line x1="4" y1="28" x2="820" y2="28" stroke="#36e0ff" stroke-width="1" opacity=".18"/>
+
+      <!-- 우측 회로 박스 (고스트 번호 구역) — 이중 테두리 -->
+      <rect x="830" y="6" width="118" height="80" fill="none" stroke="#36e0ff" stroke-width="1.3" opacity=".22"/>
+      <rect x="836" y="12" width="106" height="68" fill="none" stroke="#36e0ff" stroke-width=".8" opacity=".12"/>
+      <!-- 박스 코너 노드 -->
+      <circle cx="830" cy="6"   r="2.5" fill="#36e0ff" opacity=".4" filter="url(#hglow)"/>
+      <circle cx="948" cy="6"   r="2.5" fill="#36e0ff" opacity=".4" filter="url(#hglow)"/>
+      <circle cx="830" cy="86"  r="2.5" fill="#36e0ff" opacity=".4" filter="url(#hglow)"/>
+      <circle cx="948" cy="86"  r="2.5" fill="#36e0ff" opacity=".4" filter="url(#hglow)"/>
+      <!-- 박스 → 상단 트레이스 연결 -->
+      <line x1="830" y1="6" x2="830" y2="1" stroke="#36e0ff" stroke-width="1" opacity=".3"/>
+      <line x1="948" y1="6" x2="948" y2="1" stroke="#36e0ff" stroke-width="1" opacity=".3"/>
+
+      <!-- 타이틀 영역 — 좌측 수직 트레이스 -->
+      <polyline points="4,28 4,92" stroke="#36e0ff" stroke-width="1" opacity=".15" fill="none"/>
+
+      <!-- 타이틀 영역 — 하단 시안 트레이스 -->
+      <polyline points="4,72 56,72 56,92" stroke="#ff3df0" stroke-width="1" fill="none" opacity=".25"/>
+      <circle cx="56" cy="72" r="2.2" fill="#ff3df0" opacity=".4" filter="url(#hglow)"/>
+      <polyline points="200,92 200,80 460,80 460,92" stroke="#ff3df0" stroke-width="1" fill="none" opacity=".18"/>
+      <circle cx="200" cy="80" r="2" fill="#ff3df0" opacity=".3"/>
+      <circle cx="460" cy="80" r="2" fill="#ff3df0" opacity=".3"/>
+
+      <!-- GND 심볼 (타이틀 좌하단) -->
+      <line x1="24" y1="78" x2="24" y2="88" stroke="#36e0ff" stroke-width="1" opacity=".35"/>
+      <line x1="17" y1="88" x2="31" y2="88" stroke="#36e0ff" stroke-width="1.2" opacity=".35"/>
+      <line x1="19" y1="91" x2="29" y2="91" stroke="#36e0ff" stroke-width=".9" opacity=".25"/>
+
+      <!-- 상단 코너 등록 마크 -->
+      <path d="M4,1 L24,1 M4,1 L4,18"   stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+      <path d="M936,1 L956,1 M956,1 L956,18" stroke="#ff3df0" stroke-width="1.5" fill="none" opacity=".4"/>
+
+      <!-- 흐르는 신호 (스트립 트레이스 위) -->
+      <circle r="3" fill="#36e0ff" opacity=".7" filter="url(#hglow)">
+        <animateMotion dur="4s" repeatCount="indefinite">
+          <mpath href="#htrace"/>
+        </animateMotion>
+      </circle>
+      <path id="htrace" d="M4,1 L390,1 L390,28 L168,28 L168,1 L830,1 L830,6" fill="none"/>
+    </svg>
+
+    <div class="head-strip">
+      <span class="hs-mod">MOD-07</span>
+      <span class="hs-sep">·</span>
+      <span class="hs-info">DIR-GEN</span>
+      <span class="hs-sep">·</span>
+      <span class="hs-info">SPACE</span>
+      <span class="hs-sep">·</span>
+      <span class="hs-info">REV 2.1</span>
+      <span class="hs-live">● ON AIR</span>
+    </div>
+    <div class="head-main">
+      <div class="head-ghost">07</div>
+      <div class="head-titles">
+        <h2>지시문 변환 규칙 · SPACE v2</h2>
+        <div class="ht-sub">DIR-GEN · ARCHIVE LOG STATION</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 타임코드 -->
+  <div class="timecode">
+    <span class="tc-main">00:07:24:12</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info">TAKE 01</span>
+    <span class="tc-sep">|</span>
+    <span class="tc-info">ROLL A · 29.97fps</span>
+    <div class="tc-right">
+      <span class="tc-id">ID DIR-07</span>
+      <span class="tc-badge">ON AIR</span>
+    </div>
+  </div>
+
+  <!-- 본문 2컬럼 -->
+  <div class="doc-cols">
+
+    <!-- 메타 컬럼 -->
+    <div class="meta-col">
+      <div class="meta-block">
+        <div class="mk">CATEGORY</div>
+        <div class="mv">DIR-GEN</div>
+      </div>
+      <div class="meta-block">
+        <div class="mk">FIELD</div>
+        <div class="mv cy">SPACE</div>
+      </div>
+      <div class="meta-block">
+        <div class="mk">REVISION</div>
+        <div class="mv sm">v2.1</div>
+      </div>
+      <div class="meta-block">
+        <div class="mk">STATUS</div>
+        <div class="mv">PUBLISHED</div>
+      </div>
+      <div class="meta-block">
+        <div class="mk">YEAR</div>
+        <div class="mv sm">2024</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="prog-label-top">COMPLETENESS</div>
+        <div class="prog-track"><div class="prog-fill"></div></div>
+        <div class="prog-pct">72% — IN USE</div>
+      </div>
+      <!-- 수직 트레이스 -->
+      <div class="vtrace">
+        <div class="vline"></div>
+        <div class="vnode"></div>
+        <div class="vline"></div>
+      </div>
+    </div>
+
+    <!-- 콘텐츠 컬럼 -->
+    <div class="content-col">
+      <span class="reg tr"></span>
+      <span class="reg bl"></span>
+      <div class="docbody">
+        <h2><div class="node"></div><span class="ln"></span>개요 OVERVIEW<span class="lnr"></span><div class="node"></div></h2>
+        <p>공간 구조 사진에 적용하는 <strong>지시문 변환 규칙</strong>입니다. 각 문법(Grammar)에서 도출된 DIR 코드를 기반으로 실제 촬영 지시문을 생성합니다.</p>
+        <h3>적용 대상 문법</h3>
+        <ul>
+          <li><em>DIR-01 HRZLAY</em> — 수평 레이어: 인공 구조물이 자연을 수평 분리</li>
+          <li><em>DIR-04 VANSRC</em> — 소실점 수렴: 선형 구조가 발광 지점으로 수렴</li>
+          <li><em>DIR-07 EQREP</em> — 등간격 반복: 동일 형태의 규칙적 배열</li>
+        </ul>
+        <h2><div class="node"></div><span class="ln"></span>변환 기준 CONVERSION<span class="lnr"></span><div class="node"></div></h2>
+        <p>아래 기준표에 따라 각 문법 코드를 지시문으로 변환합니다. <strong>1차 문법(G-01~G-10)</strong>은 필수 적용, 2차 문법은 선택 적용.</p>
+        <blockquote>
+          <strong>핵심 원칙:</strong> 지시문은 "무엇을 찍을 것인가"가 아니라 "어떤 시각 구조를 만들 것인가"에 집중한다. 결과물의 구조적 속성을 명시할 것.
+        </blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- 풋터 -->
+  <div class="doc-foot">
+    <div class="foot-left">
+      <div class="fdot"></div>
+      <span>S.E.T. ARCHIVE · EL-01</span>
+    </div>
+    <div class="foot-right">
+      <span class="ftag mg">SPACE</span>
+      <span class="ftag cy">DIR-GEN</span>
+      <span class="ftag yl">v2</span>
+      <span class="ftag mg">PUBLISHED</span>
+      <span class="foot-id">REV 2.1 · 2024</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

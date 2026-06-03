@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Popup A — SIGNAL INTERCEPT</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;
+  background:#04000f;font-family:'Share Tech Mono','IBM Plex Sans KR',monospace;
+  background-image:
+    repeating-linear-gradient(0deg,transparent 0 2px,rgba(54,224,255,.025) 2px 3px),
+    radial-gradient(ellipse 120% 80% at 50% 0%,rgba(54,224,255,.08),transparent 60%);
+}
+
+/* ===== 컨테이너 — 잘린 모서리 ===== */
+.doc{
+  width:100%;max-width:940px;
+  background:#050510;
+  clip-path:polygon(0 0, calc(100% - 36px) 0, 100% 36px, 100% 100%, 36px 100%, 0 calc(100% - 36px));
+  border:none;
+  position:relative;
+  box-shadow:0 0 0 1.5px #36e0ff, 0 0 60px rgba(54,224,255,.2), 0 0 120px rgba(54,224,255,.08);
+  animation:appear .35s ease-out;
+}
+@keyframes appear{from{opacity:0;transform:scale(.96) translateY(12px);}to{opacity:1;transform:none;}}
+
+/* 잘린 모서리 장식 */
+.doc::before{
+  content:'';position:absolute;
+  top:0;right:0;
+  width:0;height:0;
+  border-style:solid;
+  border-width:0 36px 36px 0;
+  border-color:transparent #36e0ff transparent transparent;
+  z-index:10;
+}
+.doc::after{
+  content:'';position:absolute;
+  bottom:0;left:0;
+  width:0;height:0;
+  border-style:solid;
+  border-width:36px 0 0 36px;
+  border-color:transparent transparent transparent #36e0ff;
+  z-index:10;
+}
+
+/* ===== 시그널 헤더바 ===== */
+.sigbar{
+  display:flex;align-items:center;gap:16px;
+  padding:9px 20px;
+  background:rgba(54,224,255,.08);
+  border-bottom:1px solid rgba(54,224,255,.2);
+  font-size:9.5px;letter-spacing:2px;color:rgba(54,224,255,.6);
+  overflow:hidden;
+  position:relative;
+}
+.sigbar .live{
+  color:#ff3df0;letter-spacing:3px;
+  text-shadow:0 0 10px #ff3df0;
+  animation:blink 1.2s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:.2;}}
+.sigbar .bar{flex:1;height:4px;background:rgba(54,224,255,.1);position:relative;overflow:hidden;}
+.sigbar .bar::after{
+  content:'';position:absolute;left:-40%;top:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,#36e0ff,transparent);
+  animation:sweep 2.4s linear infinite;
+}
+@keyframes sweep{to{left:140%;}}
+.sigbar .freq{margin-left:auto;color:#ffd24a;text-shadow:0 0 8px rgba(255,210,74,.4);}
+
+/* ===== 바디 분할 ===== */
+.body-wrap{display:flex;min-height:500px;}
+
+/* 왼쪽 사이드바 */
+.sidebar{
+  flex:0 0 72px;
+  border-right:1px solid rgba(54,224,255,.15);
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 0;gap:20px;
+  background:rgba(54,224,255,.03);
+  position:relative;
+}
+.sidebar .vtxt{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-size:9px;letter-spacing:3px;
+  color:rgba(54,224,255,.5);
+  white-space:nowrap;
+}
+.sidebar .cat{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-size:11px;letter-spacing:2px;
+  color:#36e0ff;
+  text-shadow:0 0 10px rgba(54,224,255,.4);
+  white-space:nowrap;
+}
+.strength{display:flex;flex-direction:column;gap:3px;align-items:center;margin-top:auto;padding-bottom:12px;}
+.strength .bar{width:24px;height:5px;background:rgba(54,224,255,.12);}
+.strength .bar.on{background:#36e0ff;box-shadow:0 0 6px #36e0ff;}
+
+/* 오른쪽 콘텐츠 */
+.content{flex:1;padding:24px 32px 32px;overflow:hidden;}
+
+/* 헤더 */
+.content .mod{font-size:10px;letter-spacing:4px;color:rgba(54,224,255,.55);margin-bottom:8px;}
+.content h1{
+  font-family:'IBM Plex Sans KR',monospace;font-weight:700;font-size:27px;
+  color:#fff;
+  text-shadow:0 0 30px rgba(54,224,255,.35);
+  line-height:1.3;margin-bottom:10px;
+}
+.content .meta{
+  display:flex;gap:16px;flex-wrap:wrap;
+  font-size:10px;letter-spacing:2px;
+  border-top:1px solid rgba(54,224,255,.14);
+  padding-top:10px;margin-bottom:24px;
+}
+.content .meta span{color:#ffd24a;text-shadow:0 0 8px rgba(255,210,74,.3);}
+.content .meta b{color:rgba(54,224,255,.4);margin-right:4px;}
+
+/* 닫기 */
+.close{
+  position:absolute;top:46px;right:16px;
+  width:36px;height:36px;z-index:20;
+  border:1px solid rgba(54,224,255,.4);
+  background:transparent;color:#36e0ff;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:.15s;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
+}
+.close:hover{background:rgba(54,224,255,.15);border-color:#36e0ff;box-shadow:0 0 14px rgba(54,224,255,.4);}
+
+/* ===== 본문 텍스트 ===== */
+.docbody{line-height:2.1;font-size:16px;color:#b8d4ee;}
+.docbody h2{
+  font-size:10px;letter-spacing:4px;color:#36e0ff;
+  text-shadow:0 0 12px rgba(54,224,255,.5);
+  margin:24px 0 10px;
+  display:flex;align-items:center;gap:10px;
+}
+.docbody h2::before{content:'▶';font-size:7px;opacity:.8;}
+.docbody h2::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(54,224,255,.3),transparent);}
+.docbody h3{font-size:14px;color:#ff3df0;letter-spacing:1px;margin:18px 0 8px;text-shadow:0 0 10px rgba(255,61,240,.35);}
+.docbody p{margin:8px 0;}
+.docbody strong{color:#fff;}
+.docbody em{color:#ffd24a;font-style:normal;}
+.docbody ul{margin:10px 0 10px 0;list-style:none;}
+.docbody li{padding:6px 0 6px 20px;position:relative;border-bottom:1px dashed rgba(54,224,255,.08);}
+.docbody li::before{content:'–';position:absolute;left:0;color:#36e0ff;}
+.docbody blockquote{
+  margin:18px 0;padding:14px 18px;
+  border-left:none;
+  background:rgba(54,224,255,.06);
+  outline:1px solid rgba(54,224,255,.18);
+  color:#9ed0f0;position:relative;
+}
+.docbody blockquote::before{
+  content:'INTERCEPT';position:absolute;top:-8px;left:14px;
+  font-size:8px;letter-spacing:3px;color:#36e0ff;background:#050510;padding:0 6px;
+}
+.docbody blockquote strong{color:#36e0ff;}
+
+/* ===== 하단 태그레일 ===== */
+.tagrail{
+  border-top:1px solid rgba(54,224,255,.15);
+  padding:10px 20px 10px 92px;
+  display:flex;gap:8px;flex-wrap:wrap;
+  background:rgba(54,224,255,.03);
+}
+.tag{font-size:9px;letter-spacing:2px;padding:3px 10px;border:1px solid;}
+.tag.cy{border-color:rgba(54,224,255,.5);color:#36e0ff;}
+.tag.mg{border-color:rgba(255,61,240,.5);color:#ff3df0;}
+.tag.yl{border-color:rgba(255,210,74,.5);color:#ffd24a;}
+</style>
+</head>
+<body>
+<div class="doc">
+  <button class="close">&times;</button>
+  <div class="sigbar">
+    <span class="live">● LIVE</span>
+    <span>FREQ 440.7 MHz</span>
+    <div class="bar"></div>
+    <span>ENC: UTF-8</span>
+    <span>PKT: 0x3F2A</span>
+    <span class="freq">ID DIR-07</span>
+  </div>
+  <div class="body-wrap">
+    <div class="sidebar">
+      <div class="vtxt">TRANSMISSION LOG</div>
+      <div class="cat">DIR</div>
+      <div class="strength">
+        <div class="bar on"></div><div class="bar on"></div><div class="bar on"></div>
+        <div class="bar on"></div><div class="bar"></div>
+      </div>
+    </div>
+    <div class="content">
+      <div class="mod">MOD-07 // DIR-GEN</div>
+      <h1>지시문 변환 규칙<br>SPACE v2</h1>
+      <div class="meta">
+        <span><b>STATUS</b>PUBLISHED</span>
+        <span><b>YEAR</b>2024</span>
+        <span><b>REV</b>2.1</span>
+      </div>
+      <div class="docbody">
+        <h2>개요 OVERVIEW</h2>
+        <p>공간 구조 사진에 적용하는 <strong>지시문 변환 규칙</strong>입니다. 각 문법(Grammar)에서 도출된 DIR 코드를 기반으로 실제 촬영 지시문을 생성합니다.</p>
+        <h3>적용 대상 문법</h3>
+        <ul>
+          <li><em>DIR-01 HRZLAY</em> — 수평 레이어: 인공 구조물이 자연을 수평 분리</li>
+          <li><em>DIR-04 VANSRC</em> — 소실점 수렴: 선형 구조가 발광 지점으로 수렴</li>
+          <li><em>DIR-07 EQREP</em> — 등간격 반복: 동일 형태의 규칙적 배열</li>
+        </ul>
+        <h2>변환 기준 CONVERSION</h2>
+        <p>아래 기준표에 따라 각 문법 코드를 지시문으로 변환합니다. <strong>1차 문법(G-01~G-10)</strong>은 필수 적용, 2차 문법은 선택 적용.</p>
+        <blockquote>
+          <strong>핵심 원칙:</strong> 지시문은 "무엇을 찍을 것인가"가 아니라 "어떤 시각 구조를 만들 것인가"에 집중한다.
+        </blockquote>
+      </div>
+    </div>
+  </div>
+  <div class="tagrail">
+    <span class="tag cy">SPACE</span>
+    <span class="tag mg">DIR-GEN</span>
+    <span class="tag yl">v2</span>
+    <span class="tag cy">PUBLISHED</span>
+  </div>
+</div>
+</body>
+</html>
