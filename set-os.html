@@ -3537,7 +3537,7 @@ document.addEventListener('keydown',function(e){
       if(!rail||!wrap)return;
       const s=Math.min(window.innerWidth/1140, window.innerHeight/757, 1);
       const r=wrap.getBoundingClientRect();
-      rail.style.transform='scale('+s+')';
+      rail.style.transform='scale('+(s*1.2)+')';  // 내용 120% 확대
       rail.style.top=r.top+'px';  // wrap 상단 기준 정렬
       rail.style.right=(window.innerWidth-r.left+6)+'px';
     }
