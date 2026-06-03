@@ -88,8 +88,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
 .lr-minibar{height:4px;margin:2px 6px;background:rgba(255,74,22,.08);border:1px solid var(--g4);position:relative;overflow:hidden;}
 .lr-minibar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--acc),var(--ac3));}
 .lr-slbl{font-size:5px;color:var(--g3);padding:0 6px;letter-spacing:.5px;}
-.lr-dp.data{flex:0 0 60px;}
-.lr-dp.data .lr-b{flex:0 0 auto;height:auto;overflow:hidden;}
+.rr-rail .lr-dp.data{flex:0 0 60px;overflow:hidden;}
+.rr-rail .lr-dp.data .lr-b{flex:0 0 auto;height:100%;overflow:hidden;}
 .lr-data{display:flex;align-items:stretch;}
 .lr-dcol{flex:1 1 0;min-width:0;border-right:1px solid var(--g4);padding-bottom:3px;display:flex;flex-direction:column;}
 .lr-dcol:last-child{border-right:none;}
@@ -1522,7 +1522,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
   <div class="lr-dp teal data">
    <div class="lr-dp-in">
     <div class="lr-h"><span class="arr">▶</span>ANALYSIS<span class="no">F.04</span><span class="tag">분석 데이터</span></div>
-    <div class="lr-b" style="flex:0 0 auto;height:auto;">
+    <div class="lr-b" style="flex:0 0 auto;height:auto;overflow:hidden;">
       <div class="lr-data">
         <div class="lr-dcol">
           <div class="sh">SPECIMEN</div>
