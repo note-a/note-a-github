@@ -2,468 +2,467 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>REFERENCE — Library</title>
+<title>REFERENCE — Darkroom</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --r0:#000000;
-  --r1:#0a0000;
-  --r2:#140000;
-  --r3:#2a0000;
-  --r4:#500000;
-  --r5:#8a0a00;
-  --r6:#c01800;
-  --r7:#e83010;
-  --r8:#ff5030;
-  --mono:'IBM Plex Mono',monospace;
-}
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{background:var(--r0);font-family:var(--mono);overflow:hidden;height:100%;}
-
-/* CRT 스캔라인 */
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
-  background:repeating-linear-gradient(0deg,
-    transparent 0,transparent 3px,
-    rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);}
-
-/* 빨간 앰비언스 오버레이 */
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
-  background:radial-gradient(ellipse 80% 80% at 50% 50%,
-    transparent 40%, rgba(120,0,0,.18) 100%);}
-
-/* ── nav ── */
-.nav{
-  position:fixed;top:0;left:0;right:0;z-index:200;height:30px;
-  display:flex;align-items:stretch;
-  border-bottom:1px solid #2a0000;
-  background:linear-gradient(180deg,#0a0000 0%,#060000 100%);}
-.nav-back{
-  display:flex;align-items:center;padding:0 13px;
-  font-size:7px;letter-spacing:1.5px;color:#3a0800;
-  border-right:1px solid #220000;cursor:pointer;transition:color .15s;
-  text-decoration:none;}
-.nav-back:hover{color:var(--r7);}
-.nav-title{
-  display:flex;align-items:center;padding:0 14px;
-  font-size:7px;letter-spacing:2.5px;color:#5a0a00;
-  border-right:1px solid #220000;}
+html,body{background:#030000;font-family:'IBM Plex Mono',monospace;overflow:hidden;height:100%;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);}
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:30px;display:flex;align-items:stretch;
+  border-bottom:1px solid #2a0000;background:linear-gradient(180deg,#0a0000,#060000);}
+.nav-back{display:flex;align-items:center;padding:0 13px;font-size:7px;letter-spacing:1.5px;
+  color:#3a0800;border-right:1px solid #200000;text-decoration:none;transition:color .15s;}
+.nav-back:hover{color:#e83010;}
+.nav-title{display:flex;align-items:center;padding:0 14px;font-size:7px;letter-spacing:2.5px;
+  color:#5a0a00;border-right:1px solid #200000;}
 .nav-sep{flex:1;}
-.nav-filter{
-  display:flex;align-items:center;padding:0 14px;
-  font-size:6.5px;letter-spacing:1.5px;color:#3a0800;
-  border-left:1px solid #220000;cursor:pointer;
-  transition:color .15s;user-select:none;}
-.nav-filter:hover{color:#9a1800;}
-.nav-filter.on{
-  color:var(--r7);
-  box-shadow:inset 0 -2px 0 var(--r6);}
-.nav-count{
-  display:flex;align-items:center;padding:0 13px;
-  font-size:6.5px;letter-spacing:1px;color:#280000;
-  border-left:1px solid #1a0000;}
-
-/* ── canvas ── */
-#ref-canvas{
-  position:fixed;top:30px;left:0;right:0;bottom:0;
-  display:block;cursor:none;z-index:2;}
-
-/* ── 상세 패널 ── */
-#detail-panel{
-  position:fixed;bottom:0;left:0;right:0;z-index:300;
-  height:86px;
-  border-top:1px solid #2a0000;
-  background:linear-gradient(180deg,rgba(8,0,0,.98) 0%,rgba(4,0,0,1) 100%);
-  display:flex;align-items:center;padding:0 24px;gap:22px;
+.nav-f{display:flex;align-items:center;padding:0 14px;font-size:6.5px;letter-spacing:1.5px;
+  color:#380800;border-left:1px solid #1a0000;cursor:pointer;transition:color .15s;user-select:none;}
+.nav-f:hover{color:#8a1600;}
+.nav-f.on{color:#e83010;box-shadow:inset 0 -2px 0 #a01200;}
+.nav-n{display:flex;align-items:center;padding:0 12px;font-size:6.5px;letter-spacing:1px;
+  color:#260000;border-left:1px solid #150000;}
+#cv{position:fixed;top:30px;left:0;right:0;bottom:0;display:block;cursor:none;}
+#dp{position:fixed;bottom:0;left:0;right:0;z-index:300;height:84px;
+  border-top:1px solid #280000;background:rgba(5,0,0,.97);
+  display:flex;align-items:center;padding:0 24px;gap:20px;
   transform:translateY(100%);transition:transform .22s ease;pointer-events:none;}
-#detail-panel.on{transform:translateY(0);pointer-events:auto;}
-#detail-close{
-  position:absolute;right:14px;top:10px;
-  font-size:6px;letter-spacing:1.5px;color:#3a0800;cursor:pointer;padding:4px 8px;
-  transition:color .12s;}
-#detail-close:hover{color:var(--r7);}
+#dp.on{transform:translateY(0);pointer-events:auto;}
+#dp-x{position:absolute;right:14px;top:10px;font-size:6px;letter-spacing:1.5px;
+  color:#380800;cursor:pointer;padding:4px 8px;transition:color .12s;}
+#dp-x:hover{color:#e83010;}
 </style>
 </head>
 <body>
-
 <div class="nav">
   <a class="nav-back" href="set-os.html">← SET·OS</a>
-  <div class="nav-title">REFERENCE · LIBRARY</div>
+  <div class="nav-title">REFERENCE · DARKROOM</div>
   <div class="nav-sep"></div>
-  <div class="nav-filter on"  onclick="setFilter('all',this)">ALL</div>
-  <div class="nav-filter"     onclick="setFilter('book',this)">BOOK</div>
-  <div class="nav-filter"     onclick="setFilter('idea',this)">IDEA</div>
-  <div class="nav-filter"     onclick="setFilter('ref',this)">REF</div>
-  <div class="nav-filter"     onclick="setFilter('exhibit',this)">EXHIBIT</div>
-  <div class="nav-count" id="nav-count"></div>
+  <div class="nav-f on" onclick="setF('all',this)">ALL</div>
+  <div class="nav-f"    onclick="setF('book',this)">BOOK</div>
+  <div class="nav-f"    onclick="setF('idea',this)">IDEA</div>
+  <div class="nav-f"    onclick="setF('ref',this)">REF</div>
+  <div class="nav-f"    onclick="setF('exhibit',this)">EXHIBIT</div>
+  <div class="nav-n" id="nn"></div>
 </div>
-
-<canvas id="ref-canvas"></canvas>
-
-<div id="detail-panel">
+<canvas id="cv"></canvas>
+<div id="dp">
   <div id="dp-type" style="width:58px;flex-shrink:0;"></div>
   <div style="width:1px;height:54px;flex-shrink:0;background:#1e0000;"></div>
   <div style="flex:1;min-width:0;">
     <div id="dp-title" style="font-size:16px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-    <div id="dp-sub" style="font-size:7px;color:#4a1008;margin-bottom:7px;"></div>
-    <div id="dp-excerpt" style="font-size:7.5px;color:#6a2015;line-height:1.65;font-style:italic;border-left:2px solid #1e0000;padding-left:8px;"></div>
+    <div id="dp-sub" style="font-size:7px;color:#4a0e08;margin-bottom:7px;"></div>
+    <div id="dp-ex" style="font-size:7.5px;color:#6a1e12;line-height:1.65;font-style:italic;border-left:2px solid #1e0000;padding-left:8px;"></div>
   </div>
   <div id="dp-tags" style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:flex-end;padding-right:26px;"></div>
-  <div id="detail-close" onclick="closeDetail()">✕ CLOSE</div>
+  <div id="dp-x" onclick="closeD()">✕ CLOSE</div>
 </div>
-
 <script>
-/* ════════════════════════
-   DATA
-════════════════════════ */
 const ITEMS=[
-  {id:0,type:'book',
-   title:'밝은 방',sub:'Roland Barthes · 1980',
-   excerpt:'punctum — 찌름. studium이 아닌 것, 그것이 나를 쏜다.',
-   tags:['photography','theory'],x:.12,y:.18},
-  {id:1,type:'book',
-   title:'사진에 관하여',sub:'Susan Sontag · 1977',
-   excerpt:'사진 찍는 행위는 세계를 소유하는 것이다. 이미지를 전유하는 것.',
-   tags:['photography','theory'],x:.52,y:.12},
-  {id:2,type:'book',
-   title:'눈의 문법',sub:'John Szarkowski · 1966',
-   excerpt:'가장자리, 디테일, 평면, 시간, 사물 자체의 것. 사진의 다섯 속성.',
-   tags:['photography'],x:.28,y:.52},
-  {id:3,type:'book',
-   title:'Ways of Seeing',sub:'John Berger · 1972',
-   excerpt:'우리는 먼저 보고 나서 말한다. 보는 방식이 우리가 아는 것보다 먼저다.',
-   tags:['theory'],x:.72,y:.42},
-  {id:4,type:'book',
-   title:'The Ongoing Moment',sub:'Geoff Dyer · 2005',
-   excerpt:'이미지는 이미지를 낳는다. 사진가들은 서로의 그림자를 찍는다.',
-   tags:['photography'],x:.62,y:.72},
-  {id:5,type:'book',
-   title:'집합론',sub:'Georg Cantor · 1874',
-   excerpt:'무한한 집합의 기수는 비교 가능하다. 부분이 전체와 같은 크기를 가질 수 있다.',
-   tags:['set·math'],x:.18,y:.78},
-  {id:6,type:'book',
-   title:'수학의 언어',sub:'Keith Devlin · 1998',
-   excerpt:'수학은 패턴의 과학이다. 시각적 패턴, 논리적 패턴, 관계의 패턴.',
-   tags:['set·math'],x:.82,y:.22},
-  {id:7,type:'book',
-   title:'On Photography',sub:'Susan Sontag · 1977',
-   excerpt:'카메라는 세계를 기록하는 것이 아니라 세계를 해석한다.',
-   tags:['photography','theory'],x:.4,y:.35},
-  {id:8,type:'idea',
-   title:'선택과 배제',sub:'작업 메모 · 2026',
-   excerpt:'셀렉션은 포함의 행위가 아니라 배제의 행위다. 살아남은 것이 아닌 탈락한 것이 집합을 정의한다.',
-   tags:['photography','set·math'],x:.45,y:.62},
-  {id:9,type:'idea',
-   title:'프레임의 정치',sub:'작업 메모 · 2025',
-   excerpt:'무엇을 프레임 안에 넣는가는 권력의 문제다. 가장자리가 의미를 만든다.',
-   tags:['photography','theory'],x:.22,y:.42},
-  {id:10,type:'idea',
-   title:'집합적 셀렉션',sub:'프로젝트 아이디어 · 2026',
-   excerpt:'438장 → 부분집합. 셀렉션 과정 자체를 집합론의 언어로 기록할 수 있을까.',
-   tags:['set·math','photography'],x:.68,y:.28},
-  {id:11,type:'idea',
-   title:'배제의 미학',sub:'메모 · 2026',
-   excerpt:'버린 사진들의 아카이브. 탈락한 것들이 선택된 것들보다 더 많이 말한다.',
-   tags:['photography'],x:.35,y:.85},
-  {id:12,type:'idea',
-   title:'측정과 기록',sub:'작업 방향 · 2026',
-   excerpt:'수치화할 수 없는 것을 수치화하려는 시도. 그 실패 자체가 작업이 된다.',
-   tags:['set·math'],x:.78,y:.60},
-  {id:13,type:'ref',
-   title:'New Topographics',sub:'William Jenkins · 1975',
-   excerpt:'평범한 것의 날카로움. 산업 풍경, 주차장, 창고. 아름답지 않은 것들의 아름다움.',
-   tags:['photography'],x:.08,y:.55},
-  {id:14,type:'ref',
-   title:'Bernd & Hilla Becher',sub:'Typologien · 1963–2007',
-   excerpt:'유형학적 반복. 물탱크, 고로, 가스탱크. 비교를 통해 형태가 드러난다.',
-   tags:['photography'],x:.58,y:.48},
-  {id:15,type:'ref',
-   title:'August Sander',sub:'Menschen des 20. Jahrhunderts',
-   excerpt:'유형으로서의 초상. 개인이 아닌 계층, 직업, 시대의 표본.',
-   tags:['photography'],x:.85,y:.72},
-  {id:16,type:'exhibit',
-   title:'한국 현대사진 60년',sub:'국립현대미술관 · 2017',
-   excerpt:'다큐멘터리에서 개념미술까지. 한국 사진의 계보를 한 번에.',
-   tags:['photography'],x:.3,y:.22},
-  {id:17,type:'exhibit',
-   title:'The Family of Man',sub:'MoMA · 1955',
-   excerpt:'503점. 인류 보편의 서사. 동시에 냉전 시대의 이데올로기.',
-   tags:['photography','theory'],x:.75,y:.85},
+  {id:0,type:'book',title:'밝은 방',sub:'Roland Barthes · 1980',
+   ex:'punctum — 찌름. studium이 아닌 것, 그것이 나를 쏜다.',tags:['photography','theory']},
+  {id:1,type:'book',title:'사진에 관하여',sub:'Susan Sontag · 1977',
+   ex:'사진 찍는 행위는 세계를 소유하는 것이다.',tags:['photography','theory']},
+  {id:2,type:'book',title:'눈의 문법',sub:'John Szarkowski · 1966',
+   ex:'가장자리, 디테일, 평면, 시간, 사물 자체의 것.',tags:['photography']},
+  {id:3,type:'book',title:'Ways of Seeing',sub:'John Berger · 1972',
+   ex:'보는 방식이 우리가 아는 것보다 먼저다.',tags:['theory']},
+  {id:4,type:'book',title:'The Ongoing Moment',sub:'Geoff Dyer · 2005',
+   ex:'이미지는 이미지를 낳는다.',tags:['photography']},
+  {id:5,type:'book',title:'집합론',sub:'Georg Cantor · 1874',
+   ex:'부분이 전체와 같은 크기를 가질 수 있다.',tags:['set·math']},
+  {id:6,type:'book',title:'수학의 언어',sub:'Keith Devlin · 1998',
+   ex:'수학은 패턴의 과학이다.',tags:['set·math']},
+  {id:7,type:'book',title:'On Photography',sub:'Susan Sontag · 1977',
+   ex:'카메라는 세계를 해석한다.',tags:['photography','theory']},
+  {id:8,type:'idea',title:'선택과 배제',sub:'작업 메모 · 2026',
+   ex:'셀렉션은 배제의 행위다. 탈락한 것이 집합을 정의한다.',tags:['photography','set·math']},
+  {id:9,type:'idea',title:'프레임의 정치',sub:'작업 메모 · 2025',
+   ex:'무엇을 프레임 안에 넣는가는 권력의 문제다.',tags:['photography','theory']},
+  {id:10,type:'idea',title:'집합적 셀렉션',sub:'프로젝트 아이디어 · 2026',
+   ex:'438장 → 부분집합. 셀렉션 과정을 집합론의 언어로.',tags:['set·math','photography']},
+  {id:11,type:'idea',title:'배제의 미학',sub:'메모 · 2026',
+   ex:'버린 사진들의 아카이브.',tags:['photography']},
+  {id:12,type:'idea',title:'측정과 기록',sub:'작업 방향 · 2026',
+   ex:'수치화 실패 자체가 작업이 된다.',tags:['set·math']},
+  {id:13,type:'ref',title:'New Topographics',sub:'William Jenkins · 1975',
+   ex:'평범한 것의 날카로움.',tags:['photography']},
+  {id:14,type:'ref',title:'Bernd & Hilla Becher',sub:'Typologien · 1963–2007',
+   ex:'유형학적 반복. 비교를 통해 형태가 드러난다.',tags:['photography']},
+  {id:15,type:'ref',title:'August Sander',sub:'Menschen des 20. Jahrhunderts',
+   ex:'유형으로서의 초상.',tags:['photography']},
+  {id:16,type:'exhibit',title:'한국 현대사진 60년',sub:'국립현대미술관 · 2017',
+   ex:'다큐멘터리에서 개념미술까지.',tags:['photography']},
+  {id:17,type:'exhibit',title:'The Family of Man',sub:'MoMA · 1955',
+   ex:'503점. 인류 보편의 서사.',tags:['photography','theory']},
 ];
 
-/* ════════════════════════
-   TYPE 컬러 — 모두 레드 계열
-════════════════════════ */
-const TC={
-  book:   '#ff3820',  // 브라이트 레드
-  idea:   '#e0304c',  // 크림슨
-  ref:    '#ff7030',  // 레드-오렌지
-  exhibit:'#d0a040',  // 앰버 (대비)
-};
-const TC_DIM={
-  book:   'rgba(255,56,32,.05)',
-  idea:   'rgba(224,48,76,.05)',
-  ref:    'rgba(255,112,48,.05)',
-  exhibit:'rgba(208,160,64,.05)',
+const TC={book:'#ff3820',idea:'#e0304c',ref:'#ff7030',exhibit:'#d0a040'};
+
+// 공간 비율
+const CY_R=0.61; // 카운터 상단 y
+const LY_R=0.27; // 건조선 y
+
+// 타입별 x 배치
+const PX={
+  book:   [.05,.16,.27,.38,.50,.62,.73,.85],
+  exhibit:[.22,.70],
+  idea:   [.07,.17,.27,.37,.47],
+  ref:    [.63,.74,.85],
 };
 
-/* ════════════════════════
-   STATE
-════════════════════════ */
-let cvs,ctx;
-let mx=null,my=null;
-let time=0;
-let filter='all';
-let selected=-1;
-const LOUPE_R=145;
-const ZOOM=1.9;
+let cvs,ctx,t=0,mx=null,my=null,flt='all',sel=-1;
+const LR=145, ZM=1.9;
 
-function visibleItems(){
-  return filter==='all'?ITEMS:ITEMS.filter(b=>b.type===filter);
+function vis(){return flt==='all'?ITEMS:ITEMS.filter(b=>b.type===flt);}
+
+function gp(item,W,H){
+  const idx=ITEMS.filter(b=>b.type===item.type).indexOf(item);
+  const x=(PX[item.type][idx]||.5)*W;
+  const CY=H*CY_R, LY=H*LY_R;
+  const y=item.type==='book'   ? LY+56
+          :item.type==='exhibit'? H*.14
+          : CY+8;
+  return{x,y};
 }
 
-/* ════════════════════════
-   FILTER / DETAIL
-════════════════════════ */
-function setFilter(f,el){
-  filter=f;selected=-1;closeDetail();
-  document.querySelectorAll('.nav-filter').forEach(e=>e.classList.remove('on'));
-  el.classList.add('on');
-  updateCount();
-}
-function updateCount(){
-  const n=visibleItems().length;
-  document.getElementById('nav-count').textContent=n+' items';
-}
-function openDetail(item){
-  selected=item.id;
-  const tc=TC[item.type];
-  document.getElementById('dp-type').innerHTML=
-    `<div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:3px;">${item.type.toUpperCase()}</div>
-     <div style="font-size:5px;letter-spacing:1px;color:#350808;">#${String(item.id+1).padStart(2,'0')}</div>`;
-  document.getElementById('dp-title').style.color=tc;
-  document.getElementById('dp-title').textContent=item.title;
-  document.getElementById('dp-sub').textContent=item.sub;
-  document.getElementById('dp-excerpt').textContent='"'+item.excerpt+'"';
-  document.getElementById('dp-tags').innerHTML=
-    item.tags.map(t=>`<div style="font-size:5.5px;letter-spacing:1.5px;color:#3a0808;
-      border:1px solid #280000;padding:2px 7px;">${t}</div>`).join('');
-  document.getElementById('detail-panel').classList.add('on');
-}
-function closeDetail(){
-  selected=-1;
-  document.getElementById('detail-panel').classList.remove('on');
-}
+// ─── 방 구조 ───
+function room(W,H,a){
+  const CY=H*CY_R, LY=H*LY_R;
 
-/* ════════════════════════
-   INIT
-════════════════════════ */
-function init(){
-  cvs=document.getElementById('ref-canvas');
-  ctx=cvs.getContext('2d');
-  resize();
-  window.addEventListener('resize',resize);
+  // 벽
+  const wg=ctx.createLinearGradient(0,0,0,CY);
+  wg.addColorStop(0,`rgba(5,0,0,${a})`);
+  wg.addColorStop(1,`rgba(8,0,0,${a})`);
+  ctx.fillStyle=wg; ctx.fillRect(0,0,W,CY);
 
-  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY-30;});
-  document.addEventListener('mouseleave',()=>{mx=null;my=null;});
+  // 벽 수평 질감
+  ctx.fillStyle=`rgba(20,0,0,${a*.3})`;
+  for(let y=0;y<CY;y+=10) ctx.fillRect(0,y,W,.4);
 
-  cvs.addEventListener('click',e=>{
-    if(mx===null)return;
-    const cx=e.clientX,cy=e.clientY-30;
-    const W=cvs.width,H=cvs.height;
-    const d=Math.hypot(cx-mx,cy-my);
-    if(d>LOUPE_R){closeDetail();return;}
-    const rx=mx+(cx-mx)*ZOOM;
-    const ry=my+(cy-my)*ZOOM;
-    const hit=visibleItems().find(b=>{
-      const bx=b.x*W,by=b.y*H;
-      return Math.abs(rx-bx)<96&&Math.abs(ry-by)<40;
-    });
-    if(hit)openDetail(hit);else closeDetail();
+  // 카운터 상단
+  const cg=ctx.createLinearGradient(0,CY,0,CY+22);
+  cg.addColorStop(0,`rgba(22,2,0,${a*2})`);
+  cg.addColorStop(1,`rgba(12,1,0,${a*2})`);
+  ctx.fillStyle=cg; ctx.fillRect(0,CY,W,22);
+  ctx.strokeStyle=`rgba(150,8,0,${a*3})`; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,CY);ctx.lineTo(W,CY);ctx.stroke();
+  ctx.strokeStyle=`rgba(0,0,0,${a*4})`;
+  ctx.beginPath();ctx.moveTo(0,CY+22);ctx.lineTo(W,CY+22);ctx.stroke();
+
+  // 바닥
+  ctx.fillStyle=`rgba(4,0,0,${a})`; ctx.fillRect(0,CY+22,W,H-CY-22);
+  // 바닥 원근선
+  const fp=CY+22; ctx.strokeStyle=`rgba(55,0,0,${a*.9})`; ctx.lineWidth=.4;
+  for(let i=0;i<=14;i++){
+    const fx=(i/14)*W;
+    ctx.beginPath();ctx.moveTo(W/2+(fx-W/2)*.1,fp);ctx.lineTo(fx,H);ctx.stroke();
+  }
+  for(let fy=fp,n=6,i=0;i<n;i++){
+    const y=fp+(H-fp)*i/n;
+    ctx.globalAlpha=(i/n)*a*.12;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+
+  // 건조선
+  ctx.strokeStyle=`rgba(110,8,0,${a*2.2})`; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(W*.02,LY);ctx.lineTo(W*.98,LY);ctx.stroke();
+  [W*.02,W*.98].forEach(ax=>{
+    ctx.fillStyle=`rgba(130,12,0,${a*3})`;
+    ctx.beginPath();ctx.arc(ax,LY,4,0,Math.PI*2);ctx.fill();
   });
 
-  updateCount();
-  (function loop(){time+=.011;draw();requestAnimationFrame(loop);})();
+  // 현상 트레이
+  const ty=CY+3, th=16;
+  // DEVELOPER (왼쪽 — 아이디어 구역)
+  ctx.fillStyle=`rgba(14,1,0,${a*2.5})`; ctx.fillRect(W*.03,ty,W*.46,th);
+  ctx.strokeStyle=`rgba(90,5,0,${a*3.5})`; ctx.lineWidth=.5;
+  ctx.strokeRect(W*.03,ty,W*.46,th);
+  const dg=ctx.createLinearGradient(W*.03,ty,W*.49,ty);
+  dg.addColorStop(0,`rgba(35,2,0,${a*3})`);dg.addColorStop(.5,`rgba(45,3,0,${a*3})`);dg.addColorStop(1,`rgba(28,1,0,${a*3})`);
+  ctx.fillStyle=dg; ctx.fillRect(W*.03,ty,W*.46,3);
+
+  // STOP (가운데 — 작은 구분)
+  ctx.fillStyle=`rgba(14,1,0,${a*2.5})`; ctx.fillRect(W*.51,ty,W*.07,th);
+  ctx.strokeStyle=`rgba(90,5,0,${a*3.5})`; ctx.strokeRect(W*.51,ty,W*.07,th);
+
+  // FIXER (오른쪽 — ref 구역)
+  ctx.fillStyle=`rgba(14,1,0,${a*2.5})`; ctx.fillRect(W*.60,ty,W*.32,th);
+  ctx.strokeStyle=`rgba(90,5,0,${a*3.5})`; ctx.strokeRect(W*.60,ty,W*.32,th);
+  const fg=ctx.createLinearGradient(W*.60,ty,W*.92,ty);
+  fg.addColorStop(0,`rgba(28,2,0,${a*3})`);fg.addColorStop(.5,`rgba(40,3,0,${a*3})`);fg.addColorStop(1,`rgba(22,1,0,${a*3})`);
+  ctx.fillStyle=fg; ctx.fillRect(W*.60,ty,W*.32,3);
+
+  // 트레이 라벨
+  ctx.font='300 5px IBM Plex Mono'; ctx.textAlign='center';
+  ctx.fillStyle=`rgba(90,8,0,${a*3.5})`;
+  ctx.fillText('DEVELOPER',W*.26,CY+32);
+  ctx.fillText('STOP',W*.545,CY+32);
+  ctx.fillText('FIXER',W*.76,CY+32);
+
+  // 세이프라이트 램프
+  const slX=W*.5;
+  ctx.strokeStyle=`rgba(60,4,0,${a*4})`; ctx.lineWidth=.6;
+  ctx.beginPath();ctx.moveTo(slX,0);ctx.lineTo(slX,13);ctx.stroke();
+  ctx.fillStyle=`rgba(28,2,0,${a*6})`; ctx.fillRect(slX-22,13,44,12);
+  ctx.strokeStyle=`rgba(100,8,0,${a*6})`; ctx.lineWidth=.5;
+  ctx.strokeRect(slX-22,13,44,12);
+  // 램프 소자
+  ctx.fillStyle=`rgba(200,10,0,${a*8})`;
+  ctx.beginPath();ctx.ellipse(slX,19,11,4,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle=`rgba(255,60,20,${a*7})`;
+  ctx.beginPath();ctx.ellipse(slX,19,5,2,0,0,Math.PI*2);ctx.fill();
+
+  // 타이머 (카운터 오른쪽 끝 디테일)
+  ctx.strokeStyle=`rgba(70,5,0,${a*2.5})`; ctx.lineWidth=.5;
+  ctx.beginPath();ctx.arc(W*.95,CY+10,8,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.95,CY+10);ctx.lineTo(W*.95,CY+4);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W*.95,CY+10);ctx.lineTo(W*.95+4,CY+10);ctx.stroke();
 }
 
-function resize(){
-  cvs.width=window.innerWidth;
-  cvs.height=window.innerHeight-30;
+// ─── 세이프라이트 빛 원뿔 ───
+function cone(W,H,a){
+  const slX=W*.5, slY=19;
+  const g=ctx.createRadialGradient(slX,slY,0,slX,slY,W*.7);
+  g.addColorStop(0,`rgba(170,6,0,${a*.32})`);
+  g.addColorStop(.22,`rgba(130,4,0,${a*.18})`);
+  g.addColorStop(.52,`rgba(80,2,0,${a*.08})`);
+  g.addColorStop(1,'transparent');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H*CY_R+10);
+
+  // 코너 앰비언스
+  [[0,0],[W,0]].forEach(([cx,cy])=>{
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,W*.4);
+    cg.addColorStop(0,`rgba(100,4,0,${a*.1})`);cg.addColorStop(1,'transparent');
+    ctx.fillStyle=cg; ctx.fillRect(0,0,W,H);
+  });
 }
 
-/* ════════════════════════
-   DRAW
-════════════════════════ */
+// ─── 아이템 희미한 윤곽 (루페 밖) ───
+function dimItem(item,pos){
+  const{x,y}=pos;
+  const tc=TC[item.type];
+  ctx.save();
+  if(item.type==='book'){
+    // 건조선 → 핀치 → 얇은 카드
+    ctx.globalAlpha=.09;
+    ctx.strokeStyle='rgba(120,8,0,1)'; ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,y-57);ctx.lineTo(x,y+25);ctx.stroke();
+    ctx.strokeStyle=tc; ctx.lineWidth=.4;
+    ctx.strokeRect(x-24,y-24,48,50);
+  } else if(item.type==='exhibit'){
+    ctx.globalAlpha=.07;
+    ctx.fillStyle='rgba(150,10,0,.8)';
+    ctx.beginPath();ctx.arc(x,y-32,2.5,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=tc; ctx.lineWidth=.4;
+    ctx.strokeRect(x-28,y-30,56,60);
+  } else {
+    // 트레이 안 — 거의 안 보임
+    ctx.globalAlpha=.06;
+    ctx.strokeStyle=tc; ctx.lineWidth=.4;
+    ctx.strokeRect(x-26,y-6,52,13);
+  }
+  ctx.restore();
+}
+
+// ─── 아이템 전체 디테일 (루페 안) ───
+function fullItem(item,pos,W,H){
+  const{x,y}=pos;
+  const tc=TC[item.type];
+  const LY=H*LY_R;
+  const fl=.94+Math.sin(t*1.4+item.id*1.7)*.06;
+  const isSel=item.id===sel;
+  const Z=ZM;
+  ctx.save();
+
+  if(item.type==='book'){
+    // 나무 집게
+    ctx.fillStyle='#3d1200'; ctx.fillRect(x-3/Z,LY-1/Z,6/Z,20/Z);
+    ctx.fillStyle='#5c1a00';
+    ctx.beginPath();ctx.ellipse(x,LY+4/Z,7/Z,5/Z,0,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#8a2800'; ctx.lineWidth=.5/Z; ctx.stroke();
+  }
+  if(item.type==='exhibit'){
+    // 압정
+    ctx.fillStyle='#900000';
+    ctx.beginPath();ctx.arc(x,y-42,4/Z,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#cc1000';
+    ctx.beginPath();ctx.arc(x,y-42,2/Z,0,Math.PI*2);ctx.fill();
+  }
+
+  // 카드 배경
+  ctx.globalAlpha=(isSel?.96:.84)*fl;
+  ctx.fillStyle=isSel?'#130100':'#0d0100';
+  ctx.fillRect(x-92,y-37,184,74);
+  if(isSel){ctx.globalAlpha=.11;ctx.fillStyle=tc;ctx.fillRect(x-92,y-37,184,74);}
+
+  // 번 효과
+  const bn=ctx.createRadialGradient(x,y+37,0,x,y+37,118);
+  bn.addColorStop(0,'transparent');bn.addColorStop(1,'rgba(50,0,0,.55)');
+  ctx.fillStyle=bn; ctx.fillRect(x-92,y-37,184,74);
+
+  // 테두리
+  ctx.globalAlpha=(isSel?.9:.5)*fl;
+  ctx.strokeStyle=tc; ctx.lineWidth=(isSel?1.4:.8)/Z;
+  ctx.strokeRect(x-92,y-37,184,74);
+
+  // TYPE
+  ctx.globalAlpha=.58*fl;
+  ctx.font=`500 ${6/Z*1.5}px IBM Plex Mono`;
+  ctx.fillStyle=tc; ctx.textAlign='left';
+  ctx.fillText(item.type.toUpperCase(),x-82,y-23);
+
+  // 제목
+  ctx.globalAlpha=fl;
+  ctx.font=`${isSel?600:500} ${13/Z*1.5}px IBM Plex Mono`;
+  ctx.fillStyle=isSel?tc:'rgba(210,65,45,1)';
+  ctx.textAlign='center'; ctx.fillText(item.title,x,y+3);
+
+  // 저자
+  ctx.globalAlpha=.6*fl;
+  ctx.font=`300 ${7.5/Z*1.5}px IBM Plex Mono`;
+  ctx.fillStyle='rgba(128,28,16,1)';
+  ctx.fillText(item.sub,x,y+18);
+
+  // 발췌
+  ctx.globalAlpha=.44*fl;
+  ctx.font=`300 ${6.5/Z*1.5}px IBM Plex Mono`;
+  ctx.fillStyle='rgba(145,48,28,1)';
+  const ex=item.ex.length>36?item.ex.slice(0,36)+'…':item.ex;
+  ctx.fillText(ex,x,y+31);
+
+  if(isSel){
+    ctx.globalAlpha=.38;
+    ctx.font=`300 ${5.5/Z*1.5}px IBM Plex Mono`;
+    ctx.fillStyle=tc;
+    ctx.fillText('▼ 하단에서 전체 보기',x,y+45);
+  }
+  ctx.restore();
+}
+
+// ─── 루페 링 ───
+function loupeRing(lx,ly){
+  ctx.save();
+  ctx.beginPath();ctx.arc(lx,ly,LR,0,Math.PI*2);
+  ctx.strokeStyle='rgba(200,16,0,.56)'; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.beginPath();ctx.arc(lx,ly,LR-4,0,Math.PI*2);
+  ctx.strokeStyle='rgba(160,8,0,.12)'; ctx.lineWidth=.8; ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(lx-LR*.2,ly-LR*.27,LR*.16,Math.PI*1.1,Math.PI*1.87);
+  ctx.strokeStyle='rgba(255,150,130,.07)'; ctx.lineWidth=3; ctx.stroke();
+  ctx.strokeStyle='rgba(180,10,0,.12)'; ctx.lineWidth=.5;
+  ctx.setLineDash([2,7]);
+  ctx.beginPath();ctx.moveTo(lx-LR+20,ly);ctx.lineTo(lx+LR-20,ly);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(lx,ly-LR+20);ctx.lineTo(lx,ly+LR-20);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// ─── 메인 드로우 ───
 function draw(){
   const W=cvs.width,H=cvs.height;
   if(!W||!H)return;
 
-  /* ── 배경 — 짙은 레드블랙 */
-  ctx.fillStyle='#030000';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#030000'; ctx.fillRect(0,0,W,H);
 
-  /* ── 세이프라이트 글로우 — 네 모서리 강한 레드 */
-  const corners=[[0,0],[W,0],[0,H],[W,H]];
-  corners.forEach(([cx2,cy2])=>{
-    const g=ctx.createRadialGradient(cx2,cy2,0,cx2,cy2,Math.max(W,H)*.55);
-    g.addColorStop(0,'rgba(180,6,0,.28)');
-    g.addColorStop(.4,'rgba(120,4,0,.1)');
-    g.addColorStop(1,'transparent');
-    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-  });
+  // 방 구조 (희미하게 — 항상 보임)
+  room(W,H,.13);
+  // 세이프라이트 원뿔
+  cone(W,H,1);
 
-  /* ── 중앙 약한 글로우 */
-  const cg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.5);
-  cg.addColorStop(0,'rgba(60,0,0,.08)');
-  cg.addColorStop(1,'transparent');
-  ctx.fillStyle=cg;ctx.fillRect(0,0,W,H);
+  const items=vis();
+  // 아이템 실루엣
+  items.forEach(b=>dimItem(b,gp(b,W,H)));
 
-  const vis=visibleItems();
-
-  /* ── 안내 문구 (마우스 없을 때) */
   if(mx===null){
-    ctx.save();
-    ctx.font='300 14px IBM Plex Mono';
-    ctx.fillStyle='rgba(180,10,0,.25)';
+    ctx.font='300 13px IBM Plex Mono';
+    ctx.fillStyle='rgba(180,10,0,.2)';
     ctx.textAlign='center';
     ctx.fillText('루페를 움직여 현상하세요',W/2,H/2);
     ctx.font='300 7.5px IBM Plex Mono';
-    ctx.fillStyle='rgba(150,8,0,.1)';
-    ctx.fillText('DARKROOM  ·  MOVE LOUPE TO REVEAL  ·  CLICK TO EXPAND',W/2,H/2+24);
-    ctx.restore();
+    ctx.fillStyle='rgba(140,6,0,.08)';
+    ctx.fillText('DARKROOM  ·  MOVE LOUPE TO REVEAL  ·  CLICK TO EXPAND',W/2,H/2+22);
     return;
   }
 
   const lx=mx,ly=my;
 
-  /* ── 루페 바깥 — 극히 희미한 레드 윤곽 */
-  vis.forEach(b=>{
-    const bx=b.x*W,by=b.y*H;
-    ctx.save();
-    ctx.globalAlpha=.05;
-    ctx.strokeStyle='#600000';ctx.lineWidth=.5;
-    ctx.strokeRect(bx-92,by-37,184,74);
-    ctx.restore();
-  });
-
-  /* ── 루페 클리핑 */
+  // ── 루페 ──
   ctx.save();
-  ctx.beginPath();ctx.arc(lx,ly,LOUPE_R,0,Math.PI*2);ctx.clip();
+  ctx.beginPath();ctx.arc(lx,ly,LR,0,Math.PI*2);ctx.clip();
 
-  /* 루페 내부 배경 — 어두운 레드 현상액 */
-  const lbg=ctx.createRadialGradient(lx,ly,0,lx,ly,LOUPE_R);
-  lbg.addColorStop(0,'rgba(22,4,2,1)');
-  lbg.addColorStop(.7,'rgba(14,2,1,1)');
-  lbg.addColorStop(1,'rgba(6,0,0,1)');
-  ctx.fillStyle=lbg;ctx.fillRect(lx-LOUPE_R,ly-LOUPE_R,LOUPE_R*2,LOUPE_R*2);
+  // 루페 내부 배경
+  const bg=ctx.createRadialGradient(lx,ly,0,lx,ly,LR);
+  bg.addColorStop(0,'rgba(20,2,1,1)');
+  bg.addColorStop(.8,'rgba(11,1,0,1)');
+  bg.addColorStop(1,'rgba(5,0,0,1)');
+  ctx.fillStyle=bg; ctx.fillRect(lx-LR,ly-LR,LR*2,LR*2);
 
-  /* 루페 내부 세이프라이트 앰비언스 */
-  const rg=ctx.createRadialGradient(lx,ly,0,lx,ly,LOUPE_R);
-  rg.addColorStop(0,'rgba(160,8,0,.1)');
-  rg.addColorStop(.6,'rgba(100,4,0,.06)');
-  rg.addColorStop(1,'transparent');
-  ctx.fillStyle=rg;ctx.fillRect(lx-LOUPE_R,ly-LOUPE_R,LOUPE_R*2,LOUPE_R*2);
+  // 루페 안 방 구조 (더 선명하게)
+  room(W,H,.42);
+  cone(W,H,.85);
 
-  /* 확대 변환 */
-  ctx.translate(lx,ly);ctx.scale(ZOOM,ZOOM);ctx.translate(-lx,-ly);
+  // 확대 변환
+  ctx.translate(lx,ly);ctx.scale(ZM,ZM);ctx.translate(-lx,-ly);
 
-  /* 아이템 렌더 */
-  vis.forEach((b,i)=>{
-    const bx=b.x*W,by=b.y*H;
-    const tc=TC[b.type];
-    const fl=.93+Math.sin(time*1.4+i*1.7)*.07;
-    const isSel=(b.id===selected);
-
-    ctx.save();
-    /* 카드 배경 */
-    ctx.globalAlpha=(isSel?.96:.84)*fl;
-    ctx.fillStyle=isSel?'#120200':'#0c0100';
-    ctx.fillRect(bx-92,by-37,184,74);
-
-    /* 선택 글로우 */
-    if(isSel){
-      ctx.globalAlpha=.12;
-      ctx.fillStyle=tc;
-      ctx.fillRect(bx-92,by-37,184,74);
-    }
-
-    /* 에지 번 — 인화지 화학 얼룩 */
-    const burn=ctx.createRadialGradient(bx,by+37,0,bx,by+37,115);
-    burn.addColorStop(0,'transparent');
-    burn.addColorStop(1,'rgba(60,0,0,.55)');
-    ctx.fillStyle=burn;ctx.fillRect(bx-92,by-37,184,74);
-
-    /* 카드 테두리 */
-    ctx.globalAlpha=(isSel?.9:.5)*fl;
-    ctx.strokeStyle=tc;
-    ctx.lineWidth=(isSel?1.4:.8)/ZOOM;
-    ctx.strokeRect(bx-92,by-37,184,74);
-
-    /* TYPE 태그 */
-    ctx.globalAlpha=.6*fl;
-    ctx.font=`500 ${6/ZOOM*1.5}px IBM Plex Mono`;
-    ctx.fillStyle=tc;ctx.textAlign='left';
-    ctx.fillText(b.type.toUpperCase(),bx-82,by-23);
-
-    /* 제목 */
-    ctx.globalAlpha=fl;
-    ctx.font=`${isSel?600:500} ${13/ZOOM*1.5}px IBM Plex Mono`;
-    ctx.fillStyle=isSel?tc:'rgba(220,80,60,1)';
-    ctx.textAlign='center';ctx.fillText(b.title,bx,by+3);
-
-    /* 저자 */
-    ctx.globalAlpha=.62*fl;
-    ctx.font=`300 ${7.5/ZOOM*1.5}px IBM Plex Mono`;
-    ctx.fillStyle='rgba(140,40,28,1)';
-    ctx.fillText(b.sub,bx,by+18);
-
-    /* 발췌 */
-    ctx.globalAlpha=.48*fl;
-    ctx.font=`300 ${6.5/ZOOM*1.5}px IBM Plex Mono`;
-    ctx.fillStyle='rgba(160,60,40,1)';
-    const ex=b.excerpt.length>38?b.excerpt.slice(0,38)+'…':b.excerpt;
-    ctx.fillText(ex,bx,by+31);
-
-    /* 선택 힌트 */
-    if(isSel){
-      ctx.globalAlpha=.42;
-      ctx.font=`300 ${5.5/ZOOM*1.5}px IBM Plex Mono`;
-      ctx.fillStyle=tc;
-      ctx.fillText('▼ 하단 패널에서 전체 보기',bx,by+44);
-    }
-    ctx.restore();
-  });
-
-  ctx.restore(); /* 클립 해제 */
-
-  /* ── 루페 링 */
-  ctx.save();
-
-  /* 외곽 링 — 레드 */
-  ctx.beginPath();ctx.arc(lx,ly,LOUPE_R,0,Math.PI*2);
-  ctx.strokeStyle='rgba(200,20,0,.6)';ctx.lineWidth=1.5;ctx.stroke();
-
-  /* 내부 링 */
-  ctx.beginPath();ctx.arc(lx,ly,LOUPE_R-4,0,Math.PI*2);
-  ctx.strokeStyle='rgba(160,10,0,.15)';ctx.lineWidth=.8;ctx.stroke();
-
-  /* 유리 반사 하이라이트 */
-  ctx.beginPath();
-  ctx.arc(lx-LOUPE_R*.22,ly-LOUPE_R*.28,LOUPE_R*.17,Math.PI*1.1,Math.PI*1.88);
-  ctx.strokeStyle='rgba(255,180,160,.08)';ctx.lineWidth=3;ctx.stroke();
+  // 아이템 전체 디테일
+  items.forEach(b=>fullItem(b,gp(b,W,H),W,H));
 
   ctx.restore();
 
-  /* 십자선 */
-  ctx.save();
-  ctx.strokeStyle='rgba(180,15,0,.15)';ctx.lineWidth=.5;
-  ctx.setLineDash([2,7]);
-  ctx.beginPath();ctx.moveTo(lx-LOUPE_R+20,ly);ctx.lineTo(lx+LOUPE_R-20,ly);ctx.stroke();
-  ctx.beginPath();ctx.moveTo(lx,ly-LOUPE_R+20);ctx.lineTo(lx,ly+LOUPE_R-20);ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
+  // 루페 링
+  loupeRing(lx,ly);
 }
 
+// ─── UI ───
+function setF(f,el){
+  flt=f;sel=-1;closeD();
+  document.querySelectorAll('.nav-f').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('nn').textContent=vis().length+' items';
+}
+function openD(item){
+  sel=item.id;
+  const tc=TC[item.type];
+  document.getElementById('dp-type').innerHTML=
+    `<div style="font-size:5.5px;letter-spacing:2px;color:${tc};margin-bottom:3px">${item.type.toUpperCase()}</div>
+     <div style="font-size:5px;letter-spacing:1px;color:#300000">#${String(item.id+1).padStart(2,'0')}</div>`;
+  document.getElementById('dp-title').style.color=tc;
+  document.getElementById('dp-title').textContent=item.title;
+  document.getElementById('dp-sub').textContent=item.sub;
+  document.getElementById('dp-ex').textContent='"'+item.ex+'"';
+  document.getElementById('dp-tags').innerHTML=
+    item.tags.map(g=>`<div style="font-size:5.5px;letter-spacing:1.5px;color:#380808;border:1px solid #260000;padding:2px 7px">${g}</div>`).join('');
+  document.getElementById('dp').classList.add('on');
+}
+function closeD(){
+  sel=-1;
+  document.getElementById('dp').classList.remove('on');
+}
+
+// ─── INIT ───
+function init(){
+  cvs=document.getElementById('cv');
+  ctx=cvs.getContext('2d');
+  cvs.width=window.innerWidth; cvs.height=window.innerHeight-30;
+  window.addEventListener('resize',()=>{
+    cvs.width=window.innerWidth;cvs.height=window.innerHeight-30;
+  });
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY-30;});
+  document.addEventListener('mouseleave',()=>{mx=null;my=null;});
+  cvs.addEventListener('click',e=>{
+    if(mx===null)return;
+    const cx=e.clientX,cy=e.clientY-30,W=cvs.width,H=cvs.height;
+    if(Math.hypot(cx-mx,cy-my)>LR){closeD();return;}
+    const rx=mx+(cx-mx)*ZM, ry=my+(cy-my)*ZM;
+    const hit=vis().find(b=>{const p=gp(b,W,H);return Math.abs(rx-p.x)<92&&Math.abs(ry-p.y)<38;});
+    if(hit)openD(hit);else closeD();
+  });
+  document.getElementById('nn').textContent=ITEMS.length+' items';
+  (function loop(){t+=.011;draw();requestAnimationFrame(loop);})();
+}
 init();
 </script>
 </body>
