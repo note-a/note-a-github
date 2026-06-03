@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>REFERENCE — Darkroom</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -246,6 +247,69 @@ canvas#cv{
   transform:translateY(-100%);
   transition:transform .85s cubic-bezier(.76,0,.24,1);
   pointer-events:none;
+}
+
+/* ════════════════════════════════════
+   반응형
+════════════════════════════════════ */
+@media (max-width: 900px) {
+  #page-frame {
+    width: 90vw;
+    height: 90vh;
+  }
+  #pf-inner-wrap { padding: 16px; }
+}
+
+@media (max-width: 600px) {
+  html,body { overflow: hidden; }
+
+  #outer { padding: 0; align-items: stretch; justify-content: stretch; }
+
+  #page-frame {
+    width: 100%;
+    height: var(--dvh, 100vh);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+  #page-frame::before { inset: 3px; }
+
+  /* 상단 바: 가로 스크롤 */
+  #pf-top {
+    height: 40px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    justify-content: flex-start;
+  }
+  #pf-top::-webkit-scrollbar { display: none; }
+  .pf-seg { padding: 0 10px; font-size: 8px; letter-spacing: 1px; white-space: nowrap; }
+  .pff { padding: 0 12px; font-size: 8px; letter-spacing: 1px; }
+  #pf-count { border-left: 1px solid rgba(60,2,0,.28); }
+
+  /* 내부 여백 축소 */
+  #pf-inner-wrap { padding: 8px; }
+
+  /* 하단 바 */
+  #pf-bottom { height: 40px; padding: 0 10px; }
+  #pf-hint { font-size: 7px; letter-spacing: 1px; line-height: 1.4; }
+  .ps-title { font-size: 10px; }
+  .ps-sub { font-size: 5.5px; }
+
+  /* 팝업: 고정 800px → 전체 폭 */
+  #item-popup {
+    width: calc(100% - 12px) !important;
+    left: 6px !important;
+    transform: none !important;
+  }
+  #item-popup.open { transform: none !important; }
+  #popup-header { padding: 14px 16px 12px; gap: 12px; }
+  #popup-title { font-size: 14px; }
+  #popup-body { padding: 16px 20px 28px; font-size: 11px; }
+
+  /* 인트로 */
+  #intro-quote { font-size: 10px; max-width: 88%; margin-top: 28px; }
+  #intro-enter { font-size: 6px; bottom: 36px; }
 }
 </style>
 </head>
@@ -1160,8 +1224,11 @@ function init(){
   canvas=document.getElementById('cv');
   ctx=canvas.getContext('2d');
 
+  // 모바일 100vh 버그 대응
+  function setVh(){ document.documentElement.style.setProperty('--dvh',window.innerHeight+'px'); }
+  setVh();
   resize();
-  window.addEventListener('resize',()=>{resize();});
+  window.addEventListener('resize',()=>{setVh();resize();});
 
   canvas.addEventListener('mousemove',e=>{
     const r=canvas.getBoundingClientRect();
@@ -1169,6 +1236,33 @@ function init(){
     my=(e.clientY-r.top)*(H/r.height);
   });
   canvas.addEventListener('mouseleave',()=>{mx=-1;my=-1;});
+
+  // 터치 지원
+  canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    const r=canvas.getBoundingClientRect();
+    const t=e.touches[0];
+    mx=(t.clientX-r.left)*(W/r.width);
+    my=(t.clientY-r.top)*(H/r.height);
+  },{passive:false});
+  canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const r=canvas.getBoundingClientRect();
+    const t=e.touches[0];
+    const tx=(t.clientX-r.left)*(W/r.width);
+    const ty=(t.clientY-r.top)*(H/r.height);
+    mx=tx; my=ty;
+    const items=vis();
+    let closest=null,minDist=Infinity;
+    items.forEach(item=>{
+      const {x,y}=gp(item);
+      const {dx}=anim(item);
+      const d=Math.hypot(x+dx-tx,y-ty);
+      if(d<minDist){minDist=d;closest=item;}
+    });
+    if(minDist<90&&closest) openPopup(closest);
+  },{passive:false});
+  canvas.addEventListener('touchend',()=>{mx=-1;my=-1;});
 
   canvas.addEventListener('click',e=>{
     const r=canvas.getBoundingClientRect();
