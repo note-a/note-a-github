@@ -49,6 +49,37 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .wc-bl{bottom:-1px;left:-1px;border-bottom:1px solid var(--g);border-left:1px solid var(--g);}
 .wc-br{bottom:-1px;right:-1px;border-bottom:1px solid var(--g);border-right:1px solid var(--g);}
 
+/* ── LEFT RAIL : 집합도 / 등고선 ── */
+.lr-rail{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:3;
+  width:300px;height:min(757px,96vh);display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.lr-dp{flex:1 1 0;min-height:0;background:#050302;border:1px solid var(--g4);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+  box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 30px rgba(255,74,22,.05);}
+.lr-h{flex:0 0 auto;display:flex;align-items:center;gap:5px;height:17px;padding:0 8px;
+  background:linear-gradient(90deg,rgba(255,74,22,.10),transparent);border-bottom:1px solid var(--g4);
+  font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--g2);}
+.lr-h .arr{font-size:5px;color:var(--ac3);}
+.lr-h .no{font-size:5.5px;color:var(--g3);}
+.lr-h .tag{margin-left:auto;font-size:6px;color:var(--g3);}
+.lr-dp.teal .lr-h{color:#3fb09a;}.lr-dp.teal .lr-h .arr{color:#3fb09a;}
+.lr-b{flex:1 1 auto;min-height:0;position:relative;display:flex;overflow:hidden;}
+.lr-gfx{flex:1 1 auto;min-width:0;position:relative;overflow:hidden;}
+.lr-gfx svg{position:absolute;inset:0;width:100%;height:100%;}
+.lr-side{flex:0 0 88px;border-left:1px solid var(--g4);display:flex;flex-direction:column;
+  min-height:0;background:rgba(255,74,22,.02);font-family:var(--mono);}
+.lr-side .sh{font-size:5.5px;letter-spacing:.8px;color:var(--g3);padding:3px 6px 2px;border-bottom:1px solid var(--g4);}
+.lr-tbl{padding:3px 6px;display:flex;flex-direction:column;gap:1px;}
+.lr-tbl .tr{display:flex;justify-content:space-between;font-size:6.5px;line-height:1.5;}
+.lr-tbl .tr .k{color:var(--g3);}.lr-tbl .tr .v{color:var(--g2);font-variant-numeric:tabular-nums;}
+.lr-tbl .tr .v.hi{color:#ffcf4a;}.lr-tbl .tr .v.tl{color:#3fb09a;}.lr-tbl .tr .v.vl{color:#b07bff;}
+.lr-minibar{height:4px;margin:2px 6px;background:rgba(255,74,22,.08);border:1px solid var(--g4);position:relative;overflow:hidden;}
+.lr-minibar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--acc),var(--ac3));}
+.lr-slbl{font-size:5px;color:var(--g3);padding:0 6px;letter-spacing:.5px;}
+.lr-profile{flex:0 0 32px;border-top:1px solid var(--g4);position:relative;background:rgba(0,0,0,.3);}
+.lr-profile svg{position:absolute;inset:0;width:100%;height:100%;}
+.lr-profile .plbl{position:absolute;left:3px;top:1px;font-size:5px;color:var(--g3);z-index:2;}
+@media (max-width:1560px){.lr-rail{display:none;}}
+
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
 .pnl{
   background:linear-gradient(180deg,#ff7a4a,#5e2a12);
@@ -1330,6 +1361,53 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 <div class="crt"></div>
 
 <div id="shell">
+
+<!-- ── LEFT RAIL : 집합도 / 등고선 ── -->
+<aside class="lr-rail">
+  <!-- F.01 집합도 -->
+  <div class="lr-dp teal">
+    <div class="lr-h"><span class="arr">▶</span>SET MAP<span class="no">F.01</span><span class="tag">집합도</span></div>
+    <div class="lr-b">
+      <div class="lr-gfx"><svg id="svg-set" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid meet"></svg></div>
+      <div class="lr-side">
+        <div class="sh">CARDINALITY</div>
+        <div class="lr-tbl">
+          <div class="tr"><span class="k">|A|</span><span class="v tl">2,847</span></div>
+          <div class="tr"><span class="k">|B|</span><span class="v vl">2,310</span></div>
+          <div class="tr"><span class="k">|A∩B|</span><span class="v hi" id="set-int">32</span></div>
+          <div class="tr"><span class="k">|A∪B|</span><span class="v">5,125</span></div>
+          <div class="tr"><span class="k">|A\B|</span><span class="v">2,815</span></div>
+        </div>
+        <div class="lr-slbl">∩ RATIO</div><div class="lr-minibar"><i id="set-ratio" style="width:0.6%"></i></div>
+        <div class="sh" style="margin-top:auto;border-top:1px solid var(--g4)">PERIM</div>
+        <div class="lr-tbl">
+          <div class="tr"><span class="k">∂A</span><span class="v" id="set-pa">314.2</span></div>
+          <div class="tr"><span class="k">Δ</span><span class="v" id="set-pd">+0.0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- F.02 등고선 -->
+  <div class="lr-dp">
+    <div class="lr-h"><span class="arr">▶</span>CONTOUR FIELD<span class="no">F.02</span><span class="tag">등고선</span></div>
+    <div class="lr-b" style="flex-direction:column">
+      <div style="flex:1 1 auto;display:flex;min-height:0">
+        <div class="lr-gfx"><svg id="svg-cont" viewBox="0 0 220 200" preserveAspectRatio="xMidYMid slice"></svg></div>
+        <div class="lr-side">
+          <div class="sh">ELEV BANDS</div><div class="lr-tbl" id="cont-bands"></div>
+          <div class="sh" style="border-top:1px solid var(--g4)">GRADIENT</div>
+          <div class="lr-tbl">
+            <div class="tr"><span class="k">∇mag</span><span class="v" id="cont-grad">0.00</span></div>
+            <div class="tr"><span class="k">azim</span><span class="v" id="cont-az">000°</span></div>
+            <div class="tr"><span class="k">pk</span><span class="v hi">3</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lr-profile"><div class="plbl">SECTION A–A′</div><svg id="svg-prof" viewBox="0 0 300 30" preserveAspectRatio="none"></svg></div>
+    </div>
+  </div>
+</aside>
+
 <div id="wrap">
   <div class="wc-bl"></div><div class="wc-br"></div>
 
@@ -3437,6 +3515,83 @@ document.addEventListener('keydown',function(e){
   window.addEventListener('resize',fit);
   window.addEventListener('orientationchange',function(){setTimeout(fit,150);});
   fit();
+})();
+</script>
+
+<!-- ── LEFT RAIL animation : 집합도 / 등고선 ── -->
+<script>
+(function(){
+  const $=id=>document.getElementById(id);const p2=n=>String(n).padStart(2,'0');
+  if(!$('svg-set'))return;
+
+  /* ════ F.01 집합도 ════ */
+  (function(){
+    const svg=$('svg-set');let grid='';
+    for(let x=20;x<=200;x+=20)grid+='<line x1="'+x+'" y1="14" x2="'+x+'" y2="186" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
+    for(let y=20;y<=180;y+=20)grid+='<line x1="14" y1="'+y+'" x2="206" y2="'+y+'" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
+    let axt='';for(let x=20;x<=200;x+=40)axt+='<text x="'+(x-3)+'" y="194" fill="rgba(255,74,22,.35)" font-size="5" font-family="IBM Plex Mono">'+((x-100)/2)+'</text>';
+    svg.innerHTML=`<defs>
+      <radialGradient id="lrig" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,122,46,.34)"/><stop offset="100%" stop-color="rgba(255,122,46,0)"/></radialGradient>
+      <pattern id="lrhatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(63,176,154,.25)" stroke-width="0.5"/></pattern></defs>
+      <g>${grid}</g><g>${axt}</g>
+      <line x1="14" y1="100" x2="206" y2="100" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
+      <line x1="103" y1="14" x2="103" y2="186" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
+      <circle id="lrhA" cx="84" cy="100" r="50" fill="url(#lrhatch)" opacity=".5"/>
+      <ellipse cx="103" cy="100" rx="22" ry="36" fill="url(#lrig)"/>
+      <circle id="lrcA" cx="84" cy="100" r="50" fill="none" stroke="#3fb09a" stroke-width="1.1" stroke-dasharray="3 4"/>
+      <circle id="lrcB" cx="122" cy="100" r="50" fill="none" stroke="#b07bff" stroke-width="1.1" stroke-dasharray="3 4"/>
+      <circle cx="84" cy="100" r="1.6" fill="#3fb09a"/><circle cx="122" cy="100" r="1.6" fill="#b07bff"/>
+      <line id="lrdimA" x1="84" y1="100" x2="34" y2="100" stroke="#3fb09a" stroke-width="0.5" opacity=".6"/>
+      <text id="lrdimAt" x="40" y="96" fill="#3fb09a" font-size="6" font-family="IBM Plex Mono">r=50</text>
+      <text x="34" y="42" fill="#3fb09a" font-size="9" font-family="VT323,monospace">SET (A)</text>
+      <text x="128" y="168" fill="#b07bff" font-size="9" font-family="VT323,monospace">INCL (B)</text>
+      <line x1="103" y1="100" x2="160" y2="60" stroke="rgba(255,122,46,.5)" stroke-width="0.5"/>
+      <circle cx="103" cy="100" r="1.6" fill="#ff7a2e"/>
+      <text x="162" y="58" fill="#ff7a2e" font-size="8" font-family="VT323,monospace">A∩B = 32</text>
+      <text x="34" y="118" fill="rgba(63,176,154,.5)" font-size="5" font-family="IBM Plex Mono">A\\B</text>
+      <circle id="lrtrace" r="2.4" fill="#ff7a2e"><animate attributeName="opacity" values="1;.3;1" dur="1.3s" repeatCount="indefinite"/></circle>
+      <text id="lrtraceXY" fill="#ff7a2e" font-size="5.5" font-family="IBM Plex Mono"></text>`;
+    const q=s=>svg.querySelector(s);const cA=q('#lrcA'),cB=q('#lrcB'),hA=q('#lrhA'),trace=q('#lrtrace'),tXY=q('#lrtraceXY'),dimA=q('#lrdimA'),dimAt=q('#lrdimAt');
+    let t=0,pm=314.2,intc=32;
+    setInterval(()=>{t+=0.05;
+      const rA=50+Math.sin(t)*4,rB=50+Math.cos(t*0.8)*4,cx=84+Math.sin(t*0.5)*3;
+      cA.setAttribute('r',rA.toFixed(1));cB.setAttribute('r',rB.toFixed(1));cA.setAttribute('cx',cx.toFixed(1));
+      hA.setAttribute('r',rA.toFixed(1));hA.setAttribute('cx',cx.toFixed(1));
+      dimA.setAttribute('x1',cx);dimA.setAttribute('x2',(cx-rA).toFixed(1));dimAt.setAttribute('x',(cx-rA+6).toFixed(1));dimAt.textContent='r='+rA.toFixed(0);
+      const ang=t*1.2,x=cx+Math.cos(ang)*rA,y=100+Math.sin(ang)*rA;
+      trace.setAttribute('cx',x.toFixed(1));trace.setAttribute('cy',y.toFixed(1));
+      tXY.setAttribute('x',(x+4).toFixed(1));tXY.setAttribute('y',(y-3).toFixed(1));tXY.textContent='('+(x-103).toFixed(0)+','+(100-y).toFixed(0)+')';
+      pm+=(Math.random()-0.5)*1.6;$('set-pa').textContent=pm.toFixed(1);$('set-pd').textContent=(pm-314.2>=0?'+':'')+(pm-314.2).toFixed(1);
+      if(Math.random()<0.04){intc=30+Math.floor(Math.random()*5);$('set-int').textContent=intc;$('set-ratio').style.width=(intc/5125*100).toFixed(2)+'%';}
+    },60);
+  })();
+
+  /* ════ F.02 등고선 (실시간 일렁임) ════ */
+  (function(){
+    const svg=$('svg-cont');const cx=110,cy=100,NC=12,elevs=[];
+    function blob(r,seed,t){const pts=30;let d='';for(let i=0;i<=pts;i++){const a=i/pts*Math.PI*2;
+      const w=1+Math.sin(a*3+seed+t*1.1)*0.12+Math.cos(a*5+seed*1.7-t*0.8)*0.07+Math.sin(a*2-seed*0.6+t*1.6)*0.05;
+      const rr=r+Math.sin(t*0.9+seed)*3;d+=(i===0?'M':'L')+(cx+Math.cos(a)*rr*w).toFixed(1)+' '+(cy+Math.sin(a)*rr*w*0.9).toFixed(1)+' ';}return d+'Z';}
+    function buildPaths(t){let p='';for(let i=0;i<NC;i++){const r=10+i*9.5,op=(0.55-i*0.03).toFixed(2),sw=(i%3===0)?1.0:0.6;
+      p+='<path d="'+blob(r,i*0.9,t)+'" fill="none" stroke="rgba(255,106,30,'+op+')" stroke-width="'+sw+'"/>';}return p;}
+    let labels='';for(let i=0;i<NC;i++){if(i%3===0&&i>0){const r=10+i*9.5;
+      labels+='<text x="'+(cx-2)+'" y="'+(cy-r*0.9+2)+'" fill="rgba(255,106,30,.55)" font-size="5.5" font-family="IBM Plex Mono">+'+(i*12)+'</text>';elevs.push(i*12);}}
+    let ticks='';for(let x=20;x<=200;x+=30)ticks+='<line x1="'+x+'" y1="186" x2="'+x+'" y2="190" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
+    for(let y=20;y<=170;y+=30)ticks+='<line x1="4" y1="'+y+'" x2="8" y2="'+y+'" stroke="rgba(255,74,22,.3)" stroke-width="0.6"/>';
+    svg.innerHTML=`<g id="lrcg">${buildPaths(0)}</g><g>${labels}</g><g>${ticks}</g>
+      <g><line x1="${cx-4}" y1="${cy}" x2="${cx+4}" y2="${cy}" stroke="#ffcf4a" stroke-width="0.8"/><line x1="${cx}" y1="${cy-4}" x2="${cx}" y2="${cy+4}" stroke="#ffcf4a" stroke-width="0.8"/><text x="${cx+6}" y="${cy-4}" fill="#ffcf4a" font-size="6" font-family="VT323,monospace">PK +148</text></g>
+      <g transform="translate(198,24)"><line x1="0" y1="8" x2="0" y2="-8" stroke="rgba(255,74,22,.5)" stroke-width="0.7"/><path d="M0,-8 L-2.5,-3 L2.5,-3 Z" fill="rgba(255,74,22,.7)"/><text x="-2.5" y="-10" fill="rgba(255,74,22,.6)" font-size="6" font-family="IBM Plex Mono">N</text></g>
+      <line id="lrcscan" x1="0" y1="40" x2="220" y2="40" stroke="rgba(255,207,74,.5)" stroke-width="0.8"/>`;
+    $('cont-bands').innerHTML=elevs.map((e,i)=>'<div class="tr"><span class="k">+'+e+'</span><span class="v" style="color:rgba(255,106,30,'+(0.9-i*0.12)+')">▓▓</span></div>').join('');
+    const pf=$('svg-prof');
+    function buildProfile(t){let pd='M0 28 ';for(let x=0;x<=300;x+=6){const hh=28-(Math.exp(-Math.pow((x-150)/55,2))*24+Math.sin(x/22+t*1.4)*2.4+Math.sin(x/9-t)*1.1+2);pd+='L'+x+' '+hh.toFixed(1)+' ';}return pd+'L300 30 L0 30 Z';}
+    pf.innerHTML='<path id="lrpfpath" d="'+buildProfile(0)+'" fill="rgba(255,106,30,.10)" stroke="rgba(255,106,30,.6)" stroke-width="0.8"/><line id="lrpfscan" x1="150" y1="0" x2="150" y2="30" stroke="rgba(255,207,74,.6)" stroke-width="0.7"/>';
+    const g=svg.querySelector('#lrcg'),scan=svg.querySelector('#lrcscan'),pfscan=pf.querySelector('#lrpfscan'),pfpath=pf.querySelector('#lrpfpath');let t=0,sy=20;
+    setInterval(()=>{t+=0.05;g.innerHTML=buildPaths(t);g.setAttribute('transform','rotate('+(Math.sin(t*0.2)*4).toFixed(2)+' '+cx+' '+cy+')');
+      pfpath.setAttribute('d',buildProfile(t));sy+=1.3;if(sy>186)sy=14;scan.setAttribute('y1',sy);scan.setAttribute('y2',sy);
+      const px=(sy-14)/172*300;pfscan.setAttribute('x1',px);pfscan.setAttribute('x2',px);
+      $('cont-grad').textContent=(Math.abs(Math.sin(t*0.7))*2.4).toFixed(2);$('cont-az').textContent=p2(Math.floor((t*8)%360)).toString().padStart(3,'0')+'°';},50);
+  })();
 })();
 </script>
 
