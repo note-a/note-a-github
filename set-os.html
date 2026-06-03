@@ -2492,12 +2492,14 @@ function gvaHoverOut(){
 
 function glSwitch(n){
   for(let i=1;i<=3;i++){
-    document.getElementById('gly-'+i).classList.toggle('active',i===n);
-    document.getElementById('gl-tab-'+i).classList.toggle('on',i===n);
+    const view=document.getElementById('gly-'+i);
+    const tab=document.getElementById('gl-tab-'+i);
+    if(view) view.classList.toggle('active',i===n);
+    if(tab) tab.classList.toggle('on',i===n);
   }
   const labels={1:'ANALYSIS',2:'CONTACT',3:'FILMSTRIP'};
   const lbl=document.getElementById('gl-label'); if(lbl) lbl.textContent=labels[n]||'';
-  if(n===2&&!document.getElementById('cs2-grid').dataset.built)buildCs2Grid();
+  if(n===2) buildCs2Grid();
   if(n===3&&!document.getElementById('gvc-frames').dataset.built)buildFilmstrip();
 }
 
@@ -2528,7 +2530,8 @@ function buildCs2Grid(){
   const grid=document.getElementById('cs2-grid');
   grid.dataset.built='1';
   grid.innerHTML='';
-  const frames=GL_FRAMES.length?GL_FRAMES:CS_DATA.map((f,i)=>({src:'https://picsum.photos/seed/'+f.seed+'/200/133',n:f.n,status:f.cls.toUpperCase()}));
+  const hasReal=GL_FRAMES.length>0&&GL_FRAMES[0].src;
+  const frames=hasReal?GL_FRAMES:CS_DATA.map((f,i)=>({src:'https://picsum.photos/seed/'+f.seed+'/200/133',n:f.n,status:f.cls.toUpperCase()}));
   frames.forEach(f=>{
     const v=(f.status||'').toUpperCase();
     const cls=v==='CORE'?'core':(v==='SUPPORT'||v==='SUP')?'sup':'drop';
