@@ -175,13 +175,19 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
   100%{opacity:1;   color:#c01000; filter:none;}
 }
 
-/* 서브 */
-#intro-sub{
-  margin-top:18px;
-  font-size:7.5px;letter-spacing:4px;
-  color:rgba(150,20,8,.7);
-  animation:fade-up 1s 3.8s both;
+/* 인용문 */
+#intro-quote{
+  max-width:480px;
+  margin-top:36px;
+  font-size:9px;
+  font-weight:300;
+  font-style:italic;
+  line-height:2;
+  letter-spacing:.3px;
+  color:rgba(160,28,12,.72);
+  text-align:center;
   position:relative;z-index:1;
+  animation:fade-up 1.2s 3.6s both;
 }
 /* 엔터 */
 #intro-enter{
@@ -210,7 +216,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
     <div class="lamp-bulb"></div>
   </div>
   <div id="intro-title">DARK<br>ROOM</div>
-  <div id="intro-sub">REFERENCE · 암실 서재 · 2026</div>
+  <div id="intro-quote">Looking too long is not a metaphor. It is a literal condition.<br>Eyes trained to find specific things will sometimes find those things<br>in places they are not. The eye wants to find so badly it invents.<br>There's a difference between finding and inventing.<br>The difference is a kind of wrongness you learn to feel for —<br>faint, like a word that looks spelled right but isn't.<br>You read it three times before your brain catches it.</div>
   <div id="intro-enter">— click to enter —</div>
 </div>
 
