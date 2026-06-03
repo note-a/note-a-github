@@ -164,7 +164,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
 .pl-stat .v{color:rgba(255,74,22,0.7);margin-left:auto;}
 .pl-goto{display:block;width:100%;padding:5px 7px;font-size:6.5px;letter-spacing:2px;
   text-align:center;cursor:pointer;border:0.1px solid var(--g);background:rgba(255,74,22,0.07);
-  color:rgba(255,74,22,0.6);font-family:inherit;transition:.15s;}
+  color:rgba(255,74,22,0.6);font-family:inherit;transition:.15s;
+  pointer-events:auto!important;position:relative;z-index:10;}
 .pl-goto:hover{background:rgba(255,74,22,0.18);color:#ff4a16;}
 .pilot-pnl.can-transition{transition:width .15s ease;}
 .pilot-pnl.collapsed{width:14px!important;overflow:hidden;}
@@ -1449,9 +1450,60 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
 }
 
 /* 태블릿(821~1024px): 데스크탑 레이아웃 그대로 표시 (JS가 wrap+레일을 화면에 맞춰 축소) */
+
+/* ── 페이지 전환: CRT 전원 OFF→ON ── */
+#crt-off{position:fixed;inset:0;z-index:9999;background:#000;opacity:0;pointer-events:none;}
+body.crt-leaving #crt-off{animation:crtOffBg .5s linear forwards;}
+body.crt-leaving #shell{animation:crtOff .46s cubic-bezier(.45,0,.65,1) forwards;transform-origin:center center;will-change:transform,filter;}
+@keyframes crtOff{
+  0%{transform:scale(1,1);filter:brightness(1);}
+  50%{transform:scale(1,.02);filter:brightness(2.6) contrast(1.5);}
+  68%{transform:scale(1,.02);filter:brightness(2.8) contrast(1.5);}
+  100%{transform:scale(.001,.012);filter:brightness(5);}
+}
+@keyframes crtOffBg{0%{opacity:0;}55%{opacity:0;}100%{opacity:1;}}
+body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards;transform-origin:center center;will-change:transform,filter;}
+@keyframes crtOn{
+  0%{transform:scale(.001,.012);filter:brightness(5);}
+  32%{transform:scale(1,.02);filter:brightness(2.6);}
+  100%{transform:scale(1,1);filter:brightness(1);}
+}
+@media (prefers-reduced-motion: reduce){
+  body.crt-leaving #shell,body.crt-entering #shell,body.crt-leaving #crt-off{animation:none !important;}
+}
 </style>
 </head>
 <body>
+<div id="crt-off"></div>
+<script>
+// ── 페이지 전환: CRT 전원 OFF→ON ──
+(function(){
+  var navigating=false;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.crtNav=function(url){
+    if(navigating)return;
+    if(reduce){ location.href=url; return; }
+    navigating=true;
+    document.body.classList.add('crt-leaving');
+    var shell=document.getElementById('shell'),done=false;
+    var go=function(){ if(done)return; done=true; location.href=url; };
+    if(shell) shell.addEventListener('animationend',go,{once:true});
+    setTimeout(go,560); // 폴백
+  };
+  // 진입 시 전원 ON
+  if(!reduce){
+    window.addEventListener('DOMContentLoaded',function(){
+      var shell=document.getElementById('shell'); if(!shell)return;
+      document.body.classList.add('crt-entering');
+      var cleared=false,clear=function(){ if(cleared)return; cleared=true;
+        document.body.classList.remove('crt-entering');
+        window.dispatchEvent(new Event('resize')); }; // 레일 재배치
+      shell.addEventListener('animationend',clear,{once:true});
+      setTimeout(clear,800);
+    });
+  }
+})();
+</script>
 <div id="bg"><div id="bg-lights"></div><div id="bg-grid"></div><div id="bg-vignette"></div></div>
 <div class="crt"></div>
 
@@ -1609,7 +1661,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
       <span class="v" id="pt-v">0 REC</span>
     </div>
   </div>
-  <button class="pl-goto" onclick="location.href='pilot.html'">▶ OPEN PILOT.EXP</button>
+  <button class="pl-goto" onclick="crtNav('pilot.html')">▶ OPEN PILOT.EXP</button>
 </aside>
 
 <script>
@@ -2182,11 +2234,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#0a0200;font-fa
       <span style="color:rgba(255,130,0,.6);">SECTOR·F</span>
     </div>
     <div class="mode-row">
-      <button class="mb on" onclick="location.href='gallery1.html'"><span class="k">S</span>SET</button>
+      <button class="mb on" onclick="crtNav('gallery1.html')"><span class="k">S</span>SET</button>
       <button class="mb" data-sec="inclusion"><span class="k">I</span>SET:inclusion</button>
-      <button class="mb" onclick="location.href='page-log.html'"><span class="k">L</span>LOG</button>
-      <button class="mb" onclick="location.href='reference.html'"><span class="k">R</span>Reference</button>
-      <button class="mb" onclick="location.href='measure.html'"><span class="k">M</span>MEASURE</button>
+      <button class="mb" onclick="crtNav('page-log.html')"><span class="k">L</span>LOG</button>
+      <button class="mb" onclick="crtNav('reference.html')"><span class="k">R</span>Reference</button>
+      <button class="mb" onclick="crtNav('measure.html')"><span class="k">M</span>MEASURE</button>
       <button class="mb" data-sec="about"><span class="k">A</span>ABOUT</button>
     </div>
     <button class="activate">ACTIVATE</button>
@@ -3661,7 +3713,7 @@ function scrollHud(dir){
   var esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
   function openPost(p){
     var key=(p && (p.id||p.title))||'';
-    location.href='page-log.html?post='+encodeURIComponent(key);
+    (window.crtNav||function(u){location.href=u;})('page-log.html?post='+encodeURIComponent(key));
   }
   function render(logs){
     if(!Array.isArray(logs)||!logs.length) return;
