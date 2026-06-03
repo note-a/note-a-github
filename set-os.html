@@ -65,7 +65,8 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
   font-family:var(--mono);font-size:7px;letter-spacing:1.5px;color:var(--g2);cursor:pointer;user-select:none;pointer-events:auto;}
 .lr-h .arr{font-size:5px;color:var(--ac3);transition:transform .15s;transform:rotate(90deg);}
 .lr-dp.collapsed .lr-h .arr{transform:rotate(0deg);}
-.lr-dp{transition:width .15s ease;width:100%;}
+.lr-dp{width:100%;}
+.lr-dp.can-transition{transition:width .15s ease;}
 .lr-dp.collapsed{width:14px!important;overflow:hidden;}
 .lr-dp.collapsed .lr-b{visibility:hidden;}
 .lr-rail .lr-dp.collapsed{margin-left:auto;}
@@ -2027,7 +2028,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
       <button class="mb on" onclick="location.href='gallery1.html'"><span class="k">S</span>SET</button>
       <button class="mb" data-sec="inclusion"><span class="k">I</span>INCLUSION</button>
       <button class="mb" onclick="location.href='page-log.html'"><span class="k">L</span>LOG</button>
-      <button class="mb" data-sec="ref"><span class="k">R</span>REF</button>
+      <button class="mb" onclick="location.href='reference.html'"><span class="k">R</span>REF</button>
       <button class="mb" onclick="location.href='measure.html'"><span class="k">M</span>MEASURE</button>
       <button class="mb" data-sec="about"><span class="k">A</span>ABOUT</button>
     </div>
@@ -3761,7 +3762,11 @@ document.addEventListener('keydown',function(e){
 
 <script>
 document.querySelectorAll('.lr-h').forEach(h=>{
-  h.addEventListener('click',()=>h.closest('.lr-dp').classList.toggle('collapsed'));
+  h.addEventListener('click',()=>{
+    const dp=h.closest('.lr-dp');
+    dp.classList.add('can-transition');
+    dp.classList.toggle('collapsed');
+  });
 });
 </script>
 
