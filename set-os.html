@@ -88,8 +88,6 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#000;font-famil
 .lr-profile .plbl{position:absolute;left:3px;top:1px;font-size:5px;color:var(--g3);z-index:2;}
 .rr-rail{position:fixed;z-index:3;width:240px;height:330px;transform-origin:top left;
   display:flex;flex-direction:column;gap:14px;pointer-events:none;}
-.lr-rail .lr-dp{padding-right:0;}
-.rr-rail .lr-dp{padding-left:0;}
 @media (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
 
 /* ── PANEL ── (sample-gallery 스타일 그대로) */
@@ -3606,7 +3604,7 @@ document.addEventListener('keydown',function(e){
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+(s*1.2)+')';
       rail.style.top=r.top+'px';
-      rail.style.right=(window.innerWidth-r.left)+'px';
+      rail.style.right=(window.innerWidth-r.left+10)+'px';
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
@@ -3699,7 +3697,7 @@ document.addEventListener('keydown',function(e){
       const r=wrap.getBoundingClientRect();
       rail.style.transform='scale('+(s*1.2)+')';
       rail.style.top=r.top+'px';
-      rail.style.left=r.right+'px';
+      rail.style.left=(r.right+10)+'px';
     }
     window.addEventListener('resize',place);
     window.addEventListener('orientationchange',()=>setTimeout(place,200));
