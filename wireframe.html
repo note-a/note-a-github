@@ -234,6 +234,11 @@ html,body{
       <button class="nb" data-sel="#bg"       data-name="div#bg"    style="--c:#555">div#bg</button>
       <button class="nb" data-sel=".crt"      data-name="div.crt"   style="--c:#444">div.crt</button>
 
+      <div class="sep">BG Orbs (animated)</div>
+      <button class="nb" data-sel="#bg-orbs"              data-name="#bg-orbs"         style="--c:#a0522d">#bg-orbs</button>
+      <button class="nb" data-sel="#bg-orbs .orb"         data-name=".orb (wrapper)"   style="--c:#8b4513">.orb ×7</button>
+      <button class="nb" data-sel="#bg-orbs .orb-i"       data-name=".orb-i (blur)"    style="--c:#6b3410">.orb-i ×7</button>
+
     </div>
   </div>
 
@@ -269,6 +274,9 @@ html,body{
         <input id="ann-opacity" type="range" min="10" max="100" value="75">
       </div>
       <span id="scale-info"></span>
+      <span id="bg-orb-note" style="font-size:9px;color:#5a3010;letter-spacing:.4px;margin-left:8px;">
+        ● BG-ORBS: z-index:0 / 7×.orb(transform) + .orb-i(blur) / setInterval 33ms / 7.5–12.5s period
+      </span>
       <span id="el-count">—</span>
     </div>
 
