@@ -2,185 +2,174 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>SET-OS — Wireframe Annotated</title>
+<title>SET-OS — Wireframe Full</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;}
 #frame{width:100%;height:100%;border:none;display:block;}
+#wf-toggle{
+  position:fixed;bottom:12px;right:12px;z-index:9999999;
+  display:flex;gap:6px;flex-direction:column;align-items:flex-end;
+}
+#wf-toggle button{
+  font-family:'Courier New',monospace;font-size:9px;font-weight:700;
+  padding:4px 8px;cursor:pointer;border:1px solid #555;background:#111;color:#aaa;
+  letter-spacing:1px;
+}
+#wf-toggle button.on{background:#ff4a16;color:#000;border-color:#ff4a16;}
 </style>
 </head>
 <body>
 <iframe id="frame" src="set-os.html"></iframe>
+
+<div id="wf-toggle">
+  <button id="btn-all"  class="on">ALL</button>
+  <button id="btn-hidden">HIDDEN</button>
+  <button id="btn-visible">VISIBLE</button>
+</div>
+
 <script>
-document.getElementById('frame').addEventListener('load', function(){
+const frame = document.getElementById('frame');
+
+// 깊이별 색상
+const DEPTH_COLORS = [
+  '#ff4a16','#f7dc6f','#4ecdc4','#bb8fce',
+  '#85c1e9','#f0b27a','#abebc6','#f1948a',
+  '#d2b4de','#a9cce3','#a9dfbf','#f9e79f'
+];
+
+frame.addEventListener('load', function(){
   const doc = this.contentDocument;
   if(!doc) return;
 
   setTimeout(function(){
 
+    // ── 스타일 주입 ──
     const style = doc.createElement('style');
+    style.id = 'wf-style';
     style.textContent = `
-      .wfa{
-        position:fixed;pointer-events:none;z-index:999999;box-sizing:border-box;
-        outline:1.5px solid var(--wfc);outline-offset:-1px;
+      .wfa, .wfa-h {
+        position:fixed;pointer-events:none;box-sizing:border-box;z-index:999990;
       }
-      .wfa::before{
+      .wfa   { outline:1px solid var(--wfc); outline-offset:-1px; }
+      .wfa-h { outline:1px dashed var(--wfc); outline-offset:-1px; background:rgba(0,0,0,.4); }
+      .wfa::before, .wfa-h::before {
         content:attr(data-label);
         position:absolute;top:0;left:0;
         font-family:'Courier New',monospace;
-        font-size:8px;font-weight:700;letter-spacing:.5px;
-        padding:1px 5px;line-height:16px;
+        font-size:7.5px;font-weight:700;letter-spacing:.4px;
+        padding:0px 4px;line-height:14px;
         background:var(--wfc);color:#000;
-        white-space:nowrap;z-index:999999;
+        white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis;
+        opacity:.9;
       }
-      /* 숨겨진 요소: 점선 + 반투명 */
-      .wfa-h{
-        position:fixed;pointer-events:none;z-index:999998;box-sizing:border-box;
-        outline:1.5px dashed var(--wfc);outline-offset:-1px;
-        background:rgba(0,0,0,0.55);
-      }
-      .wfa-h::before{
-        content:attr(data-label);
-        position:absolute;top:0;left:0;
-        font-family:'Courier New',monospace;
-        font-size:8px;font-weight:700;letter-spacing:.5px;
-        padding:1px 5px;line-height:16px;
-        background:var(--wfc);color:#000;opacity:.75;
-        white-space:nowrap;z-index:999999;
-      }
-      .wfa-h::after{
+      .wfa-h::after {
         content:'HIDDEN';
-        position:absolute;bottom:2px;right:4px;
-        font-family:'Courier New',monospace;font-size:7px;
-        color:var(--wfc);opacity:.6;letter-spacing:1px;
+        position:absolute;bottom:1px;right:3px;
+        font-family:'Courier New',monospace;font-size:6px;
+        color:var(--wfc);opacity:.5;letter-spacing:1px;
       }
+      .wf-hidden-all .wfa { display:none !important; }
+      .wf-visible-all .wfa-h { display:none !important; }
     `;
     doc.head.appendChild(style);
 
-    /* ── 보이는 요소 어노테이션 ── */
-    function ann(sel, label, color){
-      const el = typeof sel==='string' ? doc.querySelector(sel) : sel;
-      if(!el) return;
+    const SKIP = new Set(['SCRIPT','STYLE','META','LINK','HEAD','TITLE','BR','HR','INPUT','TEXTAREA','IFRAME','SVG','PATH','G','CIRCLE','LINE','RECT','TEXT','DEFS','POLYLINE','POLYGON','ELLIPSE']);
+
+    function getDepth(el){
+      let d=0, cur=el;
+      while(cur.parentElement){ d++; cur=cur.parentElement; }
+      return d;
+    }
+
+    function getLabel(el){
+      const id = el.id ? `#${el.id}` : '';
+      const cls = el.classList.length
+        ? '.' + Array.from(el.classList).filter(c=>!c.startsWith('wf')).join('.')
+        : '';
+      const tag = el.tagName.toLowerCase();
+      return `${tag}${id}${cls}` || tag;
+    }
+
+    function forceVisible(el){
+      const cs = doc.defaultView.getComputedStyle(el);
+      const hidden =
+        cs.display === 'none' ||
+        cs.visibility === 'hidden' ||
+        cs.opacity === '0' ||
+        (parseFloat(cs.width) === 0 && parseFloat(cs.height) === 0);
+      return hidden;
+    }
+
+    function annotateEl(el, depth){
+      if(SKIP.has(el.tagName)) return;
+      if(el.classList.contains('wfa') || el.classList.contains('wfa-h')) return;
+
+      const label = getLabel(el);
+      if(!label || label === 'div' || label === 'span') {
+        // id/class 없는 bare div/span은 생략
+        const hasId = el.id && el.id.length > 0;
+        const hasCls = el.classList.length > 0;
+        if(!hasId && !hasCls) return;
+      }
+
+      const color = DEPTH_COLORS[depth % DEPTH_COLORS.length];
+      const isHidden = forceVisible(el);
+
+      if(isHidden){
+        // 강제 표시
+        el.style.setProperty('display','block','important');
+        el.style.setProperty('visibility','visible','important');
+        el.style.setProperty('opacity','1','important');
+      }
+
       const r = el.getBoundingClientRect();
+
+      if(isHidden){
+        el.style.removeProperty('display');
+        el.style.removeProperty('visibility');
+        el.style.removeProperty('opacity');
+      }
+
       if(!r.width || !r.height) return;
+
       const d = doc.createElement('div');
-      d.className = 'wfa';
+      d.className = isHidden ? 'wfa-h' : 'wfa';
       d.setAttribute('data-label', label);
-      d.style.cssText = `--wfc:${color};left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+      d.style.cssText = `--wfc:${color};left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${999990 - depth};`;
       doc.body.appendChild(d);
     }
 
-    /* ── 숨겨진 요소 어노테이션: 강제 표시 후 위치 읽기 ── */
-    function annHidden(sel, label, color, showProp){
-      const el = typeof sel==='string' ? doc.querySelector(sel) : sel;
+    // DOM 전체 순회
+    function walk(el, depth){
       if(!el) return;
-      const prop = showProp || 'display';
-      const orig = el.style[prop];
-      const origCS = doc.defaultView.getComputedStyle(el)[prop];
-      // 강제 표시
-      el.style.setProperty(prop, prop==='display' ? 'block' : 'visible', 'important');
-      const r = el.getBoundingClientRect();
-      // 원복
-      if(orig) el.style[prop] = orig;
-      else el.style.removeProperty(prop);
-      if(!r.width || !r.height) return;
-      const d = doc.createElement('div');
-      d.className = 'wfa-h';
-      d.setAttribute('data-label', label);
-      d.style.cssText = `--wfc:${color};left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
-      doc.body.appendChild(d);
+      annotateEl(el, depth);
+      Array.from(el.children).forEach(child => walk(child, depth+1));
     }
 
-    // ══════════════════════════════════
-    // 보이는 요소들
-    // ══════════════════════════════════
-    ann('#wrap',     'div#wrap  ·  grid-rows: 1fr 84px 1fr 28px', '#ff4a16');
-    ann('.lr-rail',  'aside.lr-rail  LEFT RAIL', '#4ecdc4');
-    ann('.rr-rail',  'aside.rr-rail  RIGHT RAIL', '#4ecdc4');
+    // body 직계부터 시작 (head 제외)
+    Array.from(doc.body.children).forEach(child => walk(child, 0));
 
-    const lrDps = doc.querySelectorAll('.lr-rail .lr-dp');
-    if(lrDps[0]) ann(lrDps[0], 'F.01  SET MAP · 집합도', '#4ecdc4');
-    if(lrDps[1]) ann(lrDps[1], 'F.02  CONTOUR FIELD · 등고선', '#4ecdc4');
-    if(lrDps[2]) ann(lrDps[2], 'F.03  DATA · 측정값', '#4ecdc4');
+    // ── 외부 토글 버튼 연결 ──
+    function setMode(mode){
+      doc.body.classList.remove('wf-hidden-all','wf-visible-all');
+      document.querySelectorAll('#wf-toggle button').forEach(b=>b.classList.remove('on'));
+      if(mode==='hidden'){
+        doc.body.classList.add('wf-hidden-all');
+        document.getElementById('btn-hidden').classList.add('on');
+      } else if(mode==='visible'){
+        doc.body.classList.add('wf-visible-all');
+        document.getElementById('btn-visible').classList.add('on');
+      } else {
+        document.getElementById('btn-all').classList.add('on');
+      }
+    }
 
-    const rrDps = doc.querySelectorAll('.rr-rail .lr-dp');
-    if(rrDps[0]) ann(rrDps[0], 'F.04  SVA RADAR · 4축 형태학', '#4ecdc4');
-    if(rrDps[1]) ann(rrDps[1], 'F.04  ANALYSIS · 분석 데이터', '#4ecdc4');
+    document.getElementById('btn-all').onclick     = ()=>setMode('all');
+    document.getElementById('btn-hidden').onclick  = ()=>setMode('hidden');
+    document.getElementById('btn-visible').onclick = ()=>setMode('visible');
 
-    ann('#top-row', '#top-row  ·  grid-cols: 1fr  1fr  72px', '#f7dc6f');
-    const tp = doc.querySelectorAll('#top-row > .pnl');
-    if(tp[0]) ann(tp[0], '.pnl  <SET.VIEW>  ·  .ph (.ph-row1 / .ph-row2 / .ph-nav)', '#bb8fce');
-    if(tp[1]) ann(tp[1], '.pnl  <HUD.XT2>  ·  .h-title (.h-logo / .h-badges / .h-menu / .h-search)', '#bb8fce');
-    if(tp[2]) ann(tp[2], '.pnl  ·  .ctrl-btn ×3  (UP/EXIT/DOWN)', '#85c1e9');
-
-    ann('#gbar',     'div#gbar  ▶  iframe(gbar.html) · SET.OS바', '#a8e6cf');
-    ann('#bot-row',  '#bot-row  ·  grid-cols: 2.6fr  1fr', '#f7dc6f');
-    ann('.bot-left', '.bot-left  ·  grid-cols: 215px  200px  1fr', '#f0b27a');
-    ann('.bl-split', '.bl-split  ·  grid-rows: 1fr  1fr', '#e59866');
-
-    const bl = doc.querySelectorAll('.bl-split > .pnl');
-    if(bl[0]) ann(bl[0], 'a.chat-enter-btn  (MEASURE.DB 입장)', '#f9e79f');
-    if(bl[1]) ann(bl[1], 'div#vlWindow  ·  ▶ VIEWER_LOG.EXE', '#f9e79f');
-
-    const blp = doc.querySelectorAll('.bot-left > .pnl');
-    if(blp[0]) ann(blp[0], 'iframe(id-card.html) ID카드', '#abebc6');
-    if(blp[1]) ann(blp[1], 'iframe(work-status.html) WORK.STATUS', '#abebc6');
-
-    const brp = doc.querySelectorAll('#bot-row > .pnl');
-    if(brp[0]) ann(brp[0], '.pnl  ·  #stmt.stmt-scroll  SET.TEXT', '#bb8fce');
-
-    ann('.pilot-pnl', '.pilot-pnl  SET-NULL.CHANNEL', '#f1948a');
-    ann('.pl-goto',   '.pl-goto  ▶ OPEN PILOT.EXP', '#f1948a');
-    ann('#mode-row',  '#mode-row  ·  .mb ×6', '#85c1e9');
-    ann('.activate',  'button.activate', '#85c1e9');
-
-    // 현재 활성 gallery view
-    ann('#gly-1.active', '#gly-1  ANALYSIS view  (활성)', '#bb8fce');
-    ann('.pl-view.on',   '.pl-view.on  (활성 탭)', '#f1948a');
-
-    // ══════════════════════════════════
-    // 숨겨진 요소들 (점선 박스)
-    // ══════════════════════════════════
-
-    // gallery views (비활성)
-    annHidden('#gly-2', '#gly-2  CONTACT view', '#777777');
-    doc.querySelectorAll('.view:not(.active)').forEach((el, i) => {
-      if(i < 4) annHidden(el, `.view  (비활성 탭 ${i+1})`, '#666666');
-    });
-
-    // HUD .sec 비활성
-    doc.querySelectorAll('.sec:not(.active)').forEach((el, i) => {
-      if(i < 3) annHidden(el, `.sec  (비활성 섹션 ${i+1})`, '#555555');
-    });
-
-    // pilot 비활성 탭
-    doc.querySelectorAll('.pl-view:not(.on)').forEach((el, i) => {
-      annHidden(el, `.pl-view  [${el.id}]  (비활성 탭)`, '#a0522d');
-    });
-
-    // SET.TEXT 안 숨겨진 chat panel
-    annHidden('.pc', 'div.pc  채팅 패널  (숨김)', '#888');
-
-    // 갤러리 라이트박스
-    annHidden('#gal-lb', 'div#gal-lb  갤러리 라이트박스  (숨김)', '#888');
-
-    // 모달들
-    annHidden('.stmt-modal', 'div.stmt-modal  SET.TEXT 전체보기 모달  (숨김)', '#999');
-    annHidden('.docs-modal', 'div.docs-modal  DOCS 모달  (숨김)', '#999');
-
-    // h-vmenu (드롭다운)
-    annHidden('.h-vmenu', 'div.h-vmenu  헤더 드롭다운  (숨김)', '#888');
-
-    // bg-lights
-    annHidden('#bg-lights', 'div#bg-lights  배경 조명  (숨김)', '#444');
-
-    // bg-depth
-    ann('#bg-depth', 'div#bg-depth  배경 depth 레이어', '#333');
-
-    // crt overlay
-    ann('.crt', 'div.crt  CRT 스캔라인 오버레이  (z:100)', '#444');
-
-  }, 1000);
+  }, 1200);
 });
 </script>
 </body>
