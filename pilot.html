@@ -149,6 +149,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
   align-items:center;justify-content:center;gap:22px;padding:30px;cursor:pointer;}
 #boot.off{animation:bootout .4s steps(3) forwards;}
 @keyframes bootout{to{opacity:0;visibility:hidden;}}
+#boot .i-page{display:none;flex-direction:column;align-items:center;gap:22px;}
+#boot .i-page.on{display:flex;}
 #boot .i-top{font-size:12px;color:var(--cyan);letter-spacing:3px;}
 #boot .i-txt{max-width:600px;font-size:13.5px;line-height:2.05;color:var(--white);letter-spacing:.4px;text-align:left;}
 #boot .i-txt .hl{color:var(--yellow);}
@@ -172,9 +174,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
 
 <!-- 부팅 -->
 <div id="boot">
-  <div class="i-top">P.579 · SET-NULL · TELETEXTO</div>
-  <div class="i-txt">다시 시작하겠습니다. 당신은 어디를 걷고 있는지, 어디를 가든지 상관없고, 어디를 가든지 상관없습니다. 무언가가 잡히는 것은 아닙니다. <span class="hl">배열 자체</span>에 관한 것입니다. 다른 무언가와 관련하여 배치되는 방식. 빛이 우연히 통과하는 특정 장소의 특정 표면에서 그 순간에 떨어지고 있는 방식, 정확히 그 순간에는 다시는 통과하지 못할 것입니다. 즉, <span class="cy">당신이 보고 있는 것이 보이는 동안에도 이미 사라지고 있다</span>는 뜻입니다. 즉, 유일한 질문은 <span class="hl">당신이 그것에 대해 무언가를 할 것인지 여부</span>입니다.</div>
-  <div class="i-go blink">▶ 화면을 누르면 시작합니다</div>
+  <div class="i-page on" data-p="1">
+    <div class="i-top">P.579 · SET-NULL · TELETEXTO · 1/2</div>
+    <div class="i-txt">다시 시작하겠습니다. 당신은 어디를 걷고 있는지, 어디를 가든지 상관없고, 어디를 가든지 상관없습니다. 무언가가 잡히는 것은 아닙니다. <span class="hl">배열 자체</span>에 관한 것입니다. 다른 무언가와 관련하여 배치되는 방식. 빛이 우연히 통과하는 특정 장소의 특정 표면에서 그 순간에 떨어지고 있는 방식, 정확히 그 순간에는 다시는 통과하지 못할 것입니다. 즉, <span class="cy">당신이 보고 있는 것이 보이는 동안에도 이미 사라지고 있다</span>는 뜻입니다. 즉, 유일한 질문은 <span class="hl">당신이 그것에 대해 무언가를 할 것인지 여부</span>입니다.</div>
+    <div class="i-go blink">▶ 화면을 누르면 계속</div>
+  </div>
+  <div class="i-page" data-p="2">
+    <div class="i-top">P.579 · SET-NULL · TELETEXTO · 2/2</div>
+    <div class="i-txt">괜찮습니다. 세상은 이러한 배열을 끊임없이 생산하고 있으며, 아무도 눈치채지 못하고 아무것도 잃지 않습니다. 왜냐하면 <span class="cy">아무것도 기록되지 않았고</span> 기록되지 않은 무언가가 <span class="hl">존재하지 않았을 수도 있기 때문</span>입니다.</div>
+    <div class="i-go blink">▶ 화면을 누르면 시작합니다</div>
+  </div>
 </div>
 
 <div id="screen">
@@ -291,13 +300,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
   var t=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
   var c=document.getElementById('clk'); if(c)c.textContent=t; setTimeout(tick,1000);})();
 
-/* 인트로 — 클릭 또는 키 입력 시 입장 */
+/* 인트로 — 클릭/키 입력으로 페이지 넘기고, 마지막에 입장 */
 (function(){
-  var b=document.getElementById('boot'),done=false;
-  function enter(){ if(done||!b)return; done=true; b.classList.add('off');
-    document.removeEventListener('keydown',enter); }
-  if(b) b.addEventListener('click',enter);
-  document.addEventListener('keydown',enter);
+  var b=document.getElementById('boot'); if(!b)return;
+  var pages=b.querySelectorAll('.i-page'), idx=0, done=false;
+  function advance(){
+    if(done)return;
+    if(idx<pages.length-1){
+      pages[idx].classList.remove('on'); idx++; pages[idx].classList.add('on');
+    } else {
+      done=true; b.classList.add('off'); document.removeEventListener('keydown',advance);
+    }
+  }
+  b.addEventListener('click',advance);
+  document.addEventListener('keydown',advance);
 })();
 
 /* 창 포커스 / 드래그 / 독 */
