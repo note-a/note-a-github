@@ -3,301 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SET-NULL.OS — pilot</title>
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<title>SET-NULL · TELETEXTO P.579</title>
 <link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
 <style>
 :root{
-  --g:#ff4a16; --g2:rgba(255,74,22,.7); --g3:rgba(255,74,22,.4); --g4:rgba(255,74,22,.14);
-  --acc:#ff5e16; --ac3:#ff7a2e; --hi:#ffcf4a; --vi:#b07bff;
-  --glass:rgba(18,8,3,.66); --bar:rgba(255,74,22,.12);
-  --mono:'Courier Prime','Galmuri11',monospace;
+  --bg:#000;
+  --red:#ff2a2a; --green:#33dd44; --yellow:#ffe322; --blue:#2536e0;
+  --mag:#ff45e0; --cyan:#33e0e0; --white:#f2f2f2; --hd:#1b27b8; --gray:#9aa3b2;
+  --tx:'Galmuri11','Courier New',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#0a0200;font-family:var(--mono);color:var(--g2);}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--white);
+  font-family:var(--tx);-webkit-font-smoothing:none;image-rendering:pixelated;}
 
-/* ── 데스크탑 배경 ── */
-#desktop{position:fixed;inset:0;overflow:hidden;}
-#bg-grid{position:absolute;inset:-40px;z-index:0;
-  background-image:linear-gradient(rgba(255,74,22,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.045) 1px,transparent 1px);
-  background-size:48px 48px;animation:gridpan 22s linear infinite;}
-@keyframes gridpan{to{background-position:48px 48px;}}
-#bg-glow{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 90% 70% at 50% 32%,rgba(80,30,6,.5),transparent 70%);}
-#bg-vig{position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 75% 75% at 50% 50%,transparent 40%,rgba(0,0,0,.55) 80%,rgba(0,0,0,.92) 100%);}
+/* 미세 스캔라인(CRT TV) */
 .scan{position:fixed;inset:0;z-index:900;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);}
-.sweep{position:fixed;left:0;right:0;height:140px;z-index:901;pointer-events:none;
-  background:linear-gradient(180deg,transparent,rgba(255,122,46,.05) 50%,transparent);
-  animation:sweep 7s linear infinite;}
-@keyframes sweep{0%{top:-140px}100%{top:100%}}
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.22) 2px,rgba(0,0,0,.22) 3px);}
 
-/* ── 상단 메뉴바 ── */
-#menubar{position:fixed;top:0;left:0;right:0;height:30px;z-index:800;
-  display:flex;align-items:center;gap:14px;padding:0 12px;
-  background:linear-gradient(180deg,rgba(28,10,3,.95),rgba(14,6,2,.92));
-  border-bottom:1px solid var(--g3);backdrop-filter:blur(8px);
-  font-size:11px;letter-spacing:1px;color:var(--g2);
-  box-shadow:0 1px 18px rgba(255,74,22,.12);}
-#menubar .logo{color:var(--acc);font-weight:700;letter-spacing:2px;text-shadow:0 0 10px rgba(255,94,22,.6);}
-#menubar .logo b{color:var(--g3);font-weight:400;font-size:9px;margin-left:4px;letter-spacing:1px;}
-#menubar .mi{color:var(--g3);cursor:default;transition:.12s;}
-#menubar .mi:hover{color:var(--acc);}
-#menubar .right{margin-left:auto;display:flex;align-items:center;gap:12px;}
-#menubar .leds{display:flex;gap:5px;}
-#menubar .leds i{width:7px;height:7px;border-radius:50%;background:#3a1606;box-shadow:inset 0 0 2px #000;}
-#menubar .leds i.on{background:var(--acc);box-shadow:0 0 6px var(--acc);}
-#menubar .clk{color:var(--hi);letter-spacing:1.5px;}
-#menubar .back{color:var(--g3);cursor:pointer;border:1px solid var(--g4);padding:2px 8px;border-radius:3px;transition:.12s;}
-#menubar .back:hover{color:var(--acc);border-color:var(--g3);background:var(--g4);}
+#screen{position:fixed;inset:0;display:flex;flex-direction:column;background:#000;overflow:hidden;}
 
-/* ── 좌측 아이콘 레일 ── */
-#rail{position:fixed;top:42px;left:10px;z-index:780;display:flex;flex-direction:column;gap:10px;}
-#rail .ic{width:54px;height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  background:var(--glass);border:1px solid var(--g4);border-radius:7px;cursor:pointer;
-  backdrop-filter:blur(6px);transition:.12s;color:var(--g3);}
-#rail .ic:hover{border-color:var(--g3);color:var(--acc);box-shadow:0 0 16px rgba(255,74,22,.18);transform:translateY(-1px);}
-#rail .ic .gi{font-size:18px;line-height:1;color:var(--ac3);text-shadow:0 0 8px rgba(255,122,46,.5);}
-#rail .ic .gt{font-size:7px;letter-spacing:.5px;}
+/* ── 상단 파란 헤더 ── */
+#ttx-head{flex-shrink:0;height:42px;background:var(--hd);display:flex;align-items:center;gap:14px;padding:0 12px;}
+#ttx-head .ed{font-size:11px;color:#fff;letter-spacing:1px;}
+#ttx-head .ed b{color:var(--cyan);font-weight:400;margin-left:6px;}
+#ttx-head .big{font-size:22px;letter-spacing:4px;color:var(--yellow);font-weight:700;
+  text-shadow:2px 2px 0 #000;flex:1;text-align:center;}
+#ttx-head .clk{font-size:12px;color:var(--white);letter-spacing:1px;}
+#ttx-head .logo{font-size:20px;font-weight:700;letter-spacing:1px;color:#fff;background:#0a0a55;
+  border:2px solid #4a5aff;padding:0 6px;}
+#ttx-head .back{font-size:11px;color:var(--yellow);background:#000;border:2px solid var(--yellow);
+  padding:1px 6px;cursor:pointer;font-weight:700;letter-spacing:1px;}
+#ttx-head .back:hover{background:var(--yellow);color:#000;}
 
-/* ── 창 공통 ── */
-.win{position:absolute;min-width:240px;display:flex;flex-direction:column;
-  background:var(--glass);border:1px solid var(--g3);border-radius:8px;overflow:hidden;
-  backdrop-filter:blur(11px);
-  box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.4),0 0 34px rgba(255,74,22,.10);}
-.win.active{border-color:var(--g2);box-shadow:0 22px 60px rgba(0,0,0,.7),0 0 0 1px rgba(0,0,0,.4),0 0 46px rgba(255,74,22,.22);}
+/* ── 빨간 경고바 ── */
+#ttx-alert{flex-shrink:0;height:26px;background:var(--red);display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:13px;font-weight:700;color:var(--yellow);letter-spacing:1px;text-shadow:1px 1px 0 #000;}
+#ttx-alert .pg{color:#fff;}
+.blink{animation:bl .8s step-end infinite;}@keyframes bl{50%{opacity:0}}
+
+/* ── 데스크탑(창 영역) ── */
+#winwrap{flex:1;position:relative;min-height:0;}
+
+/* ── 창(테레텍스트 블록) ── */
+.win{position:absolute;background:#000;border:2px solid var(--th);display:flex;flex-direction:column;
+  min-width:240px;overflow:hidden;}
+.win.active{box-shadow:0 0 0 2px #000,0 0 0 4px var(--th);}
 .win.min{display:none;}
-.win-bar{height:26px;display:flex;align-items:center;gap:8px;padding:0 9px;cursor:grab;user-select:none;flex-shrink:0;
-  background:linear-gradient(180deg,rgba(255,74,22,.16),rgba(255,74,22,.05));
-  border-bottom:1px solid var(--g4);}
+.win-bar{flex-shrink:0;height:22px;background:var(--th);color:#000;display:flex;align-items:center;gap:7px;
+  padding:0 8px;cursor:grab;user-select:none;font-size:12px;font-weight:700;letter-spacing:1px;}
 .win-bar:active{cursor:grabbing;}
-.win.active .win-bar{background:linear-gradient(180deg,rgba(255,74,22,.26),rgba(255,74,22,.08));}
-.win-bar .dot{width:8px;height:8px;border-radius:50%;background:var(--g3);box-shadow:0 0 6px rgba(255,74,22,.4);}
-.win-bar .ttl{font-size:10px;letter-spacing:1.5px;color:var(--g2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.win-bar .ttl b{color:var(--g3);font-weight:400;font-size:8px;margin-left:5px;}
-.win-ctl{display:flex;gap:5px;}
-.win-ctl span{width:13px;height:13px;display:flex;align-items:center;justify-content:center;font-size:9px;
-  border:1px solid var(--g4);border-radius:3px;color:var(--g3);cursor:pointer;transition:.1s;}
-.win-ctl span:hover{color:var(--acc);border-color:var(--g3);background:var(--g4);}
-.win-menu{height:18px;display:flex;align-items:center;gap:12px;padding:0 10px;flex-shrink:0;
-  font-size:8.5px;letter-spacing:1px;color:var(--g3);border-bottom:1px solid var(--g4);background:rgba(255,74,22,.03);}
-.win-body{flex:1;overflow:auto;padding:10px 12px;font-size:11px;line-height:1.85;color:var(--g2);position:relative;}
-.win-foot{flex-shrink:0;padding:5px 10px;font-size:8px;letter-spacing:1px;color:var(--g3);
-  border-top:1px solid var(--g4);background:rgba(255,74,22,.03);display:flex;justify-content:space-between;}
+.win-bar .pg{background:#000;color:var(--th);padding:0 4px;font-weight:700;}
+.win-bar .ttl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.win-bar .ttl b{font-weight:400;font-size:10px;margin-left:5px;color:#000;}
+.win-ctl{display:flex;gap:4px;}
+.win-ctl span{width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:11px;
+  background:#000;color:var(--th);cursor:pointer;font-weight:700;}
+.win-ctl span:hover{background:#fff;color:#000;}
+.win-body{flex:1;overflow:auto;padding:9px 11px;font-size:12px;line-height:1.7;color:var(--white);position:relative;}
+.win-foot{flex-shrink:0;height:18px;background:var(--th);color:#000;display:flex;align-items:center;justify-content:space-between;
+  padding:0 8px;font-size:10px;font-weight:700;letter-spacing:1px;}
 
-/* 스크롤바 */
-.win-body::-webkit-scrollbar{width:7px;}
-.win-body::-webkit-scrollbar-thumb{background:var(--g4);border-radius:4px;}
-.win-body::-webkit-scrollbar-thumb:hover{background:var(--g3);}
+.win-body::-webkit-scrollbar{width:8px;}
+.win-body::-webkit-scrollbar-track{background:#000;}
+.win-body::-webkit-scrollbar-thumb{background:var(--th);}
 
-.blink{animation:bl .85s step-end infinite;}@keyframes bl{50%{opacity:0}}
+/* 창 테마색 */
+#w-log{--th:var(--cyan);}
+#w-attr{--th:var(--green);}
+#w-man{--th:var(--yellow);}
+#w-work{--th:var(--mag);}
 
 /* ── NULL.LOG ── */
-.nl-head{display:flex;gap:8px;font-size:8.5px;letter-spacing:1px;color:var(--g3);
-  padding:3px 2px;border-bottom:1px solid var(--g4);margin-bottom:3px;position:sticky;top:0;background:rgba(14,6,2,.9);}
+.nl-head{display:flex;gap:8px;font-size:11px;font-weight:700;color:#000;background:var(--cyan);
+  padding:2px 4px;position:sticky;top:0;}
 .nl-head .c1{flex:0 0 56px;}.nl-head .c2{flex:1;}.nl-head .c3{flex:0 0 44px;text-align:right;}
-.nl-row{display:flex;gap:8px;font-size:10px;padding:3px 2px;border-bottom:1px dotted var(--g4);color:var(--g2);}
-.nl-row:hover{background:var(--g4);}
-.nl-row.cand{color:var(--hi);}
-.nl-row .c1{flex:0 0 56px;color:var(--g3);}
+.nl-row{display:flex;gap:8px;font-size:12px;padding:3px 4px;color:var(--white);border-bottom:1px solid #111;}
+.nl-row:hover{background:var(--cyan);color:#000;}
+.nl-row.cand{color:var(--yellow);}
+.nl-row:hover.cand{color:#000;}
+.nl-row .c1{flex:0 0 56px;color:var(--gray);}
+.nl-row:hover .c1{color:#000;}
 .nl-row .c2{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nl-row .c3{flex:0 0 44px;text-align:right;color:var(--ac3);}
-.nl-tag{font-size:7px;border:1px solid var(--hi);padding:0 3px;margin-left:5px;border-radius:2px;}
-.nl-empty{padding:14px 2px;font-size:9px;color:var(--g3);letter-spacing:1px;}
+.nl-row .c3{flex:0 0 44px;text-align:right;color:var(--green);}
+.nl-row:hover .c3{color:#000;}
+.nl-tag{font-size:9px;background:var(--yellow);color:#000;padding:0 3px;margin-left:5px;font-weight:700;}
+.nl-empty{padding:14px 4px;font-size:11px;color:var(--gray);}
 
 /* ── ATTR.TEST ── */
-.dz{border:1px dashed var(--g3);border-radius:6px;background:rgba(255,74,22,.04);
-  padding:18px 10px;text-align:center;cursor:pointer;margin:2px 0 8px;transition:.12s;}
-.dz:hover{border-color:var(--acc);background:rgba(255,74,22,.09);}
-.dz .ic{font-size:24px;color:var(--g3);line-height:1;}
-.dz .lb{font-size:9px;letter-spacing:1.5px;color:var(--g3);margin-top:6px;}
-.dz .ex{font-size:8px;color:var(--g4);margin-top:2px;}
-.csec{font-size:8.5px;letter-spacing:1.5px;color:var(--g3);margin:8px 0 4px;border-bottom:1px solid var(--g4);padding-bottom:2px;}
-.term{background:rgba(0,0,0,.42);border:1px solid var(--g4);border-radius:5px;padding:8px;font-size:9.5px;line-height:1.7;
-  max-height:140px;overflow:auto;color:var(--g2);}
-.t-p{color:var(--ac3);}.t-ok{color:#5ad17a;}.t-in{color:var(--g3);}.t-ou{color:var(--g3);}
-.t-cur{display:inline-block;width:6px;height:10px;background:var(--g2);vertical-align:-1px;animation:bl 1s step-end infinite;}
-.res{background:rgba(0,0,0,.42);border:1px solid var(--g4);border-radius:5px;padding:10px 12px;margin-top:4px;}
-.res-code{font-size:16px;letter-spacing:2px;color:var(--ac3);font-weight:700;text-shadow:0 0 10px rgba(255,122,46,.5);}
-.res-code.anom{color:var(--hi);text-shadow:0 0 10px rgba(255,207,74,.55);}
-.res-desc{font-size:9px;color:var(--g3);margin-top:4px;}
-.res-vals{font-size:8.5px;color:var(--g3);margin-top:2px;}
-.stat-line{font-size:8.5px;color:var(--g3);letter-spacing:1px;margin-bottom:4px;}
-.stat-line .ok{color:#5ad17a;}
+.dz{border:2px dashed var(--green);background:#001500;padding:16px 10px;text-align:center;cursor:pointer;margin:2px 0 8px;}
+.dz:hover{background:#003000;}
+.dz .ic{font-size:24px;color:var(--green);line-height:1;}
+.dz .lb{font-size:11px;letter-spacing:1px;color:var(--green);margin-top:6px;font-weight:700;}
+.dz .ex{font-size:10px;color:var(--gray);margin-top:2px;}
+.csec{font-size:11px;letter-spacing:1px;color:var(--cyan);margin:8px 0 4px;font-weight:700;}
+.term{background:#001000;border:2px solid #0a3a0a;padding:8px;font-size:11px;line-height:1.7;
+  max-height:130px;overflow:auto;color:var(--green);}
+.t-p{color:var(--cyan);}.t-ok{color:var(--green);}.t-in{color:var(--gray);}.t-ou{color:var(--yellow);}
+.t-cur{display:inline-block;width:7px;height:11px;background:var(--green);vertical-align:-1px;animation:bl 1s step-end infinite;}
+.res{background:#001000;border:2px solid var(--green);padding:9px 11px;margin-top:4px;}
+.res-code{font-size:17px;letter-spacing:2px;color:var(--green);font-weight:700;text-shadow:1px 1px 0 #000;}
+.res-code.anom{color:var(--yellow);}
+.res-desc{font-size:10px;color:var(--white);margin-top:4px;}
+.res-vals{font-size:10px;color:var(--gray);margin-top:2px;}
+.stat-line{font-size:11px;color:var(--gray);margin-bottom:4px;}
+.stat-line .ok{color:var(--green);font-weight:700;}
 
 /* ── MANUAL ── */
-.m-sec{font-size:9px;letter-spacing:1.5px;color:var(--ac3);margin:8px 0 4px;}
+.m-sec{font-size:12px;letter-spacing:1px;color:var(--yellow);margin:8px 0 4px;font-weight:700;}
 .m-sec:first-child{margin-top:0;}
-.m-row{display:flex;gap:10px;padding:3px 0;border-bottom:1px dotted var(--g4);font-size:10px;line-height:1.6;}
-.m-k{color:var(--g3);flex:0 0 84px;}
-.m-v{color:var(--g2);flex:1;}
+.m-row{display:flex;gap:10px;padding:3px 0;border-bottom:1px solid #1a1a00;font-size:11px;line-height:1.5;}
+.m-k{color:var(--cyan);flex:0 0 86px;}
+.m-v{color:var(--white);flex:1;}
 
 /* ── WORK ── */
-.w-h{font-size:13px;letter-spacing:3px;color:var(--acc);text-shadow:0 0 10px rgba(255,94,22,.5);margin-bottom:8px;}
-.w-p{font-size:10.5px;line-height:1.95;color:var(--g2);margin-bottom:9px;}
-.w-p .hl{color:var(--hi);}
-.w-p .vi{color:var(--vi);}
-.w-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;margin-top:8px;padding-top:8px;border-top:1px solid var(--g4);}
-.w-meta .kv{display:flex;justify-content:space-between;font-size:9px;}
-.w-meta .kv .k{color:var(--g3);}.w-meta .kv .v{color:var(--ac3);}
+.w-h{font-size:15px;letter-spacing:3px;color:var(--mag);font-weight:700;text-shadow:1px 1px 0 #000;margin-bottom:8px;}
+.w-p{font-size:11.5px;line-height:1.8;color:var(--white);margin-bottom:9px;}
+.w-p .hl{color:var(--yellow);}
+.w-p .vi{color:var(--cyan);}
+.w-meta{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;margin-top:8px;padding-top:8px;border-top:2px solid var(--mag);}
+.w-meta .kv{display:flex;justify-content:space-between;font-size:10px;}
+.w-meta .kv .k{color:var(--cyan);}.w-meta .kv .v{color:var(--yellow);}
 
-/* ── 하단 독 ── */
-#dock{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:800;
-  display:flex;gap:8px;padding:6px 10px;border-radius:11px;
-  background:rgba(18,8,3,.78);border:1px solid var(--g3);backdrop-filter:blur(12px);
-  box-shadow:0 12px 36px rgba(0,0,0,.5),0 0 28px rgba(255,74,22,.12);}
-#dock .d{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:7px;cursor:pointer;
-  font-size:9.5px;letter-spacing:1px;color:var(--g3);border:1px solid transparent;transition:.12s;}
-#dock .d .dt{width:6px;height:6px;border-radius:50%;background:var(--g4);}
-#dock .d:hover{color:var(--acc);background:var(--g4);}
-#dock .d.open{color:var(--g2);border-color:var(--g4);}
-#dock .d.open .dt{background:var(--acc);box-shadow:0 0 6px var(--acc);}
+/* ── 하단 FastText 컬러 바 ── */
+#dock{flex-shrink:0;height:30px;display:flex;}
+#dock .d{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+  font-size:12px;font-weight:700;letter-spacing:1px;color:#000;}
+#dock .d:nth-child(1){background:var(--red);}
+#dock .d:nth-child(2){background:var(--green);}
+#dock .d:nth-child(3){background:var(--yellow);}
+#dock .d:nth-child(4){background:var(--cyan);}
+#dock .d .dt{display:none;}
+#dock .d:not(.open){opacity:.4;}
+#dock .d:not(.open)::before{content:'▷ ';}
+#dock .d.open::before{content:'■ ';}
 
 /* ── 부팅 ── */
-#boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:14px;font-size:11px;letter-spacing:2px;color:var(--ac3);}
-#boot.off{animation:bootout .5s ease forwards;}
+#boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;}
+#boot.off{animation:bootout .4s steps(3) forwards;}
 @keyframes bootout{to{opacity:0;visibility:hidden;}}
-#boot .bl-logo{font-size:20px;letter-spacing:5px;color:var(--acc);text-shadow:0 0 18px rgba(255,94,22,.7);}
-#boot .bl-line{font-size:9px;color:var(--g3);letter-spacing:1px;}
-#boot .bar{width:200px;height:4px;border:1px solid var(--g4);border-radius:3px;overflow:hidden;}
-#boot .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--hi));animation:bootbar 1.1s ease forwards;}
+#boot .b-big{font-size:26px;letter-spacing:6px;color:var(--yellow);font-weight:700;text-shadow:2px 2px 0 var(--red);}
+#boot .b-pg{font-size:13px;color:var(--cyan);letter-spacing:2px;}
+#boot .bar{width:220px;height:14px;border:2px solid var(--white);background:#000;}
+#boot .bar i{display:block;height:100%;width:0;background:var(--green);animation:bootbar 1.1s steps(10) forwards;}
 @keyframes bootbar{to{width:100%}}
-body.booting #desktop{animation:crtOn .5s cubic-bezier(.2,.65,.3,1) both;transform-origin:center center;}
-@keyframes crtOn{0%{transform:scale(.002,.01);filter:brightness(4);}34%{transform:scale(1,.02);filter:brightness(2.4);}100%{transform:scale(1,1);filter:brightness(1);}}
+#boot .b-msg{font-size:11px;color:var(--gray);letter-spacing:1px;}
 
-/* ── 반응형: 좁은 화면은 창 세로 스택 ── */
+/* ── 반응형 ── */
 @media (max-width:860px){
-  #rail{display:none;}
-  #desktop{overflow-y:auto;}
+  #ttx-head .big{font-size:16px;letter-spacing:2px;}
+  #winwrap{overflow-y:auto;}
   .win{position:relative !important;left:auto !important;top:auto !important;
-    width:auto !important;height:auto !important;max-height:none !important;
-    margin:0 10px 12px;transform:none !important;}
-  #winwrap{padding:42px 0 90px;display:flex;flex-direction:column;}
+    width:auto !important;height:auto !important;margin:0 8px 10px;}
+  #winstack{padding:10px 0;display:flex;flex-direction:column;}
   .win-bar{cursor:default;}
-  #dock{max-width:94vw;overflow-x:auto;}
 }
-@media (min-width:861px){#winwrap{display:contents;}}
-@media (prefers-reduced-motion:reduce){
-  #bg-grid,.sweep,body.booting #desktop,#boot .bar i{animation:none !important;}
-}
+@media (min-width:861px){#winstack{display:contents;}}
+@media (prefers-reduced-motion:reduce){#boot .bar i{animation:none;width:100%;}}
 </style>
 </head>
-<body class="booting">
+<body>
 
 <!-- 부팅 -->
 <div id="boot">
-  <div class="bl-logo">SET-NULL.OS</div>
-  <div class="bl-line">PILOT BUILD · FUTURE // v0.2</div>
+  <div class="b-big">TELETEXTO</div>
+  <div class="b-pg">P.579 · SET-NULL</div>
   <div class="bar"><i></i></div>
-  <div class="bl-line" id="boot-msg">> mount /null ... <span class="blink">_</span></div>
+  <div class="b-msg" id="boot-msg">buscando página 579 ... <span class="blink">_</span></div>
 </div>
 
-<div id="desktop">
-  <div id="bg-grid"></div>
-  <div id="bg-glow"></div>
-  <div id="bg-vig"></div>
+<div id="screen">
 
-  <!-- 메뉴바 -->
-  <div id="menubar">
-    <span class="logo">SET-NULL.OS<b>// FUTURE</b></span>
-    <span class="mi">FILE</span><span class="mi">VIEW</span><span class="mi">CHANNEL</span><span class="mi">HELP</span>
-    <span class="right">
-      <span class="leds"><i class="on"></i><i></i><i class="on"></i><i></i></span>
-      <span class="mi" style="color:var(--g3);">∅ NULL DETECTED</span>
-      <span class="clk" id="clk">--:--:--</span>
-      <span class="back" onclick="goBack()">← SET.OS</span>
-    </span>
+  <!-- 헤더 -->
+  <div id="ttx-head">
+    <span class="ed">Edición ∅·579<b>(C)SET</b></span>
+    <span class="big">SET-NULL</span>
+    <span class="clk" id="clk">--:--:--</span>
+    <span class="back" onclick="goBack()">←579</span>
+    <span class="logo">set</span>
   </div>
 
-  <!-- 좌측 아이콘 레일 -->
-  <div id="rail">
-    <div class="ic" onclick="openWin('w-log')"><span class="gi">▤</span><span class="gt">NULL.LOG</span></div>
-    <div class="ic" onclick="openWin('w-attr')"><span class="gi">⊞</span><span class="gt">ATTR</span></div>
-    <div class="ic" onclick="openWin('w-man')"><span class="gi">❓</span><span class="gt">MANUAL</span></div>
-    <div class="ic" onclick="openWin('w-work')"><span class="gi">◈</span><span class="gt">WORK</span></div>
+  <!-- 경고바 -->
+  <div id="ttx-alert">
+    <span>¡¡ LA IMAGEN NO ATRIBUIBLE EXISTE !! · 귀속 불가 이미지는 존재한다</span>
+    <span class="pg">∅579</span>
   </div>
 
+  <!-- 창 영역 -->
   <div id="winwrap">
+   <div id="winstack">
 
-  <!-- WORK / 작업 설명 -->
-  <div class="win" id="w-work" style="left:48px;top:62px;width:386px;height:312px;z-index:11;">
-    <div class="win-bar"><span class="dot"></span><span class="ttl">WORK<b>작업 설명</b></span>
-      <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
-    <div class="win-menu"><span>SET</span><span>SET:Inclusion</span><span>STATEMENT</span></div>
-    <div class="win-body">
-      <div class="w-h">SET — 집합</div>
-      <div class="w-p">세계는 날 것으로 존재하지 않는다. 인식하는 순간 그것은 이미 <span class="hl">언어가 포획한 집합</span>이다. 사진을 찍는 일은 집합이 구성되는 방식과 닮았다 — 포함과 배제, 안과 밖, 프레임 안에서만의 존재.</div>
-      <div class="w-p">AI와 함께 만든 <span class="hl">지시문</span>을 따라 촬영하고, 작가의 시선을 지운다. 남는 것은 '무엇을 보는가'가 아니라 <span class="vi">'이렇게 볼 수밖에 없는'</span> 시선의 구조다.</div>
-      <div class="w-p"><span class="hl">SET-NULL</span>은 그 구조의 바깥이다. 어느 코드에도 귀속되지 않는 이미지, 결과 없는 검색어가 모이는 <span class="vi">공집합 채널</span>. 측정하는 자도 측정된다 — 로그아웃은 불가능하다.</div>
-      <div class="w-meta">
-        <div class="kv"><span class="k">CODES</span><span class="v">83</span></div>
-        <div class="kv"><span class="k">SAMPLES</span><span class="v">438</span></div>
-        <div class="kv"><span class="k">ROUND</span><span class="v">진행중</span></div>
-        <div class="kv"><span class="k">CHANNEL</span><span class="v">PILOT</span></div>
+    <!-- WORK / 작업 설명 -->
+    <div class="win" id="w-work" style="left:40px;top:24px;width:384px;height:300px;z-index:11;">
+      <div class="win-bar"><span class="pg">400</span><span class="ttl">WORK<b>작업 설명</b></span>
+        <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
+      <div class="win-body">
+        <div class="w-h">SET — 집합</div>
+        <div class="w-p">세계는 날 것으로 존재하지 않는다. 인식하는 순간 그것은 이미 <span class="hl">언어가 포획한 집합</span>이다. 사진을 찍는 일은 집합이 구성되는 방식과 닮았다 — 포함과 배제, 안과 밖, 프레임 안에서만의 존재.</div>
+        <div class="w-p">AI와 함께 만든 <span class="hl">지시문</span>을 따라 촬영하고, 작가의 시선을 지운다. 남는 것은 '무엇을 보는가'가 아니라 <span class="vi">'이렇게 볼 수밖에 없는'</span> 시선의 구조다.</div>
+        <div class="w-p"><span class="hl">SET-NULL</span>은 그 구조의 바깥 — 어느 코드에도 귀속되지 않는 이미지, 결과 없는 검색어가 모이는 <span class="vi">공집합 채널</span>. 측정하는 자도 측정된다.</div>
+        <div class="w-meta">
+          <div class="kv"><span class="k">CODES</span><span class="v">83</span></div>
+          <div class="kv"><span class="k">SAMPLES</span><span class="v">438</span></div>
+          <div class="kv"><span class="k">ROUND</span><span class="v">진행중</span></div>
+          <div class="kv"><span class="k">CHANNEL</span><span class="v">PILOT</span></div>
+        </div>
       </div>
+      <div class="win-foot"><span>STATEMENT.TXT</span><span>P.400</span></div>
     </div>
-    <div class="win-foot"><span>STATEMENT.TXT</span><span>read-only</span></div>
-  </div>
 
-  <!-- NULL.LOG -->
-  <div class="win" id="w-log" style="left:352px;top:118px;width:436px;height:328px;z-index:12;">
-    <div class="win-bar"><span class="dot"></span><span class="ttl">NULL.LOG<b>공집합 로그</b></span>
-      <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
-    <div class="win-menu"><span>DATE</span><span>QUERY</span><span>COUNT</span><span style="margin-left:auto;color:var(--ac3);">●live</span></div>
-    <div class="win-body">
-      <div class="nl-head"><span class="c1">DATE</span><span class="c2">QUERY</span><span class="c3">×</span></div>
-      <div id="nl-list"></div>
-    </div>
-    <div class="win-foot"><span>결과 없는 검색어 자동 누적 · 3회↑ = 지시문 후보</span><span id="nl-cnt">0 REC</span></div>
-  </div>
-
-  <!-- MANUAL -->
-  <div class="win" id="w-man" style="left:120px;top:300px;width:430px;height:262px;z-index:13;">
-    <div class="win-bar"><span class="dot"></span><span class="ttl">MANUAL<b>사용 안내</b></span>
-      <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
-    <div class="win-menu"><span>① NULL.LOG</span><span>② ATTR.TEST</span></div>
-    <div class="win-body">
-      <div class="m-sec">① NULL.LOG — 공집합 로그</div>
-      <div class="m-row"><span class="m-k">이게 뭔가요</span><span class="m-v">MEASURE에서 검색 결과가 없던 단어들이 자동으로 모이는 곳.</span></div>
-      <div class="m-row"><span class="m-k">지시문 후보</span><span class="m-v">같은 단어가 3회 이상 결과 없이 검색되면 — 그 단어엔 뭔가 있다는 뜻.</span></div>
-      <div class="m-sec">② ATTR.TEST — 이미지 귀속</div>
-      <div class="m-row"><span class="m-k">이게 뭔가요</span><span class="m-v">외부 이미지를 올리면 SET의 어떤 문법 코드에 가까운지 분석.</span></div>
-      <div class="m-row"><span class="m-k">귀속 불가</span><span class="m-v">아주 가끔 어디에도 속하지 않는다는 결과 — 그것도 하나의 답.</span></div>
-    </div>
-    <div class="win-foot"><span>MANUAL.TXT</span><span>v0.2</span></div>
-  </div>
-
-  <!-- ATTR.TEST -->
-  <div class="win" id="w-attr" style="left:710px;top:84px;width:402px;height:452px;z-index:14;">
-    <div class="win-bar"><span class="dot"></span><span class="ttl">ATTR.TEST<b>귀속 분석</b></span>
-      <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
-    <div class="win-menu"><span>INPUT</span><span>STDOUT</span><span>RESULT</span><span style="margin-left:auto;">83 codes</span></div>
-    <div class="win-body">
-      <div class="csec">// 분석 입력</div>
-      <div class="dz" id="dz" onclick="document.getElementById('file-in').click()">
-        <div class="ic">⊞</div>
-        <div class="lb">이미지 드래그 또는 클릭</div>
-        <div class="ex">JPG · PNG · WEBP</div>
+    <!-- NULL.LOG -->
+    <div class="win" id="w-log" style="left:348px;top:80px;width:434px;height:316px;z-index:12;">
+      <div class="win-bar"><span class="pg">100</span><span class="ttl">NULL.LOG<b>공집합 로그</b></span>
+        <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
+      <div class="win-body">
+        <div class="nl-head"><span class="c1">DATE</span><span class="c2">QUERY</span><span class="c3">×</span></div>
+        <div id="nl-list"></div>
       </div>
-      <div class="stat-line">STATUS: <span class="ok" id="dstat">READY</span></div>
-      <input type="file" id="file-in" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
-      <div class="csec">// stdout</div>
-      <div class="term" id="term">
-        <div><span class="t-p">null@attr:~$</span> ./attr-test --init</div>
-        <div><span class="t-in">// grammar code db 로드...</span></div>
-        <div><span class="t-ok">// 83 codes loaded</span></div>
-        <div><span class="t-ok">// ready</span></div>
-        <div><span class="t-p">null@attr:~$</span> <span class="t-cur"></span></div>
-      </div>
-      <div class="csec">// result</div>
-      <div class="res" id="res"><div style="color:var(--g3);font-size:10px;letter-spacing:2px;">— 분석 대기 중 —</div></div>
+      <div class="win-foot"><span>3회↑ = 지시문 후보</span><span id="nl-cnt">0 REC</span></div>
     </div>
-    <div class="win-foot"><span>ATTR-TEST v1.3-beta</span><span>engine ●</span></div>
-  </div>
 
+    <!-- MANUAL -->
+    <div class="win" id="w-man" style="left:110px;top:286px;width:430px;height:256px;z-index:13;">
+      <div class="win-bar"><span class="pg">300</span><span class="ttl">MANUAL<b>사용 안내</b></span>
+        <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
+      <div class="win-body">
+        <div class="m-sec">① NULL.LOG — 공집합 로그</div>
+        <div class="m-row"><span class="m-k">이게 뭔가요</span><span class="m-v">MEASURE에서 검색 결과가 없던 단어들이 자동으로 모이는 곳.</span></div>
+        <div class="m-row"><span class="m-k">지시문 후보</span><span class="m-v">같은 단어가 3회 이상 결과 없이 검색되면 — 그 단어엔 뭔가 있다는 뜻.</span></div>
+        <div class="m-sec">② ATTR.TEST — 이미지 귀속</div>
+        <div class="m-row"><span class="m-k">이게 뭔가요</span><span class="m-v">외부 이미지를 올리면 SET의 어떤 문법 코드에 가까운지 분석.</span></div>
+        <div class="m-row"><span class="m-k">귀속 불가</span><span class="m-v">아주 가끔 어디에도 속하지 않는다는 결과 — 그것도 하나의 답.</span></div>
+      </div>
+      <div class="win-foot"><span>MANUAL.TXT</span><span>P.300</span></div>
+    </div>
+
+    <!-- ATTR.TEST -->
+    <div class="win" id="w-attr" style="left:706px;top:46px;width:400px;height:444px;z-index:14;">
+      <div class="win-bar"><span class="pg">200</span><span class="ttl">ATTR.TEST<b>귀속 분석</b></span>
+        <span class="win-ctl"><span data-act="min">_</span><span data-act="close">✕</span></span></div>
+      <div class="win-body">
+        <div class="csec">// 분석 입력</div>
+        <div class="dz" id="dz" onclick="document.getElementById('file-in').click()">
+          <div class="ic">⊞</div>
+          <div class="lb">이미지 드래그 또는 클릭</div>
+          <div class="ex">JPG · PNG · WEBP</div>
+        </div>
+        <div class="stat-line">STATUS: <span class="ok" id="dstat">READY</span></div>
+        <input type="file" id="file-in" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
+        <div class="csec">// stdout</div>
+        <div class="term" id="term">
+          <div><span class="t-p">null@attr:~$</span> ./attr-test --init</div>
+          <div><span class="t-in">// grammar code db 로드...</span></div>
+          <div><span class="t-ok">// 83 codes loaded</span></div>
+          <div><span class="t-ok">// ready</span></div>
+          <div><span class="t-p">null@attr:~$</span> <span class="t-cur"></span></div>
+        </div>
+        <div class="csec">// result</div>
+        <div class="res" id="res"><div style="color:var(--gray);font-size:11px;">— 분석 대기 중 —</div></div>
+      </div>
+      <div class="win-foot"><span>ATTR-TEST v1.3</span><span>P.200</span></div>
+    </div>
+
+   </div><!-- /winstack -->
   </div><!-- /winwrap -->
 
-  <!-- 하단 독 -->
+  <!-- 하단 FastText -->
   <div id="dock">
     <div class="d open" data-win="w-log"><span class="dt"></span>NULL.LOG</div>
     <div class="d open" data-win="w-attr"><span class="dt"></span>ATTR.TEST</div>
@@ -307,26 +278,22 @@ body.booting #desktop{animation:crtOn .5s cubic-bezier(.2,.65,.3,1) both;transfo
 </div>
 
 <div class="scan"></div>
-<div class="sweep"></div>
 
 <script>
-/* ── 시계 ── */
+/* 시계 */
 (function tick(){var n=new Date(),p=x=>String(x).padStart(2,'0');
   var t=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
   var c=document.getElementById('clk'); if(c)c.textContent=t; setTimeout(tick,1000);})();
 
-/* ── 부팅 ── */
+/* 부팅 */
 window.addEventListener('load',function(){
-  var msgs=['> mount /null ... OK','> load grammar.db (83) ... OK','> link MEASURE.bus ... OK','> SET-NULL.OS ready_'];
+  var msgs=['buscando página 579 ...','cargando grammar.db (83) ...','enlace MEASURE.bus ...','SET-NULL listo_'];
   var i=0,bm=document.getElementById('boot-msg');
   var iv=setInterval(function(){ i++; if(bm&&msgs[i])bm.innerHTML=msgs[i]+' <span class="blink">_</span>'; if(i>=msgs.length-1)clearInterval(iv); },280);
-  setTimeout(function(){
-    var b=document.getElementById('boot'); if(b)b.classList.add('off');
-    document.body.classList.remove('booting');
-  },1300);
+  setTimeout(function(){ var b=document.getElementById('boot'); if(b)b.classList.add('off'); },1250);
 });
 
-/* ── 창 포커스 / 드래그 / 독 ── */
+/* 창 포커스 / 드래그 / 독 */
 var zTop=20;
 function focusWin(w){ zTop++; w.style.zIndex=zTop;
   document.querySelectorAll('.win').forEach(x=>x.classList.toggle('active',x===w)); }
@@ -338,15 +305,13 @@ function setDock(id,open){ var d=document.querySelector('#dock .d[data-win="'+id
 document.querySelectorAll('.win').forEach(function(w){
   var bar=w.querySelector('.win-bar');
   w.addEventListener('pointerdown',function(){ focusWin(w); });
-  // 컨트롤(최소화/닫기)
   w.querySelectorAll('.win-ctl span').forEach(function(s){
     s.addEventListener('click',function(e){ e.stopPropagation(); closeWin(w.id); });
   });
-  // 드래그 (데스크탑 폭에서만)
   var drag=false,ox=0,oy=0;
   bar.addEventListener('pointerdown',function(e){
     if(e.target.closest('.win-ctl'))return;
-    if(window.innerWidth<=860)return; // 모바일은 스택
+    if(window.innerWidth<=860)return;
     drag=true; var r=w.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
     bar.setPointerCapture(e.pointerId); e.preventDefault();
   });
@@ -354,7 +319,7 @@ document.querySelectorAll('.win').forEach(function(w){
     if(!drag)return;
     var x=e.clientX-ox, y=e.clientY-oy;
     x=Math.max(2,Math.min(window.innerWidth-60,x));
-    y=Math.max(32,Math.min(window.innerHeight-30,y));
+    y=Math.max(70,Math.min(window.innerHeight-40,y));
     w.style.left=x+'px'; w.style.top=y+'px';
   });
   function end(){ drag=false; }
@@ -363,12 +328,11 @@ document.querySelectorAll('.win').forEach(function(w){
 document.querySelectorAll('#dock .d').forEach(function(d){
   d.addEventListener('click',function(){
     var id=d.dataset.win, w=document.getElementById(id);
-    if(w.classList.contains('min')){ openWin(id); }
-    else { focusWin(w); } // 이미 열려있으면 앞으로
+    if(w.classList.contains('min')){ openWin(id); } else { focusWin(w); }
   });
 });
 
-/* ── NULL.LOG ── */
+/* NULL.LOG */
 (function renderLog(){
   var log; try{ log=JSON.parse(localStorage.getItem('set_null_log')||'{}'); }catch(e){ log={}; }
   var seeded=false;
@@ -384,13 +348,13 @@ document.querySelectorAll('#dock .d').forEach(function(d){
   var cnt=document.getElementById('nl-cnt'); if(cnt)cnt.textContent=entries.length+(seeded?' REC (seed)':' REC');
 })();
 
-/* ── ATTR.TEST ── */
+/* ATTR.TEST */
 function handleFile(f){ if(!f)return; var ds=document.getElementById('dstat'); if(ds)ds.textContent=f.name; analyze(f); }
 (function(){
   var dz=document.getElementById('dz'); if(!dz)return;
-  dz.addEventListener('dragover',function(e){ e.preventDefault(); dz.style.borderColor='var(--acc)'; });
-  dz.addEventListener('dragleave',function(){ dz.style.borderColor=''; });
-  dz.addEventListener('drop',function(e){ e.preventDefault(); dz.style.borderColor='';
+  dz.addEventListener('dragover',function(e){ e.preventDefault(); dz.style.background='#004000'; });
+  dz.addEventListener('dragleave',function(){ dz.style.background=''; });
+  dz.addEventListener('drop',function(e){ e.preventDefault(); dz.style.background='';
     var f=e.dataTransfer.files[0]; if(f&&f.type.indexOf('image/')===0)handleFile(f); });
 })();
 function tLine(html){ var out=document.getElementById('term'); if(!out)return;
@@ -437,7 +401,6 @@ async function analyze(file){
   reader.readAsDataURL(file);
 }
 
-/* ── 뒤로 ── */
 function goBack(){ location.href='set-os.html'; }
 </script>
 </body>
