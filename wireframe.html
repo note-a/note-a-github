@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>SET-OS — Wireframe Annotated</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+#frame{width:100%;height:100%;border:none;display:block;}
+</style>
+</head>
+<body>
+<iframe id="frame" src="set-os.html"></iframe>
+<script>
+document.getElementById('frame').addEventListener('load', function(){
+  const doc = this.contentDocument;
+  if(!doc) return;
+
+  // 잠깐 기다려서 fixed 요소들이 위치 잡힌 후 실행
+  setTimeout(function(){
+
+    const style = doc.createElement('style');
+    style.textContent = `
+      .wfa{
+        position:fixed;pointer-events:none;z-index:999999;box-sizing:border-box;
+        outline:1.5px solid var(--wfc);
+        outline-offset:-1px;
+      }
+      .wfa::before{
+        content:attr(data-label);
+        position:absolute;top:0;left:0;
+        font-family:'Courier New',monospace;
+        font-size:8px;font-weight:700;letter-spacing:.5px;
+        padding:1px 5px;line-height:16px;
+        background:var(--wfc);color:#000;
+        white-space:nowrap;z-index:999999;
+      }
+    `;
+    doc.head.appendChild(style);
+
+    function ann(sel, label, color){
+      const el = typeof sel==='string' ? doc.querySelector(sel) : sel;
+      if(!el) return;
+      const r = el.getBoundingClientRect();
+      if(!r.width || !r.height) return;
+      const d = doc.createElement('div');
+      d.className = 'wfa';
+      d.setAttribute('data-label', label);
+      d.style.cssText = `--wfc:${color};left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+      doc.body.appendChild(d);
+    }
+
+    ann('#wrap',     'div#wrap  ·  grid-rows: 1fr 84px 1fr 28px', '#ff4a16');
+    ann('.lr-rail',  'aside.lr-rail  LEFT RAIL', '#4ecdc4');
+    ann('.rr-rail',  'aside.rr-rail  RIGHT RAIL', '#4ecdc4');
+
+    const lrDps = doc.querySelectorAll('.lr-rail .lr-dp');
+    if(lrDps[0]) ann(lrDps[0], 'F.01  SET MAP · 집합도', '#4ecdc4');
+    if(lrDps[1]) ann(lrDps[1], 'F.02  CONTOUR FIELD · 등고선', '#4ecdc4');
+    if(lrDps[2]) ann(lrDps[2], 'F.03  DATA · 측정값', '#4ecdc4');
+
+    const rrDps = doc.querySelectorAll('.rr-rail .lr-dp');
+    if(rrDps[0]) ann(rrDps[0], 'F.04  SVA RADAR · 4축 형태학', '#4ecdc4');
+    if(rrDps[1]) ann(rrDps[1], 'F.04  ANALYSIS · 분석 데이터', '#4ecdc4');
+
+    ann('#top-row',  '#top-row  ·  grid-cols: 1fr  1fr  72px', '#f7dc6f');
+
+    const tp = doc.querySelectorAll('#top-row > .pnl');
+    if(tp[0]) ann(tp[0], '.pnl  <SET.VIEW>  ·  .ph (.ph-row1 / .ph-row2 / .ph-nav)', '#bb8fce');
+    if(tp[1]) ann(tp[1], '.pnl  <HUD.XT2>  ·  .h-title (.h-logo / .h-badges / .h-menu / .h-search)', '#bb8fce');
+    if(tp[2]) ann(tp[2], '.pnl  ·  .ctrl-btn ×3  (UP/EXIT/DOWN)', '#85c1e9');
+
+    ann('#gbar',     'div#gbar  ▶  iframe(gbar.html)  ·  SET.OS바', '#a8e6cf');
+    ann('#bot-row',  '#bot-row  ·  grid-cols: 2.6fr  1fr', '#f7dc6f');
+    ann('.bot-left', '.bot-left  ·  grid-cols: 215px  200px  1fr', '#f0b27a');
+    ann('.bl-split', '.bl-split  ·  grid-rows: 1fr  1fr', '#e59866');
+
+    const bl = doc.querySelectorAll('.bl-split > .pnl');
+    if(bl[0]) ann(bl[0], 'a.chat-enter-btn  (MEASURE.DB 입장)', '#f9e79f');
+    if(bl[1]) ann(bl[1], 'div#vlWindow  ·  ▶ VIEWER_LOG.EXE', '#f9e79f');
+
+    const blp = doc.querySelectorAll('.bot-left > .pnl');
+    if(blp[0]) ann(blp[0], 'iframe(id-card.html)  ID카드', '#abebc6');
+    if(blp[1]) ann(blp[1], 'iframe(work-status.html)  WORK.STATUS', '#abebc6');
+
+    const brp = doc.querySelectorAll('#bot-row > .pnl');
+    if(brp[0]) ann(brp[0], '.pnl  ·  #stmt.stmt-scroll  SET.TEXT', '#bb8fce');
+
+    ann('.pilot-pnl', '.pilot-pnl  ·  SET-NULL.CHANNEL', '#f1948a');
+    ann('.pl-goto',   '.pl-goto  ·  ▶ OPEN PILOT.EXP', '#f1948a');
+    ann('#mode-row',  '#mode-row  ·  .mb ×6', '#85c1e9');
+    ann('.activate',  'button.activate', '#85c1e9');
+
+  }, 800);
+});
+</script>
+</body>
+</html>
