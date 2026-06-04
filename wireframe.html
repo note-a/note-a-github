@@ -249,6 +249,7 @@ html,body{
         <span id="loading">SET-OS 로딩 중…</span>
         <!-- 실제 페이지 배경 (JS 없이 CSS만 렌더) -->
         <iframe id="page-bg" src="set-os.html"
+          style="width:1800px;height:900px;"
           sandbox="allow-same-origin"></iframe>
         <!-- 어노테이션 오버레이 -->
         <div id="wf-canvas"></div>
@@ -283,7 +284,7 @@ const elCount  = document.getElementById('el-count');
 const scaleInfo= document.getElementById('scale-info');
 const loading  = document.getElementById('loading');
 
-const IFRAME_W = 1400;
+const IFRAME_W = 1800;
 const IFRAME_H = 900;
 
 const COLORS = [
@@ -377,6 +378,54 @@ function initLayout(){
   loading.style.display = 'none';
 }
 
+// ── 레일 CSS 강제 주입 (JS 미실행 환경에서 position 복원) ──
+function injectRailCSS(){
+  const doc = pageBg.contentDocument;
+  const win = pageBg.contentWindow;
+  if(!doc) return;
+
+  const wrap = doc.querySelector('#wrap');
+  if(!wrap) return;
+
+  const wr  = wrap.getBoundingClientRect();
+  const iw  = win.innerWidth  || IFRAME_W;
+  const ih  = win.innerHeight || IFRAME_H;
+
+  // set-os.html place() 함수 로직 그대로 재현
+  const s        = Math.min(iw / 1140, ih / 757, 1);
+  const railScale = (s * 1.2).toFixed(4);
+  const lrTop    = wr.top.toFixed(1);
+  const lrRight  = (iw - wr.left + 10).toFixed(1);
+  const rrTop    = wr.top.toFixed(1);
+  const rrLeft   = (wr.right + 10).toFixed(1);
+
+  // 기존 주입 제거
+  const old = doc.getElementById('wf-inject');
+  if(old) old.remove();
+
+  const style = doc.createElement('style');
+  style.id = 'wf-inject';
+  style.textContent = `
+    /* 미디어쿼리 override + JS 포지션 재현 */
+    .lr-rail, .rr-rail { display: flex !important; }
+    .lr-rail {
+      position: fixed !important;
+      top: ${lrTop}px !important;
+      right: ${lrRight}px !important;
+      transform: scale(${railScale}) !important;
+      transform-origin: top right !important;
+    }
+    .rr-rail {
+      position: fixed !important;
+      top: ${rrTop}px !important;
+      left: ${rrLeft}px !important;
+      transform: scale(${railScale}) !important;
+      transform-origin: top left !important;
+    }
+  `;
+  doc.head.appendChild(style);
+}
+
 // ── 전체 #wrap walk (dim 배경용) ──
 function walkWrap(){
   const doc = pageBg.contentDocument;
@@ -467,9 +516,9 @@ function selectPanel(sel, name){
 
   // 원점 = iframe viewport (0,0) 기준
   // → annotation 좌표 * curScale = iframe 위에 정확히 겹침
-  // iframe 자체 scroll 오프셋 반영
-  const sx = win.scrollX || 0;
-  const sy = win.scrollY || 0;
+  // iframe 뷰포트 원점 기준 (scroll 오프셋 반영)
+  const sx = win.pageXOffset || win.scrollX || 0;
+  const sy = win.pageYOffset || win.scrollY || 0;
   const origin = {left: -sx, top: -sy};
   allResults = [];
   walk(root, 0, origin, win, allResults);
@@ -511,9 +560,13 @@ document.querySelectorAll('.nb').forEach(btn => {
 pageBg.addEventListener('load', () => {
   initLayout();
   setTimeout(() => {
-    walkWrap();
-    // 기본: 전체 #wrap 표시
-    document.querySelector('.nb[data-sel="#wrap"]').click();
+    // 1) 레일 CSS 주입 (미디어쿼리 override + JS 포지션 재현)
+    injectRailCSS();
+    // 2) CSS 적용 후 DOM walk
+    setTimeout(() => {
+      walkWrap();
+      document.querySelector('.nb[data-sel="#wrap"]').click();
+    }, 400);
   }, 800);
 });
 
