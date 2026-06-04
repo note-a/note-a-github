@@ -197,7 +197,8 @@ html,body{
     <div id="nav-list">
 
       <div class="sep">Structure</div>
-      <button class="nb" data-sel="#wrap"   data-name="#wrap"  style="--c:#ff4a16">div#wrap  (전체)</button>
+      <button class="nb" data-sel="#shell"  data-name="#shell (전체)" style="--c:#ff4a16">#shell  (전체)</button>
+      <button class="nb" data-sel="#wrap"   data-name="#wrap"         style="--c:#e06010">div#wrap</button>
 
       <div class="sep">Left Rail</div>
       <button class="nb" data-sel=".lr-rail"                      data-name="aside.lr-rail"  style="--c:#4ecdc4">aside.lr-rail</button>
@@ -565,7 +566,7 @@ pageBg.addEventListener('load', () => {
     // 2) CSS 적용 후 DOM walk
     setTimeout(() => {
       walkWrap();
-      document.querySelector('.nb[data-sel="#wrap"]').click();
+      document.querySelector('.nb[data-sel="#shell"]').click();
     }, 400);
   }, 800);
 });
