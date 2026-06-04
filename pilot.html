@@ -42,7 +42,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
 .blink{animation:bl .8s step-end infinite;}@keyframes bl{50%{opacity:0}}
 
 /* ── 데스크탑(창 영역) ── */
-#winwrap{flex:1;position:relative;min-height:0;}
+#winwrap{flex:1;position:relative;min-height:0;overflow:hidden;}
 
 /* ── 창(테레텍스트 블록) ── */
 .win{position:absolute;background:#000;border:2px solid var(--th);display:flex;flex-direction:column;
@@ -139,15 +139,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
 
 /* ── 부팅 ── */
 #boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;}
+  align-items:center;justify-content:center;gap:22px;padding:30px;cursor:pointer;}
 #boot.off{animation:bootout .4s steps(3) forwards;}
 @keyframes bootout{to{opacity:0;visibility:hidden;}}
-#boot .b-big{font-size:26px;letter-spacing:6px;color:var(--yellow);font-weight:700;text-shadow:2px 2px 0 var(--red);}
-#boot .b-pg{font-size:13px;color:var(--cyan);letter-spacing:2px;}
-#boot .bar{width:220px;height:14px;border:2px solid var(--white);background:#000;}
-#boot .bar i{display:block;height:100%;width:0;background:var(--green);animation:bootbar 1.1s steps(10) forwards;}
-@keyframes bootbar{to{width:100%}}
-#boot .b-msg{font-size:11px;color:var(--gray);letter-spacing:1px;}
+#boot .i-top{font-size:12px;color:var(--cyan);letter-spacing:3px;}
+#boot .i-txt{max-width:600px;font-size:13.5px;line-height:2.05;color:var(--white);letter-spacing:.4px;text-align:left;}
+#boot .i-txt .hl{color:var(--yellow);}
+#boot .i-txt .cy{color:var(--cyan);}
+#boot .i-go{font-size:12px;color:var(--yellow);letter-spacing:2px;}
 
 /* ── 반응형 ── */
 @media (max-width:860px){
@@ -158,18 +157,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
   #winstack{padding:10px 0;display:flex;flex-direction:column;}
   .win-bar{cursor:default;}
 }
-@media (min-width:861px){#winstack{display:contents;}}
-@media (prefers-reduced-motion:reduce){#boot .bar i{animation:none;width:100%;}}
+@media (min-width:861px){#winstack{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(1120px,100%);}}
+@media (prefers-reduced-motion:reduce){.blink{animation:none;}}
 </style>
 </head>
 <body>
 
 <!-- 부팅 -->
 <div id="boot">
-  <div class="b-big">TELETEXTO</div>
-  <div class="b-pg">P.579 · SET-NULL</div>
-  <div class="bar"><i></i></div>
-  <div class="b-msg" id="boot-msg">buscando página 579 ... <span class="blink">_</span></div>
+  <div class="i-top">P.579 · SET-NULL · TELETEXTO</div>
+  <div class="i-txt">다시 시작하겠습니다. 당신은 어디를 걷고 있는지, 어디를 가든지 상관없고, 어디를 가든지 상관없습니다. 무언가가 잡히는 것은 아닙니다. <span class="hl">배열 자체</span>에 관한 것입니다. 다른 무언가와 관련하여 배치되는 방식. 빛이 우연히 통과하는 특정 장소의 특정 표면에서 그 순간에 떨어지고 있는 방식, 정확히 그 순간에는 다시는 통과하지 못할 것입니다. 즉, <span class="cy">당신이 보고 있는 것이 보이는 동안에도 이미 사라지고 있다</span>는 뜻입니다. 즉, 유일한 질문은 <span class="hl">당신이 그것에 대해 무언가를 할 것인지 여부</span>입니다.</div>
+  <div class="i-go blink">▶ 화면을 누르면 시작합니다</div>
 </div>
 
 <div id="screen">
@@ -285,13 +283,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
   var t=p(n.getHours())+':'+p(n.getMinutes())+':'+p(n.getSeconds());
   var c=document.getElementById('clk'); if(c)c.textContent=t; setTimeout(tick,1000);})();
 
-/* 부팅 */
-window.addEventListener('load',function(){
-  var msgs=['buscando página 579 ...','cargando grammar.db (83) ...','enlace MEASURE.bus ...','SET-NULL listo_'];
-  var i=0,bm=document.getElementById('boot-msg');
-  var iv=setInterval(function(){ i++; if(bm&&msgs[i])bm.innerHTML=msgs[i]+' <span class="blink">_</span>'; if(i>=msgs.length-1)clearInterval(iv); },280);
-  setTimeout(function(){ var b=document.getElementById('boot'); if(b)b.classList.add('off'); },1250);
-});
+/* 인트로 — 클릭 또는 키 입력 시 입장 */
+(function(){
+  var b=document.getElementById('boot'),done=false;
+  function enter(){ if(done||!b)return; done=true; b.classList.add('off');
+    document.removeEventListener('keydown',enter); }
+  if(b) b.addEventListener('click',enter);
+  document.addEventListener('keydown',enter);
+})();
 
 /* 창 포커스 / 드래그 / 독 */
 var zTop=20;
@@ -317,9 +316,10 @@ document.querySelectorAll('.win').forEach(function(w){
   });
   bar.addEventListener('pointermove',function(e){
     if(!drag)return;
-    var x=e.clientX-ox, y=e.clientY-oy;
-    x=Math.max(2,Math.min(window.innerWidth-60,x));
-    y=Math.max(70,Math.min(window.innerHeight-40,y));
+    var pr=(w.offsetParent||document.body).getBoundingClientRect();
+    var x=e.clientX-ox-pr.left, y=e.clientY-oy-pr.top;
+    x=Math.max(0,Math.min(pr.width-60,x));
+    y=Math.max(0,Math.min(pr.height-30,y));
     w.style.left=x+'px'; w.style.top=y+'px';
   });
   function end(){ drag=false; }
