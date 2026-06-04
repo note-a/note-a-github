@@ -30,25 +30,34 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 #bg-orbs{
   position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
 }
-#bg-orbs .orb{
-  position:absolute;border-radius:50%;
+/* 움직임은 .orb(필터 없음), 블러는 .orb-i(transform 없음) — 분리해야 Safari에서 동작 */
+#bg-orbs .orb{position:absolute;}
+#bg-orbs .orb-i{
+  width:100%;height:100%;border-radius:50%;
   background:radial-gradient(ellipse at center,var(--oc) 0%,transparent 70%);
   filter:blur(var(--ob));
 }
-@keyframes orb-a{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate( 6vw,  8vh) scale(1.08)}}
-@keyframes orb-b{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate(-7vw,  5vh) scale(0.94)}}
-@keyframes orb-c{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate( 5vw, -9vh) scale(1.05)}}
-@keyframes orb-d{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate(-4vw, -6vh) scale(1.10)}}
-@keyframes orb-e{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate( 8vw,  4vh) scale(0.96)}}
-@keyframes orb-f{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate(-5vw,  7vh) scale(1.06)}}
-@keyframes orb-g{0%{transform:translate(  0,   0) scale(1.00)} 100%{transform:translate( 4vw, -5vh) scale(0.92)}}
-#bg-orbs .orb:nth-child(1){--oc:rgba(160,42,4,.55);--ob:70px; width:38vw;height:44vw; left:-8vw;  top:-12vh;  animation:orb-a 18s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(2){--oc:rgba(130,32,2,.50);--ob:80px; width:28vw;height:32vw; right:5vw;  top:18vh;   animation:orb-b 23s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(3){--oc:rgba(150,38,3,.45);--ob:65px; width:22vw;height:26vw; left:22vw;  bottom:-8vh;animation:orb-c 27s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(4){--oc:rgba(110,28,2,.42);--ob:90px; width:32vw;height:28vw; right:-6vw; bottom:5vh; animation:orb-d 20s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(5){--oc:rgba(140,36,3,.38);--ob:75px; width:18vw;height:22vw; left:8vw;   top:42vh;   animation:orb-e 31s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(6){--oc:rgba(120,30,2,.35);--ob:85px; width:24vw;height:18vw; right:22vw; top:-5vh;   animation:orb-f 25s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(7){--oc:rgba(100,25,1,.40);--ob:95px; width:20vw;height:24vw; left:48vw;  bottom:10vh;animation:orb-g 29s ease-in-out infinite alternate;}
+@keyframes orb-a{0%{transform:translate(  0,   0)} 100%{transform:translate( 9vw, 11vh)}}
+@keyframes orb-b{0%{transform:translate(  0,   0)} 100%{transform:translate(-10vw,  7vh)}}
+@keyframes orb-c{0%{transform:translate(  0,   0)} 100%{transform:translate(  7vw,-12vh)}}
+@keyframes orb-d{0%{transform:translate(  0,   0)} 100%{transform:translate( -6vw, -9vh)}}
+@keyframes orb-e{0%{transform:translate(  0,   0)} 100%{transform:translate( 11vw,  6vh)}}
+@keyframes orb-f{0%{transform:translate(  0,   0)} 100%{transform:translate( -8vw, 10vh)}}
+@keyframes orb-g{0%{transform:translate(  0,   0)} 100%{transform:translate(  6vw, -7vh)}}
+#bg-orbs .orb:nth-child(1){width:38vw;height:44vw;left:-8vw;  top:-12vh;  animation:orb-a 18s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(2){width:28vw;height:32vw;right:5vw;  top:18vh;   animation:orb-b 23s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(3){width:22vw;height:26vw;left:22vw;  bottom:-8vh;animation:orb-c 27s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(4){width:32vw;height:28vw;right:-6vw; bottom:5vh; animation:orb-d 20s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(5){width:18vw;height:22vw;left:8vw;   top:42vh;   animation:orb-e 31s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(6){width:24vw;height:18vw;right:22vw; top:-5vh;   animation:orb-f 25s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(7){width:20vw;height:24vw;left:48vw;  bottom:10vh;animation:orb-g 29s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(1) .orb-i{--oc:rgba(160,42,4,.55);--ob:70px;}
+#bg-orbs .orb:nth-child(2) .orb-i{--oc:rgba(130,32,2,.50);--ob:80px;}
+#bg-orbs .orb:nth-child(3) .orb-i{--oc:rgba(150,38,3,.45);--ob:65px;}
+#bg-orbs .orb:nth-child(4) .orb-i{--oc:rgba(110,28,2,.42);--ob:90px;}
+#bg-orbs .orb:nth-child(5) .orb-i{--oc:rgba(140,36,3,.38);--ob:75px;}
+#bg-orbs .orb:nth-child(6) .orb-i{--oc:rgba(120,30,2,.35);--ob:85px;}
+#bg-orbs .orb:nth-child(7) .orb-i{--oc:rgba(100,25,1,.40);--ob:95px;}
 @keyframes bgdrift{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.12) translate(-25px,18px)}}
 #bg-grid{position:absolute;inset:-40px;
   background-image:linear-gradient(rgba(255,74,22,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,74,22,.05) 1px,transparent 1px);
@@ -1541,7 +1550,7 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
   }
 })();
 </script>
-<div id="bg"><div id="bg-lights"></div><div id="bg-grid"></div><div id="bg-vignette"></div></div><div id="bg-depth"></div><div id="bg-orbs"><div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div><div class="orb"></div></div>
+<div id="bg"><div id="bg-lights"></div><div id="bg-grid"></div><div id="bg-vignette"></div></div><div id="bg-depth"></div><div id="bg-orbs"><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div><div class="orb"><div class="orb-i"></div></div></div>
 <div class="crt"></div>
 
 <div id="shell">
