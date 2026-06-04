@@ -20,9 +20,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--whi
 .scan{position:fixed;inset:0;z-index:900;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.22) 2px,rgba(0,0,0,.22) 3px);}
 
-#screen{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:min(1160px,100%);
+#screen{position:fixed;top:10px;bottom:10px;left:50%;transform:translateX(-50%);width:min(1160px,100%);
   display:flex;flex-direction:column;background:#000;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(255,255,255,.07),0 0 40px rgba(0,0,0,.8);}
+  border:3px solid var(--blue);
+  box-shadow:0 0 0 2px #000,0 0 0 5px #0a1576,inset 0 0 0 1px rgba(255,255,255,.10),0 0 48px rgba(37,54,224,.3);}
 
 /* ── 상단 파란 헤더 ── */
 #ttx-head{flex-shrink:0;height:42px;background:var(--hd);display:flex;align-items:center;gap:14px;padding:0 12px;}
