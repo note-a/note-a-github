@@ -41,10 +41,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:
 
 /* 뷰 */
 #view{
-  flex:1;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
+  flex:1;overflow:auto;
+  display:flex;align-items:flex-start;justify-content:center;
   background:#070707;
   position:relative;
+  padding:24px;
 }
 
 /* 와이어프레임 캔버스 */
@@ -159,7 +160,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:
     </div>
     <div id="ftr">
       <span class="ftr-lbl">DEPTH</span>
-      <input id="depth-slider" type="range" min="0" max="12" value="12">
+      <input id="depth-slider" type="range" min="0" max="12" value="4">
       <span id="depth-num">ALL</span>
       <button class="tog on" id="tog-vis" style="--tc:#4ecdc4">VISIBLE</button>
       <button class="tog on" id="tog-hid" style="--tc:#888">HIDDEN</button>
@@ -186,7 +187,7 @@ const SKIP = new Set(['SCRIPT','STYLE','META','LINK','BR','HR','SVG','PATH','G',
   'CIRCLE','LINE','RECT','DEFS','POLYLINE','POLYGON','ELLIPSE','ANIMATE','TEXT','TSPAN','USE']);
 
 let allResults = [];
-let maxDepth   = 12;
+let maxDepth   = 4;
 let showVis    = true;
 let showHid    = true;
 let curScale   = 1;
@@ -243,9 +244,11 @@ function render(){
 
   if(!allResults.length) return;
 
-  // 전체 영역 bounds
+  // depth 필터 기준으로 bounds 계산 (깊은 요소가 캔버스를 늘리지 않도록)
+  const bounded = allResults.filter(r => r.depth <= maxDepth);
+  const src = bounded.length ? bounded : allResults;
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  allResults.forEach(({x,y,w,h})=>{
+  src.forEach(({x,y,w,h})=>{
     minX=Math.min(minX,x); minY=Math.min(minY,y);
     maxX=Math.max(maxX,x+w); maxY=Math.max(maxY,y+h);
   });
@@ -325,7 +328,7 @@ function selectPanel(sel, name){
 // ── 컨트롤 ──
 document.getElementById('depth-slider').addEventListener('input', function(){
   maxDepth = parseInt(this.value);
-  applyFilters();
+  render(); // bounds 재계산
 });
 document.getElementById('tog-vis').addEventListener('click', function(){
   showVis = !showVis; this.classList.toggle('on', showVis); applyFilters();
