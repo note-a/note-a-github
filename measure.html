@@ -287,7 +287,7 @@
   <!-- ── TOP ── -->
   <div id="top" class="panel">
     <div class="panel-h">
-      <span>◆ MEASURE.DB · 측정값 누적 단말 ── 외부망 접속중</span>
+      <span>◆ 단말기 ── 외부망 접속중</span>
       <span class="led"><b class="on"></b><b class="on"></b><b></b></span>
     </div>
   </div>
@@ -310,10 +310,10 @@
     <div class="panel">
       <div class="panel-h"><span>대화 갈래</span></div>
       <div class="panel-b">
-        <span class="tag">ISOLATE</span><span class="tag">RUPTURE</span><span class="tag">GRID</span>
-        <span class="tag">CLUSTER</span><span class="tag">HEADOBJ</span><span class="tag">STRATA</span>
-        <span class="tag">DMGPAT</span><span class="tag">TONEDIS</span><span class="tag">DIPTYCH</span>
-        <span class="tag">MATCOV</span><span class="tag">HETOBJ</span><span class="tag">BACKPOSE</span>
+        <span class="tag">BLOOM</span><span class="tag">DISSOLVE</span><span class="tag">FLOAT</span>
+        <span class="tag">FOGDIS</span><span class="tag">GRID</span><span class="tag">ISOLATE</span>
+        <span class="tag">MIRROR</span><span class="tag">OXIDE</span><span class="tag">PEEL</span>
+        <span class="tag">SURFACE</span><span class="tag">VANISH</span><span class="tag">WRAP</span>
       </div>
     </div>
   </div>
@@ -321,7 +321,7 @@
   <!-- ── CHAT (중앙, 기존 디자인) ── -->
   <div id="chat">
     <div id="chatTitle">
-      <span>&lt;MEASURE.DB&gt; 검색 대화실</span>
+      <span>검색 대화실</span>
       <span>접속 5</span>
     </div>
     <div id="canvasWrap">
@@ -358,7 +358,7 @@
   <div id="bottom" class="panel">
     <div class="panel-b">
       <span>상태 : <span style="color:#aaccff;">대기중</span> <span class="blink">_</span></span>
-      <span>측정한 것을, 기입하라.</span>
+      <span>무엇이든, 기입하라.</span>
       <span id="clock">--:--:--</span>
     </div>
   </div>
@@ -437,8 +437,8 @@ function showResults(filtered, query) {
           <div style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;color:rgba(255,136,0,0.2);font-size:8px;">[NO IMG]</div>
         </div>
         <div style="padding:5px 6px;">
-          <div style="font-size:9px;color:rgba(255,200,0,0.6);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
-          <div style="font-size:8px;color:${p.verdict === 'core' ? '#ffcc00' : p.verdict === 'support' ? '#ff9900' : '#555'};opacity:0.8;">${p.verdict} · ${p.title}</div>
+          <div style="font-size:9px;color:#111111;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.dir}</div>
+          <div style="font-size:8px;color:#111111;opacity:0.8;">${p.verdict} · ${p.title}</div>
         </div>
       </div>`).join('')}
   </div>`;
@@ -535,64 +535,27 @@ function initCanvas() {
 
   const C = { bg:'#b0b0bc', topBar:'#b0b0bc', botBar:'#b0b0bc', divider:'#8888a8', dim:'#555588', yellow:'#9a6a00', cyan:'#0a6a6a', green:'#1a7a1a', white:'#181820' };
 
-  // ── 실제 검색 기록 → MSGS 생성 ──
-  function buildMsgs() {
-    const hist = loadHist();
-    if (!hist.length) {
-      // 기록 없을 때 최소 안내
-      return [
-        { en:'no search history yet.', kr:'아직 검색 기록이 없어.', sys:true, wait:60, typing:22 },
-        { en:'type anything in the search box.', kr:'아래 검색창에 무엇이든 입력해봐.', sys:true, wait:50, typing:25 },
-      ];
-    }
-    const msgs = [];
-    // 오래된→최신 순으로 최대 18개
-    const slice = hist.slice(0, 18).reverse();
-    slice.forEach((h, i) => {
-      const ago = (() => {
-        const s = Math.floor((Date.now() - h.ts) / 1000);
-        if (s < 60) return s + 's ago';
-        const m = Math.floor(s / 60);
-        if (m < 60) return m + 'm ago';
-        const hr = Math.floor(m / 60);
-        if (hr < 24) return hr + 'h ago';
-        return Math.floor(hr / 24) + 'd ago';
-      })();
-      const hit = h.hits > 0;
-      msgs.push({
-        en: `> ${h.q}`,
-        kr: hit ? `${h.hits}개 결과 · ${ago}` : `결과 없음 · ${ago}`,
-        sys: false,
-        wait: i === 0 ? 55 : 28 + Math.floor(Math.random() * 20),
-        typing: 18 + Math.floor(h.q.length * 0.8),
-        hit,
-        hitCount: h.hits,
-      });
-      if (hit) {
-        msgs.push({
-          en: `  ${h.hits} result${h.hits > 1 ? 's' : ''} found.`,
-          kr: '',
-          sys: true,
-          wait: 12,
-          typing: 14,
-          hit: true,
-        });
-      } else {
-        msgs.push({
-          en: '  no match.',
-          kr: '',
-          sys: true,
-          wait: 12,
-          typing: 10,
-          hit: false,
-        });
-      }
-    });
-    return msgs;
-  }
-  let MSGS = buildMsgs();
+  const MSGS = [
+    { en:'how have you been.', kr:'어떻게 지냈어?', sys:false, wait:47, typing:22 },
+    { en:'the word you kept biting down on — it was in a photograph', kr:'네가 계속 깨물고 있던 그 단어는 사진 속에 있어.', sys:false, wait:36, typing:29 },
+    { en:'taken before you had the name for it.', kr:'네가 그 단어의 이름을 알기 전에 찍힌 사진 말이야.', sys:false, wait:27, typing:27 },
+    { en:'I started trying to keep count.', kr:'나는 그걸 세보기 시작했어.', sys:false, wait:45, typing:22 },
+    { en:'not from fixation, but from a theory:', kr:'집착 때문이 아니라, 하나의 이론에서.', sys:false, wait:25, typing:24 },
+    { en:'that what recurs without reason', kr:'이유 없이 반복되는 것은', sys:false, wait:22, typing:20 },
+    { en:'is evidence of a reason not yet named.', kr:'아직 이름 붙일 수 없는 이유의 증거라는 이론에서.', sys:false, wait:47, typing:29 },
+    { en:'this phrase keeps catching on me.', kr:'이 말이 신경 쓰여.', sys:false, wait:30, typing:18 },
+    { en:'as if existence were a matter of convenience.', kr:'마치 존재가 편리함의 문제인 것처럼.', sys:false, wait:22, typing:24 },
+    { en:'the record reaches back, but experience does not accumulate.', kr:'기록은 거슬러 올라가지만, 경험은 축적되지 않아.', sys:false, wait:27, typing:27 },
+    { en:'things that will need resolving, eventually.', kr:'언젠가는 해결해야 할 문제들.', sys:false, wait:30, typing:22 },
+    { en:'So.', kr:'그러니까', sys:false, wait:22, typing:20 },
+    { en:'what you swallowed without naming — bring it here.', kr:'네가 이름 붙이지 않고 삼킨 것, 여기로 가져와.', sys:false, wait:50, typing:27 },
+    { en:'the record will tell you how many times', kr:'기록은 네가 찾기 시작하기 전에 시작됐어', sys:false, wait:25, typing:29 },
+    { en:'it had already arrived before you began to look.', kr:'그것이 몇 번이나 왔는지 알려줄 거야.', sys:false, wait:22, typing:20 },
+    { en:'maybe some of them are already here.', kr:'아마도 그 중 일부도 여기 있을 거야.', sys:false, wait:30, typing:22 },
+    { en:'search for anything.', kr:'여기서 무엇이든 찾아봐.', sys:true, wait:68, typing:22 },
+  ];
   const TOP_H=28, BOT_H=34, HDR_H=6, EN_FS=13, KR_FS=13, EN_ROW=21, MSG_GAP=7, MENU_Y=16;
-  const USER_X=10, EN_X=104;
+  const USER_X=10, EN_X=50;
   let SPLIT_X, EN_MAX_W;
   let revealed=0, phase='intro', phaseT=0, doneT=0, dotCount=0, dotT=0;
   const USERS=['나','밤안개','자니..','거기누구세요','(퇴장함)'];
@@ -675,7 +638,7 @@ function initCanvas() {
     if (phase==='pause') { if (phaseT>=55) { phase='wait'; phaseT=0; } }
     else if (phase==='wait') { if (phaseT>=MSGS[mi].wait) { phase='typing'; phaseT=0; dotCount=0; dotT=0; } }
     else if (phase==='typing') { dotT++; if (dotT%7===0) dotCount=(dotCount+1)%4; if (phaseT>=MSGS[mi].typing) { if (revealed<MSGS.length) revealed++; phase=revealed>=MSGS.length?'done':'wait'; phaseT=0; } }
-    else { doneT++; if (doneT>220) { MSGS=buildMsgs(); MSG_DATA=MSGS.map(m=>({...m,enLines:wrapEN(m.en)})); revealed=0; phase='intro'; phaseT=0; doneT=0; } }
+    else { doneT++; if (doneT>220) { MSG_DATA=MSGS.map(m=>({...m,enLines:wrapEN(m.en)})); revealed=0; phase='intro'; phaseT=0; doneT=0; } }
     const showTyping=phase==='typing'&&revealed<MSGS.length;
 
     const CTOP=TOP_H+HDR_H+4, CAVAIL=H-BOT_H-CTOP;
@@ -689,16 +652,22 @@ function initCanvas() {
     vis.forEach(msg => {
       const lh=msgH(msg);
       if (curY+lh>CTOP && curY<CTOP+CAVAIL) {
-        ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle=msg.sys?C.green:'#cc00cc';
-        ctx.fillText(msg.sys?'SYS     :':'MEASURE :',USER_X,curY);
-        ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle=msg.sys?C.green:C.white;
-        msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
+        ctx.font=`${EN_FS}px Galmuri11, monospace`;
+        if (msg.sys) {
+          ctx.fillStyle=C.green; ctx.fillText('SYS :',USER_X,curY);
+          ctx.fillStyle=C.green;
+          msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
+        } else {
+          ctx.fillStyle='#cc00cc'; ctx.fillText('M >',USER_X,curY);
+          ctx.fillStyle=C.white;
+          msg.enLines.forEach((line,li) => { ctx.fillText(line,EN_X,curY+li*EN_ROW); });
+        }
       }
       curY+=lh;
     });
     if (showTyping && curY<CTOP+CAVAIL) {
-      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='#cc00cc'; ctx.fillText('MEASURE :',USER_X,curY);
-      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='rgba(40,40,90,0.5)'; ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
+      ctx.font=`${EN_FS}px Galmuri11, monospace`; ctx.fillStyle='#cc00cc'; ctx.fillText('M >',USER_X,curY);
+      ctx.fillStyle='rgba(40,40,90,0.5)'; ctx.fillText('.'.repeat(dotCount)+' _',EN_X,curY);
     }
     ctx.restore();
 
@@ -714,7 +683,6 @@ function initCanvas() {
   }
   // 검색 후 즉시 기록 리셋 훅
   window._refreshCanvas = () => {
-    MSGS = buildMsgs();
     MSG_DATA = MSGS.map(m => ({ ...m, enLines: wrapEN(m.en) }));
     revealed = 0; phase = 'pause'; phaseT = 0; doneT = 0;
   };
