@@ -1,385 +1,599 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SET Exclusion · P.579</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri11.css">
-<style>
-:root{
-  --bl:#0f66aa; --hd:#0050a0; --hd2:#0070cc;
-  --gray:#b8b8c8; --gray2:#9898a8; --gray3:#d0d0de;
-  --ink:#101828; --ink2:#304060; --lt:#c8d8f0;
-  --yel:#ffff55; --teal:#0a6060; --amb:#8a5c00;
-  --fnt:'Galmuri11',monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{
-  width:100%;height:100%;overflow:hidden;
-  background:var(--bl);color:var(--ink);
-  font-family:var(--fnt);
-  image-rendering:pixelated;
-  display:flex;align-items:center;justify-content:center;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PILOT CHANNEL — 이미지 실험소</title>
+  <link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body {
+      min-height:100%; background:#000099; color:#a6a6b8;
+      font-family:'Galmuri11',monospace; overflow-x:hidden;
+      -webkit-text-stroke:0.4px currentColor; text-stroke:0.4px currentColor;
+    }
+    body { display:flex; align-items:safe center; justify-content:center; padding:20px; min-height:100vh; }
 
-/* CRT 스캔라인 */
-.scan{position:fixed;inset:0;z-index:300;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,40,.06) 2px,rgba(0,0,40,.06) 3px);}
+    /* ── 스캔라인 ── */
+    .scanlines::after {
+      content:''; position:absolute; inset:0; pointer-events:none; z-index:100;
+      background:repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(64,96,192,0.05) 3px, rgba(64,96,192,0.05) 4px);
+    }
 
-/* 모니터 */
-#mon{
-  position:relative;
-  width:1120px;max-width:97vw;
-  height:730px;max-height:95vh;
-  background:var(--gray);
-  border:3px solid #9898a8;
-  box-shadow:inset -3px -3px 0 #787890, inset 3px 3px 0 #d0d0e0,
-             0 0 0 3px #003060, 0 14px 40px rgba(0,0,0,.6);
-  display:grid;
-  grid-template-rows:auto auto 1fr auto auto;
-  gap:3px;padding:4px;
-}
+    /* ══ 로비 ══ */
+    #lobby {
+      position:fixed; inset:0; z-index:200; background:#000099;
+      display:flex; align-items:safe center; justify-content:center;
+      padding:20px; overflow-y:auto;
+    }
+    #lobby.out { animation:fadeOut 0.45s ease forwards; }
+    @keyframes fadeOut { to { opacity:0; visibility:hidden; transform:scale(1.02); } }
+    #lobby::after {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:201;
+      background:repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px);
+    }
 
-/* 타이틀바 */
-.tbar{
-  background:var(--hd);color:var(--lt);
-  display:flex;align-items:center;gap:8px;
-  padding:5px 9px;font-size:12px;letter-spacing:1px;
-  box-shadow:inset -2px -2px 0 #003060, inset 2px 2px 0 #3a80ff;
-}
-.tbar .led{display:flex;gap:4px;margin-left:auto;}
-.tbar .led b{width:8px;height:8px;background:#002040;display:inline-block;box-shadow:inset 1px 1px 0 #000;}
-.tbar .led b.on{background:var(--yel);box-shadow:0 0 5px var(--yel);}
-.tbar .clk{font-size:11px;color:var(--yel);}
+    .lob-inner {
+      position:relative; z-index:202;
+      width:min(600px, 100%);
+      display:flex; flex-direction:column;
+    }
 
-/* 메뉴바 */
-.menubar{
-  background:var(--gray);
-  display:flex;gap:0;font-size:11px;
-  border-bottom:2px solid #787890;
-}
-.menubar span{
-  padding:3px 11px;color:var(--ink2);cursor:default;
-  border-right:1px solid #9898a8;
-}
-.menubar span:hover{background:var(--hd);color:var(--lt);}
+    .lob-top {
+      border:3px solid #808080; background:#0000dd;
+      padding:7px 14px; font-size:13px; letter-spacing:1px; color:#a6a6b8;
+      display:flex; justify-content:space-between; align-items:center;
+    }
 
-/* 본문 그리드 */
-.body{
-  display:grid;
-  grid-template-columns:224px 1fr 248px;
-  gap:3px;min-height:0;
-}
+    .lob-sections {
+      border:3px solid #808080; border-top:none; background:#b0b0bc;
+      box-shadow:4px 4px 0 rgba(0,0,20,0.55);
+    }
 
-/* 패널 공통 */
-.panel{
-  background:var(--gray);
-  border:2px solid #9898a8;
-  box-shadow:inset -2px -2px 0 #787890, inset 2px 2px 0 #d0d0e0;
-  display:flex;flex-direction:column;min-height:0;
-}
-.ph{
-  background:var(--hd);color:var(--lt);
-  font-size:11px;padding:5px 9px;letter-spacing:1px;flex-shrink:0;
-  box-shadow:inset -1px -1px 0 #003060, inset 1px 1px 0 #3a80ff;
-}
-.pb{padding:9px 10px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
+    .sec-item {
+      padding:18px 20px 16px;
+      border-bottom:1px solid #808080;
+      cursor:pointer; background:#b0b0bc;
+      transition:background 0.06s;
+    }
+    .sec-item:last-child { border-bottom:none; }
+    .sec-item:hover { background:#ffff55; }
+    .sec-item:hover .sec-name { color:#000099; }
 
-/* KV 행 */
-.kv{display:flex;justify-content:space-between;}
-.kv .k{color:var(--ink2);}
-.kv .v{color:var(--ink);}
+    .sec-name {
+      font-size:13px; letter-spacing:3px; color:#181820;
+      margin-bottom:6px; line-height:1;
+    }
+    .sec-desc { font-size:11px; color:#33335a; letter-spacing:1px; line-height:2.1; }
+    .sec-tag {
+      display:inline-block; border:1px solid #555588;
+      padding:1px 5px; margin:0 4px 0 0; font-size:10px; color:#33335a;
+    }
 
-/* 바 */
-.bar{height:11px;background:#002040;border:1px solid #2a3a9a;margin:2px 0 8px;position:relative;overflow:hidden;}
-.bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#3a88ff,var(--yel));transition:width .3s;}
-.bar.amb i{background:linear-gradient(90deg,#3a88ff,#ff8a3a);}
+    .lob-cmd {
+      border:3px solid #808080; border-top:none; background:#0000dd;
+      padding:8px 14px; font-size:11px; color:#a6a6b8; letter-spacing:0.5px; line-height:1.7;
+    }
+    .lob-cmd b { font-weight:normal; }
+    .blink { animation:bl 0.8s infinite; }
+    @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
 
-/* LED 그리드 */
-.led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:6px 0;}
-.led-grid b{height:10px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
-.led-grid b.on{background:var(--yel);box-shadow:0 0 4px var(--yel);}
+    /* ══ HUD ══ */
+    #hud {
+      width:min(900px, 100%);
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      grid-template-columns: 1fr 180px;
+      grid-template-areas: "top top" "main side" "bot bot";
+      gap:10px;
+    }
 
-/* 태그 */
-.tag{display:inline-block;border:1px solid var(--ink);padding:0 5px;font-size:10px;letter-spacing:1px;}
-.tag.ok{background:var(--yel);color:var(--ink);border-color:var(--amb);}
+    #hud-top {
+      grid-area:top;
+      border:3px solid #808080; background:#0000dd;
+      padding:7px 12px; font-size:11px; letter-spacing:0.5px; color:#a6a6b8;
+      display:flex; justify-content:space-between; align-items:center;
+    }
 
-/* 텍스트 콘텐츠 */
-.intro{font-size:11px;line-height:2;color:var(--ink);}
-.intro p{margin-bottom:8px;}
-.pg{font-size:9px;color:var(--ink2);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
-.s-div{border:none;border-top:1px solid #9898a8;margin:10px 0;}
+    #hud-main {
+      grid-area:main;
+      border:3px solid #808080; background:#b0b0bc;
+      display:flex; flex-direction:column;
+      box-shadow:4px 4px 0 rgba(0,0,20,0.55);
+      position:relative; overflow:hidden;
+    }
+    #hud-main.scanlines::after { z-index:10; }
+    #main-header {
+      background:#0000dd; padding:5px 12px; font-size:11px; letter-spacing:0.5px;
+      color:#a6a6b8; border-bottom:2px solid #808080;
+      display:flex; justify-content:space-between; align-items:center;
+      flex-shrink:0;
+    }
+    #back-btn { cursor:pointer; font-size:11px; color:#666699; letter-spacing:1px; }
+    #back-btn:hover { color:#ffff55; }
+    #main-body {
+      flex:1; overflow-y:auto; padding:9px;
+      font-size:11px; line-height:2; color:#181820;
+      position:relative; z-index:2;
+    }
 
-/* 부팅 콘솔 */
-.console{
-  background:#001830;
-  border:2px solid #9898a8;
-  box-shadow:inset 2px 2px 0 #003060;
-  color:var(--lt);
-  font-size:11px;line-height:1.8;
-  padding:8px 10px;height:120px;overflow:hidden;
-  margin-top:8px;
-}
-.console .row{opacity:0;animation:cin .25s forwards;}
-@keyframes cin{to{opacity:1}}
-.console .ln .t{color:#6aaaff;}
-.console .ln .ok{color:var(--yel);}
-.console .ln .em{color:#7affff;}
-.cur{display:inline-block;width:7px;height:12px;background:var(--lt);vertical-align:-1px;animation:bl .6s steps(1) infinite;}
-@keyframes bl{50%{opacity:0}}
+    #hud-side { grid-area:side; display:flex; flex-direction:column; gap:10px; }
+    .side-panel {
+      border:3px solid #808080; background:#b0b0bc;
+      box-shadow:4px 4px 0 rgba(0,0,20,0.55);
+      flex:1; display:flex; flex-direction:column; overflow:hidden;
+    }
+    .side-h {
+      background:#0000dd; padding:5px 8px; font-size:10px; letter-spacing:0.5px;
+      color:#a6a6b8; border-bottom:1px solid #808080; flex-shrink:0;
+      display:flex; justify-content:space-between;
+    }
+    .side-b { padding:9px; font-size:11px; line-height:2; color:#181820; flex:1; overflow-y:auto; }
+    .kv { display:flex; justify-content:space-between; gap:6px; }
+    .kv .k { color:#33335a; }
+    .kv .v { color:#15153a; }
 
-/* NULL.LOG 피드 */
-.feed{flex:1;overflow:hidden;padding:4px 6px;}
-.frow{
-  display:flex;gap:7px;font-size:11px;line-height:1.9;
-  cursor:default;padding:1px 3px;
-}
-.frow:hover{background:var(--yel);color:var(--bl);}
-.frow.on{background:var(--teal);color:#fff;}
-.frow .dt{color:var(--amb);flex:0 0 38px;}
-.frow:hover .dt,.frow.on .dt{color:inherit;}
-.frow .q{color:var(--ink2);flex:1;}
-.frow.on .q{color:#cce8ff;}
-.frow .n{color:#667799;margin-left:auto;}
-.frow.on .n{color:#aaddff;}
-.feed-note{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#667799;margin-top:6px;padding:0 6px 6px;}
+    #hud-bot {
+      grid-area:bot;
+      border:3px solid #808080; background:#0000dd;
+      padding:7px 12px; font-size:11px; color:#a6a6b8; letter-spacing:0.5px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
 
-/* 검색바 */
-.search{
-  display:flex;gap:5px;padding:6px;
-  border-top:2px solid #9898a8;
-  background:var(--gray);
-}
-.search input{
-  flex:1;background:#001830;border:2px solid #9898a8;
-  color:var(--lt);padding:7px 9px;
-  font-family:var(--fnt);font-size:11px;outline:none;
-  box-shadow:inset 2px 2px 0 #003060;
-}
-.search button{
-  background:var(--hd);border:2px solid #9898a8;
-  color:var(--lt);padding:7px 14px;
-  font-family:var(--fnt);font-size:11px;cursor:pointer;
-  box-shadow:inset -2px -2px 0 #003060, inset 2px 2px 0 #3a80ff;
-}
-.search button:hover{background:var(--hd2);}
+    /* ── 콘텐츠 공통 ── */
+    .c-sec {
+      font-size:10px; color:#555588; letter-spacing:2px;
+      border-bottom:1px solid #808080; padding-bottom:3px; margin:12px 0 6px;
+    }
+    .c-sec:first-child { margin-top:0; }
+    .c-row {
+      display:flex; gap:12px; padding:3px 0;
+      border-bottom:1px dotted #777777; font-size:11px; line-height:1.7;
+    }
+    .c-row .ko { color:#0a6a6a; flex:1; }
+    .c-row .en { color:#33335a; flex:1; }
+    .c-row.ind { padding-left:14px; }
+    .c-row.ind2 { padding-left:28px; }
+    .c-hl  { color:#cc00cc !important; }
+    .c-hl2 { color:#1a7a1a !important; }
 
-/* 푸터 버튼 */
-.foot{display:flex;gap:3px;}
-.foot button{
-  flex:1;
-  background:var(--gray);
-  border:2px solid #9898a8;
-  box-shadow:inset -2px -2px 0 #787890, inset 2px 2px 0 #d0d0e0;
-  font-family:var(--fnt);font-size:13px;letter-spacing:1px;
-  color:var(--ink);padding:11px;cursor:pointer;
-}
-.foot button:hover{background:var(--yel);}
-.foot button:active{box-shadow:inset 2px 2px 0 #787890, inset -2px -2px 0 #d0d0e0;}
-.foot button.pri{
-  background:var(--hd);color:var(--lt);
-  box-shadow:inset -2px -2px 0 #003060, inset 2px 2px 0 #3a80ff;
-}
-.foot button.pri:hover{background:var(--hd2);}
+    /* ATTR.TEST */
+    .dz {
+      border:2px solid #808080; background:#555566;
+      padding:14px; text-align:center; cursor:pointer; margin:8px 0;
+    }
+    .dz:hover { border-color:#0000dd; }
+    .dz pre { font-size:11px; color:#33335a; line-height:1.4; }
+    .dz .dz-label { font-size:11px; color:#a6a6b8; margin-top:6px; letter-spacing:2px; }
+    .dz .dz-ext { font-size:10px; color:#555588; margin-top:2px; }
+    .term {
+      background:#555566; border:2px solid #808080;
+      padding:8px; font-size:11px; line-height:1.7;
+      color:#a6a6b8; max-height:160px; overflow-y:auto; margin:6px 0;
+    }
+    .t-p  { color:#ffffff; }
+    .t-ok { color:#88ff88; }
+    .t-in { color:#88ddff; }
+    .t-wn { color:#ffcc44; }
+    .t-ou { color:#cccccc; }
+    .t-cursor { display:inline-block; width:7px; height:11px; background:#ffffff; vertical-align:text-bottom; animation:bl 1s step-end infinite; }
+    .res {
+      background:#555566; border:2px solid #808080;
+      padding:10px 12px; margin-top:6px;
+    }
+    .res-code { font-size:16px; letter-spacing:3px; color:#ffffff; font-weight:700; }
+    .res-code.anom { color:#ff88ff; }
+    .res-desc { font-size:10px; color:#88ddff; margin-top:4px; }
+    .res-vals { font-size:10px; color:#cccccc; margin-top:2px; }
 
-/* 상태바 */
-.statusln{
-  background:var(--hd);color:var(--lt);
-  font-size:10px;padding:4px 10px;
-  display:flex;justify-content:space-between;letter-spacing:1px;
-}
-</style>
+    /* NULL.LOG */
+    .nl-header {
+      display:flex; gap:8px; padding:4px 6px;
+      background:#0000dd; border-bottom:1px solid #808080;
+      font-size:10px; color:#a6a6b8; letter-spacing:1px; flex-shrink:0;
+    }
+    .nl-col   { flex-shrink:0; width:80px; }
+    .nl-grow  { flex:1; width:auto; }
+    .nl-right { text-align:right; width:60px; }
+    .nl-row {
+      display:flex; gap:8px; padding:3px 6px;
+      border-bottom:1px dotted #777777; font-size:10px;
+      color:#33335a; cursor:default;
+    }
+    .nl-row:hover { background:#ffff55; color:#000099; }
+    .nl-row.candidate { color:#cc00cc; }
+    .nl-tag   { font-size:8px; border:1px solid currentColor; padding:0 3px; margin-left:4px; }
+    .nl-empty { padding:12px 6px; font-size:10px; color:#555588; letter-spacing:1px; }
+    .nl-foot  { padding:8px 6px; font-size:10px; color:#555588; border-top:1px solid #808080; line-height:1.8; }
+
+    /* MANUAL.TXT */
+    .m-row { display:flex; gap:16px; padding:4px 0; border-bottom:1px dotted #777777; font-size:11px; line-height:1.8; }
+    .m-k { color:#33335a; min-width:100px; flex-shrink:0; }
+    .m-v { color:#181820; }
+  </style>
 </head>
 <body>
-<div class="scan"></div>
-<div id="mon">
 
-  <!-- 타이틀바 -->
-  <div class="tbar">
-    <span>◳ SET_EXCLUSION.EXE — P.579</span>
-    <span style="color:var(--lt);font-size:11px;">[ 공집합 채널 ]</span>
-    <div class="led" id="led">
-      <b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b>
+<!-- ══ 로비 ══ -->
+<div id="lobby">
+  <div class="lob-inner">
+    <div class="lob-top">
+      <span>PILOT CHANNEL</span>
+      <span>이미지 실험소</span>
+      <span id="lclock">--:--:--</span>
     </div>
-    <span class="clk" id="clk">00:00:00</span>
-  </div>
+    <div class="lob-sections">
 
-  <!-- 메뉴바 -->
-  <div class="menubar">
-    <span>FILE</span><span>VIEW</span><span>STATEMENT</span>
-    <span>LOG</span><span>ATTR</span><span>HELP</span>
-  </div>
-
-  <!-- 본문 -->
-  <div class="body">
-
-    <!-- 왼쪽: SYSTEM + MEASURE -->
-    <div style="display:flex;flex-direction:column;gap:3px;min-height:0;">
-      <div class="panel" style="flex:0 0 auto;">
-        <div class="ph">▣ SYSTEM</div>
-        <div class="pb">
-          <div class="kv"><span class="k">FILE</span><span class="v">P.579</span></div>
-          <div class="kv"><span class="k">TYPE</span><span class="v">SPINOFF</span></div>
-          <div class="kv"><span class="k">REF</span><span class="v">SET-OS v2.4</span></div>
-          <div class="kv"><span class="k">STATUS</span><span class="v"><span class="tag ok">READY</span></span></div>
-          <div class="led-grid" id="ledgrid"></div>
+      <div class="sec-item" onclick="enter('log')">
+        <div class="sec-name">NULL.LOG</div>
+        <div class="sec-desc">
+          <span class="sec-tag">업로드</span>
+          <span class="sec-tag">Exclusion</span>
+          &nbsp;사진을 올리면 다음 작업 Exclusion의 데이터로 사용됩니다.
         </div>
       </div>
-      <div class="panel" style="flex:1;">
-        <div class="ph">▣ MEASURE</div>
-        <div class="pb">
-          <div class="kv"><span class="k">SAMPLES</span><span class="v">438</span></div>
-          <div class="bar"><i id="sig" style="width:72%"></i></div>
-          <div class="kv"><span class="k">DIRS</span><span class="v">45</span></div>
-          <div class="bar amb"><i id="recp" style="width:58%"></i></div>
-          <div class="kv"><span class="k">CODES</span><span class="v">83</span></div>
-          <div class="bar"><i id="buf" style="width:88%"></i></div>
+
+      <div class="sec-item" onclick="enter('attr')">
+        <div class="sec-name">ATTR.TEST</div>
+        <div class="sec-desc">
+          <span class="sec-tag">분석</span>
+          <span class="sec-tag">83codes</span>
+          &nbsp;외부 이미지를 올리면 SET의 어떤 문법 코드에 가까운지 분석합니다.<br>
+          &nbsp;아주 가끔 — 어디에도 속하지 않는다는 결과가 나올 수 있어요. 그것도 하나의 답이에요.
         </div>
       </div>
-    </div>
 
-    <!-- 가운데: STATEMENT -->
-    <div class="panel">
-      <div class="ph">▣ STATEMENT — TELETEXTO P.579</div>
-      <div class="pb">
-        <div class="intro">
-          <div class="pg">P.579 · Teletexto · 1/2</div>
-          <p>다시 시작하겠습니다. 무언가가 잡히는 것은 아닙니다.
-          배열 자체에 관한 것입니다 — 다른 무언가와 관련하여 배치되는 방식.
-          빛이 우연히 통과하는 특정 표면에서 그 순간에 떨어지는 방식,
-          정확히 그 순간에는 다시는 통과하지 못할 것입니다.
-          즉, 당신이 보고 있는 것이 보이는 동안에도 이미 사라지고 있다는 뜻입니다.</p>
-          <hr class="s-div">
-          <div class="pg">P.579 · Teletexto · 2/2</div>
-          <p>괜찮습니다. 세상은 이러한 배열을 끊임없이 생산하고 있으며,
-          아무도 눈치채지 못하고 아무것도 잃지 않습니다.
-          왜냐하면 아무것도 기록되지 않았고, 기록되지 않은 무언가가
-          존재하지 않았을 수도 있기 때문입니다.</p>
+      <div class="sec-item" onclick="enter('manual')">
+        <div class="sec-name">MANUAL.TXT</div>
+        <div class="sec-desc">
+          <span class="sec-tag">안내</span>
+          <span class="sec-tag">비공개</span>
+          &nbsp;파일럿 채널 사용 안내. 이 채널이 기록하는 것과 기록하지 않는 것.<br>
+          &nbsp;NULL 결과는 좌표입니다. 귀속 불가 이미지는 경계 조건입니다.
         </div>
-        <div class="console"><div id="con"></div></div>
       </div>
-      <div class="search">
-        <input id="q" placeholder="MEASURE INPUT ▸  측정하는 것에 들어간다" readonly>
-        <button onclick="location.href='set-os.html'">ENTER</button>
-      </div>
-    </div>
 
-    <!-- 오른쪽: NULL.LOG -->
-    <div class="panel">
-      <div class="ph">▣ NULL.LOG — 공집합 로그</div>
-      <div class="feed" id="feed"></div>
-      <div class="feed-note" id="fnote">결과 없는 검색어 · 3회↑ = 지시문 후보</div>
     </div>
+    <div class="lob-cmd">
+      <span style="cursor:pointer;" onclick="window.location.href='https://note-a.github.io'">이동(<b>GO</b>)</span> &nbsp;상위(<b>P</b>) &nbsp;처음(<b>T</b>) &nbsp;도움말(<b>H</b>) &nbsp;&gt;&gt; <span class="blink">_</span>
+    </div>
+  </div>
+</div>
 
+<!-- ══ HUD ══ -->
+<div id="hud">
+
+  <div id="hud-top">
+    <span>◆ PILOT CHANNEL &nbsp;—&nbsp; 이미지 실험소</span>
+    <span id="hclock">--:--:--</span>
   </div>
 
-  <!-- 푸터 -->
-  <div class="foot">
-    <button class="pri" onclick="location.href='set-os.html'">▸ ENTER  [SET.OS]</button>
-    <button onclick="location.href='portfolio.html'">BROWSE  [PORTFOLIO]</button>
+  <div id="hud-main" class="scanlines">
+    <div id="main-header">
+      <span id="main-title">—</span>
+      <span id="back-btn" style="display:none" onclick="goBack()">← 목록으로</span>
+    </div>
+    <div id="main-body" style="display:flex;align-items:center;justify-content:center;color:#88aaff;letter-spacing:2px;">
+      PILOT CHANNEL / EXP.v0.1
+    </div>
   </div>
 
-  <!-- 상태바 -->
-  <div class="statusln">
-    <span id="stat">READY.</span>
-    <span>SET_EXCLUSION v.P579 · 438 SAMPLES · 45 DIRS</span>
+  <div id="hud-side">
+    <div class="side-panel">
+      <div class="side-h"><span>수록 현황</span><span style="color:#666699;">●live</span></div>
+      <div class="side-b">
+        <div class="kv"><span class="k">수록</span><span class="v">6 점</span></div>
+        <div class="kv"><span class="k">GAP</span><span class="v" style="color:#cc00cc;">4</span></div>
+        <div class="kv"><span class="k">WATCH</span><span class="v">2</span></div>
+        <div class="kv"><span class="k">귀속성공</span><span class="v" style="color:#555588;">0</span></div>
+        <div class="kv"><span class="k">분석완료</span><span class="v" style="color:#555588;">0</span></div>
+        <div class="kv"><span class="k">접속자</span><span class="v">1</span></div>
+        <div class="kv"><span class="k">채널</span><span class="v">비공개</span></div>
+      </div>
+    </div>
+    <div class="side-panel">
+      <div class="side-h" style="color:#cc00cc;">경고</div>
+      <div class="side-b" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;">
+        <span style="color:#cc00cc;" class="blink">● null detected</span>
+        <span onclick="document.getElementById('null-popup').style.display='flex'"
+          style="cursor:pointer;font-size:10px;color:#33335a;border:1px solid #808080;padding:3px 10px;letter-spacing:1px;">읽어보세요</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="hud-bot">
+    <span><span style="cursor:pointer;" onclick="window.location.href='https://note-a.github.io'">이동(<b>GO</b>)</span> &nbsp;목록(<b>P</b>) &nbsp;처음(<b>T</b>) &nbsp;&gt;&gt; <span class="blink">_</span></span>
   </div>
 
 </div>
 
-<script>
-// ── NULL.LOG 피드 ──
-const logData = [
-  {dt:'06.03', q:'귀속불가',   n:'×5'},
-  {dt:'06.03', q:'경계',       n:'×2'},
-  {dt:'06.02', q:'구조 없음',  n:'×1'},
-  {dt:'06.01', q:'사이',       n:'×1'},
-  {dt:'05.30', q:'배열 자체',  n:'×3'},
-  {dt:'05.29', q:'측정 불가',  n:'×2'},
-  {dt:'05.28', q:'등고선',     n:'×1'},
-  {dt:'05.27', q:'공집합',     n:'×4'},
-  {dt:'05.25', q:'반복',       n:'×2'},
-];
-let idx = 0;
-function renderFeed(){
-  document.getElementById('feed').innerHTML = logData.map((r,i) =>
-    `<div class="frow${i===idx?' on':''}" data-i="${i}">
-      <span class="dt">${r.dt}</span>
-      <span class="q">${r.q}</span>
-      <span class="n">${r.n}</span>
-    </div>`
-  ).join('');
-  document.querySelectorAll('.frow').forEach(el =>
-    el.addEventListener('click', () => { idx = +el.dataset.i; renderFeed(); })
-  );
-}
-renderFeed();
-addEventListener('keydown', e => {
-  if(e.key==='ArrowUp'  ){idx=Math.max(0,idx-1);renderFeed();e.preventDefault();}
-  if(e.key==='ArrowDown'){idx=Math.min(logData.length-1,idx+1);renderFeed();e.preventDefault();}
-});
+<!-- ══ NULL 팝업 ══ -->
+<div id="null-popup" style="
+  display:none; position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,0.72);
+  align-items:center; justify-content:center; padding:24px;
+" onclick="if(event.target===this)this.style.display='none'">
+  <div style="
+    background:#b0b0bc; border:3px solid #808080;
+    box-shadow:4px 4px 0 rgba(0,0,20,0.55);
+    max-width:540px; width:100%;
+    font-family:'Galmuri11',monospace;
+  ">
+    <div style="background:#0000dd;padding:6px 12px;font-size:10px;color:#a6a6b8;letter-spacing:1px;display:flex;justify-content:space-between;align-items:center;">
+      <span>// note</span>
+      <span onclick="document.getElementById('null-popup').style.display='none'" style="cursor:pointer;color:#a6a6b8;letter-spacing:1px;">✕</span>
+    </div>
+    <div style="padding:18px 20px;font-size:11px;line-height:2.2;color:#181820;">
+      <p style="margin-bottom:16px;">
+        Let me start again. You're walking somewhere — it doesn't matter where, it never matters where — and something catches. Not the thing itself. Something about the arrangement. The way it sits in relation to something else. The way the light happens to be falling at that particular moment on that particular surface in that particular place that you happen to be passing through, which you will never pass through again at exactly that time, which means the thing you're seeing is already disappearing even as you see it, which means the only question is whether you're going to do something about it or not.
+      </p>
+      <div style="border-top:1px solid #808080;margin-bottom:14px;"></div>
+      <p style="color:#33335a;">
+        다시 시작해 볼게요. 당신은 어딘가를 걷고 있어요 — 어디인지는 상관없어요, 어디인지는 언제나 상관없으니까요 — 그런데 무언가가 걸립니다. 그 사물 자체가 아니라, 배열 때문에. 그것이 다른 무언가와 맺는 관계 속에 놓여 있는 방식 때문에. 그 특정한 순간에 그 특정한 표면 위로 빛이 우연히 내려앉는 방식 때문에 — 당신이 마침 지나치고 있는 그 특정한 장소, 똑같은 시간에 다시는 지나치지 않을 그 장소. 그 말인즉, 당신이 보고 있는 것은 이미 보는 순간에도 사라지고 있다는 뜻이고, 그 말인즉, 유일한 질문은 당신이 그것에 대해 무언가를 할 것인지 아닌지라는 뜻입니다.
+      </p>
+    </div>
+  </div>
+</div>
 
-// ── 부팅 콘솔 ──
-const lines = [
-  '<span class="t">></span> INIT SET_EXCLUSION ........ <span class="ok">OK</span>',
-  '<span class="t">></span> LOAD P.579.STATEMENT ...... <span class="ok">DONE</span>',
-  '<span class="t">></span> PARSE TELETEXTO 1/2 ....... <span class="ok">DONE</span>',
-  '<span class="t">></span> PARSE TELETEXTO 2/2 ....... <span class="ok">DONE</span>',
-  '<span class="t">></span> NULL.LOG entries .......... <span class="ok">9 REC</span>',
-  '<span class="t">></span> ATTR.TEST ................. <span class="em">READY</span>',
-  '<span class="t">></span> <span class="em">측정하는 것에 들어간다._</span>',
-];
-const con = document.getElementById('con');
-let li = 0;
-function type(){
-  if(li >= lines.length){
-    setTimeout(()=>{con.innerHTML='';li=0;type();}, 3500);
+<script>
+const PAGES = {
+  log: {
+    title: 'NULL.LOG',
+    html: `
+      <div class="c-sec">// 업로드 — Exclusion 데이터 등록</div>
+      <div class="dz" id="log-dz" onclick="document.getElementById('log-file-in').click()">
+        <pre>+-------------------+
+|                   |
+|   DROP FILE HERE  |
+|                   |
++-------------------+</pre>
+        <div class="dz-label">이미지 드래그 또는 클릭</div>
+        <div class="dz-ext">JPG / PNG / WEBP</div>
+      </div>
+      <div style="font-size:10px;color:#33335a;margin-bottom:4px;letter-spacing:1px;">STATUS: <span id="log-stat" style="color:#1a7a1a;">READY</span></div>
+      <input type="file" id="log-file-in" accept="image/*" multiple style="display:none" onchange="Array.from(this.files).forEach(saveLogFile)">
+      <div class="c-sec" style="display:flex;justify-content:space-between;">
+        <span>// 등록된 이미지 &nbsp;<span id="log-count" style="color:#0a6a6a;">0</span></span>
+        <span id="log-clear-btn" style="cursor:pointer;color:#cc00cc;font-size:9px;letter-spacing:1px;" onclick="clearLogItems()">전체 삭제</span>
+      </div>
+      <div id="log-gallery"></div>
+      <div class="nl-foot">등록된 이미지는 다음 작업 Exclusion의 데이터로 전달됩니다.</div>
+    `
+  },
+  attr: {
+    title: 'ATTR.TEST',
+    html: `
+      <div class="c-sec">// 분석 입력</div>
+      <div class="dz" id="drop-zone" onclick="document.getElementById('file-in').click()">
+        <pre>+-------------------+
+|                   |
+|   DROP FILE HERE  |
+|                   |
++-------------------+</pre>
+        <div class="dz-label">이미지 드래그 또는 클릭</div>
+        <div class="dz-ext">JPG / PNG / WEBP</div>
+      </div>
+      <div style="font-size:10px;color:#33335a;margin-bottom:4px;letter-spacing:1px;">STATUS: <span id="drop-stat" style="color:#1a7a1a;">READY</span></div>
+      <input type="file" id="file-in" accept="image/*" style="display:none" onchange="handleFile(this.files[0])">
+      <div class="c-sec">// stdout</div>
+      <div class="term" id="term-out">
+        <div><span class="t-p">null@attr:~$</span> ./attr-test --init</div>
+        <div><span class="t-in">// grammar code db 로드 중...</span></div>
+        <div><span class="t-ok">// 83 codes loaded</span></div>
+        <div><span class="t-in">// 분석 엔진 v1.3-beta 초기화</span></div>
+        <div><span class="t-ok">// ready</span></div>
+        <div><span class="t-p">null@attr:~$</span> <span class="t-cursor"></span></div>
+      </div>
+      <div class="c-sec">// result</div>
+      <div class="res" id="result-box">
+        <div style="color:#cccccc;font-size:11px;letter-spacing:2px;">— 분석 대기 중 —</div>
+      </div>
+    `
+  },
+  manual: {
+    title: 'MANUAL.TXT',
+    html: `
+      <div class="c-sec">① NULL.LOG — Exclusion 데이터 등록</div>
+      <div class="m-row"><span class="m-k">이게 뭔가요?</span><span class="m-v">사진을 올리면 다음 작업 Exclusion의 데이터로 사용되는 공간이에요.</span></div>
+      <div class="m-row"><span class="m-k">어떻게 써요?</span><span class="m-v">이미지를 업로드하면 목록에 추가되고, Exclusion 데이터로 전달돼요.</span></div>
+      <div class="m-row"><span class="m-k">Exclusion이란?</span><span class="m-v">여기서 등록된 이미지들이 다음 작업의 기준 데이터가 됩니다.</span></div>
+      <div class="c-sec">② ATTR.TEST — 이미지 귀속 테스트</div>
+      <div class="m-row"><span class="m-k">이게 뭔가요?</span><span class="m-v">외부 이미지를 올리면, 이 사진이 SET의 어떤 문법에 가까운지 분석해줘요.</span></div>
+      <div class="m-row"><span class="m-k">어떻게 써요?</span><span class="m-v">이미지를 드래그하거나 클릭해서 업로드하면 바로 분석이 시작돼요.</span></div>
+      <div class="m-row"><span class="m-k">결과가 뭔가요?</span><span class="m-v">분석 후 이 이미지와 가장 가까운 문법 코드를 점수 순으로 보여줘요.</span></div>
+      <div class="m-row"><span class="m-k">귀속 불가?</span><span class="m-v">아주 가끔 — 어디에도 속하지 않는다는 결과가 나올 수 있어요. 그것도 하나의 답이에요.</span></div>
+    `
+  }
+};
+
+function enter(tab) {
+  const lobby = document.getElementById('lobby');
+  lobby.classList.add('out');
+  lobby.addEventListener('animationend', () => { lobby.style.display = 'none'; }, { once: true });
+
+  const p = PAGES[tab];
+  document.getElementById('main-title').textContent = p.title;
+  const body = document.getElementById('main-body');
+  body.innerHTML = p.html;
+  body.style.cssText = '';
+  document.getElementById('back-btn').style.display = 'inline';
+
+  if (tab === 'log') {
+    renderLogList();
+    const dz = document.getElementById('log-dz');
+    if (dz) {
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#0000dd'; });
+      dz.addEventListener('dragleave', () => { dz.style.borderColor = ''; });
+      dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.style.borderColor = '';
+        Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')).forEach(saveLogFile);
+      });
+    }
+  }
+
+  if (tab === 'attr') {
+    const dz = document.getElementById('drop-zone');
+    if (dz) {
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.borderColor = '#008800'; });
+      dz.addEventListener('dragleave', () => { dz.style.borderColor = ''; });
+      dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.style.borderColor = '';
+        const f = e.dataTransfer.files[0];
+        if (f && f.type.startsWith('image/')) handleFile(f);
+      });
+    }
+  }
+}
+
+/* ── NULL.LOG / Exclusion 데이터 관리 ── */
+function getLogItems() {
+  try { return JSON.parse(localStorage.getItem('exclusion_log') || '[]'); } catch { return []; }
+}
+
+function renderLogList() {
+  const items = getLogItems();
+  const gallery = document.getElementById('log-gallery');
+  const countEl = document.getElementById('log-count');
+  if (!gallery) return;
+  if (countEl) countEl.textContent = items.length;
+  if (items.length === 0) {
+    gallery.innerHTML = `<div class="nl-empty">— 등록된 이미지 없음 <span class="blink">_</span></div>`;
     return;
   }
-  const r = document.createElement('div');
-  r.className = 'row';
-  r.innerHTML = lines[li].replace(/_$/, '<span class="cur"></span>');
-  con.appendChild(r);
-  li++;
-  setTimeout(type, li >= lines.length ? 0 : 380);
+  gallery.innerHTML = items.map((item, i) => `
+    <div class="nl-row" style="align-items:center;gap:8px;padding:4px 6px;">
+      <img src="${item.thumb}" style="width:36px;height:36px;object-fit:cover;flex-shrink:0;border:1px solid #808080;">
+      <span class="nl-grow" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#33335a;">${item.name}</span>
+      <span style="color:#555588;font-size:9px;flex-shrink:0;">${item.date}</span>
+      <span style="cursor:pointer;color:#cc00cc;font-size:11px;flex-shrink:0;padding:0 4px;" onclick="removeLogItem(${i})">×</span>
+    </div>
+  `).join('');
 }
-type();
 
-// ── 시계 ──
-function pad(n){return String(n).padStart(2,'0');}
-setInterval(()=>{
-  const d = new Date();
-  document.getElementById('clk').textContent =
-    pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-}, 1000);
-
-// ── LED & 바 지터 ──
-function jitter(id, base, amp){
-  const v = Math.max(2, Math.min(100, base + (Math.random()-.5)*amp));
-  document.getElementById(id).style.width = v+'%';
+function saveLogFile(f) {
+  const stat = document.getElementById('log-stat');
+  if (stat) stat.textContent = '저장 중...';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 56;
+      cv.getContext('2d').drawImage(img, 0, 0, 56, 56);
+      const thumb = cv.toDataURL('image/jpeg', 0.75);
+      const now = new Date();
+      const date = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+      const items = getLogItems();
+      items.unshift({ name: f.name, date, thumb });
+      localStorage.setItem('exclusion_log', JSON.stringify(items));
+      renderLogList();
+      if (stat) stat.textContent = `${items.length}개 등록됨`;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
 }
-setInterval(()=>{
-  jitter('sig',  72, 16);
-  jitter('recp', 58, 12);
-  jitter('buf',  88,  6);
-  document.getElementById('led').querySelectorAll('b')
-    .forEach(b => b.classList.toggle('on', Math.random() > .4));
-  document.querySelectorAll('#ledgrid b')
-    .forEach(b => b.classList.toggle('on', Math.random() > .55));
-}, 700);
 
-// LED 그리드 초기화
-document.getElementById('ledgrid').innerHTML = Array(16).fill('<b></b>').join('');
+function removeLogItem(i) {
+  const items = getLogItems();
+  items.splice(i, 1);
+  localStorage.setItem('exclusion_log', JSON.stringify(items));
+  renderLogList();
+}
 
-// ── 상태바 메시지 ──
-const stats = [
-  'READY.', 'SCANNING...', 'MATCH: 배열 자체', 'RECORDING...',
-  'SAMPLE +1', 'IDLE', 'NULL LOG +1', 'CALIBRATING...'
-];
-setInterval(()=>{
-  document.getElementById('stat').textContent =
-    stats[Math.floor(Math.random()*stats.length)];
-}, 1500);
+function clearLogItems() {
+  if (!confirm('등록된 이미지를 모두 삭제할까요?')) return;
+  localStorage.removeItem('exclusion_log');
+  renderLogList();
+  const stat = document.getElementById('log-stat');
+  if (stat) stat.textContent = 'READY';
+}
+
+function goBack() {
+  const lobby = document.getElementById('lobby');
+  lobby.style.display = 'flex';
+  lobby.classList.remove('out');
+  lobby.style.opacity = '1';
+  lobby.style.visibility = 'visible';
+  document.getElementById('back-btn').style.display = 'none';
+  document.getElementById('main-title').textContent = '—';
+  const body = document.getElementById('main-body');
+  body.innerHTML = 'PILOT CHANNEL / EXP.v0.1';
+  body.style.cssText = 'display:flex;align-items:center;justify-content:center;color:#555588;letter-spacing:2px;';
+}
+
+function handleFile(f) {
+  if (!f) return;
+  const ds = document.getElementById('drop-stat');
+  if (ds) ds.textContent = f.name;
+  analyze(f);
+}
+
+function tLine(html) {
+  const out = document.getElementById('term-out');
+  if (!out) return;
+  const cur = out.querySelector('.t-cursor');
+  if (cur) cur.parentElement.remove();
+  const d = document.createElement('div');
+  d.innerHTML = html;
+  out.appendChild(d);
+  out.scrollTop = out.scrollHeight;
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function analyze(file) {
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const img = new Image();
+    img.onload = async () => {
+      tLine(`<span class="t-p">null@attr:~$</span> ./attr-test --input "${file.name}"`);
+      await sleep(250);
+      tLine(`<span class="t-in">// 파일 로드: ${file.name} (${img.width}×${img.height})</span>`);
+      await sleep(300); tLine(`<span class="t-in">// 전처리 시작...</span>`); await sleep(350);
+      for (let i = 0; i <= 20; i += 4) {
+        const bar = '█'.repeat(i) + '░'.repeat(20 - i);
+        const out = document.getElementById('term-out'); if (!out) break;
+        const last = out.lastElementChild;
+        if (last && last.dataset.bar) last.innerHTML = `<span class="t-ou">[${bar}] ${Math.round(i/20*100)}%</span>`;
+        else { const d = document.createElement('div'); d.dataset.bar='1'; d.innerHTML=`<span class="t-ou">[${bar}] ${Math.round(i/20*100)}%</span>`; out.appendChild(d); }
+        out.scrollTop = 9999; await sleep(100);
+      }
+      await sleep(300);
+      const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+      const ctx = cv.getContext('2d'); ctx.drawImage(img, 0, 0, 64, 64);
+      const px = ctx.getImageData(0,0,64,64).data;
+      let bright=0, sat=0;
+      for (let j=0; j<px.length; j+=4) {
+        const r=px[j]/255, g=px[j+1]/255, b=px[j+2]/255;
+        const mx=Math.max(r,g,b), mn=Math.min(r,g,b);
+        bright+=(mx+mn)/2; sat+=mx>0?(mx-mn)/mx:0;
+      }
+      bright/=px.length/4; sat/=px.length/4;
+      tLine(`<span class="t-ou">  brightness: ${bright.toFixed(3)} / saturation: ${sat.toFixed(3)}</span>`);
+      await sleep(300); tLine(`<span class="t-in">// 문법 코드 대조 중... (83 codes)</span>`); await sleep(500);
+      let code, desc, anom=false;
+      if      (bright<0.2) { code='null/void';      desc='광도 임계치 미만 — 귀속 불가'; anom=true; }
+      else if (sat>0.6)    { code='field/gap';      desc='채도 과잉 — 분류 기준 초과'; anom=true; }
+      else if (bright>0.8) { code='over/exp';       desc='노출 과다 — 측정 불가'; }
+      else                 { code='unclassifiable'; desc='어떤 코드에도 귀속되지 않음'; anom=true; }
+      tLine(`<span class="t-ok">// 분석 완료 &nbsp;—&nbsp; result: ${code}</span>`);
+      tLine(`<span class="t-p">null@attr:~$</span> <span class="t-cursor"></span>`);
+      const rb = document.getElementById('result-box');
+      if (rb) rb.innerHTML = `<div class="res-code${anom?' anom':''}">${code}</div><div class="res-desc">${desc}</div><div class="res-vals">brightness: ${bright.toFixed(3)} / saturation: ${sat.toFixed(3)}</div>`;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+(function tick() {
+  const now = new Date(), pad = n => String(n).padStart(2,'0');
+  const t = pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+  const lc = document.getElementById('lclock'), hc = document.getElementById('hclock');
+  if (lc) lc.textContent = t;
+  if (hc) hc.textContent = t;
+  setTimeout(tick, 1000);
+})();
 </script>
 </body>
 </html>
