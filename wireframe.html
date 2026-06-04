@@ -2,180 +2,287 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>SET-OS — Wireframe</title>
+<title>SET-OS — Wireframe Reference</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:'Courier New',monospace;color:#ccc;}
+html,body{
+  width:100%;height:100%;
+  background:#111;
+  font-family:'Courier New',monospace;
+  color:#ccc;
+  overflow:hidden;
+}
 
-#app{display:flex;height:100vh;}
+/* ── 전체 프레임: 화면 80% 가운데 정렬 ── */
+#frame{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:88%;height:88%;
+  display:flex;
+  border:1px solid #2a2a2a;
+  border-radius:4px;
+  overflow:hidden;
+  box-shadow:0 0 0 1px #1a1a1a, 0 20px 80px rgba(0,0,0,.8);
+}
 
-/* ── 왼쪽 네비 ── */
+/* ── 왼쪽 사이드바 ── */
 #nav{
-  width:168px;flex-shrink:0;
-  background:#0d0d0d;border-right:1px solid #1e1e1e;
+  width:240px;flex-shrink:0;
+  background:#131313;
+  border-right:1px solid #252525;
   display:flex;flex-direction:column;
 }
-#nav h2{font-size:7.5px;color:#ff4a16;letter-spacing:2px;padding:10px;border-bottom:1px solid #1a1a1a;flex-shrink:0;}
-#nav-list{flex:1;overflow-y:auto;padding:4px 0;}
-.sep{font-size:6.5px;color:#252525;letter-spacing:1.5px;padding:8px 10px 2px;text-transform:uppercase;}
+#nav-hdr{
+  padding:16px 16px 12px;
+  border-bottom:1px solid #222;
+  flex-shrink:0;
+}
+#nav-hdr .logo{
+  font-size:9px;color:#ff4a16;letter-spacing:3px;font-weight:700;
+  margin-bottom:4px;
+}
+#nav-hdr .sub{
+  font-size:10px;color:#444;letter-spacing:1px;
+}
+#nav-list{
+  flex:1;overflow-y:auto;padding:6px 0;
+}
+#nav-list::-webkit-scrollbar{width:3px;}
+#nav-list::-webkit-scrollbar-track{background:#111;}
+#nav-list::-webkit-scrollbar-thumb{background:#2a2a2a;}
+
+.sep{
+  font-size:9px;color:#2d2d2d;letter-spacing:2px;
+  padding:12px 16px 4px;text-transform:uppercase;
+  border-top:1px solid #1a1a1a;margin-top:4px;
+}
+.sep:first-child{border-top:none;margin-top:0;}
+
 .nb{
   display:block;width:100%;text-align:left;
-  font-size:8px;padding:5px 10px;background:none;border:none;
-  color:#3a3a3a;cursor:pointer;letter-spacing:.4px;
-  border-left:2px solid transparent;
+  font-size:11px;padding:7px 16px;
+  background:none;border:none;
+  color:#484848;cursor:pointer;
+  letter-spacing:.3px;
+  border-left:3px solid transparent;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color .1s,background .1s;
 }
-.nb:hover{color:#888;background:rgba(255,255,255,.03);}
-.nb.on{color:#000 !important;background:var(--c);border-left-color:var(--c);}
+.nb:hover{color:#aaa;background:rgba(255,255,255,.04);}
+.nb.on{
+  color:#111 !important;
+  background:var(--c);
+  border-left-color:color-mix(in srgb,var(--c) 60%,#000);
+  font-weight:700;
+}
 
-/* ── 메인 ── */
-#main{flex:1;display:flex;flex-direction:column;min-width:0;}
+/* ── 메인 영역 ── */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;background:#0e0e0e;}
 
+/* 상단 헤더 */
 #hdr{
-  height:30px;flex-shrink:0;
-  background:#0d0d0d;border-bottom:1px solid #1a1a1a;
-  display:flex;align-items:center;padding:0 14px;gap:12px;
+  height:44px;flex-shrink:0;
+  background:#131313;
+  border-bottom:1px solid #222;
+  display:flex;align-items:center;
+  padding:0 20px;gap:16px;
 }
-#hdr-title{font-size:10px;color:#ff4a16;letter-spacing:2px;}
-#hdr-sel{font-size:7.5px;color:#2a2a2a;letter-spacing:.5px;}
+#hdr-panel{
+  font-size:14px;font-weight:700;color:#ff4a16;
+  letter-spacing:2px;
+}
+#hdr-sel{
+  font-size:10px;color:#333;letter-spacing:.5px;
+}
+#hdr-hint{
+  margin-left:auto;font-size:9px;color:#282828;letter-spacing:.5px;
+}
 
 /* 뷰 */
 #view{
   flex:1;overflow:auto;
-  display:flex;align-items:flex-start;justify-content:center;
-  background:#070707;
-  position:relative;
-  padding:24px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  background:#0a0a0a;
+  padding:28px;
 }
+#view::-webkit-scrollbar{width:6px;height:6px;}
+#view::-webkit-scrollbar-track{background:#0a0a0a;}
+#view::-webkit-scrollbar-thumb{background:#252525;border-radius:3px;}
 
 /* 와이어프레임 캔버스 */
 #wf-canvas{
   position:relative;
-  background:#0c0c0c;
-  box-shadow:0 0 0 1px #1e1e1e, 0 12px 60px rgba(0,0,0,.9);
+  background:#0d0d0d;
+  box-shadow:0 0 0 1px #252525, 0 16px 64px rgba(0,0,0,.95);
+  flex-shrink:0;
 }
 
-/* 어노테이션 박스 */
+/* ── 어노테이션 박스 ── */
 .ab{
   position:absolute;box-sizing:border-box;
   border:var(--bw) solid var(--c);
   opacity:var(--op);
   cursor:default;
-  transition:opacity .15s;
+  transition:opacity .12s;
 }
 .ab:hover{
   opacity:1 !important;
   z-index:99999 !important;
-  border-width:1.5px !important;
+  border-width:2px !important;
 }
 .ab-lbl{
   position:absolute;top:0;left:0;
   font-family:'Courier New',monospace;
-  font-size:var(--fs);font-weight:700;letter-spacing:.3px;
-  padding:0 4px;line-height:14px;
+  font-size:var(--fs);font-weight:700;
+  letter-spacing:.2px;
+  padding:0 5px;line-height:16px;
   background:var(--c);color:#000;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   max-width:var(--mxw);
   pointer-events:none;
+  border-bottom-right-radius:2px;
 }
 .ab:hover .ab-lbl{
   max-width:none !important;
-  font-size:9px !important;
+  font-size:11px !important;
+  line-height:18px !important;
+  padding:0 7px !important;
   z-index:99999;
 }
-.ab.hid{border-style:dashed;}
-.ab.hid .ab-lbl{opacity:.7;}
+.ab.hid{border-style:dashed;border-width:1px !important;}
+.ab.hid .ab-lbl{opacity:.6;font-style:italic;}
 
-/* ── 하단 바 ── */
+/* ── 하단 컨트롤 바 ── */
 #ftr{
-  height:34px;flex-shrink:0;
-  background:#0d0d0d;border-top:1px solid #1a1a1a;
-  display:flex;align-items:center;gap:12px;padding:0 12px;
+  height:44px;flex-shrink:0;
+  background:#131313;
+  border-top:1px solid #222;
+  display:flex;align-items:center;
+  gap:14px;padding:0 20px;
 }
-.ftr-lbl{font-size:7px;color:#333;letter-spacing:.5px;}
-#depth-slider{width:90px;accent-color:#ff4a16;cursor:pointer;}
-#depth-num{font-size:8px;color:#ff4a16;min-width:20px;}
+.ftr-lbl{font-size:10px;color:#3a3a3a;letter-spacing:.5px;}
+#depth-slider{
+  width:110px;accent-color:#ff4a16;cursor:pointer;
+  height:3px;
+}
+#depth-num{
+  font-size:11px;font-weight:700;color:#ff4a16;
+  min-width:28px;letter-spacing:.5px;
+}
 .tog{
-  font-family:'Courier New',monospace;font-size:7px;font-weight:700;
-  padding:2px 8px;cursor:pointer;border:1px solid #222;
-  background:#111;color:#444;letter-spacing:.5px;
+  font-family:'Courier New',monospace;
+  font-size:9px;font-weight:700;
+  padding:4px 12px;cursor:pointer;
+  border:1px solid #252525;
+  background:#111;color:#3a3a3a;
+  letter-spacing:.5px;border-radius:2px;
+  transition:all .1s;
 }
+.tog:hover{border-color:#3a3a3a;color:#666;}
 .tog.on{background:var(--tc);color:#000;border-color:var(--tc);}
-#el-count{font-size:7px;color:#2a2a2a;letter-spacing:.5px;margin-left:auto;}
+#el-count{
+  margin-left:auto;
+  font-size:10px;color:#2a2a2a;letter-spacing:.5px;
+}
+#scale-info{
+  font-size:9px;color:#252525;letter-spacing:.3px;
+}
 </style>
 </head>
 <body>
 
-<!-- 숨겨진 DOM 소스 -->
+<!-- 숨겨진 DOM 소스 (1400×900 고정, sandbox로 격리) -->
 <iframe id="src" src="set-os.html"
   style="position:fixed;left:-9999px;top:0;width:1400px;height:900px;border:none;visibility:hidden;"
   sandbox="allow-scripts allow-same-origin"></iframe>
 
-<div id="app">
+<div id="frame">
 
+  <!-- ── 사이드바 ── -->
   <div id="nav">
-    <h2>▶ WIREFRAME</h2>
+    <div id="nav-hdr">
+      <div class="logo">▶ SET-OS</div>
+      <div class="sub">WIREFRAME REF</div>
+    </div>
     <div id="nav-list">
+
       <div class="sep">Structure</div>
-      <button class="nb" data-sel="#shell"   data-name="Shell"         style="--c:#ff4a16">div#shell</button>
-      <button class="nb" data-sel="#wrap"    data-name="#wrap"         style="--c:#ff4a16">div#wrap</button>
+      <button class="nb" data-sel="#shell"  data-name="Shell"  style="--c:#ff4a16">div#shell</button>
+      <button class="nb" data-sel="#wrap"   data-name="#wrap"  style="--c:#ff4a16">div#wrap</button>
+
       <div class="sep">Left Rail</div>
       <button class="nb" data-sel=".lr-rail"                      data-name="aside.lr-rail"  style="--c:#4ecdc4">aside.lr-rail</button>
       <button class="nb" data-sel=".lr-rail .lr-dp:nth-child(1)"  data-name="F.01 SET MAP"   style="--c:#4ecdc4">F.01 SET MAP</button>
       <button class="nb" data-sel=".lr-rail .lr-dp:nth-child(2)"  data-name="F.02 CONTOUR"   style="--c:#4ecdc4">F.02 CONTOUR</button>
       <button class="nb" data-sel=".lr-rail .lr-dp:nth-child(3)"  data-name="F.03 DATA"      style="--c:#4ecdc4">F.03 DATA</button>
+
       <div class="sep">Top Row</div>
-      <button class="nb" data-sel="#top-row"                       data-name="#top-row"       style="--c:#f7dc6f">#top-row</button>
-      <button class="nb" data-sel="#top-row>.pnl:nth-child(1)"     data-name="SET.VIEW"       style="--c:#bb8fce">SET.VIEW</button>
-      <button class="nb" data-sel="#top-row>.pnl:nth-child(2)"     data-name="HUD.XT2"        style="--c:#bb8fce">HUD.XT2</button>
-      <button class="nb" data-sel="#top-row>.pnl:nth-child(3)"     data-name="UP/EXIT/DOWN"   style="--c:#85c1e9">UP/EXIT/DOWN</button>
-      <button class="nb" data-sel="#gbar"                          data-name="GBAR"           style="--c:#a8e6cf">div#gbar</button>
+      <button class="nb" data-sel="#top-row"                     data-name="#top-row"       style="--c:#f7dc6f">#top-row</button>
+      <button class="nb" data-sel="#top-row>.pnl:nth-child(1)"   data-name="SET.VIEW"       style="--c:#bb8fce">SET.VIEW</button>
+      <button class="nb" data-sel="#top-row>.pnl:nth-child(2)"   data-name="HUD.XT2"        style="--c:#bb8fce">HUD.XT2</button>
+      <button class="nb" data-sel="#top-row>.pnl:nth-child(3)"   data-name="UP / EXIT / DOWN" style="--c:#85c1e9">UP / EXIT / DOWN</button>
+      <button class="nb" data-sel="#gbar"                        data-name="GBAR"           style="--c:#a8e6cf">div#gbar</button>
+
       <div class="sep">Bot Row</div>
-      <button class="nb" data-sel="#bot-row"                       data-name="#bot-row"       style="--c:#f7dc6f">#bot-row</button>
-      <button class="nb" data-sel=".bot-left"                      data-name=".bot-left"      style="--c:#f0b27a">.bot-left</button>
-      <button class="nb" data-sel=".bl-split>.pnl:nth-child(1)"    data-name="SYSTEM NOTICE"  style="--c:#f9e79f">SYSTEM NOTICE</button>
-      <button class="nb" data-sel=".bl-split>.pnl:nth-child(2)"    data-name="VIEWER_LOG"     style="--c:#f9e79f">VIEWER_LOG</button>
-      <button class="nb" data-sel=".bot-left>.pnl:nth-child(1)"    data-name="ID CARD"        style="--c:#abebc6">ID CARD</button>
-      <button class="nb" data-sel=".bot-left>.pnl:nth-child(2)"    data-name="WORK.STATUS"    style="--c:#abebc6">WORK.STATUS</button>
-      <button class="nb" data-sel="#bot-row>.pnl"                  data-name="SET.TEXT"       style="--c:#bb8fce">SET.TEXT</button>
+      <button class="nb" data-sel="#bot-row"                     data-name="#bot-row"       style="--c:#f7dc6f">#bot-row</button>
+      <button class="nb" data-sel=".bot-left"                    data-name=".bot-left"      style="--c:#f0b27a">.bot-left</button>
+      <button class="nb" data-sel=".bl-split>.pnl:nth-child(1)"  data-name="SYSTEM NOTICE"  style="--c:#f9e79f">SYSTEM NOTICE</button>
+      <button class="nb" data-sel=".bl-split>.pnl:nth-child(2)"  data-name="VIEWER_LOG"     style="--c:#f9e79f">VIEWER_LOG</button>
+      <button class="nb" data-sel=".bot-left>.pnl:nth-child(1)"  data-name="ID CARD"        style="--c:#abebc6">ID CARD</button>
+      <button class="nb" data-sel=".bot-left>.pnl:nth-child(2)"  data-name="WORK.STATUS"    style="--c:#abebc6">WORK.STATUS</button>
+      <button class="nb" data-sel="#bot-row>.pnl"                data-name="SET.TEXT"       style="--c:#bb8fce">SET.TEXT</button>
+
       <div class="sep">Right Rail</div>
-      <button class="nb" data-sel=".rr-rail"                       data-name="aside.rr-rail"  style="--c:#4ecdc4">aside.rr-rail</button>
-      <button class="nb" data-sel=".rr-rail .lr-dp:nth-child(1)"   data-name="F.04 SVA RADAR" style="--c:#4ecdc4">F.04 SVA RADAR</button>
-      <button class="nb" data-sel=".rr-rail .lr-dp:nth-child(2)"   data-name="F.04 ANALYSIS"  style="--c:#4ecdc4">F.04 ANALYSIS</button>
-      <button class="nb" data-sel=".pilot-pnl"                     data-name="SET-NULL.CH"    style="--c:#f1948a">SET-NULL.CHANNEL</button>
+      <button class="nb" data-sel=".rr-rail"                     data-name="aside.rr-rail"  style="--c:#4ecdc4">aside.rr-rail</button>
+      <button class="nb" data-sel=".rr-rail .lr-dp:nth-child(1)" data-name="F.04 SVA RADAR" style="--c:#4ecdc4">F.04 SVA RADAR</button>
+      <button class="nb" data-sel=".rr-rail .lr-dp:nth-child(2)" data-name="F.04 ANALYSIS"  style="--c:#4ecdc4">F.04 ANALYSIS</button>
+      <button class="nb" data-sel=".pilot-pnl"                   data-name="SET-NULL.CH"    style="--c:#f1948a">SET-NULL.CHANNEL</button>
+
       <div class="sep">Status / Overlay</div>
       <button class="nb" data-sel="#mode-row" data-name="#mode-row" style="--c:#85c1e9">#mode-row</button>
-      <button class="nb" data-sel="#bg"       data-name="div#bg"   style="--c:#444">div#bg</button>
-      <button class="nb" data-sel=".crt"      data-name="div.crt"  style="--c:#333">div.crt</button>
+      <button class="nb" data-sel="#bg"       data-name="div#bg"    style="--c:#555">div#bg</button>
+      <button class="nb" data-sel=".crt"      data-name="div.crt"   style="--c:#444">div.crt</button>
+
     </div>
   </div>
 
+  <!-- ── 메인 ── -->
   <div id="main">
+
     <div id="hdr">
-      <span id="hdr-title">— SELECT PANEL —</span>
+      <span id="hdr-panel">— SELECT PANEL —</span>
       <span id="hdr-sel"></span>
+      <span id="hdr-hint">hover box = full label · dashed = hidden</span>
     </div>
+
     <div id="view">
       <div id="wf-canvas"></div>
     </div>
+
     <div id="ftr">
       <span class="ftr-lbl">DEPTH</span>
       <input id="depth-slider" type="range" min="0" max="12" value="4">
-      <span id="depth-num">ALL</span>
+      <span id="depth-num">4</span>
       <button class="tog on" id="tog-vis" style="--tc:#4ecdc4">VISIBLE</button>
       <button class="tog on" id="tog-hid" style="--tc:#888">HIDDEN</button>
+      <span id="scale-info"></span>
       <span id="el-count">—</span>
     </div>
+
   </div>
 </div>
 
 <script>
-const src    = document.getElementById('src');
-const canvas = document.getElementById('wf-canvas');
-const view   = document.getElementById('view');
-const hdrTitle = document.getElementById('hdr-title');
+const srcFrame = document.getElementById('src');
+const canvas   = document.getElementById('wf-canvas');
+const view     = document.getElementById('view');
+const hdrPanel = document.getElementById('hdr-panel');
 const hdrSel   = document.getElementById('hdr-sel');
 const elCount  = document.getElementById('el-count');
+const scaleInfo= document.getElementById('scale-info');
 
 const COLORS = [
   '#ff4a16','#f7dc6f','#4ecdc4','#bb8fce',
@@ -183,26 +290,28 @@ const COLORS = [
   '#d2b4de','#a9cce3','#a9dfbf','#f9e79f',
   '#eb984e','#76d7c4','#7fb3d3','#c39bd3'
 ];
-const SKIP = new Set(['SCRIPT','STYLE','META','LINK','BR','HR','SVG','PATH','G',
-  'CIRCLE','LINE','RECT','DEFS','POLYLINE','POLYGON','ELLIPSE','ANIMATE','TEXT','TSPAN','USE']);
+const SKIP = new Set([
+  'SCRIPT','STYLE','META','LINK','BR','HR',
+  'SVG','PATH','G','CIRCLE','LINE','RECT','DEFS',
+  'POLYLINE','POLYGON','ELLIPSE','ANIMATE','TEXT','TSPAN','USE'
+]);
 
 let allResults = [];
 let maxDepth   = 4;
 let showVis    = true;
 let showHid    = true;
-let curScale   = 1;
 
 // ── DOM 읽기 ──
 function getLabel(el){
   const id  = el.id ? `#${el.id}` : '';
-  const cls = el.classList.length
-    ? '.'+Array.from(el.classList).filter(c=>!['wfa','wfa-h'].includes(c)).slice(0,3).join('.')
-    : '';
-  return `${el.tagName.toLowerCase()}${id}${cls}`;
+  const cls = Array.from(el.classList)
+    .filter(c => !['wfa','wfa-h'].includes(c))
+    .slice(0,3).join('.');
+  return `${el.tagName.toLowerCase()}${id}${cls ? '.'+cls : ''}`;
 }
 function isHid(el, win){
   const cs = win.getComputedStyle(el);
-  return cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)===0;
+  return cs.display==='none' || cs.visibility==='hidden' || parseFloat(cs.opacity)===0;
 }
 function forceRect(el, win){
   const hidden = isHid(el, win);
@@ -222,8 +331,11 @@ function forceRect(el, win){
 function walk(el, depth, origin, win, out){
   if(SKIP.has(el.tagName)) return;
   const hasId  = el.id && el.id.trim().length > 0;
-  const hasCls = Array.from(el.classList).some(c=>!['wfa','wfa-h'].includes(c));
-  if(!hasId && !hasCls){ Array.from(el.children).forEach(c=>walk(c,depth+1,origin,win,out)); return; }
+  const hasCls = Array.from(el.classList).some(c => !['wfa','wfa-h'].includes(c));
+  if(!hasId && !hasCls){
+    Array.from(el.children).forEach(c => walk(c, depth+1, origin, win, out));
+    return;
+  }
   const {r, hidden} = forceRect(el, win);
   if(r.width > 0 && r.height > 0){
     out.push({
@@ -233,61 +345,75 @@ function walk(el, depth, origin, win, out){
       w: r.width, h: r.height
     });
   }
-  Array.from(el.children).forEach(c=>walk(c,depth+1,origin,win,out));
+  Array.from(el.children).forEach(c => walk(c, depth+1, origin, win, out));
 }
 
 // ── 렌더 ──
 function render(){
   canvas.innerHTML = '';
-  const vw = view.clientWidth  - 48;
-  const vh = view.clientHeight - 48;
 
   if(!allResults.length) return;
 
-  // depth 필터 기준으로 bounds 계산 (깊은 요소가 캔버스를 늘리지 않도록)
+  // depth 기준 bounds 계산 (깊은 row 요소가 scale 줄이지 않도록)
   const bounded = allResults.filter(r => r.depth <= maxDepth);
-  const src = bounded.length ? bounded : allResults;
-  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
-  src.forEach(({x,y,w,h})=>{
+  const pool    = bounded.length ? bounded : allResults;
+
+  let minX=Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+  pool.forEach(({x,y,w,h}) => {
     minX=Math.min(minX,x); minY=Math.min(minY,y);
     maxX=Math.max(maxX,x+w); maxY=Math.max(maxY,y+h);
   });
-  const pw = maxX - minX, ph = maxY - minY;
-  const scale = Math.min(vw/pw, vh/ph, 3);
-  curScale = scale;
 
-  canvas.style.width  = Math.round(pw*scale)+'px';
-  canvas.style.height = Math.round(ph*scale)+'px';
+  const pw = maxX - minX;
+  const ph = maxY - minY;
 
-  allResults.forEach(({label,depth,hidden,x,y,w,h})=>{
+  // view 크기에서 패딩 제외
+  const vw = view.clientWidth  - 56;
+  const vh = view.clientHeight - 56;
+  const scale = Math.min(vw / pw, vh / ph, 4);
+
+  canvas.style.width  = Math.round(pw * scale) + 'px';
+  canvas.style.height = Math.round(ph * scale) + 'px';
+  scaleInfo.textContent = `×${scale.toFixed(2)}`;
+
+  allResults.forEach(({label, depth, hidden, x, y, w, h}) => {
     const color = COLORS[depth % COLORS.length];
-    const sw = (x-minX)*scale, sy = (y-minY)*scale;
-    const sw2 = w*scale, sh2 = h*scale;
+    const cx = (x - minX) * scale;
+    const cy = (y - minY) * scale;
+    const cw = w * scale;
+    const ch = h * scale;
 
-    // depth 기반 스타일
-    const bw  = depth===0 ? '2px' : depth<=2 ? '1.5px' : '1px';
-    const op  = Math.max(0.2, 1 - depth*0.09).toFixed(2);
-    const showLbl = sw2 >= 40 && sh2 >= 14;
-    const fs  = depth<=1 ? '8.5px' : depth<=3 ? '7.5px' : '6.5px';
-    const mxw = Math.round(sw2*0.92)+'px';
+    // depth별 스타일
+    const bw = depth === 0 ? '2.5px'
+             : depth <= 2  ? '2px'
+             :                '1.5px';
+    const op = Math.max(0.18, 1 - depth * 0.08).toFixed(2);
+
+    // 라벨: 박스가 일정 크기 이상일 때만 표시
+    const showLbl = cw >= 50 && ch >= 16;
+    const fs = depth === 0 ? '12px'
+             : depth <= 1  ? '11px'
+             : depth <= 3  ? '10px'
+             :                '9px';
+    const mxw = Math.round(cw * 0.95) + 'px';
 
     const box = document.createElement('div');
     box.className = 'ab' + (hidden ? ' hid' : '');
-    box.setAttribute('data-depth', depth);
-    box.setAttribute('data-hid', hidden ? '1' : '0');
+    box.dataset.depth = depth;
+    box.dataset.hid   = hidden ? '1' : '0';
     box.style.cssText = [
-      `--c:${color}`,`--bw:${bw}`,`--op:${op}`,`--fs:${fs}`,`--mxw:${mxw}`,
-      `left:${sw}px`,`top:${sy}px`,`width:${sw2}px`,`height:${sh2}px`,
-      `z-index:${500-depth}`
+      `--c:${color}`, `--bw:${bw}`, `--op:${op}`, `--fs:${fs}`, `--mxw:${mxw}`,
+      `left:${cx}px`, `top:${cy}px`, `width:${cw}px`, `height:${ch}px`,
+      `z-index:${500 - depth}`
     ].join(';');
 
     if(showLbl){
       const lbl = document.createElement('div');
-      lbl.className = 'ab-lbl';
+      lbl.className  = 'ab-lbl';
       lbl.textContent = label;
       box.appendChild(lbl);
     }
-    box.title = label; // tooltip fallback
+    box.title = `[d${depth}] ${label}  (${Math.round(w)}×${Math.round(h)})`;
     canvas.appendChild(box);
   });
 
@@ -296,31 +422,32 @@ function render(){
 
 function applyFilters(){
   let shown = 0;
-  canvas.querySelectorAll('.ab').forEach(el=>{
-    const d = parseInt(el.dataset.depth||0);
-    const h = el.dataset.hid === '1';
-    const vis = d <= maxDepth && (h ? showHid : showVis);
+  canvas.querySelectorAll('.ab').forEach(el => {
+    const d   = parseInt(el.dataset.depth || 0);
+    const hid = el.dataset.hid === '1';
+    const vis = d <= maxDepth && (hid ? showHid : showVis);
     el.style.display = vis ? '' : 'none';
     if(vis) shown++;
   });
-  document.getElementById('depth-num').textContent = maxDepth >= 12 ? 'ALL' : maxDepth;
-  elCount.textContent = `${shown} elements`;
+  document.getElementById('depth-num').textContent =
+    maxDepth >= 12 ? 'ALL' : String(maxDepth);
+  elCount.textContent = `${shown} els`;
 }
 
 // ── 패널 선택 ──
 function selectPanel(sel, name){
-  const doc = src.contentDocument;
-  const win = src.contentWindow;
-  if(!doc) return;
+  const doc = srcFrame.contentDocument;
+  const win = srcFrame.contentWindow;
+  if(!doc){ hdrPanel.textContent = 'LOADING…'; return; }
 
   const root = doc.querySelector(sel);
-  if(!root){ hdrTitle.textContent = 'NOT FOUND'; return; }
+  if(!root){ hdrPanel.textContent = 'NOT FOUND: ' + sel; return; }
 
   const rr = root.getBoundingClientRect();
   allResults = [];
   walk(root, 0, rr, win, allResults);
 
-  hdrTitle.textContent = name;
+  hdrPanel.textContent = name;
   hdrSel.textContent   = sel;
   render();
 }
@@ -328,25 +455,29 @@ function selectPanel(sel, name){
 // ── 컨트롤 ──
 document.getElementById('depth-slider').addEventListener('input', function(){
   maxDepth = parseInt(this.value);
-  render(); // bounds 재계산
+  render();
 });
 document.getElementById('tog-vis').addEventListener('click', function(){
-  showVis = !showVis; this.classList.toggle('on', showVis); applyFilters();
+  showVis = !showVis;
+  this.classList.toggle('on', showVis);
+  applyFilters();
 });
 document.getElementById('tog-hid').addEventListener('click', function(){
-  showHid = !showHid; this.classList.toggle('on', showHid); applyFilters();
+  showHid = !showHid;
+  this.classList.toggle('on', showHid);
+  applyFilters();
 });
-document.querySelectorAll('.nb').forEach(btn=>{
+document.querySelectorAll('.nb').forEach(btn => {
   btn.addEventListener('click', function(){
-    document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
     this.classList.add('on');
     selectPanel(this.dataset.sel, this.dataset.name);
   });
 });
 
-// ── 로드 후 기본 선택 ──
-src.addEventListener('load', ()=>{
-  setTimeout(()=>{
+// ── 로드 후 기본 패널 ──
+srcFrame.addEventListener('load', () => {
+  setTimeout(() => {
     document.querySelector('.nb[data-sel="#wrap"]').click();
   }, 1500);
 });
