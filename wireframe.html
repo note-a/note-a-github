@@ -5,290 +5,307 @@
 <title>SET-OS — Wireframe</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Courier New',monospace;}
-#frame{width:100%;height:100%;border:none;display:block;position:absolute;inset:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0a0a;font-family:'Courier New',monospace;}
 
-/* ── 패널 선택 사이드바 ── */
-#sidebar{
-  position:fixed;left:0;top:0;bottom:0;
-  width:180px;
-  background:rgba(0,0,0,.92);
-  border-right:1px solid #222;
-  z-index:9999999;
-  display:flex;flex-direction:column;
-  overflow:hidden;
+/* ── 숨겨진 소스 iframe ── */
+#src-frame{position:fixed;left:-9999px;top:0;width:1400px;height:860px;border:none;visibility:hidden;}
+
+/* ── 레이아웃 ── */
+#app{display:flex;height:100vh;}
+
+/* ── 왼쪽 패널 목록 ── */
+#nav{
+  width:160px;flex-shrink:0;
+  background:#0d0d0d;border-right:1px solid #1a1a1a;
+  display:flex;flex-direction:column;overflow:hidden;
 }
-#sidebar h2{
+#nav h2{
   font-size:8px;color:#ff4a16;letter-spacing:2px;
-  padding:10px 10px 6px;border-bottom:1px solid #1e1e1e;flex-shrink:0;
+  padding:10px;border-bottom:1px solid #1a1a1a;flex-shrink:0;
 }
-#panel-list{flex:1;overflow-y:auto;padding:4px 0;}
-#panel-list button{
+#nav-list{flex:1;overflow-y:auto;padding:4px 0;}
+.nav-sep{font-size:7px;color:#2a2a2a;letter-spacing:1.5px;padding:8px 10px 2px;}
+.nav-btn{
   display:block;width:100%;text-align:left;
-  font-family:'Courier New',monospace;font-size:8px;
-  padding:5px 10px;background:none;border:none;
-  color:#555;cursor:pointer;letter-spacing:.5px;
-  border-left:2px solid transparent;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-size:8px;padding:5px 10px;background:none;border:none;
+  color:#444;cursor:pointer;letter-spacing:.5px;
+  border-left:2px solid transparent;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
 }
-#panel-list button:hover{ color:#aaa;background:rgba(255,255,255,.04); }
-#panel-list button.active{
-  color:#000;background:var(--pc);
-  border-left-color:var(--pc);
+.nav-btn:hover{color:#888;background:rgba(255,255,255,.03);}
+.nav-btn.on{color:#000;background:var(--c);border-left-color:var(--c);}
+
+/* ── 오른쪽 메인 뷰 ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* 패널 제목 바 */
+#main-header{
+  height:32px;flex-shrink:0;
+  background:#0d0d0d;border-bottom:1px solid #1a1a1a;
+  display:flex;align-items:center;padding:0 14px;gap:10px;
 }
-#panel-list .sep{
-  font-size:7px;color:#333;letter-spacing:1.5px;
-  padding:8px 10px 3px;
+#main-title{font-size:10px;color:#ff4a16;letter-spacing:2px;}
+#main-sel{font-size:8px;color:#333;letter-spacing:1px;}
+
+/* 뷰 컨테이너 */
+#view-wrap{
+  flex:1;overflow:hidden;position:relative;
+  display:flex;align-items:center;justify-content:center;
+  background:#080808;
 }
 
-/* 숨김/보임 토글 */
-#sidebar footer{
-  padding:8px 10px;border-top:1px solid #1a1a1a;flex-shrink:0;
-  display:flex;gap:4px;flex-wrap:wrap;
+/* 클립된 iframe 뷰 */
+#clip-box{
+  position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px #222, 0 8px 40px rgba(0,0,0,.8);
 }
-#sidebar footer button{
-  font-family:'Courier New',monospace;font-size:7px;font-weight:700;
-  padding:3px 6px;cursor:pointer;border:1px solid #333;background:#111;color:#666;
-  letter-spacing:.5px;flex:1;
+#clip-frame{
+  position:absolute;border:none;
+  transform-origin:0 0;
+  width:1400px;height:900px;
 }
-#sidebar footer button.on{background:#ff4a16;color:#000;border-color:#ff4a16;}
+
+/* 어노테이션 레이어 */
+#anno-layer{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;
+}
+.ab{
+  position:absolute;box-sizing:border-box;
+  outline:1px solid var(--c);outline-offset:-1px;
+}
+.ab::before{
+  content:attr(data-l);
+  position:absolute;top:0;left:0;
+  font-family:'Courier New',monospace;
+  font-size:7.5px;font-weight:700;letter-spacing:.4px;
+  padding:0 4px;line-height:14px;
+  background:var(--c);color:#000;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;
+}
+.ab.hidden-el{
+  outline-style:dashed;background:rgba(0,0,0,.45);
+}
+.ab.hidden-el::after{
+  content:'HIDDEN';
+  position:absolute;bottom:2px;right:3px;
+  font-size:6px;color:var(--c);opacity:.5;letter-spacing:1px;
+}
+
+/* 하단 정보 */
+#info-bar{
+  height:24px;flex-shrink:0;
+  background:#0d0d0d;border-top:1px solid #1a1a1a;
+  display:flex;align-items:center;padding:0 12px;
+  font-size:7px;color:#333;letter-spacing:.5px;gap:16px;
+}
 </style>
 </head>
 <body>
 
-<iframe id="frame" src="set-os.html"></iframe>
+<div id="app">
 
-<div id="sidebar">
-  <h2>▶ WIREFRAME</h2>
-  <div id="panel-list">
-    <div class="sep">STRUCTURE</div>
-    <button data-sel="#wrap"      style="--pc:#ff4a16">div#wrap</button>
-
-    <div class="sep">LEFT RAIL</div>
-    <button data-sel=".lr-rail"                        style="--pc:#4ecdc4">aside.lr-rail</button>
-    <button data-sel=".lr-rail .lr-dp:nth-child(1)"    style="--pc:#4ecdc4">F.01 SET MAP</button>
-    <button data-sel=".lr-rail .lr-dp:nth-child(2)"    style="--pc:#4ecdc4">F.02 CONTOUR</button>
-    <button data-sel=".lr-rail .lr-dp:nth-child(3)"    style="--pc:#4ecdc4">F.03 DATA</button>
-
-    <div class="sep">TOP ROW</div>
-    <button data-sel="#top-row"                        style="--pc:#f7dc6f">#top-row</button>
-    <button data-sel="#top-row>.pnl:nth-child(1)"      style="--pc:#bb8fce">SET.VIEW 패널</button>
-    <button data-sel="#top-row>.pnl:nth-child(2)"      style="--pc:#bb8fce">HUD.XT2 패널</button>
-    <button data-sel="#top-row>.pnl:nth-child(3)"      style="--pc:#85c1e9">UP/EXIT/DOWN</button>
-    <button data-sel="#gbar"                           style="--pc:#a8e6cf">div#gbar</button>
-
-    <div class="sep">BOT ROW</div>
-    <button data-sel="#bot-row"                        style="--pc:#f7dc6f">#bot-row</button>
-    <button data-sel=".bot-left"                       style="--pc:#f0b27a">.bot-left</button>
-    <button data-sel=".bl-split>.pnl:nth-child(1)"     style="--pc:#f9e79f">SYSTEM NOTICE</button>
-    <button data-sel=".bl-split>.pnl:nth-child(2)"     style="--pc:#f9e79f">VIEWER_LOG.EXE</button>
-    <button data-sel=".bot-left>.pnl:nth-child(1)"     style="--pc:#abebc6">ID CARD</button>
-    <button data-sel=".bot-left>.pnl:nth-child(2)"     style="--pc:#abebc6">WORK.STATUS</button>
-    <button data-sel="#bot-row>.pnl"                   style="--pc:#bb8fce">SET.TEXT</button>
-
-    <div class="sep">RIGHT RAIL</div>
-    <button data-sel=".rr-rail"                        style="--pc:#4ecdc4">aside.rr-rail</button>
-    <button data-sel=".rr-rail .lr-dp:nth-child(1)"    style="--pc:#4ecdc4">F.04 SVA RADAR</button>
-    <button data-sel=".rr-rail .lr-dp:nth-child(2)"    style="--pc:#4ecdc4">F.04 ANALYSIS</button>
-    <button data-sel=".pilot-pnl"                      style="--pc:#f1948a">SET-NULL.CHANNEL</button>
-    <button data-sel=".pl-goto"                        style="--pc:#f1948a">▶ OPEN PILOT.EXP</button>
-
-    <div class="sep">OVERLAY</div>
-    <button data-sel="#mode-row"                       style="--pc:#85c1e9">#mode-row</button>
-    <button data-sel=".crt"                            style="--pc:#444">div.crt</button>
-    <button data-sel="#bg"                             style="--pc:#333">div#bg</button>
+  <!-- 왼쪽 네비 -->
+  <div id="nav">
+    <h2>▶ WIREFRAME</h2>
+    <div id="nav-list">
+      <div class="nav-sep">STRUCTURE</div>
+      <button class="nav-btn" data-sel="#shell"      data-name="Shell 전체"            style="--c:#ff4a16">div#shell</button>
+      <button class="nav-btn" data-sel="#wrap"       data-name="#wrap 메인 컨테이너"   style="--c:#ff4a16">div#wrap</button>
+      <div class="nav-sep">LEFT RAIL</div>
+      <button class="nav-btn" data-sel=".lr-rail"                    data-name="Left Rail 전체"   style="--c:#4ecdc4">aside.lr-rail</button>
+      <button class="nav-btn" data-sel=".lr-rail .lr-dp:nth-child(1)" data-name="F.01 SET MAP"   style="--c:#4ecdc4">F.01 SET MAP</button>
+      <button class="nav-btn" data-sel=".lr-rail .lr-dp:nth-child(2)" data-name="F.02 CONTOUR"  style="--c:#4ecdc4">F.02 CONTOUR</button>
+      <button class="nav-btn" data-sel=".lr-rail .lr-dp:nth-child(3)" data-name="F.03 DATA"     style="--c:#4ecdc4">F.03 DATA</button>
+      <div class="nav-sep">TOP ROW</div>
+      <button class="nav-btn" data-sel="#top-row"                      data-name="#top-row"            style="--c:#f7dc6f">#top-row</button>
+      <button class="nav-btn" data-sel="#top-row>.pnl:nth-child(1)"    data-name="SET.VIEW 패널"       style="--c:#bb8fce">SET.VIEW</button>
+      <button class="nav-btn" data-sel="#top-row>.pnl:nth-child(2)"    data-name="HUD.XT2 파일 브라우저" style="--c:#bb8fce">HUD.XT2</button>
+      <button class="nav-btn" data-sel="#top-row>.pnl:nth-child(3)"    data-name="UP/EXIT/DOWN 컨트롤" style="--c:#85c1e9">UP/EXIT/DOWN</button>
+      <button class="nav-btn" data-sel="#gbar"                         data-name="GBAR (iframe)"       style="--c:#a8e6cf">div#gbar</button>
+      <div class="nav-sep">BOT ROW</div>
+      <button class="nav-btn" data-sel="#bot-row"                       data-name="#bot-row"          style="--c:#f7dc6f">#bot-row</button>
+      <button class="nav-btn" data-sel=".bot-left"                      data-name=".bot-left"         style="--c:#f0b27a">.bot-left</button>
+      <button class="nav-btn" data-sel=".bl-split>.pnl:nth-child(1)"   data-name="SYSTEM NOTICE"     style="--c:#f9e79f">SYSTEM NOTICE</button>
+      <button class="nav-btn" data-sel=".bl-split>.pnl:nth-child(2)"   data-name="VIEWER_LOG.EXE"    style="--c:#f9e79f">VIEWER_LOG.EXE</button>
+      <button class="nav-btn" data-sel=".bot-left>.pnl:nth-child(1)"   data-name="ID CARD (iframe)"  style="--c:#abebc6">ID CARD</button>
+      <button class="nav-btn" data-sel=".bot-left>.pnl:nth-child(2)"   data-name="WORK.STATUS"       style="--c:#abebc6">WORK.STATUS</button>
+      <button class="nav-btn" data-sel="#bot-row>.pnl"                  data-name="SET.TEXT"          style="--c:#bb8fce">SET.TEXT</button>
+      <div class="nav-sep">RIGHT RAIL</div>
+      <button class="nav-btn" data-sel=".rr-rail"                       data-name="Right Rail 전체"   style="--c:#4ecdc4">aside.rr-rail</button>
+      <button class="nav-btn" data-sel=".rr-rail .lr-dp:nth-child(1)"  data-name="F.04 SVA RADAR"    style="--c:#4ecdc4">F.04 SVA RADAR</button>
+      <button class="nav-btn" data-sel=".rr-rail .lr-dp:nth-child(2)"  data-name="F.04 ANALYSIS"     style="--c:#4ecdc4">F.04 ANALYSIS</button>
+      <button class="nav-btn" data-sel=".pilot-pnl"                     data-name="SET-NULL.CHANNEL"  style="--c:#f1948a">SET-NULL.CHANNEL</button>
+      <div class="nav-sep">STATUS / BG</div>
+      <button class="nav-btn" data-sel="#mode-row"  data-name="#mode-row 상태바"   style="--c:#85c1e9">#mode-row</button>
+      <button class="nav-btn" data-sel="#bg"        data-name="div#bg 배경"        style="--c:#333">div#bg</button>
+    </div>
   </div>
-  <footer>
-    <button id="btn-all" class="on">ALL</button>
-    <button id="btn-vis">VISIBLE</button>
-    <button id="btn-hid">HIDDEN</button>
-  </footer>
+
+  <!-- 오른쪽 메인 -->
+  <div id="main">
+    <div id="main-header">
+      <span id="main-title">— SELECT PANEL —</span>
+      <span id="main-sel"></span>
+    </div>
+    <div id="view-wrap">
+      <div id="clip-box">
+        <iframe id="clip-frame" src="set-os.html" sandbox="allow-scripts allow-same-origin"></iframe>
+        <div id="anno-layer"></div>
+      </div>
+    </div>
+    <div id="info-bar">
+      <span id="info-dims">W: — · H: —</span>
+      <span id="info-count">elements: —</span>
+      <span style="margin-left:auto;color:#222;">실선=visible · 점선=hidden</span>
+    </div>
+  </div>
+
 </div>
 
 <script>
-const frame = document.getElementById('frame');
-const SKIP = new Set(['SCRIPT','STYLE','META','LINK','HEAD','TITLE','BR','HR','IFRAME','SVG','PATH','G','CIRCLE','LINE','RECT','TEXT','DEFS','POLYLINE','POLYGON','ELLIPSE','ANIMATE']);
+const clipFrame  = document.getElementById('clip-frame');
+const clipBox    = document.getElementById('clip-box');
+const annoLayer  = document.getElementById('anno-layer');
+const viewWrap   = document.getElementById('view-wrap');
+const mainTitle  = document.getElementById('main-title');
+const mainSel    = document.getElementById('main-sel');
+const infoDims   = document.getElementById('info-dims');
+const infoCount  = document.getElementById('info-count');
+
 const DEPTH_COLORS = [
   '#ff4a16','#f7dc6f','#4ecdc4','#bb8fce',
   '#85c1e9','#f0b27a','#abebc6','#f1948a',
   '#d2b4de','#a9cce3','#a9dfbf','#f9e79f',
   '#eb984e','#76d7c4','#7fb3d3','#c39bd3'
 ];
+const SKIP = new Set(['SCRIPT','STYLE','META','LINK','BR','HR','SVG','PATH','G','CIRCLE',
+  'LINE','RECT','DEFS','POLYLINE','POLYGON','ELLIPSE','ANIMATE','TEXT','TSPAN']);
 
-let allAnnotations = []; // {el, label, depth, hidden, rect}
-let currentFilter = 'all';
-let activeRoot = null;
+let frameReady = false;
+let pendingSel = null;
 
-frame.addEventListener('load', function(){
-  const doc = this.contentDocument;
-  if(!doc) return;
-
-  setTimeout(function(){
-
-    const style = doc.createElement('style');
-    style.textContent = `
-      .wfa,.wfa-h{position:fixed;pointer-events:none;box-sizing:border-box;}
-      .wfa  {outline:1.5px solid var(--wfc);outline-offset:-1px;z-index:var(--wfz);}
-      .wfa-h{outline:1.5px dashed var(--wfc);outline-offset:-1px;background:rgba(0,0,0,.5);z-index:var(--wfz);}
-      .wfa::before,.wfa-h::before{
-        content:attr(data-label);
-        position:absolute;top:0;left:0;
-        font-family:'Courier New',monospace;
-        font-size:7.5px;font-weight:700;letter-spacing:.4px;
-        padding:0 4px;line-height:14px;
-        background:var(--wfc);color:#000;white-space:nowrap;
-        max-width:260px;overflow:hidden;text-overflow:ellipsis;
-      }
-      .wfa-h::after{
-        content:'HIDDEN';position:absolute;bottom:1px;right:3px;
-        font-family:'Courier New',monospace;font-size:6px;
-        color:var(--wfc);opacity:.5;letter-spacing:1px;
-      }
-      /* 딤 오버레이 */
-      #wf-dim{
-        position:fixed;inset:0;background:rgba(0,0,0,.78);
-        pointer-events:none;z-index:999980;display:none;
-      }
-      /* 포커스 영역 강조 */
-      #wf-focus{
-        position:fixed;pointer-events:none;z-index:999981;
-        outline:2px solid #fff;outline-offset:1px;display:none;
-        box-shadow:0 0 0 9999px rgba(0,0,0,.75);
-      }
-    `;
-    doc.head.appendChild(style);
-
-    // dim + focus 요소
-    const dim = doc.createElement('div'); dim.id='wf-dim'; doc.body.appendChild(dim);
-    const focus = doc.createElement('div'); focus.id='wf-focus'; doc.body.appendChild(focus);
-
-    function getLabel(el){
-      const id  = el.id ? `#${el.id}` : '';
-      const cls = el.classList.length
-        ? '.'+Array.from(el.classList).filter(c=>!c.startsWith('wf')).slice(0,3).join('.')
-        : '';
-      return `${el.tagName.toLowerCase()}${id}${cls}`;
-    }
-
-    function isHidden(el){
-      const cs = doc.defaultView.getComputedStyle(el);
-      return cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)===0;
-    }
-
-    function getRect(el){
-      const h = isHidden(el);
-      if(h){
-        el.style.setProperty('display','block','important');
-        el.style.setProperty('visibility','visible','important');
-        el.style.setProperty('opacity','1','important');
-      }
-      const r = el.getBoundingClientRect();
-      if(h){
-        el.style.removeProperty('display');
-        el.style.removeProperty('visibility');
-        el.style.removeProperty('opacity');
-      }
-      return {rect:r, hidden:h};
-    }
-
-    function walk(el, depth, list){
-      if(SKIP.has(el.tagName)) return;
-      const label = getLabel(el);
-      const noId = !el.id || el.id.startsWith('wf');
-      const noCls = el.classList.length===0 || Array.from(el.classList).every(c=>c.startsWith('wf'));
-      if(noId && noCls) { Array.from(el.children).forEach(c=>walk(c,depth+1,list)); return; }
-      const {rect,hidden} = getRect(el);
-      if(rect.width>0 && rect.height>0){
-        list.push({el, label, depth, hidden, rect});
-      }
-      Array.from(el.children).forEach(c=>walk(c,depth+1,list));
-    }
-
-    // 전체 DOM 수집
-    Array.from(doc.body.children).forEach(c=>walk(c,0,allAnnotations));
-
-    // 어노테이션 div 생성
-    allAnnotations.forEach(({label, depth, hidden, rect}, i)=>{
-      const color = DEPTH_COLORS[depth % DEPTH_COLORS.length];
-      const z = 999990 - depth;
-      const d = doc.createElement('div');
-      d.className = hidden ? 'wfa-h' : 'wfa';
-      d.id = `wfa-${i}`;
-      d.setAttribute('data-label', label);
-      d.setAttribute('data-depth', depth);
-      d.setAttribute('data-hidden', hidden ? '1' : '0');
-      d.style.cssText = `--wfc:${color};--wfz:${z};left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;display:none;`;
-      doc.body.appendChild(d);
-    });
-
-    // ── 패널 선택 로직 ──
-    function showPanel(sel, color){
-      // 모든 숨기기
-      doc.querySelectorAll('.wfa,.wfa-h').forEach(el=>el.style.display='none');
-      dim.style.display='none';
-      focus.style.display='none';
-
-      if(!sel){ activeRoot=null; return; }
-
-      const root = doc.querySelector(sel);
-      if(!root) return;
-      activeRoot = root;
-
-      const rootRect = root.getBoundingClientRect();
-
-      // focus 박스
-      focus.style.cssText = `
-        position:fixed;pointer-events:none;z-index:999981;
-        left:${rootRect.left-2}px;top:${rootRect.top-2}px;
-        width:${rootRect.width+4}px;height:${rootRect.height+4}px;
-        outline:2px solid ${color};outline-offset:1px;display:block;
-        box-shadow:0 0 0 9999px rgba(0,0,0,.72);
-      `;
-      dim.style.display='block';
-
-      // 해당 root 내부 요소들만 표시
-      allAnnotations.forEach(({el, hidden}, i)=>{
-        if(root.contains(el) || el===root){
-          const d = doc.getElementById(`wfa-${i}`);
-          if(!d) return;
-          if(currentFilter==='all') d.style.display='';
-          else if(currentFilter==='visible' && !hidden) d.style.display='';
-          else if(currentFilter==='hidden' && hidden) d.style.display='';
-        }
-      });
-    }
-
-    // 사이드바 버튼 클릭
-    document.querySelectorAll('#panel-list button').forEach(btn=>{
-      btn.addEventListener('click', function(){
-        document.querySelectorAll('#panel-list button').forEach(b=>b.classList.remove('active'));
-        this.classList.add('active');
-        const color = getComputedStyle(this).getPropertyValue('--pc').trim() || '#fff';
-        showPanel(this.dataset.sel, color);
-      });
-    });
-
-    // 필터 토글
-    function setFilter(f){
-      currentFilter = f;
-      document.querySelectorAll('#sidebar footer button').forEach(b=>b.classList.remove('on'));
-      document.getElementById(f==='all'?'btn-all':f==='visible'?'btn-vis':'btn-hid').classList.add('on');
-      const active = document.querySelector('#panel-list button.active');
-      if(active){
-        const color = getComputedStyle(active).getPropertyValue('--pc').trim()||'#fff';
-        showPanel(active.dataset.sel, color);
-      }
-    }
-    document.getElementById('btn-all').onclick = ()=>setFilter('all');
-    document.getElementById('btn-vis').onclick = ()=>setFilter('visible');
-    document.getElementById('btn-hid').onclick = ()=>setFilter('hidden');
-
-    // 기본: #wrap 선택
-    const firstBtn = document.querySelector('#panel-list button');
-    if(firstBtn) firstBtn.click();
-
+clipFrame.addEventListener('load', () => {
+  // layout이 완전히 계산된 후 실행
+  setTimeout(() => {
+    frameReady = true;
+    if(pendingSel) selectPanel(pendingSel.sel, pendingSel.name, pendingSel.color);
   }, 1200);
 });
+
+function getLabel(el){
+  const id  = el.id ? `#${el.id}` : '';
+  const cls = el.classList.length
+    ? '.'+Array.from(el.classList).filter(c=>!c.startsWith('wf')).slice(0,3).join('.')
+    : '';
+  return `${el.tagName.toLowerCase()}${id}${cls}`;
+}
+
+function isHiddenEl(el, win){
+  const cs = win.getComputedStyle(el);
+  return cs.display==='none' || cs.visibility==='hidden' || parseFloat(cs.opacity)===0;
+}
+
+function forceRect(el, win){
+  const hidden = isHiddenEl(el, win);
+  if(hidden){
+    el.style.setProperty('display','block','important');
+    el.style.setProperty('visibility','visible','important');
+    el.style.setProperty('opacity','1','important');
+  }
+  const r = el.getBoundingClientRect();
+  if(hidden){
+    el.style.removeProperty('display');
+    el.style.removeProperty('visibility');
+    el.style.removeProperty('opacity');
+  }
+  return {r, hidden};
+}
+
+function walk(el, depth, rootRect, win, results){
+  if(SKIP.has(el.tagName)) return;
+  const hasId  = el.id && el.id.length > 0;
+  const hasCls = Array.from(el.classList).some(c=>!c.startsWith('wf'));
+  if(!hasId && !hasCls){ Array.from(el.children).forEach(c=>walk(c,depth+1,rootRect,win,results)); return; }
+  const {r, hidden} = forceRect(el, win);
+  if(r.width > 0 && r.height > 0){
+    results.push({
+      label: getLabel(el),
+      depth,
+      hidden,
+      // 루트 기준 상대 좌표
+      x: r.left - rootRect.left,
+      y: r.top  - rootRect.top,
+      w: r.width,
+      h: r.height
+    });
+  }
+  Array.from(el.children).forEach(c=>walk(c,depth+1,rootRect,win,results));
+}
+
+function selectPanel(sel, name, color){
+  if(!frameReady){ pendingSel={sel,name,color}; return; }
+  const doc = clipFrame.contentDocument;
+  const win = clipFrame.contentWindow;
+  if(!doc) return;
+
+  const root = doc.querySelector(sel);
+  if(!root){ mainTitle.textContent='NOT FOUND: '+sel; return; }
+
+  // 루트 rect
+  const rr = root.getBoundingClientRect();
+
+  // clip-box 크기
+  const vw = viewWrap.clientWidth  - 40;
+  const vh = viewWrap.clientHeight - 40;
+  const scale = Math.min(vw / rr.width, vh / rr.height, 2.5);
+  const bw = Math.round(rr.width  * scale);
+  const bh = Math.round(rr.height * scale);
+
+  clipBox.style.width  = bw+'px';
+  clipBox.style.height = bh+'px';
+
+  // iframe 위치: 루트가 clip-box 안에서 (0,0)에 오도록
+  clipFrame.style.transform = `scale(${scale})`;
+  clipFrame.style.left = (-rr.left * scale)+'px';
+  clipFrame.style.top  = (-rr.top  * scale)+'px';
+
+  // 어노테이션 수집
+  const results = [];
+  walk(root, 0, rr, win, results);
+
+  // 어노테이션 렌더
+  annoLayer.innerHTML = '';
+  annoLayer.style.width  = bw+'px';
+  annoLayer.style.height = bh+'px';
+
+  results.forEach(({label, depth, hidden, x, y, w, h})=>{
+    const color = DEPTH_COLORS[depth % DEPTH_COLORS.length];
+    const d = document.createElement('div');
+    d.className = 'ab' + (hidden ? ' hidden-el' : '');
+    d.setAttribute('data-l', label);
+    d.style.cssText = `--c:${color};left:${x*scale}px;top:${y*scale}px;width:${w*scale}px;height:${h*scale}px;z-index:${500-depth};`;
+    annoLayer.appendChild(d);
+  });
+
+  // 헤더 업데이트
+  mainTitle.textContent = name;
+  mainSel.textContent   = sel;
+  infoDims.textContent  = `W: ${Math.round(rr.width)}px · H: ${Math.round(rr.height)}px · scale: ${scale.toFixed(2)}×`;
+  infoCount.textContent = `elements: ${results.length}`;
+}
+
+// 버튼 이벤트
+document.querySelectorAll('.nav-btn').forEach(btn=>{
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+    this.classList.add('on');
+    const color = getComputedStyle(this).getPropertyValue('--c').trim()||'#ff4a16';
+    selectPanel(this.dataset.sel, this.dataset.name, color);
+  });
+});
+
+// 기본 선택
+document.querySelector('.nav-btn[data-sel="#wrap"]').click();
 </script>
 </body>
 </html>
