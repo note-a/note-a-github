@@ -197,8 +197,9 @@ html,body{
     <div id="nav-list">
 
       <div class="sep">Structure</div>
-      <button class="nb" data-sel="#shell"  data-name="#shell (전체)" style="--c:#ff4a16">#shell  (전체)</button>
-      <button class="nb" data-sel="#wrap"   data-name="#wrap"         style="--c:#e06010">div#wrap</button>
+      <button class="nb" data-sel="body"    data-name="전체 (body)"   style="--c:#ff4a16">전체 (body)</button>
+      <button class="nb" data-sel="#shell"  data-name="#shell"        style="--c:#e06010">div#shell</button>
+      <button class="nb" data-sel="#wrap"   data-name="#wrap"         style="--c:#cc5500">div#wrap</button>
 
       <div class="sep">Left Rail</div>
       <button class="nb" data-sel=".lr-rail"                      data-name="aside.lr-rail"  style="--c:#4ecdc4">aside.lr-rail</button>
@@ -432,7 +433,7 @@ function walkWrap(){
   const doc = pageBg.contentDocument;
   const win = pageBg.contentWindow;
   if(!doc) return;
-  const root = doc.querySelector('#wrap');
+  const root = doc.body;
   if(!root) return;
   allWrap = [];
   const sx = win.scrollX || 0, sy = win.scrollY || 0;
@@ -510,7 +511,7 @@ function selectPanel(sel, name){
   const win = pageBg.contentWindow;
   if(!doc){ hdrPanel.textContent = 'LOADING…'; return; }
 
-  const root = doc.querySelector(sel);
+  const root = sel === 'body' ? doc.body : doc.querySelector(sel);
   if(!root){ hdrPanel.textContent = 'NOT FOUND: ' + sel; return; }
 
   curSel = sel;
@@ -566,7 +567,7 @@ pageBg.addEventListener('load', () => {
     // 2) CSS 적용 후 DOM walk
     setTimeout(() => {
       walkWrap();
-      document.querySelector('.nb[data-sel="#shell"]').click();
+      document.querySelector('.nb[data-sel="body"]').click();
     }, 400);
   }, 800);
 });
