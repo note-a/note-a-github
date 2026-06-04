@@ -2,41 +2,122 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>SET-OS — Wireframe Full</title>
+<title>SET-OS — Wireframe</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;}
-#frame{width:100%;height:100%;border:none;display:block;}
-#wf-toggle{
-  position:fixed;bottom:12px;right:12px;z-index:9999999;
-  display:flex;gap:6px;flex-direction:column;align-items:flex-end;
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Courier New',monospace;}
+#frame{width:100%;height:100%;border:none;display:block;position:absolute;inset:0;}
+
+/* ── 패널 선택 사이드바 ── */
+#sidebar{
+  position:fixed;left:0;top:0;bottom:0;
+  width:180px;
+  background:rgba(0,0,0,.92);
+  border-right:1px solid #222;
+  z-index:9999999;
+  display:flex;flex-direction:column;
+  overflow:hidden;
 }
-#wf-toggle button{
-  font-family:'Courier New',monospace;font-size:9px;font-weight:700;
-  padding:4px 8px;cursor:pointer;border:1px solid #555;background:#111;color:#aaa;
-  letter-spacing:1px;
+#sidebar h2{
+  font-size:8px;color:#ff4a16;letter-spacing:2px;
+  padding:10px 10px 6px;border-bottom:1px solid #1e1e1e;flex-shrink:0;
 }
-#wf-toggle button.on{background:#ff4a16;color:#000;border-color:#ff4a16;}
+#panel-list{flex:1;overflow-y:auto;padding:4px 0;}
+#panel-list button{
+  display:block;width:100%;text-align:left;
+  font-family:'Courier New',monospace;font-size:8px;
+  padding:5px 10px;background:none;border:none;
+  color:#555;cursor:pointer;letter-spacing:.5px;
+  border-left:2px solid transparent;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#panel-list button:hover{ color:#aaa;background:rgba(255,255,255,.04); }
+#panel-list button.active{
+  color:#000;background:var(--pc);
+  border-left-color:var(--pc);
+}
+#panel-list .sep{
+  font-size:7px;color:#333;letter-spacing:1.5px;
+  padding:8px 10px 3px;
+}
+
+/* 숨김/보임 토글 */
+#sidebar footer{
+  padding:8px 10px;border-top:1px solid #1a1a1a;flex-shrink:0;
+  display:flex;gap:4px;flex-wrap:wrap;
+}
+#sidebar footer button{
+  font-family:'Courier New',monospace;font-size:7px;font-weight:700;
+  padding:3px 6px;cursor:pointer;border:1px solid #333;background:#111;color:#666;
+  letter-spacing:.5px;flex:1;
+}
+#sidebar footer button.on{background:#ff4a16;color:#000;border-color:#ff4a16;}
 </style>
 </head>
 <body>
+
 <iframe id="frame" src="set-os.html"></iframe>
 
-<div id="wf-toggle">
-  <button id="btn-all"  class="on">ALL</button>
-  <button id="btn-hidden">HIDDEN</button>
-  <button id="btn-visible">VISIBLE</button>
+<div id="sidebar">
+  <h2>▶ WIREFRAME</h2>
+  <div id="panel-list">
+    <div class="sep">STRUCTURE</div>
+    <button data-sel="#wrap"      style="--pc:#ff4a16">div#wrap</button>
+
+    <div class="sep">LEFT RAIL</div>
+    <button data-sel=".lr-rail"                        style="--pc:#4ecdc4">aside.lr-rail</button>
+    <button data-sel=".lr-rail .lr-dp:nth-child(1)"    style="--pc:#4ecdc4">F.01 SET MAP</button>
+    <button data-sel=".lr-rail .lr-dp:nth-child(2)"    style="--pc:#4ecdc4">F.02 CONTOUR</button>
+    <button data-sel=".lr-rail .lr-dp:nth-child(3)"    style="--pc:#4ecdc4">F.03 DATA</button>
+
+    <div class="sep">TOP ROW</div>
+    <button data-sel="#top-row"                        style="--pc:#f7dc6f">#top-row</button>
+    <button data-sel="#top-row>.pnl:nth-child(1)"      style="--pc:#bb8fce">SET.VIEW 패널</button>
+    <button data-sel="#top-row>.pnl:nth-child(2)"      style="--pc:#bb8fce">HUD.XT2 패널</button>
+    <button data-sel="#top-row>.pnl:nth-child(3)"      style="--pc:#85c1e9">UP/EXIT/DOWN</button>
+    <button data-sel="#gbar"                           style="--pc:#a8e6cf">div#gbar</button>
+
+    <div class="sep">BOT ROW</div>
+    <button data-sel="#bot-row"                        style="--pc:#f7dc6f">#bot-row</button>
+    <button data-sel=".bot-left"                       style="--pc:#f0b27a">.bot-left</button>
+    <button data-sel=".bl-split>.pnl:nth-child(1)"     style="--pc:#f9e79f">SYSTEM NOTICE</button>
+    <button data-sel=".bl-split>.pnl:nth-child(2)"     style="--pc:#f9e79f">VIEWER_LOG.EXE</button>
+    <button data-sel=".bot-left>.pnl:nth-child(1)"     style="--pc:#abebc6">ID CARD</button>
+    <button data-sel=".bot-left>.pnl:nth-child(2)"     style="--pc:#abebc6">WORK.STATUS</button>
+    <button data-sel="#bot-row>.pnl"                   style="--pc:#bb8fce">SET.TEXT</button>
+
+    <div class="sep">RIGHT RAIL</div>
+    <button data-sel=".rr-rail"                        style="--pc:#4ecdc4">aside.rr-rail</button>
+    <button data-sel=".rr-rail .lr-dp:nth-child(1)"    style="--pc:#4ecdc4">F.04 SVA RADAR</button>
+    <button data-sel=".rr-rail .lr-dp:nth-child(2)"    style="--pc:#4ecdc4">F.04 ANALYSIS</button>
+    <button data-sel=".pilot-pnl"                      style="--pc:#f1948a">SET-NULL.CHANNEL</button>
+    <button data-sel=".pl-goto"                        style="--pc:#f1948a">▶ OPEN PILOT.EXP</button>
+
+    <div class="sep">OVERLAY</div>
+    <button data-sel="#mode-row"                       style="--pc:#85c1e9">#mode-row</button>
+    <button data-sel=".crt"                            style="--pc:#444">div.crt</button>
+    <button data-sel="#bg"                             style="--pc:#333">div#bg</button>
+  </div>
+  <footer>
+    <button id="btn-all" class="on">ALL</button>
+    <button id="btn-vis">VISIBLE</button>
+    <button id="btn-hid">HIDDEN</button>
+  </footer>
 </div>
 
 <script>
 const frame = document.getElementById('frame');
-
-// 깊이별 색상
+const SKIP = new Set(['SCRIPT','STYLE','META','LINK','HEAD','TITLE','BR','HR','IFRAME','SVG','PATH','G','CIRCLE','LINE','RECT','TEXT','DEFS','POLYLINE','POLYGON','ELLIPSE','ANIMATE']);
 const DEPTH_COLORS = [
   '#ff4a16','#f7dc6f','#4ecdc4','#bb8fce',
   '#85c1e9','#f0b27a','#abebc6','#f1948a',
-  '#d2b4de','#a9cce3','#a9dfbf','#f9e79f'
+  '#d2b4de','#a9cce3','#a9dfbf','#f9e79f',
+  '#eb984e','#76d7c4','#7fb3d3','#c39bd3'
 ];
+
+let allAnnotations = []; // {el, label, depth, hidden, rect}
+let currentFilter = 'all';
+let activeRoot = null;
 
 frame.addEventListener('load', function(){
   const doc = this.contentDocument;
@@ -44,130 +125,167 @@ frame.addEventListener('load', function(){
 
   setTimeout(function(){
 
-    // ── 스타일 주입 ──
     const style = doc.createElement('style');
-    style.id = 'wf-style';
     style.textContent = `
-      .wfa, .wfa-h {
-        position:fixed;pointer-events:none;box-sizing:border-box;z-index:999990;
-      }
-      .wfa   { outline:1px solid var(--wfc); outline-offset:-1px; }
-      .wfa-h { outline:1px dashed var(--wfc); outline-offset:-1px; background:rgba(0,0,0,.4); }
-      .wfa::before, .wfa-h::before {
+      .wfa,.wfa-h{position:fixed;pointer-events:none;box-sizing:border-box;}
+      .wfa  {outline:1.5px solid var(--wfc);outline-offset:-1px;z-index:var(--wfz);}
+      .wfa-h{outline:1.5px dashed var(--wfc);outline-offset:-1px;background:rgba(0,0,0,.5);z-index:var(--wfz);}
+      .wfa::before,.wfa-h::before{
         content:attr(data-label);
         position:absolute;top:0;left:0;
         font-family:'Courier New',monospace;
         font-size:7.5px;font-weight:700;letter-spacing:.4px;
-        padding:0px 4px;line-height:14px;
-        background:var(--wfc);color:#000;
-        white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis;
-        opacity:.9;
+        padding:0 4px;line-height:14px;
+        background:var(--wfc);color:#000;white-space:nowrap;
+        max-width:260px;overflow:hidden;text-overflow:ellipsis;
       }
-      .wfa-h::after {
-        content:'HIDDEN';
-        position:absolute;bottom:1px;right:3px;
+      .wfa-h::after{
+        content:'HIDDEN';position:absolute;bottom:1px;right:3px;
         font-family:'Courier New',monospace;font-size:6px;
         color:var(--wfc);opacity:.5;letter-spacing:1px;
       }
-      .wf-hidden-all .wfa { display:none !important; }
-      .wf-visible-all .wfa-h { display:none !important; }
+      /* 딤 오버레이 */
+      #wf-dim{
+        position:fixed;inset:0;background:rgba(0,0,0,.78);
+        pointer-events:none;z-index:999980;display:none;
+      }
+      /* 포커스 영역 강조 */
+      #wf-focus{
+        position:fixed;pointer-events:none;z-index:999981;
+        outline:2px solid #fff;outline-offset:1px;display:none;
+        box-shadow:0 0 0 9999px rgba(0,0,0,.75);
+      }
     `;
     doc.head.appendChild(style);
 
-    const SKIP = new Set(['SCRIPT','STYLE','META','LINK','HEAD','TITLE','BR','HR','INPUT','TEXTAREA','IFRAME','SVG','PATH','G','CIRCLE','LINE','RECT','TEXT','DEFS','POLYLINE','POLYGON','ELLIPSE']);
-
-    function getDepth(el){
-      let d=0, cur=el;
-      while(cur.parentElement){ d++; cur=cur.parentElement; }
-      return d;
-    }
+    // dim + focus 요소
+    const dim = doc.createElement('div'); dim.id='wf-dim'; doc.body.appendChild(dim);
+    const focus = doc.createElement('div'); focus.id='wf-focus'; doc.body.appendChild(focus);
 
     function getLabel(el){
-      const id = el.id ? `#${el.id}` : '';
+      const id  = el.id ? `#${el.id}` : '';
       const cls = el.classList.length
-        ? '.' + Array.from(el.classList).filter(c=>!c.startsWith('wf')).join('.')
+        ? '.'+Array.from(el.classList).filter(c=>!c.startsWith('wf')).slice(0,3).join('.')
         : '';
-      const tag = el.tagName.toLowerCase();
-      return `${tag}${id}${cls}` || tag;
+      return `${el.tagName.toLowerCase()}${id}${cls}`;
     }
 
-    function forceVisible(el){
+    function isHidden(el){
       const cs = doc.defaultView.getComputedStyle(el);
-      const hidden =
-        cs.display === 'none' ||
-        cs.visibility === 'hidden' ||
-        cs.opacity === '0' ||
-        (parseFloat(cs.width) === 0 && parseFloat(cs.height) === 0);
-      return hidden;
+      return cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)===0;
     }
 
-    function annotateEl(el, depth){
-      if(SKIP.has(el.tagName)) return;
-      if(el.classList.contains('wfa') || el.classList.contains('wfa-h')) return;
-
-      const label = getLabel(el);
-      if(!label || label === 'div' || label === 'span') {
-        // id/class 없는 bare div/span은 생략
-        const hasId = el.id && el.id.length > 0;
-        const hasCls = el.classList.length > 0;
-        if(!hasId && !hasCls) return;
-      }
-
-      const color = DEPTH_COLORS[depth % DEPTH_COLORS.length];
-      const isHidden = forceVisible(el);
-
-      if(isHidden){
-        // 강제 표시
+    function getRect(el){
+      const h = isHidden(el);
+      if(h){
         el.style.setProperty('display','block','important');
         el.style.setProperty('visibility','visible','important');
         el.style.setProperty('opacity','1','important');
       }
-
       const r = el.getBoundingClientRect();
-
-      if(isHidden){
+      if(h){
         el.style.removeProperty('display');
         el.style.removeProperty('visibility');
         el.style.removeProperty('opacity');
       }
+      return {rect:r, hidden:h};
+    }
 
-      if(!r.width || !r.height) return;
+    function walk(el, depth, list){
+      if(SKIP.has(el.tagName)) return;
+      const label = getLabel(el);
+      const noId = !el.id || el.id.startsWith('wf');
+      const noCls = el.classList.length===0 || Array.from(el.classList).every(c=>c.startsWith('wf'));
+      if(noId && noCls) { Array.from(el.children).forEach(c=>walk(c,depth+1,list)); return; }
+      const {rect,hidden} = getRect(el);
+      if(rect.width>0 && rect.height>0){
+        list.push({el, label, depth, hidden, rect});
+      }
+      Array.from(el.children).forEach(c=>walk(c,depth+1,list));
+    }
 
+    // 전체 DOM 수집
+    Array.from(doc.body.children).forEach(c=>walk(c,0,allAnnotations));
+
+    // 어노테이션 div 생성
+    allAnnotations.forEach(({label, depth, hidden, rect}, i)=>{
+      const color = DEPTH_COLORS[depth % DEPTH_COLORS.length];
+      const z = 999990 - depth;
       const d = doc.createElement('div');
-      d.className = isHidden ? 'wfa-h' : 'wfa';
+      d.className = hidden ? 'wfa-h' : 'wfa';
+      d.id = `wfa-${i}`;
       d.setAttribute('data-label', label);
-      d.style.cssText = `--wfc:${color};left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;z-index:${999990 - depth};`;
+      d.setAttribute('data-depth', depth);
+      d.setAttribute('data-hidden', hidden ? '1' : '0');
+      d.style.cssText = `--wfc:${color};--wfz:${z};left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;display:none;`;
       doc.body.appendChild(d);
+    });
+
+    // ── 패널 선택 로직 ──
+    function showPanel(sel, color){
+      // 모든 숨기기
+      doc.querySelectorAll('.wfa,.wfa-h').forEach(el=>el.style.display='none');
+      dim.style.display='none';
+      focus.style.display='none';
+
+      if(!sel){ activeRoot=null; return; }
+
+      const root = doc.querySelector(sel);
+      if(!root) return;
+      activeRoot = root;
+
+      const rootRect = root.getBoundingClientRect();
+
+      // focus 박스
+      focus.style.cssText = `
+        position:fixed;pointer-events:none;z-index:999981;
+        left:${rootRect.left-2}px;top:${rootRect.top-2}px;
+        width:${rootRect.width+4}px;height:${rootRect.height+4}px;
+        outline:2px solid ${color};outline-offset:1px;display:block;
+        box-shadow:0 0 0 9999px rgba(0,0,0,.72);
+      `;
+      dim.style.display='block';
+
+      // 해당 root 내부 요소들만 표시
+      allAnnotations.forEach(({el, hidden}, i)=>{
+        if(root.contains(el) || el===root){
+          const d = doc.getElementById(`wfa-${i}`);
+          if(!d) return;
+          if(currentFilter==='all') d.style.display='';
+          else if(currentFilter==='visible' && !hidden) d.style.display='';
+          else if(currentFilter==='hidden' && hidden) d.style.display='';
+        }
+      });
     }
 
-    // DOM 전체 순회
-    function walk(el, depth){
-      if(!el) return;
-      annotateEl(el, depth);
-      Array.from(el.children).forEach(child => walk(child, depth+1));
-    }
+    // 사이드바 버튼 클릭
+    document.querySelectorAll('#panel-list button').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#panel-list button').forEach(b=>b.classList.remove('active'));
+        this.classList.add('active');
+        const color = getComputedStyle(this).getPropertyValue('--pc').trim() || '#fff';
+        showPanel(this.dataset.sel, color);
+      });
+    });
 
-    // body 직계부터 시작 (head 제외)
-    Array.from(doc.body.children).forEach(child => walk(child, 0));
-
-    // ── 외부 토글 버튼 연결 ──
-    function setMode(mode){
-      doc.body.classList.remove('wf-hidden-all','wf-visible-all');
-      document.querySelectorAll('#wf-toggle button').forEach(b=>b.classList.remove('on'));
-      if(mode==='hidden'){
-        doc.body.classList.add('wf-hidden-all');
-        document.getElementById('btn-hidden').classList.add('on');
-      } else if(mode==='visible'){
-        doc.body.classList.add('wf-visible-all');
-        document.getElementById('btn-visible').classList.add('on');
-      } else {
-        document.getElementById('btn-all').classList.add('on');
+    // 필터 토글
+    function setFilter(f){
+      currentFilter = f;
+      document.querySelectorAll('#sidebar footer button').forEach(b=>b.classList.remove('on'));
+      document.getElementById(f==='all'?'btn-all':f==='visible'?'btn-vis':'btn-hid').classList.add('on');
+      const active = document.querySelector('#panel-list button.active');
+      if(active){
+        const color = getComputedStyle(active).getPropertyValue('--pc').trim()||'#fff';
+        showPanel(active.dataset.sel, color);
       }
     }
+    document.getElementById('btn-all').onclick = ()=>setFilter('all');
+    document.getElementById('btn-vis').onclick = ()=>setFilter('visible');
+    document.getElementById('btn-hid').onclick = ()=>setFilter('hidden');
 
-    document.getElementById('btn-all').onclick     = ()=>setMode('all');
-    document.getElementById('btn-hidden').onclick  = ()=>setMode('hidden');
-    document.getElementById('btn-visible').onclick = ()=>setMode('visible');
+    // 기본: #wrap 선택
+    const firstBtn = document.querySelector('#panel-list button');
+    if(firstBtn) firstBtn.click();
 
   }, 1200);
 });
