@@ -384,9 +384,9 @@ function walkWrap(){
   if(!doc) return;
   const root = doc.querySelector('#wrap');
   if(!root) return;
-  const rr = root.getBoundingClientRect();
   allWrap = [];
-  walk(root, 0, rr, win, allWrap, 3); // 얕게: depth 3까지만
+  const sx = win.scrollX || 0, sy = win.scrollY || 0;
+  walk(root, 0, {left:-sx, top:-sy}, win, allWrap, 3);
 }
 
 // ── 어노테이션 렌더 ──
@@ -464,13 +464,15 @@ function selectPanel(sel, name){
   if(!root){ hdrPanel.textContent = 'NOT FOUND: ' + sel; return; }
 
   curSel = sel;
-  const rr = root.getBoundingClientRect();
 
+  // 원점 = iframe viewport (0,0) 기준
+  // → annotation 좌표 * curScale = iframe 위에 정확히 겹침
+  // iframe 자체 scroll 오프셋 반영
+  const sx = win.scrollX || 0;
+  const sy = win.scrollY || 0;
+  const origin = {left: -sx, top: -sy};
   allResults = [];
-  // #wrap 기준 origin 사용 (전체 페이지 좌표에서 위치 유지)
-  const wrapEl = doc.querySelector('#wrap') || doc.body;
-  const wrapRR = wrapEl.getBoundingClientRect();
-  walk(root, 0, wrapRR, win, allResults);
+  walk(root, 0, origin, win, allResults);
 
   hdrPanel.textContent = name;
   hdrSel.textContent   = sel;
