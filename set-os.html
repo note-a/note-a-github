@@ -37,20 +37,13 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   background:radial-gradient(ellipse at center,var(--oc) 0%,transparent 70%);
   filter:blur(var(--ob));
 }
-@keyframes orb-a{0%{transform:translate(  0,   0)} 100%{transform:translate( 9vw, 11vh)}}
-@keyframes orb-b{0%{transform:translate(  0,   0)} 100%{transform:translate(-10vw,  7vh)}}
-@keyframes orb-c{0%{transform:translate(  0,   0)} 100%{transform:translate(  7vw,-12vh)}}
-@keyframes orb-d{0%{transform:translate(  0,   0)} 100%{transform:translate( -6vw, -9vh)}}
-@keyframes orb-e{0%{transform:translate(  0,   0)} 100%{transform:translate( 11vw,  6vh)}}
-@keyframes orb-f{0%{transform:translate(  0,   0)} 100%{transform:translate( -8vw, 10vh)}}
-@keyframes orb-g{0%{transform:translate(  0,   0)} 100%{transform:translate(  6vw, -7vh)}}
-#bg-orbs .orb:nth-child(1){width:38vw;height:44vw;left:-8vw;  top:-12vh;  animation:orb-a 18s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(2){width:28vw;height:32vw;right:5vw;  top:18vh;   animation:orb-b 23s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(3){width:22vw;height:26vw;left:22vw;  bottom:-8vh;animation:orb-c 27s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(4){width:32vw;height:28vw;right:-6vw; bottom:5vh; animation:orb-d 20s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(5){width:18vw;height:22vw;left:8vw;   top:42vh;   animation:orb-e 31s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(6){width:24vw;height:18vw;right:22vw; top:-5vh;   animation:orb-f 25s ease-in-out infinite alternate;}
-#bg-orbs .orb:nth-child(7){width:20vw;height:24vw;left:48vw;  bottom:10vh;animation:orb-g 29s ease-in-out infinite alternate;}
+#bg-orbs .orb:nth-child(1){width:38vw;height:44vw;left:-8vw;  top:-12vh;}
+#bg-orbs .orb:nth-child(2){width:28vw;height:32vw;right:5vw;  top:18vh;}
+#bg-orbs .orb:nth-child(3){width:22vw;height:26vw;left:22vw;  bottom:-8vh;}
+#bg-orbs .orb:nth-child(4){width:32vw;height:28vw;right:-6vw; bottom:5vh;}
+#bg-orbs .orb:nth-child(5){width:18vw;height:22vw;left:8vw;   top:42vh;}
+#bg-orbs .orb:nth-child(6){width:24vw;height:18vw;right:22vw; top:-5vh;}
+#bg-orbs .orb:nth-child(7){width:20vw;height:24vw;left:48vw;  bottom:10vh;}
 #bg-orbs .orb:nth-child(1) .orb-i{--oc:rgba(160,42,4,.55);--ob:70px;}
 #bg-orbs .orb:nth-child(2) .orb-i{--oc:rgba(130,32,2,.50);--ob:80px;}
 #bg-orbs .orb:nth-child(3) .orb-i{--oc:rgba(150,38,3,.45);--ob:65px;}
@@ -4035,6 +4028,32 @@ document.querySelectorAll('.lr-h').forEach(h=>{
   });
 });
 </script>
-
+<script>
+/* ── BG ORB 애니메이션 (setInterval, 크로스브라우저 보장) ── */
+(function(){
+  var orbs = document.querySelectorAll('#bg-orbs .orb');
+  if(!orbs.length) return;
+  // [주기ms, x진폭px, y진폭px, x위상, y위상]
+  var cfg = [
+    [18000, 120, 140, 0.0, 1.1],
+    [23000, 140,  90, 2.2, 0.4],
+    [27000, 100, 160, 1.4, 3.0],
+    [20000, 130, 110, 3.7, 1.8],
+    [31000, 160,  80, 0.8, 2.5],
+    [25000, 110, 130, 2.9, 0.7],
+    [29000,  90, 120, 1.6, 3.3]
+  ];
+  var PI2 = Math.PI * 2;
+  setInterval(function(){
+    var t = Date.now();
+    orbs.forEach(function(orb, i){
+      var c = cfg[i];
+      var x = Math.sin(t / c[0] * PI2 + c[3]) * c[1];
+      var y = Math.cos(t / c[0] * PI2 + c[4]) * c[2];
+      orb.style.transform = 'translate(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px)';
+    });
+  }, 33);
+})();
+</script>
 </body>
 </html>
