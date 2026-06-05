@@ -96,7 +96,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .spec .lbl .c{color:var(--gl);}
 .bars{flex:1;overflow:hidden;padding:0 16px;}
 .navlist{flex:1;overflow:auto;min-height:0;padding:4px 16px 14px;}
-.navitem{padding:12px 12px 12px 0;border-bottom:1px solid rgba(255,255,255,.1);transition:padding-left .15s,background .15s;cursor:pointer;}
+.navitem{display:block;padding:12px 12px 12px 0;border-bottom:1px solid rgba(255,255,255,.1);transition:padding-left .15s,background .15s;cursor:pointer;text-decoration:none;color:inherit;}
 .navitem:last-child{border-bottom:none;}
 .navitem:hover{padding-left:9px;background:rgba(255,255,255,.04);}
 .navitem .nh{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:1px;color:var(--gl);display:flex;align-items:baseline;gap:9px;}
@@ -243,26 +243,26 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
     <div class="spec">
       <div class="lbl"><span>▣ INDEX</span><span class="c">05 NODES</span></div>
       <div class="navlist">
-        <div class="navitem" onclick="go('gallery1.html')">
+        <a class="navitem" href="gallery1.html">
           <div class="nh">SET</div>
           <div class="nd">The world as a set — what belongs, what doesn't.</div>
-        </div>
-        <div class="navitem" onclick="go('page-inclusion.html')">
+        </a>
+        <a class="navitem" href="page-inclusion.html">
           <div class="nh">SET:Inclusion</div>
           <div class="nd">Membership — the line between in and out.</div>
-        </div>
-        <div class="navitem" onclick="go('page-log.html')">
+        </a>
+        <a class="navitem" href="page-log.html">
           <div class="nh">LOG</div>
           <div class="nd">Each recurrence, recorded as it surfaces.</div>
-        </div>
-        <div class="navitem" onclick="go('page-reference.html')">
+        </a>
+        <a class="navitem" href="reference.html">
           <div class="nh">Reference</div>
           <div class="nd">Learned shapes the eye can't unlearn.</div>
-        </div>
-        <div class="navitem" onclick="go('measure.html')">
+        </a>
+        <a class="navitem" href="measure.html">
           <div class="nh">MEASURE</div>
           <div class="nd">What you measure, you enter.</div>
-        </div>
+        </a>
       </div>
       <div class="teaminfo">
         <div class="thd">▣ SET WORLD</div>
