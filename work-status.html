@@ -80,7 +80,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000;font-family:
 <body>
 <div class="feed-wrap">
   <div class="feed-hdr">
-    <span>WORK.STATUS</span>
+    <span>WORK TIMELINE</span>
     <span class="tag">작업 현황</span>
   </div>
 
@@ -178,14 +178,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000;font-family:
   // ── 데이터 fetch (localStorage 캐시 15분) ──
   const GH='https://api.github.com/repos/note-a/note-a-github/commits?per_page=50';
   const PP='https://raw.githubusercontent.com/note-a/note-a-github/main/published-posts.json';
-  const CACHE_TTL=15*60*1000;
+  const CACHE_TTL=5*60*1000; // 5분
 
-  function getCache(key){
+  function getCache(key, ignoreExpiry){
     try{
       const raw=localStorage.getItem(key);
       if(!raw) return null;
       const {ts,data}=JSON.parse(raw);
-      if(Date.now()-ts>CACHE_TTL) return null;
+      if(!ignoreExpiry && Date.now()-ts>CACHE_TTL) return null;
       return data;
     }catch(e){ return null; }
   }
@@ -197,16 +197,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000000;font-family:
     const cached=getCache(key);
     if(cached) return Promise.resolve(cached);
     return fetch(url).then(r=>r.json()).then(data=>{
-      // 레이트리밋 응답이면 캐시 안 함
-      if(data && data.message && !Array.isArray(data)) return [];
+      // 레이트리밋·오류 응답이면 만료된 캐시라도 반환
+      if(data && data.message && !Array.isArray(data)){
+        const stale=getCache(key, true);
+        return stale||[];
+      }
       setCache(key,data);
       return data;
-    }).catch(()=>[]);
+    }).catch(()=>{
+      // 네트워크 오류도 stale 캐시 폴백
+      return getCache(key, true)||[];
+    });
   }
 
   Promise.all([
     fetchWithCache(GH,'ws_commits'),
-    fetchWithCache(PP+'?t='+Date.now(),'ws_posts')
+    fetchWithCache(PP,'ws_posts')
   ]).then(([commits, posts])=>{
     if(!Array.isArray(commits)||!commits.length){ $('now-tgt').textContent='GitHub API 대기중'; return; }
 
