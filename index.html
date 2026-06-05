@@ -164,7 +164,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 
   /* prevent any horizontal bleed */
   *:not(#cs-overlay):not(#cs-overlay *){max-width:100%;}
-  pre:not(#cs-overlay pre){white-space:pre-wrap;word-break:break-all;}
+  pre:not(#cs-overlay pre):not(.banner){white-space:pre-wrap;word-break:break-all;}
 
   /* header — single line, hide non-essentials */
   .head{flex-wrap:nowrap;gap:8px;padding:7px 12px;overflow:hidden;}
