@@ -1753,34 +1753,37 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   .mob-menu-hidden .mmi-label{color:rgba(255,74,22,.5);letter-spacing:3px;}
   .mob-menu-hidden .mmi-key{border-color:rgba(255,74,22,.1);}
 
-  #mob-toast{
-    position:fixed;inset:0;z-index:900;
-    background:rgba(0,0,0,.92);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    opacity:0;pointer-events:none;
-    transition:opacity .25s;
-  }
-  #mob-toast.show{
-    opacity:1;pointer-events:auto;
-  }
-  #mob-toast pre{
-    font-family:var(--mono);
-    font-size:2.3vw;
-    line-height:1.45;
-    color:rgba(255,74,22,.7);
-    white-space:pre;
-    text-align:left;
-    margin:0;
-    overflow-x:auto;
-  }
-  #mob-toast-label{
-    font-family:var(--mono);font-size:15px;letter-spacing:5px;
-    color:var(--acc);margin-top:24px;
-  }
-  #mob-toast-sub{
-    font-family:var(--mono);font-size:9px;letter-spacing:2px;
-    color:rgba(255,74,22,.35);margin-top:10px;
-  }
+}
+
+/* ── COMING SOON overlay (모바일·데스크탑 공용) ── */
+#mob-toast{
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.94);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+}
+#mob-toast.show{
+  opacity:1;pointer-events:auto;
+}
+#mob-toast pre{
+  font-family:var(--mono);
+  font-size:clamp(7px,1.1vw,13px);
+  line-height:1.45;
+  color:rgba(255,74,22,.7);
+  white-space:pre;
+  text-align:left;
+  margin:0;
+  overflow-x:auto;
+  max-width:90vw;
+}
+#mob-toast-label{
+  font-family:var(--mono);font-size:15px;letter-spacing:5px;
+  color:var(--acc);margin-top:24px;
+}
+#mob-toast-sub{
+  font-family:var(--mono);font-size:9px;letter-spacing:2px;
+  color:rgba(255,74,22,.35);margin-top:10px;
 }
 
 /* 태블릿(821~1024px): 데스크탑 레이아웃 그대로 표시 (JS가 wrap+레일을 화면에 맞춰 축소) */
@@ -2654,7 +2657,7 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
     </div>
     <div class="mode-row">
       <button class="mb on" onclick="crtNav('https://note-a.github.io/gallery1.html')"><span class="k">S</span>SET</button>
-      <button class="mb" data-sec="inclusion"><span class="k">I</span>SET:inclusion</button>
+      <button class="mb" data-sec="inclusion" onclick="mobComingSoon()"><span class="k">I</span>SET:inclusion</button>
       <button class="mb" onclick="crtNav('https://note-a.github.io/page-log.html')"><span class="k">L</span>LOG</button>
       <button class="mb" onclick="crtNav('https://note-a.github.io/reference.html')"><span class="k">R</span>Reference</button>
       <button class="mb" onclick="crtNav('https://note-a.github.io/measure.html')"><span class="k">M</span>MEASURE</button>
@@ -4543,6 +4546,13 @@ document.querySelectorAll('.lr-h').forEach(h=>{
 </nav>
 
 <script>
+// COMING SOON overlay — 전체 뷰포트 공용
+window.mobComingSoon = function(){
+  var t = document.getElementById('mob-toast');
+  if(!t) return;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3500);
+};
 (function(){
   if(window.innerWidth > 767) return;
   function mobMenuToggle(){
@@ -4553,15 +4563,8 @@ document.querySelectorAll('.lr-h').forEach(h=>{
     document.body.classList.remove('mob-open');
     document.getElementById('mob-overlay').style.display = 'none';
   }
-  function mobComingSoon(){
-    var t = document.getElementById('mob-toast');
-    if(!t) return;
-    t.classList.add('show');
-    setTimeout(function(){ t.classList.remove('show'); }, 3500);
-  }
   window.mobMenuToggle  = mobMenuToggle;
   window.mobMenuClose   = mobMenuClose;
-  window.mobComingSoon  = mobComingSoon;
 })();
 </script>
 </body>
