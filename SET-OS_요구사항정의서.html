@@ -113,6 +113,16 @@ pre.code .s{color:var(--teal);}
 .badge.live{background:rgba(63,176,154,.12);color:var(--teal);border:1px solid rgba(63,176,154,.3);}
 .badge.demo{background:rgba(255,176,0,.1);color:var(--amb);border:1px solid rgba(255,176,0,.25);}
 
+/* ── 스크린샷 ── */
+.sc-wrap{margin:20px 0 28px;border:1px solid rgba(217,106,14,.2);background:#000;overflow:hidden;}
+.sc-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--acc3);
+  padding:6px 12px;border-bottom:1px solid rgba(217,106,14,.12);background:rgba(217,106,14,.04);}
+.sc-img{width:100%;display:block;opacity:.88;transition:opacity .2s;}
+.sc-img:hover{opacity:1;}
+.sc-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 28px;}
+.sc-pair .sc-wrap{margin:0;}
+@media(max-width:640px){.sc-pair{grid-template-columns:1fr;}}
+
 /* ── 구분선 ── */
 .divider{border:none;border-top:1px solid rgba(217,106,14,.1);margin:40px 0;}
 
@@ -144,6 +154,12 @@ pre.code .s{color:var(--teal);}
         <div class="cover-meta-val">GitHub Pages</div>
       </div>
     </div>
+  </div>
+
+  <!-- 커버 스크린샷 -->
+  <div class="sc-wrap" style="margin-bottom:32px;">
+    <div class="sc-label">// SET.OS — FULL INTERFACE PREVIEW</div>
+    <img class="sc-img" src="screenshots/sc-full.png" alt="SET.OS 전체 인터페이스">
   </div>
 
   <!-- 목차 -->
@@ -217,6 +233,17 @@ pre.code .s{color:var(--teal);}
 │              │                                │                     │
 └──────────────┴────────────────────────────────┴─────────────────────┘</pre>
 
+    <div class="sc-pair">
+      <div class="sc-wrap">
+        <div class="sc-label">// TOP ROW — GALLERY · SVA RADAR · LOG</div>
+        <img class="sc-img" src="screenshots/sc-top.png" alt="상단 패널 배치">
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-label">// BOTTOM ROW — NOTICE · VIEWER · WORK TIMELINE</div>
+        <img class="sc-img" src="screenshots/sc-bot.png" alt="하단 패널 배치">
+      </div>
+    </div>
+
     <div class="card-grid">
       <div class="card">
         <div class="card-label">DATA SOURCE</div>
@@ -258,6 +285,11 @@ pre.code .s{color:var(--teal);}
           <tr><td>우측 통계</td><td>ENTRY 시각 / SESSION 경과 시간 / STATUS(ACTIVE·SCANNING) / DEPT 표시</td></tr>
         </tbody>
       </table></div>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// GBAR — 하단 네비게이션 바</div>
+      <img class="sc-img" src="screenshots/sc-gbar.png" alt="GBAR 네비게이션">
     </div>
 
     <!-- LEFT RAIL -->
@@ -347,6 +379,17 @@ pre.code .s{color:var(--teal);}
         </tbody>
       </table></div>
 
+    <div class="sc-pair" style="margin-top:20px;">
+      <div class="sc-wrap">
+        <div class="sc-label">// &lt;GALLERY&gt; — ANALYSIS VIEW</div>
+        <img class="sc-img" src="screenshots/sc-gallery.png" alt="GALLERY 패널">
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-label">// SVA RADAR / DIST SCATTER</div>
+        <img class="sc-img" src="screenshots/sc-sva.png" alt="SVA RADAR 패널">
+      </div>
+    </div>
+
       <div class="subsection-title" style="margin-top:28px;">&lt;LOG&gt; 패널<span class="badge live">LIVE</span></div>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
@@ -358,6 +401,11 @@ pre.code .s{color:var(--teal);}
           <tr><td>검색</td><td>상단 검색창으로 LOG 엔트리 + 참조 문헌 동시 검색 가능</td></tr>
         </tbody>
       </table></div>
+
+    <div class="sc-wrap" style="margin-top:20px;">
+      <div class="sc-label">// &lt;LOG&gt; — 폴더 그리드 뷰</div>
+      <img class="sc-img" src="screenshots/sc-log.png" alt="LOG 패널">
+    </div>
 
       <div class="subsection-title" style="margin-top:28px;">MEASURE / MEASURE.DB 대화방<span class="badge live">LIVE</span></div>
       <div class="table-wrap"><table>
@@ -402,6 +450,16 @@ pre.code .s{color:var(--teal);}
         </tbody>
       </table></div>
     </div>
+    <div class="sc-pair" style="margin-top:20px;">
+      <div class="sc-wrap">
+        <div class="sc-label">// SYSTEM NOTICE + VIEWER_LOG.EXE</div>
+        <img class="sc-img" src="screenshots/sc-notice.png" alt="SYSTEM NOTICE">
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-label">// WORK TIMELINE (WORK.STATUS)</div>
+        <img class="sc-img" src="screenshots/sc-work.png" alt="WORK TIMELINE">
+      </div>
+    </div>
   </div>
 
   <hr class="divider">
@@ -412,6 +470,18 @@ pre.code .s{color:var(--teal);}
       <span class="section-n">04</span>
       <span class="section-title">모바일 대응</span>
     </div>
+
+    <div class="sc-pair">
+      <div class="sc-wrap">
+        <div class="sc-label">// DESKTOP — 1280×800</div>
+        <img class="sc-img" src="screenshots/sc-full.png" alt="데스크탑 레이아웃">
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-label">// MOBILE — 390×844 (set-os.html)</div>
+        <img class="sc-img" src="screenshots/sc-mobile.png" alt="모바일 레이아웃">
+      </div>
+    </div>
+
     <div class="table-wrap"><table>
       <thead><tr><th>항목</th><th>데스크탑</th><th>모바일 (≤767px)</th></tr></thead>
       <tbody>
