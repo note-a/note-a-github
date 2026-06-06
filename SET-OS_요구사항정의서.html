@@ -342,7 +342,20 @@ pre.code .s{color:var(--teal);}
     <div class="subsection">
       <div class="subsection-title">&lt;GALLERY&gt; 패널 <span class="badge live">LIVE</span></div>
       <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #gly-1 / #gly-2 / #gly-3 · 위치: TOP-ROW 좌측</p>
+    </div>
 
+    <div class="sc-pair">
+      <div class="sc-wrap">
+        <div class="sc-label">// &lt;GALLERY&gt; ANALYSIS 탭 — GVA-WRAP + DIST SCATTER</div>
+        <img class="sc-img" src="screenshots/sc-gallery.png" alt="GALLERY 패널">
+      </div>
+      <div class="sc-wrap">
+        <div class="sc-label">// DIST SCATTER 확대</div>
+        <img class="sc-img" src="screenshots/sc-sva.png" alt="DIST SCATTER">
+      </div>
+    </div>
+
+    <div class="subsection">
       <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">탭 구조 — <code>glSwitch(n)</code></p>
       <div class="table-wrap"><table>
         <thead><tr><th>탭 ID</th><th>이름</th><th>내용</th></tr></thead>
@@ -395,22 +408,24 @@ GL_FRAMES = [
 <span class="c">// 미로드 시 하드코딩 샘플 10개로 폴백</span></pre>
     </div>
 
+    <!-- ── B. LOG ── -->
+    <div class="subsection">
+      <div class="subsection-title">&lt;LOG&gt; 패널 <span class="badge live">LIVE</span></div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #hud-pnl · 위치: TOP-ROW 우측 · 별칭: HUD.XT2</p>
+    </div>
+
     <div class="sc-pair">
       <div class="sc-wrap">
-        <div class="sc-label">// &lt;GALLERY&gt; ANALYSIS 탭 — GVA-WRAP + DIST SCATTER</div>
-        <img class="sc-img" src="screenshots/sc-gallery.png" alt="GALLERY 패널">
+        <div class="sc-label">// &lt;LOG&gt; — ICON VIEW (폴더 그리드)</div>
+        <img class="sc-img" src="screenshots/sc-log.png" alt="LOG ICON VIEW">
       </div>
       <div class="sc-wrap">
-        <div class="sc-label">// DIST SCATTER 확대</div>
-        <img class="sc-img" src="screenshots/sc-sva.png" alt="DIST SCATTER">
+        <div class="sc-label">// &lt;LOG&gt; — LIST VIEW (파일 목록 + 메타)</div>
+        <img class="sc-img" src="screenshots/sc-log-list.png" alt="LOG LIST VIEW">
       </div>
     </div>
 
-    <!-- ── B. LOG ── -->
     <div class="subsection">
-      <div class="subsection-title">&lt;LOG&gt; 패널  <span class="badge live">LIVE</span></div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #hud-pnl · 위치: TOP-ROW 우측 · 별칭: HUD.XT2</p>
-
       <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">뷰 구조 — <code>setHudView(v)</code></p>
       <div class="table-wrap"><table>
         <thead><tr><th>뷰</th><th>클래스</th><th>내용</th></tr></thead>
@@ -451,160 +466,164 @@ GL_FRAMES = [
       </table></div>
     </div>
 
-    <div class="sc-wrap">
-      <div class="sc-label">// &lt;LOG&gt; — ICON VIEW (폴더 그리드)</div>
-      <img class="sc-img" src="screenshots/sc-log.png" alt="LOG 패널">
+    <!-- ── C. GBAR / 헤더 스트립 ── -->
+    <div class="subsection">
+      <div class="subsection-title">GBAR — 헤더 스트립 <span class="badge live">LIVE</span></div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #gbar · TOP-ROW와 BOT-ROW 사이 수평 밴드 · gbar.html?v=14 iframe · 높이 84px</p>
     </div>
 
-    <!-- ── C. GBAR ── -->
+    <div class="sc-wrap">
+      <div class="sc-label">// GBAR — 헤더 스트립 전체 (브랜딩 · STATEMENT · 네비게이션)</div>
+      <img class="sc-img" src="screenshots/sc-gbar.png" alt="GBAR 헤더 스트립">
+    </div>
+
     <div class="subsection">
-      <div class="subsection-title">GBAR — 네비게이션 바 <span class="badge live">LIVE</span></div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #gbar · 파일: gbar.html?v=14 · iframe 84px 고정 높이</p>
       <div class="table-wrap"><table>
         <thead><tr><th>영역</th><th>ID</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>좌측</td><td><code>#nb-col-l</code></td><td>"SET" 로고 + 현재 위치 표시</td></tr>
-          <tr><td>중앙</td><td><code>#nb-col-c</code></td><td>탭 5개: SET → gallery1.html / SET:Inclusion → COMING SOON / LOG → page-log.html / Reference → reference.html / MEASURE → measure.html</td></tr>
-          <tr><td>우측</td><td><code>#nb-col-r</code></td><td>ENTRY 시각 / SESSION 경과 타이머 / STATUS(ACTIVE·SCANNING 전환) / DEPT 코드</td></tr>
+          <tr><td>좌측 브랜딩</td><td><code>#nb-col-l</code></td><td>"SET.OS" 로고 + "ARCHIVE TERMINAL v2.4" + 경로 표시. 레이더 아이콘 애니메이션</td></tr>
+          <tr><td>중앙 STATEMENT</td><td><code>#nb-col-c</code></td><td>"// STATEMENT" 레이블 + 작가 노트 2줄 프리뷰. 클릭 시 <code>openStmt()</code></td></tr>
+          <tr><td>네비게이션 탭</td><td><code>.nb-tab</code></td><td>SET(활성) / SET:Inclusion(COMING SOON) / LOG / Reference / MEASURE. <code>crtNav(url)</code>로 CRT 트랜지션 이동</td></tr>
+          <tr><td>우측 타이머</td><td><code>#nb-col-r</code></td><td>ENTRY 시각 / SESSION 경과 / STATUS(ACTIVE·SCANNING) / DEPT 코드</td></tr>
+          <tr><td>ACTIVATE 버튼</td><td>—</td><td>우측 끝. 세션 활성화 표시 (데코레이티브)</td></tr>
         </tbody>
       </table></div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>항목</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>SET:Inclusion 동작</td><td>gbar.html 내에서 클릭 → <code>window.parent.mobComingSoon()</code> 호출 → set-os.html의 #mob-toast fullscreen 오버레이 표시. 부모 없을 시 자체 <code>showComingSoon()</code> 폴백</td></tr>
-          <tr><td>페이지 전환</td><td>각 탭은 <code>crtNav(url)</code> 통해 CRT OFF 트랜지션 후 이동. iOS 대응을 위해 <code>&lt;a href="..."&gt;</code> + onclick 병행</td></tr>
-          <tr><td>ACTIVATE 버튼</td><td>우측 끝. 현재 세션 활성화 표시용 (기능 없음, 데코레이티브)</td></tr>
-        </tbody>
-      </table></div>
+    </div>
+
+    <!-- ── D. LEFT RAIL ── -->
+    <div class="subsection">
+      <div class="subsection-title teal">LEFT RAIL — 집합 시각화 패널</div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">클래스: .lr-rail · wrap 좌측 외부 고정 배치 · 3개 패널 수직 스택 · viewport &gt;1560px 시 표시</p>
     </div>
 
     <div class="sc-wrap">
-      <div class="sc-label">// GBAR — 네비게이션 바 전체</div>
-      <img class="sc-img" src="screenshots/sc-gbar.png" alt="GBAR">
+      <div class="sc-label">// F.01 · Intersection — SET ∩ SET:Inclusion 집합 다이어그램</div>
+      <img class="sc-img" src="screenshots/sc-lr-f01.png" alt="LEFT RAIL F.01 Intersection">
     </div>
 
-    <!-- ── D. SET.OS 헤더 스트립 ── -->
     <div class="subsection">
-      <div class="subsection-title">SET.OS 헤더 스트립</div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">위치: TOP-ROW와 BOT-ROW 사이 수평 밴드</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>영역</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>좌측 브랜딩</td><td>"SET.OS" 로고 + "ARCHIVE TERMINAL v2.4" + "/mount/arch1" 경로 표시. 레이더 아이콘 애니메이션</td></tr>
-          <tr><td>중앙 스테이트먼트</td><td>"// STATEMENT" 레이블 + 작가 노트 2줄 프리뷰. 클릭 시 <code>openStmt()</code> → STATEMENT 모달 오픈</td></tr>
-          <tr><td>네비게이션 탭</td><td>SET / SET:Inclusion / LOG / Reference / MEASURE / ABOUT — STATUS BAR #botbar의 .navbtn 클릭 가능</td></tr>
-          <tr><td>우측 타이머</td><td>ENTRY 시각 / SESSION 경과 / STATUS / DEPT 코드 <code>#clk2</code></td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- ── E. LEFT RAIL ── -->
-    <div class="subsection">
-      <div class="subsection-title teal">LEFT RAIL — 집합 시각화 패널</div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">클래스: .lr-rail · wrap 좌측 외부 절대 배치 · 3개 패널 수직 스택</p>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">F.01 · Intersection — 집합 다이어그램</p>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
           <tr><td>요소</td><td><code>#svg-set</code> SVG</td></tr>
-          <tr><td>구성</td><td>원 A (주황, SET, r=50) + 원 B (보라, SET:Inclusion, 가변 반지름) + 교집합 영역 강조</td></tr>
-          <tr><td>표시 수치</td><td><code>#set-int</code> 교집합 크기 (예: 32) / <code>#set-pa</code> 둘레 A (314.2) / <code>#set-ratio</code> 비율 바</td></tr>
-          <tr><td>애니메이션</td><td><code>#lrtrace</code> 빨간 점이 원 위를 순환. CSS animation</td></tr>
-          <tr><td>확장</td><td>실제 채택 데이터 연동 시 원 B 반지름을 <code>admin-contents.json</code>의 SET:Inclusion 채택 비율로 동적 변경 가능</td></tr>
-        </tbody>
-      </table></div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">F.02 · CONTOUR FIELD — 등고선 밀도 맵</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>항목</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>요소</td><td><code>#svg-cont</code> SVG</td></tr>
-          <tr><td>구성</td><td>12개 레이어 동적 blob 경로 + 수평 스캔라인. 360도 회전 애니메이션 (<code>rotate()</code>)</td></tr>
-          <tr><td>서브패널</td><td><code>#svg-prof</code>: 지형 단면도 (SECTION A–A′). 지형 프로필 그래프 SVG</td></tr>
-          <tr><td>시각적 의미</td><td>작업 밀도·분포의 추상적 시각화. 현재 정적 파라미터</td></tr>
-          <tr><td>확장</td><td>DIR별 촬영 밀도 데이터 연동 시 등고선 형상을 실측 분포로 변환 가능</td></tr>
-        </tbody>
-      </table></div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">F.03 · DATA — 수치 측정값 4컬럼</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>컬럼</th><th>클래스</th><th>표시 항목</th></tr></thead>
-        <tbody>
-          <tr><td>CARDINALITY</td><td><code>.lr-dcol</code></td><td>|A| (SET 전체) / |B| (SET:Inclusion 전체) / |A∩B| (교집합) / |A∪B| (합집합) / |A\B| (차집합)</td></tr>
-          <tr><td>PERIM</td><td><code>.lr-dcol</code></td><td>둘레 (Perimeter) / 델타 (변화량) + 미니 그래프</td></tr>
-          <tr><td>ELEV BANDS</td><td><code>.lr-dcol</code></td><td><code>#cont-bands</code> 고도 밴드 테이블. 각 밴드별 색상 코드</td></tr>
-          <tr><td>GRADIENT</td><td><code>.lr-dcol</code></td><td>구배 / 방위각 / 피크값</td></tr>
+          <tr><td>구성</td><td>원 A (주황, SET, r=50) + 원 B (보라, SET:Inclusion, 가변) + 교집합 강조 + <code>#lrtrace</code> 순환 점</td></tr>
+          <tr><td>표시 수치</td><td>교집합 크기 <code>#set-int</code> / 둘레 A <code>#set-pa</code> / 비율 바 <code>#set-ratio</code></td></tr>
+          <tr><td>확장</td><td>admin-contents.json 연동 시 원 B 반지름을 실제 채택 비율로 동적 변경 가능</td></tr>
         </tbody>
       </table></div>
     </div>
 
     <div class="sc-wrap">
-      <div class="sc-label">// LEFT RAIL — Intersection F.01 · CONTOUR FIELD F.02 · DATA F.03</div>
-      <img class="sc-img" src="screenshots/sc-left-rail.png" alt="LEFT RAIL 전체">
+      <div class="sc-label">// F.02 · CONTOUR FIELD — 등고선 밀도 맵</div>
+      <img class="sc-img" src="screenshots/sc-lr-f02.png" alt="LEFT RAIL F.02 Contour Field">
     </div>
 
-    <!-- ── F. RIGHT RAIL ── -->
     <div class="subsection">
-      <div class="subsection-title vio">RIGHT RAIL — 분석·실험 패널</div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">클래스: .rr-rail · wrap 우측 외부 절대 배치 · SVA RADAR / ANALYSIS / PILOT 수직 스택</p>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">F.04 · SVA RADAR — 4축 형태학 분석 레이더</p>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>요소</td><td><code>#rr-radar</code> Canvas + 3D 투영 박스 (depth.x=13, depth.y=-12)</td></tr>
-          <tr><td>4축 구성</td><td>DS (Dominance Structure, 좌상) / SD (Spatial Distribution, 우상) / SA (Surface Anomaly, 우하) / KV (Kinetic Value, 좌하)</td></tr>
-          <tr><td>원칙</td><td>미학적·감정적 해석 완전 배제. 형태학적 수치만 표시</td></tr>
-          <tr><td>애니메이션</td><td><code>newTarget()</code> 3초 간격으로 새 타겟값 생성. 현재값은 타겟을 향해 부드럽게 수렴 (lerp)</td></tr>
-          <tr><td>연동</td><td>GALLERY에서 이미지 선택 시 해당 프레임의 <code>sva</code> 값으로 업데이트. 미지정 시 랜덤값</td></tr>
-          <tr><td>확장</td><td>AI 분석 파이프라인 연동 시 업로드된 사진마다 DS/SD/SA/KV 자동 생성 가능</td></tr>
+          <tr><td>요소</td><td><code>#svg-cont</code> SVG + <code>#svg-prof</code> 단면도</td></tr>
+          <tr><td>구성</td><td>12개 레이어 동적 blob 경로 + 수평 스캔라인. 360도 회전 애니메이션</td></tr>
+          <tr><td>서브패널</td><td>SECTION A–A′ 지형 프로필 그래프</td></tr>
+          <tr><td>시각적 의미</td><td>작업 밀도·분포의 추상적 시각화</td></tr>
         </tbody>
       </table></div>
+    </div>
 
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">ANALYSIS — 상세 메타데이터 테이블</p>
+    <div class="sc-wrap">
+      <div class="sc-label">// F.03 · DATA — 수치 측정값 4컬럼</div>
+      <img class="sc-img" src="screenshots/sc-lr-f03.png" alt="LEFT RAIL F.03 Data">
+    </div>
+
+    <div class="subsection">
+      <div class="table-wrap"><table>
+        <thead><tr><th>컬럼</th><th>표시 항목</th></tr></thead>
+        <tbody>
+          <tr><td>CARDINALITY</td><td>|A| / |B| / |A∩B| / |A∪B| / |A\B|</td></tr>
+          <tr><td>PERIM</td><td>둘레 / 델타 + 미니 그래프</td></tr>
+          <tr><td>ELEV BANDS</td><td><code>#cont-bands</code> 고도 밴드 테이블 + 색상 코드</td></tr>
+          <tr><td>GRADIENT</td><td>구배 / 방위각 <code>azim</code> / 피크값 <code>pk</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- ── E. RIGHT RAIL ── -->
+    <div class="subsection">
+      <div class="subsection-title vio">RIGHT RAIL — 분석·실험 패널</div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">클래스: .rr-rail · wrap 우측 외부 고정 배치 · SVA RADAR / ANALYSIS / PILOT 수직 스택</p>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// F.04 · SVA RADAR — 4축 형태학 분석 레이더 (DS / SD / SA / KV)</div>
+      <img class="sc-img" src="screenshots/sc-rr-radar.png" alt="SVA RADAR">
+    </div>
+
+    <div class="subsection">
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>요소</td><td><code>#rr-radar</code> Canvas + 3D 투영 박스</td></tr>
+          <tr><td>4축</td><td>DS (Dominance Structure) / SD (Spatial Distribution) / SA (Surface Anomaly) / KV (Kinetic Value)</td></tr>
+          <tr><td>원칙</td><td>미학적·감정적 해석 완전 배제. 형태학적 수치만 표시</td></tr>
+          <tr><td>애니메이션</td><td><code>newTarget()</code> 3초 간격으로 새 타겟 생성. lerp로 수렴</td></tr>
+          <tr><td>연동</td><td>GALLERY 이미지 선택 시 해당 프레임 <code>sva</code> 값으로 업데이트</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// ANALYSIS — SPECIMEN · AXES · VERDICT 메타데이터 테이블</div>
+      <img class="sc-img" src="screenshots/sc-rr-analysis.png" alt="ANALYSIS 패널">
+    </div>
+
+    <div class="subsection">
       <div class="table-wrap"><table>
         <thead><tr><th>섹션</th><th>필드</th><th>내용</th></tr></thead>
         <tbody>
           <tr><td>SPECIMEN</td><td><code>#rr-id</code> <code>#rr-rnd</code> <code>#rr-n</code></td><td>이미지 ID / 라운드 번호 / 순번</td></tr>
           <tr><td>AXES</td><td><code>DS / SD / SA / KV</code></td><td>각 축 수치값. KV는 <code>#rr-kvbar</code> 미니 바 포함</td></tr>
-          <tr><td>VERDICT</td><td><code>#rr-score</code> <code>#rr-cut</code></td><td>총합 점수 / 판정 (DROP · SUPPORT · CORE). 색상 코드 연동</td></tr>
-        </tbody>
-      </table></div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">PILOT CHANNEL <span class="badge pilot">PILOT</span></p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>항목</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>개념</td><td>SET·SET:Inclusion 어디에도 귀속되지 않는 이미지들의 실험 채널. 공집합 공간</td></tr>
-          <tr><td>접근</td><td>STATUS BAR에 반투명(<code>opacity:0.4</code>)으로 노출. 히든 메뉴 성격</td></tr>
-          <tr><td>NULL.LOG 탭</td><td>귀속 불가 이미지 기록 테이블. DATE/QUERY/COUNT 컬럼. <code>localStorage('set_null_log')</code> 저장. <code>renderLog()</code></td></tr>
-          <tr><td>ATTR.TEST 탭</td><td>드래그 앤 드롭 파일 업로더 (<code>#pt-file</code>). 이미지 속성 테스트용</td></tr>
-          <tr><td>MANUAL 탭</td><td>PILOT CHANNEL 사용 안내 텍스트</td></tr>
-          <tr><td>상태 표시</td><td>점멸 인디케이터 <code>#pt-lbl</code> + 값 <code>#pt-v</code></td></tr>
-          <tr><td>외부 링크</td><td>"▶ OPEN PILOT.EXP" → <code>crtNav('pilot.html')</code></td></tr>
+          <tr><td>VERDICT</td><td><code>#rr-score</code> <code>#rr-cut</code></td><td>총합 점수 / 판정 (DROP · SUPPORT · CORE)</td></tr>
         </tbody>
       </table></div>
     </div>
 
     <div class="sc-wrap">
-      <div class="sc-label">// RIGHT RAIL — SVA RADAR F.04 · ANALYSIS · PILOT CHANNEL</div>
-      <img class="sc-img" src="screenshots/sc-right-rail.png" alt="RIGHT RAIL 전체">
+      <div class="sc-label">// PILOT CHANNEL — NULL.LOG · ATTR.TEST · MANUAL</div>
+      <img class="sc-img" src="screenshots/sc-rr-pilot.png" alt="PILOT CHANNEL">
     </div>
 
-    <!-- ── G. BOTTOM ROW ── -->
     <div class="subsection">
-      <div class="subsection-title">하단 행 (BOTTOM ROW) 패널 구성</div>
-      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #bot-row · flex row · 4개 컬럼</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>개념</td><td>SET·SET:Inclusion 어디에도 귀속되지 않는 이미지들의 실험 채널. 공집합 공간</td></tr>
+          <tr><td>접근</td><td>STATUS BAR에 반투명(<code>opacity:0.4</code>)으로 노출. 히든 메뉴 성격</td></tr>
+          <tr><td>NULL.LOG 탭</td><td>귀속 불가 이미지 기록. DATE/QUERY/COUNT. <code>localStorage</code> 저장</td></tr>
+          <tr><td>ATTR.TEST 탭</td><td>드래그 앤 드롭 파일 업로더 <code>#pt-file</code>. 이미지 속성 테스트</td></tr>
+          <tr><td>외부 링크</td><td>"▶ OPEN PILOT.EXP" → <code>crtNav('pilot.html')</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
 
+    <!-- ── F. BOTTOM ROW ── -->
+    <div class="subsection">
+      <div class="subsection-title">하단 행 (BOTTOM ROW)</div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">ID: #bot-row · flex row · 4개 컬럼 구성</p>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// G-1 SYSTEM NOTICE + G-2 VIEWER_LOG.EXE</div>
+      <img class="sc-img" src="screenshots/sc-notice.png" alt="SYSTEM NOTICE">
+    </div>
+
+    <div class="subsection">
       <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">G-1 · SYSTEM NOTICE (시스템 공지)</p>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
           <tr><td>역할</td><td>MEASURE.DB 채팅방 입장 유도. 사용자 인터랙션의 첫 진입점</td></tr>
-          <tr><td>구성</td><td>"시스템 공지 / 채팅방에 입장했습니다" 텍스트 + <code>[입장 ▶]</code> 버튼</td></tr>
+          <tr><td>구성</td><td>"채팅방에 입장했습니다" 텍스트 + <code>[입장 ▶]</code> 버튼</td></tr>
           <tr><td>동작</td><td>버튼 클릭 → <code>https://note-a.github.io/measure.html</code>로 이동</td></tr>
-          <tr><td>스타일</td><td>CRT 공지 카드. 그라데이션 배경. 호버 글로우 효과</td></tr>
         </tbody>
       </table></div>
 
@@ -612,96 +631,139 @@ GL_FRAMES = [
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>요소</td><td><code>#vlWindow</code> — 헤더 + <code>#vlBody</code> (콘텐츠 영역)</td></tr>
-          <tr><td>역할</td><td>MEASURE.DB 대화방 검색 기록 실시간 피드 시뮬레이션</td></tr>
-          <tr><td>표시 항목</td><td>"MEASURE SEARCH LOG" / 쿼리 카운트 / <code>#vlList</code> 5개 항목 목록 / 경로 + 마지막 접속 시각 / 깜빡이는 커서</td></tr>
-          <tr><td>애니메이션</td><td><code>addEntry(query)</code>: 새 항목 추가 시 이전 항목은 색상 단계적으로 dim. QUERIES 배열 순환</td></tr>
-          <tr><td>현재 상태</td><td>데모 피드. 실제 사용자 검색 데이터 미연동</td></tr>
-          <tr><td>확장</td><td>Firebase Realtime DB / Supabase 연동 시 실제 measure.html 검색 기록 실시간 수신 가능</td></tr>
+          <tr><td>요소</td><td><code>#vlWindow</code> — 헤더 + <code>#vlBody</code></td></tr>
+          <tr><td>역할</td><td>MEASURE.DB 검색 기록 실시간 피드 시뮬레이션</td></tr>
+          <tr><td>표시</td><td>MEASURE SEARCH LOG / 쿼리 카운트 / <code>#vlList</code> 항목 목록 / 마지막 접속 시각</td></tr>
+          <tr><td>애니메이션</td><td><code>addEntry(query)</code>: 새 항목 추가 시 이전 항목 dim. QUERIES 배열 순환</td></tr>
+          <tr><td>확장</td><td>Firebase / Supabase 연동 시 실제 검색 기록 실시간 수신 가능</td></tr>
         </tbody>
       </table></div>
+    </div>
 
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">G-3 · WORK.STATUS <span class="badge live">LIVE</span></p>
+    <div class="sc-wrap">
+      <div class="sc-label">// G-2b VIEWER 3D + ID-CARD</div>
+      <img class="sc-img" src="screenshots/sc-viewer-id.png" alt="VIEWER 3D ID-CARD">
+    </div>
+
+    <div class="subsection">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">G-2b · VIEWER 3D + ID-CARD</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>상단 VIEWER</td><td>3D 렌더링 피규어 (오렌지 글로우). "SCAN:OK" 레이블. 데코레이티브 CRT 카메라 뷰</td></tr>
+          <tr><td>IDENTITY</td><td>NAME: UNKNOWN / ID: VIS-2026-### / ROLE: OBSERVER / CLR: GUEST</td></tr>
+          <tr><td>SYS MONITOR</td><td>STATUS ● ACTIVE / INTEG 98.x% / THREAT ● LOW / PKT/S 주파수 바</td></tr>
+          <tr><td>목적</td><td>방문자를 미지 관찰자로 설정. 관람객 = 신원 불명 탐침</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// G-3 WORK TIMELINE (WORK.STATUS iframe)</div>
+      <img class="sc-img" src="screenshots/sc-work.png" alt="WORK TIMELINE">
+    </div>
+
+    <div class="subsection">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">G-3 · WORK.STATUS <span class="badge live">LIVE</span></p>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
           <tr><td>구현</td><td><code>work-status.html?v=10</code> iframe 삽입</td></tr>
-          <tr><td>데이터</td><td>GitHub API (<code>note-a/note-a-github</code> repo commits) + <code>published-posts.json</code></td></tr>
-          <tr><td>표시 항목</td><td>POSTS 수 / COMMITS 총수 / 이번 주 커밋 / 최근 커밋일 / 처리량 스파크라인 / 커밋 피드 스크롤</td></tr>
-          <tr><td>캐싱</td><td>localStorage 5분 TTL. API 레이트리밋(60req/h) 시 stale 캐시 폴백 표시</td></tr>
+          <tr><td>데이터</td><td>GitHub API (<code>note-a/note-a-github</code>) + <code>published-posts.json</code></td></tr>
+          <tr><td>표시 항목</td><td>POSTS 수 / COMMITS 총수 / 이번 주 커밋 / 최근 커밋일 / 처리량 스파크라인 / 커밋 피드</td></tr>
+          <tr><td>캐싱</td><td>localStorage 5분 TTL. 레이트리밋 시 stale 폴백</td></tr>
         </tbody>
       </table></div>
+    </div>
 
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">G-4 · SET.TEXT / MEASURE.DB 우측 패널</p>
+    <div class="sc-wrap">
+      <div class="sc-label">// G-4 SET.TEXT — 작가 노트 스크롤</div>
+      <img class="sc-img" src="screenshots/sc-settext.png" alt="SET.TEXT">
+    </div>
+
+    <div class="subsection">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">G-4 · SET.TEXT / MEASURE.DB 우측 패널</p>
       <div class="table-wrap"><table>
         <thead><tr><th>뷰</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>SET.TEXT (기본)</td><td>긴 작업 노트 텍스트 스크롤. <code>.stmt-scroll</code>. 클릭 시 <code>openStmt()</code> → STATEMENT 모달 풀스크린 오픈</td></tr>
-          <tr><td>MEASURE.DB 채팅방 (<code>.pc</code>)</td><td>레트로 PC통신 채팅방 UI. 방 상태바 (접속자/DIR수/사진수) + 메시지 로그 + 사이드 명단 + 입력창 + F1~F10 단축키 바</td></tr>
-          <tr><td>채팅 자동 활동</td><td><code>randActivity()</code> — 14~36초 간격으로 가상 유저 메시지 자동 추가. <code>addRow(ts, id, cls, msg, msgCls)</code></td></tr>
-          <tr><td>사용자 입력</td><td><code>doSend()</code> — 입력창 텍스트를 메시지로 추가. 실제 DB 저장 없음 (프론트엔드 시뮬레이션)</td></tr>
+          <tr><td>SET.TEXT (기본)</td><td>긴 작업 노트 텍스트 스크롤. 클릭 시 <code>openStmt()</code> → STATEMENT 모달 풀스크린 오픈</td></tr>
+          <tr><td>MEASURE.DB 채팅방</td><td>레트로 PC통신 채팅방 UI. 방 상태바 + 메시지 로그 + 사이드 명단 + 입력창 + F1~F10 단축키 바</td></tr>
+          <tr><td>채팅 자동 활동</td><td><code>randActivity()</code> — 14~36초 간격 가상 유저 메시지 자동 추가</td></tr>
         </tbody>
       </table></div>
     </div>
 
-    <div class="sc-pair">
-      <div class="sc-wrap">
-        <div class="sc-label">// SYSTEM NOTICE + VIEWER_LOG.EXE</div>
-        <img class="sc-img" src="screenshots/sc-notice.png" alt="SYSTEM NOTICE">
-      </div>
-      <div class="sc-wrap">
-        <div class="sc-label">// WORK TIMELINE (WORK.STATUS iframe)</div>
-        <img class="sc-img" src="screenshots/sc-work.png" alt="WORK TIMELINE">
-      </div>
-    </div>
-
-    <!-- ── H. 오버레이 / 모달 ── -->
+    <!-- ── G. 오버레이 / 모달 ── -->
     <div class="subsection">
       <div class="subsection-title red">오버레이 · 모달</div>
+    </div>
 
+    <div class="sc-wrap">
+      <div class="sc-label">// COMING SOON 오버레이 — SET:Inclusion 클릭 시</div>
+      <img class="sc-img" src="screenshots/sc-modal-coming.png" alt="COMING SOON 오버레이">
+    </div>
+
+    <div class="subsection">
       <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">COMING SOON 오버레이</p>
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
           <tr><td>요소</td><td><code>#mob-toast</code> — z-index 9000. <code>position:fixed</code>. 전체 화면</td></tr>
-          <tr><td>트리거</td><td>SET:Inclusion 클릭 (GBAR 또는 STATUS BAR 모두). 모바일/데스크탑 공통</td></tr>
-          <tr><td>함수</td><td><code>window.mobComingSoon()</code> — <code>show</code> 클래스 추가 후 3500ms 뒤 자동 제거</td></tr>
+          <tr><td>트리거</td><td>SET:Inclusion 클릭 (GBAR 또는 STATUS BAR). 모바일/데스크탑 공통</td></tr>
+          <tr><td>함수</td><td><code>window.mobComingSoon()</code> — 3500ms 뒤 자동 제거</td></tr>
           <tr><td>내용</td><td>SET:inclusion ASCII 아트 + "COMING SOON" + "TAP TO DISMISS"</td></tr>
-        </tbody>
-      </table></div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">STATEMENT MODAL</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>항목</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>요소</td><td><code>#stmt-modal</code> → <code>#sm-body</code></td></tr>
-          <tr><td>트리거</td><td>SET.TEXT 영역 클릭 / STATUS BAR ABOUT 버튼 → <code>openStmt()</code></td></tr>
-          <tr><td>내용</td><td>ARTIST STATEMENT 전문. 섹션: 집합과 세계 / 재현과 시선 등. 예시 코드 블록. "MORE" 버튼 → DOCS MODAL</td></tr>
-        </tbody>
-      </table></div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:20px 0 8px;">DOCS MODAL (WORK_DOCUMENT.EXE)</p>
-      <div class="table-wrap"><table>
-        <thead><tr><th>항목</th><th>내용</th></tr></thead>
-        <tbody>
-          <tr><td>요소</td><td><code>#docs-modal</code></td></tr>
-          <tr><td>트리거</td><td>STATEMENT MODAL 내 "MORE" 버튼</td></tr>
-          <tr><td>내용</td><td>작업 설명서 전문. 장: 출발점 / 핵심 개념 / 방법론 / 문법 / 지시문. 테이블·코드블록·인용문 포함</td></tr>
         </tbody>
       </table></div>
     </div>
 
-    <!-- ── I. STATUS BAR / 배경 애니메이션 ── -->
+    <div class="sc-wrap">
+      <div class="sc-label">// STATEMENT MODAL — ARTIST STATEMENT 전문</div>
+      <img class="sc-img" src="screenshots/sc-modal-stmt.png" alt="STATEMENT 모달">
+    </div>
+
+    <div class="subsection">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">STATEMENT MODAL</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>요소</td><td><code>#stmt-modal</code> → <code>#sm-body</code></td></tr>
+          <tr><td>트리거</td><td>SET.TEXT 클릭 / STATUS BAR ABOUT 버튼 → <code>openStmt()</code></td></tr>
+          <tr><td>내용</td><td>ARTIST STATEMENT 전문. 섹션: 집합과 세계 / 재현과 시선 등. "MORE ▶" → DOCS MODAL</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="sc-wrap">
+      <div class="sc-label">// DOCS MODAL — WORK_DOCUMENT.EXE 작업 설명서</div>
+      <img class="sc-img" src="screenshots/sc-modal-docs.png" alt="DOCS 모달">
+    </div>
+
+    <div class="subsection">
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">DOCS MODAL (WORK_DOCUMENT.EXE)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>요소</td><td><code>#docs-modal</code></td></tr>
+          <tr><td>트리거</td><td>STATEMENT MODAL 내 "MORE ▶" → <code>openDocs()</code></td></tr>
+          <tr><td>내용</td><td>작업 설명서 전문. 장: 0.목적 / 1.출발점 / 핵심 개념 / 방법론 / 문법 / 지시문</td></tr>
+          <tr><td>닫기</td><td>× 버튼 또는 모달 외부 클릭 → <code>closeDocs()</code></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- ── H. STATUS BAR ── -->
+    <div class="sc-wrap">
+      <div class="sc-label">// STATUS BAR (#botbar) — 하단 고정 네비게이션 + 시스템 상태</div>
+      <img class="sc-img" src="screenshots/sc-statusbar.png" alt="STATUS BAR">
+    </div>
+
     <div class="subsection">
       <div class="subsection-title">STATUS BAR + 배경 애니메이션</div>
-
-      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:0 0 8px;">STATUS BAR (<code>#botbar</code>)</p>
       <div class="table-wrap"><table>
         <thead><tr><th>세그먼트</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>시스템 정보</td><td><code>\GH.24</code> 위치 / TR 23.3 / 상태 (Slow)</td></tr>
-          <tr><td>에러 표시</td><td>ERR·03 SECTOR·F (데코레이티브)</td></tr>
-          <tr><td>네비 버튼</td><td>SET(활성) / SET:Inclusion / LOG / Reference / MEASURE / ABOUT — 각각 crtNav 또는 openStmt 연결</td></tr>
+          <tr><td>시스템 정보</td><td><code>\GH.24</code> 위치 / TR 23.3 / 상태 (Slow) · ERR·03 SECTOR·F (데코레이티브)</td></tr>
+          <tr><td>네비 버튼</td><td>SET / SET:Inclusion / LOG / Reference / MEASURE / ABOUT — 각각 crtNav 또는 openStmt 연결</td></tr>
           <tr><td>우측 시계</td><td><code>#clk2</code> — <code>tick()</code> 1초 간격 갱신</td></tr>
         </tbody>
       </table></div>
@@ -710,9 +772,9 @@ GL_FRAMES = [
       <div class="table-wrap"><table>
         <thead><tr><th>항목</th><th>내용</th></tr></thead>
         <tbody>
-          <tr><td>구성</td><td>7개 원형 오브 요소. 각각 다크 오렌지 계열 반투명 블러 원</td></tr>
-          <tr><td>동작</td><td>각 오브마다 고유 주기(7500~12500ms), X/Y 진폭, 위상 오프셋 설정. <code>setInterval</code>로 <code>transform:translate()</code> 적용</td></tr>
-          <tr><td>목적</td><td>CRT 화면의 잔상·글로우 효과 시뮬레이션. 페이지 depth감 부여</td></tr>
+          <tr><td>구성</td><td>7개 원형 오브. 다크 오렌지 계열 반투명 블러</td></tr>
+          <tr><td>동작</td><td>각 오브마다 고유 주기(7500~12500ms), X/Y 진폭. <code>setInterval</code>로 <code>transform:translate()</code> 적용</td></tr>
+          <tr><td>목적</td><td>CRT 잔상·글로우 효과. 페이지 depth감 부여</td></tr>
         </tbody>
       </table></div>
     </div>
