@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SET.OS — 요구사항 정의서</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --acc:#d96a0e; --acc2:rgba(217,106,14,.7); --acc3:rgba(217,106,14,.35); --acc4:rgba(217,106,14,.12);
+  --amb:#ffb000; --red:#ff3b40; --teal:#3fb09a; --vio:#b07bff;
+  --bg:#09090a; --bg2:#111112; --bg3:#1a1a1b;
+  --txt:#e8e0d4; --txt2:#b8a898; --txt3:#7a6a5a;
+  --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans KR',sans-serif;
+  --border:1px solid rgba(217,106,14,.2);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--txt);font-family:var(--sans);font-size:14px;line-height:1.75;
+  background-image:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(217,106,14,.06),transparent 70%);}
+
+/* ── 레이아웃 ── */
+.page{max-width:900px;margin:0 auto;padding:60px 32px 120px;}
+
+/* ── 커버 ── */
+.cover{border:1px solid rgba(217,106,14,.3);padding:40px 36px 36px;margin-bottom:56px;position:relative;
+  background:linear-gradient(135deg,rgba(217,106,14,.04),transparent);}
+.cover::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--acc),transparent);}
+.cover-tag{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--acc3);margin-bottom:16px;}
+.cover-title{font-family:var(--mono);font-size:28px;letter-spacing:2px;color:var(--acc);font-weight:600;
+  text-shadow:0 0 40px rgba(217,106,14,.3);margin-bottom:6px;}
+.cover-sub{font-family:var(--mono);font-size:13px;color:var(--acc2);margin-bottom:28px;}
+.cover-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(217,106,14,.15);padding-top:20px;}
+.cover-meta-item{padding:0 20px 0 0;}
+.cover-meta-item:first-child{padding-left:0;}
+.cover-meta-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--txt3);margin-bottom:4px;}
+.cover-meta-val{font-family:var(--mono);font-size:12px;color:var(--txt2);}
+
+/* ── 목차 ── */
+.toc{background:var(--bg2);border:var(--border);padding:24px 28px;margin-bottom:56px;}
+.toc-head{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--acc3);margin-bottom:16px;}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.toc-list a{font-family:var(--mono);font-size:11px;color:var(--txt2);text-decoration:none;
+  display:flex;align-items:baseline;gap:12px;transition:color .15s;}
+.toc-list a:hover{color:var(--acc);}
+.toc-list a .toc-n{color:var(--acc3);min-width:18px;}
+.toc-list a .toc-dots{flex:1;border-bottom:1px dotted rgba(217,106,14,.2);margin:0 4px;position:relative;top:-3px;}
+
+/* ── 섹션 ── */
+.section{margin-bottom:64px;}
+.section-head{display:flex;align-items:center;gap:14px;margin-bottom:32px;padding-bottom:12px;
+  border-bottom:1px solid rgba(217,106,14,.2);}
+.section-n{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--acc3);
+  background:rgba(217,106,14,.1);border:1px solid rgba(217,106,14,.2);padding:2px 8px;}
+.section-title{font-family:var(--mono);font-size:17px;letter-spacing:2px;color:var(--acc);font-weight:600;}
+
+/* ── 서브섹션 ── */
+.subsection{margin-bottom:36px;}
+.subsection-title{font-family:var(--mono);font-size:12px;letter-spacing:2px;color:var(--amb);
+  margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.subsection-title::before{content:'';width:3px;height:14px;background:var(--amb);}
+.subsection-title.teal{color:var(--teal);}
+.subsection-title.teal::before{background:var(--teal);}
+.subsection-title.vio{color:var(--vio);}
+.subsection-title.vio::before{background:var(--vio);}
+.subsection-title.red{color:var(--red);}
+.subsection-title.red::before{background:var(--red);}
+
+/* ── 본문 텍스트 ── */
+p{color:var(--txt2);line-height:1.85;margin-bottom:14px;}
+p b, p strong{color:var(--txt);font-weight:600;}
+p.lead{color:var(--txt);font-size:15px;}
+
+/* ── 테이블 ── */
+.table-wrap{overflow-x:auto;margin-bottom:24px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead tr{background:rgba(217,106,14,.08);border-bottom:1px solid rgba(217,106,14,.3);}
+th{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--acc3);padding:10px 14px;text-align:left;font-weight:400;}
+td{padding:10px 14px;border-bottom:1px solid rgba(217,106,14,.07);color:var(--txt2);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td:first-child{font-family:var(--mono);font-size:11px;color:var(--txt);white-space:nowrap;}
+td code{font-family:var(--mono);font-size:11px;color:var(--acc2);background:rgba(217,106,14,.08);
+  padding:1px 5px;border-radius:2px;}
+tr:hover td{background:rgba(217,106,14,.03);}
+
+/* ── 코드 블록 ── */
+pre.code{background:var(--bg2);border:var(--border);padding:20px 22px;
+  font-family:var(--mono);font-size:12px;color:var(--txt2);line-height:1.65;
+  overflow-x:auto;margin-bottom:24px;}
+pre.code .c{color:var(--txt3);}
+pre.code .k{color:var(--acc2);}
+pre.code .v{color:var(--amb);}
+pre.code .s{color:var(--teal);}
+
+/* ── 인포 카드 ── */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.card{background:var(--bg2);border:var(--border);padding:16px 18px;}
+.card-label{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--acc3);margin-bottom:8px;}
+.card-val{font-family:var(--mono);font-size:20px;color:var(--acc);font-weight:600;}
+.card-desc{font-size:11px;color:var(--txt3);margin-top:4px;}
+
+/* ── 레이아웃 다이어그램 ── */
+.diagram{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--acc3);
+  background:var(--bg2);border:var(--border);padding:20px 22px;overflow-x:auto;margin-bottom:24px;}
+
+/* ── 태그 배지 ── */
+.badge{font-family:var(--mono);font-size:9px;letter-spacing:1px;padding:2px 7px;
+  border-radius:2px;display:inline-block;vertical-align:middle;margin-left:6px;}
+.badge.core{background:rgba(217,106,14,.15);color:var(--acc);border:1px solid rgba(217,106,14,.3);}
+.badge.soon{background:rgba(255,59,64,.12);color:var(--red);border:1px solid rgba(255,59,64,.3);}
+.badge.pilot{background:rgba(176,123,255,.12);color:var(--vio);border:1px solid rgba(176,123,255,.3);}
+.badge.live{background:rgba(63,176,154,.12);color:var(--teal);border:1px solid rgba(63,176,154,.3);}
+.badge.demo{background:rgba(255,176,0,.1);color:var(--amb);border:1px solid rgba(255,176,0,.25);}
+
+/* ── 구분선 ── */
+.divider{border:none;border-top:1px solid rgba(217,106,14,.1);margin:40px 0;}
+
+/* ── 푸터 ── */
+.foot{border-top:1px solid rgba(217,106,14,.2);padding-top:24px;margin-top:40px;
+  display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--txt3);}
+.foot span{color:var(--acc3);}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 커버 -->
+  <div class="cover">
+    <div class="cover-tag">REQUIREMENTS SPECIFICATION · v1.0</div>
+    <div class="cover-title">SET.OS</div>
+    <div class="cover-sub">개발자 인수인계용 요구사항 정의서</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">작성일</div>
+        <div class="cover-meta-val">2026-06-06</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">대상 파일</div>
+        <div class="cover-meta-val">set-os.html</div>
+      </div>
+      <div class="cover-meta-item">
+        <div class="cover-meta-label">호스팅</div>
+        <div class="cover-meta-val">GitHub Pages</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 목차 -->
+  <div class="toc">
+    <div class="toc-head">// TABLE OF CONTENTS</div>
+    <ul class="toc-list">
+      <li><a href="#s1"><span class="toc-n">01</span><span>제작 목적</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s2"><span class="toc-n">02</span><span>시스템 구조 개요</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s3"><span class="toc-n">03</span><span>패널별 기능 명세</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s4"><span class="toc-n">04</span><span>모바일 대응</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s5"><span class="toc-n">05</span><span>데이터 구조</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s6"><span class="toc-n">06</span><span>제약사항</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s7"><span class="toc-n">07</span><span>확장성</span><span class="toc-dots"></span></a></li>
+      <li><a href="#s8"><span class="toc-n">08</span><span>파일 구성</span><span class="toc-dots"></span></a></li>
+    </ul>
+  </div>
+
+  <!-- 1. 제작 목적 -->
+  <div class="section" id="s1">
+    <div class="section-head">
+      <span class="section-n">01</span>
+      <span class="section-title">제작 목적</span>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">배경 — 왜 아카이브가 OS가 되었는가</div>
+      <p class="lead">SET는 타인의 사진에서 추출한 지시문으로 세계를 측정하는 사진 작업이다. 작업의 구조상 사진은 최종 결과물이 아니라 <b>측정 과정의 출력물</b>에 가깝다. 지시문을 입력하고, 촬영하고, 선별하고, 기록하는 전 과정이 작업 자체이며, 그 과정은 온라인에 공개된다.</p>
+      <p>이 아카이브를 단순 갤러리나 포트폴리오 사이트로 구성하지 않은 이유는 세 가지다.</p>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">1 — 측정 장치로서의 인터페이스</div>
+      <p>SET의 작업 논리는 "관측자도 측정된다"는 전제 위에 있다. 관객이 수동적으로 사진을 보는 것이 아니라, MEASURE를 통해 지시문 언어를 직접 입력하고 검색하면 교집합이 생성된다. 아카이브가 곧 측정 도구여야 했다.</p>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">2 — 과정의 가시화</div>
+      <p>어떤 사진이 <b>CORE(채택)·SUPPORT(보조)·DROP(탈락)</b>되었는지, 어떤 조건이 반복 출현했는지를 데이터로 드러내야 했다. 갤러리 형식은 선별된 결과만 보여주지만 SET는 과정 전체가 작업이다.</p>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">3 — 공집합의 설계</div>
+      <p>SET:Inclusion(자기 자신의 사진에서 지시문을 역추출하는 작업)이 합류함으로써 두 작업의 교집합 지대, 즉 언어와 이미지 사이의 측정 불가능한 오차 자체를 시각화할 공간이 필요해졌다. 이 공간은 단순 뷰어가 아닌 <b>실시간 데이터 터미널</b> 형식으로 설계되었다.</p>
+      <p>결과적으로 set-os.html은 사진 아카이브이자 측정 인터페이스이자 작업 공정 모니터다. CRT 터미널 미학은 장식이 아니라 "이 시스템은 측정 중이다"라는 작업 맥락의 시각적 번역이다.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 2. 시스템 구조 -->
+  <div class="section" id="s2">
+    <div class="section-head">
+      <span class="section-n">02</span>
+      <span class="section-title">시스템 구조 개요</span>
+    </div>
+
+    <pre class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│  GBAR  —  하단 네비게이션 바 (gbar.html, iframe)                      │
+│  [ SET ]  [ SET:Inclusion ]  [ LOG ]  [ Reference ]  [ MEASURE ]    │
+├──────────────┬────────────────────────────────┬─────────────────────┤
+│              │                                │                     │
+│  LEFT RAIL   │       MAIN CONTENT             │   RIGHT RAIL        │
+│              │                                │                     │
+│  Intersection│  &lt;GALLERY&gt;                     │   SVA RADAR  F.04   │
+│  F.01  집합도│  &lt;LOG&gt;                          │   ANALYSIS          │
+│              │  MEASURE / MEASURE.DB          │                     │
+│  CONTOUR     │  Reference                     │   PILOT CHANNEL     │
+│  FIELD  F.02 │  SYSTEM NOTICE                 │                     │
+│              │  VIEWER_LOG.EXE                │                     │
+│  DATA   F.03 │  WORK.STATUS (iframe)          │                     │
+│              │                                │                     │
+└──────────────┴────────────────────────────────┴─────────────────────┘</pre>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-label">DATA SOURCE</div>
+        <div class="card-val" style="font-size:13px;color:var(--acc2);">admin-contents.json</div>
+        <div class="card-desc">사진 메타데이터 주요 소스</div>
+      </div>
+      <div class="card">
+        <div class="card-label">SECONDARY</div>
+        <div class="card-val" style="font-size:13px;color:var(--acc2);">GitHub Commits API</div>
+        <div class="card-desc">WORK.STATUS 실시간 피드</div>
+      </div>
+      <div class="card">
+        <div class="card-label">HOSTING</div>
+        <div class="card-val" style="font-size:13px;color:var(--acc2);">GitHub Pages</div>
+        <div class="card-desc">정적 호스팅, 서버리스</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 3. 패널별 기능 명세 -->
+  <div class="section" id="s3">
+    <div class="section-head">
+      <span class="section-n">03</span>
+      <span class="section-title">패널별 기능 명세</span>
+    </div>
+
+    <!-- GBAR -->
+    <div class="subsection">
+      <div class="subsection-title">GBAR — 하단 네비게이션 바<span class="badge live">LIVE</span></div>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--acc3);margin-bottom:12px;">파일: gbar.html · set-os.html에 &lt;iframe&gt;으로 삽입</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>전체 사이트 주요 섹션 이동. SET.OS 아이덴티티 + 세션 정보 표시</td></tr>
+          <tr><td>탭 구성</td><td><code>SET</code> → gallery1.html &nbsp;/&nbsp; <code>SET:Inclusion</code> → COMING SOON 오버레이 &nbsp;/&nbsp; <code>LOG</code> → page-log.html &nbsp;/&nbsp; <code>Reference</code> → reference.html &nbsp;/&nbsp; <code>MEASURE</code> → measure.html</td></tr>
+          <tr><td>iframe 통신</td><td>SET:Inclusion 클릭 시 <code>window.parent.mobComingSoon()</code>을 호출해 부모 창 fullscreen 오버레이 표시</td></tr>
+          <tr><td>우측 통계</td><td>ENTRY 시각 / SESSION 경과 시간 / STATUS(ACTIVE·SCANNING) / DEPT 표시</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- LEFT RAIL -->
+    <div class="subsection">
+      <div class="subsection-title teal">LEFT RAIL — 집합 시각화 패널</div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin-bottom:8px;">F.01 · Intersection (집합도)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>SET와 SET:Inclusion의 교집합 구조를 SVG로 시각화</td></tr>
+          <tr><td>구현</td><td>SVG 도형 기반 집합 다이어그램. 클릭 시 패널 확장/축소</td></tr>
+          <tr><td>데이터</td><td>정적 (작업 구조의 시각적 설명)</td></tr>
+          <tr><td>확장</td><td>실제 채택률 데이터 연동 시 교집합 면적을 동적으로 변화시킬 수 있음</td></tr>
+        </tbody>
+      </table></div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:16px 0 8px;">F.02 · CONTOUR FIELD (등고선)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>작업 밀도·분포를 등고선 형식으로 표현</td></tr>
+          <tr><td>구현</td><td>SVG path 기반 등고선 애니메이션</td></tr>
+          <tr><td>확장</td><td>DIR별 촬영 밀도 데이터 연동 시 실측 분포 지도화 가능</td></tr>
+        </tbody>
+      </table></div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:16px 0 8px;">F.03 · DATA (측정값)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>작업 전체 수치 요약 (총 DIR 수, 채택/보류/탈락 건수 등)</td></tr>
+          <tr><td>데이터</td><td><code>admin-contents.json</code>에서 집계</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- RIGHT RAIL -->
+    <div class="subsection">
+      <div class="subsection-title vio">RIGHT RAIL — 분석·실험 패널</div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin-bottom:8px;">F.04 · SVA RADAR (4축 형태학 분석)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>개별 사진의 SVA(Sequential Vision Autopsy) 분석값을 레이더 차트로 표시</td></tr>
+          <tr><td>4축 구성</td><td>구조(Structure) / 밀도(Density) / 시선(Gaze) / 경계(Edge) — 형태학적 지표만</td></tr>
+          <tr><td>구현</td><td>Canvas 기반 레이더 차트. GALLERY에서 사진 선택 시 해당 사진의 분석값으로 업데이트</td></tr>
+          <tr><td>원칙</td><td>미학적·감정적 해석 완전 배제. 형태학적 수치만 표시</td></tr>
+          <tr><td>확장</td><td>AI 분석 파이프라인 연동 시 선택 사진마다 실시간 SVA 값 갱신 가능</td></tr>
+        </tbody>
+      </table></div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:16px 0 8px;">ANALYSIS (분석 데이터)</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>선택된 사진의 상세 메타데이터 및 분석 텍스트 표시</td></tr>
+          <tr><td>데이터</td><td>GL_FRAMES의 dir, status, exif, date 등. GALLERY 사진 선택과 연동</td></tr>
+        </tbody>
+      </table></div>
+
+      <p style="font-family:var(--mono);font-size:10px;color:var(--acc3);margin:16px 0 8px;">PILOT CHANNEL<span class="badge pilot">PILOT</span></p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>SET·SET:Inclusion 외부의 귀속 불가 이미지 실험소. "공집합 채널"</td></tr>
+          <tr><td>탭 구성</td><td>NULL.LOG (무속성 기록) / ATTR.TEST (속성 실험) / MANUAL.TXT (안내)</td></tr>
+          <tr><td>접근 방식</td><td>히든 메뉴. 하단 바에 반투명으로 노출. pilot.html 전체 페이지 이동 버튼 포함</td></tr>
+          <tr><td>개념</td><td>어떤 집합에도 속하지 않는 이미지들의 채널. SET 논리 밖의 실험 공간</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="subsection">
+      <div class="subsection-title">&lt;GALLERY&gt; 패널<span class="badge live">LIVE</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>사진 아카이브 뷰어. SET 전체 촬영물의 메인 인터페이스</td></tr>
+          <tr><td>탭 구성</td><td>ANALYSIS(기본) / CONTACT(컨택 시트 그리드) / FILMSTRIP(가로 스크롤)</td></tr>
+          <tr><td>사진 표시</td><td>DIR코드 / STATUS(CORE·SUPPORT·DROP) / EXIF 정보 / 촬영 날짜</td></tr>
+          <tr><td>DIST SCATTER</td><td>DIR 전체의 CORE·SUPPORT·DROP 분포를 점 산포도로 시각화. 금색=CORE / 산호=SUPPORT / 빨강=DROP</td></tr>
+          <tr><td>FILMSTRIP</td><td>전체 프레임 가로 스크롤 필름스트립. 클릭 시 해당 프레임으로 이동</td></tr>
+          <tr><td>데이터</td><td><code>admin-contents.json</code> → GL_FRAMES 배열. 미로드 시 하드코딩 샘플로 폴백</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="subsection-title" style="margin-top:28px;">&lt;LOG&gt; 패널<span class="badge live">LIVE</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>작업 기록 열람. LOG 엔트리(RULE 카드) + 참조 문헌 목록</td></tr>
+          <tr><td>탭 구성</td><td>ANALYSIS(LOG 엔트리) / CONTACT(참조 문헌) / FILMSTRIP</td></tr>
+          <tr><td>LOG 엔트리</td><td>RULE_1~5: 작업 근본 원칙 카드. 카테고리(SVA·GRAMMAR·DIR), STATUS(CORE), 프리뷰 텍스트</td></tr>
+          <tr><td>참조 문헌</td><td>바르트·손탁·플루서·베르탈란피 등 이론 문헌. 저자·연도·카테고리·프리뷰 포함</td></tr>
+          <tr><td>검색</td><td>상단 검색창으로 LOG 엔트리 + 참조 문헌 동시 검색 가능</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="subsection-title" style="margin-top:28px;">MEASURE / MEASURE.DB 대화방<span class="badge live">LIVE</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>관객이 지시문 언어를 직접 입력해 교집합을 생성하는 인터랙션 핵심 기능</td></tr>
+          <tr><td>UI 형태</td><td>채팅창 형식. 지시문 코드(FRAGMT, TONEDIS 등) 또는 자연어 입력</td></tr>
+          <tr><td>동작</td><td>입력값이 LOG 엔트리·참조문헌·사진 메타데이터를 가로질러 검색 → 결과 표시</td></tr>
+          <tr><td>개념</td><td>"측정하는 자도 측정된다" — 관객의 검색 행위 자체가 작업 안에 기록되는 구조</td></tr>
+          <tr><td>연동</td><td>measure.html 별도 전체 페이지로 이동 가능</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="subsection-title" style="margin-top:28px;">SYSTEM NOTICE (시스템 공지)</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>MEASURE.DB 검색 채팅방 입장 유도 알림 카드</td></tr>
+          <tr><td>구현</td><td>CRT 스타일 공지 UI. "채팅방에 입장했습니다" + [입장 ▶] 버튼 → measure.html</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="subsection-title" style="margin-top:28px;">VIEWER_LOG.EXE<span class="badge demo">DEMO</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>MEASURE.DB 대화방 메시지·검색 기록의 실시간 피드 표시</td></tr>
+          <tr><td>현재 상태</td><td>데모 피드 (정적 샘플 데이터). 실제 사용자 데이터 연동 미구현</td></tr>
+          <tr><td>확장</td><td>백엔드(Firebase·Supabase 등) 연동 시 실시간 검색 기록 수신 가능</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="subsection-title" style="margin-top:28px;">WORK.STATUS (작업 현황)<span class="badge live">LIVE</span></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>내용</th></tr></thead>
+        <tbody>
+          <tr><td>역할</td><td>GitHub 커밋 기반 실시간 작업 타임라인</td></tr>
+          <tr><td>구현</td><td><code>work-status.html</code>을 iframe으로 삽입</td></tr>
+          <tr><td>데이터</td><td>GitHub API(<code>note-a/note-a-github</code>) + <code>published-posts.json</code></td></tr>
+          <tr><td>표시 항목</td><td>POSTS 수 / COMMITS 수 / 이번 주 커밋 / 최근 커밋일 / 처리량 스파크라인 / 커밋 피드</td></tr>
+          <tr><td>캐시</td><td>localStorage 5분 TTL. 레이트리밋 시 stale 캐시 폴백</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 4. 모바일 -->
+  <div class="section" id="s4">
+    <div class="section-head">
+      <span class="section-n">04</span>
+      <span class="section-title">모바일 대응</span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>항목</th><th>데스크탑</th><th>모바일 (≤767px)</th></tr></thead>
+      <tbody>
+        <tr><td>레이아웃</td><td>좌/우 레일 + 메인 콘텐츠 3단</td><td>단일 컬럼</td></tr>
+        <tr><td>네비게이션</td><td>하단 GBAR (iframe)</td><td>상단 햄버거 버튼 → 슬라이드 드로어</td></tr>
+        <tr><td>좌/우 레일</td><td>표시</td><td>미표시 (추후 확장 고려)</td></tr>
+        <tr><td>COMING SOON</td><td>fullscreen 오버레이</td><td>fullscreen 오버레이 (동일)</td></tr>
+        <tr><td>페이지 전환</td><td>CRT 전원 OFF 트랜지션</td><td>동일 (<code>crtNav()</code>)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 5. 데이터 구조 -->
+  <div class="section" id="s5">
+    <div class="section-head">
+      <span class="section-n">05</span>
+      <span class="section-title">데이터 구조</span>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title teal">admin-contents.json (주요 데이터 소스)</div>
+      <pre class="code"><span class="c">// 사진 메타데이터 배열</span>
+{
+  <span class="k">"photos"</span>: [
+    {
+      <span class="k">"dir"</span>:    <span class="s">"FOGDIS"</span>,          <span class="c">// DIR 코드 (지시문 ID)</span>
+      <span class="k">"status"</span>: <span class="s">"CORE"</span>,           <span class="c">// CORE | SUPPORT | DROP</span>
+      <span class="k">"date"</span>:   <span class="s">"2025.03.14"</span>,
+      <span class="k">"exif"</span>:   <span class="s">"f/2.8 · 1/250s · ISO 200"</span>,
+      <span class="k">"src"</span>:    <span class="s">"이미지 URL"</span>,
+      <span class="k">"sva"</span>:    { <span class="c">/* SVA 4축 분석값 (선택적) */</span> }
+    }
+  ]
+}</pre>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title teal">GL_FRAMES (런타임 사진 배열)</div>
+      <p><code>admin-contents.json</code> 로드 후 GL_FRAMES 배열에 정규화해 전 패널이 공유 사용. 미로드 시 하드코딩 샘플 데이터로 폴백 동작.</p>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title teal">STATUS 분류 기준</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>값</th><th>의미</th><th>시각화 색상</th></tr></thead>
+        <tbody>
+          <tr><td>CORE</td><td>지시문 조건을 충족한 채택 사진</td><td style="color:#e6af00;">■ 금색</td></tr>
+          <tr><td>SUPPORT</td><td>부분 충족 / 보조 역할</td><td style="color:#ff5a3c;">■ 산호</td></tr>
+          <tr><td>DROP</td><td>탈락 / 미채택</td><td style="color:#ff3b40;">■ 빨강</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 6. 제약사항 -->
+  <div class="section" id="s6">
+    <div class="section-head">
+      <span class="section-n">06</span>
+      <span class="section-title">제약사항</span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>GitHub API 레이트리밋</td><td>비인증 요청 60회/시간. localStorage 캐시(5분 TTL)로 완화. 초과 시 stale 캐시 표시</td></tr>
+        <tr><td>정적 호스팅</td><td>GitHub Pages 기반. 서버 사이드 로직 없음. 모든 기능이 클라이언트 JS로 구현되어 있음</td></tr>
+        <tr><td>VIEWER_LOG.EXE 실시간성</td><td>현재 데모 피드. 실제 채팅 기능 구현을 위해서는 별도 백엔드(Firebase, Supabase 등) 필요</td></tr>
+        <tr><td>이미지 관리</td><td>GitHub Pages 레포 용량 제한 1GB. 대용량 이미지 다수 시 외부 CDN 고려 필요</td></tr>
+        <tr><td>SVA 데이터</td><td>현재 일부 하드코딩. AI 분석 파이프라인 없이는 수동 입력 필요</td></tr>
+        <tr><td>iframe 통신</td><td>gbar.html ↔ set-os.html 간 <code>window.parent</code> 통신. 크로스오리진 환경에서 미동작</td></tr>
+        <tr><td>브라우저 지원</td><td>CSS Grid, requestAnimationFrame, localStorage 사용. IE 미지원</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 7. 확장성 -->
+  <div class="section" id="s7">
+    <div class="section-head">
+      <span class="section-n">07</span>
+      <span class="section-title">확장성</span>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">단기 — 현재 구조 내 확장</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>방법</th></tr></thead>
+        <tbody>
+          <tr><td>사진 추가</td><td><code>admin-contents.json</code>에 항목 추가 → GALLERY·DIST·SVA RADAR 자동 반영</td></tr>
+          <tr><td>LOG 엔트리 추가</td><td>JS 내 <code>LOG_ITEMS</code> 배열 확장</td></tr>
+          <tr><td>참조 문헌 추가</td><td>JS 내 <code>REF_ITEMS</code> 배열 확장</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">중기 — 구조 개선 필요</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>방법</th></tr></thead>
+        <tbody>
+          <tr><td>VIEWER_LOG.EXE 실시간화</td><td>Firebase Realtime DB 또는 Supabase 연동으로 관객 검색 기록 실제 수집</td></tr>
+          <tr><td>SVA 자동화</td><td>AI 분석 API 연동 → 신규 사진 업로드 시 SVA 4축값 자동 생성</td></tr>
+          <tr><td>MEASURE 검색 고도화</td><td>현재 단순 문자열 매칭 → 형태학 코드 기반 의미론적 검색으로 전환</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title red">장기 — 아키텍처 전환</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>항목</th><th>방법</th></tr></thead>
+        <tbody>
+          <tr><td>CMS 연동</td><td>현재 JSON 파일 직접 편집 방식 → Headless CMS(Notion API, Contentful 등) 연동</td></tr>
+          <tr><td>SET:Inclusion 공개</td><td>COMING SOON 해제 후 SET:Inclusion 아카이브 섹션 별도 구성</td></tr>
+          <tr><td>교집합 동적 시각화</td><td>SET와 SET:Inclusion의 실제 채택 데이터 기반으로 Intersection(F.01) 다이어그램 동적 렌더링</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 8. 파일 구성 -->
+  <div class="section" id="s8">
+    <div class="section-head">
+      <span class="section-n">08</span>
+      <span class="section-title">파일 구성</span>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>파일</th><th>역할</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td>set-os.html</td><td>메인 OS 인터페이스</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>gbar.html</td><td>하단 네비게이션 바 (iframe)</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>work-status.html</td><td>작업 현황 패널 (iframe)</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>index.html</td><td>랜딩 페이지 (PROJECT SET)</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>gallery1.html</td><td>SET 갤러리 전체 페이지</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>page-log.html</td><td>LOG 전체 페이지</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>page-inclusion.html</td><td>SET:Inclusion 페이지</td><td><span class="badge soon">COMING SOON</span></td></tr>
+        <tr><td>reference.html</td><td>참조 문헌 전체 페이지</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>measure.html</td><td>MEASURE 검색 전체 페이지</td><td><span class="badge live">LIVE</span></td></tr>
+        <tr><td>pilot.html</td><td>PILOT CHANNEL 전체 페이지</td><td><span class="badge pilot">PILOT</span></td></tr>
+        <tr><td>admin-contents.json</td><td>사진 메타데이터 데이터 소스</td><td></td></tr>
+        <tr><td>published-posts.json</td><td>발행 포스트 목록</td><td></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="foot">
+    <span>SET.OS — 요구사항 정의서 v1.0</span>
+    <span>"측정하는 자도 측정된다"</span>
+  </div>
+
+</div>
+</body>
+</html>
