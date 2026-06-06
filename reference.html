@@ -296,16 +296,23 @@ canvas#cv{
   .ps-title { font-size: 10px; }
   .ps-sub { font-size: 5.5px; }
 
-  /* 팝업: 고정 800px → 전체 폭 */
+  /* 팝업: fixed로 뷰포트 기준 배치 (부모 overflow 잘림 방지) */
   #item-popup {
-    width: calc(100% - 12px) !important;
-    left: 6px !important;
+    position: fixed !important;
+    top: env(safe-area-inset-top, 6px) !important;
+    bottom: env(safe-area-inset-bottom, 6px) !important;
+    left: env(safe-area-inset-left, 0px) !important;
+    right: env(safe-area-inset-right, 0px) !important;
+    width: auto !important;
     transform: none !important;
   }
   #item-popup.open { transform: none !important; }
   #popup-header { padding: 14px 20px 12px; gap: 12px; }
   #popup-title { font-size: 16px; }
-  #popup-body { padding: 24px 28px 36px; font-size: 13px; }
+  #popup-body {
+    padding: 20px 24px env(safe-area-inset-bottom, 32px) !important;
+    font-size: 13px;
+  }
 
   /* 인트로 */
   #intro-quote { font-size: 10px; max-width: 88%; margin-top: 28px; }
