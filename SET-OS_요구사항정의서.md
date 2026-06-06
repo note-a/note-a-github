@@ -35,6 +35,8 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 ## 2. 시스템 구조
 
+![SET.OS 전체 인터페이스](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-full.png)
+
 ```
 ┌───────────────────────────────────────────────────────────────────────┐
 │  LEFT RAIL          │        MAIN AREA (1140×757px)         │ RIGHT RAIL │
@@ -60,7 +62,11 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 ### 3-1. LEFT RAIL — 집합 시각화
 
+![LEFT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-left-rail.png)
+
 #### F.01 — Intersection (집합도)
+
+![F.01 Intersection](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f01.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -71,6 +77,8 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 #### F.02 — CONTOUR FIELD (등고선)
 
+![F.02 CONTOUR FIELD](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f02.png)
+
 | 항목 | 내용 |
 |------|------|
 | 역할 | 작업 밀도와 분포를 등고선 지형으로 표현 |
@@ -80,17 +88,23 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 #### F.03 — DATA (측정값)
 
+![F.03 DATA](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f03.png)
+
 | 항목 | 내용 |
 |------|------|
 | 역할 | 전체 작업 수치 요약 |
-| 표시 항목 | 집합 크기(|A|, |B|, |A∩B|, |A∪B|), 경계 길이(∂A), 교집합 비율, 등고선 고도 밴드, 그래디언트 |
+| 표시 항목 | 집합 크기(｜A｜, ｜B｜, ｜A∩B｜, ｜A∪B｜), 경계 길이(∂A), 교집합 비율, 등고선 고도 밴드, 그래디언트 |
 | 데이터 | admin-contents.json 집계값 또는 하드코딩 |
 
 ---
 
 ### 3-2. RIGHT RAIL — 분석·실험
 
+![RIGHT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-right-rail.png)
+
 #### F.04 — SVA RADAR (4축 형태학 분석)
+
+![SVA RADAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-radar.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -102,6 +116,8 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 #### ANALYSIS — 분석 데이터
 
+![ANALYSIS](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-analysis.png)
+
 | 항목 | 내용 |
 |------|------|
 | 역할 | 선택된 사진의 상세 데이터 표시 |
@@ -109,6 +125,8 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 | 연동 | GALLERY 사진 선택 시 실시간 업데이트 |
 
 #### PILOT CHANNEL
+
+![PILOT CHANNEL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-pilot.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -137,9 +155,13 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 ---
 
-### 3-3. MAIN AREA — 메인 콘텐츠
+### 3-3. TOP ROW — 메인 콘텐츠
+
+![TOP ROW 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-top.png)
 
 #### `<GALLERY>` 패널 (Top-Left)
+
+![GALLERY](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-gallery.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -166,6 +188,10 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 #### `<LOG>` 패널 (Top-Right)
 
+![LOG ICON 뷰](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-log.png)
+
+![LOG LIST 뷰](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-log-list.png)
+
 | 항목 | 내용 |
 |------|------|
 | 역할 | 작업의 문법·지시문 문서 파일 브라우저. 작업 전 과정의 기록에 접근하는 인터페이스 |
@@ -182,16 +208,11 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 | 구성 | RULE_1~5: 작업 근본 원칙. 카테고리(SVA/GRAMMAR/DIR), STATUS(CORE), 프리뷰 텍스트 |
 | 검색 연동 | 상단 검색창으로 엔트리 + 참조문헌 동시 검색 |
 
-#### 중앙 컨트롤 패널 (Top-Center)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | LOG 패널 스크롤 제어 |
-| 버튼 | ▲ UP (LOG 위로 스크롤) / ✕ EXIT / ▼ DOWN (LOG 아래 스크롤) |
-
 ---
 
 ### 3-4. GBAR — 중간 타이틀바
+
+![GBAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-gbar.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -204,7 +225,13 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 ### 3-5. BOTTOM ROW — 하단 영역
 
-#### MEASURE 채팅 입장 버튼
+![BOTTOM ROW 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-bot.png)
+
+#### G-1. NOTICE + VIEWER_LOG.EXE
+
+![G-1 NOTICE / G-2 VIEWER_LOG](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-notice.png)
+
+**MEASURE 채팅 입장 버튼 (G-1)**
 
 | 항목 | 내용 |
 |------|------|
@@ -212,7 +239,7 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 | 구현 | CRT 스타일 시스템 공지 카드. "채팅방에 입장했습니다" + [입장 ▶] 버튼 |
 | 연동 | 클릭 시 measure.html로 이동 |
 
-#### VIEWER_LOG.EXE
+**VIEWER_LOG.EXE (G-2)**
 
 | 항목 | 내용 |
 |------|------|
@@ -221,15 +248,19 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 | 현재 상태 | 데모 피드(정적 샘플). 실제 사용자 검색 데이터 실시간 연동 미구현 |
 | 확장 | 백엔드 연동 시 실시간 검색 기록 수신 가능 |
 
-#### ID CARD
+#### G-2b. VIEWER 3D + ID CARD
+
+![G-2b VIEWER 3D + ID CARD](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-viewer-id.png)
 
 | 항목 | 내용 |
 |------|------|
-| 파일 | `id-card.html` (iframe 삽입) |
+| ID CARD 파일 | `id-card.html` (iframe 삽입) |
 | 역할 | 작가/프로젝트 신원 카드 |
 | 표시 항목 | 프로젝트명, 작가 정보, 작업 상태, 접속자 수 등 |
 
-#### WORK STATUS
+#### G-3. WORK STATUS
+
+![G-3 WORK STATUS](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-work.png)
 
 | 항목 | 내용 |
 |------|------|
@@ -239,13 +270,62 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 | 표시 항목 | POSTS 수 / COMMITS 수 / 이번 주 커밋 / 최근 커밋 날짜 / 스파크라인 / 커밋 피드 |
 | 캐시 | localStorage 5분 TTL. 레이트리밋 시 stale 캐시 폴백 |
 
-#### SET.TEXT — 개념 텍스트 패널
+#### G-4. SET.TEXT — 개념 텍스트 패널
+
+![G-4 SET.TEXT](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-settext.png)
 
 | 항목 | 내용 |
 |------|------|
 | 역할 | 작업 개념 서술 텍스트 상시 노출 |
 | 내용 | SET의 구조, 측정 논리, MEASURE 의미, 유예 선언 등 작업 전체 서술 |
 | 클릭 | 전체 보기 모드로 확장 |
+
+---
+
+### 3-6. 오버레이 & 모달
+
+#### COMING SOON 오버레이
+
+![COMING SOON](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-coming.png)
+
+| 항목 | 내용 |
+|------|------|
+| 역할 | SET:Inclusion 섹션 미공개 안내 fullscreen 오버레이 |
+| 트리거 | GBAR의 "SET:Inclusion" 탭 클릭 → `mobComingSoon()` 호출 |
+| 구현 | 전체 화면 오버레이. 클릭/ESC로 닫기 |
+
+#### STATEMENT MODAL
+
+![STATEMENT MODAL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-stmt.png)
+
+| 항목 | 내용 |
+|------|------|
+| 역할 | 작업 성명서·작가 노트 전체 텍스트 열람 |
+| 트리거 | STATUS BAR 우측 "STATEMENT" 버튼 클릭 |
+| 구현 | 스크롤 가능한 오버레이 모달 |
+
+#### DOCS MODAL
+
+![DOCS MODAL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-docs.png)
+
+| 항목 | 내용 |
+|------|------|
+| 역할 | 기술 문서 / 요구사항 정의서 열람 |
+| 트리거 | STATUS BAR 우측 "DOCS" 버튼 클릭 |
+| 구현 | 스크롤 가능한 오버레이 모달 |
+
+---
+
+### 3-7. STATUS BAR
+
+![STATUS BAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-statusbar.png)
+
+| 항목 | 내용 |
+|------|------|
+| 위치 | 화면 최하단 고정 바 |
+| 좌측 | 시스템 상태 메시지 (실시간 텍스트 롤링) |
+| 우측 | STATEMENT / DOCS 버튼 |
+| 역할 | 전체 인터페이스 상태 표시 + 주요 문서 진입점 |
 
 ---
 
