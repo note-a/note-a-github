@@ -1,9 +1,9 @@
 # SET.OS — 요구사항 정의서
 
-**문서 버전:** v2.0  
+**문서 버전:** v3.0  
 **작성일:** 2026-06-06  
 **대상 URL:** https://note-a.github.io/set-os.html  
-**관련 파일:** `set-os.html`, `gbar.html`, `work-status.html`, `id-card.html`, `pilot.html`, `measure.html`
+**관련 파일:** `set-os.html` (4,571줄), `gbar.html`, `work-status.html`, `id-card.html`, `pilot.html`, `measure.html`
 
 ---
 
@@ -18,12 +18,8 @@ SET는 사진 작업이지만 사진으로 시작하지 않는다. 먼저 지시
 **온라인 이동은 아카이빙이 아니다.** SET의 논리가 다른 방식으로 계속되는 것이다. 이 전제 아래 set-os.html은 세 가지 기능을 동시에 수행하도록 설계되었다.
 
 1. **측정 장치**: 관객이 수동적으로 사진을 보는 것이 아니라, MEASURE를 통해 지시문 언어를 직접 입력하면 교집합이 생성된다. 관객의 검색이 교집합을 만들고, 그 기록은 작업 안에 누적된다. 측정하는 자도 측정된다.
-
 2. **과정의 가시화**: 어떤 사진이 CORE(채택)·SUPPORT(보조)·DROP(탈락)되었는지, 어떤 조건이 반복 출현했는지를 데이터로 드러낸다. 선별된 결과만이 아니라 과정 전체가 공개된다.
-
-3. **집합의 확장**: MEASURE 외에도 두 가지 기능이 추가된다. ATTR.TEST는 SET 바깥의 이미지를 업로드하면 SET의 문법 코드 중 어디에 가장 가까운지 분석해 반환한다 — 문법이 측정 도구가 된다. NULL.LOG는 어디에도 귀속되지 못한 검색어와 이미지를 자동 수집하고, 이것들이 다음 작업 Exclusion의 데이터가 된다 — 집합이 자신의 후속을 스스로 준비한다.
-
-SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유예(Suspension) — 측정이 지속된다. set-os.html은 그 측정의 인터페이스다.
+3. **집합의 확장**: NULL.LOG는 검색 결과 없었던 단어를 자동 수집한다. ATTR.TEST는 외부 이미지를 SET의 문법 코드로 분석한다. 집합이 자신의 후속을 스스로 준비한다.
 
 ### 인터페이스 원칙
 
@@ -38,21 +34,32 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 ![SET.OS 전체 인터페이스](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-full.png)
 
 ```
-┌───────────────────────────────────────────────────────────────────────┐
-│  LEFT RAIL          │        MAIN AREA (1140×757px)         │ RIGHT RAIL │
-│                     │                                        │            │
-│  F.01 Intersection  │  TOP ROW:                              │  F.04      │
-│  (집합도)           │   <GALLERY>  │  <LOG>  │  [CTRL]       │  SVA RADAR │
-│                     │                                        │            │
-│  F.02 CONTOUR FIELD │  GBAR (중간 타이틀바, iframe)          │  ANALYSIS  │
-│  (등고선)           │                                        │            │
-│                     │  BOTTOM ROW:                           │  PILOT     │
-│  F.03 DATA          │   [MEASURE 입장] + [VIEWER_LOG.EXE]   │  CHANNEL   │
-│  (측정값)           │   [ID CARD]  [WORK STATUS]  [SET.TEXT] │            │
-└───────────────────────────────────────────────────────────────────────┘
+body
+ └─ div#shell  (뷰포트 전체 · CRT 배경 + scanline 오버레이)
+     ├─ div#wrap [1140×757px]  grid-rows: 1fr / 84px / 1fr / 28px
+     │    ├─ div#top-row       (GALLERY + LOG + 컨트롤 버튼)
+     │    ├─ div#gbar          (GBAR iframe)
+     │    ├─ div#bot-row       (NOTICE + VIEWER_LOG + ID CARD + WORK + SET.TEXT)
+     │    └─ div#botbar        (상태 바 + 네비게이션)
+     ├─ aside.lr-rail          (좌측 레일 · fixed 포지션)
+     ├─ aside.rr-rail          (우측 레일 · fixed 포지션)
+     ├─ div#bg                 (배경 그라디언트 레이어)
+     ├─ div.crt                (CRT 스캔라인 :: before 오버레이)
+     └─ div#bg-orbs            (7개 애니메이션 구체)
+aside.lr-rail / aside.rr-rail — JS place() 함수가 #wrap BoundingClientRect 기준으로 fixed 배치
+                                scale(__hudScale × 1.2) · transform-origin 각 레일 기준점
 ```
 
-**데이터 소스:** `admin-contents.json` (사진 메타데이터), `published-posts.json` (포스트 목록), GitHub Commits API
+**데이터 소스 전체**
+
+| 소스 | URL | 용도 |
+|------|-----|------|
+| `admin-contents.json` | `./admin-contents.json` | 사진 메타데이터 + RULE 항목 |
+| `published-posts.json` | GitHub raw URL | LOG 폴더 목록 |
+| GitHub Commits API | `api.github.com/repos/note-a/note-a-github/commits?per_page=50` | WORK STATUS |
+| `localStorage set_null_log` | 로컬 | PILOT NULL.LOG 검색어 누적 |
+| `localStorage ws_commits` | 로컬 (5분 TTL) | GitHub API 응답 캐시 |
+| `localStorage ws_posts` | 로컬 (5분 TTL) | posts 응답 캐시 |
 
 ---
 
@@ -60,378 +67,980 @@ SET는 미결인 채로 공개되어 있다. 종결을 향하지 않는다. 유�
 
 ---
 
-### 3-1. LEFT RAIL — 집합 시각화
-
-![LEFT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-left-rail.png)
-
-#### F.01 — Intersection (집합도)
-
-![F.01 Intersection](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f01.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | SET와 SET:Inclusion 두 작업의 교집합 구조를 SVG 벤 다이어그램으로 시각화 |
-| 구현 | SVG 기반 동적 집합 다이어그램. 원 두 개의 겹침 면적이 교집합 |
-| 데이터 | 현재 정적. 추후 실제 채택률 데이터 연동으로 교집합 면적 동적 변화 가능 |
-| 상태 | 헤더 클릭 시 패널 접기/펼치기 |
-
-#### F.02 — CONTOUR FIELD (등고선)
-
-![F.02 CONTOUR FIELD](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f02.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | 작업 밀도와 분포를 등고선 지형으로 표현 |
-| 구현 | SVG path 기반 등고선 애니메이션 + 하단 단면 프로파일(SECTION A–A′) |
-| 데이터 | 현재 정적 시각화 (개념적 밀도 표현). DIR별 촬영 밀도 연동 시 실측 분포 지도로 전환 가능 |
-| 상태 | 헤더 클릭 시 패널 접기/펼치기 |
-
-#### F.03 — DATA (측정값)
-
-![F.03 DATA](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f03.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | 전체 작업 수치 요약 |
-| 표시 항목 | 집합 크기(｜A｜, ｜B｜, ｜A∩B｜, ｜A∪B｜), 경계 길이(∂A), 교집합 비율, 등고선 고도 밴드, 그래디언트 |
-| 데이터 | admin-contents.json 집계값 또는 하드코딩 |
-
----
-
-### 3-2. RIGHT RAIL — 분석·실험
-
-![RIGHT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-right-rail.png)
-
-#### F.04 — SVA RADAR (4축 형태학 분석)
-
-![SVA RADAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-radar.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | 선택된 사진의 SVA(Sequential Vision Autopsy) 4축 분석값을 레이더 차트로 표시 |
-| 4축 구성 | DS (도메인 구조) / SD (피사체 세부) / SA (표면 분석) / KV (핵심 변수) |
-| 구현 | SVG 기반 레이더 차트. GALLERY에서 사진 클릭 시 해당 사진의 분석값으로 업데이트 |
-| 데이터 | admin-contents.json의 sva 필드 |
-| 원칙 | 미학적·감정적 해석 완전 배제. 형태학적 수치만 표시 |
-
-#### ANALYSIS — 분석 데이터
-
-![ANALYSIS](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-analysis.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | 선택된 사진의 상세 데이터 표시 |
-| 표시 항목 | 이미지 ID, 촬영 회차(round), 인덱스(n/전체), DS·SD·SA·KV 수치, KV 비중 바, 종합 점수(score), 판정(CORE/SUPPORT/DROP) |
-| 연동 | GALLERY 사진 선택 시 실시간 업데이트 |
-
-#### PILOT CHANNEL
-
-![PILOT CHANNEL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-pilot.png)
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | SET의 문법 체계 바깥에 있는 이미지와 언어를 위한 실험 공간. "공집합 채널" |
-| 탭 구성 | **NULL.LOG** / **ATTR.TEST** / MANUAL |
-| 접근 방식 | 패널 하단 "OPEN PILOT.EXP" 버튼 → pilot.html 전체 페이지 이동 |
-
-**NULL.LOG 탭**
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | MEASURE에서 검색 결과가 없었던 단어(공집합 검색어)를 자동 수집·표시 |
-| 동작 | measure.html의 공집합 발생 시 localStorage(`set_null_log`)에 키워드 + 횟수 누적. 3회 이상 = 지시문 후보로 분류 |
-| 의미 | 이 데이터는 다음 작업 **Exclusion**의 입력 데이터가 된다. NULL.LOG에 쌓이는 것들이 집합의 바깥을 정의하고, 그 바깥이 다음 작업의 시작 조건이 된다 |
-| 표시 | 날짜·키워드·횟수 목록. 3회↑ 항목은 시각적 구분 처리 |
-
-**ATTR.TEST 탭**
-
-| 항목 | 내용 |
-|------|------|
-| 역할 | 외부 이미지를 업로드하면 SET의 어떤 문법 코드(G-01~G-14 등)에 가장 가까운지 점수 순으로 분석 반환 |
-| 동작 | 드래그 또는 클릭으로 이미지 업로드 → 문법 코드별 귀속 점수 표시 |
-| 귀속 불가 | 어떤 문법으로도 설명되지 않는 경우 "귀속 불가" 반환. 이것도 유효한 결과 |
-| 의미 | SET의 문법이 내부 분류 체계를 넘어 외부 이미지를 측정하는 도구가 된다 |
-| 전체 기능 | pilot.html에서 완전 구현. PILOT CHANNEL 패널은 요약 진입점 |
-
----
-
-### 3-3. TOP ROW — 메인 콘텐츠
-
-![TOP ROW 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-top.png)
-
-#### `<GALLERY>` 패널 (Top-Left)
+### 3-1. GALLERY 패널 (`SET.VIEW`)
 
 ![GALLERY](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-gallery.png)
 
-| 항목 | 내용 |
+**DOM:** `#top-row > .pnl:nth-child(1)` → `.pnl-in` → `#gly-1` / `#gly-2`  
+**탭 전환:** `glSwitch(n)` 함수 — `gly-1`(ANALYSIS), `gly-2`(CONTACT) 중 하나에 `.active`
+
+---
+
+#### ① ANALYSIS 탭 (기본 뷰)
+
+**데이터: `GL_FRAMES` 배열**
+
+| 상태 | 내용 |
 |------|------|
-| 역할 | SET 사진 아카이브의 메인 뷰어 |
-| 탭 구성 | **ANALYSIS**(기본) / **CONTACT**(컨택 시트) |
+| 초기값 | 10개 seed 객체 `{seed, dir, n, total, status, date, exif}` |
+| fetchData() 이후 | `admin-contents.json` photos 파싱 → Fisher-Yates 셔플 후 n/total 재설정 |
+| 필드 | `{src, dir, id, n, total, status, date, exif}` |
+| src 해석 | `resolveUrl(f)`: `http` / `/` / `images/` 시작이면 그대로, 아니면 `images/` 프리픽스 |
+| 썸네일 | `thumbUrl(u)`: `/t/` 서브디렉토리의 동일명 파일 |
+| verdict | `(p.verdict\|\|'—').toUpperCase()` → `CORE` / `SUPPORT` / `DROP` |
+| 자동 전환 | `window._gvaTimer`: 8초마다 `glAThumbClick(glIdx+1)` |
 
-**ANALYSIS 뷰 (기본)**
+**좌측 — `#gva-wrap` (사진 + CRT 시각화)**
 
-| 항목 | 내용 |
+사진 렌더링:
+
+| 요소 | 설명 |
 |------|------|
-| 좌측 | 현재 사진 1장 전체 표시. GALLERY·ANALYSIS 레이블, DIR코드, 날짜, EXIF 오버레이. 스캔라인·크로스헤어 등 CRT 스코프 효과 |
-| 클릭 동작 | "ACCESS GRANTED" 애니메이션 표시 후 상세 모드로 전환 |
-| 우측 (DIST) | 전체 DIR의 사진 분포를 산포도(scatter plot)로 시각화. 금색=CORE, 산호=SUPPORT, 빨강=DROP |
-| 탐색 | ◄► 화살표로 사진 이동 |
-| 메타데이터 | 좌하단: STATUS(CORE/SUPPORT/DROP), 인덱스 표시 |
+| `#gva-bg` (img) | 현재 GL_FRAMES[glIdx].src 이미지. filter: `brightness(1.0) contrast(0.95) grayscale(1) sepia(1) saturate(2.2) hue-rotate(-8deg)` → 주황/세피아 톤 |
+| 클릭 | `gvaAccessGranted()` → "ACCESS GRANTED" 오버레이 1.8초 표시 → 1.5초 후 gallery1.html 새 탭 |
+| hover | `gvaHoverIn()` / `gvaHoverOut()` → filter `saturate(2.4) brightness(1.15)` 강화 |
 
-**CONTACT 뷰**
+오버레이 레이어 (z-index 낮→높):
 
-| 항목 | 내용 |
+| z-index | 요소 | 역할 |
+|---------|------|------|
+| 3 | `#gva-grid` | 18×18px 격자 `rgba(255,74,22,.048)` 배경 이미지 |
+| 4 | `#gva-sweep` | 52px 수직 sweep bar. animation: `gva-sweep 4.8s linear infinite` (left:-52px → 100%) |
+| 4 | 텍스트 오버레이 | 좌상단 `#gva-dir`("PROJECT SET"), 우상단 `#gva-date`/`#gva-exif`, 하단 `#gva-cls`(판정), `#gva-ctr`(인덱스) |
+| 5 | `.gva-trail` | 타깃 이동 전 잔상 박스 최대 3개, 3초 fade out |
+| 5 | `#gva-hline` | 2px 수평 스캔라인. animation: `gva-hline 3.4s linear infinite` (top:-2px → 100%) |
+| 6 | `.gva-corner.tl/.tr/.bl/.br` | 4개 코너 브래킷 18×18px. animation: `gva-bktpulse 3.5s ease-in-out infinite` (16→10→16px 크기 펄스) |
+| 6 | `#gva-tick` | 8×8px 틱 커서, 타깃 중심 위치 추적 |
+| 6 | `#gva-ping` | 40×30px ring. animation: `gva-ping 2s ease-out infinite` (scale 1→2.8, opacity 사라짐) |
+| 6 | `#gva-measure-svg` | 타깃(`#gva-target`)↔보조 감지(`#gva-detect2`) 사이 대시 측정선(`#gva-mline`) + 거리 라벨(`#gva-mdist`). 거리 = `sqrt(dx²+dy²) × 0.31` (단위: m) |
+| 7 | `#gva-target` | 72×54px 주황 테두리 박스, 흰 코너. 2800ms마다 `moveTarget()` 랜덤 이동. transition: `left 2.2s cubic-bezier`, `top 1.8s` |
+| 7 | `#gva-detect2` | 18×14px 보조 감지 박스. 4200ms마다 `moveDet2()` 랜덤 이동 |
+| 8 | `#gva-crosshair` SVG | `buildCrosshair()`로 생성. 수평/수직 arms (GAP=14px, ARM=min(W,H)×38%), 12px 간격 틱 마크, 두 개 링 (r=ARM×0.55, r=ARM×0.78), 중심 dot |
+| 9 | `#gva-glitch` | animation: `gva-glitch 6s step-end infinite` — 간헐적 수평 노이즈 바 |
+| 10 | `#gva-scan-texture` | `repeating-linear-gradient` 스캔라인 텍스처. animation: `gva-flk 7s linear infinite` (명도 깜빡임) |
+| 15 | `#gva-lock-msg` | "LOCK ACQUIRED · Xm" 하단 알림. animation: `gva-lock-show 2.4s` |
+| 20 | `#gva-access` | "ACCESS GRANTED" 텍스트. 기본 opacity:0. 클릭 시 `.active` → animation: `gva-access-in 1.8s + gva-access-flk 1.8s` |
+
+**우측 — DIST scatter 패널 (`#gl-scatter`, SVG)**
+
+`buildGlScatter()`로 생성. ViewBox: `0 0 160 280`
+
+| 요소 | 설명 |
 |------|------|
-| 역할 | 전체 사진을 컨택 시트 그리드로 표시 |
-| 표시 | DIR 정보 + CORE/SUPPORT/DROP 수량 요약 헤더 |
-| 데이터 소스 | `admin-contents.json` → GL_FRAMES 배열. 미로드 시 하드코딩 샘플 폴백 |
+| 데이터 | `ALL_DIRS` 배열 — 45개 DIR 코드와 사진 수 `{code, n}` |
+| X축 | `TEMPORAL AXIS →` — 시간축 (DIR 순서 = 촬영 순서) |
+| Y축 | `FORMAL DEPTH` — 형태적 깊이 (DIR 인덱스 기반 수직 배치) |
+| 점 크기 | `Math.max(2.5, d.n / maxN × 10)` — 사진 수에 비례 |
+| 점 색상 CORE | `rgba(230,175,0,1)` — 골드 |
+| 점 색상 SUP | `rgba(255,90,60,1)` — 코랄 |
+| 점 색상 DROP | `rgba(210,20,20,1)` — 레드 |
+| 점 색상 pending | `rgba(180,180,180,.22)` — 그레이 |
+| 상태 결정 | GL_FRAMES에서 DIR별 CORE/SUPPORT/DROP 카운트 → 최댓값. 데이터 없으면 인덱스 기반 (0-14=CORE, 15-29=SUP, 30+=DROP) |
+| drift 애니메이션 | 각 점: seed=42 기반 pseudo-random, `sin/cos` 파형으로 ±4~11px 진동 |
+| 스캔라인 | y축 따라 천천히 내려가는 수평선 (opacity pulse) |
+| 범례 | 하단: CORE(골드) · SUP(코랄) · DROP(레드) · 보류(그레이) |
 
-#### `<LOG>` 패널 (Top-Right)
+**네비게이션 및 상태**
+
+| 요소 | 설명 |
+|------|------|
+| `glAThumbClick(idx)` | 인덱스 범위 조정 후 `#gva-bg.src`, 텍스트 오버레이 업데이트 |
+| 키보드 | `ArrowLeft` → 이전, `ArrowRight` → 다음 |
+| `#gva-cls` | 현재 사진 판정: `■ CORE` / `■ SUPPORT` / `■ DROP` |
+| `#gva-ctr` | 현재 인덱스 / 전체 수 (`001 / 021` 형식) |
+| `#gva-dir` | DIR 코드 ("PROJECT SET") |
+| `#gva-date` | 촬영일 (filename에서 정규식 `/\/(\d{4})\/(\d{2})\/(\d{2,4})\//` 추출) |
+| `#gva-exif` | EXIF 정보 (`f/2.8 · 1/250s · ISO 200` 형식) |
+
+---
+
+#### ② CONTACT 탭 (`#gly-2`)
+
+`buildCs2Grid()`로 생성.
+
+| 요소 | 설명 |
+|------|------|
+| 레이아웃 | 6열 그리드 `#cs2-grid` |
+| 데이터 | GL_FRAMES 또는 CS_DATA(정적 폴백) |
+| 셀 클래스 | `.cs2-cell.core` / `.sup` / `.drop` |
+| 사진 | `.cs2-img img` — 동일한 세피아 filter 적용 |
+| 하단 바 | `.cs2-bar` — 번호 + 배지 (`C`=CORE, `S`=SUP, `—`=DROP) |
+| CORE 강조 | `outline: 1px solid rgba(255,74,22,.6)` |
+| DROP 처리 | `img opacity: 0.4` |
+
+---
+
+### 3-2. LOG 패널 (`HUD.XT2`)
 
 ![LOG ICON 뷰](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-log.png)
 
 ![LOG LIST 뷰](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-log-list.png)
 
-| 항목 | 내용 |
-|------|------|
-| 역할 | 작업의 문법·지시문 문서 파일 브라우저. 작업 전 과정의 기록에 접근하는 인터페이스 |
-| 뷰 구성 | **ICON 뷰**(기본, 폴더 그리드) / **LIST 뷰**(파일 목록) |
-| 폴더 목록 | 문법(grammar) 폴더·지시문(DIR) 폴더·SVA 분석 폴더·작업 가이드 폴더 등 SET 작업 전 문서 구조 반영 |
-| 검색 | 상단 검색창으로 폴더/파일 이름 검색 |
-| 클릭 | page-log.html로 이동 |
+**DOM:** `#top-row > .pnl:nth-child(2)` → `#hud-pnl`
 
-**LOG 패널 내 LOG 엔트리 (LIST 뷰)**
+**헤더 (`h-title`)**
 
-| 항목 | 내용 |
+| 요소 | 설명 |
 |------|------|
-| 역할 | RULE 카드 형식의 작업 원칙 목록 |
-| 구성 | RULE_1~5: 작업 근본 원칙. 카테고리(SVA/GRAMMAR/DIR), STATUS(CORE), 프리뷰 텍스트 |
-| 검색 연동 | 상단 검색창으로 엔트리 + 참조문헌 동시 검색 |
+| `h-logo-main` | `<LOG>` |
+| `h-logo-sub` | `LOG` |
+| LIVE 배지 | 녹색 dot pulse 애니메이션 |
+| ERR 배지 | 빨간 dot |
+| 탭 `■ ICON` | `data-v="icon"` — `.h-folders` 표시 |
+| 탭 `☰ LIST` | `data-v="list"` — `.h-list` 표시 |
+| 검색창 | `.h-search input` placeholder "SEARCH..." — 현재 바인딩 없음 (UI만 존재) |
 
 ---
 
-### 3-4. GBAR — 중간 타이틀바
+#### ① ICON 뷰 (`.h-folders`, 4열 그리드)
+
+**데이터 소스:**
+
+| 소스 | URL | 필터 조건 |
+|------|-----|---------|
+| `published-posts.json` | `https://raw.githubusercontent.com/note-a/note-a-github/main/published-posts.json` | `p.publishedSection === 'rule'` |
+| `admin-contents.json` | `./admin-contents.json` | `rule.items` 배열 → `.fixed=true` 표시 |
+| 렌더 순서 | `admRule.concat(pubRule)` | — |
+
+**각 폴더 아이템 (`.fld-item`)**
+
+| 요소 | 설명 |
+|------|------|
+| SVG 아이콘 | 경로: `M3 8 H17 L20 12 H43 V32 H3 Z` — 폴더 실루엣 |
+| `--fc` CSS 변수 | 10가지 주황 계열 색상 중 순환 배정 |
+| `.fld-item.fixed` | 채워진(filled) 폴더 아이콘 — admin rule 항목 |
+| `.fld-name` | 폴더명, 너비 초과 시 ellipsis |
+| 클릭 | `openPost(p)` → `crtNav('page-log.html?post='+encodeURIComponent(key))` |
+
+**정적 초기 폴더 26개** (JS 로드 전 HTML에 내장):
+*Unjudgmentable grammer, figure background grammer, space structure grammer, objects closeup grammer, figure forward grammer, figure background DIR, figure forward DIR, objects closeup DIR, Unjudgmentable DIR, instruction table, 2차 작업 가이드, Meetings and work directions, data Dashboard 2025 등*
+
+---
+
+#### ② LIST 뷰 (`.h-list` / `.h-rows`)
+
+| 컬럼 | 내용 |
+|------|------|
+| NO | 행 번호 |
+| 체크 | 선택 체크 |
+| FILENAME | 파일명 |
+| 썸네일 | 미리보기 이미지 |
+| DATE | `DD/MM/YYYY` |
+| SYS INFO | 시스템 메타정보 |
+| × | 닫기 |
+
+- `.h-row.sel`: 선택 시 배경 `rgba(255,74,22,.14)`
+- 정적 샘플 14행 내장 (`File:Dir:XXXX/X` 형식)
+- 클릭 → `openPost()` 동일
+
+---
+
+#### ③ HUD Footer (`.h-foot`)
+
+| 영역 | 설명 |
+|------|------|
+| `.hf-left` (130px) | Progress bar 2개 (`hpfill` animation 22%→68% 왕복) + path 텍스트 |
+| `#logStream2` | 실시간 로그 스트림. `addLine()` 300~1700ms 간격 실행. 형식: `HH:MM:SS.mmm [LV] [SRC] msg`. 최대 14줄 유지. SRC: NET/FS/SYS/DIR/IDX/AUTH/CACHE/IO. 가중치: OK(5)/INF(4)/WRN(3)/ERR(1) |
+| `#logCount2` | 누적 로그 카운트 |
+| `.hf-right` (142px) | 버튼 행 + 상태 인디케이터 |
+
+**HUD Status Bar (`.h-status`)**: `HS.09` · `DIR:0345` · `ERR:02 WARN` · `SET XT2`
+
+---
+
+#### ④ 중앙 컨트롤 패널 (72px 컬럼)
+
+| 버튼 | 기능 |
+|------|------|
+| ▲ UP (`.ctrl-btn.amber`) | `scrollHud(-1)` → h-folders 또는 h-rows 100px 위로 |
+| ✕ EXIT (`.ctrl-btn.exit`) | onclick 없음 (시각적 UI) |
+| ▼ DOWN (`.ctrl-btn.teal`) | `scrollHud(1)` → 100px 아래로 |
+
+---
+
+### 3-3. LEFT RAIL — 집합 시각화
+
+![LEFT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-left-rail.png)
+
+**DOM:** `aside.lr-rail`  
+`position:fixed; width:240px; height:448px; transform-origin:top right`  
+배치: `#wrap` 왼쪽 가장자리 기준, `scale(__hudScale × 1.2)`  
+1560px 이하 미디어쿼리에서 `display:none` → JS `injectRailCSS()`로 override
+
+**패널 접기:** `.lr-h` 클릭 → `.lr-dp`에 `.collapsed` 토글 → `width:14px`, `.lr-b` visibility:hidden, `.arr` 화살표 회전
+
+---
+
+#### F.01 — Intersection / 집합도
+
+![F.01 Intersection](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f01.png)
+
+**SVG** `svg-set` · ViewBox: `18 17 184 167`
+
+**무엇을 시각화하는가:** SET(작업 A)와 SET:Inclusion(작업 B) 두 작업의 교집합 구조. 두 원이 얼마나 겹치는지가 두 작업의 공유 문법 비율을 나타낸다.
+
+| 요소 | 설명 |
+|------|------|
+| 배경 그리드 | 20px 간격 `rgba(255,74,22,.05)` 선 |
+| X축 텍스트 | -40 ~ +40 (5개) — 집합 공간 좌표축 |
+| 중심 십자선 | 원점 기준 수평/수직선 |
+| `#lrcA` (원 A) | 중심 `(84+sin(t×0.5)×3, 100)`, r=50±4, 색상 `#ff7a2e`, stroke-dasharray="3 4" — **SET (A)** |
+| `#lrcB` (원 B) | 중심 `(122, 100)`, r=50±4, 색상 `#b07bff` — **INCL (B)** |
+| `#lrhA` | A 원 내부 해칭 패턴 (A와 동기화) |
+| 교집합 표시 | 타원 `cx=103, cy=100, rx=22, ry=36` radialGradient 채움 → **A∩B 영역** |
+| `A∩B = 32` 레이블 | 교집합 크기 텍스트 + 라인 `(103,100)→(160,60)` |
+| `#lrtrace` | r=2.4 추적점 — 원 A 테두리를 공전 (`ang=t×1.2`), 좌표 `#lrtraceXY` 표시 |
+
+**동적 업데이트 (60ms 인터벌, `t += 0.05`):**
+
+| 요소 | 변화 |
+|------|------|
+| `set-pa` | 원 A 둘레 (~314.2 ± random 1.6) |
+| `set-pd` | 전 프레임 대비 변화량 (+/-) |
+| `set-int` | 교집합 크기 (30~34 랜덤) |
+| `set-ratio` | 미니 바 너비 = `int / 5125 × 100`% (전체 합집합 대비 비율) |
+
+---
+
+#### F.02 — CONTOUR FIELD / 등고선
+
+![F.02 CONTOUR FIELD](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f02.png)
+
+**SVG** `svg-cont` · ViewBox: `0 0 220 200`
+
+**무엇을 시각화하는가:** 작업의 밀도와 분포. 등고선이 촘촘할수록 해당 영역에 사진이 집중되어 있음을 나타낸다. 지형도 형식으로 작업 밀도를 공간화한다.
+
+| 요소 | 설명 |
+|------|------|
+| 등고선 12레벨 | `blob(r, seed, t)` 함수 — 30개 점 불규칙 폐곡선 (sin/cos 파형 조합). 반경 10px~111.5px |
+| 색상 | `rgba(255,106,30, 0.55 - i×0.03)` — 외곽일수록 투명 |
+| 고도 레이블 | 3의 배수 레벨 (+12, +24, +36) 텍스트 |
+| 전체 회전 | `rotate(sin(t×0.2)×4)` — 느리게 흔들림 |
+| 북쪽 방향 | (198,24) 위치 화살표 |
+| 중심 | 십자 + "PK +148" 레이블 (피크 고도) |
+| `#lrcscan` | 수평 스캔라인 y=14→186 주기 이동 |
+
+**SECTION A-A' 단면 (`svg-prof`)** · ViewBox: `0 0 300 30`
+
+| 요소 | 설명 |
+|------|------|
+| `buildProfile(t)` | 가우시안 곡선 + sin 파형으로 수직 단면 생성 |
+| `#lrpfscan` | 수직 스캔라인 (등고선 스캔 x좌표와 연동) |
+
+**동적 업데이트 (50ms 인터벌, `t += 0.05`):**
+
+| 요소 | 변화 |
+|------|------|
+| 등고선 경로 전체 | `blob()` 재계산으로 유기적 형태 변화 |
+| `cont-grad` | `|sin(t×0.7)|×2.4` — 현재 경사 크기 |
+| `cont-az` | `(t×8) % 360` 도 — 현재 방위각 |
+
+---
+
+#### F.03 — DATA / 측정값
+
+![F.03 DATA](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-lr-f03.png)
+
+**무엇을 시각화하는가:** F.01과 F.02의 수치 요약. SET 집합의 크기·경계·교집합 비율을 한눈에 파악하는 대시보드.
+
+**4개 컬럼 (`lr-dcol`):**
+
+**CARDINALITY (집합 크기)**
+
+| 항목 | 값 | 설명 |
+|------|-----|------|
+| `\|A\|` | 2,847 (주황) | SET(A) 사진 총 수 |
+| `\|B\|` | 2,310 (보라) | SET:Inclusion(B) 사진 총 수 |
+| `\|A∩B\|` | `#set-int` 동적 (황금) | 교집합 크기 (30~34 변화) |
+| `\|A∪B\|` | 5,125 | 합집합 총 수 |
+| `\|A\B\|` | 2,815 | A에만 속한 수 |
+
+**PERIMETER (경계)**
+
+| 항목 | 값 | 설명 |
+|------|-----|------|
+| `∂A` | `#set-pa` 동적 | 원 A 둘레 (~314.2) |
+| `Δ` | `#set-pd` 동적 | 전 프레임 대비 변화량 |
+| ∩ RATIO 바 | `#set-ratio` 너비 | 교집합 / 합집합 비율 미니바 |
+
+**ELEVATION BANDS**: `#cont-bands` — 등고선 레벨별 색상 바 목록
+
+**GRADIENT (경사도)**
+
+| 항목 | 값 | 설명 |
+|------|-----|------|
+| `∇mag` | `#cont-grad` 동적 | 현재 경사 크기 (`\|sin(t×0.7)\|×2.4`) |
+| `azim` | `#cont-az` 동적 | 현재 방위각 (0~360°) |
+| `pk` | 3 (고정) | 피크 수 |
+
+---
+
+### 3-4. RIGHT RAIL — 분석·실험
+
+![RIGHT RAIL 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-right-rail.png)
+
+**DOM:** `aside.rr-rail`  
+`position:fixed; width:240px; height:620px; transform-origin:top left`  
+배치: `#wrap` 오른쪽 가장자리 기준, `scale(__hudScale × 1.2)`
+
+---
+
+#### F.04 — SVA RADAR
+
+![SVA RADAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-radar.png)
+
+**SVG** `svg-rr-radar` · ViewBox: `0 0 210 210` · 중심 cx=105, cy=105, R=72
+
+**무엇을 시각화하는가:** 선택된 사진의 SVA(Sequential Vision Autopsy) 형태학적 4축 분석값. 미학적·감정적 해석 없이 순수 형태학 수치만 레이더 차트로 표현.
+
+**4개 축 (90도 간격, -90도 시작, 시계방향):**
+
+| 축 | 방향 | 한국어명 | 설명 |
+|----|------|---------|------|
+| **DS** | 위 (0°) | 도메인 구조 | 프레임 지배 구조 — 화면을 지배하는 요소의 구조적 특성 |
+| **SD** | 우 (90°) | 공간 배치 | 피사체와 공간의 분포·배치 방식 |
+| **SA** | 아래 (180°) | 표면 이상 | 표면 텍스처·이상·노이즈 특성 |
+| **KV** | 좌 (270°) | 고유 변칙 | 이 사진만의 고유한 변칙적 요소. 모든 축 중 최고 가중치(×0.35) |
+
+**값 범위:** 0.00 ~ 1.00
+
+**그리드 구조:**
+
+| 요소 | 설명 |
+|------|------|
+| 4개 동심 정사각형 | r=R×k/4 (k=1~4) — 0.25, 0.50, 0.75, 1.00 눈금 |
+| 4개 스포크 | 각 축 방향 직선 |
+| 비율 눈금 텍스트 | 각 레벨에 0.25/0.50/0.75/1.00 표시 |
+| 레이블 | 각 축 끝: 축코드(8px) + 한국어명(4.5px) |
+
+**데이터 렌더링 (50ms 인터벌):**
+
+| 요소 | 설명 |
+|------|------|
+| `cur[i]` | 4개 축 현재값. 3000ms마다 새 target 설정 → `cur[i] += (tgt[i]-cur[i]) × 0.08` (EMA 보간) |
+| 전면 폴리곤 `#rr-3d` | `fill="rgba(255,122,46,.22)" stroke="#ff7a2e" stroke-width="1.4"` |
+| 후면 폴리곤 | x+13, y-12 오프셋 → 3D 그림자 효과 |
+| 측면 패널 4개 | 전·후면 연결 사각형, 각각 다른 투명도 (0.10/0.20/0.15/0.06) |
+| 4개 축 도트 | 현재값 위치에 점 + 수치 텍스트 |
+| ghost 폴리곤 `#rr-ghost` | 이전 값 잔상 (stroke-dasharray, fade) |
+| score 계산 | `DS×0.2 + SD×0.2 + SA×0.25 + KV×0.35` |
+| cuts 판정 | score×4 → index → `['DROP','DROP','SUPPORT','CORE']` |
+
+---
+
+#### ANALYSIS 패널
+
+![ANALYSIS](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-analysis.png)
+
+**무엇을 시각화하는가:** 선택된 사진의 상세 수치 데이터. SVA RADAR의 숫자 버전.
+
+**SPECIMEN 컬럼:**
+
+| 요소 | ID | 설명 |
+|------|-----|------|
+| img ID | `#rr-id` | "img_000" 형식 |
+| 촬영 회차 | `#rr-rnd` | "1차" 또는 "2차" |
+| 인덱스 | `#rr-n` | "000/438" (현재/전체) |
+
+**AXES 컬럼:**
+
+| 요소 | ID | 설명 |
+|------|-----|------|
+| DS 수치 | `#rr-ds` | 0.00~1.00 |
+| SD 수치 | `#rr-sd` | 0.00~1.00 |
+| SA 수치 | `#rr-sa` | 0.00~1.00 |
+| KV 수치 | `#rr-kv` | 0.00~1.00 (황금색 `.v.hi`) |
+| KV 비중 바 | `#rr-kvbar` | 너비 = `cur[3]×100%`, 주황색 `#ff7a2e` |
+
+**VERDICT 컬럼:**
+
+| 요소 | ID | 설명 |
+|------|-----|------|
+| 종합 점수 | `#rr-score` | 0.00~1.00 |
+| 판정 | `#rr-cut` | DROP / SUPPORT / CORE |
+
+**연동:** GALLERY에서 사진 선택 시 → `admin-contents.json`의 `sva` 필드 (`{ds, sd, sa, kv}`)로 업데이트
+
+---
+
+#### PILOT CHANNEL (`.pilot-pnl`)
+
+![PILOT CHANNEL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-rr-pilot.png)
+
+**DOM:** `.pilot-pnl` (right rail 최하단, height:180px)  
+**역할:** SET의 문법 체계 바깥에 있는 이미지와 언어를 위한 실험 공간. "공집합 채널."
+
+| 요소 | 설명 |
+|------|------|
+| 워터마크 | "PILOT" 텍스트 회전, `rgba(255,74,22,0.04)` |
+| `.pilot-badge` | "PILOT" 배지 |
+| 소개문 | "귀속 불가 이미지 실험소 — 공집합 채널 PILOT EXP" |
+
+**3개 탭 (`.pl-nav span`):**
+
+**NULL.LOG 탭 (`#pt-log`)**
+
+| 항목 | 설명 |
+|------|------|
+| 데이터 소스 | `localStorage.getItem('set_null_log')` — JSON `{단어: 카운트, ...}` |
+| 채우는 주체 | `measure.html`에서 검색 결과 없을 때 자동 기록 |
+| 테이블 | DATE \| QUERY \| × |
+| 강조 조건 | 카운트 ≥ 3이면 `.cand` (황금색) + `<span class="pl-cand-tag">후보</span>` |
+| 의미 | 3회 이상 공집합 = 다음 작업 Exclusion의 입력 데이터 후보 |
+| 빈 상태 | `#pt-log-empty` 표시 |
+
+**ATTR.TEST 탭 (`#pt-attr`)**
+
+| 항목 | 설명 |
+|------|------|
+| 드롭존 | `.pl-at-dz` 클릭 → `#pt-file.click()` |
+| 지원 형식 | `accept="image/*"` — JPG, PNG, WEBP |
+| `#pt-stat` | 상태 텍스트 ("READY" 기본) |
+| 동작 | 이미지 업로드 → SET 문법 코드(G-01~G-14 등) 귀속 점수 분석 반환 |
+| 귀속 불가 | "귀속 불가" 반환도 유효한 결과 |
+| 전체 구현 | `pilot.html` — PILOT CHANNEL은 요약 진입점 |
+
+**MANUAL 탭 (`#pt-manual`)**: NULL.LOG·ATTR.TEST 사용 안내문
+
+**하단 상태바 (`.pl-stat`):**
+
+| 탭 | lbl | v |
+|----|-----|---|
+| log | `NULL.LOG` | `0 REC` |
+| attr | `ATTR.TEST` | `83 CODES` |
+| manual | `MANUAL.TXT` | `안내` |
+
+**하단 버튼:** "OPEN PILOT.EXP" → `crtNav('https://note-a.github.io/pilot.html')`
+
+---
+
+### 3-5. GBAR — 중간 타이틀바
 
 ![GBAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-gbar.png)
 
-| 항목 | 내용 |
-|------|------|
-| 파일 | `gbar.html` (set-os.html에 `<iframe>` 삽입) |
-| 역할 | 사이트 전체 주요 섹션 이동 + 세션 정보 + 작업 통계 |
-| 탭 목록 | SET(gallery1.html) / SET:Inclusion(COMING SOON) / LOG(page-log.html) / Reference(reference.html) / MEASURE(measure.html) |
-| 특이사항 | iframe 내에서 부모창 `mobComingSoon()` 호출로 fullscreen 오버레이 연동 |
+**DOM:** `div#gbar` → `<iframe src="gbar.html?v=14">` (height:84px)  
+**레이아웃:** `.bar` — `grid-template-columns: 250px 370px minmax(0,1fr) 165px`
 
 ---
 
-### 3-5. BOTTOM ROW — 하단 영역
+**세그먼트 1 — `.seg-id` (250px)**
+
+| 요소 | 설명 |
+|------|------|
+| SVG 글리프 (46×46px) | 두 개 회전 헥사곤 (`.hex` 9s, `.hex2` 역방향 6s) + 레이더 라인 (2.4s) + 틱 (역 16s) |
+| `.ttl[data-text="SET.OS"]` | "SET.OS" 타이틀, 글리치 animation `tglitch 4s` |
+| `.sub` | "ARCHIVE TERMINAL v2.4" |
+| `.boot` | Typewriter 애니메이션 — 6개 메시지 타입/삭제 루프: `['> mount /archive ... ok', '> index 4,210 frames', '> cull queue: 432', '> render farm online', '> node-77 linked', '> sync delta +18']` |
+
+**세그먼트 2 — `.seg-nav` (370px, 네비게이션)**
+
+| 항목 | 이름 | 링크 |
+|------|------|------|
+| `[0]` `.on` | **SET** | `gallery1.html` |
+| `[1]` | **SET:Inclusion** | `parent.mobComingSoon()` → COMING SOON overlay |
+| `[2]` | **LOG** | `page-log.html` |
+| `[3]` | **Reference** | `reference.html` |
+| `[4]` | **MEASURE** | `measure.html` |
+
+**세그먼트 3 — `.seg-stats` (세션 정보)**
+
+| 요소 | ID | 설명 |
+|------|-----|------|
+| ENTRY | `#g-entry` | 페이지 로드 시각 `HH:MM:SS` |
+| SESSION | `#g-sess` (amber) | 로드 후 경과 시간, 1초 인터벌 업데이트 |
+| STATUS | `#g-status` | 기본 "● ACTIVE" (녹색). 5600ms마다 → "◌ SCANNING" (amber) 900ms 후 복귀 |
+| DEPT | `#g-dept` | "KR-09-A" (고정) |
+
+**세그먼트 4 — `.seg-stmt` (Statement 발췌)**  
+`// STATEMENT` 태그 (pulse dot) + 고정 영문 텍스트 2단락
+
+---
+
+### 3-6. BOTTOM ROW
 
 ![BOTTOM ROW 전체](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-bot.png)
 
-#### G-1. NOTICE + VIEWER_LOG.EXE
+**DOM:** `div#bot-row`  
+**레이아웃:** `grid-template-columns: minmax(0,2.6fr) minmax(0,1fr)`  
+**bot-left:** `grid-template-columns: 215px 200px minmax(0,1fr)`
+
+---
+
+#### G-1. SYSTEM NOTICE + G-2. VIEWER_LOG (`.bl-split`)
 
 ![G-1 NOTICE / G-2 VIEWER_LOG](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-notice.png)
 
-**MEASURE 채팅 입장 버튼 (G-1)**
+**SYSTEM NOTICE (`.bl-split > .pnl:nth-child(1)`)**
 
-| 항목 | 내용 |
+| 요소 | 설명 |
 |------|------|
-| 역할 | MEASURE.DB 검색 채팅방 입장 유도 |
-| 구현 | CRT 스타일 시스템 공지 카드. "채팅방에 입장했습니다" + [입장 ▶] 버튼 |
-| 연동 | 클릭 시 measure.html로 이동 |
+| `.ceb-title` | "시스템 공지" |
+| `.ceb-main` | "채팅방에 입장했습니다" |
+| `.ceb-sub` | "MEASURE.DB 검색 채팅방" |
+| `.ceb-go` | "[ 입장 ▶ ]" 버튼 — `<a href="measure.html" target="_blank">` |
 
-**VIEWER_LOG.EXE (G-2)**
+**VIEWER_LOG.EXE (`.bl-split > .pnl:nth-child(2)` → `#vlWindow`)**
 
-| 항목 | 내용 |
+| 요소 | 설명 |
 |------|------|
-| 역할 | MEASURE 검색 기록 피드 표시 |
-| 구현 | 스크롤 가능한 터미널 로그 UI. 시스템 메시지·검색어·결과 히트가 시간순 나열 |
-| 현재 상태 | 데모 피드(정적 샘플). 실제 사용자 검색 데이터 실시간 연동 미구현 |
-| 확장 | 백엔드 연동 시 실시간 검색 기록 수신 가능 |
+| 헤더 | "VIEWER_LOG.EXE" + 최소화 버튼 `_` (`#vlBody` display toggle) |
+| `#vlDot` | 5px pulse dot |
+| 텍스트 | "MEASURE SEARCH LOG" |
+| `#vlCount` | "0 queries" (누적 카운트) |
+| `#vlList` | 최대 5줄 유지. `list.prepend(e)` + lastElementChild 제거 |
+
+**로그 행 포맷:**
+
+| 컬럼 | 설명 |
+|------|------|
+| `.vlt` | 시간 (HH:MM:SS) |
+| `.vlq` | 쿼리 텍스트 |
+| 색상 나이 | 최신→오래됨: `#ff4a16` → `rgba(255,74,22,.62)` → `.38` → `.24` → `.13` |
+| 진입 animation | `vlSlideIn .3s ease` |
+
+**데모 피드 (자동 생성):**
+
+| 항목 | 설명 |
+|------|------|
+| 쿼리 풀 | `['crash','floating','shadow','grid','FOGDIS','cluster','rupture','isolate','strata','dmgpat','tonedis','diptych','matcov','headobj','backpose']` |
+| 초기 3개 | 450ms 간격으로 표시 |
+| 이후 | 3400ms 랜덤 인터벌 |
+| 풋터 | `/measure/search` + `#vlLastTime` (마지막 쿼리 시각) + 블링크 커서 `█` |
+
+---
 
 #### G-2b. VIEWER 3D + ID CARD
 
 ![G-2b VIEWER 3D + ID CARD](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-viewer-id.png)
 
-| 항목 | 내용 |
+**DOM:** `.bot-left > .pnl:nth-child(1)` → `<iframe src="id-card.html?v=7">` (200px 컬럼)
+
+**헤더 (18px, 주황 배경 검정 텍스트):** `▶ VISITOR.ID-CARD` + badge + LIVE dot
+
+**IDENTITY 섹션:**
+
+| 요소 | ID | 주기 | 내용 |
+|------|-----|------|------|
+| NAME | `#v-name` | 4700ms | "UNKNOWN" + 글리치 6라운드 60ms |
+| ID | `#v-id` | 3200ms | "VIS-2026-###" → sfx 순환: `'###','4A2','F91','??7','C0D','E38'` |
+| ROLE | `#v-role` | 5800ms | `OBSERVER → VISITOR → UNKNOWN → ANALYST → SUBJECT` 순환 |
+| CLR | `#v-clr` | 900ms | "GUEST" 색상 토글: `#d96a0e` ↔ `rgba(217,106,14,0.3)` |
+
+**SYS MONITOR 섹션:**
+
+| 요소 | ID | 설명 |
+|------|-----|------|
+| STATUS | `#v-status` | "● ACTIVE" 기본. 이상 시 "⚠ ANOMALY" |
+| INTEG | `#v-intval` | 98.7% ±0.35 랜덤워크 (범위 95.5~99.9). 0.8% 확률로 이상 트리거 |
+| INTEG 바 | `#v-intbar` | 동일 값 너비 % |
+| THREAT | `#v-threat` | "◉ LOW" / "◉ MED" / "◉ HIGH" (이상 시 상승) |
+| PKT/s | `#v-pkt` | 0000~9999 (75ms 인터벌 랜덤 업데이트) |
+
+**아바타 캔버스 (`#c1`, 152×80):**
+
+| 요소 | 설명 |
 |------|------|
-| ID CARD 파일 | `id-card.html` (iframe 삽입) |
-| 역할 | 작가/프로젝트 신원 카드 |
-| 표시 항목 | 프로젝트명, 작가 정보, 작업 상태, 접속자 수 등 |
+| 벡터 실루엣 | `headPath` + `hairPath` bezier 곡선으로 인물 실루엣 |
+| 조명 | radialGradient 좌우측 독립 조명 |
+| 호흡 pulse | `tick` 변수 sin파 |
+| orbit particles | 26개 (랜덤 반경·속도·크기) |
+| 인터벌 | 40ms |
+| 스캔라인 | `scanline overlay` + `sweep light` |
+| 코너 브래킷 | 4개 |
+| 텍스트 | "SCAN:OK" (30프레임마다 깜빡임) |
+
+**바코드 캔버스 (`#bc1`, 180×14):** 60개 바 (1px or 2px). 97% `#d96a0e`, 3% `#ff9a55` 노이즈. 좌→우 sweep
+
+**풋터:** `#v-now` 현재 날짜 `YYYY.MM.DD`
+
+---
 
 #### G-3. WORK STATUS
 
 ![G-3 WORK STATUS](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-work.png)
 
-| 항목 | 내용 |
+**DOM:** `.bot-left > .pnl:nth-child(2)` → `<iframe src="work-status.html?v=10">`
+
+**데이터 소스:**
+
+| API | URL |
+|-----|-----|
+| GitHub Commits | `https://api.github.com/repos/note-a/note-a-github/commits?per_page=50` |
+| Posts | `https://raw.githubusercontent.com/note-a/note-a-github/main/published-posts.json` |
+| 캐시 key | `ws_commits` / `ws_posts` (localStorage, TTL 5분) |
+
+**커밋 분류 `classify(msg)` → `[클래스, 라벨]`:**
+
+| 패턴 | 클래스 | 라벨 |
+|------|--------|------|
+| fix\|bug\|revert\|error | `drop` | FIX |
+| add\|feat\|new\|creat | `core` | ADD |
+| update\|upd\|sync\|push | `sync` | UPD |
+| rename\|move\|refactor | `tag` | MOV |
+| style\|design\|css\|ui\|font | `cull` | STY |
+| 기타 | `scan` | LOG |
+
+**상단 stats strip (`.f-stats`, 4컬럼):**
+
+| 항목 | ID | 설명 |
+|------|-----|------|
+| POSTS | `#s-core` (yellow) | `publishedSection==='rule'` 조건 posts 수 |
+| COMMITS | `#s-sup` (amber) | `commits.length` (최대 50) |
+| THIS WK | `#s-drop` | 7일 이내 커밋 수 |
+| LAST | `#s-q` | 최신 커밋 날짜 `MM/DD` |
+
+**NOW 진행 바:**
+
+| 요소 | 설명 |
 |------|------|
-| 파일 | `work-status.html` (iframe 삽입) |
-| 역할 | GitHub 커밋 기반 작업 타임라인. 실시간 작업 진행 상황 표시 |
-| 데이터 | GitHub API(`note-a/note-a-github`) 커밋 피드 + `published-posts.json` |
-| 표시 항목 | POSTS 수 / COMMITS 수 / 이번 주 커밋 / 최근 커밋 날짜 / 스파크라인 / 커밋 피드 |
-| 캐시 | localStorage 5분 TTL. 레이트리밋 시 stale 캐시 폴백 |
+| `#now-tgt` | 최신 커밋 메시지 (38자 truncate) |
+| `#now-bar` | 너비 = `freshPct%` = `100 - (경과일/7×100)` (최소 2%) |
+| `#now-pct` | freshPct 텍스트 |
 
-#### G-4. SET.TEXT — 개념 텍스트 패널
+**THROUGHPUT 스파크라인 (`#spk`):**
 
-![G-4 SET.TEXT](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-settext.png)
-
-| 항목 | 내용 |
+| 요소 | 설명 |
 |------|------|
-| 역할 | 작업 개념 서술 텍스트 상시 노출 |
-| 내용 | SET의 구조, 측정 논리, MEASURE 의미, 유예 선언 등 작업 전체 서술 |
-| 클릭 | 전체 보기 모드로 확장 |
+| 바 수 | 28개 (NB=28) |
+| 데이터 | 날짜별 커밋 수 집계 (최근 28일) |
+| 마지막 바 | `.hi` — 황금색 + glow 효과 |
+| `#spk-peak` | 최대값 표시 |
+
+**커밋 피드 (`#f-list`):**
+
+| 요소 | 설명 |
+|------|------|
+| 표시 수 | 최신 14개 |
+| 각 행 | 시간경과 \| 분류 배지 \| 메시지 (52자) |
+| opacity | `max(0.28, 1-i×0.06)` — 오래될수록 흐림 |
+| 시간경과 | `timeAgo()`: just now / Xm ago / Xh ago / Xd ago |
+| 갱신 주기 | 1분마다 재렌더 |
+
+**LIVE 클럭:** `#f-clk` 현재 시각 HH:MM:SS (1초 인터벌)
 
 ---
 
-### 3-6. 오버레이 & 모달
+#### G-4. SET.TEXT
+
+![G-4 SET.TEXT](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-settext.png)
+
+**DOM:** `#bot-row > .pnl` → `#stmt.stmt-scroll`
+
+| 요소 | 설명 |
+|------|------|
+| `.lead` | "세계를 측정하려면 세계 바깥에 서야 한다. 그 자리는 없다." |
+| 본문 단락 | SET 구조, 측정 논리, MEASURE 의미, 유예 선언 4개 단락 |
+| `.closing` | "이 작업의 이름은 유예다." |
+| `.stmt-caret` | 깜빡이는 커서 animation `1s step-end` |
+| hover | `background: rgba(255,74,22,.05)` |
+| click | `openStmt()` → STATEMENT 모달 열기 |
+
+**숨겨진 PC통신 채팅 (`.pc`, `display:none`):**  
+타이틀: "■ MEASURE.DB 대화방 ■" · 접속자 5명 · DIR 45개 · 사진 6,421장 · 선택 438장  
+로그 형식: `HH:MM | [ID] │ 메시지`  
+자동 랜덤 메시지: 14초~36초 간격, 4명 사용자  
+명령어: `/search`, `/who`, `/help`, `/exit`
+
+---
+
+### 3-7. 오버레이 & 모달
 
 #### COMING SOON 오버레이
 
 ![COMING SOON](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-coming.png)
 
-| 항목 | 내용 |
+| 항목 | 설명 |
 |------|------|
-| 역할 | SET:Inclusion 섹션 미공개 안내 fullscreen 오버레이 |
-| 트리거 | GBAR의 "SET:Inclusion" 탭 클릭 → `mobComingSoon()` 호출 |
-| 구현 | 전체 화면 오버레이. 클릭/ESC로 닫기 |
+| DOM | `div#mob-toast` (`position:fixed; z-index:9000`) |
+| 트리거 | `window.mobComingSoon()` 전역 함수 |
+| 내용 | ASCII art (`SET INCLUSION` 텍스트) + "COMING SOON" + "TAP TO DISMISS" |
+| 자동 닫힘 | 3500ms 후 `.show` 제거 |
+| 클릭 닫힘 | 클릭 시 즉시 `.show` 제거 |
+| gbar 연동 | gbar 내부에서 `window.parent.mobComingSoon()` 호출 |
 
 #### STATEMENT MODAL
 
 ![STATEMENT MODAL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-stmt.png)
 
-| 항목 | 내용 |
+| 항목 | 설명 |
 |------|------|
-| 역할 | 작업 성명서·작가 노트 전체 텍스트 열람 |
-| 트리거 | STATUS BAR 우측 "STATEMENT" 버튼 클릭 |
-| 구현 | 스크롤 가능한 오버레이 모달 |
+| DOM | `div#stmt-modal` (`position:fixed; z-index:200`) |
+| 트리거 | `openStmt()` (SET.TEXT 클릭 또는 STATUS BAR 버튼) |
+| 닫기 | `closeStmt()` (배경 클릭 또는 ESC) |
+| 헤더 | "ARTIST STATEMENT" (12px, `#ffb020`) |
+| 본문 섹션 | 집합과 세계 · 재현과 시선 · 제도 · 관찰자 · AI 작업 프로세스 (사진 분류/규칙 형성/패턴 분석/문법-지시문 변환/촬영 과정/셀렉 기준) · Inclusion · 시선의 구조 · 유예 |
+| 영어 인용 | `.en` 클래스 — 이탤릭 |
+| 예시 | `.ex` 클래스 — blockquote 스타일 |
+| 각주 | `.note` — AI 사용 고지 |
+| "MORE ▶" | `openDocs()` — DOCS 모달으로 연결 |
 
 #### DOCS MODAL
 
 ![DOCS MODAL](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-modal-docs.png)
 
-| 항목 | 내용 |
+| 항목 | 설명 |
 |------|------|
-| 역할 | 기술 문서 / 요구사항 정의서 열람 |
-| 트리거 | STATUS BAR 우측 "DOCS" 버튼 클릭 |
-| 구현 | 스크롤 가능한 오버레이 모달 |
+| DOM | `div#docs-modal` (`position:fixed; z-index:210` — STATEMENT 위) |
+| 트리거 | `openDocs()` |
+| 닫기 | `closeDocs()` (배경 클릭 또는 ESC) |
+| 헤더 | "WORK_DOCUMENT.EXE — 작업 설명서" |
+| 섹션 구성 | 0. 이 문서의 목적 / 1. 작업의 출발점과 역사 / 2. 작업의 핵심 개념 / 3. 작업의 방법론 / 4. 문법 생성 / 5. 지시문(DIR) / 7. 개념문 핵심 문장 |
+| 핵심 용어 table | 집합·세계·둘레(Perimeter)·시선의 구조·언어·주체·사진·유예 (8행) |
+| SVA 4축 table | DS(프레임 지배 구조) / SD(공간 배치) / SA(표면 이상) / KV(고유 변칙) |
 
 ---
 
-### 3-7. STATUS BAR
+### 3-8. STATUS BAR
 
 ![STATUS BAR](https://raw.githubusercontent.com/note-a/note-a-github/main/screenshots/sc-statusbar.png)
 
-| 항목 | 내용 |
-|------|------|
-| 위치 | 화면 최하단 고정 바 |
-| 좌측 | 시스템 상태 메시지 (실시간 텍스트 롤링) |
-| 우측 | STATEMENT / DOCS 버튼 |
-| 역할 | 전체 인터페이스 상태 표시 + 주요 문서 진입점 |
+**DOM:** `div#botbar` (height:28px)  
+**레이아웃:** `border-top: 1px solid var(--g4)`
+
+**좌측 `.binfo`:** `\GH.24` · TR 23.3 · Slow  
+**두 번째 `.binfo`:** ▲ ERR·03 · SECTOR·F (주황-빨간)
+
+**`.mode-row` — 6개 `.mb` 네비게이션 버튼:**
+
+| 인덱스 | 이름 | 색상 | 동작 |
+|--------|------|------|------|
+| `[0]` `.on` | **SET** | `#ff6a26` | `crtNav('gallery1.html')` |
+| `[1]` | **SET:inclusion** | `#ffa01e` | `mobComingSoon()` |
+| `[2]` | **LOG** | `#ff9a2e` | `crtNav('page-log.html')` |
+| `[3]` | **Reference** | `#ffa820` | `crtNav('reference.html')` |
+| `[4]` | **MEASURE** | `#ff7a1f` | `crtNav('measure.html')` |
+| `[5]` | **ABOUT** | `#ffa824` | `data-sec="about"` |
+
+각 버튼 `.mb`: `clip-path: polygon(8px 0, ...)` 오각형 형태. `.k` 스팬: 단축키 문자 (S/I/L/R/M/A)
+
+**ACTIVATE 버튼:** 클릭 이벤트 없음, border glow 시각 효과만
+
+**우측 `.binfo`:** "SET XT2" + `#clk2` 시:분 (1초 인터벌)
+
+**STATEMENT / DOCS 버튼:** `openStmt()` / `openDocs()`
 
 ---
 
-## 4. 데이터 구조
+## 4. CRT 화면 전환 효과
 
-### admin-contents.json
+**`window.crtNav(url)`** 전역 함수:
+
+| 단계 | 설명 |
+|------|------|
+| 1 | `body.classList.add('crt-leaving')` |
+| 2 | `#shell`에 `crtOff` animation 0.46s: `scale(1,1) → scale(1,.02) → scale(.001,.012)` + brightness 2.8→5 |
+| 3 | `#crt-off`에 `crtOffBg` animation: 55% 지점부터 opacity 0→1 |
+| 4 | animationend 또는 560ms fallback → `location.href = url` |
+
+**페이지 진입 시:**
+
+| 단계 | 설명 |
+|------|------|
+| 1 | `DOMContentLoaded` → `body.classList.add('crt-entering')` |
+| 2 | `crtOn` animation: `scale(.001,.012) → scale(1,.02) → scale(1,1)` + brightness 역방향 |
+| 3 | animationend 또는 800ms → `classList.remove('crt-entering')` + `dispatchEvent(new Event('resize'))` (레일 재배치) |
+
+**접근성:** `prefers-reduced-motion` 시 animation 없이 즉시 이동
+
+---
+
+## 5. 데이터 구조
+
+### admin-contents.json 스키마
 
 ```json
 {
-  "photos": [
-    {
-      "dir": "FOGDIS",
-      "status": "CORE",
-      "date": "2025.03.14",
-      "exif": "f/2.8 · 1/250s · ISO 200",
-      "src": "이미지 URL",
-      "sva": {
-        "ds": 0.72,
-        "sd": 0.58,
-        "sa": 0.41,
-        "kv": 0.88
+  "about": {
+    "artistStatement": "string"
+  },
+  "project": {
+    "photos": [
+      {
+        "filename": "images/2025/03/14/DSCF0001.jpg",
+        "dir": "FOGDIS",
+        "id": "img_001",
+        "verdict": "CORE",
+        "sva": { "ds": 0.72, "sd": 0.58, "sa": 0.41, "kv": 0.88 }
       }
-    }
-  ]
+    ]
+  },
+  "contactSheetPhotos": [
+    { "filename": "...", "dir": "...", "verdict": "...", "title": "...", "keywords": "...", "date": "..." }
+  ],
+  "rule": {
+    "items": [
+      { "id": "RULE_1", "title": "...", "author": "...", "year": "...", "category": "...", "publishedSection": "rule" }
+    ]
+  }
 }
 ```
 
-### GL_FRAMES (런타임 사진 배열)
+**flatten 로직:** `data.project`를 재귀 탐색 → `filename` 키가 있는 노드 수집
 
-admin-contents.json 로드 후 GL_FRAMES 배열에 정규화. 미로드 시 하드코딩 샘플 폴백.
+### GL_FRAMES 빌드 과정
+
+```
+admin-contents.json 로드
+ → flatten(data.project) → 사진 배열
+ → Fisher-Yates 셔플
+ → 각 항목에 n(현재 인덱스)/total(전체 수) 재설정
+ → GL_FRAMES 배열 교체
+ → glIdx=0, glAThumbClick(0) 호출
+```
+
+### resolveUrl / thumbUrl
+
+```javascript
+resolveUrl(f):
+  f.startsWith('http') || f.startsWith('/') || f.startsWith('images/')
+    ? f
+    : 'images/' + f
+
+thumbUrl(u):
+  u.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg')
+  // 썸네일은 /t/ 서브디렉토리의 동일명 파일
+```
+
+### published-posts.json 스키마
+
+```json
+[
+  {
+    "id": "string",
+    "title": "string",
+    "author": "string",
+    "year": "string",
+    "category": "string",
+    "publishedSection": "rule"
+  }
+]
+```
+
+`publishedSection === 'rule'`인 항목만 LOG 패널에 사용
 
 ### localStorage 키
 
-| 키 | 용도 |
-|----|------|
-| `set_null_log` | NULL.LOG 공집합 검색어 누적 (키워드: 횟수) |
-| `work_status_cache` | WORK STATUS GitHub API 응답 캐시 (5분 TTL) |
+| 키 | 형식 | TTL | 용도 |
+|----|------|-----|------|
+| `set_null_log` | `{"단어": 카운트, ...}` | 영구 | PILOT NULL.LOG 검색어 누적 |
+| `ws_commits` | `{ts: timestamp, data: commits[]}` | 5분 | GitHub Commits API 캐시 |
+| `ws_posts` | `{ts: timestamp, data: posts[]}` | 5분 | posts API 캐시 |
+
+### 주요 전역 변수
+
+| 변수 | 설명 |
+|------|------|
+| `GL_FRAMES[]` | 갤러리 프레임 배열 |
+| `ALL_DIRS[]` | 45개 DIR 코드와 사진 수 `{code, n}` |
+| `DIRS[]` | 상위 11개 DIR |
+| `LOG_ITEMS[]` | RULE_1~RULE_5 (5개 SET Fundamental) |
+| `REF_ITEMS[]` | 10개 참고문헌 (Barthes, Sontag 등) |
+| `galPhotos[]` | fetch된 contactSheetPhotos |
+| `glIdx` | 현재 갤러리 인덱스 |
+| `window._gvaTimer` | 8초 자동전환 interval ID |
+
+### 주요 전역 함수
+
+| 함수 | 설명 |
+|------|------|
+| `init()` | 메인 초기화 (buildGlScatter, buildGvaRadar, buildCrosshair, tick, fetchData, bindEvents) |
+| `fetchData()` | admin-contents.json 로드 |
+| `crtNav(url)` | CRT 전환 후 이동 |
+| `glSwitch(n)` | GALLERY 탭 전환 (1=ANALYSIS, 2=CONTACT) |
+| `glAThumbClick(idx)` | 갤러리 사진 선택 |
+| `buildCs2Grid()` | CONTACT sheet 빌드 |
+| `buildGlScatter()` | DIST scatter 빌드 |
+| `buildCrosshair()` | GVA 조준 레티클 SVG 생성 |
+| `openStmt()` / `closeStmt()` | STATEMENT 모달 |
+| `openDocs()` / `closeDocs()` | DOCS 모달 |
+| `mobComingSoon()` | COMING SOON overlay (전역) |
+| `scrollHud(dir)` | HUD 스크롤 (+1/-1) |
+| `setHudView(v)` | HUD icon/list 전환 |
 
 ---
 
-## 5. 모바일 대응 (`@media max-width: 767px`)
+## 6. 반응형 대응
 
-| 항목 | 데스크탑 | 모바일 |
+| 브레이크포인트 | 조건 | 동작 |
+|--------------|------|------|
+| `> 1560px` | 기본 | 좌우 레일 표시 |
+| `1025~1560px` | 비터치 | 레일 `display:none` |
+| `768~1560px` | `pointer:coarse` (터치기기) | 레일 `display:flex !important` |
+| `≤ 767px` | 모바일 | 완전 모바일 레이아웃 |
+
+**`window.__hudScale()` 스케일 계산:**
+```
+railsFit 조건이면 base=1800, 아니면 base=1140
+s = Math.min(w/base, innerHeight/757, 1)
+#wrap.style.transform = 'scale('+s+')'
+레일: scale(s×1.2) + wrap BoundingClientRect 기준 fixed 재배치
+```
+
+**모바일 레이아웃 (`≤ 767px`):**
+
+| 요소 | 데스크탑 | 모바일 |
 |------|----------|--------|
-| 레이아웃 | 좌우 레일 + 메인 고정창 | 단일 컬럼 스크롤 |
-| 네비게이션 | 중간 GBAR (iframe) | 상단 햄버거 버튼 → 슬라이드 드로어 |
-| 좌우 레일 | 표시 | 미표시 (1025px 이하 숨김) |
-| 태블릿(터치) | — | 768~1560px 터치 기기: 레일 표시 |
-| COMING SOON | fullscreen 오버레이 | fullscreen 오버레이 동일 |
+| `#wrap`, `#gbar`, `#bot-row`, 레일 | 표시 | `display:none!important` |
+| `#mob-main` | 숨김 | 표시 (개념문 텍스트) |
+| `#mob-hdr` | 숨김 | 고정 헤더 64px + 햄버거 |
+| `#mob-drawer` | 숨김 | 우측 슬라이드 nav (`translateX`) |
 
 ---
 
-## 6. 제약사항
+## 7. 제약사항
 
 | 구분 | 내용 |
 |------|------|
-| **정적 호스팅** | GitHub Pages 기반. 서버 사이드 로직 없음. 모든 기능은 클라이언트 JS로 구현 |
-| **GitHub API 레이트리밋** | 비인증 요청 60회/시간. localStorage 5분 TTL 캐시로 완화. 초과 시 stale 캐시 표시 |
-| **VIEWER_LOG 실시간성** | 현재 데모 피드. 실제 실시간 채팅 구현 시 별도 백엔드(Firebase, Supabase 등) 필요 |
-| **이미지 용량** | GitHub Pages 리포 용량 제한 1GB. 대용량 이미지 다수 시 외부 CDN 고려 필요 |
-| **SVA 데이터** | 현재 하드코딩 샘플. AI 분석 파이프라인 없으면 수동 입력 필요 |
-| **iframe 통신** | gbar.html ↔ set-os.html 간 `window.parent` 호출. 동일 오리진 한정 |
-| **NULL.LOG 지속성** | localStorage 기반으로 브라우저/기기별 데이터 분리. 서버 공유 불가 |
-| **고정 해상도** | 메인 영역 1140×757px 고정. 브라우저 zoom 대응 고려 필요 |
-| **IE/구형 브라우저** | CSS Grid, requestAnimationFrame, localStorage 사용. IE 미지원 |
+| **정적 호스팅** | GitHub Pages 기반. 서버 사이드 없음. 모든 기능 클라이언트 JS |
+| **GitHub API 레이트리밋** | 비인증 60회/시간. localStorage 5분 TTL 캐시 완화. 초과 시 stale 캐시 |
+| **VIEWER_LOG 실시간성** | 현재 데모 피드. 실시간 구현 시 Firebase/Supabase 필요 |
+| **이미지 용량** | GitHub Pages 리포 1GB 제한. 대용량 시 외부 CDN |
+| **SVA 데이터** | 현재 랜덤 시뮬레이션. 실제 AI 분석 파이프라인 없으면 수동 입력 |
+| **iframe 통신** | gbar.html ↔ set-os.html 간 `window.parent`. 동일 오리진 한정 |
+| **NULL.LOG 지속성** | localStorage 브라우저/기기별 분리. 서버 공유 불가 |
+| **고정 해상도** | 메인 영역 1140×757px 고정. 브라우저 zoom 비대응 |
+| **검색 기능** | HUD LOG 검색창 UI만 존재, 이벤트 바인딩 미구현 |
+| **EXIT 버튼** | 상단 컨트롤 ✕ EXIT 버튼 onclick 미구현 |
+| **ABOUT 버튼** | STATUS BAR ABOUT 버튼 동작 미구현 |
 
 ---
 
-## 7. 확장성
+## 8. 확장성
 
 ### 단기 — 현재 구조 내 즉시 가능
-
-- `admin-contents.json`에 사진 데이터 추가 → GALLERY·DIST·SVA RADAR 자동 반영
-- `set_null_log` localStorage와 measure.html 공집합 로직 연동 → NULL.LOG 자동 누적 활성화
-- PILOT CHANNEL 패널 → pilot.html 실제 ATTR.TEST 결과 데이터 연동
+- `admin-contents.json` 사진 추가 → GALLERY·DIST·SVA RADAR 자동 반영
+- `set_null_log` localStorage + measure.html 공집합 로직 연동 → NULL.LOG 자동 누적
+- PILOT CHANNEL → pilot.html 실제 ATTR.TEST 결과 연동
+- HUD 검색창 이벤트 바인딩 추가 → 폴더/파일 실시간 필터
 
 ### 중기 — 구조 개선 필요
-
-- **VIEWER_LOG 실시간화**: Firebase Realtime DB 또는 Supabase 연동으로 관객 검색 기록 실제 수집·공유
-- **NULL.LOG 서버 공유**: 현재 localStorage 개인 저장 → 서버 DB 공유로 전체 방문자 공집합 집계
-- **SVA 자동화**: AI 분석 API 연동. 신규 사진 업로드 시 DS/SD/SA/KV 값 자동 생성
-- **MEASURE 검색 고도화**: 단순 문자열 매칭 → 형태학 코드 기반 의미론적 검색
+- **VIEWER_LOG 실시간화**: Firebase Realtime DB 또는 Supabase 연동
+- **NULL.LOG 서버 공유**: localStorage → 서버 DB로 전체 방문자 공집합 집계
+- **SVA 자동화**: AI 분석 API 연동. 신규 사진 업로드 시 DS/SD/SA/KV 자동 생성
+- **GALLERY 연동**: GALLERY 사진 클릭 → SVA RADAR 실제 값으로 업데이트
 
 ### 장기 — 아키텍처 전환
-
-- **Exclusion 작업 섹션 개설**: NULL.LOG 누적 데이터를 기반으로 다음 작업 Exclusion 아카이브 구성
-- **SET:Inclusion 공개**: COMING SOON 해제 후 SET:Inclusion 아카이브 별도 구성
-- **교집합 동적 시각화**: SET × SET:Inclusion 실제 채택 데이터로 F.01 Intersection 다이어그램 동적 렌더링
-- **CMS 연동**: JSON 직접 편집 → Headless CMS 연동
+- **Exclusion 작업 섹션**: NULL.LOG 데이터 기반 다음 작업 아카이브
+- **SET:Inclusion 공개**: COMING SOON 해제 + 별도 아카이브 구성
+- **교집합 동적 시각화**: 실제 채택 데이터로 F.01 Intersection 동적 렌더링
+- **CMS 연동**: JSON 직접 편집 → Headless CMS
 
 ---
 
-## 8. 파일 구성
+## 9. 파일 구성
 
 | 파일 | 역할 |
 |------|------|
-| `set-os.html` | 메인 OS 인터페이스 |
-| `gbar.html` | 중간 타이틀바·네비게이션 (iframe) |
-| `work-status.html` | 작업 현황 패널 (iframe) |
-| `id-card.html` | 작가·프로젝트 신원 카드 (iframe) |
+| `set-os.html` | 메인 OS 인터페이스 (4,571줄) |
+| `gbar.html` | 중간 타이틀바·네비게이션 (iframe, 257줄) |
+| `work-status.html` | 작업 현황 패널 (iframe, 253줄) |
+| `id-card.html` | 작가·프로젝트 신원 카드 (iframe, 238줄) |
 | `gallery1.html` | SET 갤러리 전체 페이지 |
 | `page-log.html` | LOG 전체 페이지 |
 | `reference.html` | 참조 문헌 전체 페이지 |
 | `measure.html` | MEASURE 검색 전체 페이지 |
 | `pilot.html` | PILOT CHANNEL 전체 페이지 (NULL.LOG + ATTR.TEST) |
-| `admin-contents.json` | 사진 메타데이터 데이터 소스 |
+| `admin-contents.json` | 사진 메타데이터 데이터 소스 (현재 비어 있음) |
 | `published-posts.json` | 발행 포스트 목록 |
 
 ---
