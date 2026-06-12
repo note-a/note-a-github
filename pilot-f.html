@@ -893,7 +893,7 @@ setInterval(() => {
     const FILL_TARGET = 100;
     const rawCount    = parseInt(localStorage.getItem('pilot_upload_count') || '-1', 10);
     const uploadCount = rawCount < 0 ? 0 : rawCount;
-    const effCount    = rawCount < 0 ? 60 : rawCount;
+    const effCount    = rawCount < 0 ? 0 : rawCount;
     const fillRatio   = Math.min(effCount / FILL_TARGET, 1);
     if (typeof drawViz._fill === 'undefined') drawViz._fill = 0;
     drawViz._fill += (fillRatio - drawViz._fill) * 0.06;
