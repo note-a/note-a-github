@@ -120,145 +120,56 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 .pnl-bd { flex:1; padding:10px; overflow:hidden; position:relative; }
 
 /* ════ 타이틀 바 ════ */
-/* ════ TITLE BAR — 3 layouts ════ */
 #titleBar {
-  width:1200px;
-  height:60px;
+  width:1200px; height:60px;
   flex-shrink:0; position:relative; overflow:hidden;
   background:
-    linear-gradient(#000, #000) padding-box,
-    linear-gradient(145deg, #00ff88 0%, #00cc55 18%, #00aa3a 42%, #005c22 72%, #001e0b 100%) border-box;
+    linear-gradient(#000,#000) padding-box,
+    linear-gradient(145deg,#00ff88 0%,#00cc55 18%,#00aa3a 42%,#005c22 72%,#001e0b 100%) border-box;
   border:2px solid transparent;
-  box-shadow:none;
-  display:flex; align-items:stretch;
-  padding:10px 12px;
+  display:flex; align-items:center;
+  padding:0 28px;
+  font-family:'Space Mono',monospace;
 }
-#titleBar .tb-sep { width:1px; height:28px; background:rgba(0,221,85,0.13); margin:auto 0; flex-shrink:0; }
-
-/* ── Layout 1: Continuous Strip ── */
-#tbL1 { display:flex; align-items:center; width:100%; padding:0 18px; gap:0; justify-content:space-between; }
-#tbL1 .t-title { display:flex; align-items:baseline; gap:5px; flex-shrink:0; }
-#tbL1 .t-title .big { font-size:16px; color:var(--g); letter-spacing:5px; font-weight:700; line-height:1; }
-#tbL1 .t-title .sub { font-size:10px; color:rgba(0,221,85,0.55); letter-spacing:3px; align-self:center; }
-#tbL1 .t-line { flex:1; height:1px; background:linear-gradient(90deg,rgba(0,221,85,0.18),rgba(0,221,85,0.05)); margin:0 16px; }
-#tbL1 .t-num { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
-#tbL1 .t-num .v { font-size:14px; color:var(--acc); font-weight:700; letter-spacing:1px; line-height:1; }
-#tbL1 .t-num .k { font-size:5.5px; color:rgba(0,221,85,0.3); letter-spacing:2px; }
-#tbL1 .t-num.dim .v { color:var(--g2); }
-#tbL1 .t-quote { display:flex; flex-direction:column; gap:3px; flex-shrink:0; max-width:310px; }
-#tbL1 .t-quote span { font-size:7px; color:rgba(0,221,85,0.45); letter-spacing:0.4px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-#tbL1 .t-quote span.q2 { font-size:6.5px; color:rgba(0,221,85,0.22); }
-#tbL1 .t-online { display:flex; align-items:center; gap:6px; flex-shrink:0; }
-#tbL1 .t-online .dot { width:6px; height:6px; border-radius:50%; background:var(--acc); box-shadow:0 0 8px var(--acc); animation:dotpulse 2s ease-in-out infinite; }
-#tbL1 .t-online span { font-size:7px; color:var(--acc); letter-spacing:1.5px; }
-#tbL1 .t-clock { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
-#tbL1 .t-clock .time { font-size:13px; color:var(--g2); font-weight:700; letter-spacing:1.5px; }
-#tbL1 .t-clock .date { font-size:5.5px; color:rgba(0,221,85,0.25); letter-spacing:1.5px; }
-
-/* ── Layout 2: Two Tier ── */
-#tbL2 { display:flex; flex-direction:column; width:100%; }
-#tbL2 .meta { height:16px; border-bottom:1px solid rgba(0,221,85,0.1); display:flex; align-items:center; overflow:hidden; flex-shrink:0; }
-#tbL2 .meta .ticker-wrap { flex:1; overflow:hidden; position:relative; }
-#tbL2 .meta .ticker { display:inline-block; white-space:nowrap; font-size:6.5px; color:rgba(0,221,85,0.3); letter-spacing:2px; animation:tbTick 42s linear infinite; padding-left:16px; }
-@keyframes tbTick { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-#tbL2 .meta .fade-l { position:absolute; left:0; top:0; width:20px; height:100%; background:linear-gradient(90deg,rgba(0,0,0,0.98),transparent); z-index:2; }
-#tbL2 .meta .meta-r { display:flex; align-items:center; gap:10px; padding:0 12px; border-left:1px solid rgba(0,221,85,0.1); flex-shrink:0; }
-#tbL2 .meta .meta-r .cls { font-size:6px; color:rgba(255,60,30,0.55); letter-spacing:1.5px; }
-#tbL2 .meta .meta-r .mt { font-size:7px; color:rgba(0,221,85,0.35); }
-#tbL2 .main { flex:1; display:flex; align-items:center; padding:0 16px; gap:0; }
-#tbL2 .main .t2-title { display:flex; align-items:center; gap:8px; margin-right:20px; flex-shrink:0; }
-#tbL2 .main .t2-title .br { font-size:10px; color:rgba(0,221,85,0.28); }
-#tbL2 .main .t2-title .big { font-size:19px; color:var(--g); letter-spacing:6px; font-weight:700; line-height:1; }
-#tbL2 .main .t2-title .arch { font-size:8px; color:rgba(0,221,85,0.4); letter-spacing:3px; }
-#tbL2 .main .spec-wrap { position:relative; flex-shrink:0; }
-#tbL2 .main .spacer { flex:1; }
-#tbL2 .main .nums { display:flex; align-items:center; gap:16px; flex-shrink:0; }
-#tbL2 .main .nums .n { text-align:right; }
-#tbL2 .main .nums .n .v { font-size:14px; font-weight:700; letter-spacing:1px; line-height:1; }
-#tbL2 .main .nums .n .k { font-size:5.5px; color:rgba(0,221,85,0.3); letter-spacing:1.5px; margin-top:2px; }
-#tbL2 .main .nums .n.acc .v { color:var(--acc); }
-#tbL2 .main .nums .n.dim .v { color:var(--g2); }
-#tbL2 .main .t2-clk { font-size:15px; color:var(--g2); font-weight:700; letter-spacing:2px; }
-
-/* ── Layout 3: Centered ── */
-#tbL3 { display:flex; align-items:stretch; width:100%; }
-#tbL3 .left { flex:1; display:flex; flex-direction:column; justify-content:center; padding:0 18px; gap:4px; border-right:1px solid rgba(0,221,85,0.1); }
-#tbL3 .left span { font-size:6.5px; color:rgba(0,221,85,0.42); letter-spacing:0.4px; line-height:1.4; }
-#tbL3 .left span.q2 { font-size:6px; color:rgba(0,221,85,0.2); }
-#tbL3 .center { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 24px; flex-shrink:0; border-right:1px solid rgba(0,221,85,0.1); position:relative; }
-#tbL3 .center::before,#tbL3 .center::after { content:''; position:absolute; left:50%; transform:translateX(-50%); width:32px; height:1px; background:rgba(0,221,85,0.18); }
-#tbL3 .center::before { top:7px; } #tbL3 .center::after { bottom:7px; }
-#tbL3 .center .name { font-size:15px; color:var(--g); letter-spacing:5px; font-weight:700; display:flex; align-items:center; gap:5px; }
-#tbL3 .center .name .dot { font-size:8px; color:rgba(0,221,85,0.25); }
-#tbL3 .center .code { font-size:5.5px; color:rgba(0,221,85,0.28); letter-spacing:2.5px; margin-top:3px; }
-#tbL3 .right { flex:1; display:flex; align-items:center; justify-content:flex-end; padding:0 18px; gap:16px; }
-#tbL3 .right .r-num { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-#tbL3 .right .r-num .rv { font-weight:700; letter-spacing:1px; line-height:1; }
-#tbL3 .right .r-num .rk { font-size:5.5px; color:rgba(0,221,85,0.3); letter-spacing:1.5px; }
-#tbL3 .right .r-num.acc .rv { font-size:13px; color:var(--acc); }
-#tbL3 .right .r-num.dim .rv { font-size:11px; color:var(--g2); }
-#tbL3 .right .r-clk { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-#tbL3 .right .r-clk .rc-d { font-size:5.5px; color:rgba(0,221,85,0.25); letter-spacing:1px; }
-#tbL3 .right .r-clk .rc-t { font-size:14px; color:var(--g2); font-weight:700; letter-spacing:2px; }
-
-/* ── 레이아웃 전환 버튼 ── */
-#tbModeBtn {
-  position:absolute; right:0; top:0; height:100%; padding:0 8px;
-  background:rgba(0,221,85,0.06); border-left:1px solid rgba(0,221,85,0.12);
-  display:flex; align-items:center; cursor:pointer; z-index:30;
-  font-size:7px; color:rgba(0,221,85,0.3); letter-spacing:1px;
-  user-select:none; transition:all .15s;
+#titleBar .th-name {
+  font-size:11px; font-weight:700; color:rgba(0,221,85,0.9);
+  letter-spacing:7px; line-height:1; flex-shrink:0;
 }
-#tbModeBtn:hover { background:rgba(0,221,85,0.1); color:var(--g2); }
-
-/* 숨김 클래스 */
-.tb-hidden { display:none !important; }
-
-/* 구버전 클래스들 사용 안하지만 남겨둠 */
-#tbLogo { display:none; }
-.ttab { display:none; }
-.tb-stat { display:none; }
-.tb-dot { display:none; }
-.tb-spacer { display:none; }
-#tbRight { display:none; }
-.tb-cls { display:none; }
-.ttab {
-  display:flex; align-items:center; padding:0 20px;
-  font-size:9px; letter-spacing:1.5px; color:var(--g3);
-  background:rgba(0,0,0,0.8); border:1px solid var(--g4);
-  clip-path:polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
-  cursor:pointer; margin-right:-8px; user-select:none;
-  transition:all .1s;
+#titleBar .th-divider {
+  width:1px; height:14px; background:rgba(0,221,85,0.15);
+  margin:0 22px; flex-shrink:0;
 }
-.ttab:hover { color:var(--g2); background:rgba(0,0,0,0.9); }
-.ttab.on { color:#000; background:var(--acc); border-color:var(--acc); font-size:10px; }
-/* 타이틀바 스탯 칩 */
-.tb-stat {
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  padding:0 12px; gap:2px; border-right:1px solid rgba(0,221,85,0.12);
-  height:100%;
+#titleBar .th-stats {
+  display:flex; align-items:baseline; gap:14px; flex-shrink:0;
 }
-.tb-stat-k { font-size:7px; color:rgba(0,221,85,0.4); letter-spacing:1.5px; }
-.tb-stat-v { font-size:10px; color:var(--g2); letter-spacing:1px; }
-.tb-stat-v.acc { color:var(--acc); }
-.tb-stat-v.org { color:#ffb000; }
-.tb-stat-v.dim { color:rgba(0,221,85,0.35); }
-/* 상태 도트 */
-.tb-dot {
-  width:8px; height:8px; border-radius:50%; background:rgba(0,221,85,0.2);
-  border:1px solid rgba(0,221,85,0.3); margin:0 6px;
-  flex-shrink:0;
+#titleBar .th-stat-item {
+  display:flex; align-items:baseline; gap:4px;
 }
-.tb-dot.on { background:var(--acc); box-shadow:0 0 6px var(--acc); animation:dotpulse 2s ease-in-out infinite; }
-@keyframes dotpulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.tb-spacer { flex:1; }
-#tbRight {
-  display:flex; align-items:center; gap:14px; padding:0 18px;
-  background:rgba(0,0,0,0.8); border:1px solid var(--g4);
-  clip-path:polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+#titleBar .th-stat-v {
+  font-size:11px; font-weight:700; letter-spacing:0.5px; line-height:1;
 }
-.tb-cls { font-size:7.5px; letter-spacing:1.5px; color:rgba(255,60,30,0.7); }
-.tb-time { font-size:11px; color:var(--g2); }
+#titleBar .th-stat-v.acc { color:rgba(155,255,58,0.8); }
+#titleBar .th-stat-v.dim { color:rgba(0,221,85,0.5); }
+#titleBar .th-stat-v.faint { color:rgba(0,221,85,0.3); }
+#titleBar .th-stat-k {
+  font-size:5px; color:rgba(0,221,85,0.25); letter-spacing:2px; line-height:1;
+}
+#titleBar .th-spacer { flex:1; }
+#titleBar .th-status {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+}
+#titleBar .th-dot {
+  width:5px; height:5px; border-radius:50%;
+  background:#9bff3a; box-shadow:0 0 6px rgba(155,255,58,0.6);
+  animation:thpulse 2.5s ease-in-out infinite; flex-shrink:0;
+}
+@keyframes thpulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+#titleBar .th-online { font-size:6px; color:rgba(155,255,58,0.7); letter-spacing:2px; line-height:1; }
+#titleBar .th-clk {
+  font-size:13px; font-weight:700; color:rgba(0,221,85,0.65);
+  letter-spacing:2px; line-height:1; font-variant-numeric:tabular-nums;
+  margin-left:20px; flex-shrink:0;
+}
 
 /* ════ 메인 행 ════ */
 #mainRow { flex:1; display:flex; gap:8px; min-height:0; }
@@ -753,16 +664,11 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
   #titleBar {
     height: auto !important;
     min-height: 48px;
-    padding: 6px 0;
+    padding: 6px 28px;
     border-bottom: 1px solid rgba(0,221,85,0.2);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  /* 인용문, 구분선 일부 숨김 */
-  #tbL1 .t-quote    { display: none !important; }
-  #tbL1 .t-line     { display: none !important; }
-  /* 숫자 블록 간격 줄임 */
-  #tbL1 { padding: 0 12px; gap: 8px; flex-wrap: wrap; overflow: hidden; }
 
   /* ── 메인 행: 세로 스택 ── */
   #mainRow {
@@ -870,140 +776,29 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
 <!-- ── 타이틀바: wrap 밖 독립 요소 ── -->
 <div id="titleBar">
-
-    <!-- ── LAYOUT 1: Continuous Strip ── -->
-    <div id="tbL1">
-
-      <!-- 타이틀 -->
-      <div class="t-title">
-        <span class="big">SET</span>
-        <span class="sub">ARCHIVE</span>
-      </div>
-
-      <div class="t-line" style="max-width:24px;"></div>
-      <div class="tb-sep"></div>
-
-      <!-- 숫자 블록: RECORDS + SEL + DIRS + 비율 바 -->
-      <div style="display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 14px;flex-shrink:0;">
-        <div style="display:flex;align-items:baseline;gap:10px;">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
-            <span style="font-size:13px;color:var(--acc);font-weight:700;letter-spacing:1px;line-height:1;">5,900</span>
-            <span style="font-size:5px;color:rgba(0,221,85,0.3);letter-spacing:2px;">REC</span>
-          </div>
-          <span style="font-size:9px;color:rgba(0,221,85,0.2);">/</span>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
-            <span style="font-size:13px;color:var(--g2);font-weight:700;letter-spacing:1px;line-height:1;">438</span>
-            <span style="font-size:5px;color:rgba(0,221,85,0.3);letter-spacing:2px;">SEL</span>
-          </div>
-          <span style="font-size:9px;color:rgba(0,221,85,0.2);">/</span>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:1px;">
-            <span style="font-size:13px;color:rgba(0,221,85,0.5);font-weight:700;letter-spacing:1px;line-height:1;">45</span>
-            <span style="font-size:5px;color:rgba(0,221,85,0.3);letter-spacing:2px;">DIR</span>
-          </div>
-        </div>
-        <!-- 선택 비율 바 -->
-        <div style="display:flex;align-items:center;gap:5px;">
-          <div style="width:90px;height:2px;background:rgba(0,221,85,0.08);position:relative;overflow:hidden;">
-            <div style="position:absolute;left:0;top:0;height:100%;width:7.4%;background:var(--acc);box-shadow:0 0 4px var(--acc);"></div>
-          </div>
-          <span style="font-size:5.5px;color:rgba(0,221,85,0.3);letter-spacing:1px;">7.4% SEL</span>
-        </div>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- 철학 텍스트 -->
-      <div class="t-quote" style="padding:0 16px;">
-        <span>Instructions, coerced body, suspended gaze.</span>
-        <span class="q2">But the scale I hold is already contaminated.</span>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- ONLINE + RESTRICTED -->
-      <div style="display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 14px;flex-shrink:0;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:dotpulse 2s ease-in-out infinite;flex-shrink:0;"></div>
-          <span style="font-size:7px;color:var(--acc);letter-spacing:1.5px;">ONLINE</span>
-        </div>
-        <span style="font-size:5.5px;color:rgba(255,60,30,0.5);letter-spacing:1.5px;">RESTRICTED · LV.2</span>
-      </div>
-
-      <div class="tb-sep"></div>
-
-      <!-- 시계: HH:MM 크게 + :SS 작게 + 날짜 -->
-      <div style="display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:2px;padding:0 16px;flex-shrink:0;">
-        <div style="display:flex;align-items:baseline;gap:1px;">
-          <span style="font-size:14px;color:var(--g2);font-weight:700;letter-spacing:1.5px;" id="clock">--:--</span>
-          <span style="font-size:9px;color:rgba(0,221,85,0.45);font-weight:700;letter-spacing:1px;" id="tbSec">:--</span>
-        </div>
-        <span style="font-size:5.5px;color:rgba(0,221,85,0.25);letter-spacing:1.5px;" id="tbDate1">2026.06.01</span>
-      </div>
-
+  <span class="th-name">SET</span>
+  <div class="th-divider"></div>
+  <div class="th-stats">
+    <div class="th-stat-item">
+      <span class="th-stat-v acc">438</span>
+      <span class="th-stat-k">SEL</span>
     </div>
-
-    <!-- ── LAYOUT 2: Two Tier ── -->
-    <div id="tbL2" class="tb-hidden">
-      <div class="meta">
-        <div class="ticker-wrap">
-          <div class="fade-l"></div>
-          <div class="ticker">Instructions, coerced body, suspended gaze.&nbsp;&nbsp;·&nbsp;&nbsp;Archiving the structure of photography by halting reproduction.&nbsp;&nbsp;·&nbsp;&nbsp;Set is the world. I'm measuring the perimeter of the set.&nbsp;&nbsp;·&nbsp;&nbsp;But the scale I hold is already contaminated by the world itself.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instructions, coerced body, suspended gaze.&nbsp;&nbsp;·&nbsp;&nbsp;Archiving the structure of photography by halting reproduction.&nbsp;&nbsp;·&nbsp;&nbsp;Set is the world. I'm measuring the perimeter of the set.&nbsp;&nbsp;·&nbsp;&nbsp;But the scale I hold is already contaminated by the world itself.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-        </div>
-        <div class="meta-r">
-          <span class="cls">RESTRICTED · LV.2</span>
-          <span class="mt" id="tbMetaTime">--:--:--</span>
-        </div>
-      </div>
-      <div class="main">
-        <div class="t2-title">
-          <span class="br">[</span>
-          <span class="big">SET</span>
-          <span class="br">]</span>
-          <div style="width:1px;height:14px;background:rgba(0,221,85,0.2);"></div>
-          <span class="arch">ARCHIVE</span>
-        </div>
-        <canvas id="tbSpecCv" width="380" height="26" style="display:block;flex-shrink:0;"></canvas>
-        <div class="spacer"></div>
-        <div class="nums">
-          <div class="n acc"><div class="v">5,900</div><div class="k">REC</div></div>
-          <div style="width:1px;height:14px;background:rgba(0,221,85,0.12);"></div>
-          <div class="n dim"><div class="v">438</div><div class="k">SEL</div></div>
-          <div style="width:1px;height:14px;background:rgba(0,221,85,0.12);"></div>
-          <span class="t2-clk" id="tbClk2">--:--:--</span>
-        </div>
-      </div>
+    <div class="th-stat-item">
+      <span class="th-stat-v dim">5,900</span>
+      <span class="th-stat-k">REC</span>
     </div>
-
-    <!-- ── LAYOUT 3: Centered Identity ── -->
-    <div id="tbL3" class="tb-hidden">
-      <div class="left">
-        <span>Instructions, coerced body, suspended gaze.</span>
-        <span class="q2">Archiving the structure of photography by halting reproduction.</span>
-      </div>
-      <div class="center">
-        <div class="name">
-          <span class="dot">·</span>
-          <span>SETARCH</span>
-          <span class="dot">·</span>
-        </div>
-        <div class="code">SET_NULL_CH</div>
-      </div>
-      <div class="right">
-        <canvas id="tbRadarCv" width="34" height="34" style="flex-shrink:0;"></canvas>
-        <div style="width:1px;height:18px;background:rgba(0,221,85,0.12);flex-shrink:0;"></div>
-        <div class="r-num acc"><div class="rv">5,900</div><div class="rk">REC</div></div>
-        <div class="r-num dim"><div class="rv">438</div><div class="rk">SEL</div></div>
-        <div style="width:1px;height:18px;background:rgba(0,221,85,0.12);flex-shrink:0;"></div>
-        <div class="r-clk">
-          <span class="rc-d" id="tbDate3">2026.06.01</span>
-          <span class="rc-t" id="tbClk3">--:--:--</span>
-        </div>
-      </div>
+    <div class="th-stat-item">
+      <span class="th-stat-v faint">45</span>
+      <span class="th-stat-k">DIR</span>
     </div>
-
-    <!-- 레이아웃 전환 버튼 -->
-    <div id="tbModeBtn" onclick="cycleTbLayout()">L1</div>
   </div>
+  <div class="th-spacer"></div>
+  <div class="th-status">
+    <div class="th-dot"></div>
+    <span class="th-online">ONLINE</span>
+  </div>
+  <span class="th-clk" id="thClk">--:--:--</span>
+</div>
 
 <!-- ── 메인 wrap ── -->
 <div id="wrap">
@@ -3424,21 +3219,6 @@ document.getElementById('exitBtn').onclick=()=>{ log('SYS',false,'EXIT · REDIRE
   for(let i=0;i<24;i++){ rx.appendChild(document.createElement('i')); }
   for(let i=0;i<16;i++){ ry.appendChild(document.createElement('i')); }
 })();
-/* ── 타이틀바 레이아웃 전환 ── */
-let _tbMode=1;
-function cycleTbLayout(){
-  _tbMode=(_tbMode%3)+1;
-  ['tbL1','tbL2','tbL3'].forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(el) el.className=(i+1===_tbMode)?'':'tb-hidden';
-  });
-  const btn=document.getElementById('tbModeBtn');
-  if(btn) btn.textContent='L'+_tbMode;
-  // 레이아웃2 스펙트럼, 레이아웃3 레이더 초기화
-  if(_tbMode===2) initTbSpec();
-  if(_tbMode===3) initTbRadar();
-}
-
 /* ── 시계 ── */
 function tick(){
   const t=new Date();
@@ -3446,109 +3226,25 @@ function tick(){
   const ss=`:${String(t.getSeconds()).padStart(2,'0')}`;
   const full=hm+ss;
   const d=`${t.getFullYear()}.${String(t.getMonth()+1).padStart(2,'0')}.${String(t.getDate()).padStart(2,'0')}`;
-  // L1: HH:MM + :SS 분리
-  const clk=document.getElementById('clock'); if(clk) clk.textContent=hm;
-  const sec=document.getElementById('tbSec'); if(sec) sec.textContent=ss;
-  // L2, L3, meta
-  ['tbClk2','tbClk3','tbMetaTime'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=full;});
-  ['tbDate1','tbDate3'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=d;});
+  const clk=document.getElementById('thClk'); if(clk) clk.textContent=full;
 }
 tick(); setInterval(tick,1000);
 
-/* ── L2: 스펙트럼 ── */
-let _tbSpecInited=false;
-function initTbSpec(){
-  if(_tbSpecInited)return; _tbSpecInited=true;
-  const cv=document.getElementById('tbSpecCv');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  const W=cv.width,H=cv.height,N=56;
-  const vals=Array.from({length:N},()=>Math.random());
-  const tgts=Array.from({length:N},()=>Math.random());
-  const spd=Array.from({length:N},(_,i)=>0.05+(i/N)*0.15);
-  const amp=Array.from({length:N},(_,i)=>Math.max(0.1,1-i/N*0.6+Math.sin(i/N*Math.PI)*0.3));
-  const pks=vals.slice(),pkT=new Array(N).fill(0);
-  function frame(){
-    vals.forEach((_,i)=>{
-      if(Math.random()<0.02+i/N*0.05) tgts[i]=(0.05+Math.random()*0.93)*amp[i];
-      vals[i]+=(tgts[i]-vals[i])*spd[i];
-      if(vals[i]>=pks[i]){pks[i]=vals[i];pkT[i]=55;}
-      else if(pkT[i]>0)pkT[i]--;
-      else pks[i]=Math.max(pks[i]-0.005,vals[i]);
-    });
-    ctx.clearRect(0,0,W,H);
-    const bw=(W-2)/N-0.4;
-    vals.forEach((v,i)=>{
-      const h=Math.max(1,v*(H-2));
-      const x=i*(bw+0.4);
-      ctx.shadowBlur=v>0.75?5:0;
-      ctx.shadowColor='rgba(155,255,58,0.5)';
-      const gr=ctx.createLinearGradient(0,H,0,0);
-      gr.addColorStop(0,'rgba(0,221,85,0.8)');
-      gr.addColorStop(0.55,'rgba(0,221,85,0.9)');
-      gr.addColorStop(1,'rgba(155,255,58,0.95)');
-      ctx.fillStyle=gr;ctx.fillRect(x,H-h,bw,h);
-      ctx.shadowBlur=0;
-      ctx.fillStyle=`rgba(155,255,58,${Math.min(1,pkT[i]/55*1.3)*0.9})`;
-      ctx.fillRect(x,H-pks[i]*(H-2)-1,bw,1.2);
-    });
-    if(document.getElementById('tbL2')&&!document.getElementById('tbL2').classList.contains('tb-hidden'))
-      requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-/* ── L3: 레이더 ── */
-let _tbRadarInited=false;
-function initTbRadar(){
-  if(_tbRadarInited)return; _tbRadarInited=true;
-  const cv=document.getElementById('tbRadarCv');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  const cx=17,cy=17,R=15;
-  let angle=0;const blips=[];
-  function draw(){
-    ctx.clearRect(0,0,34,34);
-    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fill();
-    ctx.strokeStyle='rgba(0,221,85,0.2)';ctx.lineWidth=0.5;ctx.stroke();
-    [R*.38,R*.68].forEach(r=>{ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(0,221,85,0.08)';ctx.lineWidth=0.5;ctx.stroke();});
-    ctx.strokeStyle='rgba(0,221,85,0.07)';ctx.lineWidth=0.5;
-    ctx.beginPath();ctx.moveTo(cx-R,cy);ctx.lineTo(cx+R,cy);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(cx,cy-R);ctx.lineTo(cx,cy+R);ctx.stroke();
-    for(let i=0;i<18;i++){const a=angle-Math.PI*.6*(i/18);ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a-Math.PI*.6/18,a);ctx.fillStyle=`rgba(0,221,85,${(1-i/18)*0.22})`;ctx.fill();}
-    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(angle)*R,cy+Math.sin(angle)*R);
-    ctx.strokeStyle='rgba(155,255,58,0.85)';ctx.lineWidth=1.2;ctx.stroke();
-    blips.forEach(b=>{b.age++;ctx.beginPath();ctx.arc(b.x,b.y,1.5,0,Math.PI*2);ctx.fillStyle=`rgba(155,255,58,${Math.max(0,0.85-b.age/32)})`;ctx.fill();});
-    for(let i=blips.length-1;i>=0;i--)if(blips[i].age>32)blips.splice(i,1);
-    angle+=0.055;if(angle>Math.PI*2){angle-=Math.PI*2;if(Math.random()<0.45){const ba=Math.random()*Math.PI*2,br=(0.2+Math.random()*0.75)*R;blips.push({x:cx+Math.cos(ba)*br,y:cy+Math.sin(ba)*br,age:0});}}
-    if(document.getElementById('tbL3')&&!document.getElementById('tbL3').classList.contains('tb-hidden'))
-      requestAnimationFrame(draw);
-  }
-  draw();
-}
-
 // ── CAPTURE REPORT 보고서 파일 매핑 ──
 const REPORT_FILES = {
-  // 2025/09 — no date file (복수 배치 합본)
-  '20250928':'no date file review.md',
   // 2025/10
-  '20251003':'no date file review.md',
   '20251008':'6.20251011 review.md',
   '20251018':'4.20251018 review.md',
   '20251025':'5.20251025 review.md',
   // 2025/11
-  '20251101':'no date file review.md',
   '20251102':'7.20251102 review.md',
   '20251104':'8.20251104 review.md',
-  '20251108':'no date file review.md',
   '20251115':'9.20251115 review.md',
   '20251122':'10.20251122 review.md',
   '20251129':'11.20251129 review.md',
   // 2025/12
   '20251206':'12.20251206 review.md',
   '20251213':'13.20251213 review.md',
-  '20251225':'no date file review.md',
   '20251227':'14.20251227 review.md',
   // 2026/01
   '20260104':'1.20260104 review.md',
@@ -3559,14 +3255,12 @@ const REPORT_FILES = {
   '20260207':'5.20260207 review.md',
   '20260214':'6.20260214 review.md',
   '20260216':'7.20260216 review.md',
-  '20260217':'no date file review.md',
   '20260221':'2.20260221 review.md',
   '20260227':'3.20260227 review.md',
   // 2026/03
   '20260301':'4.20260301 review.md',
   '20260304':'5.20260304 review.md',
   '20260316':'6.20260316 review.md',
-  '20260322':'no date file review.md',
 };
 
 function mdToRepHtml(md){
