@@ -58,9 +58,9 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 }
 
 /* ════ 셸 / wrap ════ */
-#shell { position:fixed; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; min-width:1270px; min-height:750px; }
+#shell { position:fixed; inset:0; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; min-width:1270px; min-height:800px; }
 #wrap {
-  width:1200px; height:676px;
+  width:1200px; height:754px;
   display:flex; flex-direction:column; gap:8px;
   position:relative; padding:10px;
   background:
@@ -107,8 +107,104 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 .pnl-tab.on { color:#000; background:var(--acc); border-color:var(--acc); }
 .pnl-bd { flex:1; padding:10px; overflow:hidden; position:relative; }
 
-/* ════ 타이틀 바 ════ */
-#titleBar {
+/* ════ 타이틀 바 — 숨김 (사이드바로 이동) ════ */
+#titleBar { display:none; }
+
+/* ════ 사이드바 헤더 블록 ════ */
+#sideHd {
+  flex-shrink:0;
+  display:flex; flex-direction:column;
+  border-bottom:1px solid rgba(68,136,255,0.2);
+  position:relative; overflow:hidden;
+  background:linear-gradient(180deg, rgba(68,136,255,0.08) 0%, transparent 100%);
+}
+/* 왼쪽 수직 액센트 라인 */
+#sideHd::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+  background:linear-gradient(180deg, transparent 0%, #4488ff 30%, #4488ff 70%, transparent 100%);
+}
+/* 스캔라인 */
+#sideHd::after {
+  content:''; position:absolute; left:0; right:0; height:1px; z-index:5; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(170,187,255,0.6), transparent);
+  animation:sidescan 3.5s linear infinite;
+}
+@keyframes sidescan { 0%{top:-1px;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{top:100%;opacity:0} }
+
+/* 이름 영역 */
+.sh-name-block { padding:12px 12px 8px 14px; border-bottom:1px solid rgba(68,136,255,0.1); }
+.sh-proj { font-size:10px; font-weight:700; color:rgba(68,136,255,0.92); letter-spacing:4px; display:block; }
+.sh-sub  { font-size:5.5px; color:rgba(68,136,255,0.3); letter-spacing:3px; display:block; margin-top:3px; }
+
+/* 통계 영역 */
+.sh-stats { padding:8px 12px 8px 14px; border-bottom:1px solid rgba(68,136,255,0.1); display:flex; flex-direction:column; gap:5px; }
+.sh-stat { display:flex; justify-content:space-between; align-items:baseline; }
+.sh-val  { font-size:12px; font-weight:700; font-variant-numeric:tabular-nums; }
+.sh-val.acc   { color:rgba(170,187,255,0.85); }
+.sh-val.dim   { color:rgba(68,136,255,0.45); }
+.sh-val.faint { color:rgba(68,136,255,0.25); }
+.sh-key  { font-size:5.5px; color:rgba(68,136,255,0.22); letter-spacing:2px; }
+
+/* 시계 + 상태 */
+.sh-clock-block { padding:8px 12px 10px 14px; border-bottom:1px solid rgba(68,136,255,0.12); display:flex; flex-direction:column; gap:5px; }
+.sh-clk  { font-size:15px; font-weight:700; color:rgba(68,136,255,0.72); letter-spacing:2px; font-variant-numeric:tabular-nums; display:block; }
+.sh-status { display:flex; align-items:center; gap:5px; }
+.sh-dot  { width:4px; height:4px; border-radius:50%; background:#aabbff; animation:thpulse 2.5s ease-in-out infinite; flex-shrink:0; }
+.sh-online { font-size:6px; color:rgba(170,187,255,0.5); letter-spacing:2px; }
+
+/* 경로 */
+.sh-path { padding:6px 12px 6px 14px; font-size:6px; color:rgba(68,136,255,0.22); letter-spacing:1px; line-height:1.9; }
+.sh-path b { color:rgba(68,136,255,0.45); font-weight:normal; }
+
+/* 이하 기존 헤더 CSS (참조용, 숨겨진 요소) */
+#tbName { display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  padding:0 20px 0 22px; gap:4px;
+  background:rgba(68,136,255,0.08);
+  border-right:1px solid rgba(68,136,255,0.22);
+  clip-path:polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  position:relative;
+}
+#tbName::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(180deg, transparent 0%, #4488ff 40%, #4488ff 60%, transparent 100%);
+}
+.tb-proj { font-size:13px; font-weight:700; color:rgba(68,136,255,0.92); letter-spacing:5px; line-height:1; }
+.tb-sub  { font-size:6px; color:rgba(68,136,255,0.35); letter-spacing:3px; }
+#tbInfo {
+  flex:1; display:flex; flex-direction:column; padding:0 24px;
+  background:linear-gradient(90deg, rgba(68,136,255,0.03) 0%, transparent 50%);
+}
+#tbPath {
+  height:22px; flex-shrink:0; display:flex; align-items:center; gap:6px;
+  border-bottom:1px solid rgba(68,136,255,0.08);
+  font-size:7px; letter-spacing:1px;
+}
+.tb-crumb { color:rgba(68,136,255,0.28); }
+.tb-crumb.cur { color:rgba(68,136,255,0.55); }
+.tb-sep { color:rgba(68,136,255,0.16); }
+.tb-path-sp { flex:1; }
+.tb-sess { font-size:6.5px; color:rgba(68,136,255,0.18); letter-spacing:1px; }
+#tbRow2 { flex:1; display:flex; align-items:center; gap:0; }
+.tb-stat { display:flex; align-items:baseline; gap:4px; padding:0 16px; border-right:1px solid rgba(68,136,255,0.1); }
+.tb-stat:first-child { padding-left:0; }
+.tv { font-size:13px; font-weight:700; letter-spacing:0.5px; }
+.tv.acc { color:rgba(170,187,255,0.85); }
+.tv.dim { color:rgba(68,136,255,0.45); }
+.tv.faint { color:rgba(68,136,255,0.28); }
+.tk { font-size:5px; color:rgba(68,136,255,0.22); letter-spacing:2px; }
+#tbTrack { flex:1; margin:0 20px; height:3px; background:rgba(68,136,255,0.1); position:relative; }
+#tbTrack::before,#tbTrack::after { content:''; position:absolute; top:-3px; height:9px; width:1px; background:rgba(68,136,255,0.3); }
+#tbTrack::before { left:0; }
+#tbTrack::after  { right:0; }
+#tbFill { position:absolute; left:0; top:0; bottom:0; width:0%; background:rgba(68,136,255,0.5); transition:width .6s; }
+#tbRight { display:flex; align-items:center; gap:12px; flex-shrink:0; padding-left:20px; border-left:1px solid rgba(68,136,255,0.1); }
+.th-dot { width:5px; height:5px; border-radius:50%; background:#aabbff; animation:thpulse 2.5s ease-in-out infinite; }
+@keyframes thpulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.th-online { font-size:6px; color:rgba(170,187,255,0.6); letter-spacing:2px; }
+.th-clk { font-size:16px; font-weight:700; color:rgba(68,136,255,0.7); letter-spacing:3px; font-variant-numeric:tabular-nums; }
+
+/* 기존 헤더 CSS (hidden) */
+#tbOld {
   width:1200px; height:60px; flex-shrink:0;
   display:flex; align-items:stretch; gap:0;
   font-family:'Space Mono',monospace;
@@ -186,8 +282,8 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 /* ════ 메인 행 ════ */
 #mainRow { flex:1; display:flex; gap:8px; min-height:0; }
 
-/* ── 왼쪽 메뉴 (gallery와 반대 방향) ── */
-#menuCol { width:110px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
+/* ── 왼쪽 메뉴 + 헤더 통합 컬럼 ── */
+#menuCol { width:148px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
 #exitBtn {
   height:52px; flex-shrink:0; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:3px; cursor:pointer; user-select:none;
@@ -366,7 +462,6 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
   #shell { position:relative; min-width:unset; min-height:unset; display:block; padding:10px; }
   #wrap { width:100% !important; height:auto !important; min-height:calc(100dvh - 20px); border:1px solid var(--bd); background:rgba(0,0,0,0.98) !important; box-shadow:none; padding:8px; gap:6px; }
   #wrap::before,#wrap::after,#wc-bl,#wc-br { display:none; }
-  #titleBar { height:auto !important; min-height:48px; padding:6px 16px; border-bottom:1px solid rgba(68,136,255,0.2); }
   #mainRow { flex-direction:column-reverse; flex:none; height:auto; overflow:visible; }
   #menuCol { width:100% !important; flex-direction:row !important; gap:0 !important; overflow-x:auto; border-bottom:1px solid rgba(68,136,255,0.15); padding:4px 6px; scrollbar-width:none; }
   #menuCol::-webkit-scrollbar { display:none; }
@@ -441,8 +536,27 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
   <div id="mainRow">
 
-    <!-- ── 왼쪽 메뉴 ── -->
+    <!-- ── 왼쪽 메뉴 + 헤더 ── -->
     <div id="menuCol">
+
+      <!-- 사이드바 헤더 -->
+      <div id="sideHd">
+        <div class="sh-name-block">
+          <span class="sh-proj">INCLUSION</span>
+          <span class="sh-sub">ARCHIVE</span>
+        </div>
+        <div class="sh-stats">
+          <div class="sh-stat"><span class="sh-val acc">—</span><span class="sh-key">SEL</span></div>
+          <div class="sh-stat"><span class="sh-val dim">—</span><span class="sh-key">TOTAL</span></div>
+          <div class="sh-stat"><span class="sh-val faint">—</span><span class="sh-key">BATCH</span></div>
+        </div>
+        <div class="sh-clock-block">
+          <span class="sh-clk" id="thClk">--:--:--</span>
+          <div class="sh-status"><div class="sh-dot"></div><span class="sh-online">STANDBY</span></div>
+        </div>
+        <div class="sh-path">SET ›<br>INCLUSION ›<br><b id="sideSess">—</b></div>
+      </div>
+
       <div id="exitBtn" onclick="window.history.back()"><span class="ex-i">⏻</span><span class="ex-t">EXIT</span></div>
       <div class="mbtn on" data-sec="VIEW">VIEW</div>
       <div class="mbtn" data-sec="SEQUENCE">SEQUENCE</div>
@@ -594,8 +708,8 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 <script>
 const sid = 'I-' + Math.random().toString(16).slice(2,10).toUpperCase();
 document.getElementById('sbSess').textContent = 'SESS: ' + sid;
-const tbSessEl = document.getElementById('tbSess');
-if (tbSessEl) tbSessEl.textContent = 'SESS: ' + sid;
+const sideSessEl = document.getElementById('sideSess');
+if (sideSessEl) sideSessEl.textContent = sid;
 
 function tickClock() {
   const n = new Date();
