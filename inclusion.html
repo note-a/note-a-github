@@ -109,28 +109,79 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
 /* ════ 타이틀 바 ════ */
 #titleBar {
-  width:1200px; height:60px; flex-shrink:0; position:relative; overflow:hidden;
-  background:
-    linear-gradient(#000,#000) padding-box,
-    linear-gradient(145deg,#4499ff 0%,#2266ee 18%,#1144bb 42%,#002288 72%,#000b30 100%) border-box;
-  border:2px solid transparent;
-  display:flex; align-items:center; padding:0 28px; font-family:'Space Mono',monospace;
+  width:1200px; height:60px; flex-shrink:0;
+  display:flex; align-items:stretch; gap:0;
+  font-family:'Space Mono',monospace;
+  border-bottom:1px solid rgba(68,136,255,0.2);
+  position:relative;
 }
-.th-name { font-size:11px; font-weight:700; color:rgba(68,136,255,0.9); letter-spacing:7px; flex-shrink:0; }
-.th-divider { width:1px; height:14px; background:rgba(68,136,255,0.15); margin:0 22px; flex-shrink:0; }
-.th-stats { display:flex; align-items:baseline; gap:14px; flex-shrink:0; }
-.th-stat-item { display:flex; align-items:baseline; gap:4px; }
-.th-stat-v { font-size:11px; font-weight:700; letter-spacing:0.5px; }
-.th-stat-v.acc { color:rgba(170,187,255,0.8); }
-.th-stat-v.dim { color:rgba(68,136,255,0.5); }
-.th-stat-v.faint { color:rgba(68,136,255,0.3); }
-.th-stat-k { font-size:5px; color:rgba(68,136,255,0.25); letter-spacing:2px; }
-.th-spacer { flex:1; }
-.th-status { display:flex; align-items:center; gap:6px; flex-shrink:0; }
-.th-dot { width:5px; height:5px; border-radius:50%; background:#aabbff; box-shadow:0 0 6px rgba(170,187,255,0.6); animation:thpulse 2.5s ease-in-out infinite; }
+/* 스캔라인 애니메이션 — 헤더 전체 */
+#titleBar::after {
+  content:''; position:absolute; left:0; right:0; height:1px; z-index:5; pointer-events:none;
+  background:linear-gradient(90deg, transparent 0%, rgba(170,187,255,0.55) 40%, rgba(170,187,255,0.8) 60%, transparent 100%);
+  animation:tbscan 4s linear infinite;
+}
+@keyframes tbscan { 0%{top:-1px;opacity:0} 5%{opacity:1} 95%{opacity:1} 100%{top:100%;opacity:0} }
+
+/* 왼쪽 이름 블록 */
+#tbName {
+  flex-shrink:0; width:186px;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  padding:0 20px 0 22px; gap:4px;
+  background:rgba(68,136,255,0.08);
+  border-right:1px solid rgba(68,136,255,0.22);
+  clip-path:polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+  position:relative;
+}
+#tbName::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(180deg, transparent 0%, #4488ff 40%, #4488ff 60%, transparent 100%);
+}
+.tb-proj { font-size:13px; font-weight:700; color:rgba(68,136,255,0.92); letter-spacing:5px; line-height:1; }
+.tb-sub  { font-size:6px; color:rgba(68,136,255,0.35); letter-spacing:3px; }
+
+/* 오른쪽 정보 영역 */
+#tbInfo {
+  flex:1; display:flex; flex-direction:column; padding:0 24px;
+  background:linear-gradient(90deg, rgba(68,136,255,0.03) 0%, transparent 50%);
+}
+/* 상단 행: 경로 브레드크럼 */
+#tbPath {
+  height:22px; flex-shrink:0; display:flex; align-items:center; gap:6px;
+  border-bottom:1px solid rgba(68,136,255,0.08);
+  font-size:7px; letter-spacing:1px;
+}
+.tb-crumb { color:rgba(68,136,255,0.28); }
+.tb-crumb.cur { color:rgba(68,136,255,0.55); }
+.tb-sep { color:rgba(68,136,255,0.16); }
+.tb-path-sp { flex:1; }
+.tb-sess { font-size:6.5px; color:rgba(68,136,255,0.18); letter-spacing:1px; }
+/* 하단 행: 통계 + 트랙 + 시계 */
+#tbRow2 {
+  flex:1; display:flex; align-items:center; gap:0;
+}
+.tb-stat { display:flex; align-items:baseline; gap:4px; padding:0 16px; border-right:1px solid rgba(68,136,255,0.1); }
+.tb-stat:first-child { padding-left:0; }
+.tv { font-size:13px; font-weight:700; letter-spacing:0.5px; }
+.tv.acc { color:rgba(170,187,255,0.85); }
+.tv.dim { color:rgba(68,136,255,0.45); }
+.tv.faint { color:rgba(68,136,255,0.28); }
+.tk { font-size:5px; color:rgba(68,136,255,0.22); letter-spacing:2px; }
+/* 수평 선택률 트랙 */
+#tbTrack {
+  flex:1; margin:0 20px; height:3px;
+  background:rgba(68,136,255,0.1); position:relative;
+}
+#tbTrack::before,#tbTrack::after { content:''; position:absolute; top:-3px; height:9px; width:1px; background:rgba(68,136,255,0.3); }
+#tbTrack::before { left:0; }
+#tbTrack::after  { right:0; }
+#tbFill { position:absolute; left:0; top:0; bottom:0; width:0%; background:rgba(68,136,255,0.5); transition:width .6s; }
+/* 우측: 상태 + 시계 */
+#tbRight { display:flex; align-items:center; gap:12px; flex-shrink:0; padding-left:20px; border-left:1px solid rgba(68,136,255,0.1); }
+.th-dot { width:5px; height:5px; border-radius:50%; background:#aabbff; animation:thpulse 2.5s ease-in-out infinite; }
 @keyframes thpulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-.th-online { font-size:6px; color:rgba(170,187,255,0.7); letter-spacing:2px; }
-.th-clk { font-size:13px; font-weight:700; color:rgba(68,136,255,0.65); letter-spacing:2px; font-variant-numeric:tabular-nums; margin-left:20px; flex-shrink:0; }
+.th-online { font-size:6px; color:rgba(170,187,255,0.6); letter-spacing:2px; }
+.th-clk { font-size:16px; font-weight:700; color:rgba(68,136,255,0.7); letter-spacing:3px; font-variant-numeric:tabular-nums; }
 
 /* ════ 메인 행 ════ */
 #mainRow { flex:1; display:flex; gap:8px; min-height:0; }
@@ -352,16 +403,36 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 <div id="shell">
 
 <div id="titleBar">
-  <span class="th-name">INCLUSION</span>
-  <div class="th-divider"></div>
-  <div class="th-stats">
-    <div class="th-stat-item"><span class="th-stat-v acc">—</span><span class="th-stat-k">SEL</span></div>
-    <div class="th-stat-item"><span class="th-stat-v dim">—</span><span class="th-stat-k">TOTAL</span></div>
-    <div class="th-stat-item"><span class="th-stat-v faint">—</span><span class="th-stat-k">BATCH</span></div>
+  <!-- 왼쪽 이름 블록 -->
+  <div id="tbName">
+    <span class="tb-proj">INCLUSION</span>
+    <span class="tb-sub">ARCHIVE</span>
   </div>
-  <div class="th-spacer"></div>
-  <div class="th-status"><div class="th-dot"></div><span class="th-online">STANDBY</span></div>
-  <span class="th-clk" id="thClk">--:--:--</span>
+  <!-- 오른쪽 정보 영역 -->
+  <div id="tbInfo">
+    <!-- 상단: 경로 브레드크럼 -->
+    <div id="tbPath">
+      <span class="tb-crumb">SET</span>
+      <span class="tb-sep">›</span>
+      <span class="tb-crumb">INCLUSION</span>
+      <span class="tb-sep">›</span>
+      <span class="tb-crumb cur">NULL_CH</span>
+      <div class="tb-path-sp"></div>
+      <span class="tb-sess" id="tbSess">SESS: —</span>
+    </div>
+    <!-- 하단: 통계 + 트랙 + 시계 -->
+    <div id="tbRow2">
+      <div class="tb-stat"><span class="tv acc">—</span><span class="tk">SEL</span></div>
+      <div class="tb-stat"><span class="tv dim">—</span><span class="tk">TOTAL</span></div>
+      <div class="tb-stat"><span class="tv faint">—</span><span class="tk">BATCH</span></div>
+      <div id="tbTrack"><div id="tbFill"></div></div>
+      <div id="tbRight">
+        <div class="th-dot"></div>
+        <span class="th-online">STANDBY</span>
+        <span class="th-clk" id="thClk">--:--:--</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="wrap">
@@ -523,6 +594,8 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 <script>
 const sid = 'I-' + Math.random().toString(16).slice(2,10).toUpperCase();
 document.getElementById('sbSess').textContent = 'SESS: ' + sid;
+const tbSessEl = document.getElementById('tbSess');
+if (tbSessEl) tbSessEl.textContent = 'SESS: ' + sid;
 
 function tickClock() {
   const n = new Date();
