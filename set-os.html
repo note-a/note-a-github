@@ -4155,14 +4155,14 @@ const FILE_SVG = `<svg class="h-file-svg" viewBox="0 0 32 38" xmlns="http://www.
 </svg>`;
 
 // 폴더 클릭 → 파일 아이콘 그리드 표시
-function hudOpenFolder(name){
+function hudOpenFolder(name, logItem){
   const folders = document.querySelector('.h-folders');
   const files = document.getElementById('h-files');
   const title = document.getElementById('h-files-title');
   const fileList = document.getElementById('h-files-list');
   if(!folders || !files) return;
 
-  const slug = name.replace(/\s+/g,'_').toUpperCase();
+  const slug = (name||'FILE').replace(/\s+/g,'_').toUpperCase();
   const entries = [
     slug+'_LOG.txt',
     slug+'_DIR.log',
@@ -4173,10 +4173,18 @@ function hudOpenFolder(name){
   ];
   title.textContent = '▸ ' + name;
   fileList.innerHTML = entries.map(n=>`
-    <div class="h-file-item" onclick="window.open('https://note-a.github.io/page-log.html','_blank')">
+    <div class="h-file-item">
       ${FILE_SVG}
       <span class="h-file-name">${n}</span>
     </div>`).join('');
+
+  // 파일 클릭 → openPost 또는 LOG 이동
+  fileList.querySelectorAll('.h-file-item').forEach(el=>{
+    el.addEventListener('click', function(){
+      if(typeof openPost==='function' && logItem) openPost(logItem);
+      else window.open('https://note-a.github.io/page-log.html','_blank');
+    });
+  });
 
   folders.style.display = 'none';
   files.style.display = 'flex';
@@ -4265,7 +4273,7 @@ function scrollHud(dir){
           +'<svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg>'
           +'<span class="fld-name">'+t+'</span></div>';
       }).join('');
-      [].forEach.call(grid.querySelectorAll('.fld-item'),function(el,i){el.addEventListener('click',function(){openPost(logs[i]);});});
+      [].forEach.call(grid.querySelectorAll('.fld-item'),function(el,i){el.addEventListener('click',function(){hudOpenFolder(logs[i].title||logs[i].id||'',logs[i]);});});
     }
     var rows=document.querySelector('.h-rows');
     if(rows){
