@@ -1818,14 +1818,7 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
   var navigating=false;
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   window.crtNav=function(url){
-    if(navigating)return;
-    if(reduce){ location.href=url; return; }
-    navigating=true;
-    document.body.classList.add('crt-leaving');
-    var shell=document.getElementById('shell'),done=false;
-    var go=function(){ if(done)return; done=true; location.href=url; };
-    if(shell) shell.addEventListener('animationend',go,{once:true});
-    setTimeout(go,560); // 폴백
+    window.open(url,'_blank');
   };
   // 진입 시 전원 ON
   if(!reduce){
