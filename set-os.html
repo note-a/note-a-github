@@ -1361,6 +1361,26 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 .fld-item.fixed .fld-ic .body{fill:var(--fc,#ff4a16);stroke:var(--fc,#ff6a1e);filter:brightness(1.1);}
 .fld-item.fixed .fld-ic .ln{stroke:rgba(0,0,0,.35);opacity:1;}
 .fld-item.fixed:hover .fld-ic .body{filter:brightness(1.28);}
+.fld-item{cursor:pointer;}
+/* 파일 서브뷰 */
+.h-files{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.h-files-back{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:5px 10px;
+  font-family:var(--mono);font-size:9px;color:rgba(255,74,22,.6);letter-spacing:1px;
+  border-bottom:1px solid rgba(255,74,22,.15);cursor:pointer;user-select:none;}
+.h-files-back:hover{color:rgba(255,74,22,1);}
+.h-files-title{flex-shrink:0;padding:4px 10px 4px;font-family:var(--mono);font-size:8px;
+  color:rgba(255,74,22,.35);letter-spacing:1.5px;border-bottom:1px solid rgba(255,74,22,.1);}
+.h-files-list{flex:1;overflow-y:auto;}
+.h-files-list::-webkit-scrollbar{width:3px;}
+.h-files-list::-webkit-scrollbar-thumb{background:rgba(255,74,22,.2);}
+.h-file-item{display:flex;align-items:center;gap:8px;padding:5px 10px;cursor:pointer;
+  border-bottom:1px solid rgba(255,74,22,.07);font-family:var(--mono);}
+.h-file-item:hover{background:rgba(255,74,22,.07);}
+.h-file-ic{font-size:11px;color:rgba(255,74,22,.4);flex-shrink:0;}
+.h-file-item:hover .h-file-ic{color:rgba(255,74,22,.85);}
+.h-file-name{font-size:8.5px;color:rgba(255,74,22,.7);flex:1;letter-spacing:.3px;}
+.h-file-item:hover .h-file-name{color:#ff4a16;}
+.h-file-date{font-size:7px;color:rgba(255,74,22,.25);flex-shrink:0;}
 .fld-name{font-family:var(--mono);font-size:9px;color:var(--fc,#ff4a16);opacity:.62;letter-spacing:.3px;
   text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 .fld-item.fixed .fld-name{opacity:.85;}
@@ -2326,34 +2346,40 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
       </div>
 
       <div class="h-folders">
-        <div class="fld-item" title="Unjudgmentable grammer"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Unjudgmentable grammer</span></div>
-        <div class="fld-item" title="figure background grammer"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background grammer</span></div>
-        <div class="fld-item" title="space structure grammer"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure grammer</span></div>
-        <div class="fld-item" title="objects closeup grammer"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup grammer</span></div>
-        <div class="fld-item" title="figure forward grammer"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward grammer</span></div>
-        <div class="fld-item" title="figure background DIR"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background DIR</span></div>
-        <div class="fld-item" title="figure forward DIR"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR</span></div>
-        <div class="fld-item" title="objects closeup DIR"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup DIR</span></div>
-        <div class="fld-item" title="Unjudgmentable DIR"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Unjudgmentable DIR</span></div>
-        <div class="fld-item" title="instruction table"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">instruction table</span></div>
-        <div class="fld-item" title="2차 작업 가이드"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">2차 작업 가이드</span></div>
-        <div class="fld-item" title="Meetings and work directions"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Meetings and work directions</span></div>
-        <div class="fld-item" title="data Dashboard 2025"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">data Dashboard 2025</span></div>
-        <div class="fld-item" title="space structure sva v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure sva v2</span></div>
-        <div class="fld-item" title="figure background sva v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background sva v2</span></div>
-        <div class="fld-item" title="figure forward sva v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward sva v2</span></div>
-        <div class="fld-item" title="objects closeup sva v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup sva v2</span></div>
-        <div class="fld-item" title="figure background grammer v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background grammer v2</span></div>
-        <div class="fld-item" title="figure forward grammer v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward grammer v2</span></div>
-        <div class="fld-item" title="objects closeup grammer v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup grammer v2</span></div>
-        <div class="fld-item" title="space structure grammer v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure grammer v2</span></div>
-        <div class="fld-item" title="figure forward DIR v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR v2</span></div>
-        <div class="fld-item" title="figure forward DIR v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR v2</span></div>
-        <div class="fld-item" title="objects closeup DIR v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup DIR v2</span></div>
-        <div class="fld-item" title="space structure DIR v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure DIR v2</span></div>
-        <div class="fld-item" title="instruction table v2"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">instruction table v2</span></div>
+        <div class="fld-item" title="Unjudgmentable grammer" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Unjudgmentable grammer</span></div>
+        <div class="fld-item" title="figure background grammer" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background grammer</span></div>
+        <div class="fld-item" title="space structure grammer" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure grammer</span></div>
+        <div class="fld-item" title="objects closeup grammer" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup grammer</span></div>
+        <div class="fld-item" title="figure forward grammer" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward grammer</span></div>
+        <div class="fld-item" title="figure background DIR" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background DIR</span></div>
+        <div class="fld-item" title="figure forward DIR" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR</span></div>
+        <div class="fld-item" title="objects closeup DIR" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup DIR</span></div>
+        <div class="fld-item" title="Unjudgmentable DIR" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Unjudgmentable DIR</span></div>
+        <div class="fld-item" title="instruction table" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">instruction table</span></div>
+        <div class="fld-item" title="2차 작업 가이드" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">2차 작업 가이드</span></div>
+        <div class="fld-item" title="Meetings and work directions" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">Meetings and work directions</span></div>
+        <div class="fld-item" title="data Dashboard 2025" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">data Dashboard 2025</span></div>
+        <div class="fld-item" title="space structure sva v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure sva v2</span></div>
+        <div class="fld-item" title="figure background sva v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background sva v2</span></div>
+        <div class="fld-item" title="figure forward sva v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward sva v2</span></div>
+        <div class="fld-item" title="objects closeup sva v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup sva v2</span></div>
+        <div class="fld-item" title="figure background grammer v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure background grammer v2</span></div>
+        <div class="fld-item" title="figure forward grammer v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward grammer v2</span></div>
+        <div class="fld-item" title="objects closeup grammer v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup grammer v2</span></div>
+        <div class="fld-item" title="space structure grammer v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure grammer v2</span></div>
+        <div class="fld-item" title="figure forward DIR v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR v2</span></div>
+        <div class="fld-item" title="figure forward DIR v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">figure forward DIR v2</span></div>
+        <div class="fld-item" title="objects closeup DIR v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">objects closeup DIR v2</span></div>
+        <div class="fld-item" title="space structure DIR v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">space structure DIR v2</span></div>
+        <div class="fld-item" title="instruction table v2" onclick="hudOpenFolder(this.title)"><svg class="fld-ic" viewBox="0 0 46 36"><path class="body" d="M3 8 H17 L20 12 H43 V32 H3 Z"/><line class="ln" x1="3" y1="16" x2="43" y2="16"/></svg><span class="fld-name">instruction table v2</span></div>
       </div>
 
+      <!-- 파일 서브뷰 (폴더 클릭 시 표시) -->
+      <div class="h-files" id="h-files">
+        <div class="h-files-back" onclick="hudFolderBack()">◄ BACK</div>
+        <div class="h-files-title" id="h-files-title">—</div>
+        <div class="h-files-list" id="h-files-list"></div>
+      </div>
 
     </div></div>
 
@@ -4106,13 +4132,57 @@ init();
 function setHudView(v){
   const list = document.querySelector('.h-list');
   const folders = document.querySelector('.h-folders');
+  const files = document.getElementById('h-files');
   if(list) list.style.display = (v==='list') ? 'flex' : 'none';
   if(folders) folders.style.display = (v==='icon') ? 'grid' : 'none';
+  if(files) files.style.display = 'none';
   document.querySelectorAll('.h-menu .h-tab[data-v]').forEach(t=>t.classList.toggle('on', t.dataset.v===v));
+}
+
+// 폴더 클릭 → 파일 목록 표시
+function hudOpenFolder(name){
+  const folders = document.querySelector('.h-folders');
+  const files = document.getElementById('h-files');
+  const title = document.getElementById('h-files-title');
+  const fileList = document.getElementById('h-files-list');
+  if(!folders || !files) return;
+
+  // 더미 파일 생성 (폴더명 기반)
+  const slug = name.replace(/\s+/g,'_').toUpperCase();
+  const entries = [
+    {n: slug+'_LOG.txt',   date:'2025.03.14'},
+    {n: slug+'_DIR.log',   date:'2025.04.02'},
+    {n: slug+'_NOTE.md',   date:'2025.05.18'},
+    {n: slug+'_SVA.csv',   date:'2025.06.01'},
+  ];
+  title.textContent = '📂 ' + name;
+  fileList.innerHTML = entries.map(f=>`
+    <div class="h-file-item" onclick="window.open('https://note-a.github.io/page-log.html','_blank')">
+      <span class="h-file-ic">▣</span>
+      <span class="h-file-name">${f.n}</span>
+      <span class="h-file-date">${f.date}</span>
+    </div>`).join('');
+
+  folders.style.display = 'none';
+  files.style.display = 'flex';
+}
+
+// 파일 뷰 → 폴더 목록으로 돌아가기
+function hudFolderBack(){
+  const folders = document.querySelector('.h-folders');
+  const files = document.getElementById('h-files');
+  if(folders) folders.style.display = 'grid';
+  if(files) files.style.display = 'none';
 }
 
 // SET / measure buttons scroll the active HUD.XT2 view (icon grid or list)
 function scrollHud(dir){
+  const files = document.getElementById('h-files');
+  if(files && files.style.display === 'flex'){
+    const fl = document.getElementById('h-files-list');
+    if(fl) fl.scrollBy({ top: dir * 100, behavior: 'smooth' });
+    return;
+  }
   let t = document.querySelector('.h-folders');
   if(!t || getComputedStyle(t).display === 'none'){
     t = document.querySelector('.h-rows');
