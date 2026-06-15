@@ -1368,19 +1368,25 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   font-family:var(--mono);font-size:9px;color:rgba(255,74,22,.6);letter-spacing:1px;
   border-bottom:1px solid rgba(255,74,22,.15);cursor:pointer;user-select:none;}
 .h-files-back:hover{color:rgba(255,74,22,1);}
-.h-files-title{flex-shrink:0;padding:4px 10px 4px;font-family:var(--mono);font-size:8px;
-  color:rgba(255,74,22,.35);letter-spacing:1.5px;border-bottom:1px solid rgba(255,74,22,.1);}
-.h-files-list{flex:1;overflow-y:auto;}
-.h-files-list::-webkit-scrollbar{width:3px;}
-.h-files-list::-webkit-scrollbar-thumb{background:rgba(255,74,22,.2);}
-.h-file-item{display:flex;align-items:center;gap:8px;padding:5px 10px;cursor:pointer;
-  border-bottom:1px solid rgba(255,74,22,.07);font-family:var(--mono);}
-.h-file-item:hover{background:rgba(255,74,22,.07);}
-.h-file-ic{font-size:11px;color:rgba(255,74,22,.4);flex-shrink:0;}
-.h-file-item:hover .h-file-ic{color:rgba(255,74,22,.85);}
-.h-file-name{font-size:8.5px;color:rgba(255,74,22,.7);flex:1;letter-spacing:.3px;}
+.h-files-title{flex-shrink:0;padding:4px 10px;font-family:var(--mono);font-size:7.5px;
+  color:rgba(255,74,22,.3);letter-spacing:1.5px;border-bottom:1px solid rgba(255,74,22,.1);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.h-files-grid{flex:1;overflow-x:hidden;overflow-y:auto;display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;padding:6px 4px;align-content:start;}
+.h-files-grid::-webkit-scrollbar{width:4px;}
+.h-files-grid::-webkit-scrollbar-thumb{background:rgba(255,74,22,.2);}
+.h-file-item{display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 2px 5px;border:1px solid transparent;cursor:pointer;user-select:none;}
+.h-file-item:hover{background:rgba(255,74,22,.07);border-color:rgba(255,74,22,.25);}
+.h-file-svg{width:32px;height:38px;display:block;}
+.h-file-svg .fbody{fill:rgba(40,18,0,.55);stroke:#ff4a16;stroke-width:1.3;}
+.h-file-svg .fline{stroke:#ff4a16;opacity:.28;stroke-width:1;}
+.h-file-svg .fcorner{fill:rgba(255,74,22,.3);}
+.h-file-item:hover .h-file-svg .fbody{fill:rgba(100,46,0,.6);filter:brightness(1.2);}
+.h-file-item:hover .h-file-svg .fline{opacity:.7;}
+.h-file-name{font-family:var(--mono);font-size:7px;color:rgba(255,74,22,.55);
+  text-align:center;line-height:1.3;word-break:break-all;letter-spacing:.2px;width:100%;}
 .h-file-item:hover .h-file-name{color:#ff4a16;}
-.h-file-date{font-size:7px;color:rgba(255,74,22,.25);flex-shrink:0;}
 .fld-name{font-family:var(--mono);font-size:9px;color:var(--fc,#ff4a16);opacity:.62;letter-spacing:.3px;
   text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 .fld-item.fixed .fld-name{opacity:.85;}
@@ -2378,7 +2384,7 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
       <div class="h-files" id="h-files">
         <div class="h-files-back" onclick="hudFolderBack()">◄ BACK</div>
         <div class="h-files-title" id="h-files-title">—</div>
-        <div class="h-files-list" id="h-files-list"></div>
+        <div class="h-files-grid" id="h-files-list"></div>
       </div>
 
     </div></div>
@@ -4139,7 +4145,16 @@ function setHudView(v){
   document.querySelectorAll('.h-menu .h-tab[data-v]').forEach(t=>t.classList.toggle('on', t.dataset.v===v));
 }
 
-// 폴더 클릭 → 파일 목록 표시
+// 파일 아이콘 SVG
+const FILE_SVG = `<svg class="h-file-svg" viewBox="0 0 32 38" xmlns="http://www.w3.org/2000/svg">
+  <polygon class="fbody" points="4,2 22,2 28,8 28,36 4,36"/>
+  <polygon class="fcorner" points="22,2 28,8 22,8"/>
+  <line class="fline" x1="8" y1="16" x2="24" y2="16"/>
+  <line class="fline" x1="8" y1="21" x2="24" y2="21"/>
+  <line class="fline" x1="8" y1="26" x2="18" y2="26"/>
+</svg>`;
+
+// 폴더 클릭 → 파일 아이콘 그리드 표시
 function hudOpenFolder(name){
   const folders = document.querySelector('.h-folders');
   const files = document.getElementById('h-files');
@@ -4147,20 +4162,20 @@ function hudOpenFolder(name){
   const fileList = document.getElementById('h-files-list');
   if(!folders || !files) return;
 
-  // 더미 파일 생성 (폴더명 기반)
   const slug = name.replace(/\s+/g,'_').toUpperCase();
   const entries = [
-    {n: slug+'_LOG.txt',   date:'2025.03.14'},
-    {n: slug+'_DIR.log',   date:'2025.04.02'},
-    {n: slug+'_NOTE.md',   date:'2025.05.18'},
-    {n: slug+'_SVA.csv',   date:'2025.06.01'},
+    slug+'_LOG.txt',
+    slug+'_DIR.log',
+    slug+'_NOTE.md',
+    slug+'_SVA.csv',
+    slug+'_DATA.csv',
+    slug+'_REP.txt',
   ];
-  title.textContent = '📂 ' + name;
-  fileList.innerHTML = entries.map(f=>`
+  title.textContent = '▸ ' + name;
+  fileList.innerHTML = entries.map(n=>`
     <div class="h-file-item" onclick="window.open('https://note-a.github.io/page-log.html','_blank')">
-      <span class="h-file-ic">▣</span>
-      <span class="h-file-name">${f.n}</span>
-      <span class="h-file-date">${f.date}</span>
+      ${FILE_SVG}
+      <span class="h-file-name">${n}</span>
     </div>`).join('');
 
   folders.style.display = 'none';
