@@ -4162,20 +4162,19 @@ function hudOpenFolder(name, logItem){
   const fileList = document.getElementById('h-files-list');
   if(!folders || !files) return;
 
-  const slug = (name||'FILE').replace(/\s+/g,'_').toUpperCase();
   const entries = [
-    slug+'_LOG.txt',
-    slug+'_DIR.log',
-    slug+'_NOTE.md',
-    slug+'_SVA.csv',
-    slug+'_DATA.csv',
-    slug+'_REP.txt',
+    {top:'LOG',  ext:'.txt'},
+    {top:'DIR',  ext:'.log'},
+    {top:'NOTE', ext:'.md'},
+    {top:'SVA',  ext:'.csv'},
+    {top:'DATA', ext:'.csv'},
+    {top:'REP',  ext:'.txt'},
   ];
   title.textContent = '▸ ' + name;
-  fileList.innerHTML = entries.map(n=>`
+  fileList.innerHTML = entries.map(f=>`
     <div class="h-file-item">
       ${FILE_SVG}
-      <span class="h-file-name">${n}</span>
+      <span class="h-file-name">${f.top}<br><span style="opacity:.5">${f.ext}</span></span>
     </div>`).join('');
 
   // 파일 클릭 → openPost 또는 LOG 이동
