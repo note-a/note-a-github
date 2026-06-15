@@ -13,22 +13,19 @@
   --g4:  rgba(68,136,255,0.16);
   --acc: #aabbff;
   --red: #ff3b1f;
-  --pnl-top: #000;
-  --pnl:     #000000;
-  --hd:      #000;
-  --bd:      #2255cc;
+  --pnl: #000000;
+  --bd:  #2255cc;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background:#000000; font-family:'Space Mono',monospace; }
+html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background:#000; font-family:'Space Mono',monospace; }
 
-/* ════ 전역 스크롤바 ════ */
 * { scrollbar-width:thin; scrollbar-color:#2266cc #00050f; }
 *::-webkit-scrollbar { width:6px; height:6px; }
 *::-webkit-scrollbar-track { background:#000; }
 *::-webkit-scrollbar-thumb { background:#2266cc; border-radius:0; }
 *::-webkit-scrollbar-thumb:hover { background:#4488ff; }
 
-/* ════ 블러 배경 ════ */
+/* ════ 배경 ════ */
 #bg { position:fixed; inset:0; z-index:0; background:#000; overflow:hidden; }
 #bg-lights {
   position:absolute; inset:-200px;
@@ -57,8 +54,7 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 }
 #bg-overlay {
   position:absolute; inset:0;
-  background:radial-gradient(ellipse 56% 54% at 50% 50%,
-    rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.55) 58%, transparent 100%);
+  background:radial-gradient(ellipse 56% 54% at 50% 50%, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.55) 58%, transparent 100%);
 }
 
 /* ════ 셸 / wrap ════ */
@@ -86,7 +82,7 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 .crt { position:absolute; inset:0; z-index:25; pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px); }
 
-/* ════ 각진 패널 ════ */
+/* ════ 패널 ════ */
 .pnl {
   background:linear-gradient(135deg, #2266ee 0%, #1133bb 40%, #001688 75%, #000d40 100%);
   padding:1px;
@@ -99,8 +95,7 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 }
 .pnl-hd {
   height:24px; flex-shrink:0; display:flex; align-items:center;
-  padding:0 12px 0 16px; gap:8px;
-  background:#000;
+  padding:0 12px 0 16px; gap:8px; background:#000;
   border-bottom:1px solid rgba(68,136,255,0.25);
   font-size:9px; letter-spacing:2px; color:var(--g);
   overflow:hidden; white-space:nowrap;
@@ -114,39 +109,62 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
 /* ════ 타이틀 바 ════ */
 #titleBar {
-  width:1200px; height:60px;
-  flex-shrink:0; position:relative; overflow:hidden;
+  width:1200px; height:60px; flex-shrink:0; position:relative; overflow:hidden;
   background:
     linear-gradient(#000,#000) padding-box,
     linear-gradient(145deg,#4499ff 0%,#2266ee 18%,#1144bb 42%,#002288 72%,#000b30 100%) border-box;
   border:2px solid transparent;
-  display:flex; align-items:center; padding:0 28px;
-  font-family:'Space Mono',monospace;
+  display:flex; align-items:center; padding:0 28px; font-family:'Space Mono',monospace;
 }
-#titleBar .th-name { font-size:11px; font-weight:700; color:rgba(68,136,255,0.9); letter-spacing:7px; line-height:1; flex-shrink:0; }
-#titleBar .th-divider { width:1px; height:14px; background:rgba(68,136,255,0.15); margin:0 22px; flex-shrink:0; }
-#titleBar .th-stats { display:flex; align-items:baseline; gap:14px; flex-shrink:0; }
-#titleBar .th-stat-item { display:flex; align-items:baseline; gap:4px; }
-#titleBar .th-stat-v { font-size:11px; font-weight:700; letter-spacing:0.5px; line-height:1; }
-#titleBar .th-stat-v.acc { color:rgba(170,187,255,0.8); }
-#titleBar .th-stat-v.dim { color:rgba(68,136,255,0.5); }
-#titleBar .th-stat-v.faint { color:rgba(68,136,255,0.3); }
-#titleBar .th-stat-k { font-size:5px; color:rgba(68,136,255,0.25); letter-spacing:2px; line-height:1; }
-#titleBar .th-spacer { flex:1; }
-#titleBar .th-status { display:flex; align-items:center; gap:6px; flex-shrink:0; }
-#titleBar .th-dot {
-  width:5px; height:5px; border-radius:50%;
-  background:#aabbff; box-shadow:0 0 6px rgba(170,187,255,0.6);
-  animation:thpulse 2.5s ease-in-out infinite; flex-shrink:0;
-}
+.th-name { font-size:11px; font-weight:700; color:rgba(68,136,255,0.9); letter-spacing:7px; flex-shrink:0; }
+.th-divider { width:1px; height:14px; background:rgba(68,136,255,0.15); margin:0 22px; flex-shrink:0; }
+.th-stats { display:flex; align-items:baseline; gap:14px; flex-shrink:0; }
+.th-stat-item { display:flex; align-items:baseline; gap:4px; }
+.th-stat-v { font-size:11px; font-weight:700; letter-spacing:0.5px; }
+.th-stat-v.acc { color:rgba(170,187,255,0.8); }
+.th-stat-v.dim { color:rgba(68,136,255,0.5); }
+.th-stat-v.faint { color:rgba(68,136,255,0.3); }
+.th-stat-k { font-size:5px; color:rgba(68,136,255,0.25); letter-spacing:2px; }
+.th-spacer { flex:1; }
+.th-status { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.th-dot { width:5px; height:5px; border-radius:50%; background:#aabbff; box-shadow:0 0 6px rgba(170,187,255,0.6); animation:thpulse 2.5s ease-in-out infinite; }
 @keyframes thpulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-#titleBar .th-online { font-size:6px; color:rgba(170,187,255,0.7); letter-spacing:2px; line-height:1; }
-#titleBar .th-clk { font-size:13px; font-weight:700; color:rgba(68,136,255,0.65); letter-spacing:2px; line-height:1; font-variant-numeric:tabular-nums; margin-left:20px; flex-shrink:0; }
+.th-online { font-size:6px; color:rgba(170,187,255,0.7); letter-spacing:2px; }
+.th-clk { font-size:13px; font-weight:700; color:rgba(68,136,255,0.65); letter-spacing:2px; font-variant-numeric:tabular-nums; margin-left:20px; flex-shrink:0; }
 
 /* ════ 메인 행 ════ */
 #mainRow { flex:1; display:flex; gap:8px; min-height:0; }
 
-/* ── 중앙 ── */
+/* ── 왼쪽 메뉴 (gallery와 반대 방향) ── */
+#menuCol { width:110px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
+#exitBtn {
+  height:52px; flex-shrink:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:3px; cursor:pointer; user-select:none;
+  background:#3a0703; border:1px solid var(--red);
+  clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  color:var(--red);
+}
+#exitBtn:hover { background:#520a05; }
+#exitBtn .ex-i { font-size:15px; } #exitBtn .ex-t { font-size:8px; letter-spacing:1px; }
+
+/* 왼쪽 메뉴 버튼: 오른쪽으로 돌출 (gallery와 반대로 오른쪽에 화살촉) */
+.mbtn {
+  flex:1; display:flex; align-items:center;
+  padding-left:14px; padding-right:12px; gap:6px;
+  font-size:8.5px; letter-spacing:1px; color:var(--g3); cursor:pointer; user-select:none;
+  background:rgba(0,0,0,0.75); border:1px solid var(--g4);
+  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+  transition:all .12s; justify-content:flex-start;
+}
+.mbtn::before { content:'▸'; font-size:8px; color:var(--g4); flex-shrink:0; }
+.mbtn:hover { color:var(--g2); background:rgba(0,0,0,0.85); }
+.mbtn:hover::before { color:var(--g3); }
+.mbtn:active { transform:translateX(1px); }
+.mbtn.on { color:#000; background:var(--acc); border-color:var(--acc); font-size:9px; margin-left:-6px; padding-left:20px; }
+.mbtn.on::before { color:#000; }
+.home-btn { margin-top:auto; color:var(--g3); border-color:rgba(68,136,255,0.2); text-decoration:none; display:flex; }
+
+/* ── 중앙 (전체 너비 차지) ── */
 #centerCol { flex:1; display:flex; flex-direction:column; min-width:0; }
 #centerCol .pnl, #centerCol .pnl-in { height:100%; }
 #sysHd { display:flex; align-items:center; gap:10px; padding:8px 12px 6px; font-size:11px; color:var(--g); letter-spacing:2px; }
@@ -154,7 +172,7 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 #sysHd .sub { font-size:8px; color:var(--g3); letter-spacing:1px; }
 #sysHd #ctxLabel { margin-left:auto; font-size:8px; color:var(--acc); letter-spacing:1px; }
 
-/* ── 뷰어 영역 (갤러리와 동일 구조) ── */
+/* ── 뷰어 영역 ── */
 #viewer {
   flex:1; margin:0 12px 12px; position:relative; overflow:hidden;
   border:1px solid var(--g4); background:#000;
@@ -179,178 +197,110 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 .gc.bl { bottom:10px; left:10px; border-bottom:1px solid var(--g3); border-left:1px solid var(--g3); }
 .gc.br { bottom:10px; right:10px; border-bottom:1px solid var(--g3); border-right:1px solid var(--g3); }
 #emptyState { position:absolute; inset:0; z-index:3; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; pointer-events:none; }
-#emptyState .es1 { font-size:12px; color:rgba(68,136,255,0.18); letter-spacing:6px; }
-#emptyState .es2 { font-size:8px; color:rgba(68,136,255,0.12); letter-spacing:2px; }
+.es1 { font-size:12px; color:rgba(68,136,255,0.18); letter-spacing:6px; }
+.es2 { font-size:8px; color:rgba(68,136,255,0.12); letter-spacing:2px; }
 #ruler-x, #ruler-y { position:absolute; z-index:4; display:flex; }
 #ruler-x { left:0; right:0; bottom:0; height:8px; }
 #ruler-x i { flex:1; border-left:1px solid rgba(68,136,255,0.15); }
 #ruler-y { top:0; bottom:0; right:0; width:8px; flex-direction:column; }
 #ruler-y i { flex:1; border-top:1px solid rgba(68,136,255,0.15); }
 
-/* ── 하단 정보 (섹션별) ── */
-#mapInfo { display:flex; gap:12px; padding:4px 14px 4px; }
-.mi { display:flex; gap:9px; flex:1; align-items:flex-start; }
-.mi-ico { width:30px; height:30px; flex-shrink:0; }
-.mi-body { flex:1; min-width:0; }
-.mi-title { font-size:8px; color:var(--g); letter-spacing:1.5px; margin-bottom:6px; }
-.mi-row { font-size:7.5px; color:var(--g3); line-height:1.95; }
-.mi-row b { color:var(--g2); font-weight:normal; }
-
-/* ── 세로 메뉴 ── */
-#menuCol { width:122px; flex-shrink:0; display:flex; flex-direction:column; gap:6px; }
-#exitBtn {
-  height:52px; flex-shrink:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:3px; cursor:pointer; user-select:none;
-  background:#3a0703; border:1px solid var(--red);
-  clip-path:polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-  color:var(--red);
-}
-#exitBtn:hover { background:#520a05; }
-#exitBtn:active { transform:translateY(1px); }
-#exitBtn .ex-i { font-size:15px; } #exitBtn .ex-t { font-size:8px; letter-spacing:1px; }
-.mbtn {
-  flex:1; display:flex; align-items:center; padding-left:10px; padding-right:16px; gap:6px;
-  font-size:8.5px; letter-spacing:1px; color:var(--g3); cursor:pointer; user-select:none;
-  background:rgba(0,0,0,0.75); border:1px solid var(--g4);
-  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
-  transition:all .12s; justify-content:flex-end;
-}
-.mbtn::after { content:'◂'; font-size:8px; color:var(--g4); }
-.mbtn:hover { color:var(--g2); background:rgba(0,0,0,0.85); }
-.mbtn:active { transform:translateX(-1px); }
-.mbtn.on { color:#000; background:var(--acc); border-color:var(--acc); font-size:9px; margin-right:-6px; padding-right:22px; }
-.mbtn.on::after { color:#000; }
-.home-btn { margin-top:auto; color:var(--g3); border-color:rgba(68,136,255,0.2); text-decoration:none; display:flex; }
-
-/* ── 우측 컬럼 ── */
-#rightCol { width:300px; flex-shrink:0; display:flex; flex-direction:column; gap:8px; min-height:0; }
-#scanPnl { flex:0 0 auto; } #metaPnl { flex:0 0 auto; }
-#srcPnl { flex:1 1 0; min-height:0; }
-#rightCol .pnl { min-height:0; } #rightCol .pnl-in { height:100%; }
-#rightCol .pnl { background:linear-gradient(135deg,#1144cc 0%,#002288 52%,#001155 100%); }
-#rightCol .pnl-hd { border-bottom-color:rgba(68,136,255,0.13); }
-#rightCol .pnl-tab, #rightCol .nav-btn { border-color:rgba(68,136,255,0.1); }
-
-.nav-btn { width:18px; height:14px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
-  border:1px solid var(--g4); background:rgba(0,0,0,0.7); color:var(--g3); font-size:8px; user-select:none; }
-.nav-btn:hover { color:var(--g); } .nav-btn:active { transform:translateY(1px); }
-.nav-ind { font-size:8px; color:var(--g3); } .nav-ind b { color:var(--acc); }
-
-/* SCAN / ANALYSIS */
-.sc-scope { position:relative; width:100%; height:90px; background:#000000;
-  border:1px solid rgba(68,136,255,0.12); overflow:hidden; margin-bottom:8px; }
-.sc-grid { position:absolute; inset:0;
-  background-image:linear-gradient(rgba(68,136,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(68,136,255,0.07) 1px,transparent 1px);
-  background-size:14px 14px; }
-.sc-frameN { position:absolute; left:6px; top:5px; font-size:11px; color:rgba(68,136,255,0.25); letter-spacing:1px; z-index:3; }
-.sc-corner { position:absolute; width:12px; height:12px; z-index:3; }
-.sc-corner.tl { top:5px; left:5px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
-.sc-corner.tr { top:5px; right:5px; border-top:1px solid var(--acc); border-right:1px solid var(--acc); }
-.sc-corner.bl { bottom:5px; left:5px; border-bottom:1px solid var(--acc); border-left:1px solid var(--acc); }
-.sc-corner.br { bottom:5px; right:5px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
-.sc-sweep { position:absolute; top:0; bottom:0; width:30px; z-index:2;
-  background:linear-gradient(90deg, transparent, rgba(170,187,255,0.28), rgba(170,187,255,0.05));
-  animation:scsweep 2.2s linear infinite; }
-@keyframes scsweep { 0%{left:-30px} 100%{left:100%} }
-.sc-cross-h, .sc-cross-v { position:absolute; background:rgba(170,187,255,0.2); z-index:2; }
-.sc-cross-h { left:0; right:0; height:1px; top:50%; }
-.sc-cross-v { top:0; bottom:0; width:1px; left:50%; }
-.sc-tick { position:absolute; width:7px; height:7px; border:1px solid var(--acc); z-index:3;
-  transform:translate(-50%,-50%); transition:left .5s, top .5s; box-shadow:0 0 6px rgba(170,187,255,0.7); }
-.sc-hline { position:absolute; left:0; right:0; height:2px; z-index:3; pointer-events:none;
-  background:linear-gradient(90deg,transparent 0%,rgba(170,187,255,0.55) 30%,rgba(170,187,255,0.8) 50%,rgba(170,187,255,0.55) 70%,transparent 100%);
-  animation:schline 1.8s linear infinite; }
-@keyframes schline { 0%{top:-2px;opacity:0.8} 90%{opacity:0.8} 100%{top:100%;opacity:0} }
-.sc-target { position:absolute; width:28px; height:20px; z-index:4; pointer-events:none;
-  border:1px solid rgba(170,187,255,0.85);
-  box-shadow:0 0 6px rgba(170,187,255,0.4), inset 0 0 4px rgba(170,187,255,0.1);
-  transition:left 1.4s cubic-bezier(.25,.8,.25,1), top 1s cubic-bezier(.25,.8,.25,1); }
-.sc-target::before,.sc-target::after { content:''; position:absolute; width:5px; height:5px; }
-.sc-target::before { top:-3px; left:-3px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
-.sc-target::after  { bottom:-3px; right:-3px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
-.sc-pct { position:absolute; right:7px; bottom:6px; font-size:9px; color:var(--acc); z-index:5; letter-spacing:1px;
-  text-shadow:0 0 6px rgba(170,187,255,0.8); }
-.sc-ana-lbl { position:absolute; left:7px; bottom:6px; font-size:7px; color:rgba(170,187,255,0.6); z-index:5; letter-spacing:1.5px; }
-.sc-glitch { position:absolute; left:0; right:0; z-index:4; pointer-events:none;
-  background:rgba(170,187,255,0.12); animation:scglitch 5s step-end infinite; }
-@keyframes scglitch {
-  0%,88%,100%{opacity:0;height:0}
-  89%{opacity:1;top:18%;height:4px}
-  90%{top:55%;height:2px}
-  91%{top:72%;height:6px}
-  92%{opacity:0;height:0}
-  95%{opacity:1;top:33%;height:3px}
-  96%{opacity:0}
-}
-@keyframes bktpulse { 0%,100%{opacity:1;width:12px;height:12px} 50%{opacity:0.5;width:8px;height:8px} }
-.sc-corner { animation:bktpulse 3s ease-in-out infinite; }
-.sc-corner.tr { animation-delay:.75s; }
-.sc-corner.bl { animation-delay:1.5s; }
-.sc-corner.br { animation-delay:2.25s; }
-
-/* METADATA */
-.fi-meta { display:grid; grid-template-columns:max-content 1fr; gap:3px 10px; align-items:baseline; }
-.fi-meta .mk { font-size:7.5px; color:rgba(180,40,0,0.5); letter-spacing:0.5px; }
-.fi-meta .mv { font-size:8.5px; color:var(--g2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-/* SOURCE RECORD */
-.src-doc { font-size:12px; line-height:1.9; color:var(--g3); height:100%; overflow-y:auto; }
-.src-doc::-webkit-scrollbar { width:4px; }
-.src-doc::-webkit-scrollbar-thumb { background:rgba(68,136,255,0.3); }
-
-/* ════ 섹션 공통 ════ */
-.sec-wrap { padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px;
-  scrollbar-width:thin; scrollbar-color:#2266cc #00050f; }
-.sec-wrap::-webkit-scrollbar { width:6px; }
-.sec-wrap::-webkit-scrollbar-thumb { background:#2266cc; }
+/* ── 섹션 (중앙 내부) ── */
+.sec-wrap { padding:14px; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
 .sec-hd { font-size:9px; color:var(--g); letter-spacing:2px; padding-bottom:8px; border-bottom:1px solid var(--g4); flex-shrink:0; }
 .sec-hd b { color:var(--acc); font-weight:normal; }
-
-/* SEQUENCE */
-.seq-row { display:flex; align-items:center; gap:8px; padding:5px 8px; border:1px solid var(--g4);
-  background:rgba(0,0,0,0.5); cursor:pointer; font-size:8px; transition:background .1s; }
-.seq-row:hover { background:rgba(68,136,255,0.07); }
+.seq-row { display:flex; align-items:center; gap:8px; padding:5px 8px; border:1px solid var(--g4); background:rgba(0,0,0,0.5); font-size:8px; }
 .seq-num { color:var(--acc); min-width:24px; }
 .seq-label { color:var(--g3); flex:1; }
-.seq-cnt { font-size:7px; color:var(--g2); }
-
-/* FIELD */
 .field-row { display:flex; align-items:center; gap:8px; padding:3px 0; }
-.field-lbl { font-size:8px; color:var(--g3); min-width:80px; letter-spacing:0.5px; }
+.field-lbl { font-size:8px; color:var(--g3); min-width:80px; }
 .field-track { flex:1; height:6px; background:rgba(68,136,255,0.08); border:1px solid rgba(68,136,255,0.1); }
 .field-fill { height:100%; background:rgba(68,136,255,0.45); }
 .field-n { font-size:8px; color:var(--g2); min-width:28px; text-align:right; }
 .field-cat { font-size:7px; color:rgba(68,136,255,0.25); letter-spacing:1px; padding:6px 0 3px; border-top:1px solid rgba(68,136,255,0.08); margin-top:4px; }
-
-/* NOTES */
 .note-block { border:1px solid var(--g4); padding:10px 12px; background:rgba(0,0,0,0.4); }
 .note-lbl { font-size:7px; color:rgba(180,40,0,0.55); letter-spacing:1.5px; margin-bottom:5px; }
 .note-val { font-size:8px; color:var(--g2); line-height:1.9; }
-
-/* EXPORT */
 .exp-actions { display:flex; gap:6px; }
 .exp-btn { font-family:'Space Mono',monospace; font-size:8px; padding:4px 12px; border:1px solid var(--g); background:transparent; color:var(--g); cursor:pointer; letter-spacing:1px; }
 .exp-btn:hover { background:var(--g); color:#000; }
-.exp-section { margin-top:8px; }
-.exp-section-hd { font-size:7.5px; color:rgba(180,40,0,0.6); letter-spacing:2px; margin-bottom:5px; }
-.exp-row { font-size:8px; color:var(--g3); line-height:2; padding:2px 0; border-bottom:1px solid var(--g4); display:flex; gap:10px; }
-.exp-row b { color:var(--g2); font-weight:normal; }
 
-/* ════ 하단 행 ════ */
-#botRow { height:136px; flex-shrink:0; display:flex; gap:8px; }
-#logPnl { flex:1; min-width:0; overflow:hidden; } #logPnl .pnl-in { height:100%; }
+/* ════ 하단 행: 4개 패널 가로 배치 ════ */
+#botRow { height:152px; flex-shrink:0; display:flex; gap:8px; }
+
+/* SCAN (작은 스코프) */
+#scanPnl { flex:0 0 170px; }
+#scanPnl .pnl-in { height:100%; }
+.sc-scope { position:relative; width:100%; height:68px; background:#000;
+  border:1px solid rgba(68,136,255,0.12); overflow:hidden; }
+.sc-grid { position:absolute; inset:0;
+  background-image:linear-gradient(rgba(68,136,255,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(68,136,255,0.07) 1px,transparent 1px);
+  background-size:14px 14px; }
+.sc-sweep { position:absolute; top:0; bottom:0; width:24px; z-index:2;
+  background:linear-gradient(90deg, transparent, rgba(170,187,255,0.28), rgba(170,187,255,0.05));
+  animation:scsweep 2.2s linear infinite; }
+@keyframes scsweep { 0%{left:-24px} 100%{left:100%} }
+.sc-cross-h,.sc-cross-v { position:absolute; background:rgba(170,187,255,0.2); z-index:2; }
+.sc-cross-h { left:0; right:0; height:1px; top:50%; }
+.sc-cross-v { top:0; bottom:0; width:1px; left:50%; }
+.sc-tick { position:absolute; width:6px; height:6px; border:1px solid var(--acc); z-index:3;
+  transform:translate(-50%,-50%); transition:left .5s,top .5s; box-shadow:0 0 6px rgba(170,187,255,0.7); }
+.sc-hline { position:absolute; left:0; right:0; height:2px; z-index:3; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(170,187,255,0.6) 50%,transparent);
+  animation:schline 1.8s linear infinite; }
+@keyframes schline { 0%{top:-2px} 100%{top:100%} }
+.sc-target { position:absolute; width:22px; height:16px; z-index:4; pointer-events:none;
+  border:1px solid rgba(170,187,255,0.8);
+  box-shadow:0 0 5px rgba(170,187,255,0.4);
+  transition:left 1.4s cubic-bezier(.25,.8,.25,1),top 1s cubic-bezier(.25,.8,.25,1); }
+.sc-corner { position:absolute; width:10px; height:10px; z-index:3; }
+.sc-corner.tl { top:4px; left:4px; border-top:1px solid var(--acc); border-left:1px solid var(--acc); }
+.sc-corner.tr { top:4px; right:4px; border-top:1px solid var(--acc); border-right:1px solid var(--acc); }
+.sc-corner.bl { bottom:4px; left:4px; border-bottom:1px solid var(--acc); border-left:1px solid var(--acc); }
+.sc-corner.br { bottom:4px; right:4px; border-bottom:1px solid var(--acc); border-right:1px solid var(--acc); }
+.sc-glitch { position:absolute; left:0; right:0; z-index:4; pointer-events:none;
+  background:rgba(170,187,255,0.12); animation:scglitch 5s step-end infinite; }
+@keyframes scglitch {
+  0%,88%,100%{opacity:0;height:0} 89%{opacity:1;top:18%;height:3px}
+  90%{top:55%;height:2px} 91%{top:72%;height:4px} 92%{opacity:0}
+  95%{opacity:1;top:33%;height:2px} 96%{opacity:0}
+}
+@keyframes bktpulse { 0%,100%{opacity:1;width:10px;height:10px} 50%{opacity:0.4;width:7px;height:7px} }
+.sc-corner { animation:bktpulse 3s ease-in-out infinite; }
+.sc-corner.tr { animation-delay:.75s; }
+.sc-corner.bl { animation-delay:1.5s; }
+.sc-corner.br { animation-delay:2.25s; }
+.sc-pct { position:absolute; right:5px; bottom:4px; font-size:8px; color:var(--acc); z-index:5; letter-spacing:1px; }
+.sc-ana-lbl { position:absolute; left:5px; bottom:4px; font-size:6px; color:rgba(170,187,255,0.6); z-index:5; letter-spacing:1.5px; }
+.sc-frameN { position:absolute; left:5px; top:4px; font-size:9px; color:rgba(68,136,255,0.25); z-index:3; }
+
+/* SCAN 내비 */
+.nav-btn { width:16px; height:13px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;
+  border:1px solid var(--g4); background:rgba(0,0,0,0.7); color:var(--g3); font-size:7px; user-select:none; }
+.nav-btn:hover { color:var(--g); }
+.nav-ind { font-size:7px; color:var(--g3); }
+.nav-ind b { color:var(--acc); }
+
+/* METADATA */
+#metaPnl { flex:0 0 160px; }
+#metaPnl .pnl-in { height:100%; }
+.fi-meta { display:grid; grid-template-columns:max-content 1fr; gap:2px 8px; align-items:baseline; }
+.fi-meta .mk { font-size:7px; color:rgba(180,40,0,0.5); letter-spacing:0.5px; }
+.fi-meta .mv { font-size:8px; color:var(--g2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* SOURCE RECORD */
+#srcPnl { flex:1; min-width:0; }
+#srcPnl .pnl-in { height:100%; }
+.src-doc { font-size:11px; line-height:1.9; color:var(--g3); height:100%; overflow-y:auto; }
+.src-doc::-webkit-scrollbar { width:3px; }
+.src-doc::-webkit-scrollbar-thumb { background:rgba(68,136,255,0.3); }
+
+/* SELECTION LOG */
+#logPnl { flex:1; min-width:0; }
+#logPnl .pnl-in { height:100%; }
+#repContent { font-size:11px; line-height:2; color:var(--g2); height:100%; overflow-y:auto; }
 #repContent::-webkit-scrollbar { width:3px; }
 #repContent::-webkit-scrollbar-thumb { background:rgba(68,136,255,0.35); }
-#repContent::-webkit-scrollbar-track { background:transparent; }
-
-/* CONTEXT */
-.rel-mode { font-size:7px; color:var(--g3); padding:2px 5px; cursor:pointer; user-select:none;
-  border:1px solid var(--g4); background:rgba(0,0,0,0.7); }
-.rel-mode.on { color:#000; background:var(--acc); border-color:var(--acc); }
-.rel-cap { font-size:7.5px; color:var(--g3); letter-spacing:1px; margin-bottom:6px; }
-.rel-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:4px; }
-.rel-cell { aspect-ratio:3/2; background:rgba(68,136,255,0.05); border:1px solid var(--g4);
-  display:flex; align-items:center; justify-content:center; font-size:7px; color:var(--g3); }
 
 /* ════ 상태 바 ════ */
 #statusBar { height:22px; flex-shrink:0; display:flex; align-items:center; border-top:1px solid var(--g4); }
@@ -360,29 +310,22 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 .sb-w { padding:0 12px; font-size:7px; letter-spacing:1.5px; color:rgba(255,60,30,0.35); }
 
 /* ════ MOBILE ════ */
-@media (max-width: 767px) {
-  html, body { min-width:unset; overflow-x:hidden; }
-  #shell { position:relative; min-width:unset; min-height:unset; display:block; padding:10px; box-sizing:border-box; }
+@media (max-width:767px) {
+  html,body { min-width:unset; overflow-x:hidden; }
+  #shell { position:relative; min-width:unset; min-height:unset; display:block; padding:10px; }
   #wrap { width:100% !important; height:auto !important; min-height:calc(100dvh - 20px); border:1px solid var(--bd); background:rgba(0,0,0,0.98) !important; box-shadow:none; padding:8px; gap:6px; }
   #wrap::before,#wrap::after,#wc-bl,#wc-br { display:none; }
-  #titleBar { height:auto !important; min-height:48px; padding:6px 28px; border-bottom:1px solid rgba(68,136,255,0.2); }
-  #mainRow { flex-direction:column; flex:none; height:auto; overflow:visible; min-height:unset; }
-  #centerCol { width:100%; flex:none; height:55vh; min-height:340px; }
-  #centerCol .pnl, #centerCol .pnl-in { height:100%; }
-  #rightCol { display:none !important; }
-  #menuCol { width:100% !important; height:auto !important; flex-direction:row !important; gap:0 !important; overflow-x:auto; border-top:1px solid rgba(68,136,255,0.2); padding:4px 8px; flex-shrink:0; scrollbar-width:none; }
+  #titleBar { height:auto !important; min-height:48px; padding:6px 16px; border-bottom:1px solid rgba(68,136,255,0.2); }
+  #mainRow { flex-direction:column-reverse; flex:none; height:auto; overflow:visible; }
+  #menuCol { width:100% !important; flex-direction:row !important; gap:0 !important; overflow-x:auto; border-bottom:1px solid rgba(68,136,255,0.15); padding:4px 6px; scrollbar-width:none; }
   #menuCol::-webkit-scrollbar { display:none; }
   #exitBtn { display:none !important; }
-  #menuCol .mbtn { flex-shrink:0; height:28px; line-height:28px; padding:0 14px; writing-mode:horizontal-tb; font-size:8px; border:1px solid rgba(68,136,255,0.2); margin-right:4px; }
-  #botRow { flex-direction:column; height:auto !important; flex-shrink:0; }
-  #relPnl { display:none !important; }
-  #sidePnl { display:none !important; }
-  #logPnl { width:100%; min-height:140px; }
-  #logPnl .pnl-in { height:auto; min-height:140px; }
-  #botRow > div:last-child { display:none !important; }
-  #statusBar { overflow-x:auto; scrollbar-width:none; white-space:nowrap; }
-  #statusBar::-webkit-scrollbar { display:none; }
-  .sb-i { flex-shrink:0; }
+  .mbtn { flex-shrink:0; height:26px; padding:0 12px; font-size:8px; border:1px solid rgba(68,136,255,0.2); margin-right:4px; clip-path:none; justify-content:center; }
+  .mbtn.on { margin-left:0; padding-left:12px; }
+  #centerCol { width:100%; flex:none; height:55vh; min-height:300px; }
+  #centerCol .pnl, #centerCol .pnl-in { height:100%; }
+  #botRow { flex-direction:column; height:auto !important; }
+  #scanPnl,#metaPnl { flex:none; min-height:120px; }
   #bg-lights { filter:blur(40px); }
   #bg-grid { display:none; }
 }
@@ -391,12 +334,10 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
   #shell { position:relative; min-width:unset; min-height:unset; padding:12px; display:block; }
   #wrap { width:100% !important; height:auto !important; min-height:96vh; padding:8px; gap:6px; }
   #wrap::before,#wrap::after,#wc-bl,#wc-br { display:none; }
-  #rightCol { width:240px; }
-  #menuCol { width:100px; }
-  #centerCol { min-width:0; }
-  #botRow { height:auto !important; }
-  #logPnl .pnl-in { height:auto; min-height:120px; }
-  #relPnl,#sidePnl { min-width:0; }
+  #menuCol { width:90px; }
+  #botRow { height:auto; }
+  #scanPnl { flex:0 0 140px; }
+  #metaPnl { flex:0 0 140px; }
 }
 </style>
 </head>
@@ -410,47 +351,43 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 
 <div id="shell">
 
-<!-- ── 타이틀바 ── -->
 <div id="titleBar">
   <span class="th-name">INCLUSION</span>
   <div class="th-divider"></div>
   <div class="th-stats">
-    <div class="th-stat-item">
-      <span class="th-stat-v acc">—</span>
-      <span class="th-stat-k">SEL</span>
-    </div>
-    <div class="th-stat-item">
-      <span class="th-stat-v dim">—</span>
-      <span class="th-stat-k">TOTAL</span>
-    </div>
-    <div class="th-stat-item">
-      <span class="th-stat-v faint">—</span>
-      <span class="th-stat-k">BATCH</span>
-    </div>
+    <div class="th-stat-item"><span class="th-stat-v acc">—</span><span class="th-stat-k">SEL</span></div>
+    <div class="th-stat-item"><span class="th-stat-v dim">—</span><span class="th-stat-k">TOTAL</span></div>
+    <div class="th-stat-item"><span class="th-stat-v faint">—</span><span class="th-stat-k">BATCH</span></div>
   </div>
   <div class="th-spacer"></div>
-  <div class="th-status">
-    <div class="th-dot"></div>
-    <span class="th-online">STANDBY</span>
-  </div>
+  <div class="th-status"><div class="th-dot"></div><span class="th-online">STANDBY</span></div>
   <span class="th-clk" id="thClk">--:--:--</span>
 </div>
 
-<!-- ── 메인 wrap ── -->
 <div id="wrap">
   <div class="crt"></div>
   <div id="wc-bl"></div><div id="wc-br"></div>
 
-  <!-- 메인 행 -->
   <div id="mainRow">
 
-    <!-- 중앙 -->
+    <!-- ── 왼쪽 메뉴 ── -->
+    <div id="menuCol">
+      <div id="exitBtn" onclick="window.history.back()"><span class="ex-i">⏻</span><span class="ex-t">EXIT</span></div>
+      <div class="mbtn on" data-sec="VIEW">VIEW</div>
+      <div class="mbtn" data-sec="SEQUENCE">SEQUENCE</div>
+      <div class="mbtn" data-sec="FIELD">FIELD</div>
+      <div class="mbtn" data-sec="NOTES">NOTES</div>
+      <div class="mbtn" data-sec="EXPORT">EXPORT</div>
+      <a class="mbtn home-btn" href="index.html">HOME</a>
+    </div>
+
+    <!-- ── 중앙 (전체 너비) ── -->
     <div id="centerCol">
       <div class="pnl"><div class="pnl-in">
         <div id="sysHd"><span class="chev">»</span> ARCHIVE: INCLUSION_NULL_CH <span class="sub">· 0 RECORDS</span><span id="ctxLabel">VIEW · ALL</span></div>
 
         <!-- VIEW -->
-        <div id="sec-VIEW" class="sec-wrap" style="display:flex; padding:0; gap:0; overflow:hidden;">
+        <div id="sec-VIEW" style="display:flex; flex:1; padding:0; overflow:hidden;">
           <div id="viewer">
             <div id="viewer-grid"></div>
             <div id="viewer-scan"></div>
@@ -467,7 +404,7 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
         <!-- SEQUENCE -->
         <div id="sec-SEQUENCE" class="sec-wrap" style="display:none;">
           <div class="sec-hd">SEQUENCE <b>· 순서</b></div>
-          <div class="seq-row"><span class="seq-num">—</span><span class="seq-label">NO SEQUENCES DEFINED</span><span class="seq-cnt">—</span></div>
+          <div class="seq-row"><span class="seq-num">—</span><span class="seq-label">NO SEQUENCES DEFINED</span></div>
         </div>
 
         <!-- FIELD -->
@@ -484,7 +421,6 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
           <div class="sec-hd">NOTES <b>· 편집 메모</b></div>
           <div class="note-block"><div class="note-lbl">DIRECTION</div><div class="note-val">—</div></div>
           <div class="note-block"><div class="note-lbl">PURPOSE</div><div class="note-val">—</div></div>
-          <div class="note-block"><div class="note-lbl">TONE</div><div class="note-val">—</div></div>
         </div>
 
         <!-- EXPORT -->
@@ -495,132 +431,79 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
             <button class="exp-btn">PDF</button>
             <button class="exp-btn">MANIFEST</button>
           </div>
-          <div class="exp-section">
-            <div class="exp-section-hd">OUTPUT TARGET</div>
-            <div class="exp-row"><span>FORMAT</span><b>—</b></div>
-            <div class="exp-row"><span>ITEMS</span><b>—</b></div>
-            <div class="exp-row"><span>STATUS</span><b>PENDING</b></div>
-          </div>
         </div>
 
         <!-- 섹션별 하단 정보 -->
-        <div id="mapInfo"></div>
+        <div id="mapInfo" style="display:flex; gap:12px; padding:4px 14px 4px; flex-shrink:0;"></div>
       </div></div>
-    </div>
-
-    <!-- 우측 -->
-    <div id="rightCol">
-
-      <div style="display:flex; gap:8px; flex-shrink:0;">
-
-        <!-- SCAN / ANALYSIS -->
-        <div class="pnl" id="scanPnl" style="flex:1; min-width:0;"><div class="pnl-in">
-          <div class="pnl-hd">SCAN / ANALYSIS
-            <span class="hd-r">
-              <span class="nav-btn" id="navPrev">◄</span>
-              <span class="nav-ind"><b id="navCur">0001</b>/<span id="navTot">—</span></span>
-              <span class="nav-btn" id="navNext">►</span>
-            </span>
-          </div>
-          <div class="pnl-bd">
-            <div class="sc-scope" id="scScope">
-              <span class="sc-frameN" id="fiThumbN">0001</span>
-              <span class="sc-corner tl"></span><span class="sc-corner tr"></span>
-              <span class="sc-corner bl"></span><span class="sc-corner br"></span>
-              <span class="sc-grid"></span>
-              <span class="sc-sweep"></span>
-              <span class="sc-hline"></span>
-              <span class="sc-glitch"></span>
-              <span class="sc-cross-h"></span><span class="sc-cross-v"></span>
-              <span class="sc-tick" id="scTick" style="left:50%;top:50%;"></span>
-              <span class="sc-target" id="scTarget" style="left:47%;top:40%;"></span>
-              <span class="sc-pct" id="scPct">00%</span>
-              <span class="sc-ana-lbl" id="scAnaLbl">SCANNING</span>
-            </div>
-          </div>
-        </div></div>
-
-        <!-- METADATA -->
-        <div class="pnl" id="metaPnl" style="flex:1; min-width:0;"><div class="pnl-in">
-          <div class="pnl-hd">METADATA<span class="hd-r"><span class="pnl-tab" id="fiVerdict">—</span></span></div>
-          <div class="pnl-bd">
-            <div class="fi-meta" id="fiMeta">
-              <span style="font-size:8px;color:var(--g4);letter-spacing:1px;line-height:2;">AWAITING SELECTION —<br>SELECT A PHOTO TO VIEW METADATA</span>
-            </div>
-          </div>
-        </div></div>
-
-      </div>
-
-      <!-- SOURCE RECORD -->
-      <div class="pnl" id="srcPnl"><div class="pnl-in">
-        <div class="pnl-hd">SOURCE RECORD · 원본<span class="hd-r"><span class="pnl-tab" id="srcRef">····</span></span></div>
-        <div class="pnl-bd">
-          <div id="srcPlaceholder" style="font-size:8px;color:var(--g4);letter-spacing:1px;line-height:2;padding:2px 0;">NO RECORD LOADED —<br>SELECT AN ITEM TO LOAD SOURCE</div>
-          <div class="src-doc" id="srcDoc" style="display:none;"></div>
-        </div>
-      </div></div>
-
-    </div>
-
-    <!-- 세로 메뉴 -->
-    <div id="menuCol">
-      <div id="exitBtn" onclick="window.history.back()"><span class="ex-i">⏻</span><span class="ex-t">EXIT</span></div>
-      <div class="mbtn on" data-sec="VIEW">VIEW</div>
-      <div class="mbtn" data-sec="SEQUENCE">SEQUENCE</div>
-      <div class="mbtn" data-sec="FIELD">FIELD</div>
-      <div class="mbtn" data-sec="NOTES">NOTES</div>
-      <div class="mbtn" data-sec="EXPORT">EXPORT</div>
-      <a class="mbtn home-btn" href="index.html">HOME</a>
     </div>
 
   </div>
 
-  <!-- 하단 행 -->
+  <!-- ── 하단 행: 4개 패널 가로 ── -->
   <div id="botRow">
-    <div class="pnl" id="logPnl"><div class="pnl-in">
-      <div class="pnl-hd">SELECTION LOG · 선택 기록<span class="hd-r"><span class="pnl-tab on" id="repNo">—</span></span></div>
-      <div class="pnl-bd" style="padding:6px 10px;overflow:hidden;display:flex;flex-direction:column;">
-        <div id="repContent" style="flex:1;overflow-y:auto;font-size:12px;line-height:2;color:var(--g2);">
-          <span style="color:var(--g4)">컨텐츠가 추가되면 선택 기록이 표시됩니다.</span>
+
+    <!-- SCAN / ANALYSIS -->
+    <div class="pnl" id="scanPnl"><div class="pnl-in">
+      <div class="pnl-hd">SCAN / ANALYSIS
+        <span class="hd-r">
+          <span class="nav-btn">◄</span>
+          <span class="nav-ind"><b id="navCur">0001</b>/<span id="navTot">—</span></span>
+          <span class="nav-btn">►</span>
+        </span>
+      </div>
+      <div class="pnl-bd" style="padding:8px;">
+        <div class="sc-scope">
+          <span class="sc-frameN">0001</span>
+          <span class="sc-corner tl"></span><span class="sc-corner tr"></span>
+          <span class="sc-corner bl"></span><span class="sc-corner br"></span>
+          <span class="sc-grid"></span>
+          <span class="sc-sweep"></span>
+          <span class="sc-hline"></span>
+          <span class="sc-glitch"></span>
+          <span class="sc-cross-h"></span><span class="sc-cross-v"></span>
+          <span class="sc-tick" id="scTick" style="left:50%;top:50%;"></span>
+          <span class="sc-target" id="scTarget" style="left:47%;top:40%;"></span>
+          <span class="sc-pct" id="scPct">00%</span>
+          <span class="sc-ana-lbl">SCANNING</span>
+        </div>
+        <div style="margin-top:6px; display:flex; gap:6px; font-size:7px; color:var(--g3);">
+          <span style="color:rgba(180,40,0,0.5)">STATUS</span>
+          <span style="color:var(--g2)">IDLE</span>
+          <span style="margin-left:auto; color:rgba(180,40,0,0.5)">FRAME</span>
+          <span style="color:var(--acc)" id="frameLbl">—</span>
         </div>
       </div>
     </div></div>
 
-    <!-- CONTEXT + PREVIEW 2열 -->
-    <div style="display:flex;gap:8px;flex-shrink:0;width:440px;">
-
-      <div class="pnl" id="relPnl" style="flex:1;min-width:0;"><div class="pnl-in">
-        <div class="pnl-hd">CONTEXT · 맥락
-          <span class="hd-r">
-            <span class="rel-mode on" data-rel="SET">SET</span>
-            <span class="rel-mode" data-rel="TIME">TIME</span>
-            <span class="rel-mode" data-rel="TAG">TAG</span>
-          </span>
+    <!-- METADATA -->
+    <div class="pnl" id="metaPnl"><div class="pnl-in">
+      <div class="pnl-hd">METADATA<span class="hd-r"><span class="pnl-tab" id="fiVerdict">—</span></span></div>
+      <div class="pnl-bd">
+        <div class="fi-meta" id="fiMeta">
+          <span style="font-size:7.5px;color:var(--g4);letter-spacing:1px;line-height:2;grid-column:1/-1;">AWAITING<br>SELECTION</span>
         </div>
-        <div class="pnl-bd">
-          <div class="rel-cap">CONTENT PENDING</div>
-          <div class="rel-grid" id="relGrid"></div>
-        </div>
-      </div></div>
+      </div>
+    </div></div>
 
-      <div class="pnl" id="sidePnl" style="flex:2;min-width:0;"><div class="pnl-in">
-        <div class="pnl-hd">PREVIEW<span class="hd-r" style="font-size:7px;color:var(--g3)">STANDBY · —</span></div>
-        <div class="pnl-bd" style="display:flex;gap:8px;align-items:stretch;height:calc(100% - 22px)">
-          <div style="aspect-ratio:3/2;height:100%;flex-shrink:0;background:#000;border:1px solid var(--g4);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:7px;color:var(--g4);letter-spacing:1px;">NO IMAGE</span>
-          </div>
-          <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0">
-            <div style="font-size:7.5px;color:var(--g4);letter-spacing:.5px;">—</div>
-            <div style="font-size:7px;color:var(--g4);letter-spacing:.5px;">AWAITING CONTENT</div>
-            <div style="margin-top:auto;border-top:1px solid var(--g4);padding-top:4px;display:flex;gap:6px">
-              <div style="font-size:7px;color:var(--g4);margin-left:auto;cursor:pointer">NEXT ›</div>
-            </div>
-          </div>
-        </div>
-      </div></div>
+    <!-- SOURCE RECORD -->
+    <div class="pnl" id="srcPnl"><div class="pnl-in">
+      <div class="pnl-hd">SOURCE RECORD · 원본<span class="hd-r"><span class="pnl-tab" id="srcRef">····</span></span></div>
+      <div class="pnl-bd">
+        <div style="font-size:7.5px;color:var(--g4);letter-spacing:1px;line-height:2;">NO RECORD LOADED —<br>SELECT AN ITEM TO LOAD SOURCE</div>
+      </div>
+    </div></div>
 
-    </div>
+    <!-- SELECTION LOG -->
+    <div class="pnl" id="logPnl"><div class="pnl-in">
+      <div class="pnl-hd">SELECTION LOG · 선택 기록<span class="hd-r"><span class="pnl-tab on">—</span></span></div>
+      <div class="pnl-bd">
+        <div id="repContent">
+          <span style="color:var(--g4)">컨텐츠가 추가되면 기록이 표시됩니다.</span>
+        </div>
+      </div>
+    </div></div>
+
   </div>
 
   <!-- 상태 바 -->
@@ -641,27 +524,23 @@ html,body { width:100%; height:100%; min-width:1270px; overflow:auto; background
 const sid = 'I-' + Math.random().toString(16).slice(2,10).toUpperCase();
 document.getElementById('sbSess').textContent = 'SESS: ' + sid;
 
-// 시계
 function tickClock() {
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2,'0');
-  const mm = String(now.getMinutes()).padStart(2,'0');
-  const ss = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('thClk').textContent = hh + ':' + mm + ':' + ss;
+  const n = new Date();
+  document.getElementById('thClk').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' +
+    String(n.getMinutes()).padStart(2,'0') + ':' +
+    String(n.getSeconds()).padStart(2,'0');
 }
-tickClock();
-setInterval(tickClock, 1000);
+tickClock(); setInterval(tickClock, 1000);
 
-// 섹션별 하단 정보
 const ICO = {
-  ap:  '<svg class="mi-ico" viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="var(--g3)" stroke-width="1"/><rect x="13" y="13" width="4" height="4" fill="var(--g)"/></svg>',
-  bar: '<svg class="mi-ico" viewBox="0 0 30 30"><rect x="4" y="18" width="5" height="8" fill="var(--g3)"/><rect x="12" y="10" width="5" height="16" fill="var(--g)"/><rect x="20" y="14" width="5" height="12" fill="var(--g3)"/></svg>',
-  film:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="3" y="6" width="24" height="18" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="3" y="6" width="3" height="18" fill="var(--g3)"/><rect x="11" y="6" width="3" height="18" fill="var(--g3)"/><rect x="19" y="6" width="3" height="18" fill="var(--g3)"/></svg>',
-  grid:'<svg class="mi-ico" viewBox="0 0 30 30"><rect x="4" y="4" width="9" height="9" fill="var(--g)"/><rect x="17" y="4" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="4" y="17" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="17" y="17" width="9" height="9" fill="var(--g3)"/></svg>',
-  diam:'<svg class="mi-ico" viewBox="0 0 30 30"><polygon points="15,3 27,15 15,27 3,15" fill="none" stroke="var(--g)" stroke-width="1.5"/><polygon points="15,10 20,15 15,20 10,15" fill="var(--g)"/></svg>',
-  hex: '<svg class="mi-ico" viewBox="0 0 30 30"><polygon points="15,3 26,9 26,21 15,27 4,21 4,9" fill="none" stroke="var(--g)" stroke-width="1.5"/></svg>',
+  ap:  '<svg width="30" height="30" viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="9" y="9" width="12" height="12" fill="none" stroke="var(--g3)" stroke-width="1"/><rect x="13" y="13" width="4" height="4" fill="var(--g)"/></svg>',
+  bar: '<svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="18" width="5" height="8" fill="var(--g3)"/><rect x="12" y="10" width="5" height="16" fill="var(--g)"/><rect x="20" y="14" width="5" height="12" fill="var(--g3)"/></svg>',
+  film:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="3" y="6" width="24" height="18" fill="none" stroke="var(--g)" stroke-width="1.5"/><rect x="3" y="6" width="3" height="18" fill="var(--g3)"/><rect x="11" y="6" width="3" height="18" fill="var(--g3)"/><rect x="19" y="6" width="3" height="18" fill="var(--g3)"/></svg>',
+  grid:'<svg width="30" height="30" viewBox="0 0 30 30"><rect x="4" y="4" width="9" height="9" fill="var(--g)"/><rect x="17" y="4" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="4" y="17" width="9" height="9" fill="none" stroke="var(--g3)"/><rect x="17" y="17" width="9" height="9" fill="var(--g3)"/></svg>',
+  diam:'<svg width="30" height="30" viewBox="0 0 30 30"><polygon points="15,3 27,15 15,27 3,15" fill="none" stroke="var(--g)" stroke-width="1.5"/><polygon points="15,10 20,15 15,20 10,15" fill="var(--g)"/></svg>',
+  hex: '<svg width="30" height="30" viewBox="0 0 30 30"><polygon points="15,3 26,9 26,21 15,27 4,21 4,9" fill="none" stroke="var(--g)" stroke-width="1.5"/></svg>',
 };
-
 const SECTIONS = {
   VIEW:[
     {i:ICO.ap,  t:'ARCHIVE INFO', rows:[['STATUS','EMPTY'],['PROJECT','INCLUSION'],['ORIGIN','SET']]},
@@ -669,49 +548,47 @@ const SECTIONS = {
     {i:ICO.film,t:'TIMELINE',     rows:[['PERIOD','—'],['BATCHES','—'],['AVG/BATCH','—']]},
   ],
   SEQUENCE:[
-    {i:ICO.grid,t:'ORDER',        rows:[['SEQUENCES','—'],['ACTIVE','—'],['MODE','LINEAR']]},
-    {i:ICO.diam,t:'COVERAGE',     rows:[['ASSIGNED','—'],['UNASSIGNED','—'],['RATIO','—']]},
-    {i:ICO.hex, t:'FLOW',         rows:[['DIRECTION','FWD'],['LOOP','OFF'],['MARK','—']]},
+    {i:ICO.grid,t:'ORDER',     rows:[['SEQUENCES','—'],['ACTIVE','—'],['MODE','LINEAR']]},
+    {i:ICO.diam,t:'COVERAGE',  rows:[['ASSIGNED','—'],['UNASSIGNED','—'],['RATIO','—']]},
+    {i:ICO.hex, t:'FLOW',      rows:[['DIRECTION','FWD'],['LOOP','OFF'],['MARK','—']]},
   ],
   FIELD:[
-    {i:ICO.ap,  t:'SUBJECT',      rows:[['PRIMARY','—'],['SECONDARY','—'],['COUNT','—']]},
-    {i:ICO.hex, t:'LOCATION',     rows:[['AREA','—'],['ZONE','—'],['TAG','—']]},
-    {i:ICO.diam,t:'CONDITIONS',   rows:[['LIGHT','—'],['SETTING','—'],['NOTE','—']]},
+    {i:ICO.ap,  t:'SUBJECT',   rows:[['PRIMARY','—'],['SECONDARY','—'],['COUNT','—']]},
+    {i:ICO.hex, t:'LOCATION',  rows:[['AREA','—'],['ZONE','—'],['TAG','—']]},
+    {i:ICO.diam,t:'CONDITIONS',rows:[['LIGHT','—'],['SETTING','—'],['NOTE','—']]},
   ],
   NOTES:[
-    {i:ICO.diam,t:'EDITORIAL',    rows:[['DIRECTION','—'],['INTENT','—'],['TONE','—']]},
-    {i:ICO.bar, t:'SELECTION',    rows:[['CRITERIA','—'],['PRIORITY','—'],['RULE','—']]},
-    {i:ICO.film,t:'OUTPUT',       rows:[['FORMAT','—'],['TARGET','—'],['DEADLINE','—']]},
+    {i:ICO.diam,t:'EDITORIAL', rows:[['DIRECTION','—'],['INTENT','—'],['TONE','—']]},
+    {i:ICO.bar, t:'CRITERIA',  rows:[['PRIORITY','—'],['RULE','—'],['VERSION','—']]},
+    {i:ICO.film,t:'OUTPUT',    rows:[['FORMAT','—'],['TARGET','—'],['DEADLINE','—']]},
   ],
   EXPORT:[
-    {i:ICO.grid,t:'FORMAT',       rows:[['TYPE','—'],['SIZE','—'],['COMPRESS','—']]},
-    {i:ICO.ap,  t:'MANIFEST',     rows:[['ITEMS','—'],['GENERATED','—'],['HASH','—']]},
-    {i:ICO.hex, t:'DELIVERY',     rows:[['TARGET','—'],['METHOD','—'],['STATUS','PENDING']]},
+    {i:ICO.grid,t:'FORMAT',    rows:[['TYPE','—'],['SIZE','—'],['COMPRESS','—']]},
+    {i:ICO.ap,  t:'MANIFEST',  rows:[['ITEMS','—'],['GENERATED','—'],['HASH','—']]},
+    {i:ICO.hex, t:'DELIVERY',  rows:[['TARGET','—'],['METHOD','—'],['STATUS','PENDING']]},
   ],
 };
 
-function renderMapInfo(secKey) {
-  const blocks = SECTIONS[secKey] || [];
-  document.getElementById('mapInfo').innerHTML = blocks.map(b => `
-    <div class="mi">
+function renderMapInfo(sec) {
+  const blocks = SECTIONS[sec] || [];
+  document.getElementById('mapInfo').innerHTML = blocks.map(b=>`
+    <div style="display:flex;gap:9px;flex:1;align-items:flex-start;">
       ${b.i}
-      <div class="mi-body">
-        <div class="mi-title">${b.t}</div>
-        ${b.rows.map(r=>`<div class="mi-row">${r[0]} <b>${r[1]}</b></div>`).join('')}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:8px;color:var(--g);letter-spacing:1.5px;margin-bottom:6px;">${b.t}</div>
+        ${b.rows.map(r=>`<div style="font-size:7.5px;color:var(--g3);line-height:1.95;">${r[0]} <b style="color:var(--g2);font-weight:normal;">${r[1]}</b></div>`).join('')}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// 섹션 전환
 let curSec = 'VIEW';
 document.querySelectorAll('.mbtn[data-sec]').forEach(btn => {
   btn.addEventListener('click', () => {
     const sec = btn.dataset.sec;
     if (sec === curSec) return;
     document.querySelectorAll('[id^="sec-"]').forEach(el => el.style.display = 'none');
-    const target = document.getElementById('sec-' + sec);
-    if (target) target.style.display = 'flex';
+    const t = document.getElementById('sec-' + sec);
+    if (t) t.style.display = sec === 'VIEW' ? 'flex' : 'flex';
     document.querySelectorAll('.mbtn[data-sec]').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('sbSection').textContent = sec;
@@ -720,7 +597,6 @@ document.querySelectorAll('.mbtn[data-sec]').forEach(btn => {
     curSec = sec;
   });
 });
-
 renderMapInfo('VIEW');
 
 // SCAN 애니메이션
@@ -731,10 +607,10 @@ setInterval(() => {
   const x = Math.random() * 80 + 5;
   const y = Math.random() * 70 + 10;
   if (scTick) { scTick.style.left = x + '%'; scTick.style.top = y + '%'; }
-  if (scTarget) { scTarget.style.left = (x - 3) + '%'; scTarget.style.top = (y - 2) + '%'; }
+  if (scTarget) { scTarget.style.left = (x-3) + '%'; scTarget.style.top = (y-2) + '%'; }
   scanPct = (scanPct + Math.floor(Math.random() * 7 + 1)) % 101;
-  const pEl = document.getElementById('scPct');
-  if (pEl) pEl.textContent = String(scanPct).padStart(2,'0') + '%';
+  const p = document.getElementById('scPct');
+  if (p) p.textContent = String(scanPct).padStart(2,'0') + '%';
 }, 1800);
 </script>
 </body>
