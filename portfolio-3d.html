@@ -377,11 +377,10 @@ function assignImage(p, src) {
 
 let PHOTOS = makeLayout(120, 7777);
 
-fetch('photos/')
-  .then(r => r.text())
-  .then(html => {
-    const matches = [...html.matchAll(/href="([^"?#]+\.(jpg|jpeg|png|webp|gif))"/gi)];
-    const urls = matches.map(m => 'photos/' + m[1]);
+fetch('photos/photos.json')
+  .then(r => r.json())
+  .then(files => {
+    const urls = files.map(f => 'photos/' + f);
     if (!urls.length) return;
     const n = Math.max(urls.length, 80);
     PHOTOS = makeLayout(n, 7777);
