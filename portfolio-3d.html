@@ -381,10 +381,14 @@ let PHOTOS = makeLayout(120, 7777);
 // 10초 안에 로드 안 되면 강제로 로딩 화면 닫기
 const _ldTimeout = setTimeout(() => { if (!_ldDone) _ldFinish(); }, 10000);
 
+const _ldFileEl = document.getElementById('ld-file');
+if (_ldFileEl) _ldFileEl.textContent = 'fetching: ' + location.href.replace('portfolio-3d.html','') + 'photos/photos.json';
+
 fetch('photos/photos.json')
-  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
   .then(files => {
-    const urls = files.map(f => 'photos/' + encodeURIComponent(f));
+    if (_ldFileEl) _ldFileEl.textContent = 'loaded list: ' + files.length + ' photos';
+    const urls = files.map(f => 'photos/' + f);
     if (!urls.length) { _ldFinish(); return; }
     const n = Math.max(urls.length, 80);
     PHOTOS = makeLayout(n, 7777);
@@ -398,7 +402,10 @@ fetch('photos/photos.json')
     });
     setTimeout(buildEdges, 0);
   })
-  .catch(() => { _ldFinish(); });
+  .catch(e => {
+    if (_ldFileEl) _ldFileEl.textContent = 'ERROR: ' + e.message;
+    setTimeout(_ldFinish, 3000);
+  });
 
 // ─── 연결선 사전 계산 (3D 거리 기준, 1회만) ───────
 let EDGES = [];
