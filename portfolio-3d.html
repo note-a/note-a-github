@@ -139,6 +139,22 @@ canvas { display:block; }
 }
 #zoom-controls button:hover { background:#c02a1a; }
 
+/* ══ 모바일 ══ */
+@media (max-width: 640px) {
+  #nav { padding:0 14px; height:46px; }
+  #nav .logo { font-size:11px; }
+  #nav ul { display:none; }
+  #nav .nav-right .nav-location { display:none; }
+  #nav .contact-btn { padding:4px 10px; font-size:8px; }
+  #side-left { left:6px; width:28px; gap:10px; padding:10px 0; }
+  #side-right { right:6px; width:28px; gap:10px; padding:10px 0; }
+  #side-left .side-label, #side-right .side-label { font-size:6px; }
+  #loader .ld-remain { font-size:64px; }
+  #loader .ld-logo { font-size:11px; top:22px; left:20px; }
+  #loader .ld-label { top:28px; right:20px; }
+  #loader .ld-file { left:20px; }
+}
+
 #loader {
   position:fixed; inset:0; z-index:200;
   background:#fff;
@@ -606,6 +622,50 @@ window.addEventListener('mousemove', e => {
   mx = e.clientX; my = e.clientY;
 });
 window.addEventListener('mouseup', () => { isDrag = false; });
+
+// ─── 터치 드래그 + 핀치줌 ────────────────────────────
+let _tx = 0, _ty = 0, _pinchDist = 0;
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    isDrag = true; hasDragged = false;
+    _tx = e.touches[0].clientX; _ty = e.touches[0].clientY;
+    velRotX = 0; velRotY = 0;
+  } else if (e.touches.length === 2) {
+    isDrag = false;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    _pinchDist = Math.hypot(dx, dy);
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (e.touches.length === 1 && isDrag) {
+    const dx = e.touches[0].clientX - _tx;
+    const dy = e.touches[0].clientY - _ty;
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) hasDragged = true;
+    velRotY = dx * 0.003;
+    velRotX = dy * 0.003;
+    userRotY += velRotY;
+    userRotX += velRotX;
+    userRotX = Math.max(-Math.PI * 0.48, Math.min(Math.PI * 0.48, userRotX));
+    _tx = e.touches[0].clientX; _ty = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    const dist = Math.hypot(dx, dy);
+    if (_pinchDist > 0) {
+      userZoom = Math.max(0.25, Math.min(5.0, userZoom * (dist / _pinchDist)));
+    }
+    _pinchDist = dist;
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  if (e.touches.length === 0) isDrag = false;
+  _pinchDist = 0;
+}, { passive: false });
 
 // ─── 스크롤 줌 ───────────────────────────────────────
 canvas.addEventListener('wheel', e => {
