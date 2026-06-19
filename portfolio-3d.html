@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Portfolio · 3D</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; background:#ffffff; }
+canvas { display:block; }
+
+/* ══ 헤더 ══ */
+#nav {
+  position:fixed; top:0; left:0; right:0;
+  z-index:9999; height:52px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px;
+  background:#fff;
+  border-bottom:1.5px solid #000;
+}
+.nav-left { display:flex; flex-direction:column; gap:1px; }
+#nav .logo {
+  font:800 13px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.28em; color:#111; line-height:1;
+}
+#nav .logo span { color:#666; }
+.logo-sub {
+  font:400 7px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.26em; color:#888;
+}
+#nav ul { display:flex; gap:0; list-style:none; }
+#nav ul li { position:relative; }
+#nav ul li a {
+  display:block; padding:4px 11px;
+  font:500 10px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.16em; color:#555;
+  text-decoration:none; transition:color .15s;
+}
+#nav ul li a:hover, #nav ul li a.active { color:#111; }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-location {
+  font:400 9px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.14em; color:#888;
+}
+#nav .contact-btn {
+  font:600 9px "Helvetica Neue",Arial,sans-serif; letter-spacing:0.18em;
+  color:#111; padding:5px 13px;
+  border:1.5px solid #111; border-radius:2px;
+  background:transparent; cursor:pointer; transition:all .15s;
+}
+#nav .contact-btn:hover { background:#111; color:#fff; }
+
+/* ══ 사이드바 ══ */
+#side-left {
+  position:fixed; left:12px; top:50%; transform:translateY(-50%);
+  z-index:9999; width:34px;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  padding:14px 0;
+  background:#fff;
+  border:1.5px solid #000;
+  border-radius:4px;
+}
+#side-right {
+  position:fixed; right:12px; top:50%; transform:translateY(-50%);
+  z-index:9999; width:34px;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  padding:14px 0;
+  background:#fff;
+  border:1.5px solid #000;
+  border-radius:4px;
+}
+.side-label {
+  font:600 8px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.22em; color:#444;
+  writing-mode:vertical-rl; transform:rotate(180deg);
+}
+.side-line { width:1px; height:28px; background:#ccc; }
+.social-links { display:flex; flex-direction:column; gap:10px; align-items:center; }
+.social-links a {
+  font:700 9px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.08em; color:#444;
+  text-decoration:none; transition:color .15s;
+  writing-mode:vertical-rl;
+}
+.social-links a:hover { color:#111; }
+#dot-nav { display:flex; flex-direction:column; gap:7px; align-items:center; }
+#dot-nav span {
+  width:5px; height:5px; border-radius:50%;
+  background:#bbb;
+  transition:all .2s; cursor:pointer;
+}
+#dot-nav span.on, #dot-nav span:hover {
+  background:#111; transform:scale(1.4);
+}
+.photo-count { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.photo-count .num {
+  font:700 15px "Helvetica Neue",Arial,sans-serif;
+  color:#111; letter-spacing:-0.01em;
+}
+.photo-count .lbl {
+  font:600 7px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.18em; color:#666;
+  writing-mode:vertical-rl; transform:rotate(180deg);
+}
+
+/* ══ 하단 상태바 ══ */
+#bottom-bar {
+  position:fixed; bottom:20px; left:28px; right:28px;
+  z-index:40; pointer-events:none;
+  display:flex; align-items:flex-end; justify-content:space-between;
+}
+#photo-info {
+  pointer-events:none;
+  display:flex; flex-direction:column; gap:2px;
+}
+#photo-info .num {
+  font:700 36px "Helvetica Neue","Arial",sans-serif;
+  color:rgba(0,0,0,0.08);
+  line-height:1; letter-spacing:-0.02em;
+}
+#photo-info .lbl {
+  font:400 10px "Helvetica Neue","Arial",sans-serif;
+  letter-spacing:0.18em;
+  color:rgba(0,0,0,0.3);
+}
+#zoom-controls {
+  display:flex; gap:8px; pointer-events:all;
+}
+#zoom-controls button {
+  width:36px; height:36px; border-radius:50%;
+  border:none; cursor:pointer;
+  font:400 18px "Helvetica Neue","Arial",sans-serif;
+  color:#fff; background:#d63a2a;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 2px 8px rgba(214,58,42,0.35);
+  transition:background .15s;
+  line-height:1;
+}
+#zoom-controls button:hover { background:#c02a1a; }
+
+#loader {
+  position:fixed; inset:0; z-index:200;
+  background:#fff;
+  transition:opacity 0.6s ease;
+}
+#loader.fade-out { opacity:0; pointer-events:none; }
+#loader .ld-logo {
+  position:absolute; top:32px; left:36px;
+  font:800 13px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.28em; color:#111;
+}
+#loader .ld-logo span { color:rgba(0,0,0,0.35); }
+#loader .ld-label {
+  position:absolute; top:38px; right:36px;
+  font:400 8px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.4em; color:rgba(0,0,0,0.3);
+}
+#loader .ld-center {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-54%);
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+}
+#loader .ld-remain {
+  font:700 90px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:-0.04em; color:#111; line-height:1;
+}
+#loader .ld-count {
+  font:400 10px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.22em; color:rgba(0,0,0,0.4);
+}
+#loader .ld-bar-wrap {
+  position:absolute; bottom:0; left:0; right:0;
+  height:3px; background:rgba(0,0,0,0.06);
+}
+#loader .ld-bar {
+  height:100%; width:0%; background:#111; transition:none;
+}
+#loader .ld-file {
+  position:absolute; bottom:20px; left:36px;
+  font:400 9px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.08em; color:rgba(0,0,0,0.25);
+  max-width:400px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+#lb {
+  display:none; position:fixed; inset:0;
+  background:rgba(255,255,255,0.96);
+  z-index:100; align-items:center; justify-content:center; cursor:zoom-out;
+}
+#lb.on { display:flex; }
+#lb img { max-width:90vw; max-height:90vh; object-fit:contain; border-radius:4px; box-shadow:0 8px 60px rgba(0,0,0,0.5); }
+</style>
+</head>
+<body>
+<nav id="nav" style="background:#ffffff;border-bottom:1.5px solid #d0d0d0;position:fixed;top:0;left:0;right:0;height:52px;display:none;align-items:center;justify-content:space-between;padding:0 24px;z-index:9999;">
+  <div class="nav-left">
+    <div class="logo" style="color:#111;">AUTO<span style="color:#888;">/</span>MASS</div>
+    <div class="logo-sub" style="color:#888;">VISUAL PORTFOLIO</div>
+  </div>
+  <ul>
+    <li><a href="#" class="active">HOME</a></li>
+    <li><a href="#">BOOK</a></li>
+    <li><a href="#">ARTIST STATEMENT</a></li>
+    <li><a href="#">NOTE</a></li>
+    <li><a href="#">GITHUB</a></li>
+  </ul>
+  <div class="nav-right" style="display:flex;align-items:center;gap:16px;">
+    <div style="font:400 9px Helvetica,Arial,sans-serif;letter-spacing:0.14em;color:#888;">SEOUL, KR</div>
+    <div class="contact-btn" style="font:600 9px Helvetica,Arial,sans-serif;letter-spacing:0.18em;color:#111;padding:5px 13px;border:1.5px solid #111;border-radius:2px;cursor:pointer;">CONTACT</div>
+  </div>
+</nav>
+
+<div id="side-left" style="background:#ffffff;border:1.5px solid #d0d0d0;position:fixed;left:12px;top:50%;transform:translateY(-50%);width:34px;display:none;flex-direction:column;align-items:center;gap:16px;padding:14px 0;border-radius:4px;z-index:9999;">
+  <div style="font:600 8px Helvetica,Arial,sans-serif;letter-spacing:0.2em;color:#444;writing-mode:vertical-rl;transform:rotate(180deg);">PORTFOLIO · 2024</div>
+  <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+    <a href="https://instagram.com" target="_blank" title="Instagram" style="font:700 9px Helvetica,Arial,sans-serif;color:#444;text-decoration:none;writing-mode:vertical-rl;transition:color .15s;" onmouseover="this.style.color='#111'" onmouseout="this.style.color='#444'">IG</a>
+    <a href="https://behance.net" target="_blank" title="Behance" style="font:700 9px Helvetica,Arial,sans-serif;color:#444;text-decoration:none;writing-mode:vertical-rl;transition:color .15s;" onmouseover="this.style.color='#111'" onmouseout="this.style.color='#444'">BE</a>
+    <a href="https://twitter.com" target="_blank" title="Twitter/X" style="font:700 9px Helvetica,Arial,sans-serif;color:#444;text-decoration:none;writing-mode:vertical-rl;transition:color .15s;" onmouseover="this.style.color='#111'" onmouseout="this.style.color='#444'">TW</a>
+    <a href="https://youtube.com" target="_blank" title="YouTube" style="font:700 9px Helvetica,Arial,sans-serif;color:#444;text-decoration:none;writing-mode:vertical-rl;transition:color .15s;" onmouseover="this.style.color='#111'" onmouseout="this.style.color='#444'">YT</a>
+  </div>
+  <div style="width:1px;height:24px;background:#ccc;"></div>
+</div>
+
+<div id="side-right" style="background:#ffffff;border:1.5px solid #d0d0d0;position:fixed;right:12px;top:50%;transform:translateY(-50%);width:34px;display:none;flex-direction:column;align-items:center;gap:14px;padding:14px 0;border-radius:4px;z-index:9999;">
+  <div style="width:1px;height:24px;background:#ccc;"></div>
+  <div id="dot-nav" style="display:flex;flex-direction:column;gap:7px;align-items:center;">
+    <span data-view="0" title="Default" style="width:5px;height:5px;border-radius:50%;background:#111;display:block;cursor:pointer;transition:all .2s;"></span>
+    <span data-view="1" title="Top" style="width:5px;height:5px;border-radius:50%;background:#bbb;display:block;cursor:pointer;transition:all .2s;"></span>
+    <span data-view="2" title="Side" style="width:5px;height:5px;border-radius:50%;background:#bbb;display:block;cursor:pointer;transition:all .2s;"></span>
+    <span data-view="3" title="Close" style="width:5px;height:5px;border-radius:50%;background:#bbb;display:block;cursor:pointer;transition:all .2s;"></span>
+    <span data-view="4" title="Wide" style="width:5px;height:5px;border-radius:50%;background:#bbb;display:block;cursor:pointer;transition:all .2s;"></span>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:3px;">
+    <div id="photo-num" style="font:700 14px Helvetica,Arial,sans-serif;color:#111;">—</div>
+    <div style="font:600 7px Helvetica,Arial,sans-serif;letter-spacing:0.18em;color:#666;writing-mode:vertical-rl;transform:rotate(180deg);">PHOTOS</div>
+  </div>
+  <div style="font:600 8px Helvetica,Arial,sans-serif;letter-spacing:0.2em;color:#444;writing-mode:vertical-rl;transform:rotate(180deg);">SCROLL · DRAG</div>
+</div>
+
+
+<div id="loader">
+  <div class="ld-logo">AUTO<span>/</span>MASS</div>
+  <div class="ld-label">LOADING</div>
+  <div class="ld-center">
+    <div class="ld-remain" id="ld-remain">—</div>
+    <div class="ld-count" id="ld-count">PHOTOS REMAINING</div>
+  </div>
+  <div class="ld-bar-wrap"><div class="ld-bar" id="ld-bar"></div></div>
+  <div class="ld-file" id="ld-file"></div>
+</div>
+<canvas id="c"></canvas>
+<div id="lb"><img id="lb-img"></div>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const dpr = window.devicePixelRatio || 1;
+
+function rng(seed) {
+  let s = seed >>> 0;
+  return function() {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    return s / 0x100000000;
+  };
+}
+
+// ─── 파티클 ───────────────────────────────────────
+
+
+// ─── 레이아웃 생성 (구형 360° 배치) ─────────────
+const THUMB_LONG = 600;
+const R_MIN = 420, R_MAX = 2400;
+const _PHI_GOLDEN = Math.PI * (3 - Math.sqrt(5)); // golden angle
+
+function makeLayout(count, seed) {
+  const rand = rng(seed);
+  const items = [];
+  for (let i = 0; i < count; i++) {
+    // Fibonacci sphere: 균등 분포 + 약간의 랜덤 지터
+    const t     = (i + 0.5) / count;
+    const phi   = Math.acos(1 - 2 * t) - Math.PI / 2;          // ±90° 전방위
+    const theta = _PHI_GOLDEN * i + (rand() - 0.5) * 0.6;      // 지터
+    const r     = R_MIN + rand() * (R_MAX - R_MIN);
+    const x = r * Math.cos(phi) * Math.sin(theta);
+    const y = r * Math.sin(phi);
+    const z = r * Math.cos(phi) * Math.cos(theta);
+    // 가까운 사진은 작게, 먼 사진은 크게 (화면상 일정 크기 유지)
+    const w = (80 + rand() * 70) * (r / 900);
+    items.push({
+      id: i, x, y, z,
+      w, h: w * 0.67,
+      rot: 0, type: 'photo',
+      img: null, thumb: null,
+    });
+  }
+  return items;
+}
+
+let _ldTotal = 0, _ldLoaded = 0, _ldDone = false;
+let _ldLastFile = '—';
+const _ldBar    = document.getElementById('ld-bar');
+const _ldCount  = document.getElementById('ld-count');
+const _ldRemain = document.getElementById('ld-remain');
+const _ldFile   = document.getElementById('ld-file');
+const _loader   = document.getElementById('loader');
+
+function _ldFinish() {
+  if (_ldDone) return;
+  _ldDone = true;
+  if (_ldRemain) _ldRemain.textContent = '0';
+  if (_ldCount)  _ldCount.textContent  = 'PHOTOS REMAINING';
+  if (_ldBar) _ldBar.style.width = '100%';
+  setTimeout(() => {
+    if (_loader) _loader.classList.add('fade-out');
+    ['nav','side-left','side-right'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
+  }, 300);
+  setTimeout(() => { if (_loader) _loader.style.display = 'none'; }, 1000);
+}
+
+const _ldT0 = performance.now();
+
+// 이미지 onload마다 직접 호출 — 타이머 throttling 없음
+function _ldUpdate(filename) {
+  if (_ldDone) return;
+  if (filename) _ldLastFile = filename;
+  const pct = _ldTotal > 0 ? Math.round(_ldLoaded / _ldTotal * 100) : 0;
+  if (_ldBar) _ldBar.style.width = pct + '%';
+  if (_ldFile) _ldFile.textContent = _ldLastFile;
+  // 남은 초 계산
+  const elapsedSec = (performance.now() - _ldT0) / 1000;
+  const rate = elapsedSec > 0.5 && _ldLoaded > 0 ? _ldLoaded / elapsedSec : 0;
+  const rem = _ldTotal > 0 ? _ldTotal - _ldLoaded : null;
+  if (_ldRemain) {
+    if (rem !== null && rate > 0) {
+      const secsLeft = Math.max(1, Math.ceil(rem / rate));
+      _ldRemain.textContent = secsLeft;
+      if (_ldCount) _ldCount.textContent = 'SEC REMAINING';
+    } else {
+      _ldRemain.textContent = '—';
+      if (_ldCount) _ldCount.textContent = 'LOADING...';
+    }
+  }
+  if (_ldTotal > 0 && _ldLoaded >= _ldTotal) _ldFinish();
+}
+
+// 최초 표시
+if (_ldRemain) _ldRemain.textContent = '—';
+if (_ldCount)  _ldCount.textContent  = 'LOADING...';
+
+function updateLoader(filename) {
+  if (filename) _ldLastFile = filename;
+}
+
+function assignImage(p, src) {
+  const img = new Image();
+  img.onload = function() {
+    p.h = p.w * (this.naturalHeight / this.naturalWidth);
+    const long = Math.max(this.naturalWidth, this.naturalHeight);
+    const s = Math.min(1, THUMB_LONG / long);
+    const tw = Math.round(this.naturalWidth * s);
+    const th = Math.round(this.naturalHeight * s);
+    try {
+      const oc = new OffscreenCanvas(tw, th);
+      oc.getContext('2d').drawImage(this, 0, 0, tw, th);
+      p.thumb = oc;
+    } catch(e) { p.thumb = this; }
+    _ldLoaded++;
+    _ldUpdate(decodeURIComponent(src.split('/').pop()));
+  };
+  img.onerror = () => { _ldLoaded++; _ldUpdate(decodeURIComponent(src.split('/').pop())); };
+  img.src = src;
+  p.img = img;
+}
+
+let PHOTOS = makeLayout(120, 7777);
+
+fetch('photos/')
+  .then(r => r.text())
+  .then(html => {
+    const matches = [...html.matchAll(/href="([^"?#]+\.(jpg|jpeg|png|webp|gif))"/gi)];
+    const urls = matches.map(m => 'photos/' + m[1]);
+    if (!urls.length) return;
+    const n = Math.max(urls.length, 80);
+    PHOTOS = makeLayout(n, 7777);
+    const photoItems = PHOTOS.filter(p => p.type === 'photo');
+    _ldTotal = photoItems.length;
+    _ldStart = Date.now();
+    updateLoader();
+    const byDist = [...photoItems].sort((a, b) => a.z - b.z);
+    byDist.forEach((p, idx) => {
+      const delay = idx < 60 ? 0 : Math.floor((idx - 60) / 32) * 12 + 5;
+      setTimeout(() => assignImage(p, urls[p.id % urls.length]), delay);
+    });
+    setTimeout(buildEdges, 0);
+  })
+  .catch(() => {});
+
+// ─── 연결선 사전 계산 (3D 거리 기준, 1회만) ───────
+let EDGES = [];
+function buildEdges() {
+  const K = 5;
+  const pts = PHOTOS.filter(p => p.type === 'photo');
+  EDGES = [];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i];
+    const dists = [];
+    for (let j = 0; j < pts.length; j++) {
+      if (i === j) continue;
+      const b = pts[j];
+      const dx = a.x - b.x, dy = a.y - b.y, dz = a.z - b.z;
+      dists.push({ j, d: dx*dx + dy*dy + dz*dz });
+    }
+    dists.sort((x, y) => x.d - y.d);
+    for (let k = 0; k < K && k < dists.length; k++) {
+      const key = i < dists[k].j ? `${i}-${dists[k].j}` : `${dists[k].j}-${i}`;
+      EDGES.push({ a: pts[i], b: pts[dists[k].j], key });
+    }
+  }
+  // 중복 제거
+  const seen = new Set();
+  EDGES = EDGES.filter(e => { if (seen.has(e.key)) return false; seen.add(e.key); return true; });
+}
+buildEdges();
+
+// ─── 카메라 ───────────────────────────────────────
+const FOV = 520;
+let camZ = 0, camX = 0, camY = 0;
+let userRotY = 0, userRotX = 0;
+let userZoom = 1.0;
+let velRotY = 0, velRotX = 0;
+
+function project(px, py, pz) {
+  const W = canvas.width / dpr, H = canvas.height / dpr;
+  let dx = px - camX, dy = py - camY, dz = pz - camZ;
+  const cosY = Math.cos(userRotY), sinY = Math.sin(userRotY);
+  let rx  =  dx * cosY + dz * sinY;
+  let rz0 = -dx * sinY + dz * cosY;
+  const cosX = Math.cos(userRotX), sinX = Math.sin(userRotX);
+  let ry = dy * cosX - rz0 * sinX;
+  let rz = dy * sinX + rz0 * cosX;
+  if (rz + FOV < 10) return null;
+  const sc = (FOV / (rz + FOV + 150)) * userZoom;
+  return { sx: W * 0.5 + rx * sc, sy: H * 0.42 + ry * sc, scale: sc, depth: rz };
+}
+
+
+// ─── 그리기 ───────────────────────────────────────
+function draw(elapsed) {
+  const W = canvas.width / dpr, H = canvas.height / dpr;
+  ctx.clearRect(0, 0, W, H);
+
+  // 배경: 상단 어둡고 중앙 밝은 깊이감
+  // 배경: 흰색
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+
+  // ── 원근 그리드 플로어 ──────────────────────────
+  const horizY = H * 0.72;
+  const gridAlpha = 0.22;
+  ctx.strokeStyle = `rgba(160,205,235,${gridAlpha})`;
+  ctx.lineWidth = 0.8;
+  // 가로선
+  for (let i = 0; i <= 8; i++) {
+    const t = i / 8;
+    const y = horizY + (H - horizY) * t * t;
+    const xSpread = W * 0.05 + W * 0.45 * (t * 0.9 + 0.1);
+    ctx.beginPath();
+    ctx.moveTo(W/2 - xSpread, y);
+    ctx.lineTo(W/2 + xSpread, y);
+    ctx.globalAlpha = gridAlpha * (1 - t * 0.5);
+    ctx.stroke();
+  }
+  // 세로선 (소실점으로 수렴)
+  for (let i = -6; i <= 6; i++) {
+    const xBot = W/2 + i * W * 0.09;
+    ctx.beginPath();
+    ctx.moveTo(W/2, horizY);
+    ctx.lineTo(xBot, H);
+    ctx.globalAlpha = gridAlpha * 0.6;
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // ── 3D 사진/카드 ─────────────────────────────────
+  const visible = PHOTOS.map(p => {
+    const proj = project(p.x, p.y, p.z);
+    return proj ? { p, proj } : null;
+  }).filter(Boolean);
+
+  visible.sort((a, b) => b.proj.depth - a.proj.depth);
+
+  // ── 연결선 ──────────────────────────────────────
+  ctx.strokeStyle = 'rgba(60,60,60,0.35)';
+  ctx.lineWidth = 0.9;
+  for (const e of EDGES) {
+    const pa = e.a._sx !== undefined ? e.a : null;
+    const pb = e.b._sx !== undefined ? e.b : null;
+    if (!pa || !pb) continue;
+    ctx.beginPath();
+    ctx.moveTo(pa._sx, pa._sy);
+    ctx.lineTo(pb._sx, pb._sy);
+    ctx.stroke();
+  }
+
+  hitAreas = [];
+  visible.forEach(({ p, proj }) => {
+    const { sx, sy, scale } = proj;
+    p._sx = sx; p._sy = sy;
+    const pw = p.w * scale;
+    const ph = p.h * scale;
+    if (pw < 3) return;
+
+    hitAreas.push({ p, sx, sy, pw, ph });
+
+    ctx.save();
+    ctx.translate(sx, sy);
+
+    if (p.thumb) {
+      ctx.drawImage(p.thumb, -pw/2, -ph/2, pw, ph);
+    } else if (p.img && p.img.complete && p.img.naturalWidth > 0) {
+      ctx.drawImage(p.img, -pw/2, -ph/2, pw, ph);
+    } else {
+      ctx.fillStyle = 'rgba(200,200,200,0.6)';
+      ctx.fillRect(-pw/2, -ph/2, pw, ph);
+    }
+
+    ctx.restore();
+  });
+}
+
+// ─── 애니메이션 ───────────────────────────────────
+let lastTime = null, elapsed = 0;
+
+function animate(ts) {
+  if (lastTime === null) lastTime = ts;
+  const dt = Math.min(ts - lastTime, 50);
+  lastTime = ts;
+  elapsed += dt;
+
+  camX = Math.sin(elapsed * 0.00018) * 18;
+  camY = Math.sin(elapsed * 0.00013) * 8;
+
+  // 관성
+  if (!isDrag) {
+    velRotY *= 0.90;
+    velRotX *= 0.90;
+    userRotY += velRotY;
+    userRotX += velRotX;
+    userRotX = Math.max(-Math.PI * 0.48, Math.min(Math.PI * 0.48, userRotX));
+  }
+  _dotLerp();
+
+  draw(elapsed);
+  requestAnimationFrame(animate);
+}
+
+// ─── 라이트박스 ───────────────────────────────────
+let hitAreas = [];
+const lb    = document.getElementById('lb');
+const lbImg = document.getElementById('lb-img');
+
+canvas.addEventListener('click', e => {
+  if (hasDragged) return;
+  const x = e.clientX, y = e.clientY;
+  for (let i = hitAreas.length - 1; i >= 0; i--) {
+    const { p, sx, sy, pw, ph } = hitAreas[i];
+    if (x >= sx - pw/2 && x <= sx + pw/2 && y >= sy - ph/2 && y <= sy + ph/2) {
+      if (p.img && p.img.src) lbImg.src = p.img.src;
+      lb.classList.add('on');
+      return;
+    }
+  }
+});
+lb.addEventListener('click', () => lb.classList.remove('on'));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('on'); });
+
+// ─── 드래그 + 관성 ───────────────────────────────────────
+let isDrag = false, hasDragged = false, mx = 0, my = 0;
+canvas.addEventListener('mousedown', e => {
+  isDrag = true; hasDragged = false;
+  mx = e.clientX; my = e.clientY;
+  velRotX = 0; velRotY = 0;
+});
+window.addEventListener('mousemove', e => {
+  if (!isDrag) return;
+  const dx = e.clientX - mx, dy = e.clientY - my;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasDragged = true;
+  velRotY = dx * 0.003;
+  velRotX = dy * 0.003;
+  userRotY += velRotY;
+  userRotX += velRotX;
+  userRotX = Math.max(-Math.PI * 0.48, Math.min(Math.PI * 0.48, userRotX));
+  mx = e.clientX; my = e.clientY;
+});
+window.addEventListener('mouseup', () => { isDrag = false; });
+
+// ─── 스크롤 줌 ───────────────────────────────────────
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? 0.95 : 1.05;
+  userZoom = Math.max(0.25, Math.min(5.0, userZoom * delta));
+}, { passive: false });
+
+// ─── 리사이즈 ────────────────────────────────────
+function resize() {
+  canvas.width  = window.innerWidth  * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width  = window.innerWidth  + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// 사진 수 업데이트
+const photoNumEl = document.getElementById('photo-num');
+function updatePhotoNum() {
+  if (photoNumEl) photoNumEl.textContent = PHOTOS.filter(p => p.type === 'photo').length;
+}
+setInterval(updatePhotoNum, 1000);
+
+
+// ─── 닷 네비게이션 — 뷰 프리셋 ────────────────────────
+const VIEW_PRESETS = [
+  { rotY: 0,              rotX: 0,              zoom: 1.0  }, // 0 Default
+  { rotY: 0,              rotX: -Math.PI * 0.4, zoom: 0.9  }, // 1 Top
+  { rotY: Math.PI * 0.5, rotX: 0,              zoom: 1.0  }, // 2 Side
+  { rotY: 0,              rotX: 0,              zoom: 2.0  }, // 3 Close-up
+  { rotY: 0,              rotX: 0,              zoom: 0.5  }, // 4 Wide
+];
+let _dotTarget = null;
+let _dotDots = null;
+
+function _dotApply(idx) {
+  if (!_dotDots) _dotDots = document.querySelectorAll('#dot-nav span');
+  _dotDots.forEach((s, i) => s.style.background = i === idx ? '#111' : '#bbb');
+  _dotTarget = VIEW_PRESETS[idx];
+}
+
+document.getElementById('dot-nav').addEventListener('click', e => {
+  const span = e.target.closest('span[data-view]');
+  if (!span) return;
+  _dotApply(parseInt(span.dataset.view));
+});
+
+// animate 루프에서 _dotTarget 있으면 부드럽게 이동 (animate 함수 내 inertia 이후에 적용)
+function _dotLerp() {
+  if (!_dotTarget) return;
+  const SPEED = 0.07;
+  userRotY += (_dotTarget.rotY - userRotY) * SPEED;
+  userRotX += (_dotTarget.rotX - userRotX) * SPEED;
+  userZoom += (_dotTarget.zoom  - userZoom)  * SPEED;
+  if (Math.abs(_dotTarget.rotY - userRotY) < 0.001 &&
+      Math.abs(_dotTarget.rotX - userRotX) < 0.001 &&
+      Math.abs(_dotTarget.zoom  - userZoom)  < 0.001) {
+    userRotY = _dotTarget.rotY;
+    userRotX = _dotTarget.rotX;
+    userZoom = _dotTarget.zoom;
+    _dotTarget = null;
+  }
+}
+
+function start() { resize(); requestAnimationFrame(animate); }
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', start);
+} else { start(); }
+window.addEventListener('resize', resize);
+</script>
+</body>
+</html>
