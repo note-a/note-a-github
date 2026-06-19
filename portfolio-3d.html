@@ -307,6 +307,7 @@ const _loader   = document.getElementById('loader');
 function _ldFinish() {
   if (_ldDone) return;
   _ldDone = true;
+  clearTimeout(_ldTimeout);
   if (_ldRemain) _ldRemain.textContent = '0';
   if (_ldCount)  _ldCount.textContent  = 'PHOTOS REMAINING';
   if (_ldBar) _ldBar.style.width = '100%';
@@ -377,17 +378,19 @@ function assignImage(p, src) {
 
 let PHOTOS = makeLayout(120, 7777);
 
+// 10초 안에 로드 안 되면 강제로 로딩 화면 닫기
+const _ldTimeout = setTimeout(() => { if (!_ldDone) _ldFinish(); }, 10000);
+
 fetch('photos/photos.json')
-  .then(r => r.json())
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
   .then(files => {
-    const urls = files.map(f => 'photos/' + f);
-    if (!urls.length) return;
+    const urls = files.map(f => 'photos/' + encodeURIComponent(f));
+    if (!urls.length) { _ldFinish(); return; }
     const n = Math.max(urls.length, 80);
     PHOTOS = makeLayout(n, 7777);
     const photoItems = PHOTOS.filter(p => p.type === 'photo');
     _ldTotal = photoItems.length;
-    _ldStart = Date.now();
-    updateLoader();
+    _ldUpdate();
     const byDist = [...photoItems].sort((a, b) => a.z - b.z);
     byDist.forEach((p, idx) => {
       const delay = idx < 60 ? 0 : Math.floor((idx - 60) / 32) * 12 + 5;
@@ -395,7 +398,7 @@ fetch('photos/photos.json')
     });
     setTimeout(buildEdges, 0);
   })
-  .catch(() => {});
+  .catch(() => { _ldFinish(); });
 
 // ─── 연결선 사전 계산 (3D 거리 기준, 1회만) ───────
 let EDGES = [];
