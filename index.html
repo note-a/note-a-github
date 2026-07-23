@@ -97,8 +97,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
   transition:color .3s;}
 .hero.ohov .htxt p{color:rgba(255,130,0,.52)!important;transition:color .3s;}
 .hero.ohov .htxt .hi{color:rgba(255,140,0,.78)!important;transition:color .3s;}
-.hero.ohov .enter{color:#ff8c00!important;border-color:rgba(255,140,0,.85)!important;
-  box-shadow:inset 0 1px 0 rgba(255,140,0,.18),0 0 24px rgba(255,100,0,.18)!important;transition:.2s;}
+.hero.ohov .enter{color:#ff8c00!important;border-color:rgba(255,140,0,.6)!important;transition:.2s;}
 
 /* ── text + enter: all inside hero ── */
 .htxt{position:absolute;left:50%;bottom:160px;transform:translateX(-50%);
@@ -108,16 +107,24 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .htxt p:last-child{margin-bottom:0;}
 .htxt .hi{color:rgba(255,255,255,.62);}
 .henter{position:absolute;bottom:108px;left:50%;transform:translateX(-50%);z-index:5;}
-.enter{position:relative;overflow:hidden;font-family:var(--px);font-size:10px;letter-spacing:1px;padding:10px 36px;
-  cursor:pointer;color:#eaeaea;display:inline-block;
-  background:#1a1a1a;border:1px solid rgba(255,255,255,.7);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 20px rgba(255,255,255,.06);transition:.12s;}
-.enter:hover{background:#2e2e2e;border-color:#fff;}
-.enter .ar{display:inline-block;animation:nudge 1.4s ease-in-out infinite;}
-@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
-.enter::after{content:'';position:absolute;top:0;left:-50%;width:32%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent);animation:sweep 2.8s linear infinite;}
-@keyframes sweep{to{left:130%}}
+.enter{
+  position:relative;overflow:hidden;display:inline-block;cursor:pointer;
+  font-family:var(--mono);font-size:12px;letter-spacing:3px;
+  padding:12px 44px;
+  color:rgba(255,255,255,.68);
+  background:transparent;
+  border:1px solid rgba(255,255,255,.22);
+  clip-path:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  transition:color .25s,border-color .25s,background .25s;}
+.enter:hover{
+  color:#fff;
+  background:rgba(255,255,255,.04);
+  border-color:rgba(255,255,255,.5);}
+.enter .ar{display:inline-block;animation:nudge 1.6s ease-in-out infinite;}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(6px)}}
+.enter::after{content:'';position:absolute;top:0;left:-60%;width:28%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);animation:sweep 3.2s linear infinite;}
+@keyframes sweep{to{left:140%}}
 
 /* ── coming soon overlay ── */
 #cs-overlay{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;
@@ -133,26 +140,34 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 
 /* ── mobile ── */
 @media(max-width:767px){
-  html,body{overflow-x:hidden;overflow-y:auto;height:auto;align-items:stretch;justify-content:flex-start;}
-  body{display:block;}
-  #wrap{width:100%;max-width:100%;transform:none;max-height:none;border:none;box-shadow:none;overflow-x:hidden;}
-  .tick{display:none;}
-  *:not(#cs-overlay):not(#cs-overlay *){max-width:100%;}
+  /* 풀스크린 고정, 스크롤 없음 */
+  html,body{overflow:hidden;height:100%;height:100svh;}
+  #wrap{height:100svh;max-height:100svh;}
+  .hero{min-height:0;}
+
+  /* 레터박스 좁게 */
+  .lbox{height:36px;}
+
+  /* 배너: 모바일 너비에 맞게 축소 */
+  .hero .banner{
+    transform:translate(-50%,-50%) scale(0.44) scaleX(0.85) scaleY(2.8) skewX(-11deg);
+    top:40%;}
+
+  /* 텍스트: 두 번째 단락 숨김, 위치 조정 */
+  .htxt{bottom:96px;font-size:10px;width:90%;line-height:1.65;}
+  .htxt p:last-child{display:none;}
+  .htxt .hi{font-size:10px;}
+
+  /* ENTER 버튼 */
+  .henter{bottom:48px;}
+  .enter{font-size:10px;padding:10px 28px;letter-spacing:2px;
+    clip-path:polygon(8px 0%,calc(100% - 8px) 0%,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0% calc(100% - 8px),0% 8px);}
+
+  /* 코너 레이블 숨김 */
+  .hlab{display:none;}
+
+  /* 기타 */
   pre:not(#cs-overlay pre):not(.banner){white-space:pre-wrap;word-break:break-all;}
-  .head{flex-wrap:nowrap;gap:8px;padding:7px 12px;overflow:hidden;}
-  .head .brand{font-size:12px;flex-shrink:0;}
-  .head .meta,.head .led,.head .div{display:none;}
-  .head .rec{font-size:9px;flex-shrink:0;white-space:nowrap;}
-  .head .clk{font-size:12px;font-weight:600;flex-shrink:0;}
-  .hero{min-height:180px;flex:0 0 220px;}
-  .hero .banner{transform:translate(-50%,-50%) scale(0.72) scaleX(0.85) scaleY(1.9) skewX(-11deg);}
-  .hlab{font-size:7.5px;letter-spacing:.5px;}
-  .hlab.tl{left:8px;top:6px;} .hlab.tr{right:8px;top:6px;}
-  .hlab.bl{left:8px;bottom:6px;} .hlab.br{right:8px;bottom:6px;}
-  .hlab.ml,.hlab.mr{display:none;}
-  .henter{bottom:14px;}
-  .htxt{bottom:58px;font-size:10px;}
-  .enter{font-size:9px;padding:9px 24px;}
 }
 </style>
 </head>
@@ -182,7 +197,8 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 // ── hero scope: accumulation dot field ──
 const cv=document.getElementById('scope'),cx=cv.getContext('2d');
 let t=0,swp=0,dots=[];
-function initDots(){dots=[];const N=160;for(let i=0;i<N;i++){dots.push({
+const isMob=window.innerWidth<768;
+function initDots(){dots=[];const N=isMob?80:160;for(let i=0;i<N;i++){dots.push({
   x:Math.random(),y:Math.random(),r:Math.random()*1.6+0.5,
   ph:Math.random()*Math.PI*2,sp:0.3+Math.random()*1.1,
   vx:0.018+Math.random()*0.065,teal:Math.random()<0.10});}}
@@ -221,7 +237,7 @@ const netCv=document.getElementById('net-cv'),netCtx=netCv.getContext('2d');
 let pts=[];
 function initNet(){
   netCv.width=netCv.clientWidth;netCv.height=netCv.clientHeight;
-  const n=55;
+  const n=isMob?24:55;
   pts=Array.from({length:n},()=>({
     x:Math.random()*netCv.width,y:Math.random()*netCv.height,
     vx:(Math.random()-.5)*0.18,vy:(Math.random()-.5)*0.18}));}
@@ -233,7 +249,7 @@ function drawNet(){
     p.x+=p.vx;p.y+=p.vy;
     if(p.x<0)p.x=w;if(p.x>w)p.x=0;
     if(p.y<0)p.y=h;if(p.y>h)p.y=0;}
-  const DIST=160;
+  const DIST=isMob?100:160;
   for(let i=0;i<pts.length;i++){
     for(let j=i+1;j<pts.length;j++){
       const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
@@ -377,10 +393,10 @@ initRain();drawRain();
 
 function go(u){if(parent!==window)return;location.href=u;}
 
-// ── orange hover ──
+// ── orange hover / touch ──
 (function(){
   const hero=document.querySelector('.hero');
-  let leaveTimer;
+  let leaveTimer,touchTimer;
   function on(){clearTimeout(leaveTimer);hero.classList.add('ohov');}
   function off(){leaveTimer=setTimeout(()=>hero.classList.remove('ohov'),40);}
   ['.banner','.htxt','.henter'].forEach(s=>{
@@ -389,6 +405,8 @@ function go(u){if(parent!==window)return;location.href=u;}
     el.style.pointerEvents='auto';
     el.addEventListener('mouseenter',on);
     el.addEventListener('mouseleave',off);
+    el.addEventListener('touchstart',()=>{clearTimeout(touchTimer);on();},{passive:true});
+    el.addEventListener('touchend',()=>{touchTimer=setTimeout(off,900);},{passive:true});
   });
 })();
 
