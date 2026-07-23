@@ -545,6 +545,126 @@ body {
   line-height: 1.65; padding-left: 14px;
 }
 .faq-a strong { color: rgba(180,220,255,0.85); font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════
+   MOBILE (≤768px)
+═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: auto;
+    min-height: 100dvh;
+    align-items: flex-start;
+  }
+
+  #main {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 4px 6px 32px;
+    gap: 6px;
+  }
+
+  /* ── 순서: 타이틀 → 원(VIZ) → ATTR.TEST → NULL.LOG → MANUAL ── */
+  #title-bar   { order: 0; }
+  #panel-center  { order: 1; }
+  #attr83-panel  { order: 2; }
+  #null-panel    { order: 3; }
+  #manual-panel  { order: 4; }
+
+  /* 타이틀바 — 좌우 장식 숨김, 텍스트 축소 */
+  #title-bar {
+    flex-wrap: nowrap;
+    padding: 0 6px;
+    overflow: hidden;
+  }
+  #title-bar > div:first-child,
+  #title-bar > div:last-child { display: none !important; }
+  #title-bar > div:nth-child(2) {
+    padding: 0 !important;
+    width: 100%;
+  }
+  #title-bar > div:nth-child(2) > div:first-child {
+    font-size: 13px !important;
+    letter-spacing: 2px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #title-bar > div:nth-child(2) > div:last-child {
+    font-size: 8px !important;
+    letter-spacing: 1px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 중앙 원(VIZ) — 핵심. 화면 최상단에 넉넉하게 */
+  #panel-center {
+    grid-area: unset !important;
+    grid-row: unset !important;
+    grid-column: unset !important;
+    width: 100% !important;
+    height: min(420px, 56vw) !important;
+    height: 380px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ATTR.TEST */
+  #attr83-panel {
+    grid-area: unset !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 180px;
+    overflow: visible !important;
+  }
+
+  /* NULL.LOG */
+  #null-panel {
+    grid-area: unset !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 160px;
+    overflow: visible !important;
+  }
+
+  /* MANUAL.TXT */
+  #manual-panel {
+    grid-area: unset !important;
+    grid-row: unset !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #manual-panel > div[style*="flex:1"] {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* 패널 공통 — auto 높이 시 내부 스크롤 제거 */
+  #attr83-panel > div[style*="overflow-y"],
+  #null-panel   > div[style*="overflow-y"],
+  #manual-panel > div[style*="overflow-y"] {
+    overflow-y: visible !important;
+  }
+
+  /* 드롭존 — 터치 타겟 확대 */
+  #attr83-drop-zone { padding: 22px 12px !important; }
+  #null-drop-zone   { padding: 16px 8px  !important; }
+
+  /* 주요 폰트 크기 상향 */
+  .panel-title-text { font-size: 12px !important; }
+  .mfaq-q, .mfaq-a { font-size: 11px !important; }
+  .data-table       { font-size: 12px !important; }
+  .data-table th    { font-size: 11px !important; }
+  .null-item        { font-size: 11px !important; }
+  .attr-code-name   { font-size: 14px !important; }
+  .big-num-val      { font-size: 20px !important; }
+}
 </style>
 </head>
 <body>
@@ -589,7 +709,7 @@ body {
   <!-- ═══════════════════════════════════════════════════
        RIGHT-BOTTOM: NULL.LOG
   ═══════════════════════════════════════════════════ -->
-  <div class="panel" style="grid-area:right-b; display:flex; flex-direction:column; overflow:hidden;">
+  <div id="null-panel" class="panel" style="grid-area:right-b; display:flex; flex-direction:column; overflow:hidden;">
     <div class="panel-title-row">
       <div class="panel-title-deco"></div>
       <span class="panel-title-text">NULL.LOG</span>
@@ -725,7 +845,7 @@ body {
   <!-- ═══════════════════════════════════════════════════
        LEFT: MANUAL.TXT (spans full left col)
   ═══════════════════════════════════════════════════ -->
-  <div class="panel" style="grid-area:left-t; grid-row:2/4; display:flex; flex-direction:column; overflow:hidden;">
+  <div id="manual-panel" class="panel" style="grid-area:left-t; grid-row:2/4; display:flex; flex-direction:column; overflow:hidden;">
     <div class="panel-title-row">
       <div class="panel-title-deco"></div>
       <span class="panel-title-text">MANUAL.TXT</span>
@@ -996,83 +1116,6 @@ setInterval(() => {
       ctx.fillText(val, cx+Math.cos(rad)*lr, cy+Math.sin(rad)*lr + 5*dpr);
     });
 
-    // ════════════════════════════════════════
-    // RADIAL SPOKES — 배치 (24→2 stroke)
-    // ════════════════════════════════════════
-    ctx.beginPath();
-    for(let i=0;i<24;i++) if(i%6!==0){
-      const a=(i/24)*Math.PI*2;
-      ctx.moveTo(cx+Math.cos(a)*gR,cy+Math.sin(a)*gR);
-      ctx.lineTo(cx+Math.cos(a)*(R-2*dpr),cy+Math.sin(a)*(R-2*dpr));
-    }
-    ctx.strokeStyle='rgba(80,160,255,0.06)'; ctx.lineWidth=0.5; ctx.stroke();
-    ctx.beginPath();
-    for(let i=0;i<24;i+=6){
-      const a=(i/24)*Math.PI*2;
-      ctx.moveTo(cx+Math.cos(a)*gR,cy+Math.sin(a)*gR);
-      ctx.lineTo(cx+Math.cos(a)*(R-2*dpr),cy+Math.sin(a)*(R-2*dpr));
-    }
-    ctx.strokeStyle='rgba(80,160,255,0.18)'; ctx.lineWidth=1; ctx.stroke();
-
-    // ════════════════════════════════════════
-    // ORBITAL RINGS
-    // ════════════════════════════════════════
-    const orb1R = gR + (R-gR)*0.32;
-    const orb2R = gR + (R-gR)*0.68;
-
-    [[orb1R,32,0.50,1],[orb2R,56,-0.30,-1]].forEach(([orR,n,spd,dir], ri) => {
-      const rot = t*spd*dir;
-      // faint full circle base
-      ctx.beginPath(); ctx.arc(cx,cy,orR,0,Math.PI*2);
-      ctx.strokeStyle='rgba(80,160,255,0.06)'; ctx.lineWidth=0.5; ctx.stroke();
-      // segments — 배치 (32/56→2 stroke per ring)
-      ctx.beginPath();
-      for(let i=0;i<n;i++) if(i%4!==0){
-        const a0=(i/n)*Math.PI*2+rot,a1=((i+0.52)/n)*Math.PI*2+rot;
-        ctx.moveTo(cx+Math.cos(a0)*orR,cy+Math.sin(a0)*orR);
-        ctx.arc(cx,cy,orR,a0,a1);
-      }
-      ctx.strokeStyle='rgba(80,160,255,0.18)'; ctx.lineWidth=0.8; ctx.stroke();
-      ctx.beginPath();
-      for(let i=0;i<n;i+=4){
-        const a0=(i/n)*Math.PI*2+rot,a1=((i+0.52)/n)*Math.PI*2+rot;
-        ctx.moveTo(cx+Math.cos(a0)*orR,cy+Math.sin(a0)*orR);
-        ctx.arc(cx,cy,orR,a0,a1);
-      }
-      ctx.strokeStyle='rgba(80,160,255,0.60)'; ctx.lineWidth=2.2; ctx.stroke();
-      // 4 bright nodes + data boxes
-      const ringLabels = [
-        // ring 1 (inner) — 실험실 라이브 스탯
-        [['NULL', String(_nullCnt)], ['ATTR', String(_attrCnt)], ['ENERGY', `${Math.round(fLevel*100)}%`], ['CODES', '83']],
-        // ring 2 (outer) — SET 구조 개요
-        [['12 CATS', 'GRAMMAR'], ['VOID', '5 codes'], ['BLOOM', '8 codes'], ['FIELD', '8 codes']]
-      ];
-      const nodeLabels = ringLabels[ri] || ringLabels[0];
-      for (let i=0;i<4;i++) {
-        const a  =(i/4)*Math.PI*2+rot;
-        const nx =cx+Math.cos(a)*orR, ny=cy+Math.sin(a)*orR;
-        const p  =0.5+0.5*Math.sin(t*3+i*1.5);
-        // node dot
-        ctx.beginPath(); ctx.arc(nx,ny,4*dpr,0,Math.PI*2);
-        ctx.fillStyle=`rgba(80,160,255,${0.7+p*0.3})`; ctx.fill();
-        ctx.beginPath(); ctx.arc(nx,ny,(8+p*5)*dpr,0,Math.PI*2);
-        ctx.strokeStyle=`rgba(80,160,255,${0.22*p})`; ctx.lineWidth=1.2; ctx.stroke();
-        // connector line to label box
-        const labelDist = orR + 22*dpr;
-        const lx = cx+Math.cos(a)*labelDist, ly = cy+Math.sin(a)*labelDist;
-        ctx.beginPath(); ctx.moveTo(nx,ny); ctx.lineTo(lx,ly);
-        ctx.strokeStyle=`rgba(80,160,255,0.30)`; ctx.lineWidth=0.8; ctx.stroke();
-        // mini label box
-        const [k,v] = nodeLabels[i];
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillStyle=`rgba(80,160,255,${0.5+p*0.3})`;
-        ctx.font=`bold ${6.5*dpr}px "Space Mono",monospace`;
-        ctx.fillText(k, lx, ly-5*dpr);
-        ctx.fillStyle=`rgba(80,160,255,${0.35+p*0.2})`;
-        ctx.font=`${6*dpr}px "Space Mono",monospace`;
-        ctx.fillText(v, lx, ly+5*dpr);
-      }
-    });
 
     // ════════════════════════════════════════
     // ARC GAUGE (bottom half — fill level)
@@ -1152,435 +1195,181 @@ setInterval(() => {
       return[pts[i][0]*(1-ft)+pts[i+1][0]*ft,pts[i][1]*(1-ft)+pts[i+1][1]*ft];
     }
     // ── 1. 외부 코로나 헤일로 (레이어드 + 색상 변화) ──
-    // 각 레이어마다 다른 색상으로 플라즈마 스펙트럼 표현
-    const coronaColors=[
-      [100,160,255],  // 블루
-      [160,120,255],  // 퍼플
-      [ 80,200,255],  // 시안블루
-      [200,160,255],  // 라벤더
-      [120,100,255],  // 인디고
-    ];
-    for(let i=0;i<5;i++){
-      const pulse=0.5+0.5*Math.sin(t*2.3+i*2.0);
-      const ar=gR*(1.04+i*0.075);
-      const [cr,cg,cb]=coronaColors[i];
-      const cShift=Math.sin(t*0.20+i*1.2)*0.5+0.5;
-      const [cr2,cg2,cb2]=coronaColors[(i+2)%5];
-      const fr=Math.round(cr*(1-cShift)+cr2*cShift);
-      const fg=Math.round(cg*(1-cShift)+cg2*cShift);
-      const fb=Math.round(cb*(1-cShift)+cb2*cShift);
-      const ag=ctx.createRadialGradient(cx,cy,gR*0.88,cx,cy,ar);
-      ag.addColorStop(0,`rgba(${fr},${fg},${fb},0)`);
-      ag.addColorStop(0.45,`rgba(${fr},${fg},${fb},${(0.06+pulse*0.05)*(1-i*0.18)*(fLevel*0.7+0.3)})`);
-      ag.addColorStop(1,`rgba(${fr},${fg},${fb},0)`);
-      ctx.beginPath(); ctx.arc(cx,cy,ar,0,Math.PI*2);
-      ctx.fillStyle=ag; ctx.fill();
-    }
+    // 글로브 외부 글로우 — 단순 파란 코로나
+    const coronaPulse=0.5+0.5*Math.sin(t*1.8);
+    const cg1=ctx.createRadialGradient(cx,cy,gR*0.90,cx,cy,gR*1.22);
+    cg1.addColorStop(0,'rgba(60,140,255,0)');
+    cg1.addColorStop(0.4,`rgba(60,140,255,${(0.10+coronaPulse*0.06).toFixed(3)})`);
+    cg1.addColorStop(1,'rgba(20,80,200,0)');
+    ctx.beginPath(); ctx.arc(cx,cy,gR*1.22,0,Math.PI*2);
+    ctx.fillStyle=cg1; ctx.fill();
 
     // 앞쪽 아크 데이터 (유리 밖 오버레이용)
     let frontArcs=[];
 
-    // ── 2. 구체 내부 (클립) ──
+    // ── 2. 구체 내부 (글로브) ──
     ctx.save();
     ctx.beginPath(); ctx.arc(cx,cy,gR,0,Math.PI*2); ctx.clip();
 
-    // 내부 배경 — 딥블루 플라즈마 구체
+    // 배경
     const bgGp=ctx.createRadialGradient(cx,cy,0,cx,cy,gR);
-    bgGp.addColorStop(0,   'rgba(10,20,55,1)');
-    bgGp.addColorStop(0.40,'rgba(5,12,38,1)');
-    bgGp.addColorStop(0.75,'rgba(2,6,24,1)');
-    bgGp.addColorStop(1,   'rgba(0,2,12,1)');
+    bgGp.addColorStop(0,   'rgba(8,14,40,1)');
+    bgGp.addColorStop(0.5, 'rgba(4,8,28,1)');
+    bgGp.addColorStop(1,   'rgba(0,2,14,1)');
     ctx.fillStyle=bgGp; ctx.fillRect(cx-gR-1,cy-gR-1,gR*2+2,gR*2+2);
 
-    // ── 구 내부 블루/퍼플 대기 — 레퍼런스처럼 짙은 파란 글로우 ──
-    const eHue=Math.sin(t*0.14)*0.5+0.5;
-    const sfG=ctx.createRadialGradient(cx,cy,0,cx,cy,gR*0.96);
-    sfG.addColorStop(0,   `rgba(${Math.round(60+eHue*40)},${Math.round(120+eHue*40)},255,${(fLevel*0.50).toFixed(3)})`);
-    sfG.addColorStop(0.40,`rgba(${Math.round(80+eHue*60)},${Math.round(80+eHue*40)},255,${(fLevel*0.28).toFixed(3)})`);
-    sfG.addColorStop(0.72,`rgba(40,30,160,${(fLevel*0.12).toFixed(3)})`);
-    sfG.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    ctx.fillStyle=sfG; ctx.fillRect(cx-gR,cy-gR,gR*2,gR*2);
-    ctx.restore();
+    // ── 글로브 setup (한 번만) ──
+    if (!drawViz._gpts) {
+      const TOTAL = 600;
+      function rSph(){while(true){const u=Math.random()*2-1,v=Math.random()*2-1,w=Math.random()*2-1,d=u*u+v*v+w*w;if(d>1||d<0.001)continue;const s=1/Math.sqrt(d);return{x:u*s,y:v*s,z:w*s};}}
+      const HDEFS=[[0.15,0.55,0.82],[-0.72,0.18,0.67],[0.55,-0.48,0.68],[0.82,0.28,-0.50],[-0.28,-0.72,0.63],[0.05,0.92,-0.38],[0.60,0.55,0.58],[-0.50,0.60,-0.62],[0.30,-0.30,-0.90]];
+      const hN=HDEFS.map(([x,y,z])=>{const l=Math.sqrt(x*x+y*y+z*z);return{x:x/l,y:y/l,z:z/l};});
+      const gpts=hN.map(h=>({...h,hub:true,slot:0,spawnAt:0}));
+      function mhd(p){let m=Infinity;for(const h of hN){const dx=p.x-h.x,dy=p.y-h.y,dz=p.z-h.z,d=Math.sqrt(dx*dx+dy*dy+dz*dz);if(d<m)m=d;}return m;}
+      const norm=[];for(let i=0;i<TOTAL;i++){const p=rSph();p.hub=false;p.dist=mhd(p);norm.push(p);}
+      norm.sort((a,b)=>a.dist-b.dist);
+      norm.forEach((p,i)=>{p.slot=(i+0.5)/TOTAL;p.spawnAt=(i/TOTAL)*3000+(Math.random()-0.5)*200;gpts.push(p);});
+      const GGRID=[];
+      [-60,-30,0,30,60].forEach(lat=>{const y=Math.sin(lat*Math.PI/180),r=Math.cos(lat*Math.PI/180);const ring=[];for(let i=0;i<=22;i++){const tt=i/22*Math.PI*2;ring.push({x:r*Math.cos(tt),y,z:r*Math.sin(tt)});}GGRID.push(ring);});
+      for(let lon=0;lon<360;lon+=60){const ring=[],ang=lon*Math.PI/180;for(let i=0;i<=14;i++){const phi=i/14*Math.PI;ring.push({x:Math.sin(phi)*Math.cos(ang),y:Math.cos(phi),z:Math.sin(phi)*Math.sin(ang)});}GGRID.push(ring);}
+      const gpulses=[];
+      setInterval(()=>{const i=Math.floor(Math.random()*hN.length),j=(i+1+Math.floor(Math.random()*(hN.length-1)))%hN.length;gpulses.push({ai:i,bi:j,t:0,spd:0.010+Math.random()*0.008});},900);
+      drawViz._gpts=gpts; drawViz._ghN=hN; drawViz._ggrid=GGRID; drawViz._gpulses=gpulses;
+      drawViz._gStart=performance.now();
+    }
+    const gpts=drawViz._gpts, ghN=drawViz._ghN, GGRID=drawViz._ggrid, gpulses=drawViz._gpulses;
+    const gElapsed=performance.now()-drawViz._gStart;
+    const gRot=t*0.22, GTILT=0.30;
+    const bright=1.0;
 
+    function gproj(p){
+      const cy2=Math.cos(gRot),sy2=Math.sin(gRot);
+      const rx=p.x*cy2-p.z*sy2,rz=p.x*sy2+p.z*cy2;
+      const ry2=p.y*Math.cos(GTILT)-rz*Math.sin(GTILT),rz2=p.y*Math.sin(GTILT)+rz*Math.cos(GTILT);
+      const fov=2.5,sc=fov/(fov+rz2);
+      return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:(rz2+1)/2};
+    }
 
-    // ══════════════════════════════════════════════════
-    // 아크 — 360도 전방향으로 퍼지는 플라즈마 볼
-    // ══════════════════════════════════════════════════
-    const epoch=Math.floor(t*0.7);  // 위치 시드 — 느리게 변화 (1.4초마다)
-    const NUM_PRI=8;  // 최대 8개 아크
-    const arcList=[];
-
-    for(let i=0;i<NUM_PRI;i++){
-      // 게이지: i번째 아크는 fLevel이 i/NUM_PRI에 도달할 때 켜짐
-      const arcThresh=(i+0.5)/NUM_PRI;
-      if(fLevel<arcThresh-0.05) continue;
-      const arcFade=Math.min(1,(fLevel-(arcThresh-0.05))/0.10);
-
-      // 2D 방사형 — 360도 균등 분배
-      const theta=(i/NUM_PRI)*Math.PI*2 + globeRot*0.22;
-      const wobT=Math.sin(t*0.9+i*1.7)*0.22+Math.cos(t*0.6+i*2.4)*0.12;
-      const angle=theta+wobT;
-      // 아크 길이: fLevel 낮으면 짧은 불꽃, 높으면 구벽까지
-      // 각 아크가 고유한 위상으로 느리게 등장 — 순차적으로 뻗어나가는 느낌
-      const arcCycle=0.5+0.5*Math.sin(t*0.42+i*(Math.PI*2/NUM_PRI)*1.6);
-      const reachBase=(0.20+fLevel*0.70)*gR;
-      const reach=reachBase*(0.06+arcCycle*0.94)+Math.sin(t*1.0+i*0.9)*0.025*fLevel*gR;
-      const ptx=cx+Math.cos(angle)*reach;
-      const pty=cy+Math.sin(angle)*reach;
-      const df=1.0; // 방향 무관 — 모든 아크 동일 밝기
-      const ps=1.0;
-      const az3=0;
-
-      const seed=((i*1013+epoch*337)&0x7fffffff);
-
-      // 트렁크 — 베지어 커브
-      const sway=(mkRand((seed*41+3)&0x7fffffff)()-0.5)*0.55;
-      const pts=makeBezierArc(cx,cy,ptx,pty,sway,mkRand(seed));
-
-      // 브랜치 — 3단계 분기 트리 (트렁크→가지→서브가지→잔가지)
-      const branches=[];
-      const rndB=mkRand((seed*31+7)&0x7fffffff);
-      const mAngle=Math.atan2(pty-cy,ptx-cx);
-
-      // 1단계 가지 — fLevel에 따라 최대 4개 (성능)
-      const numBr=fLevel<0.12?0:fLevel<0.30?1:fLevel<0.55?2:fLevel<0.78?3:4;
-      for(let b=0;b<numBr;b++){
-        // 트렁크 위 분기점: 균등 간격 + 살짝 랜덤
-        const bt=Math.min(0.15+b*(0.68/Math.max(numBr,1))+rndB()*0.12, 0.82);
-        const[bx0,by0]=ptOnLine(pts,bt);
-        const bSign=rndB()<0.5?1:-1;
-        const bAngle=mAngle+bSign*(0.45+rndB()*0.90);  // 45°~135° 넓은 분기각
-        const bLen=reach*(0.48+rndB()*0.65);
-        const bPts=makeBezierArc(bx0,by0,
-          bx0+Math.cos(bAngle)*bLen, by0+Math.sin(bAngle)*bLen,
-          (rndB()-0.5)*0.60, mkRand((seed*17+b*113)&0x7fffffff));
-
-        // 2단계 서브가지
-        const sub=[];
-        const numSub=fLevel<0.35?0:fLevel<0.60?1:2;
-        for(let s=0;s<numSub;s++){
-          const st=Math.min(0.20+s*0.28+rndB()*0.15, 0.80);
-          const[sx0,sy0]=ptOnLine(bPts,st);
-          const sSign=rndB()<0.5?1:-1;
-          const sAngle=bAngle+sSign*(0.50+rndB()*0.85);
-          const sLen=bLen*(0.38+rndB()*0.48);
-          const sPts=makeBezierArc(sx0,sy0,
-            sx0+Math.cos(sAngle)*sLen, sy0+Math.sin(sAngle)*sLen,
-            (rndB()-0.5)*0.45, mkRand((seed*7+b*33+s*77)&0x7fffffff));
-
-          // 3단계 잔가지 — 60% 이상에서 등장
-          const twigs=[];
-          const numTwig=fLevel<0.70?0:1;
-          for(let tw=0;tw<numTwig;tw++){
-            const tt=0.30+rndB()*0.45;
-            const[tx0,ty0]=ptOnLine(sPts,tt);
-            const tSign=rndB()<0.5?1:-1;
-            const tAngle=sAngle+tSign*(0.55+rndB()*0.75);
-            const tLen=sLen*(0.30+rndB()*0.40);
-            twigs.push({pts:makeBezierArc(tx0,ty0,
-              tx0+Math.cos(tAngle)*tLen, ty0+Math.sin(tAngle)*tLen,
-              (rndB()-0.5)*0.40, mkRand((seed*3+b*7+s*13+tw*29)&0x7fffffff))});
-          }
-          sub.push({pts:sPts, twigs});
+    // 격자선 — 세그먼트별 depth 기반 알파 (입체감)
+    GGRID.forEach(ring=>{
+      let prev=null;
+      ring.forEach(p=>{
+        const pp=gproj(p);
+        if(prev){
+          const a2=((prev.depth+pp.depth)/2)*0.14;
+          ctx.beginPath();ctx.moveTo(prev.sx,prev.sy);ctx.lineTo(pp.sx,pp.sy);
+          ctx.strokeStyle=`rgba(60,100,200,${a2.toFixed(3)})`; ctx.lineWidth=0.5*dpr; ctx.stroke();
         }
-        branches.push({pts:bPts,sub});
+        prev=pp;
+      });
+    });
+
+    // 전체 포인트 투영 (모든 노드 표시, age로 페이드인)
+    const gproj_all=gpts.map(p=>{const age=Math.min(1,(gElapsed-p.spawnAt)/400);return{...gproj(p),orig:p,age};});
+    gproj_all.sort((a,b)=>a.z-b.z);
+
+    // 연결선
+    const GLINK=0.42;
+    for(let i=0;i<gproj_all.length;i++){
+      const a=gproj_all[i];
+      for(let j=i+1;j<gproj_all.length;j++){
+        const b=gproj_all[j];
+        const dx=a.orig.x-b.orig.x,dy=a.orig.y-b.orig.y,dz=a.orig.z-b.orig.z;
+        const dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
+        if(dist>GLINK) continue;
+        const avgD=(a.depth+b.depth)/2;
+        const alpha=Math.pow(avgD,1.3)*0.72*(1-dist/GLINK)*bright*Math.min(a.age,b.age);
+        if(alpha<0.004) continue;
+        const isHub=a.orig.hub||b.orig.hub;
+        ctx.beginPath();ctx.moveTo(a.sx,a.sy);ctx.lineTo(b.sx,b.sy);
+        const lr=isHub?80:40, lg=isHub?180:140, lb=255;
+        ctx.strokeStyle=`rgba(${lr},${lg},${lb},${(alpha*(isHub?1:0.75)).toFixed(3)})`;
+        ctx.lineWidth=(isHub?0.9:0.55)*dpr; ctx.stroke();
       }
-
-      const flicker=0.82+0.18*Math.max(0,Math.sin(t*8.8+i*3.9)*Math.sin(t*6.0+i*2.5));
-      // 아크별 고유 불투명도 — 씨드 기반 베이스 + 느린 펄스로 각자 다른 밝기
-      const arcBaseAlpha=0.30+mkRand((seed*53+11)&0x7fffffff)()*0.70;  // 0.30~1.00 랜덤 베이스
-      const arcPulse=0.7+0.3*Math.sin(t*0.55+i*2.3+mkRand((seed*71)&0x7fffffff)()*Math.PI*2);
-      const alpha=(arcBaseAlpha*(0.55+fLevel*0.45))*flicker*arcFade*arcPulse*Math.min(arcBoost,1.8);
-      // 16색 팔레트 — 블루/화이트/퍼플 플라즈마 (레퍼런스)
-      const PALETTE=[
-        [200, 220, 255],  // 아이스화이트
-        [100, 160, 255],  // 일렉트릭블루
-        [180, 140, 255],  // 라벤더퍼플
-        [  0, 200, 255],  // 시안블루
-        [255, 255, 255],  // 순백
-        [130, 100, 255],  // 인디고
-        [160, 200, 255],  // 스카이블루
-        [210, 170, 255],  // 소프트퍼플
-        [ 80, 180, 255],  // 딥블루
-        [240, 230, 255],  // 화이트퍼플
-        [100, 220, 255],  // 아쿠아
-        [150, 110, 255],  // 미디엄퍼플
-        [220, 240, 255],  // 페일블루
-        [ 60, 140, 255],  // 코발트
-        [190, 160, 255],  // 바이올렛
-        [  0, 160, 255],  // 딥아쿠아
-      ];
-      const ci=i%PALETTE.length;
-      const ci2=(ci+3)%PALETTE.length;  // 3칸 떨어진 색으로 lerp (대비 극대화)
-      const cBlend=0.5+0.5*Math.sin(t*0.22+i*1.1);  // 느리게 색 전환
-      const rc=Math.round(PALETTE[ci][0]*(1-cBlend)+PALETTE[ci2][0]*cBlend);
-      const gc=Math.round(PALETTE[ci][1]*(1-cBlend)+PALETTE[ci2][1]*cBlend);
-      const bc=Math.round(PALETTE[ci][2]*(1-cBlend)+PALETTE[ci2][2]*cBlend);
-      const glowLW=1.0*dpr;
-      arcList.push({pts,branches,alpha,r:rc,g:gc,b:bc,glowLW,az3,df,tx:ptx,ty:pty,i,ps});
     }
-    arcList.sort((a,b)=>a.az3-b.az3);
 
-    // ── 렌더 리스트 평탄화 — lw(선 두께 배율) 포함 ──
-    const renderArcs=[];
-    arcList.forEach(a=>{
-      renderArcs.push({pts:a.pts,alpha:a.alpha,r:a.r,g:a.g,b:a.b,lw:1.00});
-      a.branches.forEach(br=>{
-        renderArcs.push({pts:br.pts,alpha:a.alpha*0.80,r:a.r,g:a.g,b:a.b,lw:0.60});
-        (br.sub||[]).forEach(s=>{
-          renderArcs.push({pts:s.pts,alpha:a.alpha*0.55,r:a.r,g:a.g,b:a.b,lw:0.38});
-          (s.twigs||[]).forEach(tw=>{
-            renderArcs.push({pts:tw.pts,alpha:a.alpha*0.32,r:a.r,g:a.g,b:a.b,lw:0.22});
-          });
+    // 허브 아크
+    const ghubP=gproj_all.filter(p=>p.orig.hub);
+    ghubP.forEach((a,i)=>{
+      ghubP.slice(i+1).forEach(b=>{
+        const avgD=(a.depth+b.depth)/2;if(avgD<0.2)return;
+        const dx=a.orig.x-b.orig.x,dy=a.orig.y-b.orig.y,dz=a.orig.z-b.orig.z;
+        if(Math.sqrt(dx*dx+dy*dy+dz*dz)>1.6)return;
+        const mx=(a.sx+b.sx)/2,my=(a.sy+b.sy)/2;
+        const ddx=mx-cx,ddy=my-cy,dd=Math.sqrt(ddx*ddx+ddy*ddy)||1;
+        ctx.beginPath();ctx.moveTo(a.sx,a.sy);
+        ctx.quadraticCurveTo(mx+ddx/dd*gR*0.18,my+ddy/dd*gR*0.18,b.sx,b.sy);
+        ctx.strokeStyle=`rgba(100,80,220,${(avgD*0.35*bright).toFixed(3)})`;
+        ctx.lineWidth=0.8*dpr;ctx.stroke();
+      });
+    });
+
+    // 펄스
+    gpulses.forEach((pu,pi)=>{
+      pu.t+=pu.spd;if(pu.t>1){gpulses.splice(pi,1);return;}
+      if(pu.ai>=ghubP.length||pu.bi>=ghubP.length)return;
+      const a=ghubP[pu.ai],b=ghubP[pu.bi];if(!a||!b)return;
+      const mx=(a.sx+b.sx)/2,my=(a.sy+b.sy)/2;
+      const ddx=mx-cx,ddy=my-cy,dd=Math.sqrt(ddx*ddx+ddy*ddy)||1;
+      const cpx=mx+ddx/dd*gR*0.18,cpy=my+ddy/dd*gR*0.18;
+      const tt=pu.t;
+      const px=(1-tt)*(1-tt)*a.sx+2*(1-tt)*tt*cpx+tt*tt*b.sx;
+      const py=(1-tt)*(1-tt)*a.sy+2*(1-tt)*tt*cpy+tt*tt*b.sy;
+      const gr=ctx.createRadialGradient(px,py,0,px,py,5*dpr);
+      gr.addColorStop(0,'rgba(200,210,255,0.95)');gr.addColorStop(1,'rgba(100,120,255,0)');
+      ctx.beginPath();ctx.arc(px,py,5*dpr,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.beginPath();ctx.arc(px,py,1.5*dpr,0,Math.PI*2);
+      ctx.fillStyle='rgba(230,235,255,0.95)';ctx.fill();
+    });
+
+    // 점
+    for(const p of gproj_all){
+      const fade=Math.pow(p.depth,1.3);
+      const age=Math.max(0,p.age);
+      const al=fade*bright*0.92*age;
+      if(p.orig.hub){
+        const ha=fade*bright*age;
+        const gr=ctx.createRadialGradient(p.sx,p.sy,0,p.sx,p.sy,gR*0.07*dpr);
+        gr.addColorStop(0,`rgba(140,160,255,${(ha*0.25).toFixed(2)})`);gr.addColorStop(1,'rgba(60,80,255,0)');
+        ctx.beginPath();ctx.arc(p.sx,p.sy,gR*0.07*dpr,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+        [gR*0.05*dpr,gR*0.03*dpr].forEach(r=>{
+          ctx.beginPath();ctx.arc(p.sx,p.sy,r,0,Math.PI*2);
+          ctx.strokeStyle=`rgba(100,160,255,${(ha*0.6).toFixed(2)})`;ctx.lineWidth=0.8*dpr;ctx.stroke();
         });
-      });
-    });
-
-    // ── 섬세한 선 렌더링 — 5패스, 레벨별 두께 차등 ──
-    function batchPath(arcs){
-      ctx.beginPath();
-      arcs.forEach(({pts})=>{
-        if(pts.length<2) return;
-        ctx.moveTo(pts[0][0],pts[0][1]);
-        for(let k=1;k<pts.length;k++) ctx.lineTo(pts[k][0],pts[k][1]);
-      });
-      ctx.stroke();
+        ctx.beginPath();ctx.arc(p.sx,p.sy,gR*0.014*dpr,0,Math.PI*2);
+        ctx.fillStyle=`rgba(200,220,255,${ha.toFixed(2)})`;
+        ctx.shadowColor='#4499ff';ctx.shadowBlur=10*dpr;ctx.fill();ctx.shadowBlur=0;
+      } else {
+        const sz=(0.4+fade*2.2)*dpr;
+        const dr=Math.round(60+fade*160), dg=Math.round(110+fade*140);
+        if(fade>0.50&&al>0.10){
+          const gr=ctx.createRadialGradient(p.sx,p.sy,0,p.sx,p.sy,sz*4);
+          gr.addColorStop(0,`rgba(${dr},${dg},255,${(al*0.22).toFixed(2)})`);gr.addColorStop(1,'rgba(60,80,255,0)');
+          ctx.beginPath();ctx.arc(p.sx,p.sy,sz*4,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+        }
+        ctx.beginPath();ctx.arc(p.sx,p.sy,sz,0,Math.PI*2);
+        ctx.fillStyle=`rgba(${dr},${dg},255,${al.toFixed(2)})`;ctx.fill();
+        if(fade>0.70&&al>0.35){
+          ctx.beginPath();ctx.arc(p.sx,p.sy,sz*0.4,0,Math.PI*2);
+          ctx.fillStyle=`rgba(220,235,255,${(al*0.85).toFixed(2)})`;ctx.fill();
+        }
+      }
     }
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    ctx.lineCap='round'; ctx.lineJoin='round';
-    // Pass 1: 넓은 대기 글로우 — 배치, 부드럽게 퍼지는 블루
-    ctx.lineWidth=16*dpr;
-    ctx.strokeStyle='rgba(70,120,255,0.042)';
-    batchPath(renderArcs);
-    // Pass 2: 중간 글로우 — 배치
-    ctx.lineWidth=4*dpr;
-    ctx.strokeStyle='rgba(110,150,255,0.12)';
-    batchPath(renderArcs);
-    // Pass 3: 내부 컬러 글로우 — 레벨별 두께 차등
-    renderArcs.forEach(({pts,alpha,r,g,b,lw})=>{
-      ctx.lineWidth=(1.4*lw)*dpr;
-      ctx.strokeStyle=`rgba(${r},${g},${b},${Math.min(alpha*0.75,0.85).toFixed(3)})`;
-      strokePts(pts);
-    });
-    ctx.restore();
-    // Pass 4: 화이트 코어 — lw 티어별 배치 (~100+→4 stroke)
-    ctx.lineCap='round'; ctx.lineJoin='round';
-    [1.00,0.60,0.38,0.22].forEach(lwTier=>{
-      const grp=renderArcs.filter(a=>a.lw===lwTier);
-      if(!grp.length) return;
-      const avgA=grp.reduce((s,a)=>s+Math.min(a.alpha*0.92,0.95),0)/grp.length;
-      ctx.lineWidth=(0.45*lwTier)*dpr;
-      ctx.strokeStyle=`rgba(255,255,255,${avgA.toFixed(3)})`;
-      ctx.beginPath();
-      grp.forEach(({pts})=>{
-        if(pts.length<2)return;
-        ctx.moveTo(pts[0][0],pts[0][1]);
-        for(let k=1;k<pts.length;k++)ctx.lineTo(pts[k][0],pts[k][1]);
-      });
-      ctx.stroke();
-    });
-    // Pass 5: 극세 필라멘트 — 트렁크만, 가장 밝고 얇은 중심선
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    ctx.lineCap='round'; ctx.lineWidth=0.2*dpr;
-    ctx.strokeStyle='rgba(240,245,255,0.55)';
-    arcList.forEach(({pts})=>strokePts(pts));
-    ctx.restore();
-
-    // 끝점 스파크
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    arcList.forEach(({tx,ty,df,i,r,g,b,alpha,ps})=>{
-      const ef=Math.max(0,Math.sin(t*11+i*5.3))*Math.max(0,Math.sin(t*7.8+i*3.1));
-      const sA=(0.40+0.60*Math.abs(Math.sin(t*4+i*0.9)))*df*(0.5+ef*0.5);
-      const eR=(1.5+df*2.5+ef*6)*dpr*Math.min(ps,1.4);
-      const eg=ctx.createRadialGradient(tx,ty,0,tx,ty,eR);
-      eg.addColorStop(0,`rgba(255,255,255,${(sA*0.9).toFixed(2)})`);
-      eg.addColorStop(0.4,`rgba(${r},${g},${b},${(sA*0.5).toFixed(2)})`);
-      eg.addColorStop(1,'rgba(0,0,0,0)');
-      ctx.fillStyle=eg; ctx.beginPath(); ctx.arc(tx,ty,eR,0,Math.PI*2); ctx.fill();
-    });
-    ctx.restore();
-    frontArcs=arcList.filter(a=>a.df>0.60&&a.ps>1.08);
-
-
-    // ── 표면 코로나 — 배치 단일 패스 (48→1 fill) ──
-    ctx.save(); ctx.globalCompositeOperation='lighter';
-    ctx.beginPath();
-    for(let i=0;i<48;i++){
-      const ca=(i/48)*Math.PI*2+t*0.10;
-      const pr=gR*(0.88+0.06*Math.sin(t*2.8+i*1.28));
-      const cpx=cx+Math.cos(ca)*pr, cpy=cy+Math.sin(ca)*pr;
-      ctx.moveTo(cpx+2.5*dpr,cpy);
-      ctx.arc(cpx,cpy,2.5*dpr,0,Math.PI*2);
-    }
-    const cA=(0.13+0.09*Math.abs(Math.sin(t*3.2)))*(fLevel*0.55+0.45);
-    ctx.fillStyle=`rgba(80,160,255,${cA.toFixed(3)})`; ctx.fill();
-    ctx.restore();
-
-    // ── 중심 전극 구체 — 3D 오프셋 광원 ──
-    {
-      const orbR=gR*0.11;
-      const orbP=0.5+0.5*Math.sin(t*5.2);
-      // 아이스블루/시안 전극 글로우
-      [gR*0.50, gR*0.28, gR*0.16].forEach((ogr,oi)=>{
-        const og=ctx.createRadialGradient(cx,cy,0,cx,cy,ogr);
-        const oa=[0.10+orbP*0.06, 0.28+orbP*0.14, 0.55+orbP*0.18][oi];
-        const mul=fLevel*0.5+0.5;
-        og.addColorStop(0,`rgba(120,210,255,${oa*mul})`);
-        og.addColorStop(0.4,`rgba(40,140,255,${oa*0.40*mul})`);
-        og.addColorStop(1,'rgba(0,60,160,0)');
-        ctx.beginPath(); ctx.arc(cx,cy,ogr,0,Math.PI*2);
-        ctx.fillStyle=og;
-        ctx.shadowColor='#40c8ff'; ctx.shadowBlur=(28-oi*7)*dpr; ctx.fill(); ctx.shadowBlur=0;
-      });
-      // 전극 구체 본체 — 아이스화이트→시안→딥블루
-      const orbG=ctx.createRadialGradient(cx-orbR*0.38,cy-orbR*0.32,0,cx+orbR*0.20,cy+orbR*0.18,orbR*1.15);
-      orbG.addColorStop(0,`rgba(220,240,255,${0.96+orbP*0.04})`);
-      orbG.addColorStop(0.35,`rgba(80,180,255,${0.90+orbP*0.08})`);
-      orbG.addColorStop(0.70,`rgba(30,90,220,0.80)`);
-      orbG.addColorStop(1,`rgba(0,30,120,0.50)`);
-      ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2);
-      ctx.fillStyle=orbG;
-      ctx.shadowColor='#60ccff'; ctx.shadowBlur=35*dpr; ctx.fill(); ctx.shadowBlur=0;
-      ctx.beginPath(); ctx.arc(cx-orbR*0.30,cy-orbR*0.28,orbR*0.42,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${0.38+orbP*0.12})`; ctx.fill();
-      ctx.beginPath(); ctx.arc(cx-orbR*0.20,cy-orbR*0.18,orbR*0.16,0,Math.PI*2);
-      ctx.fillStyle=`rgba(255,255,255,${0.72+orbP*0.16})`; ctx.fill();
-    }
-
-    // ── 구면 엣지 다크닝 ──
-    const vigG=ctx.createRadialGradient(cx,cy,gR*0.50,cx,cy,gR);
-    vigG.addColorStop(0,'rgba(0,0,0,0)');
-    vigG.addColorStop(0.65,'rgba(0,0,0,0)');
-    vigG.addColorStop(0.85,'rgba(0,0,0,0.30)');
-    vigG.addColorStop(1,'rgba(0,0,0,0.72)');
-    ctx.fillStyle=vigG; ctx.fillRect(cx-gR-1,cy-gR-1,gR*2+2,gR*2+2);
-
-    // ── 구면 3D 곡률 조명 — 광원 상단좌측 ──
-    // 밝은 면 (빛이 닿는 쪽 — 내부 가스도 살짝 밝아짐)
-    const litG=ctx.createRadialGradient(cx-gR*0.38,cy-gR*0.34,0,cx,cy,gR*0.92);
-    litG.addColorStop(0,`rgba(120,160,255,${0.20+fLevel*0.10})`);
-    litG.addColorStop(0.30,'rgba(80,100,200,0.04)');
-    litG.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=litG; ctx.fillRect(cx-gR-1,cy-gR-1,gR*2+2,gR*2+2);
-    // 어두운 면 (하단우측 — 그림자)
-    const darkG=ctx.createRadialGradient(cx+gR*0.48,cy+gR*0.44,0,cx,cy,gR);
-    darkG.addColorStop(0,'rgba(0,0,0,0)');
-    darkG.addColorStop(0.45,'rgba(0,0,0,0)');
-    darkG.addColorStop(0.78,'rgba(0,0,0,0.22)');
-    darkG.addColorStop(1,'rgba(0,0,0,0.46)');
-    ctx.fillStyle=darkG; ctx.fillRect(cx-gR-1,cy-gR-1,gR*2+2,gR*2+2);
 
     ctx.restore(); // 구 클립 해제
 
     // ── 3. 유리 구체 — 다층 렌더링 ──
 
-    // (a) 유리 표면 — 블루/퍼플 테두리
-    const rimHue=Math.sin(t*0.20)*0.5+0.5;
-    const rimR=Math.round(80+rimHue*120), rimG2=Math.round(100+rimHue*80), rimB=255;
+    // (a) 유리 표면 — 청색 림
     ctx.beginPath(); ctx.arc(cx,cy,gR,0,Math.PI*2);
-    ctx.strokeStyle=`rgba(${rimR},${rimG2},${rimB},${0.55+fLevel*0.20})`;
-    ctx.lineWidth=2.0*dpr;
-    ctx.shadowColor=`rgb(${rimR},${rimG2},${rimB})`; ctx.shadowBlur=10*dpr;
+    ctx.strokeStyle=`rgba(80,160,255,0.55)`;
+    ctx.lineWidth=1.5*dpr;
+    ctx.shadowColor='rgba(60,140,255,0.8)'; ctx.shadowBlur=8*dpr;
     ctx.stroke(); ctx.shadowBlur=0;
-
-    // (b) 구 외부 대기 글로우 — 색상 변화 포함
-    const rimGrad=ctx.createRadialGradient(cx,cy,gR*0.82,cx,cy,gR*1.18);
-    rimGrad.addColorStop(0,`rgba(${rimR},${rimG2},${rimB},0)`);
-    rimGrad.addColorStop(0.38,`rgba(${rimR},${rimG2},${rimB},${0.12+fLevel*0.10})`);
-    rimGrad.addColorStop(0.65,`rgba(${Math.round(rimR*0.6)},${Math.round(rimG2*0.8)},${Math.round(rimB*0.9)},${0.08+fLevel*0.06})`);
-    rimGrad.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.beginPath(); ctx.arc(cx,cy,gR*1.18,0,Math.PI*2);
-    ctx.fillStyle=rimGrad; ctx.fill();
-
-    // (c) 구 내부 유리 효과들 (clip)
-    ctx.save(); ctx.beginPath(); ctx.arc(cx,cy,gR,0,Math.PI*2); ctx.clip();
-
-    // ── 유리 표면 스페큘러 — 상단 좌측 (크고 밝게) ──
-    const hiRG=ctx.createRadialGradient(cx-gR*0.38,cy-gR*0.34,0,cx-gR*0.38,cy-gR*0.34,gR*0.62);
-    hiRG.addColorStop(0,'rgba(220,235,255,0.32)');
-    hiRG.addColorStop(0.22,'rgba(120,180,255,0.10)');
-    hiRG.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=hiRG; ctx.fillRect(cx-gR,cy-gR,gR*2,gR*2);
-
-    // ── 유리 표면 스페큘러 — 하단 우측 미세 반사 ──
-    const refG=ctx.createRadialGradient(cx+gR*0.44,cy+gR*0.40,0,cx+gR*0.44,cy+gR*0.40,gR*0.38);
-    refG.addColorStop(0,`rgba(40,130,255,0.07)`);
-    refG.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=refG; ctx.fillRect(cx-gR,cy-gR,gR*2,gR*2);
-
-    // ── 유리 안쪽 테두리 ──
-    ctx.beginPath(); ctx.arc(cx,cy,gR*0.97,0,Math.PI*2);
-    ctx.strokeStyle=`rgba(80,160,255,${0.06+fLevel*0.04})`;
-    ctx.lineWidth=0.8*dpr; ctx.stroke();
-
-    // ── 흰 반사점 (작은 스페큘러 하이라이트) ──
-    const specR=gR*0.07;
-    const specG=ctx.createRadialGradient(cx-gR*0.44,cy-gR*0.42,0,cx-gR*0.44,cy-gR*0.42,specR);
-    specG.addColorStop(0,'rgba(255,255,255,0.70)');
-    specG.addColorStop(0.4,'rgba(180,210,255,0.25)');
-    specG.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.beginPath(); ctx.arc(cx-gR*0.44,cy-gR*0.42,specR,0,Math.PI*2);
-    ctx.fillStyle=specG; ctx.fill();
 
     ctx.restore();
 
 
-    // ── 4. 외부 세그먼트 링 2개 — 배치, shadowBlur 제거 (56→4 stroke) ──
-    [[gR+(R-gR)*0.22,32,1.0,0.40],[gR+(R-gR)*0.54,24,-0.6,0.32]].forEach(([rr,segs,sm,maxA],ri)=>{
-      const spin=sm*t;
-      const thresh=fLevel*(ri===0?1.1:0.9)+0.06;
-      // inactive 배치
-      ctx.beginPath();
-      for(let i=0;i<segs;i++) if(i/segs>=thresh){
-        const a1=(i/segs)*Math.PI*2+spin,a2=((i+0.72)/segs)*Math.PI*2+spin;
-        ctx.moveTo(cx+Math.cos(a1)*rr,cy+Math.sin(a1)*rr);
-        ctx.arc(cx,cy,rr,a1,a2);
-      }
-      ctx.strokeStyle='rgba(80,160,255,0.04)'; ctx.lineWidth=0.6*dpr; ctx.stroke();
-      // active — 펄스 평균값 (additive blending으로 글로우 효과 대체)
-      const pulse=0.5+0.5*Math.sin(t*3+ri*2.1);
-      ctx.save(); ctx.globalCompositeOperation='lighter';
-      ctx.beginPath();
-      for(let i=0;i<segs;i++) if(i/segs<thresh){
-        const a1=(i/segs)*Math.PI*2+spin,a2=((i+0.72)/segs)*Math.PI*2+spin;
-        ctx.moveTo(cx+Math.cos(a1)*rr,cy+Math.sin(a1)*rr);
-        ctx.arc(cx,cy,rr,a1,a2);
-      }
-      ctx.strokeStyle=`rgba(80,160,255,${(maxA*pulse).toFixed(3)})`; ctx.lineWidth=2.0*dpr; ctx.stroke();
-      ctx.restore();
-    });
-
-
-    // ── 6. 에너지 노드 블립 (구 표면) ──
-    const nodeDefs=[
-      {a:0.30,lbl:'PWR-01',val:'98.2%', col:'#4499ff'},
-      {a:1.20,lbl:'PWR-02',val:'91.7%', col:'#4499ff'},
-      {a:2.10,lbl:'ARC-03',val:'SURGE', col:'#ff4466'},
-      {a:3.10,lbl:'PWR-04',val:'87.4%', col:'#4499ff'},
-      {a:4.00,lbl:'PWR-05',val:'94.1%', col:'#00ccff'},
-      {a:5.10,lbl:'ARC-06',val:'88.3%', col:'#4499ff'},
-    ];
-    nodeDefs.forEach((nd,di)=>{
-      const angle=nd.a+globeRot*0.15;
-      const px=cx+Math.cos(angle)*gR, py=cy+Math.sin(angle)*gR;
-      const isLit=di/nodeDefs.length<fLevel*1.3+0.1;
-      if(!isLit) return;
-      const p=0.4+0.6*Math.sin(t*2.5+nd.a*3);
-      ctx.beginPath(); ctx.arc(px,py,3.5*dpr,0,Math.PI*2);
-      ctx.fillStyle=nd.col; ctx.shadowColor=nd.col; ctx.shadowBlur=8; ctx.fill(); ctx.shadowBlur=0;
-      ctx.beginPath(); ctx.arc(px,py,(7+p*5)*dpr,0,Math.PI*2);
-      ctx.strokeStyle=nd.col+'44'; ctx.lineWidth=1.2; ctx.stroke();
-      const isRight=Math.cos(angle)>0;
-      const lx1=px+(isRight?12:-12)*dpr, lx2=px+(isRight?28:-28)*dpr;
-      ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(lx1,py-8*dpr); ctx.lineTo(lx2,py-8*dpr);
-      ctx.strokeStyle=nd.col+'88'; ctx.lineWidth=0.8; ctx.stroke();
-      ctx.textAlign=isRight?'left':'right'; ctx.textBaseline='middle';
-      ctx.fillStyle=nd.col; ctx.font=`bold ${6*dpr}px "Space Mono",monospace`;
-      ctx.fillText(nd.lbl, lx2+(isRight?2:-2)*dpr, py-8*dpr-5*dpr);
-      ctx.fillStyle=nd.col+'bb'; ctx.font=`${5.5*dpr}px "Space Mono",monospace`;
-      ctx.fillText(nd.val, lx2+(isRight?2:-2)*dpr, py-8*dpr+5*dpr);
-    });
 
     // ════════════════════════════════════════
     // HUD OVERLAYS (corners, readouts)
