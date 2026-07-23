@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sample A · Tunnel</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#e8e8e8; overflow:hidden; font-family:"Helvetica Neue",Arial,sans-serif; animation:bodyFadeIn 2s ease forwards; }
+@keyframes bodyFadeIn { from { opacity:0; } to { opacity:1; } }
+
+#scene {
+  position:fixed; top:52px; left:0; right:0; bottom:0;
+  perspective:900px;
+  perspective-origin:52% 50%;
+}
+/* 비네트 — 가장자리 어둡게 */
+#scene::after {
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse 75% 80% at 52% 50%, transparent 55%, rgba(0,0,0,0.18) 100%);
+  pointer-events:none;
+  z-index:9000;
+}
+#camera {
+  position:absolute; left:50%; top:50%;
+  width:0; height:0;
+  transform-style:preserve-3d;
+}
+
+.wall { position:absolute; }
+
+/* 좌벽 — 콘크리트, 안쪽으로 어두워짐 */
+#wall-l {
+  width:9000px; height:560px;
+  left:-400px; top:-280px;
+  transform-origin:0% 50%;
+  transform:rotateY(90deg);
+  background:#ffffff;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px),
+    repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px);
+  background-size: 100% 50px, 50px 100%;
+}
+/* 우벽 */
+#wall-r {
+  width:9000px; height:560px;
+  left:-8600px; top:-280px;
+  transform-origin:100% 50%;
+  transform:rotateY(-90deg);
+  background:#ffffff;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px),
+    repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px);
+  background-size: 100% 50px, 50px 100%;
+}
+
+/* 바닥 — 어두운 콘크리트 */
+#floor {
+  width:800px; height:9000px;
+  left:-400px; top:280px;
+  transform-origin:50% 0%;
+  transform:rotateX(-90deg);
+  background:#ffffff;
+  background-image:
+    repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px),
+    repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px);
+  background-size: 50px 100%, 100% 50px;
+}
+
+/* 천장 — 밝은 콘크리트 */
+#ceiling {
+  width:800px; height:9000px;
+  left:-400px; top:-9280px;
+  transform-origin:50% 100%;
+  transform:rotateX(90deg);
+  background:#ffffff;
+  background-image:
+    repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px),
+    repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px);
+  background-size: 50px 100%, 100% 50px;
+}
+
+/* 액자 — 매트 없음, 그림자만 */
+.ph {
+  position:absolute;
+  padding:0;
+  background:transparent;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.38), 0 2px 8px rgba(0,0,0,0.18);
+  overflow:visible;
+}
+.ph img {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.ph-caption { display:none; }
+
+/* 벽 스팟 조명 — 사진 위쪽 벽에 원형 그라데이션 */
+.spot {
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 50% 0%, rgba(240,245,255,0.5) 0%, transparent 70%);
+}
+
+#nav {
+  position:fixed; top:0; left:0; right:0;
+  z-index:9999; height:52px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px;
+  background:#fff;
+  border-bottom:1.5px solid #000;
+}
+.nav-left { display:flex; flex-direction:column; gap:1px; }
+#nav .logo {
+  font:800 13px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.06em; color:#111; line-height:1;
+}
+.logo-sub {
+  font:400 7px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.26em; color:#888;
+}
+#nav ul { display:flex; gap:0; list-style:none; }
+#nav ul li a {
+  display:block; padding:4px 11px;
+  font:500 10px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.16em; color:#555;
+  text-decoration:none; transition:color .15s;
+}
+#nav ul li a:hover { color:#111; }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-location {
+  font:400 9px "Helvetica Neue",Arial,sans-serif;
+  letter-spacing:0.14em; color:#888;
+}
+.contact-btn {
+  font:600 9px "Helvetica Neue",Arial,sans-serif; letter-spacing:0.18em;
+  color:#111; padding:5px 13px;
+  border:1.5px solid #111; border-radius:2px;
+  background:transparent; cursor:pointer; transition:all .15s;
+}
+.contact-btn:hover { background:#111; color:#fff; }
+@media (max-width:640px) {
+  #nav { padding:0 14px; }
+  #nav ul { display:none; }
+  .nav-location { display:none; }
+}
+
+#ui-bc { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); color:rgba(0,0,0,0.22); font-size:9px; letter-spacing:0.28em; pointer-events:none; }
+
+/* 입구 좌우 사이드 패널 */
+#side-l, #side-r {
+  position:absolute;
+  width:6000px; height:2000px;
+  top:-1000px;
+  background:#ffffff;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px),
+    repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(0,0,0,0.12) 50px);
+  background-size: 100% 50px, 50px 100%;
+  pointer-events:none;
+}
+#side-l { left:-6400px; }
+#side-r { left:400px; }
+
+/* ── 뒷벽 + 작가노트 (카메라 자식, 터널 끝에 고정) ── */
+#wall-b {
+  position:absolute;
+  width:800px; height:700px;
+  left:-400px; top:-350px;
+  transform:translateZ(-9000px);
+  background:#e8e8e8;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#artist-note {
+  width:680px;
+  text-align:left;
+}
+.note-label {
+  font:600 8px "Helvetica Neue",sans-serif;
+  letter-spacing:0.36em;
+  color:rgba(0,0,0,0.26);
+  margin-bottom:14px;
+  text-transform:uppercase;
+}
+.note-rule {
+  width:22px; height:1px;
+  background:rgba(0,0,0,0.18);
+  margin-bottom:14px;
+}
+.note-body {
+  font:300 9px/1.78 "Helvetica Neue",sans-serif;
+  color:rgba(0,0,0,0.52);
+  letter-spacing:0.01em;
+  word-break:keep-all;
+  column-count:2;
+  column-gap:32px;
+  column-rule:1px solid rgba(0,0,0,0.07);
+}
+.note-body p { margin-bottom:9px; }
+.note-sig {
+  margin-top:18px;
+  font:400 8px "Helvetica Neue",sans-serif;
+  letter-spacing:0.26em;
+  color:rgba(0,0,0,0.28);
+}
+
+/* ── 라이트박스 ── */
+#lb {
+  position:fixed; inset:0; z-index:100;
+  background:rgba(255,255,255,0);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s ease, background 0.3s ease;
+}
+#lb.on {
+  opacity:1; pointer-events:all;
+  background:rgba(255,255,255,0.94);
+}
+#lb-inner {
+  position:relative;
+  max-width:88vw; max-height:88vh;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  transform:scale(0.94);
+  transition:transform 0.3s ease;
+}
+#lb.on #lb-inner { transform:scale(1); }
+#lb-img {
+  display:block;
+  max-width:100%; max-height:80vh;
+  object-fit:contain;
+  box-shadow:0 4px 32px rgba(0,0,0,0.14);
+}
+#lb-caption {
+  color:rgba(0,0,0,0.35);
+  font:400 9px "Helvetica Neue",sans-serif;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+}
+#lb-close {
+  position:absolute; top:-36px; right:0;
+  color:rgba(0,0,0,0.3);
+  font:300 20px "Helvetica Neue",sans-serif;
+  cursor:pointer;
+  line-height:1;
+  padding:4px 8px;
+  transition:color 0.15s;
+}
+#lb-close:hover { color:#000; }
+
+
+/* 입구 텍스트 — 바닥에 새겨진 전시명 */
+#entry-text {
+  position:absolute;
+  width:700px;
+  left:-350px; top:280px;
+  transform:translateZ(-720px) rotateX(-90deg);
+  text-align:center;
+  font:200 42px/1 "Helvetica Neue",sans-serif;
+  letter-spacing:0.55em;
+  color:rgba(255,255,255,0.12);
+  text-transform:uppercase;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="camera">
+    <div id="wall-l"  class="wall"></div>
+    <div id="wall-r"  class="wall"></div>
+    <div id="floor"   class="wall"></div>
+    <div id="ceiling" class="wall"></div>
+    <div id="side-l"></div>
+    <div id="side-r"></div>
+    <div id="entry-text">바탕과 바늘</div>
+    <div id="wall-b">
+      <div id="artist-note">
+        <div class="note-label">Artist Statement</div>
+        <div class="note-rule"></div>
+        <div class="note-body">
+          <p>이것을 풍경이라고 불러야 하나. 창문을 통해 보는 하늘은 예뻤다. 그리고 내려가고 있었다. 위에서 아래로가 아닌 여기서 어디론가 가고 있는 중이었다. 길을 잃은 듯 했다. 추락 같기도, 비행 같기도 했다. 이것을 뭐라고 부를지 모르겠다. 차 안엔 찬구들이 있었다. 막힌 곳이 없는 것만 같은 시공간이었다. 멈춰 있다는 생각이 들 때 쯤 네비게이션은 자꾸 다른 길을 알려 준다고 말한다. 저기로 가야 하는데. 서린 겨울이 오면 풍경들이 모두 비슷한 영혼을 가진 것만 같다. 생각을 한다.</p>
+          <p>외곽에 나가서 사진을 찍는 일은 하지 않으면 안 되는 일도 아니고, 해야 하는 일도 아니었다. 하고 싶은 일이다. 라고 명명 하기엔 약간 부족 한 감이 있지만, 어딘가에 도움이 될거라고 들었던 생각은 망각이 빨랐다. 그저 한번 하고 싶은 일이 점점 습관처럼 된 것이었다. 형식 없는 소재들과 소재 없는 형식들.. 사진을 찍을 때면 정말 이게 나를 위한 일인지는 모르겠지만 조금 게워내는 느낌이 좋았다.</p>
+          <p>유령마을의 풍경들을 담고 싶었다. 처음 이 생각을 했을 때는 풍경이 주는 정적임이 좋았던것 같다. 미디어에 널린 사진들의 프레임 바깥이 궁금했다. 직접 보고 직접 담아내고 싶었다. 쉽게 볼 수 없는 독립된 형체의 건물, 형태가 심미적 이미지라 생각했다. 활력을 상실한 빈 공간, 오랜 시간의 축척, 허물들, 고요, 정적, 공허, 불안, 창백, 낯설음, 어쩌고. 그것들은 우직하게 몇년을 그 자리에서 버티고, 자라고 있다.</p>
+          <p>현실감을 이탈한 풍경은 재개발을 기다리는 것 같기도 아닌 것 같기도 오묘한 표정을 짓는다. 네비게이션에 일부로 안 띄려는 듯 하는 것 같다. 하지만 편리는 발전되고 그곳들은 금방 발각되어 사진을 찍는 사람들에게 출사지라는 이름이 붙여진다. 발각과 망각이 공존하는 장소가 펼쳐진다. 이런 곳으로 갈 때는 서울 한복판에서 느낄 수 없는 일상의 감각을 벗어나 어떠한 차원으로 가는것 같았다. 그곳들이 변하지 않았음 하는 나의 것도, 그곳을 변화시킬 세계의 것도 모두 같은 욕망이라 명명한다. 풍요의 시대가 짙어질 수록 빈곤함을 원한다. 하지만 풍요로 넘쳐나는 도시는 동시에 빈곤하다. 그래서 나는 빈곤뿐인 장소를 찾는 걸까. 방치되고 고립된 장소가 주는 진심을 담고 싶은 걸까. 맞다고 단언 할 수는 없는 비틀어진 마음이다.</p>
+          <p>이런 감정이 드는데는 내가 만들어낸 사진은 프레임이 존재한다. 앞에서 말한 프레임 바깥의 공간이 자꾸 신경이 쓰이는 것이다. 분리와 연결로 만들어낸 프레임의 바깥은 혼돈과 위협이 있다. 수미상관이다. 나의 비틀어진 욕망을 채집하고 감각적인 이미지를 만들다 할 때 사진이란 매체의 매개체가 되어간다. 수단일 그곳의 자연미에 열광하지 않은 그곳의 네이티브에게 나의 의미는 의미가 없다. 풍경을 이념화 시키는 것도 내키지 않을 것이다. 시간과 공간이 지나간 것인 도식이자 개념이다. 나는 그 곳을 볼 순 있지만 그곳을 알지 못한다. 사진을 찍고 말한다. 알지도 못하면서 말한다. 해방의 댓가는 뒤탈이 있다. 앞으로 어떤 사진을 찍어야 할 지 고민이다. 내가 무엇을 할 수 있을까.</p>
+          <p>사진들의 기능을 생각한다. 기술 복제와 해시태그로 인해 범람하는 이미지 세대에서. 사진은 음악처럼 피할 수 없다. 이미 핸드폰에 있다. 이미 거리에 있다. 기술의 발전으로 어느정도 태양을 피할 수는 있지만 그 기술의 발전으로 사진과 음악은 피할 수 없다. 좋아요와 친구뿐이 남게되었다. 역설적이다. 그리고 그것들에 인상을 쓰며 사유한다. 호흡을 하는 기분이 든다.</p>
+          <p>어느 책에서 보았던가. 쓴다는 것, 기록하는 것, 잊지 않으려고 하는것, 망각되지 않으려고 하는것의 생각들이 전이된다. 사진보다 어쩌면 더 커보이는 프레임이 그것을 나타낸다. 돌아온 대답은 지평선 너머의 하늘을 보고 메아리를 치는것 같다. 원인에서 결과로 가는 줄 알았는데 다시 원인으로 돌아온다. 그러나 원위치 라는 것은 아니다. 같다는 뜻도. 이 사진은 그렇게 크게 힘이 없다. 힘내서 소리치지도 않는다. 사진을 찍을수록 사진 혼자 존립할 수 없을 것 만 같은 기분이 든다.</p>
+          <p>누구나 스쳐 지나가는 고민에 대해. 뭘 위하는지. 뭘 의하는지. 나는 다시 사람들이 떠난 빈자리로 찾아간다. 텅 빈 공간 사람들이 떠난 곳을 찾고 마음에 드는 이미지를 만들고, 그것에 이름을 붙여주고, 이런 이야기들을 만들고, 썰물처럼 내려와 다시 집으로 돌아오고, 우리집 마당엔 그렇게 바다가 자라고 있다.</p>
+        </div>
+        <div class="note-sig">— 바탕과 바늘</div>
+      </div>
+    </div>
+  </div>
+</div>
+<nav id="nav">
+  <div class="nav-left">
+    <div class="logo">바탕과 바늘</div>
+    <div class="logo-sub">VISUAL PORTFOLIO</div>
+  </div>
+  <ul>
+    <li><a href="#" class="active">HOME</a></li>
+    <li><a href="portfolio-3d.html">3D VIEW</a></li>
+    <li><a href="portfolio-sample-b.html">RAIL</a></li>
+    <li><a href="portfolio-sample-c.html">SCATTER</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-location">SEOUL, KR</div>
+    <button class="contact-btn">CONTACT</button>
+  </div>
+</nav>
+<div id="ui-bc">SCROLL · DRAG</div>
+<div id="lb">
+  <div id="lb-inner">
+    <span id="lb-close">&#x2715;</span>
+    <img id="lb-img" src="" alt="">
+    <div id="lb-caption"></div>
+  </div>
+</div>
+
+<script>
+const scene   = document.getElementById('scene');
+const camera  = document.getElementById('camera');
+const wallL   = document.getElementById('wall-l');
+const wallR   = document.getElementById('wall-r');
+const wallF   = document.getElementById('floor');
+const wallC   = document.getElementById('ceiling');
+const wallB   = document.getElementById('wall-b');
+
+const DEPTH      = 9000;
+const NEAR_START = 380;
+let camZ = -200, targetZ = NEAR_START;
+const MAX_Z = NEAR_START + 8580; // = 8960, 뒷벽 20px 앞까지
+
+/* ── Photo layout ──
+   l/r: lyOff = top offset within wall height(560px)
+   f/c: lxOff = left offset within tunnel width(800px)
+   floor top = D  /  ceiling top = DEPTH-D (coord reversal due to transform-origin:100%)
+*/
+// 75x50(landscape 3:2): pw=360, ph=240, lyOff=160
+// 50x75(portrait 2:3):  pw=240, ph=360, lyOff=100
+const DEFS = [
+  { wall:'l', D:500,  lyOff:160, pw:360, ph:240 }, // _002 landscape
+  { wall:'r', D:1300, lyOff:100, pw:240, ph:360 }, // _003 portrait
+  { wall:'l', D:2100, lyOff:100, pw:240, ph:360 }, // _004 portrait
+  { wall:'r', D:2900, lyOff:100, pw:240, ph:360 }, // _005 portrait
+  { wall:'l', D:3700, lyOff:100, pw:240, ph:360 }, // _007 portrait
+  { wall:'r', D:4500, lyOff:160, pw:360, ph:240 }, // _009 landscape
+  { wall:'l', D:5300, lyOff:100, pw:240, ph:360 }, // _01(1) portrait
+  { wall:'r', D:6100, lyOff:100, pw:240, ph:360 }, // _01 portrait
+  { wall:'l', D:6900, lyOff:100, pw:240, ph:360 }, // _010 portrait
+  { wall:'r', D:7700, lyOff:160, pw:360, ph:240 }, // _011 landscape
+];
+
+const photoEls = [];
+
+DEFS.forEach((d, i) => {
+  const el = document.createElement('div');
+  el.className = 'ph';
+  el.style.width  = d.pw + 'px';
+  el.style.height = d.ph + 'px';
+
+  let target;
+  if (d.wall === 'l') {
+    el.style.left = d.D + 'px';
+    el.style.top  = d.lyOff + 'px';
+    target = wallL;
+  } else if (d.wall === 'r') {
+    el.style.left = (DEPTH - d.D - d.pw) + 'px';
+    el.style.top  = d.lyOff + 'px';
+    target = wallR;
+  } else if (d.wall === 'f') {
+    el.style.left = d.lxOff + 'px';
+    el.style.top  = d.D + 'px';
+    target = wallF;
+  } else {
+    el.style.left = d.lxOff + 'px';
+    el.style.top  = (DEPTH - d.D) + 'px';
+    target = wallC;
+  }
+
+  const cap = document.createElement('div');
+  cap.className = 'ph-caption';
+  cap.innerHTML = `<span class="cap-title"></span><span>${String(i + 1).padStart(2, '0')}</span>`;
+  el.appendChild(cap);
+
+  /* 스팟 조명 — 벽에 부착 (좌우 벽만) */
+  if (d.wall === 'l' || d.wall === 'r') {
+    const spot = document.createElement('div');
+    spot.className = 'spot';
+    spot.style.cssText = `width:${d.pw + 200}px; height:${d.ph * 1.4}px; left:${-100}px; top:${-d.ph * 0.9}px;`;
+    el.appendChild(spot);
+  }
+
+  el.style.cursor = 'pointer';
+  el.addEventListener('click', () => {
+    if (hasDragged) return;
+    const img = el.querySelector('img');
+    if (!img || !img.src) return;
+    const cap = el.querySelector('.ph-caption');
+    openLb(img.src, cap ? cap.textContent.trim() : '');
+  });
+
+  target.appendChild(el);
+  photoEls.push({ el, D: d.D });
+});
+
+/* ── Load photos ── */
+(async () => {
+  try {
+    const res  = await fetch('photo/photos.json');
+    const list = await res.json();
+    DEFS.forEach((_, i) => {
+      if (!list[i]) return;
+      const img = new Image();
+      img.src = 'photo/' + list[i];
+      img.onload = () => {
+        photoEls[i].el.insertBefore(img, photoEls[i].el.firstChild);
+        const title = list[i].replace(/,.*$/, '').replace(/\.jpe?g$/i, '').trim();
+        const capTitle = photoEls[i].el.querySelector('.cap-title');
+        if (capTitle) capTitle.textContent = title;
+        const capNum = photoEls[i].el.querySelector('.ph-caption span:last-child');
+        if (capNum) capNum.innerHTML = `${String(i + 1).padStart(2, '0')}&thinsp;/&thinsp;${String(list.length).padStart(2, '0')}`;
+      };
+    });
+  } catch(e) {}
+})();
+
+/* ── 스크롤 → 전진 ── */
+window.addEventListener('wheel', e => {
+  targetZ = Math.max(NEAR_START, Math.min(MAX_Z, targetZ + e.deltaY * 2.2));
+}, { passive: true });
+
+/* ── 라이트박스 ── */
+const lb        = document.getElementById('lb');
+const lbImg     = document.getElementById('lb-img');
+const lbCaption = document.getElementById('lb-caption');
+
+function openLb(src, label) {
+  lbImg.src = src;
+  lbCaption.textContent = label;
+  lb.classList.add('on');
+}
+function closeLb() { lb.classList.remove('on'); }
+lb.addEventListener('click', e => { if (e.target === lb || e.target === document.getElementById('lb-close')) closeLb(); });
+document.getElementById('lb-close').addEventListener('click', closeLb);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+/* ── 드래그 → 방향 + 관성 / 클릭 → 라이트박스 ── */
+let isDrag = false, hasDragged = false, mx = 0, my = 0;
+let velX = 0, velY = 0, offX = 0, offY = 0;
+
+window.addEventListener('mousedown', e => {
+  if (lb.classList.contains('on')) return;
+  isDrag = true; hasDragged = false;
+  mx = e.clientX; my = e.clientY;
+  velX = 0; velY = 0;
+});
+window.addEventListener('mousemove', e => {
+  if (!isDrag) return;
+  const dx = e.clientX - mx, dy = e.clientY - my;
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasDragged = true;
+  velX = dx * 0.025;
+  velY = dy * 0.012;
+  offX = Math.max(-10, Math.min(10, offX + velX));
+  offY = Math.max(-6,  Math.min(6,  offY + velY));
+  mx = e.clientX; my = e.clientY;
+});
+window.addEventListener('mouseup', () => { isDrag = false; });
+
+window.addEventListener('touchstart', e => {
+  isDrag = true; mx = e.touches[0].clientX; my = e.touches[0].clientY;
+  velX = 0; velY = 0;
+}, { passive: true });
+window.addEventListener('touchmove', e => {
+  if (!isDrag) return;
+  const dx = e.touches[0].clientX - mx, dy = e.touches[0].clientY - my;
+  velX = dx * 0.025;
+  velY = dy * 0.012;
+  offX = Math.max(-10, Math.min(10, offX + velX));
+  offY = Math.max(-6,  Math.min(6,  offY + velY));
+  mx = e.touches[0].clientX; my = e.touches[0].clientY;
+}, { passive: true });
+window.addEventListener('touchend', () => { isDrag = false; });
+
+function animate() {
+  camZ += (targetZ - camZ) * 0.065;
+
+  if (!isDrag) {
+    velX *= 0.88;
+    velY *= 0.88;
+    offX = Math.max(-10, Math.min(10, offX + velX));
+    offY = Math.max(-6,  Math.min(6,  offY + velY));
+  }
+
+  camera.style.transform = `translateZ(${camZ}px)`;
+  scene.style.perspectiveOrigin = `${52 + offX}% ${50 + offY}%`;
+
+
+  photoEls.forEach(m => {
+    m.el.style.visibility = (camZ - m.D) > 80 ? 'hidden' : '';
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
