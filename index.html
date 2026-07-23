@@ -26,6 +26,9 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .lbox-t{top:0;}.lbox-b{bottom:0;}
 /* tape line artifact */
 #tape-line{position:fixed;left:0;right:0;z-index:349;pointer-events:none;opacity:0;transition:opacity 60ms;}
+/* transition overlay */
+#trans-ov{position:fixed;inset:0;z-index:8000;pointer-events:none;}
+#trans-cv{position:absolute;inset:0;width:100%;height:100%;}
 /* chroma overlay */
 #chroma{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;
   background:linear-gradient(135deg,rgba(255,0,60,.04),rgba(0,60,255,.04));
@@ -175,6 +178,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 <div id="bg"></div><div id="bgrid"></div><div id="vig"></div><div class="crt"></div>
 <div class="lbox lbox-t"></div><div class="lbox lbox-b"></div>
 <div id="tape-line"></div><div id="chroma"></div>
+<div id="trans-ov"><canvas id="trans-cv"></canvas></div>
 <div id="wrap">
   <div class="hero">
     <canvas id="net-cv"></canvas>
@@ -391,7 +395,66 @@ initRain();drawRain();
   },300);
 })();
 
-function go(u){if(parent!==window)return;location.href=u;}
+function go(u){
+  if(parent!==window)return;
+  const ov=document.getElementById('trans-ov');
+  const cv=document.getElementById('trans-cv');
+  const ctx=cv.getContext('2d');
+  const w=cv.width=window.innerWidth;
+  const h=cv.height=window.innerHeight;
+  ov.style.pointerEvents='auto';
+
+  // small grain canvas for fast noise
+  const gc=document.createElement('canvas');
+  const GW=420,GH=300;gc.width=GW;gc.height=GH;
+  const gx=gc.getContext('2d');
+  function grain(){
+    const id=gx.createImageData(GW,GH),d=id.data;
+    for(let i=0;i<d.length;i+=4){
+      const v=Math.random()*255|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=Math.random()*255|0;}
+    gx.putImageData(id,0,0);}
+
+  let frame=0;const TOTAL=26;
+  function tick(){
+    const p=frame/TOTAL;
+    ctx.clearRect(0,0,w,h);
+
+    // darken progressively
+    ctx.fillStyle=`rgba(0,0,0,${Math.min(1,p*1.6)})`;
+    ctx.fillRect(0,0,w,h);
+
+    // grain burst
+    grain();
+    ctx.globalAlpha=0.5+Math.random()*0.4;
+    ctx.drawImage(gc,0,0,w,h);
+    ctx.globalAlpha=1;
+
+    // RGB horizontal strips
+    const n=(4+Math.random()*8)|0;
+    for(let i=0;i<n;i++){
+      const sy=Math.random()*h;
+      const sh=1+Math.random()*(15+p*50);
+      const dx=(Math.random()-.5)*(50+p*120);
+      ctx.fillStyle=`rgba(255,20,20,${0.2+Math.random()*0.45})`;
+      ctx.fillRect(dx-4,sy,w,sh);
+      ctx.fillStyle=`rgba(20,20,255,${0.2+Math.random()*0.45})`;
+      ctx.fillRect(dx+4,sy,w,sh);
+      ctx.fillStyle=`rgba(255,255,255,${0.06+Math.random()*0.12})`;
+      ctx.fillRect(dx,sy,w,sh);}
+
+    // white flash at very start
+    if(frame<4){
+      ctx.fillStyle=`rgba(255,255,255,${(4-frame)/4*0.7})`;
+      ctx.fillRect(0,0,w,h);}
+
+    frame++;
+    if(frame<TOTAL){requestAnimationFrame(tick);}
+    else{
+      ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
+      setTimeout(()=>{location.href=u;},60);}
+  }
+  tick();
+}
 
 // ── orange hover / touch ──
 (function(){
