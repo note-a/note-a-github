@@ -1470,6 +1470,28 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 
 #mob-nav-row,#mob-main,#mob-hdr,#mob-overlay,#mob-drawer{display:none;}
 
+/* ── rotate hint ── */
+#rotate-hint{
+  display:none;
+  position:fixed;inset:0;z-index:9999;
+  background:#000;
+  flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;
+}
+#rotate-hint svg{
+  width:52px;height:52px;stroke:var(--acc);fill:none;stroke-width:1.5;
+  animation:rot-spin 2s ease-in-out infinite;}
+@keyframes rot-spin{
+  0%,30%{transform:rotate(0deg);}
+  60%,100%{transform:rotate(90deg);}
+}
+#rotate-hint p{
+  margin-top:20px;font-family:var(--mono);font-size:11px;
+  letter-spacing:3px;color:var(--acc);opacity:.7;text-transform:uppercase;}
+@media (orientation:portrait) and (max-width:900px){
+  #rotate-hint{display:flex;}
+}
+
 /* ════════════════════════════════════════
    모바일: 주요 패널 + 메뉴만
    SET.VIEW → HUD.XT2 → PILOT + sticky nav
@@ -4316,6 +4338,16 @@ document.querySelectorAll('.lr-h').forEach(h=>{
   <div id="mob-toast-sub">TAP TO DISMISS</div>
 </div>
 <div id="mob-overlay" onclick="mobMenuClose()"></div>
+<div id="rotate-hint">
+  <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="6" width="28" height="40" rx="3"/>
+    <line x1="10" y1="14" x2="38" y2="14"/>
+    <line x1="10" y1="40" x2="38" y2="40"/>
+    <circle cx="24" cy="45" r="1.5" fill="currentColor" stroke="none"/>
+    <polyline points="40,4 46,10 40,16" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <p>rotate device</p>
+</div>
 
 <nav id="mob-drawer">
   <div id="mob-drawer-head">
