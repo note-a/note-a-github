@@ -1270,7 +1270,7 @@ setInterval(() => {
       const GTILT=0.30;
       const ry2=py_p*Math.cos(GTILT)-rz*Math.sin(GTILT),rz2=py_p*Math.sin(GTILT)+rz*Math.cos(GTILT);
       const fov=2.5,sc=fov/(fov+rz2);
-      return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:(rz2+1)/2};
+      return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:(1-rz2)/2};
     }
 
     // 격자선 — 세그먼트별 depth 기반 알파 (입체감)
@@ -1289,7 +1289,7 @@ setInterval(() => {
 
     // 전체 포인트 투영 (모든 노드 표시, age로 페이드인)
     const gproj_all=gpts.map(p=>{const age=Math.min(1,(gElapsed-p.spawnAt)/400);return{...gproj(p),orig:p,age};});
-    gproj_all.sort((a,b)=>a.z-b.z);
+    gproj_all.sort((a,b)=>b.z-a.z);
 
     // 연결선
     const GLINK=0.42;
