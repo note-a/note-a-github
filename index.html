@@ -20,7 +20,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 #bgrid{position:fixed;inset:-40px;z-index:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:54px 54px;animation:drift 18s linear infinite;}
 @keyframes drift{to{transform:translate(54px,54px);}}
 #vig{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 74% 74% at 50% 48%,transparent 26%,rgba(0,0,0,.62) 74%,rgba(0,0,0,.96) 100%);}
-.crt{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
+.crt{position:fixed;inset:0;z-index:360;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
 /* letterbox */
 .lbox{position:fixed;left:0;right:0;z-index:350;background:#000;height:52px;pointer-events:none;}
 .lbox-t{top:0;}.lbox-b{bottom:0;}
@@ -470,7 +470,7 @@ function go(u){
 // ── film grain ──
 (function(){
   const gc=document.createElement('canvas');
-  gc.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:302;pointer-events:none;opacity:0.055;';
+  gc.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:360;pointer-events:none;opacity:0.055;';
   document.body.appendChild(gc);
   const gx=gc.getContext('2d');
   const GW=480,GH=300;gc.width=GW;gc.height=GH;
