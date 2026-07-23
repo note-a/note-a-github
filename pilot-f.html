@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PILOT CHANNEL — 이미지 실험소</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -12,7 +12,7 @@ body {
   width: 100vw; height: 100vh;
   overflow: hidden;
   background: #000d1a;
-  font-family: 'Space Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   color: #4499ff;
   display: flex;
   justify-content: center;
@@ -510,7 +510,7 @@ body {
   font-size: 9px; letter-spacing: 1px;
   color: rgba(160,210,255,0.75);
   border: none; background: none;
-  font-family: 'Space Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   text-align: left; transition: background 0.15s;
 }
 .panel-faq-toggle:hover { background: rgba(80,160,255,0.06); }
@@ -756,7 +756,7 @@ body {
       <button id="null-clear-btn" style="
         font-size:9px;letter-spacing:1px;color:#5580aa;
         background:none;border:1px solid rgba(60,100,180,0.18);
-        padding:2px 6px;cursor:pointer;font-family:'Space Mono',monospace;
+        padding:2px 6px;cursor:pointer;font-family:'JetBrains Mono',monospace;
         transition:color 0.15s, border-color 0.15s;
       ">CLEAR</button>
     </div>
@@ -996,17 +996,30 @@ setInterval(() => {
   const clicks = [];    // {x,y,age,code,flash}
   let arcBoost = 1.0;  // 클릭 시 아크 밝기 일시 부스트
 
+  // ── 드래그 상태 ──
+  let dragX = null, dragY = null;   // 현재 그리기 위치 (부드러운 보간)
+  let targetX = null, targetY = null; // 목표 위치
+  let isDragging = false;
+  let hasDragged = false;           // 클릭 vs 드래그 구분
+
   function resize() {
     const wrap = document.getElementById('center-canvas-wrap');
     W = cv.width  = wrap.offsetWidth  * devicePixelRatio;
     H = cv.height = wrap.offsetHeight * devicePixelRatio;
     cv.style.width  = wrap.offsetWidth  + 'px';
     cv.style.height = wrap.offsetHeight + 'px';
+    dragX = targetX = W / 2;
+    dragY = targetY = H / 2;
   }
 
   function drawViz() {
     ctx.clearRect(0, 0, W, H);
-    const cx = W / 2, cy = H / 2;
+    // 스프링 보간 — 원이 목표 위치로 부드럽게 이동
+    if (targetX === null) { targetX = W / 2; dragX = W / 2; }
+    if (targetY === null) { targetY = H / 2; dragY = H / 2; }
+    dragX += (targetX - dragX) * 0.10;
+    dragY += (targetY - dragY) * 0.10;
+    const cx = dragX, cy = dragY;
     const R   = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
     const dpr = devicePixelRatio;
 
@@ -1086,7 +1099,7 @@ setInterval(() => {
     for(let i=0;i<12;i++){
       const rad=(i/12*360-90)*Math.PI/180;
       ctx.fillStyle='rgba(80,160,255,0.60)';
-      ctx.font=`${6.5*dpr}px "Space Mono",monospace`;
+      ctx.font=`${6.5*dpr}px "JetBrains Mono",monospace`;
       ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillText(SET_CATS[i], cx+Math.cos(rad)*(R+13*dpr), cy+Math.sin(rad)*(R+13*dpr));
     }
@@ -1110,10 +1123,10 @@ setInterval(() => {
       const lr = R - 18*dpr;
       ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillStyle='rgba(80,160,255,0.45)';
-      ctx.font=`${7*dpr}px "Space Mono",monospace`;
+      ctx.font=`${7*dpr}px "JetBrains Mono",monospace`;
       ctx.fillText(key, cx+Math.cos(rad)*lr, cy+Math.sin(rad)*lr - 5*dpr);
       ctx.fillStyle='rgba(160,210,255,0.85)';
-      ctx.font=`bold ${8*dpr}px "Space Mono",monospace`;
+      ctx.font=`bold ${8*dpr}px "JetBrains Mono",monospace`;
       ctx.fillText(val, cx+Math.cos(rad)*lr, cy+Math.sin(rad)*lr + 5*dpr);
     });
 
@@ -1147,7 +1160,7 @@ setInterval(() => {
         ctx.strokeStyle=i%5===0?'rgba(80,160,255,0.6)':'rgba(80,160,255,0.25)';
         ctx.lineWidth=i%5===0?1.8:0.8; ctx.stroke();
         if(i%5===0) {
-          ctx.fillStyle='rgba(80,160,255,0.5)'; ctx.font=`${6.5*dpr}px "Space Mono",monospace`;
+          ctx.fillStyle='rgba(80,160,255,0.5)'; ctx.font=`${6.5*dpr}px "JetBrains Mono",monospace`;
           ctx.textAlign='center'; ctx.textBaseline='middle';
           ctx.fillText(`${i*10}`, cx+Math.cos(a)*(gaugeR+14*dpr), cy+Math.sin(a)*(gaugeR+14*dpr));
         }
@@ -1402,7 +1415,7 @@ setInterval(() => {
     const readY = cy + R - 10*dpr;
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillStyle='rgba(80,160,255,0.28)';
-    ctx.font=`${7*dpr}px "Space Mono",monospace`;
+    ctx.font=`${7*dpr}px "JetBrains Mono",monospace`;
     ctx.fillText(`DATA LOADED  ${uploadCount} / ${FILL_TARGET}`, cx, readY);
     // 게이지 퍼센트 + 충전 상태 문구 — 구 하단부
     ctx.save();
@@ -1411,7 +1424,7 @@ setInterval(() => {
     // pct% 숫자
     ctx.shadowColor='#4499ff'; ctx.shadowBlur=20*dpr;
     ctx.fillStyle='rgba(80,180,255,0.88)';
-    ctx.font=`bold ${28*dpr}px "Space Mono",monospace`;
+    ctx.font=`bold ${28*dpr}px "JetBrains Mono",monospace`;
     ctx.fillText(`${pct}%`, cx, cy + gR*0.48);
     // 충전 상태 문구 — 깜빡이며 순환
     const chargePhrases=['▶ CHARGING','ACCUMULATING','ENERGY LOAD','◈ LOADING ◈'];
@@ -1419,7 +1432,7 @@ setInterval(() => {
     const cpBlink=0.45+0.45*Math.sin(t*2.2);
     ctx.shadowColor='#44aaff'; ctx.shadowBlur=12*dpr;
     ctx.fillStyle=`rgba(80,180,255,${(0.55+fLevel*0.30)*cpBlink})`;
-    ctx.font=`${8.5*dpr}px "Space Mono",monospace`;
+    ctx.font=`${8.5*dpr}px "JetBrains Mono",monospace`;
     ctx.fillText(chargePhrases[cpIdx], cx, cy + gR*0.48 + 20*dpr);
     // 충전 바 (작은 도트 진행 표시)
     const dotCount=8;
@@ -1439,7 +1452,7 @@ setInterval(() => {
 
     // top title readout
     ctx.fillStyle='rgba(80,160,255,0.35)';
-    ctx.font=`${7.5*dpr}px "Space Mono",monospace`;
+    ctx.font=`${7.5*dpr}px "JetBrains Mono",monospace`;
     ctx.fillText('⬡  PLASMA CORE  ⬡', cx, cy - R + 12*dpr);
 
     // energy readout (animating)
@@ -1495,15 +1508,15 @@ setInterval(() => {
           const ly = ck.y - prog * 52 * dpr;
           ctx.save();
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.font = `bold ${10*dpr}px "Space Mono",monospace`;
+          ctx.font = `bold ${10*dpr}px "JetBrains Mono",monospace`;
           ctx.fillStyle = `rgba(220,240,255,${(la*0.95).toFixed(3)})`;
           ctx.shadowColor = '#80c8ff'; ctx.shadowBlur = 12*dpr;
           ctx.fillText(ck.code.id, ck.x, ly);
           ctx.shadowBlur = 0;
-          ctx.font = `${8*dpr}px "Space Mono",monospace`;
+          ctx.font = `${8*dpr}px "JetBrains Mono",monospace`;
           ctx.fillStyle = `rgba(140,195,255,${(la*0.70).toFixed(3)})`;
           ctx.fillText(ck.code.name, ck.x, ly + 14*dpr);
-          ctx.font = `${7*dpr}px "Space Mono",monospace`;
+          ctx.font = `${7*dpr}px "JetBrains Mono",monospace`;
           ctx.fillStyle = `rgba(100,160,255,${(la*0.45).toFixed(3)})`;
           ctx.fillText(ck.code.desc, ck.x, ly + 26*dpr);
           ctx.restore();
@@ -1523,26 +1536,68 @@ setInterval(() => {
 
   window.addEventListener('resize', resize);
 
-  // ── 플라즈마 클릭 이벤트 ──
-  cv.style.cursor = 'crosshair';
-  cv.addEventListener('click', e => {
+  // ── 드래그 / 클릭 이벤트 ──
+  cv.style.cursor = 'grab';
+
+  function getPos(e) {
     const rect = cv.getBoundingClientRect();
-    const dp   = devicePixelRatio;
-    const mx   = (e.clientX - rect.left)  * dp;
-    const my   = (e.clientY - rect.top)   * dp;
-    // 구 범위 안일 때만
-    const R0  = Math.min(cv.width, cv.height) * 0.44;
-    if (Math.hypot(mx - cv.width/2, my - cv.height/2) > R0 * 1.05) return;
-    // SET83에서 무작위 코드 선택
+    const src  = e.touches ? e.touches[0] : e;
+    return {
+      x: (src.clientX - rect.left) * devicePixelRatio,
+      y: (src.clientY - rect.top)  * devicePixelRatio
+    };
+  }
+
+  function clampTarget(x, y) {
+    const R0 = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
+    const pad = R0 * 0.55;
+    targetX = Math.max(pad, Math.min(W - pad, x));
+    targetY = Math.max(pad, Math.min(H - pad, y));
+  }
+
+  cv.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    isDragging = true; hasDragged = false;
+    cv.style.cursor = 'grabbing';
+    const p = getPos(e); clampTarget(p.x, p.y);
+  });
+  cv.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    hasDragged = true;
+    const p = getPos(e); clampTarget(p.x, p.y);
+  });
+  cv.addEventListener('mouseup',    () => { isDragging = false; cv.style.cursor = 'grab'; });
+  cv.addEventListener('mouseleave', () => { isDragging = false; cv.style.cursor = 'grab'; });
+
+  cv.addEventListener('touchstart', e => {
+    e.preventDefault();
+    isDragging = true; hasDragged = false;
+    const p = getPos(e); clampTarget(p.x, p.y);
+  }, { passive: false });
+  cv.addEventListener('touchmove', e => {
+    e.preventDefault();
+    hasDragged = true;
+    const p = getPos(e); clampTarget(p.x, p.y);
+  }, { passive: false });
+  cv.addEventListener('touchend', e => {
+    e.preventDefault();
+    isDragging = false;
+  }, { passive: false });
+
+  // 클릭 — 드래그 중이 아닐 때만 SET 코드 표시
+  cv.addEventListener('click', e => {
+    if (hasDragged) return;
+    const p  = getPos(e);
+    const R0 = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
+    if (Math.hypot(p.x - dragX, p.y - dragY) > R0 * 1.05) return;
     const code = SET83[Math.floor(Math.random() * SET83.length)];
-    clicks.push({ x: mx, y: my, age: 0, code });
-    arcBoost = 2.2;  // 아크 일시 밝아짐
-    // 하단 레이블에 현재 코드 반영
+    clicks.push({ x: p.x, y: p.y, age: 0, code });
+    arcBoost = 2.2;
     const lb = document.getElementById('vlabel-bottom');
     if (lb) {
       lb.textContent = code.id + ' · ' + code.name;
       clearTimeout(lb._rt);
-      lb._rt = setTimeout(() => { lb.textContent = 'CLICK · REVEAL SET CODE'; }, 4000);
+      lb._rt = setTimeout(() => { lb.textContent = 'DRAG · CLICK · REVEAL SET CODE'; }, 4000);
     }
   });
 
