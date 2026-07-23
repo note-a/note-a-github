@@ -1472,9 +1472,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 
 
 @keyframes mob-glow-drift{
-  0%,100%{transform:translate(0,0) scale(1);}
-  30%{transform:translate(8%,-12%) scale(1.05);}
-  65%{transform:translate(-7%,10%) scale(.95);}
+  0%  {transform:translate(-15%,-40%);}
+  25% {transform:translate(20%,-10%);}
+  50% {transform:translate(10%, 35%);}
+  75% {transform:translate(-20%, 15%);}
+  100%{transform:translate(-15%,-40%);}
 }
 /* ════════════════════════════════════════
    모바일: 주요 패널 + 메뉴만
@@ -1489,7 +1491,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   body{background:#080300!important;}
   #mob-glow{
     display:block!important;position:fixed;inset:0;
-    background:radial-gradient(ellipse 65% 36% at 25% 65%, rgba(255,90,20,.38), transparent 70%);
+    background:radial-gradient(ellipse 110% 60% at 50% 50%, rgba(255,90,20,.18), transparent 70%);
     pointer-events:none;z-index:1;
     will-change:transform;
     animation:mob-glow-drift 14s ease-in-out infinite;
