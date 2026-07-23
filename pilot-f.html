@@ -997,9 +997,12 @@ setInterval(() => {
   let arcBoost = 1.0;  // 클릭 시 아크 밝기 일시 부스트
 
   // ── 구체 회전 드래그 ──
-  let manualRot = 0;   // 수동 회전 누적값
+  let manualRot  = 0;
+  let manualTilt = 0.30;   // 초기 틸트 (원본 GTILT)
+  let velRot  = 0;
+  let velTilt = 0;
   let isDragging = false;
-  let lastDragX  = null;
+  let lastDragX = null, lastDragY = null;
   let hasDragged = false;
 
   function resize() {
@@ -1246,7 +1249,15 @@ setInterval(() => {
     }
     const gpts=drawViz._gpts, ghN=drawViz._ghN, GGRID=drawViz._ggrid, gpulses=drawViz._gpulses;
     const gElapsed=performance.now()-drawViz._gStart;
-    const gRot=t*0.22 + manualRot, GTILT=0.30;
+    // 관성 감속 (드래그 해제 후 서서히 멈춤)
+    if (!isDragging) {
+      velRot  *= 0.90;
+      velTilt *= 0.90;
+      manualRot  += velRot;
+      manualTilt += velTilt;
+    }
+    manualTilt = Math.max(-0.75, Math.min(0.75, manualTilt));
+    const gRot=t*0.22 + manualRot, GTILT=manualTilt;
     const bright=1.0;
 
     function gproj(p){
@@ -1532,36 +1543,40 @@ setInterval(() => {
   // ── 구체 회전 드래그 / 클릭 ──
   cv.style.cursor = 'grab';
 
-  function clientX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+  function cxy(e) {
+    const s = e.touches ? e.touches[0] : e;
+    return { x: s.clientX, y: s.clientY };
+  }
+
+  function applyDrag(e) {
+    const p = cxy(e);
+    const dx = p.x - lastDragX, dy = p.y - lastDragY;
+    velRot  = dx * 0.008;
+    velTilt = dy * 0.008;
+    manualRot  += velRot;
+    manualTilt += velTilt;
+    lastDragX = p.x; lastDragY = p.y;
+    hasDragged = true;
+  }
 
   cv.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     isDragging = true; hasDragged = false;
-    lastDragX = clientX(e);
+    const p = cxy(e); lastDragX = p.x; lastDragY = p.y;
     cv.style.cursor = 'grabbing';
   });
-  cv.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    const dx = clientX(e) - lastDragX;
-    manualRot += dx * 0.008;
-    lastDragX = clientX(e);
-    hasDragged = true;
-  });
+  cv.addEventListener('mousemove', e => { if (isDragging) applyDrag(e); });
   cv.addEventListener('mouseup',    () => { isDragging = false; cv.style.cursor = 'grab'; });
   cv.addEventListener('mouseleave', () => { isDragging = false; cv.style.cursor = 'grab'; });
 
   cv.addEventListener('touchstart', e => {
     e.preventDefault();
     isDragging = true; hasDragged = false;
-    lastDragX = clientX(e);
+    const p = cxy(e); lastDragX = p.x; lastDragY = p.y;
   }, { passive: false });
   cv.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (!isDragging) return;
-    const dx = clientX(e) - lastDragX;
-    manualRot += dx * 0.008;
-    lastDragX = clientX(e);
-    hasDragged = true;
+    if (isDragging) applyDrag(e);
   }, { passive: false });
   cv.addEventListener('touchend', e => {
     e.preventDefault();
