@@ -1482,6 +1482,17 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   /* ── shell ── */
   html,body{overflow:auto!important;overflow-x:hidden!important;}
   body{background:#080300!important;}
+  @keyframes mob-glow-drift{
+    0%,100%{transform:translate(0,0) scale(1);}
+    30%{transform:translate(8%,-12%) scale(1.05);}
+    65%{transform:translate(-7%,10%) scale(.95);}
+  }
+  body::before{
+    content:'';position:fixed;inset:0;
+    background:radial-gradient(ellipse 65% 36% at 50% 50%, rgba(255,90,20,.34), transparent 70%);
+    pointer-events:none;z-index:-1;
+    animation:mob-glow-drift 14s ease-in-out infinite;
+  }
 
   #shell{
     position:static;display:flex!important;
@@ -1569,9 +1580,9 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   #mob-main{
     display:block!important;
     width:100%!important;
-    padding:32px 24px 48px;
+    padding:12px 24px 48px;
     min-height:calc(100vh - 44px);
-    background:radial-gradient(ellipse 100% 50% at 50% 8%, rgba(255,90,20,.45), #080300 60%)!important;
+    background:transparent!important;
   }
   .mm-lead{
     font-size:11px;line-height:1.9;
