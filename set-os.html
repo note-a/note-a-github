@@ -1489,32 +1489,125 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   .lr-rail,.rr-rail,#wrap,#gbar,#bot-row,#botbar,
   #mob-nav-row{display:none!important;}
 
-  /* ── mob-main: 텍스트 메인 ── */
+  /* ── mob-main ── */
   #mob-main{
-    display:block!important;
-    padding:32px 24px 48px;
-    min-height:calc(100vh - 44px);
+    display:flex!important;
+    flex-direction:column;
+    min-height:calc(100svh - 52px);
     background:#000;
+    overflow:hidden;
+  }
+
+  /* 히어로 인용구 */
+  .mm-hero{
+    flex-shrink:0;
+    position:relative;
+    padding:28px 22px 24px;
+    border-bottom:1px solid rgba(255,74,22,.15);
+    background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.2) 3px,rgba(0,0,0,.2) 4px),#020100;
+  }
+  .mm-hero::before,.mm-hero::after{
+    content:'';position:absolute;width:12px;height:12px;
+  }
+  .mm-hero::before{top:10px;left:10px;border-top:1px solid rgba(255,74,22,.5);border-left:1px solid rgba(255,74,22,.5);}
+  .mm-hero::after{top:10px;right:10px;border-top:1px solid rgba(255,74,22,.5);border-right:1px solid rgba(255,74,22,.5);}
+  .mm-hero-tag{
+    font-family:var(--mono);font-size:8px;letter-spacing:3px;
+    color:rgba(255,74,22,.4);margin-bottom:14px;
   }
   .mm-lead{
-    font-size:14px;line-height:1.9;
-    color:#b84a0c;
-    letter-spacing:-.01em;
-    margin:0 0 20px;
-    word-break:keep-all;
+    font-family:var(--mono);
+    font-size:18px;font-weight:700;line-height:1.55;
+    color:var(--acc);
+    letter-spacing:-.01em;word-break:keep-all;
+    margin:0 0 14px;
+    text-shadow:0 0 20px rgba(255,74,22,.3);
   }
-  #mob-main p{
-    font-size:14px;line-height:1.9;
-    color:#b84a0c;
-    letter-spacing:-.01em;
-    margin:0 0 20px;
-    word-break:keep-all;
+  .mm-hero-sub{
+    font-family:var(--mono);font-size:9px;letter-spacing:2.5px;
+    color:rgba(255,74,22,.3);
+    display:flex;align-items:center;gap:8px;
   }
-  .mm-tail{
-    font-size:14px!important;
-    color:#b84a0c!important;
-    margin-top:20px!important;
+  .mm-hero-sub::before{
+    content:'';width:20px;height:0.5px;background:rgba(255,74,22,.3);
   }
+
+  /* 네비 카드 그리드 */
+  .mm-grid{
+    flex:1;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:repeat(3,1fr);
+    gap:5px;padding:5px;
+    background:rgba(255,74,22,.03);
+  }
+  .mm-card{
+    background:#050302;
+    border:0.5px solid rgba(255,74,22,.3);
+    box-shadow:0 0 12px rgba(255,74,22,.04);
+    display:flex;flex-direction:column;
+    overflow:hidden;text-decoration:none;
+    position:relative;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .1s,border-color .1s;
+  }
+  .mm-card:active{background:rgba(255,74,22,.06);border-color:rgba(255,74,22,.65);}
+  .mm-card:active .mmc-head{background:linear-gradient(90deg,rgba(255,74,22,.2),transparent);}
+  .mm-card:active .mmc-arr{color:var(--acc);}
+  .mmc-head{
+    flex-shrink:0;height:17px;
+    display:flex;align-items:center;gap:4px;
+    padding:0 7px;
+    background:linear-gradient(90deg,rgba(255,74,22,.1),transparent);
+    border-bottom:1px solid rgba(255,74,22,.1);
+    font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;
+    color:rgba(255,74,22,.45);
+    transition:background .1s;
+  }
+  .mmc-no{color:rgba(255,74,22,.3);}
+  .mmc-dot{
+    width:3.5px;height:3.5px;border-radius:50%;
+    background:var(--acc);box-shadow:0 0 4px var(--acc);
+    animation:mcPulse 2.4s ease-in-out infinite;margin-left:auto;
+  }
+  @keyframes mcPulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+  .mmc-vis{
+    flex:1;display:flex;align-items:center;padding:4px 8px 2px;
+  }
+  .mmc-vis svg{width:100%;height:auto;max-height:44px;display:block;overflow:visible;}
+  .mmc-info{
+    flex-shrink:0;padding:0 8px 6px;
+  }
+  .mmc-title{
+    font-family:var(--mono);font-size:13px;font-weight:700;
+    letter-spacing:2px;color:var(--acc);line-height:1;
+  }
+  .mmc-sub{
+    font-family:var(--mono);font-size:7.5px;
+    letter-spacing:.8px;color:rgba(255,74,22,.38);
+    margin-top:2px;
+  }
+  .mmc-bar{
+    height:1.5px;margin-top:5px;
+    background:rgba(255,74,22,.08);position:relative;
+  }
+  .mmc-bar i{
+    position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,var(--acc),var(--ac3));
+  }
+  .mmc-foot{
+    flex-shrink:0;height:16px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 7px;
+    border-top:1px solid rgba(255,74,22,.07);
+    font-family:var(--mono);font-size:7px;
+    letter-spacing:1px;color:rgba(255,74,22,.18);
+  }
+  .mmc-arr{color:rgba(255,74,22,.32);font-size:9px;}
+
+  /* 기존 p 태그들 숨김 */
+  #mob-main>p{display:none;}
+  .mm-tail{display:none!important;}
 
   #mob-nav-row-placeholder{display:none;}
   .mob-nav-btn-x{display:none;}
@@ -2659,11 +2752,142 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
 
 <!-- 모바일 메인 텍스트 (shell 바깥) -->
 <div id="mob-main">
-  <p class="mm-lead">세계를 측정하려면 세계 바깥에 서야 한다. 그 자리는 없다.</p>
-  <p>이 작업은 그 불가능한 전제에서 출발한다. 타인의 사진에서 반복되는 시각적 조건을 추출해 지시문으로 변환하고, 그 언어를 들고 직접 촬영에 나섰다. 지시문은 미적 판단이 아니라 구조적 조건을 명령한다. 피사체의 배치, 배경과의 관계, 공간이 작동하는 방식. 나는 그 언어가 현실에 존재하는 장면을 찾아다녔고, 조건이 온전히 작동한 사진을 가려냈다. 이 선택이 축적되어 문법이 된다.</p>
-  <p>SET는 타인의 사진에서 추출한 지시문으로, SET:Inclusion은 나 자신의 과거 사진에서 추출한 지시문으로 같은 과정을 반복한다. 출처는 반대 방향이지만 두 작업은 어느 지점에서 교집합을 이룬다. 그 교집합이 이 작업이 추적하는 것이다. 취향도 개인도 아닌, 시선을 작동시키는 보이지 않는 구조.</p>
-  <p>사진은 결과물이 아니다. 촬영하고 선택하고 기록하는 과정 전체가 온라인에 공개되며, 관객은 MEASURE를 통해 지시문의 언어를 직접 입력할 수 있다. 코드를 검색하면 날짜를 가로질러 그 조건을 충족한 사진들이 모인다. 교집합은 미리 완성되어 있지 않다. 관객의 검색이 교집합을 만들고, 그 기록은 작업 안에 누적된다. 측정하는 자도 측정된다. 탈출은 없었다. 지시문을 어기는 순간이 지시문에 가장 충실했고, 저항은 수행이 되었다. 나는 그 역설을 끝내지 않기로 했다.</p>
-  <p class="mm-tail">이 작업의 이름은 유예다.</p>
+
+  <div class="mm-hero">
+    <div class="mm-hero-tag">PROJECT SET // STATEMENT</div>
+    <p class="mm-lead">세계를 측정하려면<br>세계 바깥에 서야 한다.<br>그 자리는 없다.</p>
+    <div class="mm-hero-sub">ONGOING · 2024 —</div>
+  </div>
+
+  <div class="mm-grid">
+
+    <a class="mm-card" href="https://note-a.github.io/gallery1.html" onclick="crtNav('https://note-a.github.io/gallery1.html');return false;">
+      <div class="mmc-head"><span class="mmc-no">01</span><span>VIEW</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 42" fill="none">
+        <rect x="1" y="1" width="22" height="14" stroke="rgba(255,74,22,.6)" stroke-width=".5" fill="rgba(255,74,22,.09)"/>
+        <rect x="27" y="1" width="22" height="14" stroke="rgba(255,74,22,.3)" stroke-width=".5" fill="rgba(255,74,22,.04)"/>
+        <rect x="53" y="1" width="22" height="14" stroke="rgba(255,74,22,.5)" stroke-width=".5" fill="rgba(255,74,22,.07)"/>
+        <rect x="1" y="19" width="22" height="14" stroke="rgba(255,74,22,.25)" stroke-width=".5" fill="rgba(255,74,22,.03)"/>
+        <rect x="27" y="19" width="22" height="14" stroke="rgba(255,74,22,.55)" stroke-width=".5" fill="rgba(255,74,22,.08)"/>
+        <rect x="53" y="19" width="22" height="14" stroke="rgba(255,74,22,.35)" stroke-width=".5" fill="rgba(255,74,22,.05)"/>
+        <line x1="1" y1="8" x2="23" y2="8" stroke="rgba(255,74,22,.25)" stroke-width=".3"/>
+        <line x1="12" y1="1" x2="12" y2="15" stroke="rgba(255,74,22,.25)" stroke-width=".3"/>
+        <rect x="1" y="36" width="74" height=".8" fill="rgba(255,74,22,.1)"/>
+        <rect x="1" y="39" width="44" height=".8" fill="rgba(255,74,22,.07)"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">SET</div>
+        <div class="mmc-sub">갤러리</div>
+        <div class="mmc-bar"><i style="width:82%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>GALLERY</span><span class="mmc-arr">→</span></div>
+    </a>
+
+    <a class="mm-card" href="https://note-a.github.io/gallery2.html" target="_blank" onclick="return true;">
+      <div class="mmc-head"><span class="mmc-no">02</span><span>EXT</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 42" fill="none">
+        <circle cx="28" cy="21" r="16" stroke="rgba(255,74,22,.5)" stroke-width=".6"/>
+        <circle cx="48" cy="21" r="16" stroke="rgba(255,74,22,.5)" stroke-width=".6"/>
+        <path d="M38,6.5 C44,10.5 47.5,15.8 47.5,21 C47.5,26.2 44,31.5 38,35.5 C32,31.5 28.5,26.2 28.5,21 C28.5,15.8 32,10.5 38,6.5Z" fill="rgba(255,74,22,.1)" stroke="rgba(255,74,22,.25)" stroke-width=".4"/>
+        <circle cx="28" cy="21" r="1.8" fill="rgba(255,74,22,.45)"/>
+        <circle cx="48" cy="21" r="1.8" fill="rgba(255,74,22,.45)"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">INCL</div>
+        <div class="mmc-sub">SET:inclusion</div>
+        <div class="mmc-bar"><i style="width:55%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>집합 접속</span><span class="mmc-arr">↗</span></div>
+    </a>
+
+    <a class="mm-card" href="https://note-a.github.io/page-log.html" onclick="crtNav('https://note-a.github.io/page-log.html');return false;">
+      <div class="mmc-head"><span class="mmc-no">03</span><span>LOG</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 38" fill="none">
+        <line x1="0" y1="30" x2="76" y2="30" stroke="rgba(255,74,22,.12)" stroke-width=".4"/>
+        <polyline points="0,22 10,14 20,26 30,8 40,19 50,12 60,24 70,10 76,17" stroke="rgba(255,74,22,.7)" stroke-width=".9"/>
+        <circle cx="30" cy="8" r="2" fill="rgba(255,74,22,.85)"/>
+        <line x1="19" y1="28" x2="19" y2="32" stroke="rgba(255,74,22,.28)" stroke-width=".4"/>
+        <line x1="38" y1="28" x2="38" y2="32" stroke="rgba(255,74,22,.28)" stroke-width=".4"/>
+        <line x1="57" y1="28" x2="57" y2="32" stroke="rgba(255,74,22,.28)" stroke-width=".4"/>
+        <line x1="76" y1="28" x2="76" y2="32" stroke="rgba(255,74,22,.28)" stroke-width=".4"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">LOG</div>
+        <div class="mmc-sub">작업 기록</div>
+        <div class="mmc-bar"><i style="width:64%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>STREAM</span><span class="mmc-arr">→</span></div>
+    </a>
+
+    <a class="mm-card" href="https://note-a.github.io/reference.html" onclick="crtNav('https://note-a.github.io/reference.html');return false;">
+      <div class="mmc-head"><span class="mmc-no">04</span><span>REF</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 40" fill="none">
+        <rect x="8" y="2" width="60" height="36" stroke="rgba(255,74,22,.18)" stroke-width=".4" fill="rgba(255,74,22,.02)"/>
+        <rect x="4" y="5" width="60" height="36" stroke="rgba(255,74,22,.13)" stroke-width=".4" fill="rgba(255,74,22,.015)"/>
+        <rect x="0" y="8" width="60" height="36" stroke="rgba(255,74,22,.38)" stroke-width=".5" fill="rgba(255,74,22,.04)"/>
+        <line x1="7" y1="18" x2="52" y2="18" stroke="rgba(255,74,22,.5)" stroke-width=".7"/>
+        <line x1="7" y1="25" x2="40" y2="25" stroke="rgba(255,74,22,.28)" stroke-width=".7"/>
+        <line x1="7" y1="32" x2="46" y2="32" stroke="rgba(255,74,22,.38)" stroke-width=".7"/>
+        <line x1="7" y1="39" x2="32" y2="39" stroke="rgba(255,74,22,.18)" stroke-width=".7"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">REF</div>
+        <div class="mmc-sub">문헌 · 참조</div>
+        <div class="mmc-bar"><i style="width:47%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>INDEX</span><span class="mmc-arr">→</span></div>
+    </a>
+
+    <a class="mm-card" href="https://note-a.github.io/measure.html" onclick="crtNav('https://note-a.github.io/measure.html');return false;">
+      <div class="mmc-head"><span class="mmc-no">05</span><span>QRY</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 34" fill="none">
+        <line x1="4" y1="17" x2="72" y2="17" stroke="rgba(255,74,22,.55)" stroke-width=".8"/>
+        <polyline points="9,11 4,17 9,23" stroke="rgba(255,74,22,.55)" stroke-width=".8"/>
+        <polyline points="67,11 72,17 67,23" stroke="rgba(255,74,22,.55)" stroke-width=".8"/>
+        <line x1="15" y1="12" x2="15" y2="22" stroke="rgba(255,74,22,.4)" stroke-width=".6"/>
+        <line x1="26" y1="14" x2="26" y2="20" stroke="rgba(255,74,22,.28)" stroke-width=".5"/>
+        <line x1="38" y1="10" x2="38" y2="24" stroke="rgba(255,74,22,.5)" stroke-width=".7"/>
+        <line x1="50" y1="14" x2="50" y2="20" stroke="rgba(255,74,22,.28)" stroke-width=".5"/>
+        <line x1="61" y1="12" x2="61" y2="22" stroke="rgba(255,74,22,.4)" stroke-width=".6"/>
+        <circle cx="38" cy="17" r="2.5" fill="rgba(255,74,22,.75)"/>
+        <line x1="38" y1="3" x2="38" y2="9" stroke="rgba(255,74,22,.28)" stroke-width=".5" stroke-dasharray="1,2"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">MSR</div>
+        <div class="mmc-sub">지시문 검색</div>
+        <div class="mmc-bar"><i style="width:71%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>MEASURE</span><span class="mmc-arr">→</span></div>
+    </a>
+
+    <a class="mm-card" href="#" onclick="openStmt();return false;">
+      <div class="mmc-head"><span class="mmc-no">06</span><span>SYS</span><span class="mmc-dot"></span></div>
+      <div class="mmc-vis"><svg viewBox="0 0 76 46" fill="none">
+        <circle cx="38" cy="23" r="19" stroke="rgba(255,74,22,.16)" stroke-width=".5"/>
+        <circle cx="38" cy="23" r="12" stroke="rgba(255,74,22,.26)" stroke-width=".5"/>
+        <circle cx="38" cy="23" r="6" stroke="rgba(255,74,22,.42)" stroke-width=".6"/>
+        <circle cx="38" cy="23" r="2" fill="rgba(255,74,22,.85)"/>
+        <line x1="38" y1="4" x2="38" y2="42" stroke="rgba(255,74,22,.09)" stroke-width=".4"/>
+        <line x1="19" y1="23" x2="57" y2="23" stroke="rgba(255,74,22,.09)" stroke-width=".4"/>
+        <circle cx="38" cy="11" r="1.4" fill="rgba(255,74,22,.5)"/>
+        <circle cx="50" cy="23" r="1.4" fill="rgba(255,74,22,.35)"/>
+      </svg></div>
+      <div class="mmc-info">
+        <div class="mmc-title">ABOUT</div>
+        <div class="mmc-sub">작업 소개</div>
+        <div class="mmc-bar"><i style="width:38%"></i></div>
+      </div>
+      <div class="mmc-foot"><span>INFO</span><span class="mmc-arr">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- 기존 텍스트 단락 (숨김 처리) -->
+  <p style="display:none">이 작업은 그 불가능한 전제에서 출발한다. 타인의 사진에서 반복되는 시각적 조건을 추출해 지시문으로 변환하고, 그 언어를 들고 직접 촬영에 나섰다. 지시문은 미적 판단이 아니라 구조적 조건을 명령한다. 피사체의 배치, 배경과의 관계, 공간이 작동하는 방식. 나는 그 언어가 현실에 존재하는 장면을 찾아다녔고, 조건이 온전히 작동한 사진을 가려냈다. 이 선택이 축적되어 문법이 된다.</p>
+  <p style="display:none">SET는 타인의 사진에서 추출한 지시문으로, SET:Inclusion은 나 자신의 과거 사진에서 추출한 지시문으로 같은 과정을 반복한다. 출처는 반대 방향이지만 두 작업은 어느 지점에서 교집합을 이룬다. 그 교집합이 이 작업이 추적하는 것이다. 취향도 개인도 아닌, 시선을 작동시키는 보이지 않는 구조.</p>
+  <p style="display:none">사진은 결과물이 아니다. 촬영하고 선택하고 기록하는 과정 전체가 온라인에 공개되며, 관객은 MEASURE를 통해 지시문의 언어를 직접 입력할 수 있다. 코드를 검색하면 날짜를 가로질러 그 조건을 충족한 사진들이 모인다. 교집합은 미리 완성되어 있지 않다. 관객의 검색이 교집합을 만들고, 그 기록은 작업 안에 누적된다. 측정하는 자도 측정된다. 탈출은 없었다. 지시문을 어기는 순간이 지시문에 가장 충실했고, 저항은 수행이 되었다. 나는 그 역설을 끝내지 않기로 했다.</p>
+  <p class="mm-tail" style="display:none">이 작업의 이름은 유예다.</p>
+
 </div>
 
 <!-- STATEMENT MODAL -->
