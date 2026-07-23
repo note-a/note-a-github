@@ -1534,21 +1534,33 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
 <body>
 <div id="crt-off"></div>
 <script>
-// ── mobile scale-to-fit ──
+// ── mobile scale-to-fit (portrait: rotate 90deg) ──
 (function(){
-  var DESIGN_W=1140, DESIGN_H=757;
+  var DW=1140,DH=757;
   function fit(){
-    if(window.innerWidth>=DESIGN_W)return;
-    var s=Math.min(window.innerWidth/DESIGN_W, window.innerHeight/DESIGN_H);
     var sh=document.getElementById('shell');
     if(!sh)return;
-    sh.style.transformOrigin='top left';
-    sh.style.transform='scale('+s+')';
-    sh.style.width=DESIGN_W+'px';
-    sh.style.height=DESIGN_H+'px';
-    document.body.style.width=Math.round(DESIGN_W*s)+'px';
-    document.body.style.height=Math.round(DESIGN_H*s)+'px';
+    var vw=window.innerWidth,vh=window.innerHeight;
+    if(vw>=DW&&vh>=DH){
+      sh.style.cssText='position:fixed;inset:0;';return;}
+    sh.style.position='fixed';
+    sh.style.top='0';sh.style.left='0';
+    sh.style.right='auto';sh.style.bottom='auto';
+    sh.style.width=DW+'px';sh.style.height=DH+'px';
+    sh.style.transformOrigin='0 0';
     document.body.style.overflow='hidden';
+    if(vh>vw){
+      // portrait → rotate 90deg so landscape dashboard fits
+      var s=Math.min(vw/DH,vh/DW);
+      var tx=(vw-DH*s)/2;
+      var ty=(vh+DW*s)/2;
+      sh.style.transform='translate('+tx+'px,'+ty+'px) rotate(90deg) scale('+s+')';
+    } else {
+      // landscape → scale to fit
+      var s=Math.min(vw/DW,vh/DH);
+      var tx=(vw-DW*s)/2;
+      sh.style.transform='translate('+tx+'px,0) scale('+s+')';
+    }
   }
   fit();
   window.addEventListener('resize',fit);
