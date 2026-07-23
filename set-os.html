@@ -1482,12 +1482,44 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   /* ── shell ── */
   #shell{
     position:static;display:block!important;
-    height:auto;padding:64px 0 0;
+    height:auto;padding:52px 0 0;
   }
 
   /* 모든 기존 패널 숨김 */
-  .lr-rail,.rr-rail,#wrap,#gbar,#bot-row,#botbar,
+  .lr-rail,.rr-rail,#gbar,#bot-row,#botbar,
   #mob-nav-row{display:none!important;}
+
+  #wrap{
+    position:relative!important;
+    inset:auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    height:56vw!important;
+    border:none!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+    background:#000!important;
+  }
+  .wc-bl,.wc-br{display:none!important;}
+  #top-row{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    flex:1!important;
+    min-height:0!important;
+    gap:0!important;
+    padding:0!important;
+  }
+  #top-row > .pnl ~ .pnl{display:none!important;}
+  #top-row > .pnl:first-child{
+    width:100%!important;
+    flex:1!important;
+    min-height:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+  }
 
   /* ── mob-main: 텍스트 메인 ── */
   #mob-main{
