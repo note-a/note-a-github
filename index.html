@@ -414,38 +414,32 @@ function go(u){
       const v=Math.random()*255|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=Math.random()*255|0;}
     gx.putImageData(id,0,0);}
 
-  let frame=0;const TOTAL=26;
+  let frame=0;const TOTAL=20;
   function tick(){
     const p=frame/TOTAL;
     ctx.clearRect(0,0,w,h);
 
     // darken progressively
-    ctx.fillStyle=`rgba(0,0,0,${Math.min(1,p*1.6)})`;
+    ctx.fillStyle=`rgba(0,0,0,${Math.min(1,p*1.8)})`;
     ctx.fillRect(0,0,w,h);
 
-    // grain burst
+    // subtle grain
     grain();
-    ctx.globalAlpha=0.5+Math.random()*0.4;
+    ctx.globalAlpha=0.25+Math.random()*0.2;
     ctx.drawImage(gc,0,0,w,h);
     ctx.globalAlpha=1;
 
-    // RGB horizontal strips
-    const n=(4+Math.random()*8)|0;
-    for(let i=0;i<n;i++){
-      const sy=Math.random()*h;
-      const sh=1+Math.random()*(15+p*50);
-      const dx=(Math.random()-.5)*(50+p*120);
-      ctx.fillStyle=`rgba(255,20,20,${0.2+Math.random()*0.45})`;
-      ctx.fillRect(dx-4,sy,w,sh);
-      ctx.fillStyle=`rgba(20,20,255,${0.2+Math.random()*0.45})`;
-      ctx.fillRect(dx+4,sy,w,sh);
-      ctx.fillStyle=`rgba(255,255,255,${0.06+Math.random()*0.12})`;
-      ctx.fillRect(dx,sy,w,sh);}
-
-    // white flash at very start
-    if(frame<4){
-      ctx.fillStyle=`rgba(255,255,255,${(4-frame)/4*0.7})`;
-      ctx.fillRect(0,0,w,h);}
+    // minimal RGB strips — only mid-animation
+    if(p>0.15&&p<0.75){
+      const n=(2+Math.random()*3)|0;
+      for(let i=0;i<n;i++){
+        const sy=Math.random()*h;
+        const sh=1+Math.random()*(8+p*16);
+        const dx=(Math.random()-.5)*(20+p*40);
+        ctx.fillStyle=`rgba(255,20,20,${0.12+Math.random()*0.18})`;
+        ctx.fillRect(dx-3,sy,w,sh);
+        ctx.fillStyle=`rgba(20,20,255,${0.12+Math.random()*0.18})`;
+        ctx.fillRect(dx+3,sy,w,sh);}}
 
     frame++;
     if(frame<TOTAL){requestAnimationFrame(tick);}
