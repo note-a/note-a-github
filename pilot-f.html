@@ -996,11 +996,11 @@ setInterval(() => {
   const clicks = [];    // {x,y,age,code,flash}
   let arcBoost = 1.0;  // 클릭 시 아크 밝기 일시 부스트
 
-  // ── 드래그 상태 ──
-  let dragX = null, dragY = null;   // 현재 그리기 위치 (부드러운 보간)
-  let targetX = null, targetY = null; // 목표 위치
+  // ── 구체 회전 드래그 ──
+  let manualRot = 0;   // 수동 회전 누적값
   let isDragging = false;
-  let hasDragged = false;           // 클릭 vs 드래그 구분
+  let lastDragX  = null;
+  let hasDragged = false;
 
   function resize() {
     const wrap = document.getElementById('center-canvas-wrap');
@@ -1008,18 +1008,11 @@ setInterval(() => {
     H = cv.height = wrap.offsetHeight * devicePixelRatio;
     cv.style.width  = wrap.offsetWidth  + 'px';
     cv.style.height = wrap.offsetHeight + 'px';
-    dragX = targetX = W / 2;
-    dragY = targetY = H / 2;
   }
 
   function drawViz() {
     ctx.clearRect(0, 0, W, H);
-    // 스프링 보간 — 원이 목표 위치로 부드럽게 이동
-    if (targetX === null) { targetX = W / 2; dragX = W / 2; }
-    if (targetY === null) { targetY = H / 2; dragY = H / 2; }
-    dragX += (targetX - dragX) * 0.10;
-    dragY += (targetY - dragY) * 0.10;
-    const cx = dragX, cy = dragY;
+    const cx = W / 2, cy = H / 2;
     const R   = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
     const dpr = devicePixelRatio;
 
@@ -1253,7 +1246,7 @@ setInterval(() => {
     }
     const gpts=drawViz._gpts, ghN=drawViz._ghN, GGRID=drawViz._ggrid, gpulses=drawViz._gpulses;
     const gElapsed=performance.now()-drawViz._gStart;
-    const gRot=t*0.22, GTILT=0.30;
+    const gRot=t*0.22 + manualRot, GTILT=0.30;
     const bright=1.0;
 
     function gproj(p){
@@ -1536,35 +1529,23 @@ setInterval(() => {
 
   window.addEventListener('resize', resize);
 
-  // ── 드래그 / 클릭 이벤트 ──
+  // ── 구체 회전 드래그 / 클릭 ──
   cv.style.cursor = 'grab';
 
-  function getPos(e) {
-    const rect = cv.getBoundingClientRect();
-    const src  = e.touches ? e.touches[0] : e;
-    return {
-      x: (src.clientX - rect.left) * devicePixelRatio,
-      y: (src.clientY - rect.top)  * devicePixelRatio
-    };
-  }
-
-  function clampTarget(x, y) {
-    const R0 = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
-    const pad = R0 * 0.55;
-    targetX = Math.max(pad, Math.min(W - pad, x));
-    targetY = Math.max(pad, Math.min(H - pad, y));
-  }
+  function clientX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
 
   cv.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
     isDragging = true; hasDragged = false;
+    lastDragX = clientX(e);
     cv.style.cursor = 'grabbing';
-    const p = getPos(e); clampTarget(p.x, p.y);
   });
   cv.addEventListener('mousemove', e => {
     if (!isDragging) return;
+    const dx = clientX(e) - lastDragX;
+    manualRot += dx * 0.008;
+    lastDragX = clientX(e);
     hasDragged = true;
-    const p = getPos(e); clampTarget(p.x, p.y);
   });
   cv.addEventListener('mouseup',    () => { isDragging = false; cv.style.cursor = 'grab'; });
   cv.addEventListener('mouseleave', () => { isDragging = false; cv.style.cursor = 'grab'; });
@@ -1572,26 +1553,31 @@ setInterval(() => {
   cv.addEventListener('touchstart', e => {
     e.preventDefault();
     isDragging = true; hasDragged = false;
-    const p = getPos(e); clampTarget(p.x, p.y);
+    lastDragX = clientX(e);
   }, { passive: false });
   cv.addEventListener('touchmove', e => {
     e.preventDefault();
+    if (!isDragging) return;
+    const dx = clientX(e) - lastDragX;
+    manualRot += dx * 0.008;
+    lastDragX = clientX(e);
     hasDragged = true;
-    const p = getPos(e); clampTarget(p.x, p.y);
   }, { passive: false });
   cv.addEventListener('touchend', e => {
     e.preventDefault();
     isDragging = false;
   }, { passive: false });
 
-  // 클릭 — 드래그 중이 아닐 때만 SET 코드 표시
+  // 클릭 — 드래그 아닐 때만 SET 코드 표시
   cv.addEventListener('click', e => {
     if (hasDragged) return;
-    const p  = getPos(e);
+    const rect = cv.getBoundingClientRect();
+    const mx = (e.clientX - rect.left) * devicePixelRatio;
+    const my = (e.clientY - rect.top)  * devicePixelRatio;
     const R0 = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
-    if (Math.hypot(p.x - dragX, p.y - dragY) > R0 * 1.05) return;
+    if (Math.hypot(mx - W/2, my - H/2) > R0 * 1.05) return;
     const code = SET83[Math.floor(Math.random() * SET83.length)];
-    clicks.push({ x: p.x, y: p.y, age: 0, code });
+    clicks.push({ x: mx, y: my, age: 0, code });
     arcBoost = 2.2;
     const lb = document.getElementById('vlabel-bottom');
     if (lb) {
