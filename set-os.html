@@ -4441,13 +4441,13 @@ document.addEventListener('keydown',function(e){
     for(let y=20;y<=180;y+=20)grid+='<line x1="14" y1="'+y+'" x2="206" y2="'+y+'" stroke="rgba(255,74,22,.05)" stroke-width="0.5"/>';
     let axt='';for(let x=20;x<=200;x+=40)axt+='<text x="'+(x-3)+'" y="194" fill="rgba(255,74,22,.35)" font-size="7" font-family="Courier Prime,Galmuri11,Share Tech Mono">'+((x-100)/2)+'</text>';
     svg.innerHTML=`<defs>
-      <radialGradient id="lrig" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,122,46,.75)"/><stop offset="100%" stop-color="rgba(255,122,46,0)"/></radialGradient>
+      <radialGradient id="lrig" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="rgba(255,140,46,1)"/><stop offset="60%" stop-color="rgba(255,100,20,.5)"/><stop offset="100%" stop-color="rgba(255,80,10,0)"/></radialGradient>
       <pattern id="lrhatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="rgba(255,122,46,.25)" stroke-width="0.5"/></pattern></defs>
       <g>${grid}</g><g>${axt}</g>
       <line x1="14" y1="100" x2="206" y2="100" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
       <line x1="103" y1="14" x2="103" y2="186" stroke="rgba(255,74,22,.18)" stroke-width="0.6"/>
       <circle id="lrhA" cx="84" cy="100" r="50" fill="url(#lrhatch)" opacity=".5"/>
-      <ellipse cx="103" cy="100" rx="22" ry="36" fill="url(#lrig)"/>
+      <ellipse cx="103" cy="100" rx="45" ry="55" fill="url(#lrig)"/>
       <circle id="lrcA" cx="84" cy="100" r="50" fill="none" stroke="#ff7a2e" stroke-width="1.1" stroke-dasharray="3 4"/>
       <circle id="lrcB" cx="122" cy="100" r="50" fill="none" stroke="#b07bff" stroke-width="1.1" stroke-dasharray="3 4"/>
       <circle cx="84" cy="100" r="1.6" fill="#ff7a2e"/><circle cx="122" cy="100" r="1.6" fill="#b07bff"/>
