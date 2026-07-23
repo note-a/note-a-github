@@ -46,7 +46,6 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;}
 #net-cv{position:absolute;inset:0;z-index:0;pointer-events:none;}
 #rain-cv{position:absolute;inset:0;z-index:1;pointer-events:none;}
-#scan-cv{position:absolute;inset:0;z-index:3;pointer-events:none;}
 .hero .herofx{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(ellipse 68% 88% at 50% 50%,rgba(0,0,0,.42),rgba(0,0,0,.08) 72%,transparent 100%);}
 .hlab{position:absolute;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;color:var(--g2);z-index:4;}
@@ -142,7 +141,6 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
     <canvas id="rain-cv"></canvas>
     <pre class="banner" id="pixbanner"></pre>
     <canvas id="scope"></canvas>
-    <canvas id="scan-cv"></canvas>
     <div class="herofx"></div>
     <div class="htxt">
       <p class="hi">Let me start again. You're walking somewhere — it doesn't matter where, it never matters where — and something catches. Not the thing itself. Something about the arrangement. The way it sits in relation to something else. The way the light happens to be falling at that particular moment on that particular surface in that particular place that you happen to be passing through, which you will never pass through again at exactly that time, which means the thing you're seeing is already disappearing even as you see it, which means the only question is whether you're going to do something about it or not.</p>
@@ -192,35 +190,6 @@ function draw(){
 }
 draw();
 
-// ── scan sweep canvas ──
-const scanCv=document.getElementById('scan-cv'),scanCtx=scanCv.getContext('2d');
-let scanPos=-0.1;
-function drawScan(){
-  scanCv.width=scanCv.clientWidth*devicePixelRatio;
-  scanCv.height=scanCv.clientHeight*devicePixelRatio;
-  const w=scanCv.width,h=scanCv.height;
-  scanCtx.clearRect(0,0,w,h);
-  const cy=scanPos*h;
-  const g=scanCtx.createLinearGradient(0,cy-60,0,cy+60);
-  g.addColorStop(0,'rgba(255,255,255,0)');
-  g.addColorStop(0.3,'rgba(255,255,255,0.055)');
-  g.addColorStop(0.5,'rgba(255,255,255,0.17)');
-  g.addColorStop(0.7,'rgba(255,255,255,0.055)');
-  g.addColorStop(1,'rgba(255,255,255,0)');
-  const sx=w*0.25,sw=w*0.5;
-  scanCtx.fillStyle=g;
-  scanCtx.fillRect(sx,0,sw,h);
-  // bright line
-  scanCtx.beginPath();
-  scanCtx.moveTo(sx,cy);scanCtx.lineTo(sx+sw,cy);
-  scanCtx.strokeStyle='rgba(255,255,255,0.28)';
-  scanCtx.lineWidth=1;
-  scanCtx.stroke();
-  scanPos+=0.0026;
-  if(scanPos>1.12)scanPos=-0.12;
-  requestAnimationFrame(drawScan);
-}
-drawScan();
 
 // particle network
 const netCv=document.getElementById('net-cv'),netCtx=netCv.getContext('2d');
