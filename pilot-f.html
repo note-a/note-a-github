@@ -563,7 +563,7 @@ body {
     flex-direction: column !important;
     width: 100% !important;
     height: auto !important;
-    padding: 4px 6px 32px;
+    padding: 4px 0 32px;
     gap: 6px;
   }
 
@@ -607,10 +607,11 @@ body {
     grid-row: unset !important;
     grid-column: unset !important;
     width: 100% !important;
-    height: min(420px, 56vw) !important;
-    height: 380px !important;
+    height: 100vw !important;
     flex-shrink: 0 !important;
   }
+  /* 캔버스 공간 확보 — 타이틀 바 숨김 */
+  #center-top-bar { display: none !important; }
 
   /* ATTR.TEST */
   #attr83-panel {
@@ -1006,7 +1007,7 @@ setInterval(() => {
   function drawViz() {
     ctx.clearRect(0, 0, W, H);
     const cx = W / 2, cy = H / 2;
-    const R   = Math.min(W, H) * 0.44;
+    const R   = Math.min(W, H) * (window.innerWidth <= 768 ? 0.46 : 0.44);
     const dpr = devicePixelRatio;
 
     // ── data / fill ──
