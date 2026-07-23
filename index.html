@@ -44,7 +44,8 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 .hero{position:relative;flex:1;min-height:360px;border-bottom:none;overflow:hidden;
   background:radial-gradient(ellipse 90% 120% at 50% 48%,rgba(255,255,255,.06),transparent 72%);}
 .hero canvas{position:absolute;inset:0;width:100%;height:100%;}
-#rain-cv{position:absolute;inset:0;z-index:0;pointer-events:none;}
+#net-cv{position:absolute;inset:0;z-index:0;pointer-events:none;}
+#rain-cv{position:absolute;inset:0;z-index:1;pointer-events:none;}
 #scan-cv{position:absolute;inset:0;z-index:3;pointer-events:none;}
 .hero .herofx{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(ellipse 68% 88% at 50% 50%,rgba(0,0,0,.42),rgba(0,0,0,.08) 72%,transparent 100%);}
@@ -137,6 +138,7 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 <div id="bg"></div><div id="bgrid"></div><div id="vig"></div><div class="crt"></div>
 <div id="wrap">
   <div class="hero">
+    <canvas id="net-cv"></canvas>
     <canvas id="rain-cv"></canvas>
     <pre class="banner" id="pixbanner"></pre>
     <canvas id="scope"></canvas>
@@ -205,11 +207,12 @@ function drawScan(){
   g.addColorStop(0.5,'rgba(255,255,255,0.17)');
   g.addColorStop(0.7,'rgba(255,255,255,0.055)');
   g.addColorStop(1,'rgba(255,255,255,0)');
+  const sx=w*0.25,sw=w*0.5;
   scanCtx.fillStyle=g;
-  scanCtx.fillRect(0,0,w,h);
+  scanCtx.fillRect(sx,0,sw,h);
   // bright line
   scanCtx.beginPath();
-  scanCtx.moveTo(0,cy);scanCtx.lineTo(w,cy);
+  scanCtx.moveTo(sx,cy);scanCtx.lineTo(sx+sw,cy);
   scanCtx.strokeStyle='rgba(255,255,255,0.28)';
   scanCtx.lineWidth=1;
   scanCtx.stroke();
@@ -218,6 +221,41 @@ function drawScan(){
   requestAnimationFrame(drawScan);
 }
 drawScan();
+
+// particle network
+const netCv=document.getElementById('net-cv'),netCtx=netCv.getContext('2d');
+let pts=[];
+function initNet(){
+  netCv.width=netCv.clientWidth;netCv.height=netCv.clientHeight;
+  const n=55;
+  pts=Array.from({length:n},()=>({
+    x:Math.random()*netCv.width,y:Math.random()*netCv.height,
+    vx:(Math.random()-.5)*0.18,vy:(Math.random()-.5)*0.18}));}
+function drawNet(){
+  netCv.width=netCv.clientWidth;netCv.height=netCv.clientHeight;
+  const w=netCv.width,h=netCv.height;
+  netCtx.clearRect(0,0,w,h);
+  for(const p of pts){
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=w;if(p.x>w)p.x=0;
+    if(p.y<0)p.y=h;if(p.y>h)p.y=0;}
+  const DIST=160;
+  for(let i=0;i<pts.length;i++){
+    for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<DIST){
+        const a=(1-d/DIST)*0.12;
+        netCtx.strokeStyle=`rgba(255,255,255,${a})`;
+        netCtx.lineWidth=.7;
+        netCtx.beginPath();
+        netCtx.moveTo(pts[i].x,pts[i].y);netCtx.lineTo(pts[j].x,pts[j].y);
+        netCtx.stroke();}}}
+  for(const p of pts){
+    netCtx.fillStyle='rgba(255,255,255,0.22)';
+    netCtx.beginPath();netCtx.arc(p.x,p.y,1.2,0,Math.PI*2);netCtx.fill();}
+  requestAnimationFrame(drawNet);}
+initNet();drawNet();
 
 // character rain
 const rainCv=document.getElementById('rain-cv'),rainCtx=rainCv.getContext('2d');
