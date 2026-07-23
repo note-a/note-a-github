@@ -1481,7 +1481,9 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 
   /* ── shell ── */
   #shell{
-    position:static;display:block!important;
+    position:static;display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
     height:auto;padding:52px 0 0;
   }
 
@@ -1495,8 +1497,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
     display:flex!important;
     flex-direction:column!important;
     width:80%!important;
-    margin-left:auto!important;
-    margin-right:auto!important;
+    margin-top:16px!important;
     height:44vw!important;
     border:none!important;
     box-shadow:none!important;
@@ -1527,6 +1528,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   /* ── mob-main: 텍스트 메인 ── */
   #mob-main{
     display:block!important;
+    width:100%!important;
     padding:32px 24px 48px;
     min-height:calc(100vh - 44px);
     background:#000;
