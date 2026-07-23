@@ -1270,7 +1270,7 @@ setInterval(() => {
       const GTILT=0.30;
       const ry2=py_p*Math.cos(GTILT)-rz*Math.sin(GTILT),rz2=py_p*Math.sin(GTILT)+rz*Math.cos(GTILT);
       const fov=2.5,sc=fov/(fov+rz2);
-      return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:(1-rz2)/2};
+      return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:0.25+0.75*(1-rz2)/2};
     }
 
     // 격자선 — 세그먼트별 depth 기반 알파 (입체감)
