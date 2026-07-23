@@ -998,7 +998,7 @@ setInterval(() => {
 
   // ── 구체 회전 드래그 ──
   let manualRot  = 0;
-  let manualTilt = 0.30;   // 초기 틸트 (원본 GTILT)
+  let manualPitch = 0;     // 수직 드래그 → 구체 X축 회전
   let velRot  = 0;
   let velTilt = 0;
   let isDragging = false;
@@ -1254,16 +1254,21 @@ setInterval(() => {
       velRot  *= 0.90;
       velTilt *= 0.90;
       manualRot  += velRot;
-      manualTilt += velTilt;
+      manualPitch += velTilt;
     }
-    manualTilt = Math.max(-0.75, Math.min(0.75, manualTilt));
-    const gRot=t*0.22 + manualRot, GTILT=manualTilt;
+    const gRot=t*0.22 + manualRot;
     const bright=1.0;
 
     function gproj(p){
+      // 1. X축 회전 (상하 드래그) — 구체 자체 회전
+      const cp=Math.cos(manualPitch),sp=Math.sin(manualPitch);
+      const py_p=p.y*cp - p.z*sp, pz_p=p.y*sp + p.z*cp;
+      // 2. Y축 회전 (좌우 드래그 + 자동)
       const cy2=Math.cos(gRot),sy2=Math.sin(gRot);
-      const rx=p.x*cy2-p.z*sy2,rz=p.x*sy2+p.z*cy2;
-      const ry2=p.y*Math.cos(GTILT)-rz*Math.sin(GTILT),rz2=p.y*Math.sin(GTILT)+rz*Math.cos(GTILT);
+      const rx=p.x*cy2-pz_p*sy2, rz=p.x*sy2+pz_p*cy2;
+      // 3. 고정 카메라 틸트
+      const GTILT=0.30;
+      const ry2=py_p*Math.cos(GTILT)-rz*Math.sin(GTILT),rz2=py_p*Math.sin(GTILT)+rz*Math.cos(GTILT);
       const fov=2.5,sc=fov/(fov+rz2);
       return{sx:cx+rx*gR*sc,sy:cy-ry2*gR*sc,z:rz2,depth:(rz2+1)/2};
     }
@@ -1551,10 +1556,10 @@ setInterval(() => {
   function applyDrag(e) {
     const p = cxy(e);
     const dx = p.x - lastDragX, dy = p.y - lastDragY;
-    velRot  = dx * 0.008;
-    velTilt = dy * 0.008;
-    manualRot  += velRot;
-    manualTilt += velTilt;
+    velRot   = dx * 0.008;
+    velTilt  = dy * 0.008;
+    manualRot   += velRot;
+    manualPitch += velTilt;
     lastDragX = p.x; lastDragY = p.y;
     hasDragged = true;
   }
