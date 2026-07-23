@@ -1468,7 +1468,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 .mode-row .mb:nth-of-type(6){color:#ffa824;border-color:rgba(255,210,61,.5);}
 .mode-row .mb .k{opacity:.7;}
 
-#mob-nav-row,#mob-main,#mob-hdr,#mob-overlay,#mob-drawer{display:none;}
+#mob-nav-row,#mob-main,#mob-hdr,#mob-overlay,#mob-drawer,#mob-glow{display:none;}
 
 
 /* ════════════════════════════════════════
@@ -1487,10 +1487,10 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
     30%{transform:translate(8%,-12%) scale(1.05);}
     65%{transform:translate(-7%,10%) scale(.95);}
   }
-  body::before{
-    content:'';position:fixed;inset:0;
-    background:radial-gradient(ellipse 65% 36% at 50% 50%, rgba(255,90,20,.34), transparent 70%);
-    pointer-events:none;z-index:-1;
+  #mob-glow{
+    display:block!important;position:fixed;inset:0;
+    background:radial-gradient(ellipse 65% 36% at 50% 50%, rgba(255,90,20,.38), transparent 70%);
+    pointer-events:none;z-index:1;
     animation:mob-glow-drift 14s ease-in-out infinite;
   }
 
@@ -1516,7 +1516,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
     height:auto!important;
     margin-top:4px!important;
     transform:none!important;
-    z-index:1!important;
+    z-index:2!important;
     padding:0 48px 0 12px!important;
     box-sizing:border-box!important;
   }
@@ -1583,6 +1583,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
     padding:12px 24px 48px;
     min-height:calc(100vh - 44px);
     background:transparent!important;
+    position:relative;z-index:2;
   }
   .mm-lead{
     font-size:11px;line-height:1.9;
@@ -2747,6 +2748,7 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
 
 </div></div><!-- /wrap /shell -->
 
+<div id="mob-glow"></div>
 <!-- 모바일 메인 텍스트 (shell 바깥) -->
 <div id="mob-main">
   <p class="mm-lead">세계를 측정하려면 세계 바깥에 서야 한다. 그 자리는 없다.</p>
