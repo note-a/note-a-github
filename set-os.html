@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=1140, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>HELLO SET WORLD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1470,19 +1470,6 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 
 #mob-nav-row,#mob-main,#mob-hdr,#mob-overlay,#mob-drawer{display:none;}
 
-/* ── portrait mobile: rotate page 90deg ── */
-@media (orientation:portrait) and (max-width:900px){
-  body{
-    transform:rotate(90deg);
-    transform-origin:center center;
-    width:100vh;
-    height:100vw;
-    position:fixed;
-    top:calc((100vh - 100vw) / 2);
-    left:calc((100vw - 100vh) / 2);
-    overflow:hidden;
-  }
-}
 
 /* ════════════════════════════════════════
    모바일: 주요 패널 + 메뉴만
@@ -1547,6 +1534,25 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
 <body>
 <div id="crt-off"></div>
 <script>
+// ── mobile scale-to-fit ──
+(function(){
+  var DESIGN_W=1140, DESIGN_H=757;
+  function fit(){
+    if(window.innerWidth>=DESIGN_W)return;
+    var s=Math.min(window.innerWidth/DESIGN_W, window.innerHeight/DESIGN_H);
+    var sh=document.getElementById('shell');
+    if(!sh)return;
+    sh.style.transformOrigin='top left';
+    sh.style.transform='scale('+s+')';
+    sh.style.width=DESIGN_W+'px';
+    sh.style.height=DESIGN_H+'px';
+    document.body.style.width=Math.round(DESIGN_W*s)+'px';
+    document.body.style.height=Math.round(DESIGN_H*s)+'px';
+    document.body.style.overflow='hidden';
+  }
+  fit();
+  window.addEventListener('resize',fit);
+})();
 // ── 페이지 전환: CRT 전원 OFF→ON ──
 (function(){
   var navigating=false;
