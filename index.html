@@ -21,6 +21,15 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 @keyframes drift{to{transform:translate(54px,54px);}}
 #vig{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 74% 74% at 50% 48%,transparent 26%,rgba(0,0,0,.62) 74%,rgba(0,0,0,.96) 100%);}
 .crt{position:fixed;inset:0;z-index:300;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);}
+/* letterbox */
+.lbox{position:fixed;left:0;right:0;z-index:350;background:#000;height:52px;pointer-events:none;}
+.lbox-t{top:0;}.lbox-b{bottom:0;}
+/* tape line artifact */
+#tape-line{position:fixed;left:0;right:0;z-index:349;pointer-events:none;opacity:0;transition:opacity 60ms;}
+/* chroma overlay */
+#chroma{position:fixed;inset:0;z-index:301;pointer-events:none;opacity:0;
+  background:linear-gradient(135deg,rgba(255,0,60,.04),rgba(0,60,255,.04));
+  mix-blend-mode:screen;}
 
 #wrap{position:relative;z-index:1;width:100%;max-width:100%;height:100vh;max-height:100vh;
   background:#000000;border:none;box-shadow:none;
@@ -135,6 +144,8 @@ body.flood{filter:sepia(1) saturate(3.6) hue-rotate(-22deg) brightness(1.06) con
 </head>
 <body>
 <div id="bg"></div><div id="bgrid"></div><div id="vig"></div><div class="crt"></div>
+<div class="lbox lbox-t"></div><div class="lbox lbox-b"></div>
+<div id="tape-line"></div><div id="chroma"></div>
 <div id="wrap">
   <div class="hero">
     <canvas id="net-cv"></canvas>
@@ -351,6 +362,55 @@ initRain();drawRain();
 })();
 
 function go(u){if(parent!==window)return;location.href=u;}
+
+// ── film grain ──
+(function(){
+  const gc=document.createElement('canvas');
+  gc.style.cssText='position:fixed;inset:0;width:100%;height:100%;z-index:302;pointer-events:none;opacity:0.055;';
+  document.body.appendChild(gc);
+  const gx=gc.getContext('2d');
+  const GW=480,GH=300;gc.width=GW;gc.height=GH;
+  function grain(){
+    const id=gx.createImageData(GW,GH),d=id.data;
+    for(let i=0;i<d.length;i+=4){const v=Math.random()*255|0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255;}
+    gx.putImageData(id,0,0);}
+  grain();setInterval(grain,50);
+})();
+
+// ── tape line artifacts ──
+(function(){
+  const el=document.getElementById('tape-line');
+  function pop(){
+    const y=10+Math.random()*80;
+    const h=1+Math.random()*3|0;
+    const bright=Math.random()>.4;
+    el.style.cssText=`position:fixed;left:0;right:0;z-index:349;pointer-events:none;
+      top:${y}vh;height:${h}px;opacity:${0.2+Math.random()*.5};
+      background:${bright?'rgba(255,255,255,.55)':'rgba(120,180,255,.35)'};`;
+    setTimeout(()=>el.style.opacity='0', 40+Math.random()*90);
+    setTimeout(pop, 600+Math.random()*3800);}
+  setTimeout(pop, 800);
+})();
+
+// ── chromatic flicker ──
+(function(){
+  const ch=document.getElementById('chroma');
+  function flash(){
+    ch.style.opacity=String(0.6+Math.random()*.4);
+    ch.style.background=`linear-gradient(${Math.random()*360}deg,rgba(255,0,60,.06),rgba(0,60,255,.06))`;
+    setTimeout(()=>ch.style.opacity='0', 30+Math.random()*60);
+    setTimeout(flash, 2500+Math.random()*7000);}
+  setTimeout(flash, 1200);
+})();
+
+// ── frame-drop flicker ──
+(function(){
+  function flick(){
+    document.getElementById('wrap').style.opacity=String(0.7+Math.random()*.2);
+    setTimeout(()=>document.getElementById('wrap').style.opacity='1', 40);
+    setTimeout(flick, 5000+Math.random()*15000);}
+  setTimeout(flick, 3000);
+})();
 function showComingSoon(){
   var o=document.getElementById('cs-overlay');
   if(!o)return;
