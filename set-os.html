@@ -1488,27 +1488,32 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
   }
 
   /* 모든 기존 패널 숨김 */
-  .lr-rail,.rr-rail,#gbar,#bot-row,#botbar,
+  .rr-rail,#wrap,#gbar,#bot-row,#botbar,
   #mob-nav-row{display:none!important;}
 
-  #wrap{
+  /* lr-rail: Venn 다이어그램만 표시 */
+  .lr-rail{
     position:relative!important;
     inset:auto!important;
     display:flex!important;
     flex-direction:column!important;
-    width:60%!important;
-    margin-top:80px!important;
-    height:44vw!important;
-    border:none!important;
-    box-shadow:none!important;
-    padding:0!important;
-    margin:0!important;
-    background:#000!important;
-    font-size:9px!important;
+    width:68%!important;
+    height:auto!important;
+    margin-top:56px!important;
+    transform:none!important;
+    z-index:1!important;
   }
-  .wc-bl,.wc-br{display:none!important;}
-  #wrap .ph{display:none!important;}
-  #gva-wrap ~ *{display:none!important;}
+  .lr-rail .lr-dp ~ .lr-dp{display:none!important;}
+  .lr-rail .lr-dp:first-child{
+    flex:none!important;
+    height:auto!important;
+  }
+  .lr-rail .lr-gfx{
+    width:100%!important;
+    aspect-ratio:1/1!important;
+    height:auto!important;
+  }
+  .lr-rail .lr-h{display:none!important;}
   #top-row{
     display:flex!important;
     flex-direction:column!important;
