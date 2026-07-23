@@ -1587,13 +1587,11 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
     background:transparent!important;
     position:relative;z-index:2;
   }
-  .mm-pair{
-    margin:0;
-    font-size:13px;line-height:1.9;
-    color:#b84a0c;letter-spacing:-.01em;
-    word-break:break-word;overflow-wrap:anywhere;
-  }
+  .mm-pair{display:none;}
   .mm-lead,.mm-tail{display:none;}
+  .ll{margin:0 0 2px;}
+  .ll .en{display:block;font-size:13px;line-height:1.75;color:#b84a0c;letter-spacing:-.01em;margin:0;word-break:break-word;overflow-wrap:anywhere;}
+  .ll .kr{display:block;font-size:11px;line-height:1.6;color:rgba(184,74,12,.42);letter-spacing:-.01em;margin:0 0 10px;word-break:break-word;overflow-wrap:anywhere;}
 
   #mob-nav-row-placeholder{display:none;}
   .mob-nav-btn-x{display:none;}
@@ -2739,12 +2737,19 @@ body.crt-entering #shell{animation:crtOn .52s cubic-bezier(.2,.65,.3,1) forwards
 <div id="mob-glow"></div>
 <!-- 모바일 메인 텍스트 (shell 바깥) -->
 <div id="mob-main">
-  <p class="mm-pair">Let me start again.</p>
-  <p class="mm-pair">You're walking somewhere — it doesn't matter where, it never matters where — and something catches.</p>
-  <p class="mm-pair">Not the thing itself. Something about the arrangement.</p>
-  <p class="mm-pair">The way it sits in relation to something else.</p>
-  <p class="mm-pair">The way the light happens to be falling at that particular moment on that particular surface in that particular place that you happen to be passing through, which you will never pass through again at exactly that time,</p>
-  <p class="mm-pair">which means the thing you're seeing is already disappearing even as you see it, which means the only question is whether you're going to do something about it or not.</p>
+  <div class="ll"><span class="en">Let me start again.</span><span class="kr">다시 시작해보자.</span></div>
+  <div class="ll"><span class="en">You're walking somewhere —</span><span class="kr">당신은 어딘가를 걷고 있다 —</span></div>
+  <div class="ll"><span class="en">it doesn't matter where, it never matters where —</span><span class="kr">어디든 상관없다, 어디인지는 결코 상관없다 —</span></div>
+  <div class="ll"><span class="en">and something catches.</span><span class="kr">그리고 무언가가 걸린다.</span></div>
+  <div class="ll"><span class="en">Not the thing itself.</span><span class="kr">사물 자체가 아니다.</span></div>
+  <div class="ll"><span class="en">Something about the arrangement.</span><span class="kr">배치에 관한 무언가.</span></div>
+  <div class="ll"><span class="en">The way it sits in relation to something else.</span><span class="kr">그것이 다른 무언가와의 관계 속에 자리 잡는 방식.</span></div>
+  <div class="ll"><span class="en">The way the light happens to be falling</span><span class="kr">빛이 마침 내리쬐고 있는 방식,</span></div>
+  <div class="ll"><span class="en">at that particular moment on that particular surface</span><span class="kr">그 특정한 순간, 그 특정한 표면 위에</span></div>
+  <div class="ll"><span class="en">in that particular place that you happen to be passing through,</span><span class="kr">당신이 지나가는 그 특정한 장소에,</span></div>
+  <div class="ll"><span class="en">which you will never pass through again at exactly that time,</span><span class="kr">정확히 그 시각에는 다시는 지나가지 못할,</span></div>
+  <div class="ll"><span class="en">which means the thing you're seeing is already disappearing even as you see it,</span><span class="kr">당신이 지금 보고 있는 것이 그것을 보는 순간에도 이미 사라지고 있다는 것을 뜻하며,</span></div>
+  <div class="ll"><span class="en">which means the only question is whether you're going to do something about it or not.</span><span class="kr">유일한 질문은 그것에 대해 무언가를 할 것인지 아닌지뿐이라는 것이다.</span></div>
 </div>
 
 <!-- STATEMENT MODAL -->
