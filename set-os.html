@@ -211,7 +211,7 @@ html,body{width:100%;min-height:100vh;overflow:hidden;background:#080300;font-fa
 .pilot-pnl.collapsed .pl-nav,.pilot-pnl.collapsed .pl-intro,.pilot-pnl.collapsed .pl-view,.pilot-pnl.collapsed .pl-stat{visibility:hidden;}
 .rr-rail .pilot-pnl.collapsed{margin-right:auto;}
 @media (max-width:767px){.lr-rail{display:none;}.rr-rail{display:none;}}  /* overridden below */
-@media (min-width:1025px) and (max-width:1560px){.lr-rail,.rr-rail{display:none;}}
+/* laptop 1025-1560px: rails shown, wrap scales down to fit */
 /* 터치 기기(태블릿): 768~1560px 어느 방향이든 좌우 레일 표시 */
 @media (pointer:coarse) and (min-width:768px) and (max-width:1560px){.lr-rail,.rr-rail{display:flex !important;}}
 
@@ -4399,7 +4399,7 @@ document.addEventListener('keydown',function(e){
   window.__hudScale=function(){
     var w=window.innerWidth;
     var coarse=window.matchMedia&&window.matchMedia('(pointer:coarse)').matches;
-    var railsFit = (w>=768 && w<=1024) || (coarse && w>=768 && w<=1560);
+    var railsFit = (w>=768 && w<=1024) || (coarse && w>=768 && w<=1560) || (!coarse && w>=1025 && w<=1560);
     var base = railsFit ? 1800 : 1140;
     return Math.min(w/base, window.innerHeight/757, 1);
   };
