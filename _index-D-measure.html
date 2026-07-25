@@ -160,7 +160,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
       </div>
       <!-- 게시글 상세 뷰 -->
       <div id="detailView" style="display:none;flex-direction:column;flex:1;min-height:0;">
-        <div style="overflow-y:auto;flex:1;padding:12px 14px;background:#e8e8f0;" id="detailBody"></div>
+        <div style="display:flex;flex-direction:column;flex:1;min-height:0;background:var(--gray);" id="detailBody"></div>
         <div class="search">
           <button onclick="backToBoard()" style="flex:0 0 auto;padding:8px 14px;">◀ LIST</button>
           <span style="flex:1;font-size:10px;color:var(--ink2);padding:0 8px;align-self:center;" id="detailMeta"></span>
@@ -225,13 +225,17 @@ const DEMO=[
 
 function fmtAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d';}
 
+function showView(name){
+  ['introView','boardView','detailView'].forEach(id=>{
+    document.getElementById(id).style.display=(id===name)?'flex':'none';
+  });
+}
+
 function goBoard(el){
   const cat=el.dataset.cat;
   document.querySelectorAll('.menubar span').forEach(s=>s.classList.remove('mactive'));
   el.classList.add('mactive');
   document.getElementById('centerPh').textContent='▣ '+LABELS[cat];
-  document.getElementById('introView').style.display='none';
-  document.getElementById('boardView').style.display='flex';
   const msgs=DEMO.filter(m=>m.cat===cat);
   const col=COLORS[cat]||'#334455';
   document.getElementById('boardCount').textContent=msgs.length+'건';
@@ -243,38 +247,37 @@ function goBoard(el){
         <span class="mago">${fmtAgo(m.ts)}</span>
       </div>`;}).join('')
     :'<div class="board-empty">▸ 메시지가 없습니다</div>';
+  showView('boardView');
 }
 
 function backToIntro(){
   document.querySelectorAll('.menubar span').forEach(s=>s.classList.remove('mactive'));
   document.getElementById('centerPh').textContent='▣ TRANSMISSION — SET WORLD / ACCUMULATION LOG';
-  document.getElementById('boardView').style.display='none';
-  document.getElementById('detailView').style.display='none';
-  document.getElementById('introView').style.display='flex';
+  showView('introView');
 }
 
 function openDetail(i){
   const m=DEMO[i];
   const col=COLORS[m.cat]||'#334455';
   document.getElementById('centerPh').textContent='▣ '+LABELS[m.cat]+' · '+m.name;
-  document.getElementById('boardView').style.display='none';
-  document.getElementById('detailView').style.display='flex';
   document.getElementById('detailMeta').textContent=m.name+' · '+fmtAgo(m.ts);
   document.getElementById('detailBody').innerHTML=
-    `<div style="display:flex;gap:6px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
-       <span style="font-size:9px;padding:0 5px;border:1px solid ${col};color:${col};">${LABELS[m.cat]}</span>
-       <span style="font-size:12px;color:var(--ink);font-weight:bold;">${m.name}</span>
+    `<div style="display:flex;gap:7px;align-items:center;padding:7px 10px;border-bottom:2px solid #999;flex-shrink:0;">
+       <span style="font-size:9px;padding:1px 5px;border:1px solid ${col};color:${col};letter-spacing:1px;">${LABELS[m.cat]}</span>
+       <span style="font-size:11px;color:var(--ink);letter-spacing:1px;">${m.name}</span>
        <span style="font-size:10px;color:var(--amb);margin-left:auto;">${fmtAgo(m.ts)}</span>
      </div>
-     <div style="white-space:pre-wrap;word-break:break-word;background:#fff;border:2px solid #999;
-       box-shadow:inset 2px 2px 0 #ccc,inset -2px -2px 0 #888;padding:10px 12px;font-size:11px;line-height:2;color:var(--ink);">${m.body}</div>`;
+     <div style="flex:1;padding:10px 12px;overflow-y:auto;">
+       <div style="white-space:pre-wrap;word-break:break-word;background:var(--blue);border:2px solid #2a3a9a;
+         box-shadow:inset 2px 2px 0 #003060;padding:10px 12px;font-size:11px;line-height:2;color:var(--lt);">${m.body}</div>
+     </div>`;
+  showView('detailView');
 }
 
 function backToBoard(){
-  document.getElementById('detailView').style.display='none';
-  document.getElementById('boardView').style.display='flex';
   const active=document.querySelector('.menubar span.mactive');
   document.getElementById('centerPh').textContent='▣ '+(active?LABELS[active.dataset.cat]:'게시판');
+  showView('boardView');
 }
 </script>
 </body>
