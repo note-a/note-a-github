@@ -662,11 +662,7 @@ function renderRecent(){
       <div class="stat-top">
         <span class="stat-label C-${cat}">▸ ${LABELS[cat]}</span>
         <span class="stat-cnt">${cnt}건</span>
-      </div>
-      <div class="stat-preview">${esc(latest.body.replace(/\n/g,' '))}</div>
-      <div class="stat-foot">
-        <span>${esc(latest.name||'익명')}</span>
-        <span>${fmtAgo(latest.ts)}</span>
+        <span class="stat-ago">${fmtAgo(latest.ts)}</span>
       </div>
     </div>`;
   }).join('');
