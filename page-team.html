@@ -3,413 +3,321 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S.E.T. — TEAM // 팀 소통</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
+<title>SET_TEAM.EXE — COMM</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri11.css">
 <style>
 :root{
-  --bg:#04010f;
-  --ln:#36e0ff;
-  --mg:#ff3df0;
-  --dim:#1a6a8a;
-  --lbl:#b8f0ff;
-  --yl:#ffd24a;
-  --gn:#3dff8a;
-  --rd:#ff5a7a;
-  --bd:rgba(54,224,255,.22);
-  --font:'Courier Prime','Galmuri11','Share Tech Mono',monospace;
+  --blue:#0f66aa;--hd:#0055aa;--hd2:#0077cc;--gray:#b0b0bc;--gray2:#999999;
+  --ink:#112233;--ink2:#334455;--lt:#a6a6b8;--yel:#ffff55;--teal:#0a6a6a;--amb:#9a6a00;
+  --red:#aa2222;--grn:#22aa44;--pur:#5500aa;--org:#cc6600;--slate:#667799;--cyan:#008888;
+  --fnt:'Galmuri11',monospace;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-  zoom:0.75;
-  min-height:100vh;
-  font-family:var(--font);
-  color:var(--lbl);
-  overflow-x:hidden;
-  background:
-    repeating-linear-gradient(0deg,transparent 0 13px,rgba(54,224,255,.03) 13px 14px),
-    repeating-linear-gradient(90deg,transparent 0 13px,rgba(54,224,255,.03) 13px 14px),
-    radial-gradient(110% 60% at 50% 0%,rgba(54,224,255,.10),transparent 60%),
-    radial-gradient(110% 60% at 20% 80%,rgba(255,61,240,.08),transparent 60%),
-    linear-gradient(180deg,#08021a 0%,#04010f 100%);
-  background-attachment:fixed;
-}
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
-  background:radial-gradient(130% 130% at 50% 45%,transparent 60%,rgba(0,0,0,.55) 100%);}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
-  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.12) 2px 3px);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:var(--ink);
+  font-family:var(--fnt);image-rendering:pixelated;
+  display:flex;align-items:center;justify-content:center;}
+.scan{position:fixed;inset:0;z-index:300;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,40,.06) 2px,rgba(0,0,40,.06) 3px);}
 
-@keyframes fadein{from{opacity:0;}to{opacity:1;}}
-@keyframes blink{50%{opacity:.2;}}
-@keyframes march{to{stroke-dashoffset:-42;}}
-@keyframes sweep{from{transform:translateY(-180px);}to{transform:translateY(calc(100vh + 180px));}}
-@keyframes pop{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
-
-/* ── TOPBAR ── */
-.topbar{
-  position:relative;z-index:5;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 28px 12px;
-  border-bottom:1px solid var(--bd);
-}
-.topbar-left{display:flex;align-items:center;gap:16px;}
-.site-id{font-size:11px;letter-spacing:4px;color:var(--dim);}
-.page-id{font-size:13px;letter-spacing:3px;color:var(--ln);text-shadow:0 0 10px rgba(54,224,255,.4);}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--gn);box-shadow:0 0 8px var(--gn);animation:pulse 1.4s steps(1) infinite;flex:0 0 auto;}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.exit-btn{
-  border:1.3px solid var(--ln);background:transparent;color:var(--ln);
-  font-family:var(--font);font-size:12px;letter-spacing:3px;
-  padding:8px 24px;cursor:pointer;transition:.15s;
-}
-.exit-btn:hover{background:var(--ln);color:#000;}
-
-/* ── LAYOUT ── */
-.wrap{
-  position:relative;z-index:5;
-  max-width:1600px;margin:0 auto;
-  padding:24px 28px 64px;
-  display:grid;
-  grid-template-columns:340px 1fr;
-  gap:20px;
-  align-items:start;
+/* ── MONITOR ── */
+#mon{
+  position:relative;width:1280px;max-width:99vw;height:820px;max-height:98vh;
+  background:var(--gray);border:3px solid #999;
+  box-shadow:inset -3px -3px 0 #777,inset 3px 3px 0 #ccc,0 0 0 3px #003060,0 14px 40px rgba(0,0,0,.6);
+  display:grid;grid-template-rows:auto auto 1fr auto auto;gap:3px;padding:4px;
 }
 
-/* ── LEFT PANEL (post form + filters) ── */
-.left-col{display:flex;flex-direction:column;gap:16px;}
+/* ── TITLE BAR ── */
+.tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:8px;
+  padding:5px 9px;font-size:12px;letter-spacing:1px;
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.tbar .led{display:flex;gap:4px;}
+.tbar .led b{width:8px;height:8px;background:#002040;display:inline-block;box-shadow:inset 1px 1px 0 #000;}
+.tbar .led b.on{background:var(--yel);box-shadow:0 0 5px var(--yel);}
+.tbar .clk{font-size:11px;color:var(--yel);margin-left:auto;}
+.conn-badge{font-size:10px;padding:1px 7px;background:#002040;border:1px solid #001530;color:var(--yel);}
 
-.panel{
-  border:1.5px solid var(--bd);
-  background:rgba(4,10,26,.7);
-  animation:fadein .5s ease-out;
-}
-.panel-head{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 14px;
-  border-bottom:1px solid var(--bd);
-  background:rgba(54,224,255,.05);
-  font-size:10px;letter-spacing:3px;color:var(--ln);
-}
-.panel-head .ph-dot{width:5px;height:5px;border-radius:50%;background:var(--ln);box-shadow:0 0 5px var(--ln);}
-.panel-body{padding:16px 14px;}
+/* ── MENU BAR ── */
+.menubar{background:var(--gray);display:flex;gap:0;font-size:11px;border-bottom:2px solid #777;}
+.menubar span{padding:3px 12px;color:var(--ink2);cursor:default;border-right:1px solid #999;}
+.menubar span:hover,.menubar span.act{background:var(--hd);color:var(--lt);}
 
-/* form */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:6px;}
-.field input,.field textarea,.field select{
-  width:100%;background:rgba(0,0,0,.5);
-  border:1px solid rgba(54,224,255,.2);
-  color:var(--lbl);font-family:var(--font);font-size:13px;
-  padding:9px 11px;outline:none;transition:.15s;
-  resize:none;
-}
-.field input:focus,.field textarea:focus,.field select:focus{
-  border-color:var(--ln);
-  box-shadow:0 0 0 2px rgba(54,224,255,.08);
-}
-.field select option{background:#04010f;}
-.field textarea{min-height:110px;line-height:1.7;}
+/* ── BODY GRID ── */
+.body{display:grid;grid-template-columns:200px 1fr 280px;gap:3px;min-height:0;}
 
-/* category buttons */
-.cat-btns{display:flex;gap:8px;flex-wrap:wrap;}
-.cat-btn{
-  flex:1;min-width:70px;padding:7px 10px;
-  background:transparent;border:1px solid;
-  font-family:var(--font);font-size:10px;letter-spacing:2px;
-  cursor:pointer;transition:.15s;text-align:center;
-}
-.cat-btn[data-cat="handover"]{border-color:rgba(255,210,74,.35);color:rgba(255,210,74,.6);}
-.cat-btn[data-cat="shoot"]{border-color:rgba(54,224,255,.35);color:rgba(54,224,255,.6);}
-.cat-btn[data-cat="link"]{border-color:rgba(255,61,240,.35);color:rgba(255,61,240,.6);}
-.cat-btn[data-cat="idea"]{border-color:rgba(61,255,138,.35);color:rgba(61,255,138,.6);}
-.cat-btn[data-cat="etc"]{border-color:rgba(180,180,180,.3);color:rgba(180,180,180,.5);}
-.cat-btn.active[data-cat="handover"]{background:rgba(255,210,74,.15);border-color:var(--yl);color:var(--yl);}
-.cat-btn.active[data-cat="shoot"]{background:rgba(54,224,255,.15);border-color:var(--ln);color:var(--ln);}
-.cat-btn.active[data-cat="link"]{background:rgba(255,61,240,.15);border-color:var(--mg);color:var(--mg);}
-.cat-btn.active[data-cat="idea"]{background:rgba(61,255,138,.15);border-color:var(--gn);color:var(--gn);}
-.cat-btn.active[data-cat="etc"]{background:rgba(180,180,180,.1);border-color:#aaa;color:#ccc;}
+/* ── PANEL ── */
+.panel{background:var(--gray);border:2px solid #999;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
+  display:flex;flex-direction:column;min-height:0;}
+.ph{background:var(--hd);color:var(--lt);font-size:11px;padding:5px 9px;letter-spacing:1px;flex-shrink:0;
+  box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
+.pb{padding:7px 9px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
 
-.submit-btn{
-  width:100%;padding:12px;margin-top:4px;
-  background:rgba(54,224,255,.08);border:1.5px solid var(--ln);
-  color:var(--ln);font-family:var(--font);font-size:12px;letter-spacing:4px;
-  cursor:pointer;transition:.15s;
-}
-.submit-btn:hover{background:var(--ln);color:#000;}
-.submit-btn:disabled{opacity:.3;cursor:not-allowed;}
+/* ── KV / LED ── */
+.kv{display:flex;justify-content:space-between;font-size:11px;}
+.kv .k{color:var(--ink2);} .kv .v{color:var(--ink);}
+.led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin:5px 0 8px;}
+.led-grid b{height:9px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
+.led-grid b.on{background:var(--yel);box-shadow:0 0 4px var(--yel);}
 
-/* filter bar */
-.filter-row{display:flex;gap:6px;flex-wrap:wrap;}
-.f-btn{
-  padding:5px 13px;background:transparent;
-  border:1px solid rgba(54,224,255,.2);
-  color:rgba(54,224,255,.45);font-family:var(--font);
-  font-size:9px;letter-spacing:2px;cursor:pointer;transition:.15s;
-}
-.f-btn:hover,.f-btn.on{background:rgba(54,224,255,.1);border-color:var(--ln);color:var(--ln);}
+/* ── FILTER BUTTONS ── */
+.fbtn{display:block;width:100%;text-align:left;padding:3px 8px;font-family:var(--fnt);font-size:11px;
+  color:var(--ink);background:var(--gray);border:none;border-bottom:1px solid #999;cursor:pointer;}
+.fbtn:last-child{border-bottom:none;}
+.fbtn:hover,.fbtn.on{background:var(--yel);color:var(--blue);}
+.fbtn .fc{float:right;color:var(--amb);font-size:10px;}
+.fbtn.on .fc{color:var(--blue);}
 
-/* members list */
-.member-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(54,224,255,.06);}
-.member-row:last-child{border-bottom:none;}
-.m-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
-.m-dot.on{background:var(--gn);box-shadow:0 0 6px var(--gn);}
-.m-dot.off{background:rgba(255,255,255,.15);}
-.m-name{font-size:12px;color:var(--lbl);}
-.m-role{margin-left:auto;font-size:9px;letter-spacing:1px;color:var(--dim);}
+/* ── MEMBER ROWS ── */
+.mrow{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 0;border-bottom:1px solid #aaa;}
+.mrow:last-child{border-bottom:none;}
+.mdot{width:8px;height:8px;flex:0 0 8px;}
+.mdot.on{background:var(--grn);}
+.mdot.off{background:#8a8a8a;box-shadow:inset 1px 1px 0 #000;}
+.mrole{margin-left:auto;font-size:9px;color:var(--ink2);}
 
-/* ── RIGHT COL (messages feed) ── */
-.right-col{display:flex;flex-direction:column;gap:0;}
+/* ── CATEGORY BADGE COLORS ── */
+.C-notice  {border-color:#887700;color:#887700;}
+.C-status  {border-color:#0055aa;color:#0055aa;}
+.C-handover{border-color:var(--amb);color:var(--amb);}
+.C-idea    {border-color:var(--grn);color:var(--grn);}
+.C-question{border-color:var(--org);color:var(--org);}
+.C-decision{border-color:var(--pur);color:var(--pur);}
+.C-criteria{border-color:var(--red);color:var(--red);}
+.C-history {border-color:var(--slate);color:var(--slate);}
+.C-resource{border-color:var(--cyan);color:var(--cyan);}
+/* white on dark backgrounds */
+.sel .mcbadge,.sel .dc{color:#fff!important;border-color:#adf!important;}
 
-.feed-head{
-  display:flex;align-items:center;gap:14px;
-  padding:12px 18px;
-  border:1.5px solid var(--bd);border-bottom:none;
-  background:rgba(54,224,255,.04);
-}
-.feed-title{font-size:11px;letter-spacing:4px;color:var(--ln);}
-.feed-count{font-size:10px;color:var(--dim);margin-left:auto;}
+/* ── MESSAGE FEED ROWS ── */
+.feed{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;}
+.mrow-msg{display:flex;align-items:baseline;gap:5px;font-size:11px;line-height:1.6;
+  cursor:pointer;padding:3px 8px;border-bottom:1px solid #aaa;}
+.mrow-msg:hover{background:var(--yel);color:var(--blue);}
+.mrow-msg.sel{background:var(--teal);color:#fff;}
+.mcbadge{font-size:9px;padding:0 4px;border:1px solid;flex:0 0 auto;white-space:nowrap;}
+.mname{flex:0 0 52px;font-size:10px;color:var(--ink2);overflow:hidden;white-space:nowrap;}
+.mrow-msg.sel .mname{color:#bdf;}
+.mpreview{flex:1;color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.mrow-msg.sel .mpreview{color:#dff;}
+.mtime{flex:0 0 auto;font-size:9px;color:var(--amb);white-space:nowrap;}
+.mrow-msg.sel .mtime{color:#fd8;}
+.mdelbtn{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;
+  padding:0 2px;line-height:1;flex:0 0 auto;}
+.mrow-msg:hover .mdelbtn,.mrow-msg.sel .mdelbtn{color:#fff;}
+.feed-empty{padding:14px 9px;font-size:11px;color:var(--ink2);}
 
-.feed{
-  border:1.5px solid var(--bd);
-  min-height:500px;
-  background:rgba(2,5,18,.6);
-}
-.feed-empty{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:300px;gap:12px;
-  color:var(--dim);font-size:11px;letter-spacing:3px;
-}
-.feed-empty svg{opacity:.2;}
+/* ── DETAIL VIEW ── */
+.detail-wrap{flex:0 0 auto;max-height:210px;border-top:2px solid #999;
+  background:#e8e8f0;display:flex;flex-direction:column;overflow:hidden;}
+.detail-ph{background:#334455;color:var(--lt);font-size:10px;padding:4px 9px;letter-spacing:1px;flex-shrink:0;}
+.detail-body{padding:8px 10px;font-size:11px;line-height:1.9;overflow-y:auto;flex:1;color:var(--ink);}
+.det-meta{display:flex;gap:7px;align-items:center;margin-bottom:5px;flex-wrap:wrap;}
+.dc{font-size:9px;padding:0 5px;border:1px solid;}
+.det-name{font-size:12px;color:var(--ink);}
+.det-time{font-size:10px;color:var(--amb);margin-left:auto;}
+.det-page{font-size:10px;color:var(--pur);background:#ede8f8;border:1px solid #bb88ee;padding:1px 6px;}
+.det-text{white-space:pre-wrap;word-break:break-word;background:#fff;
+  border:1px solid #ccc;padding:7px 9px;box-shadow:inset 1px 1px 0 #e0e0e0;font-size:11px;line-height:1.9;}
+.det-hint{color:var(--ink2);font-size:10px;}
 
-/* message card */
-.msg{
-  border-bottom:1px solid rgba(54,224,255,.06);
-  padding:18px 22px;
-  animation:pop .25s ease-out;
-  transition:background .1s;
-}
-.msg:hover{background:rgba(54,224,255,.03);}
-.msg:last-child{border-bottom:none;}
-.msg-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.msg-cat{
-  padding:2px 9px;border:1px solid;font-size:8px;letter-spacing:2px;flex:0 0 auto;
-}
-.msg-cat.handover{border-color:rgba(255,210,74,.5);color:var(--yl);}
-.msg-cat.shoot{border-color:rgba(54,224,255,.5);color:var(--ln);}
-.msg-cat.link{border-color:rgba(255,61,240,.5);color:var(--mg);}
-.msg-cat.idea{border-color:rgba(61,255,138,.5);color:var(--gn);}
-.msg-cat.etc{border-color:rgba(180,180,180,.4);color:#bbb;}
-.msg-page{font-size:10px;letter-spacing:1px;color:rgba(255,61,240,.6);margin-left:2px;}
-.msg-name{font-size:13px;color:#fff;letter-spacing:.5px;}
-.msg-time{margin-left:auto;font-size:9px;color:var(--dim);letter-spacing:1px;}
-.msg-del{
-  background:transparent;border:none;color:rgba(255,90,122,.3);
-  font-size:14px;cursor:pointer;padding:0 4px;transition:.15s;line-height:1;
-}
-.msg-del:hover{color:var(--rd);}
-.msg-body{font-size:14px;line-height:1.85;color:#c8ddef;white-space:pre-wrap;word-break:break-word;}
+/* ── WRITE PANEL ── */
+.wfield{margin-bottom:7px;}
+.wlbl{display:block;font-size:10px;color:var(--ink2);letter-spacing:1px;margin-bottom:3px;}
+.winput,.warea{width:100%;background:var(--blue);border:2px solid #999;color:var(--lt);
+  padding:5px 8px;font-family:var(--fnt);font-size:11px;outline:none;
+  box-shadow:inset 2px 2px 0 #003060;}
+.winput:focus,.warea:focus{border-color:var(--yel);}
+.warea{resize:none;min-height:110px;line-height:1.8;}
+.wcats{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.wcatb{background:var(--gray);border:2px solid #999;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
+  font-family:var(--fnt);font-size:10px;color:var(--ink);padding:4px 5px;cursor:pointer;text-align:center;}
+.wcatb:hover{background:var(--yel);}
+.wcatb.active{background:var(--hd);color:var(--lt);
+  box-shadow:inset 2px 2px 0 #003060,inset -2px -2px 0 #3a88ff;}
+.wsend{width:100%;background:var(--hd);border:2px solid #999;color:var(--lt);
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;
+  font-family:var(--fnt);font-size:11px;padding:8px;cursor:pointer;letter-spacing:2px;margin-top:3px;}
+.wsend:hover{background:var(--hd2);}
+.wsend:disabled{opacity:.35;cursor:not-allowed;}
+.hint{font-size:9px;color:var(--ink2);margin-top:2px;text-align:right;}
 
-/* firebase config notice */
-.cfg-notice{
-  position:fixed;inset:0;z-index:400;
-  background:rgba(4,1,14,.94);
-  display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(6px);
-  padding:24px;
-}
-.cfg-box{
-  width:100%;max-width:680px;
-  border:1.5px solid var(--ln);
-  background:#060810;
-  animation:pop .3s ease-out;
-}
-.cfg-head{
-  padding:16px 22px;
-  border-bottom:1.5px solid var(--ln);
-  background:rgba(54,224,255,.07);
-  font-size:12px;letter-spacing:4px;color:var(--ln);
-  display:flex;align-items:center;gap:10px;
-}
-.cfg-body{padding:24px 26px;}
-.cfg-body p{font-size:13px;line-height:1.8;color:#a0bcd0;margin-bottom:18px;}
-.cfg-body code{
-  display:block;background:#010408;border:1px solid rgba(54,224,255,.15);
-  padding:14px 16px;font-size:12px;line-height:1.8;color:#7be4ff;
-  white-space:pre;overflow-x:auto;margin-bottom:20px;
-  font-family:var(--font);
-}
-.cfg-body ol{padding-left:20px;color:#a0bcd0;font-size:13px;line-height:2;}
-.cfg-body li b{color:var(--ln);}
-.cfg-close{
-  width:100%;margin-top:20px;padding:12px;
-  background:rgba(54,224,255,.08);border:1.5px solid var(--ln);
-  color:var(--ln);font-family:var(--font);font-size:12px;letter-spacing:4px;
-  cursor:pointer;transition:.15s;
-}
-.cfg-close:hover{background:var(--ln);color:#000;}
+/* ── FOOTER ── */
+.foot{display:flex;gap:3px;}
+.foot button{flex:1;background:var(--gray);border:2px solid #999;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
+  font-family:var(--fnt);font-size:12px;letter-spacing:1px;color:var(--ink);padding:9px;cursor:pointer;}
+.foot button:hover{background:var(--yel);}
+.foot button:active{box-shadow:inset 2px 2px 0 #888,inset -2px -2px 0 #ccc;}
+.foot button.pri{background:var(--hd);color:var(--lt);
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.foot button.pri:hover{background:var(--hd2);}
+.statusln{background:var(--hd);color:var(--lt);font-size:10px;padding:4px 10px;
+  display:flex;justify-content:space-between;letter-spacing:1px;}
 
-/* scan bar */
-.scanbar{position:fixed;left:0;right:0;top:0;height:140px;z-index:59;pointer-events:none;
-  background:linear-gradient(180deg,transparent,rgba(54,224,255,.07) 46%,rgba(255,61,240,.05) 56%,transparent);
-  transform:translateY(-150px);animation:sweep 8s linear infinite;}
-
-/* ── MOBILE ── */
-@media(max-width:900px){
-  body{zoom:1;}
-  .wrap{grid-template-columns:1fr;gap:16px;}
-  .topbar{padding:12px 16px;}
-  .wrap{padding:16px 14px 48px;}
-}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:12px;}
+::-webkit-scrollbar-track{background:#888;border:2px solid #666;}
+::-webkit-scrollbar-thumb{background:var(--hd);border:2px solid #003060;}
 </style>
 </head>
 <body>
+<div class="scan"></div>
+<div id="mon">
 
-<!-- Firebase config notice (shown until configured) -->
-<div class="cfg-notice" id="cfgNotice">
-  <div class="cfg-box">
-    <div class="cfg-head">
-      <span>◈</span> FIREBASE 설정 필요 · SETUP REQUIRED
-    </div>
-    <div class="cfg-body">
-      <p>팀 메시지를 저장하려면 <b style="color:var(--ln)">Firebase Realtime Database</b>가 필요합니다. 무료 플랜으로 충분합니다.</p>
-      <ol>
-        <li><b>console.firebase.google.com</b> 에서 프로젝트 생성</li>
-        <li>Realtime Database 활성화 → 테스트 모드로 시작</li>
-        <li>프로젝트 설정 → 웹 앱 추가 → 아래 값 복사</li>
-        <li>이 파일 하단 <b style="color:var(--yl)">FIREBASE CONFIG</b> 주석 위치에 붙여넣기</li>
-      </ol>
-      <code>// ── FIREBASE CONFIG ──
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:xxxxxxxxxxxx"
-};</code>
-      <button class="cfg-close" onclick="document.getElementById('cfgNotice').style.display='none'">
-        일단 닫기 (로컬 미리보기) · CLOSE PREVIEW
-      </button>
-    </div>
+  <!-- TITLE BAR -->
+  <div class="tbar">
+    <span>◳ SET_TEAM.EXE — COMMUNICATION BOARD</span>
+    <span style="color:var(--lt);font-size:11px">[ SET_WORLD ]</span>
+    <span class="conn-badge" id="connBadge">● INIT</span>
+    <div class="led" id="ledRow"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></div>
+    <span class="clk" id="clk">00:00:00</span>
   </div>
-</div>
 
-<div class="scanbar"></div>
-
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="topbar-left">
-    <span class="site-id">S.E.T.</span>
-    <span style="color:var(--bd)">·</span>
-    <span class="page-id">TEAM COMM</span>
-    <div class="live-dot"></div>
+  <!-- MENU BAR -->
+  <div class="menubar">
+    <span>FILE</span><span class="act">COMM</span><span>VIEW</span>
+    <span>FILTER</span><span>MEMBERS</span><span>HELP</span>
   </div>
-  <div class="topbar-right">
-    <span style="font-size:9px;letter-spacing:2px;color:var(--dim)" id="connStatus">● CONNECTING</span>
-    <button class="exit-btn" onclick="leave()">← EXIT</button>
-  </div>
-</div>
 
-<!-- MAIN LAYOUT -->
-<div class="wrap">
+  <!-- BODY -->
+  <div class="body">
 
-  <!-- LEFT: form + filters + members -->
-  <div class="left-col">
+    <!-- ── LEFT ── -->
+    <div style="display:flex;flex-direction:column;gap:3px;min-height:0;">
 
-    <!-- POST FORM -->
-    <div class="panel">
-      <div class="panel-head"><div class="ph-dot"></div>NEW MESSAGE · 메시지 작성</div>
-      <div class="panel-body">
-        <div class="field">
-          <label>NAME · 이름</label>
-          <input type="text" id="inName" placeholder="이름 입력" maxlength="24" autocomplete="off">
+      <!-- FILTER -->
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="ph">▣ CATEGORY · 분류</div>
+        <div>
+          <button class="fbtn on" data-f="all"      onclick="setFilter(this)">▸ ALL 전체        <span class="fc" id="fc-all">0</span></button>
+          <button class="fbtn"    data-f="notice"   onclick="setFilter(this)">▸ 공지            <span class="fc" id="fc-notice">0</span></button>
+          <button class="fbtn"    data-f="status"   onclick="setFilter(this)">▸ 작업 현황       <span class="fc" id="fc-status">0</span></button>
+          <button class="fbtn"    data-f="handover" onclick="setFilter(this)">▸ 인수인계        <span class="fc" id="fc-handover">0</span></button>
+          <button class="fbtn"    data-f="idea"     onclick="setFilter(this)">▸ 아이디어/메모   <span class="fc" id="fc-idea">0</span></button>
+          <button class="fbtn"    data-f="question" onclick="setFilter(this)">▸ 질문/논의       <span class="fc" id="fc-question">0</span></button>
+          <button class="fbtn"    data-f="decision" onclick="setFilter(this)">▸ 결정 로그       <span class="fc" id="fc-decision">0</span></button>
+          <button class="fbtn"    data-f="criteria" onclick="setFilter(this)">▸ 셀렉 기준       <span class="fc" id="fc-criteria">0</span></button>
+          <button class="fbtn"    data-f="history"  onclick="setFilter(this)">▸ 작업 이력       <span class="fc" id="fc-history">0</span></button>
+          <button class="fbtn"    data-f="resource" onclick="setFilter(this)">▸ 리소스 모음     <span class="fc" id="fc-resource">0</span></button>
         </div>
-        <div class="field">
-          <label>CATEGORY · 분류</label>
-          <div class="cat-btns">
-            <button class="cat-btn active" data-cat="handover">인수인계</button>
-            <button class="cat-btn" data-cat="shoot">촬영 날짜</button>
-            <button class="cat-btn" data-cat="link">링크 설명</button>
-            <button class="cat-btn" data-cat="idea">아이디어</button>
-            <button class="cat-btn" data-cat="etc">기타</button>
+      </div>
+
+      <!-- SYSTEM -->
+      <div class="panel" style="flex:0 0 auto;">
+        <div class="ph">▣ SYSTEM</div>
+        <div class="pb">
+          <div class="kv"><span class="k">SRC</span><span class="v">SET_WORLD</span></div>
+          <div class="kv"><span class="k">DB</span><span class="v" id="dbStatus">INIT</span></div>
+          <div class="kv"><span class="k">REC</span><span class="v" id="recCount">0 ENTRIES</span></div>
+          <div class="led-grid" id="ledgrid"></div>
+        </div>
+      </div>
+
+      <!-- MEMBERS -->
+      <div class="panel" style="flex:1;">
+        <div class="ph">▣ MEMBERS · 팀원</div>
+        <div class="pb" id="memberList">
+          <div class="mrow"><div class="mdot on"></div><span>관리자</span><span class="mrole">ADMIN</span></div>
+          <div class="mrow"><div class="mdot off"></div><span>팀원 A</span><span class="mrole">MEMBER</span></div>
+          <div class="mrow"><div class="mdot off"></div><span>팀원 B</span><span class="mrole">MEMBER</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── CENTER ── -->
+    <div class="panel" style="display:flex;flex-direction:column;">
+      <div class="ph">▣ MESSAGE BOARD — <span id="feedTitle">전체 · ALL</span></div>
+
+      <div class="feed" id="feed">
+        <div class="feed-empty" id="feedEmpty">▸ 메시지가 없습니다 / NO MESSAGES</div>
+      </div>
+
+      <div class="detail-wrap">
+        <div class="detail-ph">▣ DETAIL · 선택된 메시지</div>
+        <div class="detail-body" id="detailBody">
+          <span class="det-hint">▸ 목록에서 메시지를 클릭하면 전문이 표시됩니다</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT: WRITE ── -->
+    <div class="panel">
+      <div class="ph">▣ NEW MESSAGE · 작성</div>
+      <div class="pb">
+
+        <div class="wfield">
+          <span class="wlbl">NAME · 이름</span>
+          <input class="winput" id="inName" type="text" placeholder="이름 입력" maxlength="24" autocomplete="off">
+        </div>
+
+        <div class="wfield">
+          <span class="wlbl">CATEGORY · 분류</span>
+          <div class="wcats">
+            <button class="wcatb active" data-cat="notice">공지</button>
+            <button class="wcatb" data-cat="status">작업현황</button>
+            <button class="wcatb" data-cat="handover">인수인계</button>
+            <button class="wcatb" data-cat="idea">아이디어</button>
+            <button class="wcatb" data-cat="question">질문/논의</button>
+            <button class="wcatb" data-cat="decision">결정로그</button>
+            <button class="wcatb" data-cat="criteria">셀렉기준</button>
+            <button class="wcatb" data-cat="history">작업이력</button>
+            <button class="wcatb" data-cat="resource" style="grid-column:span 2">리소스</button>
           </div>
         </div>
-        <div class="field" id="pageField" style="display:none">
-          <label>PAGE · 페이지명</label>
-          <input type="text" id="inPage" placeholder="예: page-log.html, 메인화면 등" maxlength="60" autocomplete="off">
+
+        <div class="wfield" id="pageField" style="display:none">
+          <span class="wlbl">PAGE · 페이지 / URL</span>
+          <input class="winput" id="inPage" type="text" placeholder="예: page-log.html" maxlength="80" autocomplete="off">
         </div>
-        <div class="field">
-          <label>MESSAGE · 내용 &nbsp;<span style="color:var(--dim);font-size:9px">Ctrl+Enter 전송</span></label>
-          <textarea id="inMsg" placeholder="자유롭게 작성하세요..." maxlength="4000" style="min-height:150px"></textarea>
+
+        <div class="wfield">
+          <span class="wlbl">MESSAGE · 내용</span>
+          <textarea class="warea" id="inMsg" placeholder="자유롭게 작성..." maxlength="4000"></textarea>
+          <div class="hint">Ctrl+Enter · 전송</div>
         </div>
-        <button class="submit-btn" id="sendBtn" onclick="sendMsg()">▶ SEND · 전송</button>
+
+        <button class="wsend" id="sendBtn" onclick="sendMsg()">▸ SEND · 전송</button>
+
+        <div style="margin-top:12px;border-top:2px solid #999;padding-top:8px;">
+          <div class="kv"><span class="k">FIREBASE</span><span class="v" id="fbLabel">—</span></div>
+          <div style="font-size:9px;color:var(--ink2);line-height:1.7;margin-top:4px;">
+            미설정시 데모 모드 동작.<br>
+            파일 하단 FIREBASE CONFIG에<br>
+            설정값 입력 → 실시간 공유.
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- FILTER -->
-    <div class="panel">
-      <div class="panel-head"><div class="ph-dot"></div>FILTER · 필터</div>
-      <div class="panel-body">
-        <div class="filter-row">
-          <button class="f-btn on" data-filter="all" onclick="setFilter('all',this)">전체</button>
-          <button class="f-btn" data-filter="handover" onclick="setFilter('handover',this)">인수인계</button>
-          <button class="f-btn" data-filter="shoot" onclick="setFilter('shoot',this)">촬영</button>
-          <button class="f-btn" data-filter="link" onclick="setFilter('link',this)">링크</button>
-          <button class="f-btn" data-filter="idea" onclick="setFilter('idea',this)">아이디어</button>
-          <button class="f-btn" data-filter="etc" onclick="setFilter('etc',this)">기타</button>
-        </div>
-      </div>
-    </div>
+  </div><!-- /body -->
 
-    <!-- MEMBERS -->
-    <div class="panel">
-      <div class="panel-head"><div class="ph-dot"></div>MEMBERS · 팀원</div>
-      <div class="panel-body" id="memberList">
-        <!-- populated by JS or manually -->
-        <div class="member-row">
-          <div class="m-dot on"></div>
-          <span class="m-name">관리자</span>
-          <span class="m-role">ADMIN</span>
-        </div>
-      </div>
-    </div>
-
+  <!-- FOOTER -->
+  <div class="foot">
+    <button class="pri" onclick="leave()">▸ EXIT  [SET.OS]</button>
+    <button onclick="resetFilter()">SHOW ALL</button>
+    <button onclick="if(confirm('전체 삭제?'))clearAll()">CLEAR ALL</button>
+    <button onclick="location.reload()">REFRESH</button>
   </div>
 
-  <!-- RIGHT: messages feed -->
-  <div class="right-col">
-    <div class="feed-head">
-      <span class="feed-title">◈ MESSAGE BOARD · 메시지</span>
-      <span class="feed-count" id="feedCount">— 건</span>
-    </div>
-    <div class="feed" id="feed">
-      <div class="feed-empty" id="feedEmpty">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="4" y="8" width="32" height="24" rx="1" stroke="#36e0ff" stroke-width="1.5"/>
-          <line x1="10" y1="16" x2="30" y2="16" stroke="#36e0ff" stroke-width="1.2"/>
-          <line x1="10" y1="21" x2="24" y2="21" stroke="#36e0ff" stroke-width="1.2"/>
-          <line x1="10" y1="26" x2="20" y2="26" stroke="#36e0ff" stroke-width="1.2"/>
-        </svg>
-        <span>아직 메시지가 없습니다</span>
-        <span style="font-size:9px;color:rgba(54,224,255,.25)">NO MESSAGES YET</span>
-      </div>
-    </div>
+  <div class="statusln">
+    <span id="statLine">READY.</span>
+    <span>SET_TEAM v.1.0 · 9 CATEGORIES</span>
   </div>
 
 </div>
 
-<!-- ── FIREBASE SDK ── -->
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
-// ════════════════════════════════════════════════
-//  FIREBASE CONFIG — 여기에 본인 Firebase 설정값 입력
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════
+//  FIREBASE CONFIG — 아래 값을 본인 Firebase 프로젝트로 교체
+//  console.firebase.google.com → 프로젝트 생성 → Realtime Database → 웹 앱 추가
+// ════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -419,188 +327,216 @@ const firebaseConfig = {
   messagingSenderId: "000000000000",
   appId: "1:000000000000:web:xxxxxxxxxxxx"
 };
-// ════════════════════════════════════════════════
+// ════════════════════════════════════════════
+
+const CATS = ['notice','status','handover','idea','question','decision','criteria','history','resource'];
+const CAT_LABELS = {
+  notice:'공지', status:'작업현황', handover:'인수인계',
+  idea:'아이디어', question:'질문/논의', decision:'결정로그',
+  criteria:'셀렉기준', history:'작업이력', resource:'리소스'
+};
+const FILTER_LABELS = {
+  all:'전체 · ALL', notice:'공지', status:'작업 현황',
+  handover:'인수인계', idea:'아이디어 / 메모', question:'질문 / 논의',
+  decision:'결정 로그', criteria:'셀렉 기준', history:'작업 이력', resource:'리소스 모음'
+};
 
 const CONFIGURED = firebaseConfig.apiKey !== "YOUR_API_KEY";
-
 let db, msgsRef;
 let allMsgs = [];
 let activeFilter = 'all';
 let selectedCat = 'notice';
+let selectedId = null;
 
 // ── INIT ──
-function init(){
+(function init(){
+  document.getElementById('ledgrid').innerHTML = Array(16).fill('<b></b>').join('');
   if(!CONFIGURED){
-    setStatus('● NOT CONFIGURED', '#ff5a7a');
-    return;
+    setConn('DEMO', false);
+    document.getElementById('fbLabel').textContent = 'NOT SET';
+    loadDemo();
+  } else {
+    try{
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+      msgsRef = db.ref('team_messages');
+      setConn('CONNECTED', true);
+      document.getElementById('fbLabel').textContent = 'LIVE';
+      listen();
+    }catch(e){
+      setConn('ERROR', false);
+      document.getElementById('fbLabel').textContent = 'ERROR';
+      loadDemo();
+    }
   }
-  try{
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-    msgsRef = db.ref('team_messages');
-    setStatus('● CONNECTED', '#3dff8a');
-    listen();
-  }catch(e){
-    setStatus('● ERROR', '#ff5a7a');
-    console.error(e);
-  }
-}
+})();
 
-// ── REAL-TIME LISTENER ──
 function listen(){
   msgsRef.orderByChild('ts').on('value', snap => {
     allMsgs = [];
-    snap.forEach(child => {
-      allMsgs.push({id: child.key, ...child.val()});
-    });
-    allMsgs.reverse(); // newest first
-    renderFeed();
+    snap.forEach(c => allMsgs.push({id:c.key,...c.val()}));
+    allMsgs.reverse();
+    renderFeed(); updateCounts();
   });
 }
 
 // ── RENDER ──
 function renderFeed(){
-  const filtered = activeFilter === 'all'
-    ? allMsgs
-    : allMsgs.filter(m => m.cat === activeFilter);
-
-  document.getElementById('feedCount').textContent = filtered.length + ' 건';
+  const list = activeFilter==='all' ? allMsgs : allMsgs.filter(m=>m.cat===activeFilter);
   const feed = document.getElementById('feed');
-  const empty = document.getElementById('feedEmpty');
-
-  if(!filtered.length){
-    empty.style.display = 'flex';
-    // remove old cards
-    feed.querySelectorAll('.msg').forEach(el => el.remove());
-    return;
-  }
-  empty.style.display = 'none';
-
-  // diff render: rebuild
-  feed.querySelectorAll('.msg').forEach(el => el.remove());
-  filtered.forEach(m => {
+  feed.querySelectorAll('.mrow-msg').forEach(el=>el.remove());
+  document.getElementById('feedEmpty').style.display = list.length ? 'none' : '';
+  list.forEach(m=>{
     const el = document.createElement('div');
-    el.className = 'msg';
+    el.className = 'mrow-msg' + (m.id===selectedId?' sel':'');
     el.dataset.id = m.id;
-    const pageTag = m.page ? `<span class="msg-page">· ${esc(m.page)}</span>` : '';
-    el.innerHTML = `
-      <div class="msg-head">
-        <span class="msg-cat ${m.cat}">${catLabel(m.cat)}</span>
-        ${pageTag}
-        <span class="msg-name">${esc(m.name||'익명')}</span>
-        <span class="msg-time">${fmtTime(m.ts)}</span>
-        <button class="msg-del" onclick="delMsg('${m.id}')" title="삭제">×</button>
-      </div>
-      <div class="msg-body">${esc(m.body)}</div>
-    `;
+    const preview = m.body.replace(/\n/g,' ').slice(0,55);
+    el.innerHTML =
+      `<span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>`+
+      `<span class="mname">${esc(m.name||'익명')}</span>`+
+      `<span class="mpreview">${esc(preview)}</span>`+
+      `<span class="mtime">${fmtS(m.ts)}</span>`+
+      `<button class="mdelbtn" onclick="ev(event);delMsg('${m.id}')">×</button>`;
+    el.addEventListener('click',()=>selectMsg(m));
     feed.appendChild(el);
   });
 }
 
+function selectMsg(m){
+  selectedId = m.id;
+  document.querySelectorAll('.mrow-msg').forEach(el=>el.classList.toggle('sel',el.dataset.id===m.id));
+  const pageTag = m.page ? `<span class="det-page">· ${esc(m.page)}</span>` : '';
+  document.getElementById('detailBody').innerHTML =
+    `<div class="det-meta">`+
+      `<span class="dc C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>`+
+      pageTag+
+      `<strong class="det-name">${esc(m.name||'익명')}</strong>`+
+      `<span class="det-time">${fmtFull(m.ts)}</span>`+
+    `</div>`+
+    `<div class="det-text">${esc(m.body)}</div>`;
+  setStat('LOADED: '+esc(m.name||'익명')+' / '+(CAT_LABELS[m.cat]||m.cat).toUpperCase());
+}
+
+function updateCounts(){
+  document.getElementById('fc-all').textContent = allMsgs.length;
+  CATS.forEach(c=>{
+    const el=document.getElementById('fc-'+c);
+    if(el) el.textContent = allMsgs.filter(m=>m.cat===c).length;
+  });
+  document.getElementById('recCount').textContent = allMsgs.length+' ENTRIES';
+}
+
 // ── SEND ──
 function sendMsg(){
-  if(!CONFIGURED){ alert('Firebase 설정 후 사용 가능합니다.'); return; }
-  const name = document.getElementById('inName').value.trim();
-  const body = document.getElementById('inMsg').value.trim();
-  if(!body){ document.getElementById('inMsg').focus(); return; }
-
-  const btn = document.getElementById('sendBtn');
-  btn.disabled = true;
-
-  const page = document.getElementById('inPage').value.trim();
-  msgsRef.push({
-    name: name || '익명',
-    cat: selectedCat,
-    page: page || null,
-    body,
-    ts: Date.now()
-  }).then(() => {
-    document.getElementById('inPage').value = '';
-    document.getElementById('inMsg').value = '';
-    btn.disabled = false;
-  }).catch(e => {
-    alert('전송 실패: ' + e.message);
-    btn.disabled = false;
-  });
+  if(!CONFIGURED){alert('Firebase 설정 후 사용 가능합니다.');return;}
+  const name=document.getElementById('inName').value.trim();
+  const body=document.getElementById('inMsg').value.trim();
+  if(!body){document.getElementById('inMsg').focus();return;}
+  const page=document.getElementById('inPage').value.trim();
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=true; setStat('TRANSMITTING...');
+  msgsRef.push({name:name||'익명',cat:selectedCat,page:page||null,body,ts:Date.now()})
+    .then(()=>{
+      document.getElementById('inMsg').value='';
+      document.getElementById('inPage').value='';
+      btn.disabled=false; setStat('SEND OK.');
+    }).catch(e=>{alert('오류: '+e.message);btn.disabled=false;setStat('ERROR.');});
 }
 
-// ── DELETE ──
 function delMsg(id){
-  if(!CONFIGURED) return;
-  if(!confirm('삭제하시겠습니까?')) return;
-  msgsRef.child(id).remove();
+  if(!confirm('삭제?')) return;
+  if(CONFIGURED){ msgsRef.child(id).remove(); }
+  else{
+    allMsgs=allMsgs.filter(m=>m.id!==id);
+    if(selectedId===id){ selectedId=null; document.getElementById('detailBody').innerHTML='<span class="det-hint">▸ 메시지를 클릭하면 전문이 표시됩니다</span>'; }
+    renderFeed(); updateCounts();
+  }
 }
 
-// ── CATEGORY SELECT ──
-document.querySelectorAll('.cat-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+function clearAll(){
+  if(CONFIGURED) msgsRef.remove();
+  else{ allMsgs=[];selectedId=null;renderFeed();updateCounts();document.getElementById('detailBody').innerHTML='<span class="det-hint">▸ 메시지를 클릭하면 전문이 표시됩니다</span>'; }
+}
+
+// ── FILTER ──
+function setFilter(el){
+  const f=el.dataset.f;
+  activeFilter=f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('feedTitle').textContent = FILTER_LABELS[f]||f;
+  renderFeed();
+  setStat('FILTER: '+(FILTER_LABELS[f]||f).toUpperCase());
+}
+function resetFilter(){
+  activeFilter='all';
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('on',b.dataset.f==='all'));
+  document.getElementById('feedTitle').textContent=FILTER_LABELS['all'];
+  renderFeed();
+}
+
+// ── CATEGORY BUTTONS ──
+document.querySelectorAll('.wcatb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.wcatb').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    selectedCat = btn.dataset.cat;
-    document.getElementById('pageField').style.display = selectedCat === 'link' ? '' : 'none';
-    if(selectedCat !== 'link') document.getElementById('inPage').value = '';
+    selectedCat=btn.dataset.cat;
+    document.getElementById('pageField').style.display=selectedCat==='resource'?'':'none';
+    if(selectedCat!=='resource') document.getElementById('inPage').value='';
   });
 });
 
-// ── FILTER ──
-function setFilter(f, el){
-  activeFilter = f;
-  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  renderFeed();
+// ── DEMO DATA ──
+function loadDemo(){
+  allMsgs=[
+    {id:'d1',name:'김세트',cat:'notice',page:null,body:'📅 다음 촬영 일정 공지\n\n일시: 7월 30일 (수) 오전 10시\n장소: 추후 단체톡으로 공유\n준비물: 카메라 본체, 렌즈 2종 (표준+광각), 노트북, 외장하드\n\n전날 저녁까지 배터리 충전 완료 필수.',ts:Date.now()-60000*15},
+    {id:'d2',name:'이아카',cat:'status',page:null,body:'[현재 진행 단계: 2단계 — 1차 셀렉션 완료, 2차 진행 중]\n\n45개 DIR 중 38개 검토 완료 (84%).\n미완료: DIR_039~045 (7개)\n예상 완료: 내일까지.\n\n다음 단계(3단계 문법화)는 셀렉 마무리 후 시작.',ts:Date.now()-60000*60},
+    {id:'d3',name:'박로그',cat:'handover',page:null,body:'작업 중단 지점 인수인계.\n\nDIR_039 바탕과바늘 시리즈 — 2차 셀렉 절반 완료.\n폴더: /photo/바탕과_바늘/\n판정 보류 파일 3장 있음 → 같이 보고 결정 필요.\n\n메모 파일: Desktop/set_memo_0724.txt 참고.',ts:Date.now()-60000*120},
+    {id:'d4',name:'김세트',cat:'idea',page:null,body:'개념문 메모 — "바느질 그리드"\n\n수평 줄이 화면을 자르는 게 아니라, 수평 줄이 화면을 엮는 구조.\n천이 프레임을 받아내는 게 아니라, 프레임이 천의 결을 따라가는 느낌.\n\nSVA 방향: 표면 질감의 방향성 vs 구도선의 방향성이 어긋날 때.\n→ 지시문 후보: "수직 구도선이 수평 직물결을 절단하는 순간"',ts:Date.now()-3600000*2},
+    {id:'d5',name:'이아카',cat:'question',page:null,body:'질문: DIR_041 판정 기준 애매합니다.\n\n피사체가 프레임 정중앙에 있고, 배경이 완전히 단색인 경우 →\n현재 기준으로는 SUPPORT인지 DROP인지 불명확.\n\n참고: 지시문 7번 "피사체 고립" 케이스와 겹치는데\n이게 해당 지시문의 CORE 조건을 충족하는지?\n\n→ 판단 부탁드립니다.',ts:Date.now()-3600000*4},
+    {id:'d6',name:'박로그',cat:'decision',page:null,body:'[결정 로그 2026-07-24]\n\n건: DIR_038 처리 방식\n결정: DROP\n이유: 피사체-배경 관계가 불명확하고, 기존 어떤 지시문 조건도 충족하지 않음. "아름답지만 기준에 안 맞는" 케이스.\n\n원칙 재확인: 기준 미충족 시 아름다움으로 보정 금지.',ts:Date.now()-3600000*6},
+    {id:'d7',name:'김세트',cat:'criteria',page:null,body:'셀렉 기준 레퍼런스 (최신)\n\nCORE: 해당 지시문의 핵심 조건을 명확히 충족. 대체 불가한 사례.\nSUPPORT: 조건 부분 충족. 맥락 보강 역할.\nDROP: 조건 불충족 또는 중복. 아카이브 불필요.\n\n보류 처리 룰: 2인 이상 판단 불일치 → 보류 태그 후 공동 검토.\n보류 기간: 최대 1주. 이후 자동 DROP.',ts:Date.now()-3600000*8},
+    {id:'d8',name:'이아카',cat:'history',page:null,body:'[작업 이력]\n\n1단계 (촬영): 2024-05 완료 / 438장\n2단계 (1차 셀렉): 2026-06-10 완료 / 197장 통과\n2단계 (2차 셀렉): 2026-07-24 진행중 / 45 DIR\n3단계 (문법화): 예정\n4단계 (지시문화): 예정\n5단계 (아카이빙): 예정\n6단계 (퍼블리시): 예정',ts:Date.now()-3600000*12},
+    {id:'d9',name:'박로그',cat:'resource',page:'page-log.html',body:'리소스 모음\n\n■ 홈페이지\n- 메인: set-os.html\n- 로그/아카이브: page-log.html\n- 포트폴리오(3D): portfolio-3d.html\n- 포트폴리오(터널): portfolio-3d2.html\n- 팀소통: page-team.html\n\n■ DIR 코드 체계: A01~A45 (바탕과바늘)\n■ SVA 방법론 문서: Desktop/SVA_method_v2.pdf\n■ 지시문 원본: 노션 SET/지시문 페이지',ts:Date.now()-3600000*24},
+  ];
+  renderFeed(); updateCounts();
 }
 
 // ── HELPERS ──
-function setStatus(txt, color){
-  const el = document.getElementById('connStatus');
-  el.textContent = txt;
-  el.style.color = color;
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtS(ts){if(!ts)return'—';const d=new Date(ts);return(d.getMonth()+1)+'.'+(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function fmtFull(ts){if(!ts)return'—';const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function pad(n){return String(n).padStart(2,'0');}
+function setStat(t){document.getElementById('statLine').textContent=t;}
+function setConn(t,ok){
+  const el=document.getElementById('connBadge');
+  el.textContent='● '+t; el.style.color=ok?'#ffff55':'#ff8888';
+  document.getElementById('dbStatus').textContent=ok?'LIVE':'DEMO';
+  setStat(t+'.');
 }
-function catLabel(cat){
-  return {handover:'인수인계',shoot:'촬영',link:'링크',idea:'아이디어',etc:'기타'}[cat] || cat;
-}
-function fmtTime(ts){
-  if(!ts) return '—';
-  const d = new Date(ts);
-  const mm = String(d.getMonth()+1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  const hh = String(d.getHours()).padStart(2,'0');
-  const mi = String(d.getMinutes()).padStart(2,'0');
-  return `${mm}.${dd} ${hh}:${mi}`;
-}
-function esc(s){
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function leave(){
-  document.body.classList.add('leaving');
-  setTimeout(() => location.href='set-os.html', 420);
-}
+function ev(e){e.stopPropagation();}
+function leave(){location.href='set-os.html';}
 
-// Enter key to send
-document.getElementById('inMsg').addEventListener('keydown', e => {
-  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendMsg();
+// ── CTRL+ENTER ──
+document.getElementById('inMsg').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) sendMsg();
 });
 
-// ── DEMO MESSAGES (미설정 상태에서 UI 미리보기용) ──
-function loadDemo(){
-  allMsgs = [
-    {id:'d1', name:'김세트', cat:'handover', page:null, body:'현재 진행 중인 작업 인수인계합니다.\n\n- 바탕과 바늘 2차 셀렉션: 45개 DIR 중 38개 완료. 나머지 7개 미검토.\n- set-os.html 모바일 레이아웃 수정 완료, 커밋 완료.\n- portfolio-3d2.html 사진 로딩 문제 해결됨 (photo/ 폴더 누락이 원인).', ts: Date.now() - 1000*60*25},
-    {id:'d2', name:'이아카', cat:'shoot', page:null, body:'다음 촬영 일정\n\n📅 7월 30일 (수) 오전 10시\n📍 장소: 추후 공유\n\n준비물: 카메라 본체 + 렌즈 2종, 노트북, 외장하드\n전날까지 배터리 충전 필수.', ts: Date.now() - 1000*60*90},
-    {id:'d3', name:'박로그', cat:'link', page:'page-log.html', body:'page-log.html 게시물 팝업 가로폭을 960px → 1400px으로 늘렸습니다. body zoom:0.7 때문에 실제로는 670px처럼 보이던 문제 해결. 확인 부탁드립니다.', ts: Date.now() - 1000*60*180},
-    {id:'d4', name:'김세트', cat:'idea', page:null, body:'아이디어: 메인 화면에 최근 촬영 날짜 카운트다운 위젯 추가하면 어떨까요? set-os.html 우측 패널 여유 공간에 넣을 수 있을 것 같습니다.', ts: Date.now() - 1000*3600*3},
-    {id:'d5', name:'이아카', cat:'etc', page:null, body:'노트북 화면에서 양쪽 패널 안 보이는 문제 수정됐습니다. 1025~1560px 구간에서 레일이 숨겨지던 CSS 규칙 제거 완료.', ts: Date.now() - 1000*3600*6},
-  ];
-  renderFeed();
-  setStatus('● DEMO MODE', '#ffd24a');
-}
+// ── CLOCK ──
+setInterval(()=>{
+  const d=new Date();
+  document.getElementById('clk').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+},1000);
 
-init();
-if(!CONFIGURED) loadDemo();
+// ── LED JITTER ──
+setInterval(()=>{
+  document.getElementById('ledRow').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.4));
+  document.getElementById('ledgrid').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.55));
+},800);
+
+// ── STATUS ROTATION ──
+const STATS=['SCANNING...','IDLE','READY.','RECORD MODE','SYNC OK','BUFFER OK','CALIBRATING...'];
+setInterval(()=>setStat(STATS[Math.floor(Math.random()*STATS.length)]),2500);
 </script>
-
-<style>
-@keyframes crt-off{0%{clip-path:inset(0 0 0 0);filter:brightness(1);}40%{clip-path:inset(48% 0 48% 0);filter:brightness(3);}72%{clip-path:inset(49.5% 12% 49.5% 12%);filter:brightness(5);}100%{clip-path:inset(50% 50% 50% 50%);filter:brightness(0);}}
-body.leaving{animation:crt-off .42s ease-in forwards !important;}
-</style>
 </body>
 </html>
