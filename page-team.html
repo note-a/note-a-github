@@ -191,21 +191,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .hkey{display:inline-block;background:var(--gray);border:2px solid #999;
   box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 
-/* ── TIMELINE PANEL (right) ── */
-.tld-grp{border-bottom:2px solid #999;}
-.tld-date{font-size:9px;letter-spacing:2px;color:var(--lt);background:var(--hd);padding:3px 8px;
-  box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
-.tld-items{padding:4px 0;}
-.tld-row{display:flex;gap:0;cursor:pointer;padding:3px 6px 5px 4px;}
-.tld-row:hover{background:var(--yel);}
-.tld-row:hover .tld-txt,.tld-row:hover .tld-who,.tld-row:hover .tld-hm{color:var(--blue);}
-.tld-line{display:flex;flex-direction:column;align-items:center;width:16px;flex-shrink:0;padding-top:3px;}
-.tld-dot{width:8px;height:8px;border:2px solid;}
-.tld-body{flex:1;min-width:0;}
-.tld-top{display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
-.tld-who{font-size:9px;color:var(--ink2);}
-.tld-hm{font-size:9px;color:var(--ink2);margin-left:auto;}
-.tld-txt{font-size:10px;color:var(--ink);line-height:1.5;word-break:break-all;margin-top:2px;}
+/* ── GANTT PANEL (right) ── */
+.gantt-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+.gantt-hdr{display:flex;height:24px;flex-shrink:0;border-bottom:2px solid #888;background:var(--gray);}
+.gantt-lhd{width:52px;flex-shrink:0;border-right:2px solid #888;}
+.gantt-cal-hdr{flex:1;overflow:hidden;position:relative;background:#c8c8d8;}
+.gantt-body{flex:1;overflow-y:auto;overflow-x:hidden;}
+.gantt-row{display:flex;height:22px;border-bottom:1px solid #bbb;}
+.gantt-lbl{width:52px;flex-shrink:0;border-right:2px solid #888;padding:3px 4px;font-size:9px;
+  color:var(--ink2);overflow:hidden;white-space:nowrap;display:flex;align-items:center;background:var(--gray);}
+.gantt-track{flex:1;position:relative;overflow:hidden;background:#e8e8f0;}
+.gantt-row:nth-child(even) .gantt-track{background:#dde0ee;}
+.gantt-wk{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.1);}
+.gantt-today{position:absolute;top:0;bottom:0;width:2px;background:rgba(200,0,0,.6);z-index:2;}
+.gantt-dot{position:absolute;top:4px;width:12px;height:12px;margin-left:-6px;cursor:pointer;z-index:3;
+  border:2px solid;box-shadow:1px 1px 0 rgba(0,0,0,.3);}
+.gantt-dot:hover{outline:2px solid var(--yel);z-index:4;}
+.gantt-mn{position:absolute;top:4px;font-size:8px;letter-spacing:1px;color:var(--hd);font-family:var(--fnt);}
+.gantt-mn-line{position:absolute;top:0;bottom:0;width:1px;background:#999;}
 
 /* ── WRITE MODAL ── */
 .wfield{margin-bottom:7px;}
@@ -636,33 +639,80 @@ function setMobTab(tab){
 function renderRecent(){
   const el = document.getElementById('recentFeed');
   if(!el) return;
-  if(!allMsgs.length){
-    el.innerHTML='<div style="color:var(--ink2);padding:10px 8px;font-size:10px;">메시지 없음</div>';
-    return;
+
+  const DAY = 86400000;
+  const now = Date.now();
+  const CAT_COLORS = {
+    notice:'#887700', status:'#0055aa', handover:'#9a6a00', idea:'#22aa44',
+    question:'#cc6600', decision:'#5500aa', criteria:'#aa2222', history:'#667799', resource:'#008888'
+  };
+  const CAT_SHORT = {
+    notice:'공지', status:'현황', handover:'인계', idea:'아이디어',
+    question:'논의', decision:'결정', criteria:'기준', history:'이력', resource:'리소스'
+  };
+  const CATS = ['notice','status','handover','idea','question','decision','criteria','history','resource'];
+
+  // Date range
+  const allTs = allMsgs.map(m=>m.ts);
+  const rawMin = allTs.length ? Math.min(...allTs) : now - 30*DAY;
+  const startDate = new Date(rawMin); startDate.setDate(1); startDate.setHours(0,0,0,0);
+  const startTs = startDate.getTime();
+  const endDate = new Date(now + 14*DAY); endDate.setDate(endDate.getDate()+1); endDate.setHours(0,0,0,0);
+  const endTs = endDate.getTime();
+  const totalDays = Math.ceil((endTs - startTs) / DAY);
+
+  // Chart width: 10px per day, min 180px
+  const PX = Math.max(10, Math.min(14, 190 / totalDays));
+  const chartW = Math.round(totalDays * PX);
+  const todayX = Math.round((now - startTs) / DAY * PX);
+
+  // Month header marks
+  let mnHtml = '', wkHtml = '';
+  const d = new Date(startTs);
+  while(d.getTime() <= endTs){
+    const x = Math.round((d.getTime() - startTs) / DAY * PX);
+    const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    mnHtml += `<div class="gantt-mn-line" style="left:${x}px"></div>
+               <div class="gantt-mn" style="left:${x+2}px">${mn[d.getMonth()]} ${d.getFullYear().toString().slice(2)}</div>`;
+    d.setMonth(d.getMonth()+1); d.setDate(1);
   }
-  const sorted = [...allMsgs].sort((a,b)=>b.ts-a.ts);
-  const byDate = {};
-  sorted.forEach(m=>{ const d=fmtDate(m.ts); if(!byDate[d]) byDate[d]=[]; byDate[d].push(m); });
-  el.innerHTML = Object.entries(byDate).map(([date, msgs])=>`
-    <div class="tld-grp">
-      <div class="tld-date">${date}</div>
-      <div class="tld-items">
-        ${msgs.map(m=>{
-          const preview = m.body.replace(/\n/g,' ').slice(0,50);
-          return `<div class="tld-row" onclick="selectMsgById('${m.id}')">
-            <div class="tld-line"><div class="tld-dot C-${m.cat}"></div></div>
-            <div class="tld-body">
-              <div class="tld-top">
-                <span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>
-                <span class="tld-who">${esc(m.name||'익명')}</span>
-                <span class="tld-hm">${fmtS(m.ts).split(' ')[1]||''}</span>
-              </div>
-              <div class="tld-txt">${esc(preview)}${m.body.length>50?'…':''}</div>
-            </div>
-          </div>`;
-        }).join('')}
+
+  // Week lines
+  const wd = new Date(startTs);
+  while(wd.getTime() <= endTs){
+    const x = Math.round((wd.getTime() - startTs) / DAY * PX);
+    wkHtml += `<div class="gantt-wk" style="left:${x}px"></div>`;
+    wd.setDate(wd.getDate()+7);
+  }
+
+  // Today line (reused in each row via CSS + JS injection)
+  const todayLine = `<div class="gantt-today" style="left:${todayX}px"></div>`;
+
+  // Rows
+  const rowsHtml = CATS.map(cat => {
+    const msgs = allMsgs.filter(m=>m.cat===cat);
+    const dots = msgs.map(m => {
+      const x = Math.round((m.ts - startTs) / DAY * PX);
+      const tip = (m.name||'익명')+': '+m.body.replace(/\n/g,' ').slice(0,40);
+      return `<div class="gantt-dot" style="left:${x}px;background:${CAT_COLORS[cat]};border-color:${CAT_COLORS[cat]};"
+        onclick="selectMsgById('${m.id}')" title="${esc(tip)}"></div>`;
+    }).join('');
+    return `<div class="gantt-row">
+      <div class="gantt-lbl">${CAT_SHORT[cat]}</div>
+      <div class="gantt-track" style="min-width:${chartW}px">${wkHtml}${todayLine}${dots}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="gantt-wrap">
+    <div class="gantt-hdr">
+      <div class="gantt-lhd"></div>
+      <div class="gantt-cal-hdr" style="min-width:${chartW}px;overflow-x:auto;">${mnHtml}
+        <div class="gantt-today" style="left:${todayX}px"></div>
       </div>
-    </div>`).join('');
+    </div>
+    <div class="gantt-body">${rowsHtml}</div>
+  </div>`;
+  el.style.cssText='flex:1;overflow:hidden;display:flex;flex-direction:column;';
 }
 
 // ── RENDER ──
