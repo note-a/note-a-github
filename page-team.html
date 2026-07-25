@@ -20,11 +20,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 
 /* ── MONITOR ── */
 #mon{
-  position:relative;width:1280px;max-width:99vw;height:820px;max-height:98vh;
-  background:var(--gray);border:3px solid #999;
-  box-shadow:inset -3px -3px 0 #777,inset 3px 3px 0 #ccc,0 0 0 3px #003060,0 14px 40px rgba(0,0,0,.6);
+  position:relative;width:1120px;max-width:97vw;height:730px;max-height:95vh;
+  background:var(--gray);border:3px solid #999999;
+  box-shadow:inset -3px -3px 0 #777777,inset 3px 3px 0 #cccccc,0 0 0 3px #003060,0 14px 40px rgba(0,0,0,.6);
   display:grid;grid-template-rows:auto auto auto 1fr auto auto;gap:3px;padding:4px;
-  transition:height .15s;
+  overflow:hidden;transition:height .15s;
 }
 #mon.minimized .menubar,#mon.minimized .mob-tabs,#mon.minimized .body,
 #mon.minimized .foot,#mon.minimized .statusln{display:none!important;}
@@ -33,16 +33,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   border:none!important;box-shadow:none!important;}
 
 /* ── TITLE BAR ── */
-.tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:6px;
-  padding:4px 6px;font-size:12px;letter-spacing:1px;
+.tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:8px;
+  padding:5px 9px;font-size:12px;letter-spacing:1px;
   box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
-.tbar .led{display:flex;gap:4px;}
+.tbar .led{display:flex;gap:4px;margin-left:auto;}
 .tbar .led b{width:8px;height:8px;background:#002040;display:inline-block;box-shadow:inset 1px 1px 0 #000;}
 .tbar .led b.on{background:var(--yel);box-shadow:0 0 5px var(--yel);}
 .tbar .clk{font-size:11px;color:var(--yel);}
 .conn-badge{font-size:10px;padding:1px 6px;background:#002040;border:1px solid #001530;color:var(--yel);}
 /* Win controls */
-.win-ctrl{display:flex;gap:2px;margin-left:auto;flex-shrink:0;}
+.win-ctrl{display:flex;gap:2px;flex-shrink:0;}
 .wc{width:20px;height:16px;background:var(--gray);border:2px solid #999;
   box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
   font-family:var(--fnt);font-size:11px;color:var(--ink);cursor:pointer;
@@ -76,7 +76,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .mob-tab.on{background:var(--hd);color:var(--lt);}
 
 /* ── BODY ── */
-.body{display:grid;grid-template-columns:200px 1fr 280px;gap:3px;min-height:0;}
+.body{display:grid;grid-template-columns:236px 1fr 260px;gap:3px;min-height:0;}
 .col-left,.col-center,.col-right{display:flex;flex-direction:column;gap:3px;min-height:0;}
 .col-center{min-height:0;}
 
@@ -85,11 +85,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;display:flex;flex-direction:column;min-height:0;}
 .ph{background:var(--hd);color:var(--lt);font-size:11px;padding:5px 9px;letter-spacing:1px;flex-shrink:0;
   box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
-.pb{padding:7px 9px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
+.pb{padding:9px 10px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
 .kv{display:flex;justify-content:space-between;font-size:11px;}
 .kv .k{color:var(--ink2);} .kv .v{color:var(--ink);}
-.led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin:5px 0 8px;}
-.led-grid b{height:9px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
+.bar{height:11px;background:#002040;border:1px solid #2a3a9a;margin:2px 0 8px;position:relative;overflow:hidden;}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#3a88ff,var(--yel));transition:width .2s;}
+.bar.amb i{background:linear-gradient(90deg,#3a88ff,#ff8a3a);}
+.led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin:6px 0;}
+.led-grid b{height:10px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
 .led-grid b.on{background:var(--yel);box-shadow:0 0 4px var(--yel);}
 
 /* ── FILTER ── */
@@ -210,9 +213,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 
 /* ── FOOTER ── */
 .foot{display:flex;gap:3px;}
-.foot button{flex:1;background:var(--gray);border:2px solid #999;
-  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
-  font-family:var(--fnt);font-size:12px;letter-spacing:1px;color:var(--ink);padding:9px;cursor:pointer;}
+.foot button{flex:1;background:var(--gray);border:2px solid #999999;
+  box-shadow:inset -2px -2px 0 #888888,inset 2px 2px 0 #cccccc;
+  font-family:var(--fnt);font-size:14px;letter-spacing:1px;color:var(--ink);padding:13px;cursor:pointer;}
 .foot button:hover{background:var(--yel);}
 .foot button:active{box-shadow:inset 2px 2px 0 #888,inset -2px -2px 0 #ccc;}
 .foot button.pri{background:var(--hd);color:var(--lt);box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
@@ -344,6 +347,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
           <div class="kv"><span class="k">DB</span><span class="v" id="dbStatus">INIT</span></div>
           <div class="kv"><span class="k">REC</span><span class="v" id="recCount">0 ENTRIES</span></div>
           <div class="led-grid" id="ledgrid"></div>
+          <div class="kv"><span class="k">SIG</span><span class="v" id="sigv">62%</span></div>
+          <div class="bar"><i id="sig" style="width:62%"></i></div>
+          <div class="kv"><span class="k">REC</span><span class="v" id="recpv">84%</span></div>
+          <div class="bar amb"><i id="recp" style="width:84%"></i></div>
+          <div class="kv"><span class="k">BUF</span><span class="v">OK</span></div>
+          <div class="bar"><i id="buf" style="width:100%"></i></div>
         </div>
       </div>
       <div class="panel" style="flex:1;">
@@ -373,17 +382,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
         </div>
         <div class="wfield">
           <span class="wlbl">CATEGORY · 분류</span>
-          <div class="wcats">
-            <button class="wcatb active" data-cat="notice">공지</button>
-            <button class="wcatb" data-cat="status">작업현황</button>
-            <button class="wcatb" data-cat="handover">인수인계</button>
-            <button class="wcatb" data-cat="idea">아이디어</button>
-            <button class="wcatb" data-cat="question">질문/논의</button>
-            <button class="wcatb" data-cat="decision">결정로그</button>
-            <button class="wcatb" data-cat="criteria">셀렉기준</button>
-            <button class="wcatb" data-cat="history">작업이력</button>
-            <button class="wcatb" data-cat="resource" style="grid-column:span 2">리소스</button>
-          </div>
+          <select class="winput" id="inCat" onchange="selectedCat=this.value;document.getElementById('pageField').style.display=this.value==='resource'?'':'none';if(this.value!=='resource')document.getElementById('inPage').value='';">
+            <option value="notice">공지</option>
+            <option value="status">작업현황</option>
+            <option value="handover">인수인계</option>
+            <option value="idea">아이디어</option>
+            <option value="question">질문/논의</option>
+            <option value="decision">결정로그</option>
+            <option value="criteria">셀렉기준</option>
+            <option value="history">작업이력</option>
+            <option value="resource">리소스</option>
+          </select>
         </div>
         <div class="wfield" id="pageField" style="display:none">
           <span class="wlbl">PAGE · 페이지 / URL</span>
@@ -836,15 +845,6 @@ function setConn(t,ok){
 function ev(e){e.stopPropagation();}
 function leave(){location.href='set-os.html';}
 
-document.querySelectorAll('.wcatb').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.wcatb').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedCat = btn.dataset.cat;
-    document.getElementById('pageField').style.display = selectedCat==='resource' ? '' : 'none';
-    if(selectedCat!=='resource') document.getElementById('inPage').value='';
-  });
-});
 
 document.getElementById('inMsg').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) sendMsg();
@@ -864,9 +864,13 @@ setInterval(()=>{
   document.getElementById('clk').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
 },1000);
 
+function jitter(id,base,amp){const v=Math.max(0,Math.min(100,base+(Math.random()-.5)*amp));document.getElementById(id).style.width=v+'%';return Math.round(v);}
 setInterval(()=>{
   document.getElementById('ledRow').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.4));
   document.getElementById('ledgrid').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.55));
+  const s=jitter('sig',62,18);document.getElementById('sigv').textContent=s+'%';
+  const r=jitter('recp',84,10);document.getElementById('recpv').textContent=r+'%';
+  jitter('buf',100,5);
 },800);
 
 const STATS=['SCANNING...','IDLE','READY.','RECORD MODE','SYNC OK','BUFFER OK','CALIBRATING...'];
