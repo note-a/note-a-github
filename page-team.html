@@ -191,24 +191,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .hkey{display:inline-block;background:var(--gray);border:2px solid #999;
   box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 
-/* ── GANTT PANEL (right) ── */
-.gantt-wrap{display:flex;flex-direction:column;height:100%;overflow:hidden;}
-.gantt-hdr{display:flex;height:24px;flex-shrink:0;border-bottom:2px solid #888;background:var(--gray);}
-.gantt-lhd{width:52px;flex-shrink:0;border-right:2px solid #888;}
-.gantt-cal-hdr{flex:1;overflow:hidden;position:relative;background:#c8c8d8;}
-.gantt-body{flex:1;overflow-y:auto;overflow-x:hidden;}
-.gantt-row{display:flex;height:22px;border-bottom:1px solid #bbb;}
-.gantt-lbl{width:52px;flex-shrink:0;border-right:2px solid #888;padding:3px 4px;font-size:9px;
-  color:var(--ink2);overflow:hidden;white-space:nowrap;display:flex;align-items:center;background:var(--gray);}
-.gantt-track{flex:1;position:relative;overflow:hidden;background:#e8e8f0;}
-.gantt-row:nth-child(even) .gantt-track{background:#dde0ee;}
-.gantt-wk{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.1);}
-.gantt-today{position:absolute;top:0;bottom:0;width:2px;background:rgba(200,0,0,.6);z-index:2;}
-.gantt-dot{position:absolute;top:4px;width:12px;height:12px;margin-left:-6px;cursor:pointer;z-index:3;
-  border:2px solid;box-shadow:1px 1px 0 rgba(0,0,0,.3);}
-.gantt-dot:hover{outline:2px solid var(--yel);z-index:4;}
-.gantt-mn{position:absolute;top:4px;font-size:8px;letter-spacing:1px;color:var(--hd);font-family:var(--fnt);}
-.gantt-mn-line{position:absolute;top:0;bottom:0;width:1px;background:#999;}
+/* ── STATUS PANEL (right) ── */
+.stat-card{border-bottom:2px solid #999;padding:7px 9px;cursor:pointer;}
+.stat-card:hover{background:var(--yel);}
+.stat-card:hover .stat-preview,.stat-card:hover .stat-meta{color:var(--blue);}
+.stat-card.empty{opacity:.35;cursor:default;}
+.stat-card.empty:hover{background:transparent;}
+.stat-top{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.stat-cnt{font-size:9px;color:var(--lt);background:var(--hd);padding:0 5px;min-width:18px;text-align:center;}
+.stat-ago{font-size:9px;color:var(--ink2);margin-left:auto;}
+.stat-preview{font-size:10px;color:var(--ink);line-height:1.5;overflow:hidden;
+  white-space:nowrap;text-overflow:ellipsis;}
+.stat-meta{font-size:9px;color:var(--ink2);margin-top:1px;}
 
 /* ── WRITE MODAL ── */
 .wfield{margin-bottom:7px;}
@@ -635,84 +629,45 @@ function setMobTab(tab){
   if(tab==='board'){ C.classList.add('mob-on'); document.getElementById('feed').scrollTop=0; }
 }
 
-// ── TIMELINE (right panel) ──
+// ── STATUS BOARD (right panel) ──
 function renderRecent(){
   const el = document.getElementById('recentFeed');
   if(!el) return;
+  el.style.cssText = '';
 
-  const DAY = 86400000;
-  const now = Date.now();
-  const CAT_COLORS = {
-    notice:'#887700', status:'#0055aa', handover:'#9a6a00', idea:'#22aa44',
-    question:'#cc6600', decision:'#5500aa', criteria:'#aa2222', history:'#667799', resource:'#008888'
-  };
-  const CAT_SHORT = {
-    notice:'공지', status:'현황', handover:'인계', idea:'아이디어',
-    question:'논의', decision:'결정', criteria:'기준', history:'이력', resource:'리소스'
-  };
   const CATS = ['notice','status','handover','idea','question','decision','criteria','history','resource'];
+  const LABELS = {notice:'공지',status:'작업현황',handover:'인수인계',idea:'아이디어',
+    question:'질문/논의',decision:'결정로그',criteria:'셀렉기준',history:'작업이력',resource:'리소스'};
 
-  // Date range
-  const allTs = allMsgs.map(m=>m.ts);
-  const rawMin = allTs.length ? Math.min(...allTs) : now - 30*DAY;
-  const startDate = new Date(rawMin); startDate.setDate(1); startDate.setHours(0,0,0,0);
-  const startTs = startDate.getTime();
-  const endDate = new Date(now + 14*DAY); endDate.setDate(endDate.getDate()+1); endDate.setHours(0,0,0,0);
-  const endTs = endDate.getTime();
-  const totalDays = Math.ceil((endTs - startTs) / DAY);
+  // 카테고리별 메시지 그룹, 최신순
+  const byCat = {};
+  CATS.forEach(c => { byCat[c] = allMsgs.filter(m=>m.cat===c).sort((a,b)=>b.ts-a.ts); });
 
-  // Chart width: 10px per day, min 180px
-  const PX = Math.max(10, Math.min(14, 190 / totalDays));
-  const chartW = Math.round(totalDays * PX);
-  const todayX = Math.round((now - startTs) / DAY * PX);
+  // 활성 카테고리 우선, 그 다음 비활성
+  const active   = CATS.filter(c=>byCat[c].length > 0);
+  const inactive = CATS.filter(c=>byCat[c].length === 0);
 
-  // Month header marks
-  let mnHtml = '', wkHtml = '';
-  const d = new Date(startTs);
-  while(d.getTime() <= endTs){
-    const x = Math.round((d.getTime() - startTs) / DAY * PX);
-    const mn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    mnHtml += `<div class="gantt-mn-line" style="left:${x}px"></div>
-               <div class="gantt-mn" style="left:${x+2}px">${mn[d.getMonth()]} ${d.getFullYear().toString().slice(2)}</div>`;
-    d.setMonth(d.getMonth()+1); d.setDate(1);
-  }
-
-  // Week lines
-  const wd = new Date(startTs);
-  while(wd.getTime() <= endTs){
-    const x = Math.round((wd.getTime() - startTs) / DAY * PX);
-    wkHtml += `<div class="gantt-wk" style="left:${x}px"></div>`;
-    wd.setDate(wd.getDate()+7);
-  }
-
-  // Today line (reused in each row via CSS + JS injection)
-  const todayLine = `<div class="gantt-today" style="left:${todayX}px"></div>`;
-
-  // Rows
-  const rowsHtml = CATS.map(cat => {
-    const msgs = allMsgs.filter(m=>m.cat===cat);
-    const dots = msgs.map(m => {
-      const x = Math.round((m.ts - startTs) / DAY * PX);
-      const tip = (m.name||'익명')+': '+m.body.replace(/\n/g,' ').slice(0,40);
-      return `<div class="gantt-dot" style="left:${x}px;background:${CAT_COLORS[cat]};border-color:${CAT_COLORS[cat]};"
-        onclick="selectMsgById('${m.id}')" title="${esc(tip)}"></div>`;
-    }).join('');
-    return `<div class="gantt-row">
-      <div class="gantt-lbl">${CAT_SHORT[cat]}</div>
-      <div class="gantt-track" style="min-width:${chartW}px">${wkHtml}${todayLine}${dots}</div>
-    </div>`;
-  }).join('');
-
-  el.innerHTML = `<div class="gantt-wrap">
-    <div class="gantt-hdr">
-      <div class="gantt-lhd"></div>
-      <div class="gantt-cal-hdr" style="min-width:${chartW}px;overflow-x:auto;">${mnHtml}
-        <div class="gantt-today" style="left:${todayX}px"></div>
+  const card = (cat, msgs) => {
+    const latest = msgs[0];
+    const cnt    = msgs.length;
+    const ago    = latest ? fmtAgo(latest.ts) : '';
+    const preview= latest ? latest.body.replace(/\n/g,' ').slice(0,55) : '—';
+    const who    = latest ? (latest.name||'익명') : '';
+    const empty  = !latest;
+    return `<div class="stat-card${empty?' empty':''}" onclick="${empty?'':'selectMsgById(\''+latest.id+'\')'}">
+      <div class="stat-top">
+        <span class="mcbadge C-${cat}">${LABELS[cat]}</span>
+        <span class="stat-cnt">${cnt}</span>
+        <span class="stat-ago">${ago}</span>
       </div>
-    </div>
-    <div class="gantt-body">${rowsHtml}</div>
-  </div>`;
-  el.style.cssText='flex:1;overflow:hidden;display:flex;flex-direction:column;';
+      ${!empty ? `<div class="stat-preview">${esc(preview)}${latest.body.length>55?'…':''}</div>
+      <div class="stat-meta">${esc(who)}</div>` : ''}
+    </div>`;
+  };
+
+  el.innerHTML = active.map(c=>card(c,byCat[c])).join('')
+    + (inactive.length ? `<div style="border-top:2px solid #999;padding:4px 9px;font-size:9px;color:var(--ink2);letter-spacing:1px;">NO ACTIVITY</div>`
+      + inactive.map(c=>card(c,[])).join('') : '');
 }
 
 // ── RENDER ──
