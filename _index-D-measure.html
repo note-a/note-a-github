@@ -83,6 +83,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .foot button.pri{background:var(--hd);color:var(--lt);box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
 .foot button.pri:hover{background:var(--hd2);}
 .statusln{background:var(--hd);color:var(--lt);font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;letter-spacing:1px;}
+
+.menubar span.mactive{background:var(--hd);color:var(--lt);}
+.msg-row{display:flex;align-items:baseline;gap:5px;font-size:11px;line-height:1.7;
+  cursor:pointer;padding:4px 8px;border-bottom:1px solid #aaa;}
+.msg-row:hover{background:var(--yel);color:var(--blue);}
+.msg-row:hover .mname,.msg-row:hover .mago{color:var(--blue);}
+.mbadge{font-size:9px;padding:0 4px;border:1px solid;flex:0 0 auto;white-space:nowrap;}
+.mname{flex:0 0 52px;font-size:10px;color:var(--ink2);overflow:hidden;white-space:nowrap;}
+.mpreview{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.mago{flex:0 0 auto;font-size:9px;color:var(--amb);white-space:nowrap;}
+.board-empty{padding:14px 9px;font-size:11px;color:var(--ink2);}
 </style>
 </head>
 <body>
@@ -90,13 +101,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 <div id="mon">
   <div class="tbar"><span style="color:var(--lt);font-size:11px;">PROJECT SET : Southkoreasuicidesquad</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></span><span class="clk" id="clk">00:00:00</span></div>
   <div class="menubar">
-    <span onclick="goBoard('notice')">공지</span>
-    <span onclick="goBoard('status')">작업 현황</span>
-    <span onclick="goBoard('handover')">인수인계</span>
-    <span onclick="goBoard('idea')">아이디어/메모</span>
-    <span onclick="goBoard('question')">질문/논의</span>
-    <span onclick="goBoard('criteria')">셀렉 기준</span>
-    <span onclick="goBoard('history')">작업 이력</span>
+    <span data-cat="notice"   onclick="goBoard(this)">공지</span>
+    <span data-cat="status"   onclick="goBoard(this)">작업 현황</span>
+    <span data-cat="handover" onclick="goBoard(this)">인수인계</span>
+    <span data-cat="idea"     onclick="goBoard(this)">아이디어/메모</span>
+    <span data-cat="question" onclick="goBoard(this)">질문/논의</span>
+    <span data-cat="criteria" onclick="goBoard(this)">셀렉 기준</span>
+    <span data-cat="history"  onclick="goBoard(this)">작업 이력</span>
   </div>
 
   <div class="body">
@@ -124,17 +135,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
     </div>
 
     <div class="panel">
-      <div class="ph">▣ TRANSMISSION — SET WORLD / ACCUMULATION LOG</div>
-      <div class="pb">
-        <div class="intro">
-          <p>There are things that keep appearing. In different cities, different light, different hands. <span class="hl">The same thing, almost.</span> Close enough to ask why.</p>
-          <p>This is one answer to that question. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+      <div class="ph" id="centerPh">▣ TRANSMISSION — SET WORLD / ACCUMULATION LOG</div>
+      <!-- 기본 인트로 -->
+      <div id="introView" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+        <div class="pb">
+          <div class="intro">
+            <p>There are things that keep appearing. In different cities, different light, different hands. <span class="hl">The same thing, almost.</span> Close enough to ask why.</p>
+            <p>This is one answer to that question. It took years. It is still going. Some conditions repeat — not because they are chosen, but because the world keeps producing them.</p>
+          </div>
+          <div class="console" style="margin-top:8px;"><div id="con"></div></div>
         </div>
-        <div class="console" style="margin-top:8px;"><div id="con"></div></div>
+        <div class="search">
+          <input id="q" placeholder="MEASURE INPUT ▸ what you measure, you enter" readonly>
+          <button onclick="go('set-os.html')">SCAN</button>
+        </div>
       </div>
-      <div class="search">
-        <input id="q" placeholder="MEASURE INPUT ▸ what you measure, you enter" readonly>
-        <button onclick="go('set-os.html')">SCAN</button>
+      <!-- 게시판 뷰 -->
+      <div id="boardView" style="display:none;flex-direction:column;flex:1;min-height:0;">
+        <div style="overflow-y:auto;flex:1;" id="boardFeed"></div>
+        <div class="search">
+          <button onclick="backToIntro()" style="flex:0 0 auto;padding:8px 14px;">◀ BACK</button>
+          <span style="flex:1;font-size:10px;color:var(--ink2);padding:0 8px;align-self:center;" id="boardCount"></span>
+        </div>
       </div>
     </div>
 
@@ -180,7 +202,47 @@ const lg=document.getElementById('ledgrid');lg.innerHTML=Array(16).fill('<b></b>
 const stats=['SCANNING SECTOR 04...','MATCH FOUND: STRATA','RECORDING...','SAMPLE +1','IDLE','CALIBRATING...'];
 setInterval(()=>{document.getElementById('stat').textContent=stats[Math.floor(Math.random()*stats.length)];},1400);
 function go(u){if(parent!==window)return;location.href=u;}
-function goBoard(cat){location.href='page-team.html#'+cat;}
+
+const LABELS={notice:'공지',status:'작업 현황',handover:'인수인계',idea:'아이디어/메모',question:'질문/논의',criteria:'셀렉 기준',history:'작업 이력'};
+const COLORS={notice:'#887700',status:'#0055aa',handover:'#9a6a00',idea:'#22aa44',question:'#cc6600',criteria:'#aa2222',history:'#667799'};
+const DEMO=[
+  {name:'김세트',cat:'notice',  body:'다음 촬영 일정 공지\n일시: 7월 30일 (수) 오전 10시\n장소: 추후 단체톡으로 공유\n준비물: 카메라 본체, 렌즈 2종, 노트북, 외장하드',ts:Date.now()-60000*15},
+  {name:'이아카',cat:'status',  body:'현재 진행 단계: 2단계 — 1차 셀렉션 완료, 2차 진행 중\n45개 DIR 중 38개 검토 완료 (84%).\n미완료: DIR_039~045 (7개)',ts:Date.now()-60000*60},
+  {name:'박로그',cat:'handover',body:'작업 중단 지점 인수인계.\nDIR_039 바탕과바늘 시리즈 — 2차 셀렉 절반 완료.\n판정 보류 파일 3장 → 같이 보고 결정 필요.',ts:Date.now()-60000*120},
+  {name:'김세트',cat:'idea',    body:'개념문 메모 — "바느질 그리드"\n수평 줄이 화면을 자르는 게 아니라, 수평 줄이 화면을 엮는 구조.',ts:Date.now()-3600000*2},
+  {name:'이아카',cat:'question',body:'질문: DIR_041 판정 기준 애매합니다.\n피사체가 프레임 정중앙, 배경이 완전 단색인 경우 → SUPPORT인지 DROP인지 불명확.',ts:Date.now()-3600000*4},
+  {name:'김세트',cat:'criteria',body:'셀렉 기준 레퍼런스 (최신)\nCORE: 핵심 조건 명확히 충족.\nSUPPORT: 조건 부분 충족. 맥락 보강 역할.\nDROP: 조건 불충족 또는 중복.',ts:Date.now()-3600000*8},
+  {name:'이아카',cat:'history', body:'작업 이력\n1단계 (촬영): 2024-05 완료 / 438장\n2단계 (1차 셀렉): 2026-06-10 완료 / 197장\n2단계 (2차 셀렉): 2026-07-24 진행중',ts:Date.now()-3600000*12},
+];
+
+function fmtAgo(ts){const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d';}
+
+function goBoard(el){
+  const cat=el.dataset.cat;
+  document.querySelectorAll('.menubar span').forEach(s=>s.classList.remove('mactive'));
+  el.classList.add('mactive');
+  document.getElementById('centerPh').textContent='▣ '+LABELS[cat];
+  document.getElementById('introView').style.display='none';
+  document.getElementById('boardView').style.display='flex';
+  const msgs=DEMO.filter(m=>m.cat===cat);
+  const col=COLORS[cat]||'#334455';
+  document.getElementById('boardCount').textContent=msgs.length+'건';
+  document.getElementById('boardFeed').innerHTML=msgs.length
+    ?msgs.map(m=>`<div class="msg-row">
+        <span class="mbadge" style="border-color:${col};color:${col};">${LABELS[m.cat]}</span>
+        <span class="mname">${m.name}</span>
+        <span class="mpreview">${m.body.split('\n')[0]}</span>
+        <span class="mago">${fmtAgo(m.ts)}</span>
+      </div>`).join('')
+    :'<div class="board-empty">▸ 메시지가 없습니다</div>';
+}
+
+function backToIntro(){
+  document.querySelectorAll('.menubar span').forEach(s=>s.classList.remove('mactive'));
+  document.getElementById('centerPh').textContent='▣ TRANSMISSION — SET WORLD / ACCUMULATION LOG';
+  document.getElementById('boardView').style.display='none';
+  document.getElementById('introView').style.display='flex';
+}
 </script>
 </body>
 </html>
