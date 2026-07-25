@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.E.T. — TEAM // 팀 소통</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/galmuri/dist/galmuri.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#04010f;
+  --ln:#36e0ff;
+  --mg:#ff3df0;
+  --dim:#1a6a8a;
+  --lbl:#b8f0ff;
+  --yl:#ffd24a;
+  --gn:#3dff8a;
+  --rd:#ff5a7a;
+  --bd:rgba(54,224,255,.22);
+  --font:'Courier Prime','Galmuri11','Share Tech Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  zoom:0.75;
+  min-height:100vh;
+  font-family:var(--font);
+  color:var(--lbl);
+  overflow-x:hidden;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 13px,rgba(54,224,255,.03) 13px 14px),
+    repeating-linear-gradient(90deg,transparent 0 13px,rgba(54,224,255,.03) 13px 14px),
+    radial-gradient(110% 60% at 50% 0%,rgba(54,224,255,.10),transparent 60%),
+    radial-gradient(110% 60% at 20% 80%,rgba(255,61,240,.08),transparent 60%),
+    linear-gradient(180deg,#08021a 0%,#04010f 100%);
+  background-attachment:fixed;
+}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:60;
+  background:radial-gradient(130% 130% at 50% 45%,transparent 60%,rgba(0,0,0,.55) 100%);}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:61;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.12) 2px 3px);}
+
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+@keyframes blink{50%{opacity:.2;}}
+@keyframes march{to{stroke-dashoffset:-42;}}
+@keyframes sweep{from{transform:translateY(-180px);}to{transform:translateY(calc(100vh + 180px));}}
+@keyframes pop{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:relative;z-index:5;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px 12px;
+  border-bottom:1px solid var(--bd);
+}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.site-id{font-size:11px;letter-spacing:4px;color:var(--dim);}
+.page-id{font-size:13px;letter-spacing:3px;color:var(--ln);text-shadow:0 0 10px rgba(54,224,255,.4);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--gn);box-shadow:0 0 8px var(--gn);animation:pulse 1.4s steps(1) infinite;flex:0 0 auto;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.exit-btn{
+  border:1.3px solid var(--ln);background:transparent;color:var(--ln);
+  font-family:var(--font);font-size:12px;letter-spacing:3px;
+  padding:8px 24px;cursor:pointer;transition:.15s;
+}
+.exit-btn:hover{background:var(--ln);color:#000;}
+
+/* ── LAYOUT ── */
+.wrap{
+  position:relative;z-index:5;
+  max-width:1600px;margin:0 auto;
+  padding:24px 28px 64px;
+  display:grid;
+  grid-template-columns:340px 1fr;
+  gap:20px;
+  align-items:start;
+}
+
+/* ── LEFT PANEL (post form + filters) ── */
+.left-col{display:flex;flex-direction:column;gap:16px;}
+
+.panel{
+  border:1.5px solid var(--bd);
+  background:rgba(4,10,26,.7);
+  animation:fadein .5s ease-out;
+}
+.panel-head{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 14px;
+  border-bottom:1px solid var(--bd);
+  background:rgba(54,224,255,.05);
+  font-size:10px;letter-spacing:3px;color:var(--ln);
+}
+.panel-head .ph-dot{width:5px;height:5px;border-radius:50%;background:var(--ln);box-shadow:0 0 5px var(--ln);}
+.panel-body{padding:16px 14px;}
+
+/* form */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:9px;letter-spacing:3px;color:var(--dim);margin-bottom:6px;}
+.field input,.field textarea,.field select{
+  width:100%;background:rgba(0,0,0,.5);
+  border:1px solid rgba(54,224,255,.2);
+  color:var(--lbl);font-family:var(--font);font-size:13px;
+  padding:9px 11px;outline:none;transition:.15s;
+  resize:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:var(--ln);
+  box-shadow:0 0 0 2px rgba(54,224,255,.08);
+}
+.field select option{background:#04010f;}
+.field textarea{min-height:110px;line-height:1.7;}
+
+/* category buttons */
+.cat-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.cat-btn{
+  flex:1;min-width:70px;padding:7px 10px;
+  background:transparent;border:1px solid;
+  font-family:var(--font);font-size:10px;letter-spacing:2px;
+  cursor:pointer;transition:.15s;text-align:center;
+}
+.cat-btn[data-cat="handover"]{border-color:rgba(255,210,74,.35);color:rgba(255,210,74,.6);}
+.cat-btn[data-cat="shoot"]{border-color:rgba(54,224,255,.35);color:rgba(54,224,255,.6);}
+.cat-btn[data-cat="link"]{border-color:rgba(255,61,240,.35);color:rgba(255,61,240,.6);}
+.cat-btn[data-cat="idea"]{border-color:rgba(61,255,138,.35);color:rgba(61,255,138,.6);}
+.cat-btn[data-cat="etc"]{border-color:rgba(180,180,180,.3);color:rgba(180,180,180,.5);}
+.cat-btn.active[data-cat="handover"]{background:rgba(255,210,74,.15);border-color:var(--yl);color:var(--yl);}
+.cat-btn.active[data-cat="shoot"]{background:rgba(54,224,255,.15);border-color:var(--ln);color:var(--ln);}
+.cat-btn.active[data-cat="link"]{background:rgba(255,61,240,.15);border-color:var(--mg);color:var(--mg);}
+.cat-btn.active[data-cat="idea"]{background:rgba(61,255,138,.15);border-color:var(--gn);color:var(--gn);}
+.cat-btn.active[data-cat="etc"]{background:rgba(180,180,180,.1);border-color:#aaa;color:#ccc;}
+
+.submit-btn{
+  width:100%;padding:12px;margin-top:4px;
+  background:rgba(54,224,255,.08);border:1.5px solid var(--ln);
+  color:var(--ln);font-family:var(--font);font-size:12px;letter-spacing:4px;
+  cursor:pointer;transition:.15s;
+}
+.submit-btn:hover{background:var(--ln);color:#000;}
+.submit-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* filter bar */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;}
+.f-btn{
+  padding:5px 13px;background:transparent;
+  border:1px solid rgba(54,224,255,.2);
+  color:rgba(54,224,255,.45);font-family:var(--font);
+  font-size:9px;letter-spacing:2px;cursor:pointer;transition:.15s;
+}
+.f-btn:hover,.f-btn.on{background:rgba(54,224,255,.1);border-color:var(--ln);color:var(--ln);}
+
+/* members list */
+.member-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid rgba(54,224,255,.06);}
+.member-row:last-child{border-bottom:none;}
+.m-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto;}
+.m-dot.on{background:var(--gn);box-shadow:0 0 6px var(--gn);}
+.m-dot.off{background:rgba(255,255,255,.15);}
+.m-name{font-size:12px;color:var(--lbl);}
+.m-role{margin-left:auto;font-size:9px;letter-spacing:1px;color:var(--dim);}
+
+/* ── RIGHT COL (messages feed) ── */
+.right-col{display:flex;flex-direction:column;gap:0;}
+
+.feed-head{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 18px;
+  border:1.5px solid var(--bd);border-bottom:none;
+  background:rgba(54,224,255,.04);
+}
+.feed-title{font-size:11px;letter-spacing:4px;color:var(--ln);}
+.feed-count{font-size:10px;color:var(--dim);margin-left:auto;}
+
+.feed{
+  border:1.5px solid var(--bd);
+  min-height:500px;
+  background:rgba(2,5,18,.6);
+}
+.feed-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:300px;gap:12px;
+  color:var(--dim);font-size:11px;letter-spacing:3px;
+}
+.feed-empty svg{opacity:.2;}
+
+/* message card */
+.msg{
+  border-bottom:1px solid rgba(54,224,255,.06);
+  padding:18px 22px;
+  animation:pop .25s ease-out;
+  transition:background .1s;
+}
+.msg:hover{background:rgba(54,224,255,.03);}
+.msg:last-child{border-bottom:none;}
+.msg-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.msg-cat{
+  padding:2px 9px;border:1px solid;font-size:8px;letter-spacing:2px;flex:0 0 auto;
+}
+.msg-cat.handover{border-color:rgba(255,210,74,.5);color:var(--yl);}
+.msg-cat.shoot{border-color:rgba(54,224,255,.5);color:var(--ln);}
+.msg-cat.link{border-color:rgba(255,61,240,.5);color:var(--mg);}
+.msg-cat.idea{border-color:rgba(61,255,138,.5);color:var(--gn);}
+.msg-cat.etc{border-color:rgba(180,180,180,.4);color:#bbb;}
+.msg-page{font-size:10px;letter-spacing:1px;color:rgba(255,61,240,.6);margin-left:2px;}
+.msg-name{font-size:13px;color:#fff;letter-spacing:.5px;}
+.msg-time{margin-left:auto;font-size:9px;color:var(--dim);letter-spacing:1px;}
+.msg-del{
+  background:transparent;border:none;color:rgba(255,90,122,.3);
+  font-size:14px;cursor:pointer;padding:0 4px;transition:.15s;line-height:1;
+}
+.msg-del:hover{color:var(--rd);}
+.msg-body{font-size:14px;line-height:1.85;color:#c8ddef;white-space:pre-wrap;word-break:break-word;}
+
+/* firebase config notice */
+.cfg-notice{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(4,1,14,.94);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(6px);
+  padding:24px;
+}
+.cfg-box{
+  width:100%;max-width:680px;
+  border:1.5px solid var(--ln);
+  background:#060810;
+  animation:pop .3s ease-out;
+}
+.cfg-head{
+  padding:16px 22px;
+  border-bottom:1.5px solid var(--ln);
+  background:rgba(54,224,255,.07);
+  font-size:12px;letter-spacing:4px;color:var(--ln);
+  display:flex;align-items:center;gap:10px;
+}
+.cfg-body{padding:24px 26px;}
+.cfg-body p{font-size:13px;line-height:1.8;color:#a0bcd0;margin-bottom:18px;}
+.cfg-body code{
+  display:block;background:#010408;border:1px solid rgba(54,224,255,.15);
+  padding:14px 16px;font-size:12px;line-height:1.8;color:#7be4ff;
+  white-space:pre;overflow-x:auto;margin-bottom:20px;
+  font-family:var(--font);
+}
+.cfg-body ol{padding-left:20px;color:#a0bcd0;font-size:13px;line-height:2;}
+.cfg-body li b{color:var(--ln);}
+.cfg-close{
+  width:100%;margin-top:20px;padding:12px;
+  background:rgba(54,224,255,.08);border:1.5px solid var(--ln);
+  color:var(--ln);font-family:var(--font);font-size:12px;letter-spacing:4px;
+  cursor:pointer;transition:.15s;
+}
+.cfg-close:hover{background:var(--ln);color:#000;}
+
+/* scan bar */
+.scanbar{position:fixed;left:0;right:0;top:0;height:140px;z-index:59;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(54,224,255,.07) 46%,rgba(255,61,240,.05) 56%,transparent);
+  transform:translateY(-150px);animation:sweep 8s linear infinite;}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  body{zoom:1;}
+  .wrap{grid-template-columns:1fr;gap:16px;}
+  .topbar{padding:12px 16px;}
+  .wrap{padding:16px 14px 48px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Firebase config notice (shown until configured) -->
+<div class="cfg-notice" id="cfgNotice">
+  <div class="cfg-box">
+    <div class="cfg-head">
+      <span>◈</span> FIREBASE 설정 필요 · SETUP REQUIRED
+    </div>
+    <div class="cfg-body">
+      <p>팀 메시지를 저장하려면 <b style="color:var(--ln)">Firebase Realtime Database</b>가 필요합니다. 무료 플랜으로 충분합니다.</p>
+      <ol>
+        <li><b>console.firebase.google.com</b> 에서 프로젝트 생성</li>
+        <li>Realtime Database 활성화 → 테스트 모드로 시작</li>
+        <li>프로젝트 설정 → 웹 앱 추가 → 아래 값 복사</li>
+        <li>이 파일 하단 <b style="color:var(--yl)">FIREBASE CONFIG</b> 주석 위치에 붙여넣기</li>
+      </ol>
+      <code>// ── FIREBASE CONFIG ──
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:xxxxxxxxxxxx"
+};</code>
+      <button class="cfg-close" onclick="document.getElementById('cfgNotice').style.display='none'">
+        일단 닫기 (로컬 미리보기) · CLOSE PREVIEW
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="scanbar"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="site-id">S.E.T.</span>
+    <span style="color:var(--bd)">·</span>
+    <span class="page-id">TEAM COMM</span>
+    <div class="live-dot"></div>
+  </div>
+  <div class="topbar-right">
+    <span style="font-size:9px;letter-spacing:2px;color:var(--dim)" id="connStatus">● CONNECTING</span>
+    <button class="exit-btn" onclick="leave()">← EXIT</button>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="wrap">
+
+  <!-- LEFT: form + filters + members -->
+  <div class="left-col">
+
+    <!-- POST FORM -->
+    <div class="panel">
+      <div class="panel-head"><div class="ph-dot"></div>NEW MESSAGE · 메시지 작성</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>NAME · 이름</label>
+          <input type="text" id="inName" placeholder="이름 입력" maxlength="24" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>CATEGORY · 분류</label>
+          <div class="cat-btns">
+            <button class="cat-btn active" data-cat="handover">인수인계</button>
+            <button class="cat-btn" data-cat="shoot">촬영 날짜</button>
+            <button class="cat-btn" data-cat="link">링크 설명</button>
+            <button class="cat-btn" data-cat="idea">아이디어</button>
+            <button class="cat-btn" data-cat="etc">기타</button>
+          </div>
+        </div>
+        <div class="field" id="pageField" style="display:none">
+          <label>PAGE · 페이지명</label>
+          <input type="text" id="inPage" placeholder="예: page-log.html, 메인화면 등" maxlength="60" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>MESSAGE · 내용 &nbsp;<span style="color:var(--dim);font-size:9px">Ctrl+Enter 전송</span></label>
+          <textarea id="inMsg" placeholder="자유롭게 작성하세요..." maxlength="4000" style="min-height:150px"></textarea>
+        </div>
+        <button class="submit-btn" id="sendBtn" onclick="sendMsg()">▶ SEND · 전송</button>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="panel">
+      <div class="panel-head"><div class="ph-dot"></div>FILTER · 필터</div>
+      <div class="panel-body">
+        <div class="filter-row">
+          <button class="f-btn on" data-filter="all" onclick="setFilter('all',this)">전체</button>
+          <button class="f-btn" data-filter="handover" onclick="setFilter('handover',this)">인수인계</button>
+          <button class="f-btn" data-filter="shoot" onclick="setFilter('shoot',this)">촬영</button>
+          <button class="f-btn" data-filter="link" onclick="setFilter('link',this)">링크</button>
+          <button class="f-btn" data-filter="idea" onclick="setFilter('idea',this)">아이디어</button>
+          <button class="f-btn" data-filter="etc" onclick="setFilter('etc',this)">기타</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div class="panel">
+      <div class="panel-head"><div class="ph-dot"></div>MEMBERS · 팀원</div>
+      <div class="panel-body" id="memberList">
+        <!-- populated by JS or manually -->
+        <div class="member-row">
+          <div class="m-dot on"></div>
+          <span class="m-name">관리자</span>
+          <span class="m-role">ADMIN</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: messages feed -->
+  <div class="right-col">
+    <div class="feed-head">
+      <span class="feed-title">◈ MESSAGE BOARD · 메시지</span>
+      <span class="feed-count" id="feedCount">— 건</span>
+    </div>
+    <div class="feed" id="feed">
+      <div class="feed-empty" id="feedEmpty">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="8" width="32" height="24" rx="1" stroke="#36e0ff" stroke-width="1.5"/>
+          <line x1="10" y1="16" x2="30" y2="16" stroke="#36e0ff" stroke-width="1.2"/>
+          <line x1="10" y1="21" x2="24" y2="21" stroke="#36e0ff" stroke-width="1.2"/>
+          <line x1="10" y1="26" x2="20" y2="26" stroke="#36e0ff" stroke-width="1.2"/>
+        </svg>
+        <span>아직 메시지가 없습니다</span>
+        <span style="font-size:9px;color:rgba(54,224,255,.25)">NO MESSAGES YET</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── FIREBASE SDK ── -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+// ════════════════════════════════════════════════
+//  FIREBASE CONFIG — 여기에 본인 Firebase 설정값 입력
+// ════════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:xxxxxxxxxxxx"
+};
+// ════════════════════════════════════════════════
+
+const CONFIGURED = firebaseConfig.apiKey !== "YOUR_API_KEY";
+
+let db, msgsRef;
+let allMsgs = [];
+let activeFilter = 'all';
+let selectedCat = 'notice';
+
+// ── INIT ──
+function init(){
+  if(!CONFIGURED){
+    setStatus('● NOT CONFIGURED', '#ff5a7a');
+    return;
+  }
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    msgsRef = db.ref('team_messages');
+    setStatus('● CONNECTED', '#3dff8a');
+    listen();
+  }catch(e){
+    setStatus('● ERROR', '#ff5a7a');
+    console.error(e);
+  }
+}
+
+// ── REAL-TIME LISTENER ──
+function listen(){
+  msgsRef.orderByChild('ts').on('value', snap => {
+    allMsgs = [];
+    snap.forEach(child => {
+      allMsgs.push({id: child.key, ...child.val()});
+    });
+    allMsgs.reverse(); // newest first
+    renderFeed();
+  });
+}
+
+// ── RENDER ──
+function renderFeed(){
+  const filtered = activeFilter === 'all'
+    ? allMsgs
+    : allMsgs.filter(m => m.cat === activeFilter);
+
+  document.getElementById('feedCount').textContent = filtered.length + ' 건';
+  const feed = document.getElementById('feed');
+  const empty = document.getElementById('feedEmpty');
+
+  if(!filtered.length){
+    empty.style.display = 'flex';
+    // remove old cards
+    feed.querySelectorAll('.msg').forEach(el => el.remove());
+    return;
+  }
+  empty.style.display = 'none';
+
+  // diff render: rebuild
+  feed.querySelectorAll('.msg').forEach(el => el.remove());
+  filtered.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'msg';
+    el.dataset.id = m.id;
+    const pageTag = m.page ? `<span class="msg-page">· ${esc(m.page)}</span>` : '';
+    el.innerHTML = `
+      <div class="msg-head">
+        <span class="msg-cat ${m.cat}">${catLabel(m.cat)}</span>
+        ${pageTag}
+        <span class="msg-name">${esc(m.name||'익명')}</span>
+        <span class="msg-time">${fmtTime(m.ts)}</span>
+        <button class="msg-del" onclick="delMsg('${m.id}')" title="삭제">×</button>
+      </div>
+      <div class="msg-body">${esc(m.body)}</div>
+    `;
+    feed.appendChild(el);
+  });
+}
+
+// ── SEND ──
+function sendMsg(){
+  if(!CONFIGURED){ alert('Firebase 설정 후 사용 가능합니다.'); return; }
+  const name = document.getElementById('inName').value.trim();
+  const body = document.getElementById('inMsg').value.trim();
+  if(!body){ document.getElementById('inMsg').focus(); return; }
+
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  const page = document.getElementById('inPage').value.trim();
+  msgsRef.push({
+    name: name || '익명',
+    cat: selectedCat,
+    page: page || null,
+    body,
+    ts: Date.now()
+  }).then(() => {
+    document.getElementById('inPage').value = '';
+    document.getElementById('inMsg').value = '';
+    btn.disabled = false;
+  }).catch(e => {
+    alert('전송 실패: ' + e.message);
+    btn.disabled = false;
+  });
+}
+
+// ── DELETE ──
+function delMsg(id){
+  if(!CONFIGURED) return;
+  if(!confirm('삭제하시겠습니까?')) return;
+  msgsRef.child(id).remove();
+}
+
+// ── CATEGORY SELECT ──
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedCat = btn.dataset.cat;
+    document.getElementById('pageField').style.display = selectedCat === 'link' ? '' : 'none';
+    if(selectedCat !== 'link') document.getElementById('inPage').value = '';
+  });
+});
+
+// ── FILTER ──
+function setFilter(f, el){
+  activeFilter = f;
+  document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderFeed();
+}
+
+// ── HELPERS ──
+function setStatus(txt, color){
+  const el = document.getElementById('connStatus');
+  el.textContent = txt;
+  el.style.color = color;
+}
+function catLabel(cat){
+  return {handover:'인수인계',shoot:'촬영',link:'링크',idea:'아이디어',etc:'기타'}[cat] || cat;
+}
+function fmtTime(ts){
+  if(!ts) return '—';
+  const d = new Date(ts);
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mi = String(d.getMinutes()).padStart(2,'0');
+  return `${mm}.${dd} ${hh}:${mi}`;
+}
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function leave(){
+  document.body.classList.add('leaving');
+  setTimeout(() => location.href='set-os.html', 420);
+}
+
+// Enter key to send
+document.getElementById('inMsg').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)) sendMsg();
+});
+
+// ── DEMO MESSAGES (미설정 상태에서 UI 미리보기용) ──
+function loadDemo(){
+  allMsgs = [
+    {id:'d1', name:'김세트', cat:'handover', page:null, body:'현재 진행 중인 작업 인수인계합니다.\n\n- 바탕과 바늘 2차 셀렉션: 45개 DIR 중 38개 완료. 나머지 7개 미검토.\n- set-os.html 모바일 레이아웃 수정 완료, 커밋 완료.\n- portfolio-3d2.html 사진 로딩 문제 해결됨 (photo/ 폴더 누락이 원인).', ts: Date.now() - 1000*60*25},
+    {id:'d2', name:'이아카', cat:'shoot', page:null, body:'다음 촬영 일정\n\n📅 7월 30일 (수) 오전 10시\n📍 장소: 추후 공유\n\n준비물: 카메라 본체 + 렌즈 2종, 노트북, 외장하드\n전날까지 배터리 충전 필수.', ts: Date.now() - 1000*60*90},
+    {id:'d3', name:'박로그', cat:'link', page:'page-log.html', body:'page-log.html 게시물 팝업 가로폭을 960px → 1400px으로 늘렸습니다. body zoom:0.7 때문에 실제로는 670px처럼 보이던 문제 해결. 확인 부탁드립니다.', ts: Date.now() - 1000*60*180},
+    {id:'d4', name:'김세트', cat:'idea', page:null, body:'아이디어: 메인 화면에 최근 촬영 날짜 카운트다운 위젯 추가하면 어떨까요? set-os.html 우측 패널 여유 공간에 넣을 수 있을 것 같습니다.', ts: Date.now() - 1000*3600*3},
+    {id:'d5', name:'이아카', cat:'etc', page:null, body:'노트북 화면에서 양쪽 패널 안 보이는 문제 수정됐습니다. 1025~1560px 구간에서 레일이 숨겨지던 CSS 규칙 제거 완료.', ts: Date.now() - 1000*3600*6},
+  ];
+  renderFeed();
+  setStatus('● DEMO MODE', '#ffd24a');
+}
+
+init();
+if(!CONFIGURED) loadDemo();
+</script>
+
+<style>
+@keyframes crt-off{0%{clip-path:inset(0 0 0 0);filter:brightness(1);}40%{clip-path:inset(48% 0 48% 0);filter:brightness(3);}72%{clip-path:inset(49.5% 12% 49.5% 12%);filter:brightness(5);}100%{clip-path:inset(50% 50% 50% 50%);filter:brightness(0);}}
+body.leaving{animation:crt-off .42s ease-in forwards !important;}
+</style>
+</body>
+</html>
