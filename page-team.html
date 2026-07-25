@@ -352,21 +352,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
           <button class="fbtn"    data-f="resource" onclick="setFilter(this)">▸ 리소스 모음     <span class="fc" id="fc-resource">0</span></button>
         </div>
       </div>
-      <div class="panel" style="flex:0 0 auto;">
-        <div class="ph">▣ SYSTEM</div>
-        <div class="pb">
-          <div class="kv"><span class="k">SRC</span><span class="v">SET_WORLD</span></div>
-          <div class="kv"><span class="k">DB</span><span class="v" id="dbStatus">INIT</span></div>
-          <div class="kv"><span class="k">REC</span><span class="v" id="recCount">0 ENTRIES</span></div>
-          <div class="led-grid" id="ledgrid"></div>
-          <div class="kv"><span class="k">SIG</span><span class="v" id="sigv">62%</span></div>
-          <div class="bar"><i id="sig" style="width:62%"></i></div>
-          <div class="kv"><span class="k">REC</span><span class="v" id="recpv">84%</span></div>
-          <div class="bar amb"><i id="recp" style="width:84%"></i></div>
-          <div class="kv"><span class="k">BUF</span><span class="v">OK</span></div>
-          <div class="bar"><i id="buf" style="width:100%"></i></div>
-        </div>
-      </div>
       <div class="panel" style="flex:1;">
         <div class="ph" style="cursor:pointer;" onclick="openMembers()">▣ MEMBERS · 팀원 ▸</div>
         <div class="pb" id="memberList"></div>
@@ -384,10 +369,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
       </div>
     </div>
 
-    <!-- RIGHT: TIMELINE -->
+    <!-- RIGHT: SYSTEM -->
     <div class="col-right panel" id="col-right">
-      <div class="ph">▣ TIMELINE · 작업 흐름</div>
-      <div id="recentFeed" style="flex:1;overflow-y:auto;padding:0;"></div>
+      <div class="ph">▣ SYSTEM</div>
+      <div class="pb">
+        <div class="kv"><span class="k">SRC</span><span class="v">SET_WORLD</span></div>
+        <div class="kv"><span class="k">DB</span><span class="v" id="dbStatus">INIT</span></div>
+        <div class="kv"><span class="k">REC</span><span class="v" id="recCount">0 ENTRIES</span></div>
+        <div class="led-grid" id="ledgrid"></div>
+        <div class="kv"><span class="k">SIG</span><span class="v" id="sigv">62%</span></div>
+        <div class="bar"><i id="sig" style="width:62%"></i></div>
+        <div class="kv"><span class="k">REC</span><span class="v" id="recpv">84%</span></div>
+        <div class="bar amb"><i id="recp" style="width:84%"></i></div>
+        <div class="kv"><span class="k">BUF</span><span class="v">OK</span></div>
+        <div class="bar"><i id="buf" style="width:100%"></i></div>
+      </div>
     </div>
 
   </div><!-- /body -->
