@@ -7,27 +7,22 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quiple/galmuri/dist/galmuri11.css">
 <style>
 :root{
-  --blue:#0f66aa;--hd:#0055aa;--hd2:#0077cc;--gray:#b0b0bc;--gray2:#999999;
+  --blue:#0f66aa;--hd:#0055aa;--hd2:#0077cc;--gray:#b0b0bc;
   --ink:#112233;--ink2:#334455;--lt:#a6a6b8;--yel:#ffff55;--teal:#0a6a6a;--amb:#9a6a00;
   --red:#aa2222;--grn:#22aa44;--pur:#5500aa;--org:#cc6600;--slate:#667799;--cyan:#008888;
   --fnt:'Galmuri11',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:var(--ink);
-  font-family:var(--fnt);image-rendering:pixelated;
-  display:flex;align-items:center;justify-content:center;}
+  font-family:var(--fnt);image-rendering:pixelated;display:flex;align-items:center;justify-content:center;}
 .scan{position:fixed;inset:0;z-index:300;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,40,.06) 2px,rgba(0,0,40,.06) 3px);}
-
-/* ── MONITOR ── */
 #mon{
   position:relative;width:1280px;max-width:99vw;height:820px;max-height:98vh;
   background:var(--gray);border:3px solid #999;
   box-shadow:inset -3px -3px 0 #777,inset 3px 3px 0 #ccc,0 0 0 3px #003060,0 14px 40px rgba(0,0,0,.6);
   display:grid;grid-template-rows:auto auto 1fr auto auto;gap:3px;padding:4px;
 }
-
-/* ── TITLE BAR ── */
 .tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:8px;
   padding:5px 9px;font-size:12px;letter-spacing:1px;
   box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
@@ -36,47 +31,49 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .tbar .led b.on{background:var(--yel);box-shadow:0 0 5px var(--yel);}
 .tbar .clk{font-size:11px;color:var(--yel);margin-left:auto;}
 .conn-badge{font-size:10px;padding:1px 7px;background:#002040;border:1px solid #001530;color:var(--yel);}
-
-/* ── MENU BAR ── */
-.menubar{background:var(--gray);display:flex;gap:0;font-size:11px;border-bottom:2px solid #777;}
-.menubar span{padding:3px 12px;color:var(--ink2);cursor:default;border-right:1px solid #999;}
-.menubar span:hover,.menubar span.act{background:var(--hd);color:var(--lt);}
-
-/* ── BODY GRID ── */
+/* ── MENU ── */
+.menubar{background:var(--gray);display:flex;font-size:11px;border-bottom:2px solid #777;position:relative;}
+.mitem{position:relative;}
+.mitem>span{display:block;padding:3px 12px;color:var(--ink2);cursor:pointer;border-right:1px solid #999;user-select:none;}
+.mitem>span:hover,.mitem>span.mopen{background:var(--hd);color:var(--lt);}
+.drop{display:none;position:absolute;top:100%;left:0;z-index:600;min-width:175px;
+  background:var(--gray);border:2px solid #999;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc,3px 3px 0 #003060;}
+.drop.on{display:block;}
+.ditem{display:block;width:100%;text-align:left;padding:4px 14px;font-family:var(--fnt);font-size:11px;
+  color:var(--ink);background:none;border:none;border-bottom:1px solid #ccc;cursor:pointer;}
+.ditem:last-child{border-bottom:none;}
+.ditem:hover{background:var(--hd);color:var(--lt);}
+.ditem.chk::before{content:'✓ ';color:var(--grn);}
+.ditem:not(.chk)::before{content:'  ';}
+.dsep{height:2px;background:#999;margin:2px 0;}
+/* ── LAYOUT ── */
 .body{display:grid;grid-template-columns:200px 1fr 280px;gap:3px;min-height:0;}
-
-/* ── PANEL ── */
 .panel{background:var(--gray);border:2px solid #999;
-  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
-  display:flex;flex-direction:column;min-height:0;}
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;display:flex;flex-direction:column;min-height:0;}
 .ph{background:var(--hd);color:var(--lt);font-size:11px;padding:5px 9px;letter-spacing:1px;flex-shrink:0;
   box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
 .pb{padding:7px 9px;font-size:11px;line-height:1.9;overflow:auto;flex:1;}
-
-/* ── KV / LED ── */
 .kv{display:flex;justify-content:space-between;font-size:11px;}
 .kv .k{color:var(--ink2);} .kv .v{color:var(--ink);}
 .led-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin:5px 0 8px;}
 .led-grid b{height:9px;background:#002040;box-shadow:inset 1px 1px 0 #000;}
 .led-grid b.on{background:var(--yel);box-shadow:0 0 4px var(--yel);}
-
-/* ── FILTER BUTTONS ── */
+/* ── FILTER ── */
 .fbtn{display:block;width:100%;text-align:left;padding:3px 8px;font-family:var(--fnt);font-size:11px;
   color:var(--ink);background:var(--gray);border:none;border-bottom:1px solid #999;cursor:pointer;}
 .fbtn:last-child{border-bottom:none;}
 .fbtn:hover,.fbtn.on{background:var(--yel);color:var(--blue);}
 .fbtn .fc{float:right;color:var(--amb);font-size:10px;}
 .fbtn.on .fc{color:var(--blue);}
-
-/* ── MEMBER ROWS ── */
+/* ── MEMBERS ── */
 .mrow{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 0;border-bottom:1px solid #aaa;}
 .mrow:last-child{border-bottom:none;}
 .mdot{width:8px;height:8px;flex:0 0 8px;}
 .mdot.on{background:var(--grn);}
 .mdot.off{background:#8a8a8a;box-shadow:inset 1px 1px 0 #000;}
 .mrole{margin-left:auto;font-size:9px;color:var(--ink2);}
-
-/* ── CATEGORY BADGE COLORS ── */
+/* ── CATEGORY COLORS ── */
 .C-notice  {border-color:#887700;color:#887700;}
 .C-status  {border-color:#0055aa;color:#0055aa;}
 .C-handover{border-color:var(--amb);color:var(--amb);}
@@ -86,10 +83,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .C-criteria{border-color:var(--red);color:var(--red);}
 .C-history {border-color:var(--slate);color:var(--slate);}
 .C-resource{border-color:var(--cyan);color:var(--cyan);}
-/* white on dark backgrounds */
 .sel .mcbadge,.sel .dc{color:#fff!important;border-color:#adf!important;}
-
-/* ── MESSAGE FEED ROWS ── */
+/* ── FEED ── */
 .feed{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;}
 .mrow-msg{display:flex;align-items:baseline;gap:5px;font-size:11px;line-height:1.6;
   cursor:pointer;padding:3px 8px;border-bottom:1px solid #aaa;}
@@ -102,31 +97,65 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .mrow-msg.sel .mpreview{color:#dff;}
 .mtime{flex:0 0 auto;font-size:9px;color:var(--amb);white-space:nowrap;}
 .mrow-msg.sel .mtime{color:#fd8;}
-.mdelbtn{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;
-  padding:0 2px;line-height:1;flex:0 0 auto;}
-.mrow-msg:hover .mdelbtn,.mrow-msg.sel .mdelbtn{color:#fff;}
+.mdelbtn{background:none;border:none;color:var(--red);font-size:13px;cursor:pointer;padding:0 2px;line-height:1;flex:0 0 auto;}
+.mrow-msg:hover .mdelbtn{color:var(--blue);}
+.mrow-msg.sel .mdelbtn{color:#fff;}
 .feed-empty{padding:14px 9px;font-size:11px;color:var(--ink2);}
-
-/* ── DETAIL VIEW ── */
-.detail-wrap{flex:0 0 auto;max-height:210px;border-top:2px solid #999;
-  background:#e8e8f0;display:flex;flex-direction:column;overflow:hidden;}
-.detail-ph{background:#334455;color:var(--lt);font-size:10px;padding:4px 9px;letter-spacing:1px;flex-shrink:0;}
-.detail-body{padding:8px 10px;font-size:11px;line-height:1.9;overflow-y:auto;flex:1;color:var(--ink);}
-.det-meta{display:flex;gap:7px;align-items:center;margin-bottom:5px;flex-wrap:wrap;}
+/* ── TIMELINE ── */
+.tl-date{padding:4px 8px 2px;font-size:10px;color:var(--hd);background:#c8c8d8;
+  border-top:2px solid #999;border-bottom:2px solid var(--hd);letter-spacing:2px;margin-top:3px;}
+.tl-date:first-child{margin-top:0;border-top:none;}
+/* ── DETAIL MODAL ── */
+#detModal{display:none;position:absolute;inset:0;z-index:200;
+  background:rgba(0,20,50,.55);align-items:center;justify-content:center;}
+#detModal.on{display:flex;}
+.det-win{width:680px;max-width:92%;max-height:80%;background:var(--gray);border:3px solid #999;
+  box-shadow:inset -3px -3px 0 #777,inset 3px 3px 0 #ccc,4px 4px 0 #003060;
+  display:flex;flex-direction:column;}
+.det-tbar{background:var(--hd);color:var(--lt);display:flex;align-items:center;gap:8px;
+  padding:5px 9px;font-size:11px;letter-spacing:1px;flex-shrink:0;
+  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.det-tbar .det-close{margin-left:auto;background:var(--gray);border:2px solid #999;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
+  font-family:var(--fnt);font-size:11px;color:var(--ink);padding:2px 10px;cursor:pointer;}
+.det-tbar .det-close:hover{background:var(--red);color:#fff;}
+.det-scroll{overflow-y:auto;flex:1;padding:12px 14px;background:#e8e8f0;}
+.det-meta{display:flex;gap:7px;align-items:center;margin-bottom:8px;flex-wrap:wrap;}
 .dc{font-size:9px;padding:0 5px;border:1px solid;}
 .det-name{font-size:12px;color:var(--ink);}
 .det-time{font-size:10px;color:var(--amb);margin-left:auto;}
 .det-page{font-size:10px;color:var(--pur);background:#ede8f8;border:1px solid #bb88ee;padding:1px 6px;}
 .det-text{white-space:pre-wrap;word-break:break-word;background:#fff;
-  border:1px solid #ccc;padding:7px 9px;box-shadow:inset 1px 1px 0 #e0e0e0;font-size:11px;line-height:1.9;}
-.det-hint{color:var(--ink2);font-size:10px;}
-
+  border:2px solid #999;box-shadow:inset 2px 2px 0 #ccc,inset -2px -2px 0 #888;
+  padding:10px 12px;font-size:11px;line-height:2;color:var(--ink);}
+/* ── OVERLAY MODALS ── */
+.ov-modal{display:none;position:absolute;inset:0;z-index:201;
+  background:rgba(0,20,50,.55);align-items:center;justify-content:center;}
+.ov-modal.on{display:flex;}
+.ov-win{width:520px;max-width:90%;max-height:78%;background:var(--gray);border:3px solid #999;
+  box-shadow:inset -3px -3px 0 #777,inset 3px 3px 0 #ccc,4px 4px 0 #003060;
+  display:flex;flex-direction:column;}
+/* ── MEMBERS EDITOR ── */
+.mem-row{display:flex;align-items:center;gap:6px;font-size:11px;padding:4px 8px;border-bottom:1px solid #aaa;}
+.mem-row input{flex:1;background:var(--blue);border:1px solid #999;color:var(--lt);
+  padding:2px 6px;font-family:var(--fnt);font-size:11px;outline:none;}
+.mem-row select{background:var(--gray);border:1px solid #999;color:var(--ink);font-family:var(--fnt);font-size:10px;padding:2px;}
+.mem-add{width:100%;background:var(--gray);border:2px solid #999;border-top:2px solid #777;
+  box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
+  font-family:var(--fnt);font-size:11px;color:var(--ink);padding:5px;cursor:pointer;}
+.mem-add:hover{background:var(--yel);}
+/* ── HELP ── */
+.help-block{padding:10px 14px;font-size:11px;line-height:2;background:#e8e8f0;}
+.help-h{font-size:11px;color:var(--hd);background:var(--gray);padding:3px 8px;
+  margin:6px -14px;border-top:1px solid #999;border-bottom:1px solid #999;letter-spacing:1px;}
+.help-h:first-child{margin-top:-10px;}
+.hkey{display:inline-block;background:var(--gray);border:2px solid #999;
+  box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 /* ── WRITE PANEL ── */
 .wfield{margin-bottom:7px;}
 .wlbl{display:block;font-size:10px;color:var(--ink2);letter-spacing:1px;margin-bottom:3px;}
 .winput,.warea{width:100%;background:var(--blue);border:2px solid #999;color:var(--lt);
-  padding:5px 8px;font-family:var(--fnt);font-size:11px;outline:none;
-  box-shadow:inset 2px 2px 0 #003060;}
+  padding:5px 8px;font-family:var(--fnt);font-size:11px;outline:none;box-shadow:inset 2px 2px 0 #003060;}
 .winput:focus,.warea:focus{border-color:var(--yel);}
 .warea{resize:none;min-height:110px;line-height:1.8;}
 .wcats{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
@@ -134,15 +163,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;
   font-family:var(--fnt);font-size:10px;color:var(--ink);padding:4px 5px;cursor:pointer;text-align:center;}
 .wcatb:hover{background:var(--yel);}
-.wcatb.active{background:var(--hd);color:var(--lt);
-  box-shadow:inset 2px 2px 0 #003060,inset -2px -2px 0 #3a88ff;}
+.wcatb.active{background:var(--hd);color:var(--lt);box-shadow:inset 2px 2px 0 #003060,inset -2px -2px 0 #3a88ff;}
 .wsend{width:100%;background:var(--hd);border:2px solid #999;color:var(--lt);
   box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;
   font-family:var(--fnt);font-size:11px;padding:8px;cursor:pointer;letter-spacing:2px;margin-top:3px;}
 .wsend:hover{background:var(--hd2);}
 .wsend:disabled{opacity:.35;cursor:not-allowed;}
 .hint{font-size:9px;color:var(--ink2);margin-top:2px;text-align:right;}
-
 /* ── FOOTER ── */
 .foot{display:flex;gap:3px;}
 .foot button{flex:1;background:var(--gray);border:2px solid #999;
@@ -150,13 +177,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   font-family:var(--fnt);font-size:12px;letter-spacing:1px;color:var(--ink);padding:9px;cursor:pointer;}
 .foot button:hover{background:var(--yel);}
 .foot button:active{box-shadow:inset 2px 2px 0 #888,inset -2px -2px 0 #ccc;}
-.foot button.pri{background:var(--hd);color:var(--lt);
-  box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
+.foot button.pri{background:var(--hd);color:var(--lt);box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
 .foot button.pri:hover{background:var(--hd2);}
-.statusln{background:var(--hd);color:var(--lt);font-size:10px;padding:4px 10px;
-  display:flex;justify-content:space-between;letter-spacing:1px;}
-
-/* ── SCROLLBAR ── */
+.statusln{background:var(--hd);color:var(--lt);font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;letter-spacing:1px;}
 ::-webkit-scrollbar{width:12px;}
 ::-webkit-scrollbar-track{background:#888;border:2px solid #666;}
 ::-webkit-scrollbar-thumb{background:var(--hd);border:2px solid #003060;}
@@ -166,7 +189,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 <div class="scan"></div>
 <div id="mon">
 
-  <!-- TITLE BAR -->
   <div class="tbar">
     <span>◳ SET_TEAM.EXE — COMMUNICATION BOARD</span>
     <span style="color:var(--lt);font-size:11px">[ SET_WORLD ]</span>
@@ -175,19 +197,48 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
     <span class="clk" id="clk">00:00:00</span>
   </div>
 
-  <!-- MENU BAR -->
   <div class="menubar">
-    <span>FILE</span><span class="act">COMM</span><span>VIEW</span>
-    <span>FILTER</span><span>MEMBERS</span><span>HELP</span>
+    <div class="mitem">
+      <span onclick="openMenu('file')">FILE</span>
+      <div class="drop" id="drop-file">
+        <button class="ditem" onclick="exportTxt()">내보내기 TXT</button>
+        <button class="ditem" onclick="exportJson()">내보내기 JSON</button>
+        <div class="dsep"></div>
+        <button class="ditem" onclick="closeMenus();window.print()">인쇄 / PRINT</button>
+      </div>
+    </div>
+    <div class="mitem">
+      <span class="mopen" onclick="openMenu('view')">VIEW</span>
+      <div class="drop" id="drop-view">
+        <button class="ditem chk" id="vm-list"     onclick="setViewMode('list')">목록 (LIST)</button>
+        <button class="ditem"     id="vm-timeline" onclick="setViewMode('timeline')">타임라인 (TIMELINE)</button>
+        <div class="dsep"></div>
+        <button class="ditem"     id="vm-desc" onclick="setSortDir('desc')">최신순 (DESC)</button>
+        <button class="ditem"     id="vm-asc"  onclick="setSortDir('asc')">오래된순 (ASC)</button>
+      </div>
+    </div>
+    <div class="mitem">
+      <span onclick="openMenu('filter')">FILTER</span>
+      <div class="drop" id="drop-filter">
+        <button class="ditem" onclick="quickFilter('all')">▸ ALL 전체</button>
+        <button class="ditem" onclick="quickFilter('notice')">▸ 공지</button>
+        <button class="ditem" onclick="quickFilter('status')">▸ 작업 현황</button>
+        <button class="ditem" onclick="quickFilter('handover')">▸ 인수인계</button>
+        <button class="ditem" onclick="quickFilter('idea')">▸ 아이디어</button>
+        <button class="ditem" onclick="quickFilter('question')">▸ 질문/논의</button>
+        <button class="ditem" onclick="quickFilter('decision')">▸ 결정 로그</button>
+        <button class="ditem" onclick="quickFilter('criteria')">▸ 셀렉 기준</button>
+        <button class="ditem" onclick="quickFilter('history')">▸ 작업 이력</button>
+        <button class="ditem" onclick="quickFilter('resource')">▸ 리소스 모음</button>
+      </div>
+    </div>
+    <div class="mitem"><span onclick="openMembers()">MEMBERS</span></div>
+    <div class="mitem"><span onclick="openHelp()">HELP</span></div>
   </div>
 
-  <!-- BODY -->
   <div class="body">
 
-    <!-- ── LEFT ── -->
     <div style="display:flex;flex-direction:column;gap:3px;min-height:0;">
-
-      <!-- FILTER -->
       <div class="panel" style="flex:0 0 auto;">
         <div class="ph">▣ CATEGORY · 분류</div>
         <div>
@@ -203,8 +254,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
           <button class="fbtn"    data-f="resource" onclick="setFilter(this)">▸ 리소스 모음     <span class="fc" id="fc-resource">0</span></button>
         </div>
       </div>
-
-      <!-- SYSTEM -->
       <div class="panel" style="flex:0 0 auto;">
         <div class="ph">▣ SYSTEM</div>
         <div class="pb">
@@ -214,45 +263,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
           <div class="led-grid" id="ledgrid"></div>
         </div>
       </div>
-
-      <!-- MEMBERS -->
       <div class="panel" style="flex:1;">
-        <div class="ph">▣ MEMBERS · 팀원</div>
-        <div class="pb" id="memberList">
-          <div class="mrow"><div class="mdot on"></div><span>관리자</span><span class="mrole">ADMIN</span></div>
-          <div class="mrow"><div class="mdot off"></div><span>팀원 A</span><span class="mrole">MEMBER</span></div>
-          <div class="mrow"><div class="mdot off"></div><span>팀원 B</span><span class="mrole">MEMBER</span></div>
-        </div>
+        <div class="ph" style="cursor:pointer;" onclick="openMembers()">▣ MEMBERS · 팀원 ▸</div>
+        <div class="pb" id="memberList"></div>
       </div>
-
     </div>
 
-    <!-- ── CENTER ── -->
     <div class="panel" style="display:flex;flex-direction:column;">
-      <div class="ph">▣ MESSAGE BOARD — <span id="feedTitle">전체 · ALL</span></div>
-
+      <div class="ph">▣ MESSAGE BOARD — <span id="feedTitle">전체 · ALL</span>
+        <span id="viewBtn" onclick="toggleViewMode()"
+          style="float:right;cursor:pointer;font-size:10px;background:#003060;padding:1px 6px;">[ LIST ]</span>
+      </div>
       <div class="feed" id="feed">
         <div class="feed-empty" id="feedEmpty">▸ 메시지가 없습니다 / NO MESSAGES</div>
       </div>
-
-      <div class="detail-wrap">
-        <div class="detail-ph">▣ DETAIL · 선택된 메시지</div>
-        <div class="detail-body" id="detailBody">
-          <span class="det-hint">▸ 목록에서 메시지를 클릭하면 전문이 표시됩니다</span>
-        </div>
-      </div>
     </div>
 
-    <!-- ── RIGHT: WRITE ── -->
     <div class="panel">
       <div class="ph">▣ NEW MESSAGE · 작성</div>
       <div class="pb">
-
         <div class="wfield">
-          <span class="wlbl">NAME · 이름</span>
-          <input class="winput" id="inName" type="text" placeholder="이름 입력" maxlength="24" autocomplete="off">
+          <span class="wlbl">NAME · 이름 (선택)</span>
+          <input class="winput" id="inName" type="text" placeholder="비우면 익명" maxlength="24" autocomplete="off">
         </div>
-
         <div class="wfield">
           <span class="wlbl">CATEGORY · 분류</span>
           <div class="wcats">
@@ -267,56 +300,107 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
             <button class="wcatb" data-cat="resource" style="grid-column:span 2">리소스</button>
           </div>
         </div>
-
         <div class="wfield" id="pageField" style="display:none">
           <span class="wlbl">PAGE · 페이지 / URL</span>
           <input class="winput" id="inPage" type="text" placeholder="예: page-log.html" maxlength="80" autocomplete="off">
         </div>
-
         <div class="wfield">
           <span class="wlbl">MESSAGE · 내용</span>
           <textarea class="warea" id="inMsg" placeholder="자유롭게 작성..." maxlength="4000"></textarea>
           <div class="hint">Ctrl+Enter · 전송</div>
         </div>
-
         <button class="wsend" id="sendBtn" onclick="sendMsg()">▸ SEND · 전송</button>
-
         <div style="margin-top:12px;border-top:2px solid #999;padding-top:8px;">
           <div class="kv"><span class="k">FIREBASE</span><span class="v" id="fbLabel">—</span></div>
           <div style="font-size:9px;color:var(--ink2);line-height:1.7;margin-top:4px;">
             미설정시 데모 모드 동작.<br>
-            파일 하단 FIREBASE CONFIG에<br>
-            설정값 입력 → 실시간 공유.
+            파일 하단 CONFIG에 값 입력<br>
+            → 팀 실시간 공유 가능.
           </div>
         </div>
-
       </div>
     </div>
 
-  </div><!-- /body -->
+  </div>
 
-  <!-- FOOTER -->
+  <!-- DETAIL MODAL -->
+  <div id="detModal" onclick="if(event.target===this)closeDetail()">
+    <div class="det-win">
+      <div class="det-tbar">
+        <span id="detTitle">▣ MESSAGE DETAIL</span>
+        <button class="det-close" onclick="closeDetail()">✕ CLOSE</button>
+      </div>
+      <div class="det-scroll" id="detScroll"></div>
+    </div>
+  </div>
+
+  <!-- MEMBERS MODAL -->
+  <div class="ov-modal" id="memModal" onclick="if(event.target===this)closeMembers()">
+    <div class="ov-win">
+      <div class="det-tbar">
+        <span>▣ MEMBERS · 팀원 관리</span>
+        <button class="det-close" onclick="closeMembers()">✕ CLOSE</button>
+      </div>
+      <div class="pb" style="overflow-y:auto;padding:0;">
+        <div id="memEditor"></div>
+        <button class="mem-add" onclick="addMember()">＋ 팀원 추가</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HELP MODAL -->
+  <div class="ov-modal" id="helpModal" onclick="if(event.target===this)closeHelp()">
+    <div class="ov-win">
+      <div class="det-tbar">
+        <span>▣ HELP · 사용 안내</span>
+        <button class="det-close" onclick="closeHelp()">✕ CLOSE</button>
+      </div>
+      <div class="det-scroll">
+        <div class="help-block">
+          <p class="help-h">▸ 글쓰기</p>
+          오른쪽에서 이름(선택) · 분류 · 내용 입력 후 SEND.<br>
+          이름 비우면 <strong>익명</strong>으로 게시. 누구나 작성 가능.<br>
+          <p class="help-h">▸ 게시물 보기</p>
+          목록 클릭 → 팝업으로 전문 열람.<br>
+          <span class="hkey">ESC</span> 또는 배경 클릭으로 닫기.<br>
+          <p class="help-h">▸ VIEW 메뉴</p>
+          <strong>LIST</strong>: 시간순 목록 ·
+          <strong>TIMELINE</strong>: 날짜별 그룹<br>
+          <strong>DESC/ASC</strong>: 정렬 방향 전환<br>
+          제목 바의 <strong>[ LIST ]</strong> 버튼으로 빠르게 토글.<br>
+          <p class="help-h">▸ FILE 메뉴</p>
+          TXT / JSON 형식으로 메시지 내보내기 가능.<br>
+          <p class="help-h">▸ 단축키</p>
+          <span class="hkey">Ctrl</span>+<span class="hkey">Enter</span> — 전송 &nbsp;
+          <span class="hkey">ESC</span> — 팝업 닫기<br>
+          <p class="help-h">▸ Firebase 연동</p>
+          파일 하단 FIREBASE CONFIG 섹션에 키 입력.<br>
+          Database Rules → .read/.write true 설정 필요.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="foot">
     <button class="pri" onclick="leave()">▸ EXIT  [SET.OS]</button>
     <button onclick="resetFilter()">SHOW ALL</button>
     <button onclick="if(confirm('전체 삭제?'))clearAll()">CLEAR ALL</button>
     <button onclick="location.reload()">REFRESH</button>
   </div>
-
   <div class="statusln">
     <span id="statLine">READY.</span>
-    <span>SET_TEAM v.1.0 · 9 CATEGORIES</span>
+    <span>SET_TEAM v.1.1 · 9 CATEGORIES</span>
   </div>
 
 </div>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 // ════════════════════════════════════════════
 //  FIREBASE CONFIG — 아래 값을 본인 Firebase 프로젝트로 교체
-//  console.firebase.google.com → 프로젝트 생성 → Realtime Database → 웹 앱 추가
+//  console.firebase.google.com > 프로젝트 > Realtime Database > 웹 앱 추가
+//  Database Rules: { "rules": { ".read": true, ".write": true } }
 // ════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -331,14 +415,13 @@ const firebaseConfig = {
 
 const CATS = ['notice','status','handover','idea','question','decision','criteria','history','resource'];
 const CAT_LABELS = {
-  notice:'공지', status:'작업현황', handover:'인수인계',
-  idea:'아이디어', question:'질문/논의', decision:'결정로그',
-  criteria:'셀렉기준', history:'작업이력', resource:'리소스'
+  notice:'공지', status:'작업현황', handover:'인수인계', idea:'아이디어',
+  question:'질문/논의', decision:'결정로그', criteria:'셀렉기준', history:'작업이력', resource:'리소스'
 };
 const FILTER_LABELS = {
-  all:'전체 · ALL', notice:'공지', status:'작업 현황',
-  handover:'인수인계', idea:'아이디어 / 메모', question:'질문 / 논의',
-  decision:'결정 로그', criteria:'셀렉 기준', history:'작업 이력', resource:'리소스 모음'
+  all:'전체 · ALL', notice:'공지', status:'작업 현황', handover:'인수인계',
+  idea:'아이디어 / 메모', question:'질문 / 논의', decision:'결정 로그',
+  criteria:'셀렉 기준', history:'작업 이력', resource:'리소스 모음'
 };
 
 const CONFIGURED = firebaseConfig.apiKey !== "YOUR_API_KEY";
@@ -347,10 +430,18 @@ let allMsgs = [];
 let activeFilter = 'all';
 let selectedCat = 'notice';
 let selectedId = null;
+let viewMode = 'list';
+let sortDir = 'desc';
 
-// ── INIT ──
+let members = [
+  {name:'관리자', role:'ADMIN', online:true},
+  {name:'팀원 A', role:'MEMBER', online:false},
+  {name:'팀원 B', role:'MEMBER', online:false},
+];
+
 (function init(){
   document.getElementById('ledgrid').innerHTML = Array(16).fill('<b></b>').join('');
+  renderMemberList();
   if(!CONFIGURED){
     setConn('DEMO', false);
     document.getElementById('fbLabel').textContent = 'NOT SET';
@@ -380,33 +471,47 @@ function listen(){
   });
 }
 
-// ── RENDER ──
+function makeMRow(m){
+  const el = document.createElement('div');
+  el.className = 'mrow-msg'+(m.id===selectedId?' sel':'');
+  el.dataset.id = m.id;
+  const preview = m.body.replace(/\n/g,' ').slice(0,55);
+  el.innerHTML =
+    `<span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>`+
+    `<span class="mname">${esc(m.name||'익명')}</span>`+
+    `<span class="mpreview">${esc(preview)}</span>`+
+    `<span class="mtime">${fmtS(m.ts)}</span>`+
+    `<button class="mdelbtn" onclick="ev(event);delMsg('${m.id}')">×</button>`;
+  el.addEventListener('click',()=>selectMsg(m));
+  return el;
+}
+
 function renderFeed(){
-  const list = activeFilter==='all' ? allMsgs : allMsgs.filter(m=>m.cat===activeFilter);
+  const base = activeFilter==='all' ? allMsgs : allMsgs.filter(m=>m.cat===activeFilter);
+  const list = sortDir==='desc' ? base : [...base].reverse();
   const feed = document.getElementById('feed');
-  feed.querySelectorAll('.mrow-msg').forEach(el=>el.remove());
+  feed.querySelectorAll('.mrow-msg,.tl-date').forEach(el=>el.remove());
   document.getElementById('feedEmpty').style.display = list.length ? 'none' : '';
-  list.forEach(m=>{
-    const el = document.createElement('div');
-    el.className = 'mrow-msg' + (m.id===selectedId?' sel':'');
-    el.dataset.id = m.id;
-    const preview = m.body.replace(/\n/g,' ').slice(0,55);
-    el.innerHTML =
-      `<span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>`+
-      `<span class="mname">${esc(m.name||'익명')}</span>`+
-      `<span class="mpreview">${esc(preview)}</span>`+
-      `<span class="mtime">${fmtS(m.ts)}</span>`+
-      `<button class="mdelbtn" onclick="ev(event);delMsg('${m.id}')">×</button>`;
-    el.addEventListener('click',()=>selectMsg(m));
-    feed.appendChild(el);
-  });
+  if(viewMode==='timeline'){
+    const byDate = {};
+    list.forEach(m=>{ const d=fmtDate(m.ts); if(!byDate[d])byDate[d]=[]; byDate[d].push(m); });
+    Object.entries(byDate).forEach(([date,msgs])=>{
+      const dh = document.createElement('div');
+      dh.className = 'tl-date';
+      dh.textContent = '── '+date+' ──';
+      feed.appendChild(dh);
+      msgs.forEach(m=>feed.appendChild(makeMRow(m)));
+    });
+  } else {
+    list.forEach(m=>feed.appendChild(makeMRow(m)));
+  }
 }
 
 function selectMsg(m){
   selectedId = m.id;
   document.querySelectorAll('.mrow-msg').forEach(el=>el.classList.toggle('sel',el.dataset.id===m.id));
   const pageTag = m.page ? `<span class="det-page">· ${esc(m.page)}</span>` : '';
-  document.getElementById('detailBody').innerHTML =
+  document.getElementById('detScroll').innerHTML =
     `<div class="det-meta">`+
       `<span class="dc C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>`+
       pageTag+
@@ -414,79 +519,167 @@ function selectMsg(m){
       `<span class="det-time">${fmtFull(m.ts)}</span>`+
     `</div>`+
     `<div class="det-text">${esc(m.body)}</div>`;
-  setStat('LOADED: '+esc(m.name||'익명')+' / '+(CAT_LABELS[m.cat]||m.cat).toUpperCase());
+  document.getElementById('detTitle').textContent =
+    '▣ '+(CAT_LABELS[m.cat]||m.cat).toUpperCase()+' · '+(m.name||'익명');
+  document.getElementById('detModal').classList.add('on');
+  setStat('LOADED: '+(m.name||'익명')+' / '+(CAT_LABELS[m.cat]||m.cat).toUpperCase());
+}
+
+function closeDetail(){
+  document.getElementById('detModal').classList.remove('on');
+  selectedId = null;
+  document.querySelectorAll('.mrow-msg').forEach(el=>el.classList.remove('sel'));
 }
 
 function updateCounts(){
   document.getElementById('fc-all').textContent = allMsgs.length;
-  CATS.forEach(c=>{
-    const el=document.getElementById('fc-'+c);
-    if(el) el.textContent = allMsgs.filter(m=>m.cat===c).length;
-  });
+  CATS.forEach(c=>{ const el=document.getElementById('fc-'+c); if(el) el.textContent=allMsgs.filter(m=>m.cat===c).length; });
   document.getElementById('recCount').textContent = allMsgs.length+' ENTRIES';
 }
 
-// ── SEND ──
 function sendMsg(){
-  if(!CONFIGURED){alert('Firebase 설정 후 사용 가능합니다.');return;}
-  const name=document.getElementById('inName').value.trim();
-  const body=document.getElementById('inMsg').value.trim();
-  if(!body){document.getElementById('inMsg').focus();return;}
-  const page=document.getElementById('inPage').value.trim();
-  const btn=document.getElementById('sendBtn');
-  btn.disabled=true; setStat('TRANSMITTING...');
-  msgsRef.push({name:name||'익명',cat:selectedCat,page:page||null,body,ts:Date.now()})
-    .then(()=>{
-      document.getElementById('inMsg').value='';
-      document.getElementById('inPage').value='';
-      btn.disabled=false; setStat('SEND OK.');
-    }).catch(e=>{alert('오류: '+e.message);btn.disabled=false;setStat('ERROR.');});
+  const name = document.getElementById('inName').value.trim();
+  const body = document.getElementById('inMsg').value.trim();
+  if(!body){ document.getElementById('inMsg').focus(); return; }
+  const page = document.getElementById('inPage').value.trim();
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true; setStat('TRANSMITTING...');
+  if(!CONFIGURED){
+    const nm = {id:'u'+Date.now(), name:name||'익명', cat:selectedCat, page:page||null, body, ts:Date.now()};
+    allMsgs.unshift(nm);
+    document.getElementById('inMsg').value = '';
+    document.getElementById('inPage').value = '';
+    btn.disabled = false; setStat('SEND OK. (DEMO)');
+    renderFeed(); updateCounts();
+    return;
+  }
+  msgsRef.push({name:name||'익명', cat:selectedCat, page:page||null, body, ts:Date.now()})
+    .then(()=>{ document.getElementById('inMsg').value=''; document.getElementById('inPage').value=''; btn.disabled=false; setStat('SEND OK.'); })
+    .catch(e=>{ alert('오류: '+e.message); btn.disabled=false; setStat('ERROR.'); });
 }
 
 function delMsg(id){
   if(!confirm('삭제?')) return;
   if(CONFIGURED){ msgsRef.child(id).remove(); }
   else{
-    allMsgs=allMsgs.filter(m=>m.id!==id);
-    if(selectedId===id){ selectedId=null; document.getElementById('detailBody').innerHTML='<span class="det-hint">▸ 메시지를 클릭하면 전문이 표시됩니다</span>'; }
+    allMsgs = allMsgs.filter(m=>m.id!==id);
+    if(selectedId===id) closeDetail();
     renderFeed(); updateCounts();
   }
 }
 
 function clearAll(){
   if(CONFIGURED) msgsRef.remove();
-  else{ allMsgs=[];selectedId=null;renderFeed();updateCounts();document.getElementById('detailBody').innerHTML='<span class="det-hint">▸ 메시지를 클릭하면 전문이 표시됩니다</span>'; }
+  else{ allMsgs=[]; closeDetail(); renderFeed(); updateCounts(); }
 }
 
-// ── FILTER ──
 function setFilter(el){
-  const f=el.dataset.f;
-  activeFilter=f;
+  if(!el) return;
+  activeFilter = el.dataset.f;
   document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
   el.classList.add('on');
-  document.getElementById('feedTitle').textContent = FILTER_LABELS[f]||f;
+  document.getElementById('feedTitle').textContent = FILTER_LABELS[activeFilter]||activeFilter;
   renderFeed();
-  setStat('FILTER: '+(FILTER_LABELS[f]||f).toUpperCase());
+  setStat('FILTER: '+(FILTER_LABELS[activeFilter]||activeFilter).toUpperCase());
 }
+
+function quickFilter(f){
+  const el = document.querySelector('.fbtn[data-f="'+f+'"]');
+  if(el) setFilter(el);
+  closeMenus();
+}
+
 function resetFilter(){
-  activeFilter='all';
+  activeFilter = 'all';
   document.querySelectorAll('.fbtn').forEach(b=>b.classList.toggle('on',b.dataset.f==='all'));
-  document.getElementById('feedTitle').textContent=FILTER_LABELS['all'];
+  document.getElementById('feedTitle').textContent = FILTER_LABELS['all'];
   renderFeed();
 }
 
-// ── CATEGORY BUTTONS ──
-document.querySelectorAll('.wcatb').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.wcatb').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    selectedCat=btn.dataset.cat;
-    document.getElementById('pageField').style.display=selectedCat==='resource'?'':'none';
-    if(selectedCat!=='resource') document.getElementById('inPage').value='';
-  });
-});
+function setViewMode(mode){
+  viewMode = mode;
+  document.getElementById('viewBtn').textContent = '[ '+mode.toUpperCase()+' ]';
+  document.getElementById('vm-list').classList.toggle('chk', mode==='list');
+  document.getElementById('vm-timeline').classList.toggle('chk', mode==='timeline');
+  renderFeed(); closeMenus();
+  setStat('VIEW: '+mode.toUpperCase());
+}
 
-// ── DEMO DATA ──
+function toggleViewMode(){ setViewMode(viewMode==='list'?'timeline':'list'); }
+
+function setSortDir(dir){
+  sortDir = dir;
+  document.getElementById('vm-desc').classList.toggle('chk', dir==='desc');
+  document.getElementById('vm-asc').classList.toggle('chk', dir==='asc');
+  renderFeed(); closeMenus();
+  setStat('SORT: '+dir.toUpperCase());
+}
+
+function openMenu(name){
+  const names = ['file','view','filter'];
+  names.forEach(n=>{
+    const d = document.getElementById('drop-'+n);
+    if(!d) return;
+    if(n===name){ d.classList.toggle('on'); }
+    else{ d.classList.remove('on'); }
+  });
+  if(name==='view'){
+    document.getElementById('vm-list').classList.toggle('chk', viewMode==='list');
+    document.getElementById('vm-timeline').classList.toggle('chk', viewMode==='timeline');
+    document.getElementById('vm-desc').classList.toggle('chk', sortDir==='desc');
+    document.getElementById('vm-asc').classList.toggle('chk', sortDir==='asc');
+  }
+}
+
+function closeMenus(){ document.querySelectorAll('.drop').forEach(d=>d.classList.remove('on')); }
+
+document.addEventListener('click', e=>{ if(!e.target.closest('.mitem')) closeMenus(); });
+
+function renderMemberList(){
+  document.getElementById('memberList').innerHTML = members.map(m=>
+    `<div class="mrow"><div class="mdot ${m.online?'on':'off'}"></div><span>${esc(m.name)}</span><span class="mrole">${esc(m.role)}</span></div>`
+  ).join('');
+}
+
+function renderMemberEditor(){
+  document.getElementById('memEditor').innerHTML = members.map((m,i)=>
+    `<div class="mem-row">
+      <div class="mdot ${m.online?'on':'off'}" style="cursor:pointer;" onclick="toggleOnline(${i})" title="온라인 토글"></div>
+      <input value="${esc(m.name)}" oninput="members[${i}].name=this.value;renderMemberList()" placeholder="이름">
+      <select onchange="members[${i}].role=this.value">
+        <option ${m.role==='ADMIN'?'selected':''}>ADMIN</option>
+        <option ${m.role==='MEMBER'?'selected':''}>MEMBER</option>
+        <option ${m.role==='GUEST'?'selected':''}>GUEST</option>
+      </select>
+      <button style="background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;" onclick="removeMember(${i})">×</button>
+    </div>`
+  ).join('');
+}
+
+function toggleOnline(i){ members[i].online=!members[i].online; renderMemberList(); renderMemberEditor(); }
+function addMember(){ members.push({name:'신규',role:'MEMBER',online:false}); renderMemberEditor(); renderMemberList(); }
+function removeMember(i){ members.splice(i,1); renderMemberEditor(); renderMemberList(); }
+function openMembers(){ renderMemberEditor(); document.getElementById('memModal').classList.add('on'); closeMenus(); }
+function closeMembers(){ document.getElementById('memModal').classList.remove('on'); }
+function openHelp(){ document.getElementById('helpModal').classList.add('on'); closeMenus(); }
+function closeHelp(){ document.getElementById('helpModal').classList.remove('on'); }
+
+function exportTxt(){
+  const list = activeFilter==='all' ? allMsgs : allMsgs.filter(m=>m.cat===activeFilter);
+  const txt = list.map(m=>
+    `[${CAT_LABELS[m.cat]||m.cat}] ${m.name||'익명'} · ${fmtFull(m.ts)}\n`+
+    (m.page?`PAGE: ${m.page}\n`:'')+
+    `${m.body}\n${'─'.repeat(40)}`
+  ).join('\n\n');
+  dlFile('team_messages.txt', txt); closeMenus();
+}
+function exportJson(){ dlFile('team_messages.json', JSON.stringify(allMsgs,null,2)); closeMenus(); }
+function dlFile(name, content){
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,'+encodeURIComponent(content);
+  a.download = name; a.click();
+}
+
 function loadDemo(){
   allMsgs=[
     {id:'d1',name:'김세트',cat:'notice',page:null,body:'📅 다음 촬영 일정 공지\n\n일시: 7월 30일 (수) 오전 10시\n장소: 추후 단체톡으로 공유\n준비물: 카메라 본체, 렌즈 2종 (표준+광각), 노트북, 외장하드\n\n전날 저녁까지 배터리 충전 완료 필수.',ts:Date.now()-60000*15},
@@ -494,16 +687,16 @@ function loadDemo(){
     {id:'d3',name:'박로그',cat:'handover',page:null,body:'작업 중단 지점 인수인계.\n\nDIR_039 바탕과바늘 시리즈 — 2차 셀렉 절반 완료.\n폴더: /photo/바탕과_바늘/\n판정 보류 파일 3장 있음 → 같이 보고 결정 필요.\n\n메모 파일: Desktop/set_memo_0724.txt 참고.',ts:Date.now()-60000*120},
     {id:'d4',name:'김세트',cat:'idea',page:null,body:'개념문 메모 — "바느질 그리드"\n\n수평 줄이 화면을 자르는 게 아니라, 수평 줄이 화면을 엮는 구조.\n천이 프레임을 받아내는 게 아니라, 프레임이 천의 결을 따라가는 느낌.\n\nSVA 방향: 표면 질감의 방향성 vs 구도선의 방향성이 어긋날 때.\n→ 지시문 후보: "수직 구도선이 수평 직물결을 절단하는 순간"',ts:Date.now()-3600000*2},
     {id:'d5',name:'이아카',cat:'question',page:null,body:'질문: DIR_041 판정 기준 애매합니다.\n\n피사체가 프레임 정중앙에 있고, 배경이 완전히 단색인 경우 →\n현재 기준으로는 SUPPORT인지 DROP인지 불명확.\n\n참고: 지시문 7번 "피사체 고립" 케이스와 겹치는데\n이게 해당 지시문의 CORE 조건을 충족하는지?\n\n→ 판단 부탁드립니다.',ts:Date.now()-3600000*4},
-    {id:'d6',name:'박로그',cat:'decision',page:null,body:'[결정 로그 2026-07-24]\n\n건: DIR_038 처리 방식\n결정: DROP\n이유: 피사체-배경 관계가 불명확하고, 기존 어떤 지시문 조건도 충족하지 않음. "아름답지만 기준에 안 맞는" 케이스.\n\n원칙 재확인: 기준 미충족 시 아름다움으로 보정 금지.',ts:Date.now()-3600000*6},
-    {id:'d7',name:'김세트',cat:'criteria',page:null,body:'셀렉 기준 레퍼런스 (최신)\n\nCORE: 해당 지시문의 핵심 조건을 명확히 충족. 대체 불가한 사례.\nSUPPORT: 조건 부분 충족. 맥락 보강 역할.\nDROP: 조건 불충족 또는 중복. 아카이브 불필요.\n\n보류 처리 룰: 2인 이상 판단 불일치 → 보류 태그 후 공동 검토.\n보류 기간: 최대 1주. 이후 자동 DROP.',ts:Date.now()-3600000*8},
-    {id:'d8',name:'이아카',cat:'history',page:null,body:'[작업 이력]\n\n1단계 (촬영): 2024-05 완료 / 438장\n2단계 (1차 셀렉): 2026-06-10 완료 / 197장 통과\n2단계 (2차 셀렉): 2026-07-24 진행중 / 45 DIR\n3단계 (문법화): 예정\n4단계 (지시문화): 예정\n5단계 (아카이빙): 예정\n6단계 (퍼블리시): 예정',ts:Date.now()-3600000*12},
-    {id:'d9',name:'박로그',cat:'resource',page:'page-log.html',body:'리소스 모음\n\n■ 홈페이지\n- 메인: set-os.html\n- 로그/아카이브: page-log.html\n- 포트폴리오(3D): portfolio-3d.html\n- 포트폴리오(터널): portfolio-3d2.html\n- 팀소통: page-team.html\n\n■ DIR 코드 체계: A01~A45 (바탕과바늘)\n■ SVA 방법론 문서: Desktop/SVA_method_v2.pdf\n■ 지시문 원본: 노션 SET/지시문 페이지',ts:Date.now()-3600000*24},
+    {id:'d6',name:'박로그',cat:'decision',page:null,body:'[결정 로그 2026-07-24]\n\n건: DIR_038 처리 방식\n결정: DROP\n이유: 피사체-배경 관계가 불명확하고, 기존 어떤 지시문 조건도 충족하지 않음.\n\n원칙 재확인: 기준 미충족 시 아름다움으로 보정 금지.',ts:Date.now()-3600000*6},
+    {id:'d7',name:'김세트',cat:'criteria',page:null,body:'셀렉 기준 레퍼런스 (최신)\n\nCORE: 해당 지시문의 핵심 조건을 명확히 충족.\nSUPPORT: 조건 부분 충족. 맥락 보강 역할.\nDROP: 조건 불충족 또는 중복.\n\n보류 룰: 2인 이상 불일치 → 보류 태그 후 공동 검토.',ts:Date.now()-3600000*8},
+    {id:'d8',name:'이아카',cat:'history',page:null,body:'[작업 이력]\n\n1단계 (촬영): 2024-05 완료 / 438장\n2단계 (1차 셀렉): 2026-06-10 완료 / 197장\n2단계 (2차 셀렉): 2026-07-24 진행중 / 45 DIR\n3단계 이후: 예정',ts:Date.now()-3600000*12},
+    {id:'d9',name:'박로그',cat:'resource',page:'page-log.html',body:'리소스 모음\n\n■ 홈페이지\n- 메인: set-os.html\n- 로그: page-log.html\n- 팀소통: page-team.html\n\n■ DIR 코드: A01~A45 (바탕과바늘)\n■ SVA 문서: Desktop/SVA_method_v2.pdf',ts:Date.now()-3600000*24},
   ];
   renderFeed(); updateCounts();
 }
 
-// ── HELPERS ──
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(ts){if(!ts)return'—';const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function fmtS(ts){if(!ts)return'—';const d=new Date(ts);return(d.getMonth()+1)+'.'+(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
 function fmtFull(ts){if(!ts)return'—';const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
 function pad(n){return String(n).padStart(2,'0');}
@@ -517,24 +710,39 @@ function setConn(t,ok){
 function ev(e){e.stopPropagation();}
 function leave(){location.href='set-os.html';}
 
-// ── CTRL+ENTER ──
+document.querySelectorAll('.wcatb').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.wcatb').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedCat = btn.dataset.cat;
+    document.getElementById('pageField').style.display = selectedCat==='resource' ? '' : 'none';
+    if(selectedCat!=='resource') document.getElementById('inPage').value='';
+  });
+});
+
 document.getElementById('inMsg').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)) sendMsg();
 });
 
-// ── CLOCK ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(document.getElementById('detModal').classList.contains('on')) closeDetail();
+    else if(document.getElementById('memModal').classList.contains('on')) closeMembers();
+    else if(document.getElementById('helpModal').classList.contains('on')) closeHelp();
+    else closeMenus();
+  }
+});
+
 setInterval(()=>{
   const d=new Date();
   document.getElementById('clk').textContent=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
 },1000);
 
-// ── LED JITTER ──
 setInterval(()=>{
   document.getElementById('ledRow').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.4));
   document.getElementById('ledgrid').querySelectorAll('b').forEach(b=>b.classList.toggle('on',Math.random()>.55));
 },800);
 
-// ── STATUS ROTATION ──
 const STATS=['SCANNING...','IDLE','READY.','RECORD MODE','SYNC OK','BUFFER OK','CALIBRATING...'];
 setInterval(()=>setStat(STATS[Math.floor(Math.random()*STATS.length)]),2500);
 </script>
