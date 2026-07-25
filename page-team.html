@@ -123,7 +123,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .sel .mcbadge,.sel .dc{color:#fff!important;border-color:#adf!important;}
 
 /* ── FEED ── */
-.feed{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;}
+.feed{flex:1;overflow-y:scroll;overflow-x:hidden;min-height:0;}
 .mrow-msg{display:flex;align-items:baseline;gap:5px;font-size:11px;line-height:1.7;
   cursor:pointer;padding:4px 8px;border-bottom:1px solid #aaa;}
 .mrow-msg:hover{background:var(--yel);color:var(--blue);}
@@ -227,7 +227,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .foot{display:flex;gap:3px;}
 .foot button{flex:1;background:var(--gray);border:2px solid #999999;
   box-shadow:inset -2px -2px 0 #888888,inset 2px 2px 0 #cccccc;
-  font-family:var(--fnt);font-size:11px;letter-spacing:1px;color:var(--ink);padding:5px 8px;cursor:pointer;}
+  font-family:var(--fnt);font-size:10px;letter-spacing:0;color:var(--ink);padding:3px 6px;cursor:pointer;}
 .foot button:hover{background:var(--yel);}
 .foot button:active{box-shadow:inset 2px 2px 0 #888,inset -2px -2px 0 #ccc;}
 .foot button.pri{background:var(--hd);color:var(--lt);box-shadow:inset -2px -2px 0 #003060,inset 2px 2px 0 #3a88ff;}
@@ -257,7 +257,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   /* modals full width */
   .det-win,.ov-win{width:98%;max-height:92%;}
   /* footer */
-  .foot button{font-size:10px;padding:7px 2px;letter-spacing:0;}
+  .foot button{font-size:10px;padding:3px 2px;letter-spacing:0;}
   .foot button.pri{font-size:10px;}
   /* write panel textarea smaller */
   .warea{min-height:80px;}
@@ -372,7 +372,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
     <!-- RIGHT: SYSTEM -->
     <div class="col-right panel" id="col-right">
       <div class="ph">▣ SYSTEM</div>
-      <div class="pb">
+      <div class="pb" style="flex:0 0 auto;overflow:hidden;">
         <div class="kv"><span class="k">SRC</span><span class="v">SET_WORLD</span></div>
         <div class="kv"><span class="k">DB</span><span class="v" id="dbStatus">INIT</span></div>
         <div class="kv"><span class="k">REC</span><span class="v" id="recCount">0 ENTRIES</span></div>
