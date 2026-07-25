@@ -555,6 +555,8 @@ let members = [
   document.getElementById('ledgrid').innerHTML = Array(16).fill('<b></b>').join('');
   renderMemberList();
   if(window.innerWidth < 768) setMobTab('board');
+  const hash = location.hash.replace('#','');
+  if(hash){ const el=document.querySelector(`.fbtn[data-f="${hash}"]`); if(el) setTimeout(()=>setFilter(el),300); }
   if(!CONFIGURED){
     setConn('DEMO', false);
     document.getElementById('fbLabel').textContent = 'NOT SET';

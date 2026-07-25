@@ -88,8 +88,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 <body>
 <div class="scan"></div>
 <div id="mon">
-  <div class="tbar"><span>◳ SET_MEASURE.EXE — ENTRY</span><span style="color:var(--lt);font-size:11px;">[ SET_WORLD ]</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></span><span class="clk" id="clk">00:00:00</span></div>
-  <div class="menubar"><span>FILE</span><span>VIEW</span><span>MEASURE</span><span>LOG</span><span>HELP</span></div>
+  <div class="tbar"><span style="color:var(--lt);font-size:11px;">PROJECT SET : Southkoreasuicidesquad</span><span class="led" id="led"><b class="on"></b><b></b><b class="on"></b><b></b><b class="on"></b></span><span class="clk" id="clk">00:00:00</span></div>
+  <div class="menubar">
+    <span onclick="goBoard('notice')">공지</span>
+    <span onclick="goBoard('status')">작업 현황</span>
+    <span onclick="goBoard('handover')">인수인계</span>
+    <span onclick="goBoard('idea')">아이디어/메모</span>
+    <span onclick="goBoard('question')">질문/논의</span>
+    <span onclick="goBoard('criteria')">셀렉 기준</span>
+    <span onclick="goBoard('history')">작업 이력</span>
+  </div>
 
   <div class="body">
     <div style="display:flex;flex-direction:column;gap:3px;min-height:0;">
@@ -172,6 +180,7 @@ const lg=document.getElementById('ledgrid');lg.innerHTML=Array(16).fill('<b></b>
 const stats=['SCANNING SECTOR 04...','MATCH FOUND: STRATA','RECORDING...','SAMPLE +1','IDLE','CALIBRATING...'];
 setInterval(()=>{document.getElementById('stat').textContent=stats[Math.floor(Math.random()*stats.length)];},1400);
 function go(u){if(parent!==window)return;location.href=u;}
+function goBoard(cat){location.href='page-team.html#'+cat;}
 </script>
 </body>
 </html>
