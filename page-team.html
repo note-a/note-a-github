@@ -192,17 +192,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 
 /* ── STATUS PANEL (right) ── */
-.stat-card{border-bottom:2px solid #999;padding:7px 9px;cursor:pointer;}
+.stat-card{border-bottom:2px solid #999;padding:12px 11px;cursor:pointer;}
 .stat-card:hover{background:var(--yel);}
-.stat-card:hover .stat-preview,.stat-card:hover .stat-meta{color:var(--blue);}
-.stat-card.empty{opacity:.35;cursor:default;}
-.stat-card.empty:hover{background:transparent;}
-.stat-top{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
-.stat-cnt{font-size:9px;color:var(--lt);background:var(--hd);padding:0 5px;min-width:18px;text-align:center;}
-.stat-ago{font-size:9px;color:var(--ink2);margin-left:auto;}
-.stat-preview{font-size:10px;color:var(--ink);line-height:1.5;overflow:hidden;
-  white-space:nowrap;text-overflow:ellipsis;}
-.stat-meta{font-size:9px;color:var(--ink2);margin-top:1px;}
+.stat-card:hover .stat-preview,.stat-card:hover .stat-foot{color:var(--blue);}
+.stat-top{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.stat-label{font-size:11px;color:var(--ink);letter-spacing:1px;}
+.stat-cnt{font-size:10px;color:var(--lt);background:var(--hd);padding:1px 6px;margin-left:auto;
+  box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #3a88ff;}
+.stat-preview{font-size:10px;color:var(--ink);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.stat-foot{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;color:var(--ink2);}
 
 /* ── WRITE MODAL ── */
 .wfield{margin-bottom:7px;}
@@ -647,27 +646,30 @@ function renderRecent(){
   const active   = CATS.filter(c=>byCat[c].length > 0);
   const inactive = CATS.filter(c=>byCat[c].length === 0);
 
-  const card = (cat, msgs) => {
+  if(!active.length){
+    el.innerHTML='<div style="padding:18px 11px;font-size:10px;color:var(--ink2);">메시지 없음</div>';
+    return;
+  }
+
+  // 활성 카테고리만, 최신 업데이트 순
+  const sorted = active.sort((a,b)=>byCat[b][0].ts - byCat[a][0].ts);
+
+  el.innerHTML = sorted.map(cat => {
+    const msgs   = byCat[cat];
     const latest = msgs[0];
     const cnt    = msgs.length;
-    const ago    = latest ? fmtAgo(latest.ts) : '';
-    const preview= latest ? latest.body.replace(/\n/g,' ').slice(0,55) : '—';
-    const who    = latest ? (latest.name||'익명') : '';
-    const empty  = !latest;
-    return `<div class="stat-card${empty?' empty':''}" onclick="${empty?'':'selectMsgById(\''+latest.id+'\')'}">
+    return `<div class="stat-card" onclick="selectMsgById('${latest.id}')">
       <div class="stat-top">
-        <span class="mcbadge C-${cat}">${LABELS[cat]}</span>
-        <span class="stat-cnt">${cnt}</span>
-        <span class="stat-ago">${ago}</span>
+        <span class="stat-label C-${cat}">▸ ${LABELS[cat]}</span>
+        <span class="stat-cnt">${cnt}건</span>
       </div>
-      ${!empty ? `<div class="stat-preview">${esc(preview)}${latest.body.length>55?'…':''}</div>
-      <div class="stat-meta">${esc(who)}</div>` : ''}
+      <div class="stat-preview">${esc(latest.body.replace(/\n/g,' '))}</div>
+      <div class="stat-foot">
+        <span>${esc(latest.name||'익명')}</span>
+        <span>${fmtAgo(latest.ts)}</span>
+      </div>
     </div>`;
-  };
-
-  el.innerHTML = active.map(c=>card(c,byCat[c])).join('')
-    + (inactive.length ? `<div style="border-top:2px solid #999;padding:4px 9px;font-size:9px;color:var(--ink2);letter-spacing:1px;">NO ACTIVITY</div>`
-      + inactive.map(c=>card(c,[])).join('') : '');
+  }).join('');
 }
 
 // ── RENDER ──
