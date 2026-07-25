@@ -191,11 +191,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .hkey{display:inline-block;background:var(--gray);border:2px solid #999;
   box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 
-/* ── RECENT PANEL ── */
-.rcnt-row{display:flex;flex-direction:column;gap:1px;padding:5px 4px;border-bottom:1px solid #aaa;cursor:pointer;}
-.rcnt-row:hover{background:var(--yel);color:var(--blue);}
-.rcnt-body{font-size:10px;color:var(--ink);line-height:1.5;word-break:break-all;}
-.rcnt-ago{font-size:9px;color:var(--ink2);text-align:right;}
+/* ── TIMELINE PANEL (right) ── */
+.tl-day{margin-bottom:6px;}
+.tl-day-hd{font-size:9px;letter-spacing:1px;color:var(--lt);background:var(--hd);padding:2px 6px;margin-bottom:3px;}
+.tl-item{display:flex;gap:5px;padding:3px 2px 5px;border-bottom:1px solid #bbb;cursor:pointer;}
+.tl-item:hover{background:var(--yel);}
+.tl-item:hover .tl-preview,.tl-item:hover .tl-time,.tl-item:hover .tl-name{color:var(--blue);}
+.tl-dot{flex-shrink:0;width:7px;height:7px;margin-top:4px;border:2px solid currentColor;}
+.tl-content{flex:1;min-width:0;}
+.tl-name{font-size:9px;color:var(--ink2);margin-left:4px;}
+.tl-preview{font-size:10px;color:var(--ink);line-height:1.5;word-break:break-all;margin-top:1px;}
+.tl-time{font-size:9px;color:var(--ink2);text-align:right;}
 
 /* ── WRITE MODAL ── */
 .wfield{margin-bottom:7px;}
@@ -378,12 +384,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
       </div>
     </div>
 
-    <!-- RIGHT: RECENT -->
+    <!-- RIGHT: TIMELINE -->
     <div class="col-right panel" id="col-right">
-      <div class="ph">▣ RECENT · 최근
+      <div class="ph">▣ TIMELINE · 작업 흐름
         <span onclick="openWrite()" style="float:right;cursor:pointer;font-size:10px;background:var(--hd2);padding:1px 6px;box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #6af;">[ + NEW ]</span>
       </div>
-      <div class="pb" id="recentFeed" style="padding:5px 7px;font-size:10px;line-height:1.8;"></div>
+      <div class="pb" id="recentFeed" style="padding:5px 7px;font-size:10px;overflow-y:auto;"></div>
     </div>
 
   </div><!-- /body -->
@@ -496,7 +502,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
   <div class="foot">
     <button class="pri" onclick="leave()">▸ EXIT</button>
     <button onclick="resetFilter()">ALL</button>
-    <button onclick="toggleViewMode()" id="footViewBtn">TIMELINE</button>
     <button onclick="if(confirm('전체 삭제?'))clearAll()">CLEAR</button>
     <button onclick="location.reload()">RELOAD</button>
   </div>
@@ -625,21 +630,31 @@ function setMobTab(tab){
   if(tab==='board'){ C.classList.add('mob-on'); document.getElementById('feed').scrollTop=0; }
 }
 
-// ── RECENT FEED ──
+// ── TIMELINE (right panel) ──
 function renderRecent(){
   const el = document.getElementById('recentFeed');
   if(!el) return;
-  const items = allMsgs.slice(0,8);
-  if(!items.length){ el.innerHTML='<div style="color:var(--ink2);padding:4px;">메시지 없음</div>'; return; }
-  el.innerHTML = items.map(m=>{
-    const preview = m.body.replace(/\n/g,' ').slice(0,45);
-    const ago = fmtAgo(m.ts);
-    return `<div class="rcnt-row" onclick="selectMsgById('${m.id}')">
-      <span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>
-      <span class="rcnt-body">${esc(preview)}${m.body.length>45?'…':''}</span>
-      <span class="rcnt-ago">${ago}</span>
-    </div>`;
-  }).join('');
+  if(!allMsgs.length){ el.innerHTML='<div style="color:var(--ink2);padding:6px 4px;">메시지 없음</div>'; return; }
+  // 날짜 내림차순 그룹
+  const sorted = [...allMsgs].sort((a,b)=>b.ts-a.ts);
+  const byDate = {};
+  sorted.forEach(m=>{ const d=fmtDate(m.ts); if(!byDate[d]) byDate[d]=[]; byDate[d].push(m); });
+  el.innerHTML = Object.entries(byDate).map(([date, msgs])=>`
+    <div class="tl-day">
+      <div class="tl-day-hd">${date}</div>
+      ${msgs.map(m=>{
+        const preview = m.body.replace(/\n/g,' ').slice(0,38);
+        return `<div class="tl-item" onclick="selectMsgById('${m.id}')">
+          <span class="tl-dot C-${m.cat}"></span>
+          <div class="tl-content">
+            <span class="mcbadge C-${m.cat}" style="font-size:9px;">${CAT_LABELS[m.cat]||m.cat}</span>
+            <span class="tl-name">${esc(m.name||'익명')}</span>
+            <div class="tl-preview">${esc(preview)}${m.body.length>38?'…':''}</div>
+            <div class="tl-time">${fmtS(m.ts)}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
 }
 
 // ── RENDER ──
@@ -781,7 +796,7 @@ function resetFilter(){
 function setViewMode(mode){
   viewMode = mode;
   document.getElementById('viewBtn').textContent = '[ '+mode.toUpperCase()+' ]';
-  document.getElementById('footViewBtn').textContent = mode==='list' ? 'TIMELINE' : 'LIST';
+  const fvb = document.getElementById('footViewBtn'); if(fvb) fvb.textContent = mode==='list' ? 'TIMELINE' : 'LIST';
   document.getElementById('vm-list').classList.toggle('chk', mode==='list');
   document.getElementById('vm-timeline').classList.toggle('chk', mode==='timeline');
   renderFeed(); closeMenus();
