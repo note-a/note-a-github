@@ -191,7 +191,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
 .hkey{display:inline-block;background:var(--gray);border:2px solid #999;
   box-shadow:inset -1px -1px 0 #888,inset 1px 1px 0 #ccc;padding:0 5px;font-size:10px;margin:0 2px;}
 
-/* ── WRITE PANEL ── */
+/* ── RECENT PANEL ── */
+.rcnt-row{display:flex;flex-direction:column;gap:1px;padding:5px 4px;border-bottom:1px solid #aaa;cursor:pointer;}
+.rcnt-row:hover{background:var(--yel);color:var(--blue);}
+.rcnt-body{font-size:10px;color:var(--ink);line-height:1.5;word-break:break-all;}
+.rcnt-ago{font-size:9px;color:var(--ink2);text-align:right;}
+
+/* ── WRITE MODAL ── */
 .wfield{margin-bottom:7px;}
 .wlbl{display:block;font-size:10px;color:var(--ink2);letter-spacing:1px;margin-bottom:3px;}
 .winput,.warea{width:100%;background:var(--blue);border:2px solid #999;color:var(--lt);
@@ -372,46 +378,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
       </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: RECENT -->
     <div class="col-right panel" id="col-right">
-      <div class="ph">▣ NEW MESSAGE · 작성</div>
-      <div class="pb">
-        <div class="wfield">
-          <span class="wlbl">NAME · 이름 (선택)</span>
-          <input class="winput" id="inName" type="text" placeholder="비우면 익명" maxlength="24" autocomplete="off">
-        </div>
-        <div class="wfield">
-          <span class="wlbl">CATEGORY · 분류</span>
-          <select class="winput" id="inCat" onchange="selectedCat=this.value;document.getElementById('pageField').style.display=this.value==='resource'?'':'none';if(this.value!=='resource')document.getElementById('inPage').value='';">
-            <option value="notice">공지</option>
-            <option value="status">작업현황</option>
-            <option value="handover">인수인계</option>
-            <option value="idea">아이디어</option>
-            <option value="question">질문/논의</option>
-            <option value="decision">결정로그</option>
-            <option value="criteria">셀렉기준</option>
-            <option value="history">작업이력</option>
-            <option value="resource">리소스</option>
-          </select>
-        </div>
-        <div class="wfield" id="pageField" style="display:none">
-          <span class="wlbl">PAGE · 페이지 / URL</span>
-          <input class="winput" id="inPage" type="text" placeholder="예: page-log.html" maxlength="80" autocomplete="off">
-        </div>
-        <div class="wfield">
-          <span class="wlbl">MESSAGE · 내용</span>
-          <textarea class="warea" id="inMsg" placeholder="자유롭게 작성..." maxlength="4000" style="min-height:110px;"></textarea>
-          <div class="hint">Ctrl+Enter · 전송</div>
-        </div>
-        <button class="wsend" id="sendBtn" onclick="sendMsg()">▸ SEND · 전송</button>
-        <div style="margin-top:10px;border-top:2px solid #999;padding-top:7px;">
-          <div class="kv"><span class="k">FIREBASE</span><span class="v" id="fbLabel">—</span></div>
-          <div style="font-size:9px;color:var(--ink2);line-height:1.7;margin-top:3px;">
-            미설정시 데모 모드 동작.<br>
-            파일 하단 CONFIG에 키 입력<br>→ 팀 실시간 공유 가능.
-          </div>
-        </div>
+      <div class="ph">▣ RECENT · 최근
+        <span onclick="openWrite()" style="float:right;cursor:pointer;font-size:10px;background:var(--hd2);padding:1px 6px;box-shadow:inset -1px -1px 0 #003060,inset 1px 1px 0 #6af;">[ + NEW ]</span>
       </div>
+      <div class="pb" id="recentFeed" style="padding:5px 7px;font-size:10px;line-height:1.8;"></div>
     </div>
 
   </div><!-- /body -->
@@ -469,6 +441,52 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--blue);color:va
           <p class="help-h">▸ Firebase 연동</p>
           파일 하단 CONFIG에 키 입력 → 팀 실시간 동기화.<br>
           Database Rules: .read/.write true 설정 필요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRITE MODAL -->
+  <div class="ov-modal" id="writeModal" onclick="if(event.target===this)closeWrite()">
+    <div class="ov-win" style="width:560px;">
+      <div class="det-tbar">
+        <span>✎ NEW MESSAGE · 작성</span>
+        <button class="det-close" onclick="closeWrite()">✕ CLOSE</button>
+      </div>
+      <div style="padding:14px 16px;overflow-y:auto;flex:1;background:#e8e8f0;">
+        <div class="wfield">
+          <span class="wlbl">NAME · 이름 (선택)</span>
+          <input class="winput" id="inName" type="text" placeholder="비우면 익명" maxlength="24" autocomplete="off">
+        </div>
+        <div class="wfield">
+          <span class="wlbl">CATEGORY · 분류</span>
+          <select class="winput" id="inCat" onchange="selectedCat=this.value;document.getElementById('pageField').style.display=this.value==='resource'?'':'none';if(this.value!=='resource')document.getElementById('inPage').value='';">
+            <option value="notice">공지</option>
+            <option value="status">작업현황</option>
+            <option value="handover">인수인계</option>
+            <option value="idea">아이디어</option>
+            <option value="question">질문/논의</option>
+            <option value="decision">결정로그</option>
+            <option value="criteria">셀렉기준</option>
+            <option value="history">작업이력</option>
+            <option value="resource">리소스</option>
+          </select>
+        </div>
+        <div class="wfield" id="pageField" style="display:none">
+          <span class="wlbl">PAGE · 페이지 / URL</span>
+          <input class="winput" id="inPage" type="text" placeholder="예: page-log.html" maxlength="80" autocomplete="off">
+        </div>
+        <div class="wfield">
+          <span class="wlbl">MESSAGE · 내용</span>
+          <textarea class="warea" id="inMsg" placeholder="자유롭게 작성..." maxlength="4000" style="min-height:160px;"></textarea>
+          <div class="hint">Ctrl+Enter · 전송</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
+          <button class="wsend" id="sendBtn" onclick="sendMsg()" style="flex:1;">▸ SEND · 전송</button>
+          <button onclick="closeWrite()" style="background:var(--gray);border:2px solid #999;box-shadow:inset -2px -2px 0 #888,inset 2px 2px 0 #ccc;font-family:var(--fnt);font-size:11px;color:var(--ink);padding:8px 14px;cursor:pointer;">CANCEL</button>
+        </div>
+        <div style="margin-top:10px;border-top:1px solid #bbb;padding-top:7px;">
+          <div class="kv"><span class="k" style="font-size:9px;">FIREBASE</span><span class="v" id="fbLabel" style="font-size:9px;">—</span></div>
         </div>
       </div>
     </div>
@@ -583,10 +601,20 @@ function winClose(){
   location.href = 'set-os.html';
 }
 
+// ── WRITE MODAL ──
+function openWrite(){
+  document.getElementById('writeModal').classList.add('on');
+  setTimeout(()=>document.getElementById('inMsg').focus(), 50);
+}
+function closeWrite(){
+  document.getElementById('writeModal').classList.remove('on');
+}
+
 // ── MOBILE TABS ──
 function setMobTab(tab){
   document.querySelectorAll('.mob-tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+tab)?.classList.add('on');
+  if(tab==='write'){ openWrite(); document.getElementById('tab-board')?.classList.add('on'); return; }
   const L = document.getElementById('col-left');
   const C = document.querySelector('.col-center');
   const R = document.getElementById('col-right');
@@ -594,8 +622,24 @@ function setMobTab(tab){
   C.classList.remove('mob-on');
   R.classList.remove('mob-on');
   if(tab==='filter') L.classList.add('mob-on');
-  if(tab==='write')  R.classList.add('mob-on');
   if(tab==='board'){ C.classList.add('mob-on'); document.getElementById('feed').scrollTop=0; }
+}
+
+// ── RECENT FEED ──
+function renderRecent(){
+  const el = document.getElementById('recentFeed');
+  if(!el) return;
+  const items = allMsgs.slice(0,8);
+  if(!items.length){ el.innerHTML='<div style="color:var(--ink2);padding:4px;">메시지 없음</div>'; return; }
+  el.innerHTML = items.map(m=>{
+    const preview = m.body.replace(/\n/g,' ').slice(0,45);
+    const ago = fmtAgo(m.ts);
+    return `<div class="rcnt-row" onclick="selectMsgById('${m.id}')">
+      <span class="mcbadge C-${m.cat}">${CAT_LABELS[m.cat]||m.cat}</span>
+      <span class="rcnt-body">${esc(preview)}${m.body.length>45?'…':''}</span>
+      <span class="rcnt-ago">${ago}</span>
+    </div>`;
+  }).join('');
 }
 
 // ── RENDER ──
@@ -633,8 +677,10 @@ function renderFeed(){
   } else {
     list.forEach(m=>feed.appendChild(makeMRow(m)));
   }
+  renderRecent();
 }
 
+function selectMsgById(id){ const m=allMsgs.find(x=>x.id===id); if(m) selectMsg(m); }
 function selectMsg(m){
   selectedId = m.id;
   document.querySelectorAll('.mrow-msg').forEach(el=>el.classList.toggle('sel',el.dataset.id===m.id));
@@ -680,9 +726,7 @@ function sendMsg(){
     document.getElementById('inPage').value = '';
     btn.disabled = false; setStat('SEND OK. (DEMO)');
     renderFeed(); updateCounts();
-    // mobile: switch to board after send
-    const isMob = window.innerWidth < 768;
-    if(isMob) setMobTab('board');
+    closeWrite();
     return;
   }
   msgsRef.push({name:name||'익명', cat:selectedCat, page:page||null, body, ts:Date.now()})
@@ -690,7 +734,7 @@ function sendMsg(){
       document.getElementById('inMsg').value = '';
       document.getElementById('inPage').value = '';
       btn.disabled = false; setStat('SEND OK.');
-      if(window.innerWidth < 768) setMobTab('board');
+      closeWrite();
     })
     .catch(e=>{ alert('오류: '+e.message); btn.disabled=false; setStat('ERROR.'); });
 }
@@ -834,6 +878,7 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function fmtDate(ts){if(!ts)return'—';const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function fmtS(ts){if(!ts)return'—';const d=new Date(ts);return(d.getMonth()+1)+'.'+(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
 function fmtFull(ts){if(!ts)return'—';const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
+function fmtAgo(ts){if(!ts)return'—';const s=Math.floor((Date.now()-ts)/1000);if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d';}
 function pad(n){return String(n).padStart(2,'0');}
 function setStat(t){document.getElementById('statLine').textContent=t;}
 function setConn(t,ok){
@@ -852,7 +897,8 @@ document.getElementById('inMsg').addEventListener('keydown',e=>{
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
-    if(document.getElementById('detModal').classList.contains('on')) closeDetail();
+    if(document.getElementById('writeModal').classList.contains('on')) closeWrite();
+    else if(document.getElementById('detModal').classList.contains('on')) closeDetail();
     else if(document.getElementById('memModal').classList.contains('on')) closeMembers();
     else if(document.getElementById('helpModal').classList.contains('on')) closeHelp();
     else closeMenus();
