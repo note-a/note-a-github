@@ -1845,9 +1845,8 @@ function loadGalleryGrid(){
         const name = (month.title || month.id).toUpperCase().replace(/\./g, '/');
 
         const card = document.createElement('div');
-        const monthId = month.id || month.title || '';
         card.style.cssText = 'cursor:pointer;display:flex;flex-direction:column;gap:4px;';
-        card.onclick = () => { window.open('./gallery1.html#' + encodeURIComponent(monthId), '_blank'); };
+        card.onclick = () => showMonthDetail(month);
 
         // thumbnail — 3:2 aspect ratio, green tint filter (gallery1.html 동일)
         const thumbDiv = document.createElement('div');
@@ -1876,6 +1875,47 @@ function loadGalleryGrid(){
       wrap._loaded = false;
       wrap.innerHTML = '<div style="color:#f44;padding:20px;font-size:12px;">로드 실패 — 다시 시도해주세요</div>';
     });
+}
+
+function showMonthDetail(month){
+  const name = (month.title || month.id || '').toUpperCase().replace(/\./g,'/');
+  const sheets = (month.children || []);
+  const allPhotos = sheets.flatMap(s => s.type==='sheet' ? (s.children||[]) : [s]);
+  const photoCount = allPhotos.length;
+
+  const dh = document.getElementById('detailHeader');
+  const db = document.getElementById('detailBody');
+  const ph = document.getElementById('center-ph');
+  if(ph){const t=ph.querySelector('.panel-title');if(t)t.textContent='◆ 작업 현황';}
+  if(dh) dh.innerHTML = `
+    <span class="mbadge" style="color:#00ff88;border-color:rgba(0,255,136,0.3);">STATUS</span>
+    <span style="color:#00ff88;font-size:11px;font-weight:700;">${name}</span>
+    <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-left:auto;">${photoCount} PHOTOS</span>`;
+
+  if(db){
+    let html = '';
+    sheets.forEach(sheet => {
+      const sheetPhotos = sheet.type==='sheet' ? (sheet.children||[]) : [sheet];
+      const sheetName = (sheet.title || sheet.id || '').replace(/\//g,'/');
+      html += `<div style="margin-bottom:16px;">
+        <div style="font-size:8px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(0,255,136,0.08);">${sheetName} · ${sheetPhotos.length}장</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:3px;">`;
+      sheetPhotos.forEach(p => {
+        const full = p.filename || p.url || '';
+        const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+        if(full){
+          html += `<div style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);">
+            <img src="${thumb||full}" onerror="if(!this._fb){this._fb=1;this.src='${full}'}"
+              style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);">
+          </div>`;
+        }
+      });
+      html += `</div></div>`;
+    });
+    if(!allPhotos.length) html = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
+    db.innerHTML = html;
+  }
+  showView('detailView');
 }
 
 function showView(name){
