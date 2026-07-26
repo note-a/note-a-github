@@ -1026,39 +1026,35 @@
 
     /* ── 모바일 반응형 ── */
     @media (max-width: 900px) {
-      body { overflow: auto !important; padding-bottom: env(safe-area-inset-bottom, 0px); }
+      body { display: block !important; overflow-y: auto !important; overflow-x: hidden !important; height: auto !important; }
       #app {
-        width: 100vw !important;
+        display: block !important;
+        width: calc(100vw - 12px) !important;
         height: auto !important;
-        min-height: 100vh;
         overflow: visible !important;
-        display: flex !important;
-        flex-direction: column !important;
+        border: none !important;
         padding: 6px !important;
-        gap: 6px !important;
+        margin: 0 !important;
       }
-      #titlebar { flex-shrink: 0; }
-      #team-menubar { flex-shrink: 0; }
-      #col-center { flex: 1; }
-      #bot { flex-shrink: 0; }
       #col-left, #col-right { display: none !important; }
-      #team-menubar { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+      #titlebar { width: 100% !important; box-sizing: border-box; margin-bottom: 6px; }
+      #team-menubar { width: 100% !important; box-sizing: border-box; overflow-x: auto !important; overflow-y: hidden; white-space: nowrap; -webkit-overflow-scrolling: touch; margin-bottom: 6px; }
       #team-menubar::-webkit-scrollbar { display: none; }
       #team-menubar [data-cat="calendar"],
       #team-menubar [data-cat="criteria"] { display: none !important; }
       #team-menubar span { padding: 0 16px !important; }
+      #col-center { display: block !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+      #col-center .panel { display: block !important; width: 100% !important; height: auto !important; overflow: visible !important; }
+      #introView, #boardView, #detailView, #noticeView, #galleryView, #chatView, #memoView, #writeView {
+        display: block !important; width: 100% !important; height: auto !important; overflow: visible !important; min-height: 0 !important;
+      }
+      .kp-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; height: auto !important; overflow: visible !important; width: 100% !important; }
+      #board-feed, #gallery-grid-wrap, .detail-body-wrap, #chat-feed, #memo-feed { height: auto !important; max-height: none !important; overflow: visible !important; }
+      #statement-section { max-height: none !important; overflow: visible !important; }
+      #gallery-grid-wrap { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; }
+      #bot { width: 100% !important; box-sizing: border-box; margin-top: 6px; }
       #titlebar, #titlebar *, #col-center, #col-center * { font-size: 13px !important; }
       #statement-section, #statement-section * { font-family: 'Space Mono', monospace !important; }
-      #col-center { width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: visible !important; height: auto !important; }
-      #col-center .panel { width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: visible !important; height: auto !important; }
-      #introView { width: 100% !important; min-width: 0 !important; overflow: visible !important; height: auto !important; }
-      .kp-grid { height: auto !important; overflow: visible !important; }
-      #boardView, #detailView, #noticeView, #galleryView, #chatView, #memoView, #writeView { height: auto !important; min-height: 50vh; overflow: visible !important; }
-      #board-feed, #gallery-grid-wrap, .detail-body-wrap, #chat-feed, #memo-feed { max-height: none !important; overflow: visible !important; height: auto !important; }
-      #statement-section { max-height: none !important; overflow: visible !important; }
-      .kp-grid { width: 100% !important; min-width: 0 !important; }
-      #app { border: none !important; }
-      #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; }
     }
 
     @media (max-width: 520px) {
