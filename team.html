@@ -1966,7 +1966,7 @@ function renderDetailPage(){
     if(!slice.length){
       db.innerHTML = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
     } else {
-      let html = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">';
+      let html = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">';
       slice.forEach(p => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
