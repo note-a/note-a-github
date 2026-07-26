@@ -967,8 +967,6 @@
       text-shadow: 0 0 6px #00ff88;
     }
     #team-menubar .mb-home { margin-left: auto; border-right: none; border-left: 1px solid rgba(0,255,136,0.08); }
-    #hamburger-btn { display: none; align-items: center; padding: 0 16px; cursor: pointer; color: rgba(0,255,136,0.7); font-size: 16px; letter-spacing: 1px; gap: 8px; }
-    #hamburger-drawer { display: none; }
     /* BOARD styles */
     .msg-row { display:flex;align-items:baseline;gap:8px;font-size:10.5px;line-height:1.8;
       cursor:pointer;padding:5px 10px;border-bottom:1px solid rgba(0,255,136,0.07);transition:background .12s; }
@@ -1049,16 +1047,8 @@
       #col-left .panel, #col-right .panel { flex: 1 1 calc(50% - 6px); min-width: 140px; }
       #panel-log { max-height: 160px; }
       #panel-sys { min-height: 180px; }
-      #team-menubar { overflow: hidden; }
-      #team-menubar span { display: none !important; }
-      #hamburger-btn { display: flex !important; }
-      #hamburger-drawer { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 8888; background: rgba(0,0,0,0.92); flex-direction: column; align-items: stretch; justify-content: center; padding: 20px; gap: 2px; }
-      #hamburger-drawer.open { display: flex; }
-      #hamburger-drawer .hm-item { font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 2px; color: rgba(0,255,136,0.6); padding: 14px 20px; border: 1px solid rgba(0,255,136,0.1); cursor: pointer; text-align: center; transition: all .15s; }
-      #hamburger-drawer .hm-item:hover, #hamburger-drawer .hm-item.mactive { color: #00ff88; background: rgba(0,255,136,0.08); border-color: rgba(0,255,136,0.4); text-shadow: 0 0 8px #00ff88; }
-      #hamburger-drawer .hm-home { color: rgba(0,255,136,0.4); margin-top: 12px; }
-      #hamburger-drawer .hm-reset { color: rgba(255,60,60,0.5); border-color: rgba(255,60,60,0.15); }
-      #hamburger-drawer .hm-close { color: rgba(0,255,136,0.3); font-size: 11px; letter-spacing: 3px; margin-top: 6px; }
+      #team-menubar { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+      #team-menubar::-webkit-scrollbar { display: none; }
       #col-center { height: calc(100svh - 180px); min-height: 460px; width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: hidden !important; }
       #col-center .panel { width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: 100%; overflow: hidden !important; }
       #introView { width: 100% !important; min-width: 0 !important; overflow: hidden !important; }
@@ -1197,25 +1187,6 @@
     <span data-cat="idea"     onclick="goBoard(this)">메모</span>
     <span class="mb-home" onclick="backToIntro()">HOME</span>
     <span onclick="clearAllData()" style="color:rgba(255,60,60,0.6);border-left:1px solid rgba(255,60,60,0.15);letter-spacing:1.5px;" title="모든 게시글·채팅·메모 삭제">RESET</span>
-    <div id="hamburger-btn" onclick="toggleHamburger()">
-      <span style="font-size:14px;">☰</span>
-      <span style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.5);">MENU</span>
-    </div>
-  </div>
-
-  <!-- ── 햄버거 드로어 ── -->
-  <div id="hamburger-drawer" onclick="if(event.target===this)closeHamburger()">
-    <div style="font-size:9px;color:rgba(0,255,136,0.3);letter-spacing:4px;text-align:center;margin-bottom:16px;">◆ S.E.T. MENU</div>
-    <div class="hm-item" data-cat="calendar" onclick="hmGo('calendar')">캘린더</div>
-    <div class="hm-item" data-cat="notice"   onclick="hmGo('notice')">공지</div>
-    <div class="hm-item" data-cat="status"   onclick="hmGo('status')">작업 현황</div>
-    <div class="hm-item" data-cat="handover" onclick="hmGo('handover')">인수인계</div>
-    <div class="hm-item" data-cat="chat"     onclick="hmGo('chat')">질문/논의</div>
-    <div class="hm-item" data-cat="criteria" onclick="hmGo('criteria')">셀렉 기준</div>
-    <div class="hm-item" data-cat="idea"     onclick="hmGo('idea')">메모</div>
-    <div class="hm-item hm-home" onclick="backToIntro();closeHamburger()">HOME</div>
-    <div class="hm-item hm-reset" onclick="clearAllData();closeHamburger()">RESET</div>
-    <div class="hm-item hm-close" onclick="closeHamburger()">✕ 닫기</div>
   </div>
 
   <!-- ── 좌측 컬럼 ── -->
@@ -1945,24 +1916,6 @@ function showMonthDetail(month){
     db.innerHTML = html;
   }
   showView('detailView');
-}
-
-function toggleHamburger(){
-  const d = document.getElementById('hamburger-drawer');
-  if(d) d.classList.toggle('open');
-}
-function closeHamburger(){
-  const d = document.getElementById('hamburger-drawer');
-  if(d) d.classList.remove('open');
-}
-function hmGo(cat){
-  closeHamburger();
-  // 드로어 항목 active 표시
-  document.querySelectorAll('#hamburger-drawer .hm-item').forEach(el => {
-    el.classList.toggle('mactive', el.dataset.cat === cat);
-  });
-  const span = document.querySelector(`#team-menubar span[data-cat="${cat}"]`);
-  if(span) goBoard(span);
 }
 
 function showView(name){
