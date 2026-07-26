@@ -1031,19 +1031,19 @@
 
     /* ── 모바일 반응형 ── */
     @media (max-width: 900px) {
-      html { overflow-y: auto !important; overflow-x: hidden !important; scrollbar-width: none; background: #000 !important; }
+      html { overflow: hidden !important; overflow-x: hidden !important; scrollbar-width: none; background: #000 !important; }
       html::-webkit-scrollbar { display: none; }
-      body { display: block !important; overflow-y: auto !important; overflow-x: hidden !important; height: auto !important; scrollbar-width: none; background: #000 !important; }
+      body { display: block !important; overflow: hidden !important; height: 100dvh !important; scrollbar-width: none; background: #000 !important; }
       body::-webkit-scrollbar { display: none; }
       #app { background: #000 !important; }
       #app {
         display: grid !important;
         width: 100vw !important;
-        height: auto !important;
-        overflow: visible !important;
+        height: 100dvh !important;
+        overflow: hidden !important;
         border: none !important;
         grid-template-columns: 1fr !important;
-        grid-template-rows: 68px 58px auto !important;
+        grid-template-rows: 90px 74px calc(100dvh - 164px) !important;
         grid-template-areas: "top" "menu" "center" !important;
         padding: 0 !important;
         gap: 0 !important;
@@ -1053,17 +1053,31 @@
       #team-menubar::-webkit-scrollbar { display: none; }
       #team-menubar [data-cat="criteria"] { display: none !important; }
       #team-menubar span { padding: 0 16px !important; }
-      #col-center { width: 100vw !important; min-width: 0 !important; max-width: 100vw !important; height: auto !important; min-height: calc(100dvh - 72px) !important; overflow: visible !important; padding: 0 !important; background: #020b14 !important; }
-      #col-center .panel { width: 100% !important; height: auto !important; overflow: visible !important; border-left: none !important; border-right: none !important; border-radius: 0 !important; }
-      #introView { width: 100% !important; height: auto !important; overflow: visible !important; }
-      .kp-grid { height: auto !important; overflow: visible !important; width: 100% !important; }
-      #board-feed, #gallery-grid-wrap, .detail-body-wrap, #chat-feed, #memo-feed { height: auto !important; max-height: none !important; overflow: visible !important; }
-      #statement-section { max-height: 50vh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      #col-center { width: 100vw !important; min-width: 0 !important; max-width: 100vw !important; height: calc(100dvh - 164px) !important; overflow: hidden !important; padding: 0 !important; background: #020b14 !important; }
+      #col-center .panel { width: 100% !important; height: 100% !important; overflow: hidden !important; border-left: none !important; border-right: none !important; border-radius: 0 !important; }
+      #introView { width: 100% !important; height: 100% !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      .kp-grid { height: calc(100dvh - 440px) !important; overflow-y: auto !important; width: 100% !important; min-height: 260px !important; }
+      #board-feed { height: calc(100dvh - 336px) !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      #gallery-grid-wrap { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      .detail-body-wrap { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      #chat-messages { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      #memo-feed { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+      #statement-section { max-height: 40vh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
       #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; min-width: 0 !important; }
-      #team-menubar, #team-menubar *, #col-center, #col-center * { font-size: 15px !important; }
+      #team-menubar, #team-menubar *, #col-center, #col-center * { font-size: 17px !important; }
+      .msg-row { font-size: 16px !important; padding: 10px 12px !important; line-height: 2 !important; }
+      .mbadge { font-size: 12px !important; padding: 3px 8px !important; }
+      .mname { font-size: 13px !important; flex: 0 0 70px !important; }
+      .mago { font-size: 12px !important; }
+      .panel-header { padding: 14px 14px !important; min-height: 56px !important; }
+      #col-center .panel-title { font-size: 13px !important; }
+      #board-feed .board-empty { font-size: 15px !important; padding: 24px 14px !important; }
       #titlebar { font-size: 12px !important; justify-content: center !important; }
       #titlebar .tb-left, #titlebar .tb-right { display: none !important; }
-      #titlebar .tb-center { font-size: 13px !important; letter-spacing: 1px !important; white-space: nowrap !important; }
+      #titlebar { height: 90px !important; }
+      #titlebar .tb-center { font-size: 17px !important; letter-spacing: 1px !important; white-space: nowrap !important; }
+      #team-menubar { height: 74px !important; }
+      #team-menubar span { font-size: 16px !important; padding: 0 20px !important; }
       #col-center .panel-title { font-size: 10px !important; letter-spacing: 2px !important; }
       .kp-grid { height: 480px !important; overflow-y: auto !important; }
       .panel-header { padding: 10px 12px !important; min-height: 48px !important; }
@@ -1102,21 +1116,16 @@
 </head>
 <body>
 <!-- 비밀번호 오버레이 -->
-<div id="pw-overlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;font-family:'Space Mono',monospace;">
-  <div style="font-size:10px;color:rgba(0,255,136,0.4);letter-spacing:4px;">S.E.T. — RESTRICTED ACCESS</div>
-  <div style="font-size:22px;color:#00ff88;letter-spacing:6px;font-weight:700;">◆ SET</div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px;">
-    <input id="pw-input" type="password" placeholder="PASSWORD"
-      style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.3);color:#00ff88;font-family:'Space Mono',monospace;font-size:13px;padding:8px 16px;outline:none;letter-spacing:3px;text-align:center;width:220px;"
-      onkeydown="if(event.key==='Enter')checkPw()"
-      oninput="document.getElementById('pw-err').style.opacity=0">
-    <div id="pw-err" style="font-size:9px;color:#ff4444;letter-spacing:2px;opacity:0;transition:opacity .2s;">INCORRECT PASSWORD</div>
-    <button onclick="checkPw()"
-      style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.35);color:#00ff88;font-family:'Space Mono',monospace;font-size:9px;padding:6px 20px;cursor:pointer;letter-spacing:2px;">
-      ENTER
-    </button>
-  </div>
-  <div style="font-size:8px;color:rgba(0,255,136,0.2);letter-spacing:2px;margin-top:20px;">TEAM KSS · LABORATORY MODE</div>
+<div id="pw-overlay" style="position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-family:'Space Mono',monospace;">
+  <input id="pw-input" type="password" placeholder="PASSWORD"
+    style="background:transparent;border:none;border-bottom:1px solid rgba(0,255,136,0.4);color:#00ff88;font-family:'Space Mono',monospace;font-size:16px;padding:8px 4px;outline:none;letter-spacing:4px;text-align:center;width:180px;"
+    onkeydown="if(event.key==='Enter')checkPw()"
+    oninput="document.getElementById('pw-err').style.opacity=0">
+  <div id="pw-err" style="font-size:9px;color:#ff4444;letter-spacing:2px;opacity:0;transition:opacity .2s;">INCORRECT</div>
+  <button onclick="checkPw()"
+    style="background:transparent;border:1px solid rgba(0,255,136,0.3);color:rgba(0,255,136,0.5);font-family:'Space Mono',monospace;font-size:10px;padding:5px 18px;cursor:pointer;letter-spacing:2px;">
+    ENTER
+  </button>
 </div>
 
 <!-- 라이트박스 -->
@@ -1391,9 +1400,9 @@
       <div id="chatView" style="display:none;flex-direction:column;flex:1;min-height:0;">
         <div id="chat-messages" style="flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:5px;"></div>
         <div style="padding:6px 10px;border-top:1px solid rgba(0,255,136,0.07);display:flex;gap:5px;align-items:flex-end;flex-shrink:0;">
-          <textarea id="chat-input" placeholder="메시지 입력... (Enter 전송)" rows="2"
+          <textarea id="chat-input" placeholder="메시지 입력... (Enter 전송)" rows="3"
             style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;
-                   font-family:'Space Mono',monospace;font-size:12px;padding:4px 6px;outline:none;resize:none;line-height:1.6;"
+                   font-family:'Space Mono',monospace;font-size:14px;padding:8px 10px;outline:none;resize:none;line-height:1.7;"
             onfocus="this.style.borderColor='rgba(0,255,136,0.5)'"
             onblur="this.style.borderColor='rgba(0,255,136,0.2)'"
             onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
@@ -1528,6 +1537,19 @@
           <button class="back-btn" id="gal-prev" onclick="changeGalleryPage(-1)" style="display:none;">◀</button>
           <span style="flex:1;font-size:10px;color:rgba(0,255,136,0.5);text-align:center;letter-spacing:1px;" id="galCount"></span>
           <button class="back-btn" id="gal-next" onclick="changeGalleryPage(1)" style="display:none;">▶</button>
+        </div>
+      </div>
+
+      <!-- PHOTO VIEW (in-panel) -->
+      <div id="photoView" style="display:none;flex-direction:column;flex:1;min-height:0;background:#000;">
+        <div id="pv-wrap" style="display:flex;align-items:center;justify-content:center;padding:6px;min-height:50vh;max-height:calc(100dvh - 200px);overflow:hidden;">
+          <img id="photo-view-img" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:block;user-select:none;">
+        </div>
+        <div class="board-back-bar" style="flex-shrink:0;position:sticky;bottom:0;background:#000;z-index:2;">
+          <button class="back-btn" onclick="backToDetail()">◀ LIST</button>
+          <button class="back-btn" id="pv-prev" onclick="photoViewNav(-1)">◀</button>
+          <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;text-align:center;" id="pv-meta"></span>
+          <button class="back-btn" id="pv-next" onclick="photoViewNav(1)">▶</button>
         </div>
       </div>
 
@@ -1925,11 +1947,14 @@ function renderDetailPage(){
     if(!slice.length){
       db.innerHTML = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
     } else {
-      let html = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">';
-      slice.forEach(p => {
+      const allUrls = all.map(p => p.filename || p.url || '');
+      window._pvAllPhotos = allUrls;
+      let html = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">';
+      slice.forEach((p, li) => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
-        html += `<div onclick="openLightbox('${full}')" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
+        const globalIdx = detailPage * DETAIL_PAGE_SIZE + li;
+        html += `<div onclick="openPhotoView(${globalIdx})" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
           <img src="${thumb||full}" onerror="if(!this._fb){this._fb=1;this.src='${full}'}"
             style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);transition:filter .2s;"
             onmouseover="this.style.filter='brightness(0.85) saturate(0) sepia(1) hue-rotate(90deg)'"
@@ -1960,8 +1985,48 @@ function closeLightbox(){
   if(lb) lb.style.display = 'none';
 }
 
+let _pvIndex = 0;
+function openPhotoView(idx){
+  _pvIndex = idx;
+  renderPhotoView();
+  showView('photoView');
+  pvInitSwipe();
+}
+function renderPhotoView(){
+  const photos = window._pvAllPhotos || [];
+  const img = document.getElementById('photo-view-img');
+  const meta = document.getElementById('pv-meta');
+  const prev = document.getElementById('pv-prev');
+  const next = document.getElementById('pv-next');
+  if(!img) return;
+  const url = photos[_pvIndex] || '';
+  img.src = url;
+  if(meta) meta.textContent = `${_pvIndex+1} / ${photos.length}`;
+  if(prev){ prev.disabled = _pvIndex===0; prev.style.opacity = _pvIndex===0?'0.3':'1'; }
+  if(next){ next.disabled = _pvIndex>=photos.length-1; next.style.opacity = _pvIndex>=photos.length-1?'0.3':'1'; }
+}
+function photoViewNav(dir){
+  const photos = window._pvAllPhotos || [];
+  _pvIndex = Math.max(0, Math.min(photos.length-1, _pvIndex+dir));
+  renderPhotoView();
+}
+function backToDetail(){
+  showView('detailView');
+}
+function pvInitSwipe(){
+  const wrap = document.getElementById('pv-wrap');
+  if(!wrap || wrap._swipeInit) return;
+  wrap._swipeInit = true;
+  let sx = 0;
+  wrap.addEventListener('touchstart', e=>{ sx = e.touches[0].clientX; }, {passive:true});
+  wrap.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - sx;
+    if(Math.abs(dx) > 40) photoViewNav(dx < 0 ? 1 : -1);
+  }, {passive:true});
+}
+
 function showView(name){
-  ['introView','calendarView','dayView','boardView','detailView','writeView','memoView','chatView','galleryView','noticeView'].forEach(id=>{
+  ['introView','calendarView','dayView','boardView','detailView','writeView','memoView','chatView','galleryView','noticeView','photoView'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = (id===name) ? 'flex' : 'none';
   });
@@ -2012,9 +2077,8 @@ function renderBoard(cat, page){
     if(titleEl) titleEl.textContent = '◆ ' + (CAT_LABELS[cat]||cat).toUpperCase();
   }
 
-  const noPage = (cat === 'handover');
-  const slice = noPage ? posts : posts.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
-  const showPager = !noPage && posts.length > PAGE_SIZE;
+  const slice = posts.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
+  const showPager = posts.length > PAGE_SIZE;
 
   if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = boardPage === 0; prevBtn.style.opacity = boardPage === 0 ? '0.3' : '1'; }
   if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = boardPage >= totalPages-1; nextBtn.style.opacity = boardPage >= totalPages-1 ? '0.3' : '1'; }
