@@ -1044,6 +1044,8 @@
       #col-left, #col-right { display: none !important; }
       #team-menubar { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
       #team-menubar::-webkit-scrollbar { display: none; }
+      #team-menubar [data-cat="calendar"],
+      #team-menubar [data-cat="criteria"] { display: none !important; }
       #col-center { min-height: 460px; width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: hidden !important; }
       #col-center .panel { width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: hidden !important; }
       #introView { width: 100% !important; min-width: 0 !important; overflow: hidden !important; }
@@ -1817,18 +1819,18 @@ let _handoverLoaded = false;
 function loadHandoverData(){
   if(_handoverLoaded) return Promise.resolve();
   return Promise.all([
-    fetch('./published-posts.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
+    fetch('./handover-posts.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
     fetch('./admin-contents.json').then(r=>r.ok?r.json():{}).catch(()=>{})
   ]).then(([posts, ac]) => {
     const ruleItems = (ac&&ac.rule&&ac.rule.items)||[];
-    const logItems = Array.isArray(posts) ? posts.filter(p=>p&&(p.publishedSection==='rule'||p.section==='rule')) : [];
+    const logItems = Array.isArray(posts) ? posts : [];
     const all = [...ruleItems, ...logItems];
     BOARD_DATA.handover = all.map((it,i) => ({
       id: 9000+i,
       author: it.author || 'RULE',
       title: it.title || it.name || '',
       ago: it.year || it.date || '2025',
-      body: it.text || it.preview || '',
+      body: it.preview || '',
       imgs: []
     }));
     if(all.length > 0) _handoverLoaded = true;
@@ -2053,8 +2055,9 @@ function renderBoard(cat, page){
     if(titleEl) titleEl.textContent = '◆ ' + (CAT_LABELS[cat]||cat).toUpperCase();
   }
 
-  const slice = posts.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
-  const showPager = posts.length > PAGE_SIZE;
+  const noPage = (cat === 'handover');
+  const slice = noPage ? posts : posts.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
+  const showPager = !noPage && posts.length > PAGE_SIZE;
 
   if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = boardPage === 0; prevBtn.style.opacity = boardPage === 0 ? '0.3' : '1'; }
   if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = boardPage >= totalPages-1; nextBtn.style.opacity = boardPage >= totalPages-1 ? '0.3' : '1'; }
