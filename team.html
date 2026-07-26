@@ -266,7 +266,10 @@
     #col-left {
       grid-area: left;
       display: flex; flex-direction: column; gap: 8px;
+      overflow-y: auto; overflow-x: hidden;
     }
+    #col-left::-webkit-scrollbar { width: 3px; }
+    #col-left::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.2); }
     /* 로드 시 순차 애니메이션 */
     #col-left .panel:nth-child(1) { animation: slideDown 0.5s 0.3s ease both; }
     #col-left .panel:nth-child(2) { animation: slideDown 0.5s 0.55s ease both; }
@@ -713,6 +716,8 @@
     .tb-sig-bar:nth-child(1) { height: 4px; }
     .tb-sig-bar:nth-child(2) { height: 7px; }
     .tb-sig-bar:nth-child(3) { height: 11px; }
+    .tb-mobile-label { display: none; }
+    .tb-desktop-label { display: inline; }
     .tb-conn { color: rgba(0,255,136,0.55); font-size: 8px; letter-spacing: 1px; }
     .tb-conn-dot {
       display: inline-block; width: 4px; height: 4px; border-radius: 50%;
@@ -1038,7 +1043,7 @@
         overflow: visible !important;
         border: none !important;
         grid-template-columns: 1fr !important;
-        grid-template-rows: 44px 28px auto !important;
+        grid-template-rows: 54px 46px auto !important;
         grid-template-areas: "top" "menu" "center" !important;
         padding: 0 !important;
         gap: 0 !important;
@@ -1046,7 +1051,6 @@
       #col-left, #col-right, #statusbar { display: none !important; }
       #team-menubar { overflow-x: auto !important; overflow-y: hidden; white-space: nowrap; -webkit-overflow-scrolling: touch; }
       #team-menubar::-webkit-scrollbar { display: none; }
-      #team-menubar [data-cat="calendar"],
       #team-menubar [data-cat="criteria"] { display: none !important; }
       #team-menubar span { padding: 0 16px !important; }
       #col-center { width: 100vw !important; min-width: 0 !important; max-width: 100vw !important; height: auto !important; min-height: calc(100dvh - 72px) !important; overflow: visible !important; padding: 0 !important; background: #020b14 !important; }
@@ -1057,9 +1061,13 @@
       #statement-section { max-height: none !important; overflow: visible !important; }
       #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; }
       #team-menubar, #team-menubar *, #col-center, #col-center * { font-size: 15px !important; }
-      #titlebar, #titlebar * { font-size: 11px !important; }
+      #titlebar { font-size: 12px !important; justify-content: center !important; }
+      #titlebar .tb-left, #titlebar .tb-right { display: none !important; }
+      #titlebar .tb-center { font-size: 13px !important; letter-spacing: 1px !important; white-space: nowrap !important; }
+      #col-center .panel-title { font-size: 10px !important; letter-spacing: 2px !important; }
+      .kp-grid { height: 480px !important; overflow-y: auto !important; }
       .panel-header { padding: 10px 12px !important; min-height: 48px !important; }
-      #statement-section, #statement-section * { font-family: 'Space Mono', monospace !important; }
+      #statement-section, #statement-section * { font-family: 'Space Mono', monospace !important; font-size: 13px !important; }
     }
 
     @media (max-width: 520px) {
@@ -1168,9 +1176,7 @@
       <span style="font-size:9px;color:rgba(0,255,136,0.35);">LABORATORY MODE</span>
     </div>
     <div class="tb-center" onclick="backToIntro()" style="cursor:pointer;" title="메인으로">
-      <span class="tb-deco" style="letter-spacing:1px;">──[</span><span style="color:rgba(0,255,136,0.5);font-size:9px;">◈</span><span class="tb-deco" style="letter-spacing:1px;">]──</span>
-      TF SKSS
-      <span class="tb-deco" style="letter-spacing:1px;">──[</span><span style="color:rgba(0,255,136,0.5);font-size:9px;">◈</span><span class="tb-deco" style="letter-spacing:1px;">]──</span>
+      Southkoreasuicidesquad of HMS
     </div>
     <div class="tb-right">
       <span class="tb-conn"><span class="tb-conn-dot"></span>CONN: STABLE</span>
@@ -1187,13 +1193,13 @@
 
   <!-- ── TEAM MENUBAR ── -->
   <div id="team-menubar">
-    <span data-cat="calendar" onclick="goBoard(this)">캘린더</span>
-    <span data-cat="notice"   onclick="goBoard(this)">공지</span>
-    <span data-cat="status"   onclick="goBoard(this)">작업 현황</span>
-    <span data-cat="handover" onclick="goBoard(this)">인수인계</span>
-    <span data-cat="chat"     onclick="goBoard(this)">질문/논의</span>
-    <span data-cat="criteria" onclick="goBoard(this)">셀렉 기준</span>
-    <span data-cat="idea"     onclick="goBoard(this)">메모</span>
+    <span data-cat="calendar" onclick="goBoard(this)">SCHEDULE</span>
+    <span data-cat="notice"   onclick="goBoard(this)">GUIDE</span>
+    <span data-cat="status"   onclick="goBoard(this)">STATUS</span>
+    <span data-cat="handover" onclick="goBoard(this)">LOG</span>
+    <span data-cat="chat"     onclick="goBoard(this)">THREAD</span>
+    <span data-cat="criteria" onclick="goBoard(this)">EXHIBIT</span>
+    <span data-cat="idea"     onclick="goBoard(this)">IDEA</span>
     <span class="mb-home" onclick="backToIntro()">HOME</span>
     <span onclick="clearAllData()" style="color:rgba(255,60,60,0.6);border-left:1px solid rgba(255,60,60,0.15);letter-spacing:1.5px;" title="모든 게시글·채팅·메모 삭제">RESET</span>
   </div>
@@ -1202,59 +1208,14 @@
   <div id="col-left">
 
     <!-- DATA STATUS 패널 -->
-    <div class="panel" id="panel-datastatus" style="flex:1;display:flex;flex-direction:column;">
+    <div class="panel" id="panel-datastatus" style="flex:0 0 auto;display:flex;flex-direction:column;">
       <div class="panel-corner-tr"></div>
       <div class="panel-corner-bl"></div>
       <div class="panel-header">
         <span class="panel-title">◆ DATA STATUS</span>
         <span class="panel-badge"><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#00ff88;box-shadow:0 0 6px #00ff88;vertical-align:middle;animation:blink 1.2s ease-in-out infinite;"></span> LIVE</span>
       </div>
-      <div style="padding:6px 10px;flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden;">
-
-        <!-- 메인 카운터 -->
-        <div style="display:flex;align-items:baseline;gap:6px;">
-          <span style="font-size:18px;font-weight:700;color:#00ff88;text-shadow:0 0 10px #00ff88;letter-spacing:1px;">438</span>
-          <span style="font-size:8px;color:rgba(0,255,136,.4);">FILES</span>
-        </div>
-        <div style="font-size:8px;color:rgba(0,255,136,.4);">마지막 업데이트: 2026.07.25</div>
-
-        <!-- 월별 촬영량 차트 -->
-        <div style="margin-top:4px;font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-bottom:2px;">촬영량 / MONTH</div>
-        <div class="mini-bar-chart">
-          <div class="mini-bar" style="height:22%" title="Jan: 180"></div>
-          <div class="mini-bar" style="height:48%" title="Feb: 420"></div>
-          <div class="mini-bar" style="height:78%" title="Mar: 680"></div>
-          <div class="mini-bar" style="height:100%" title="Apr: 890"></div>
-          <div class="mini-bar" style="height:65%" title="May: 560"></div>
-          <div class="mini-bar active" style="height:38%" title="Jun: 330"></div>
-          <div class="mini-bar" style="height:8%" title="Jul: 70 (진행중)"></div>
-        </div>
-        <div class="mini-bar-labels">
-          <span class="mini-bar-lbl">1</span>
-          <span class="mini-bar-lbl">2</span>
-          <span class="mini-bar-lbl">3</span>
-          <span class="mini-bar-lbl">4</span>
-          <span class="mini-bar-lbl">5</span>
-          <span class="mini-bar-lbl" style="color:rgba(0,255,136,0.55);">6</span>
-          <span class="mini-bar-lbl" style="color:rgba(255,204,68,0.6);">7</span>
-        </div>
-
-        <!-- 목표 촬영량 -->
-        <div style="font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-top:2px;">목표 촬영량</div>
-        <div style="height:5px;background:rgba(0,255,136,0.08);">
-          <div style="height:5px;width:0%;background:rgba(0,255,136,0.55);box-shadow:0 0 6px rgba(0,255,136,0.3);"></div>
-        </div>
-        <div style="display:flex;gap:8px;font-size:7px;color:rgba(0,255,136,.4);">
-          <span style="color:#00ff88;">—</span>
-          <span>— / 목표 —</span>
-        </div>
-
-        <!-- 최근 DIR 선택 현황 -->
-        <div style="font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-top:2px;">RECENT DIR SEL</div>
-        <div style="font-size:7px;color:rgba(0,255,136,.3);line-height:2;flex:1;overflow:hidden;">
-          <div>// 기록 없음</div>
-        </div>
-      </div>
+      <div id="ds-body" style="padding:6px 10px;flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden;"></div>
     </div>
     <!-- TIMELINE 패널 -->
     <div class="panel" id="panel-timeline" style="flex-shrink:0;">
@@ -1264,12 +1225,7 @@
         <span class="panel-title">◆ TIMELINE</span>
         <span class="panel-badge" id="dday-badge" style="color:#ffcc44;border-color:rgba(255,204,68,.3);">D-9</span>
       </div>
-      <div style="padding:8px 10px;display:flex;flex-direction:column;gap:0;">
-
-        <div style="font-size:8px;color:rgba(0,255,136,.2);padding:10px 0;letter-spacing:1px;">// 일정 없음</div>
-
-
-      </div>
+      <div id="tl-list" style="padding:6px 10px;display:flex;flex-direction:column;gap:0;max-height:220px;overflow-y:auto;"></div>
     </div>
 
   </div>
@@ -1388,18 +1344,18 @@
           <button onclick="calNext()" style="background:none;border:none;color:rgba(0,255,136,.5);cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;padding:0 6px;">▶</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:4px 6px 2px;flex-shrink:0;">
-          <div style="text-align:center;font-size:7px;color:rgba(0,255,136,.3);">월</div>
-          <div style="text-align:center;font-size:7px;color:rgba(0,255,136,.3);">화</div>
-          <div style="text-align:center;font-size:7px;color:rgba(0,255,136,.3);">수</div>
-          <div style="text-align:center;font-size:7px;color:rgba(0,255,136,.3);">목</div>
-          <div style="text-align:center;font-size:7px;color:rgba(0,255,136,.3);">금</div>
-          <div style="text-align:center;font-size:7px;color:rgba(255,100,100,.4);">토</div>
-          <div style="text-align:center;font-size:7px;color:rgba(255,100,100,.4);">일</div>
+          <div style="text-align:center;font-size:10px;color:rgba(0,255,136,.3);">월</div>
+          <div style="text-align:center;font-size:10px;color:rgba(0,255,136,.3);">화</div>
+          <div style="text-align:center;font-size:10px;color:rgba(0,255,136,.3);">수</div>
+          <div style="text-align:center;font-size:10px;color:rgba(0,255,136,.3);">목</div>
+          <div style="text-align:center;font-size:10px;color:rgba(0,255,136,.3);">금</div>
+          <div style="text-align:center;font-size:10px;color:rgba(255,100,100,.4);">토</div>
+          <div style="text-align:center;font-size:10px;color:rgba(255,100,100,.4);">일</div>
         </div>
         <div id="cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;padding:2px 6px;"></div>
         <div style="padding:6px 10px;border-top:1px solid rgba(0,255,136,0.07);flex:1;overflow-y:auto;">
-          <div style="font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-bottom:4px;">TODAY</div>
-          <div id="cal-today-entries" style="font-size:8px;color:rgba(0,255,136,.5);line-height:1.9;"></div>
+          <div style="font-size:9px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-bottom:4px;">TODAY</div>
+          <div id="cal-today-entries" style="font-size:12px;color:rgba(0,255,136,.5);line-height:2;"></div>
         </div>
         <div class="board-back-bar">
           <button class="back-btn" onclick="backToIntro()">◀ HOME</button>
@@ -1778,8 +1734,8 @@ tickClock();
 // BOARD DATA
 // ══════════════════════════════════════════════════
 const CAT_LABELS = {
-  notice:'공지', status:'작업 현황', handover:'인수인계',
-  idea:'아이디어/메모', question:'질문/논의', criteria:'셀렉 기준', history:'작업 이력'
+  notice:'공지', status:'작업 현황', handover:'로그',
+  idea:'아이디어/메모', question:'질문/논의', criteria:'전시/지원', history:'작업 이력'
 };
 const CAT_COLORS = {
   notice:'#ff6060', status:'#00ff88', handover:'#ffcc44',
@@ -2599,16 +2555,20 @@ function renderCalendar(){
     const isToday = (d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear());
     const hasEntry = entries[key]&&entries[key].length>0;
     const entryCount = hasEntry ? entries[key].length : 0;
-    const dot = hasEntry ? `<div style="display:flex;gap:1px;justify-content:center;margin-top:1px;">${entries[key].slice(0,3).map(e=>`<div style="width:3px;height:3px;border-radius:50%;background:${e.author==='K'?'#00ff88':'#44ccff'};"></div>`).join('')}</div>` : '';
+    const previews = hasEntry ? entries[key].slice(0,2).map(e=>{
+      const color = e.author==='K'?'#00ff88':'#44ccff';
+      const txt = (e.text||'').slice(0,10);
+      return `<div style="font-size:9px;color:${color};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;line-height:1.5;">${txt}</div>`;
+    }).join('') : '';
     html+=`<div onclick="openDay('${key}',${d})"
-      style="min-height:28px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
+      style="min-height:52px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
              background:${isToday?'rgba(0,255,136,0.06)':hasEntry?'rgba(0,255,136,0.03)':'transparent'};
-             cursor:pointer;display:flex;flex-direction:column;align-items:center;
-             transition:background 0.15s;"
+             cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;
+             transition:background 0.15s;overflow:hidden;"
       onmouseover="this.style.background='rgba(0,255,136,0.08)'"
       onmouseout="this.style.background='${isToday?'rgba(0,255,136,0.06)':hasEntry?'rgba(0,255,136,0.03)':'transparent'}'">
-      <span style="font-size:8px;color:${isToday?'#00ff88':'rgba(0,255,136,0.5)'};font-weight:${isToday?700:400};">${d}</span>
-      ${dot}
+      <span style="font-size:11px;color:${isToday?'#00ff88':'rgba(0,255,136,0.5)'};font-weight:${isToday?700:400};align-self:center;">${d}</span>
+      ${previews}
     </div>`;
   }
   grid.innerHTML=html;
@@ -2938,6 +2898,188 @@ function setAuthor(who){
     'font-family:Space Mono,monospace;font-size:11px;font-weight:700;padding:5px 18px;cursor:pointer;letter-spacing:2px;'+
     (who==='P'?active:idle);
 }
+
+/* ── TIMELINE ── */
+function tlRender(){
+  const list = JSON.parse(localStorage.getItem('tl-items')||'[]');
+  const el = document.getElementById('tl-list');
+  if(!el) return;
+  const today = new Date().toISOString().slice(0,10);
+  if(!list.length){
+    el.innerHTML='<div style="font-size:8px;color:rgba(0,255,136,.2);padding:10px 0;letter-spacing:1px;">// 일정 없음</div>';
+    return;
+  }
+  list.sort((a,b)=>a.date.localeCompare(b.date));
+  el.innerHTML = list.map((it,i)=>{
+    const isPast = it.date < today, isToday = it.date === today;
+    const nodeClass = isPast ? 'done' : isToday ? 'now' : 'future';
+    const textClass = isPast ? 'done-t' : isToday ? 'now-t' : 'future-t';
+    const connColor = isPast ? 'done-c' : 'future-c';
+    const hasNext = i < list.length - 1;
+    return `<div class="tl-row">
+      <div style="position:relative;flex-shrink:0;">
+        <div class="tl-node ${nodeClass}"></div>
+        ${hasNext?`<div class="tl-connector ${connColor}"></div>`:''}
+      </div>
+      <div class="tl-info">
+        <div class="tl-title ${textClass}">${it.text}</div>
+        <div class="tl-sub">${it.date} <span onclick="tlDel(${i})" style="cursor:pointer;color:rgba(255,80,80,.4);margin-left:6px;">✕</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function tlAdd(){
+  const date = document.getElementById('cfg-tl-date').value;
+  const text = document.getElementById('cfg-tl-text').value.trim();
+  if(!date||!text) return;
+  const list = JSON.parse(localStorage.getItem('tl-items')||'[]');
+  list.push({date,text});
+  localStorage.setItem('tl-items', JSON.stringify(list));
+  document.getElementById('cfg-tl-text').value='';
+  tlRender();
+  cfgTlListRender();
+}
+function tlDel(i){
+  const list = JSON.parse(localStorage.getItem('tl-items')||'[]');
+  list.splice(i,1);
+  localStorage.setItem('tl-items', JSON.stringify(list));
+  tlRender();
+  cfgTlListRender();
+}
+tlRender();
+</script>
+<!-- ── 설정 패널 ── -->
+<div id="cfg-trigger" onclick="cfgOpen()" title="설정"
+  style="position:fixed;bottom:14px;right:14px;width:18px;height:18px;cursor:pointer;
+         opacity:0.12;font-size:13px;color:#00ff88;z-index:9999;user-select:none;
+         transition:opacity .2s;"
+  onmouseenter="this.style.opacity='.55'" onmouseleave="this.style.opacity='.12'">⚙</div>
+
+<div id="cfg-overlay" onclick="if(event.target===this)cfgClose()"
+  style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#010d18;border:1px solid rgba(0,255,136,.25);width:340px;max-height:80vh;
+              overflow-y:auto;font-family:'Space Mono',monospace;font-size:11px;color:#00ff88;">
+    <div style="padding:10px 14px;border-bottom:1px solid rgba(0,255,136,.15);display:flex;justify-content:space-between;align-items:center;">
+      <span style="letter-spacing:2px;font-size:10px;">⚙ SETTINGS</span>
+      <span onclick="cfgClose()" style="cursor:pointer;opacity:.5;font-size:14px;">✕</span>
+    </div>
+
+    <!-- DATA STATUS -->
+    <div style="padding:10px 14px;border-bottom:1px solid rgba(0,255,136,.1);">
+      <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,.5);margin-bottom:8px;">◆ DATA STATUS</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:70px;color:rgba(0,255,136,.5);font-size:9px;">파일 수</span>
+          <input id="cfg-files" type="number" style="flex:1;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:70px;color:rgba(0,255,136,.5);font-size:9px;">업데이트</span>
+          <input id="cfg-date" type="date" style="flex:1;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="width:70px;color:rgba(0,255,136,.5);font-size:9px;">목표</span>
+          <input id="cfg-goal" type="number" placeholder="목표 파일 수" style="flex:1;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <span style="width:70px;color:rgba(0,255,136,.5);font-size:9px;padding-top:4px;">월별<br><span style="opacity:.5">(쉼표구분)</span></span>
+          <input id="cfg-bars" type="text" placeholder="1월,2월,...12월" style="flex:1;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        </div>
+        <button onclick="dsSave()" style="margin-top:2px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:#00ff88;font-family:inherit;font-size:9px;padding:5px;cursor:pointer;letter-spacing:1px;">저장</button>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div style="padding:10px 14px;">
+      <div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,.5);margin-bottom:8px;">◆ TIMELINE</div>
+      <div id="cfg-tl-list" style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:4px;">
+        <input id="cfg-tl-date" type="date" style="flex:0 0 120px;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        <input id="cfg-tl-text" type="text" placeholder="일정 입력..." style="flex:1;background:transparent;border:1px solid rgba(0,255,136,.2);color:#00ff88;font-family:inherit;font-size:10px;padding:4px 6px;outline:none;">
+        <button onclick="tlAdd()" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:#00ff88;font-size:11px;padding:4px 10px;cursor:pointer;font-family:inherit;">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 설정 패널 ── */
+const DS_KEY = 'ds-data';
+const DS_DEF = { files:438, date:'2026.07.25', goal:0, bars:[180,420,680,890,560,330,70] };
+
+function dsLoad(){ return Object.assign({}, DS_DEF, JSON.parse(localStorage.getItem(DS_KEY)||'{}')); }
+
+function dsRender(){
+  const d = dsLoad();
+  const el = document.getElementById('ds-body');
+  if(!el) return;
+  const max = Math.max(...d.bars, 1);
+  const months = ['1','2','3','4','5','6','7','8','9','10','11','12'];
+  const now = new Date().getMonth();
+  const bars = d.bars.map((v,i)=>{
+    const pct = Math.round(v/max*100);
+    const isNow = i===now;
+    return `<div class="mini-bar${isNow?' active':''}" style="height:${pct}%" title="${months[i]}월: ${v}"></div>`;
+  }).join('');
+  const lbls = d.bars.map((_,i)=>`<span class="mini-bar-lbl">${months[i]}</span>`).join('');
+  const goalPct = d.goal>0 ? Math.min(100,Math.round(d.files/d.goal*100)) : 0;
+  el.innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:6px;">
+      <span style="font-size:18px;font-weight:700;color:#00ff88;text-shadow:0 0 10px #00ff88;letter-spacing:1px;">${d.files}</span>
+      <span style="font-size:8px;color:rgba(0,255,136,.4);">FILES</span>
+    </div>
+    <div style="font-size:8px;color:rgba(0,255,136,.4);">마지막 업데이트: ${d.date}</div>
+    <div style="margin-top:4px;font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-bottom:2px;">촬영량 / MONTH</div>
+    <div class="mini-bar-chart">${bars}</div>
+    <div class="mini-bar-labels">${lbls}</div>
+    <div style="font-size:7px;color:rgba(0,255,136,.3);letter-spacing:1.5px;margin-top:4px;">목표 촬영량</div>
+    <div style="height:5px;background:rgba(0,255,136,0.08);">
+      <div style="height:5px;width:${goalPct}%;background:rgba(0,255,136,0.55);box-shadow:0 0 6px rgba(0,255,136,0.3);transition:width .4s;"></div>
+    </div>
+    <div style="font-size:7px;color:rgba(0,255,136,.4);">${d.files} / ${d.goal||'—'}</div>`;
+}
+
+function dsSave(){
+  const bars = document.getElementById('cfg-bars').value.split(',').map(v=>parseInt(v.trim())||0);
+  const d = {
+    files: parseInt(document.getElementById('cfg-files').value)||0,
+    date: document.getElementById('cfg-date').value||'',
+    goal: parseInt(document.getElementById('cfg-goal').value)||0,
+    bars
+  };
+  localStorage.setItem(DS_KEY, JSON.stringify(d));
+  dsRender();
+}
+
+function cfgOpen(){
+  const d = dsLoad();
+  document.getElementById('cfg-files').value = d.files;
+  document.getElementById('cfg-date').value = d.date.replace(/\./g,'-');
+  document.getElementById('cfg-goal').value = d.goal||'';
+  document.getElementById('cfg-bars').value = d.bars.join(',');
+  cfgTlListRender();
+  const ov = document.getElementById('cfg-overlay');
+  ov.style.display='flex';
+}
+
+function cfgClose(){
+  document.getElementById('cfg-overlay').style.display='none';
+}
+
+function cfgTlListRender(){
+  const list = JSON.parse(localStorage.getItem('tl-items')||'[]');
+  list.sort((a,b)=>a.date.localeCompare(b.date));
+  const el = document.getElementById('cfg-tl-list');
+  if(!list.length){ el.innerHTML='<div style="font-size:9px;color:rgba(0,255,136,.25);">// 일정 없음</div>'; return; }
+  el.innerHTML = list.map((it,i)=>`
+    <div style="display:flex;align-items:center;gap:6px;font-size:9px;">
+      <span style="color:rgba(0,255,136,.4);flex-shrink:0;">${it.date}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${it.text}</span>
+      <span onclick="tlDel(${i})" style="cursor:pointer;color:rgba(255,80,80,.5);flex-shrink:0;">✕</span>
+    </div>`).join('');
+}
+
+dsRender();
+document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.key==='Enter') tlAdd(); });
 </script>
 </body>
 </html>
