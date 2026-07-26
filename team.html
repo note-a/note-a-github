@@ -1466,7 +1466,9 @@
         <div class="detail-body-wrap" id="detailBody"></div>
         <div class="board-back-bar">
           <button class="back-btn" onclick="backToBoard()">◀ LIST</button>
-          <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;" id="detailMeta"></span>
+          <button class="back-btn" id="detail-prev" onclick="changeDetailPage(-1)" style="display:none;">◀</button>
+          <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;text-align:center;" id="detailMeta"></span>
+          <button class="back-btn" id="detail-next" onclick="changeDetailPage(1)" style="display:none;">▶</button>
         </div>
       </div>
 
@@ -1916,11 +1918,41 @@ function loadGalleryGrid(){
     });
 }
 
+let _detailMonth = null;
+let _detailSheets = [];
+let detailPage = 0;
+const DETAIL_PAGE_SIZE = 1; // 1 sheet per page
+
 function showMonthDetail(month){
+  _detailMonth = month;
+  _detailSheets = (month.children || []).map(s => ({
+    name: (s.title || s.id || '').replace(/\//g,'/'),
+    photos: (s.type==='sheet' ? (s.children||[]) : [s]).filter(p => p.filename||p.url)
+  })).filter(s => s.photos.length > 0);
+  detailPage = 0;
+  renderDetailPage();
+  showView('detailView');
+}
+
+function renderDetailPage(){
+  const month = _detailMonth;
+  const sheets = _detailSheets;
+  if(!month) return;
+
   const name = (month.title || month.id || '').toUpperCase().replace(/\./g,'/');
-  const sheets = (month.children || []);
-  const allPhotos = sheets.flatMap(s => s.type==='sheet' ? (s.children||[]) : [s]);
-  const photoCount = allPhotos.length;
+  const allCount = sheets.reduce((n,s)=>n+s.photos.length, 0);
+  const totalPages = Math.max(1, sheets.length);
+
+  if(detailPage >= totalPages) detailPage = totalPages - 1;
+  if(detailPage < 0) detailPage = 0;
+
+  const prevBtn = document.getElementById('detail-prev');
+  const nextBtn = document.getElementById('detail-next');
+  const meta = document.getElementById('detailMeta');
+  const showPager = totalPages > 1;
+  if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = detailPage===0; prevBtn.style.opacity = detailPage===0 ? '0.3' : '1'; }
+  if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = detailPage>=totalPages-1; nextBtn.style.opacity = detailPage>=totalPages-1 ? '0.3' : '1'; }
+  if(meta) meta.textContent = showPager ? `${detailPage+1} / ${totalPages}` : `${allCount} PHOTOS`;
 
   const dh = document.getElementById('detailHeader');
   const db = document.getElementById('detailBody');
@@ -1929,34 +1961,36 @@ function showMonthDetail(month){
   if(dh) dh.innerHTML = `
     <span class="mbadge" style="color:#00ff88;border-color:rgba(0,255,136,0.3);">STATUS</span>
     <span style="color:#00ff88;font-size:11px;font-weight:700;">${name}</span>
-    <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-left:auto;">${photoCount} PHOTOS</span>`;
+    <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-left:auto;">${allCount} PHOTOS</span>`;
 
   if(db){
-    let html = '';
-    sheets.forEach(sheet => {
-      const sheetPhotos = sheet.type==='sheet' ? (sheet.children||[]) : [sheet];
-      const sheetName = (sheet.title || sheet.id || '').replace(/\//g,'/');
-      html += `<div style="margin-bottom:16px;">
-        <div style="font-size:8px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(0,255,136,0.08);">${sheetName} · ${sheetPhotos.length}장</div>
+    if(!sheets.length){
+      db.innerHTML = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
+    } else {
+      const sheet = sheets[detailPage];
+      let html = `<div style="margin-bottom:16px;">
+        <div style="font-size:8px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(0,255,136,0.08);">${sheet.name} · ${sheet.photos.length}장</div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">`;
-      sheetPhotos.forEach(p => {
+      sheet.photos.forEach(p => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
-        if(full){
-          html += `<div onclick="openLightbox('${full}')" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
-            <img src="${thumb||full}" onerror="if(!this._fb){this._fb=1;this.src='${full}'}"
-              style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);transition:filter .2s;"
-              onmouseover="this.style.filter='brightness(0.85) saturate(0) sepia(1) hue-rotate(90deg)'"
-              onmouseout="this.style.filter='brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg)'">
-          </div>`;
-        }
+        html += `<div onclick="openLightbox('${full}')" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
+          <img src="${thumb||full}" onerror="if(!this._fb){this._fb=1;this.src='${full}'}"
+            style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);transition:filter .2s;"
+            onmouseover="this.style.filter='brightness(0.85) saturate(0) sepia(1) hue-rotate(90deg)'"
+            onmouseout="this.style.filter='brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg)'">
+        </div>`;
       });
       html += `</div></div>`;
-    });
-    if(!allPhotos.length) html = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
-    db.innerHTML = html;
+      db.innerHTML = html;
+      db.closest('.detail-body-wrap') ? db.closest('.detail-body-wrap').scrollTop = 0 : db.scrollTop = 0;
+    }
   }
-  showView('detailView');
+}
+
+function changeDetailPage(dir){
+  detailPage += dir;
+  renderDetailPage();
 }
 
 function openLightbox(url){
