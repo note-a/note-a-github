@@ -1919,16 +1919,15 @@ function loadGalleryGrid(){
 }
 
 let _detailMonth = null;
-let _detailSheets = [];
+let _detailPhotos = [];
 let detailPage = 0;
-const DETAIL_PAGE_SIZE = 1; // 1 sheet per page
+const DETAIL_PAGE_SIZE = 12;
 
 function showMonthDetail(month){
   _detailMonth = month;
-  _detailSheets = (month.children || []).map(s => ({
-    name: (s.title || s.id || '').replace(/\//g,'/'),
-    photos: (s.type==='sheet' ? (s.children||[]) : [s]).filter(p => p.filename||p.url)
-  })).filter(s => s.photos.length > 0);
+  _detailPhotos = (month.children || [])
+    .flatMap(s => s.type==='sheet' ? (s.children||[]) : [s])
+    .filter(p => p.filename || p.url);
   detailPage = 0;
   renderDetailPage();
   showView('detailView');
@@ -1936,23 +1935,23 @@ function showMonthDetail(month){
 
 function renderDetailPage(){
   const month = _detailMonth;
-  const sheets = _detailSheets;
   if(!month) return;
 
   const name = (month.title || month.id || '').toUpperCase().replace(/\./g,'/');
-  const allCount = sheets.reduce((n,s)=>n+s.photos.length, 0);
-  const totalPages = Math.max(1, sheets.length);
-
+  const all = _detailPhotos;
+  const totalPages = Math.max(1, Math.ceil(all.length / DETAIL_PAGE_SIZE));
   if(detailPage >= totalPages) detailPage = totalPages - 1;
   if(detailPage < 0) detailPage = 0;
+
+  const slice = all.slice(detailPage * DETAIL_PAGE_SIZE, (detailPage + 1) * DETAIL_PAGE_SIZE);
+  const showPager = all.length > DETAIL_PAGE_SIZE;
 
   const prevBtn = document.getElementById('detail-prev');
   const nextBtn = document.getElementById('detail-next');
   const meta = document.getElementById('detailMeta');
-  const showPager = totalPages > 1;
   if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = detailPage===0; prevBtn.style.opacity = detailPage===0 ? '0.3' : '1'; }
   if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = detailPage>=totalPages-1; nextBtn.style.opacity = detailPage>=totalPages-1 ? '0.3' : '1'; }
-  if(meta) meta.textContent = showPager ? `${detailPage+1} / ${totalPages}` : `${allCount} PHOTOS`;
+  if(meta) meta.textContent = showPager ? `${detailPage+1} / ${totalPages}` : `${all.length} PHOTOS`;
 
   const dh = document.getElementById('detailHeader');
   const db = document.getElementById('detailBody');
@@ -1961,17 +1960,14 @@ function renderDetailPage(){
   if(dh) dh.innerHTML = `
     <span class="mbadge" style="color:#00ff88;border-color:rgba(0,255,136,0.3);">STATUS</span>
     <span style="color:#00ff88;font-size:11px;font-weight:700;">${name}</span>
-    <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-left:auto;">${allCount} PHOTOS</span>`;
+    <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-left:auto;">${all.length} PHOTOS</span>`;
 
   if(db){
-    if(!sheets.length){
+    if(!slice.length){
       db.innerHTML = '<div style="color:rgba(0,255,136,0.3);font-size:10px;padding:20px;">// NO PHOTOS</div>';
     } else {
-      const sheet = sheets[detailPage];
-      let html = `<div style="margin-bottom:16px;">
-        <div style="font-size:8px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(0,255,136,0.08);">${sheet.name} · ${sheet.photos.length}장</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">`;
-      sheet.photos.forEach(p => {
+      let html = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">';
+      slice.forEach(p => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
         html += `<div onclick="openLightbox('${full}')" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
@@ -1981,9 +1977,9 @@ function renderDetailPage(){
             onmouseout="this.style.filter='brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg)'">
         </div>`;
       });
-      html += `</div></div>`;
+      html += '</div>';
       db.innerHTML = html;
-      db.closest('.detail-body-wrap') ? db.closest('.detail-body-wrap').scrollTop = 0 : db.scrollTop = 0;
+      db.scrollTop = 0;
     }
   }
 }
