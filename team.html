@@ -1032,21 +1032,16 @@
         height: auto !important;
         min-height: 100vh;
         grid-template-columns: 1fr !important;
-        grid-template-rows: 44px 28px auto auto auto 34px !important;
+        grid-template-rows: 44px 28px auto 34px !important;
         grid-template-areas:
           "top"
           "menu"
           "center"
-          "left"
-          "right"
           "bot" !important;
         padding: 6px !important;
         gap: 6px !important;
       }
-      #col-left, #col-right { flex-direction: row !important; flex-wrap: wrap; gap: 6px; }
-      #col-left .panel, #col-right .panel { flex: 1 1 calc(50% - 6px); min-width: 140px; }
-      #panel-log { max-height: 160px; }
-      #panel-sys { min-height: 180px; }
+      #col-left, #col-right { display: none !important; }
       #team-menubar { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
       #team-menubar::-webkit-scrollbar { display: none; }
       #col-center { min-height: 460px; width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: hidden !important; }
@@ -1055,8 +1050,8 @@
       #boardView, #detailView, #noticeView, #galleryView, #chatView, #memoView, #writeView { min-height: 0 !important; }
       #statement-section { max-height: 140px !important; }
       .kp-grid { width: 100% !important; min-width: 0 !important; }
-      #col-left, #col-right { width: calc(100vw - 12px) !important; min-width: 0 !important; overflow: hidden !important; }
       #app { border: none !important; }
+      #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; }
     }
 
     @media (max-width: 520px) {
