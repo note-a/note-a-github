@@ -1043,7 +1043,7 @@
         overflow: visible !important;
         border: none !important;
         grid-template-columns: 1fr !important;
-        grid-template-rows: 54px 46px auto !important;
+        grid-template-rows: 68px 58px auto !important;
         grid-template-areas: "top" "menu" "center" !important;
         padding: 0 !important;
         gap: 0 !important;
@@ -1058,7 +1058,7 @@
       #introView { width: 100% !important; height: auto !important; overflow: visible !important; }
       .kp-grid { height: auto !important; overflow: visible !important; width: 100% !important; }
       #board-feed, #gallery-grid-wrap, .detail-body-wrap, #chat-feed, #memo-feed { height: auto !important; max-height: none !important; overflow: visible !important; }
-      #statement-section { max-height: none !important; overflow: visible !important; }
+      #statement-section { max-height: 50vh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
       #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; }
       #team-menubar, #team-menubar *, #col-center, #col-center * { font-size: 15px !important; }
       #titlebar { font-size: 12px !important; justify-content: center !important; }
@@ -1522,7 +1522,7 @@
         </div>
       </div>
       <div id="galleryView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
-        <div id="gallery-grid-wrap" style="flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px;align-content:start;background:#000;"></div>
+        <div id="gallery-grid-wrap" style="flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px;align-content:start;background:#000;"></div>
         <div class="board-back-bar" style="flex-shrink:0;">
           <button class="back-btn" onclick="backToIntro()">◀ HOME</button>
           <button class="back-btn" id="gal-prev" onclick="changeGalleryPage(-1)" style="display:none;">◀</button>
@@ -1776,27 +1776,23 @@ BOARD_DATA.notice = [
   }
 ];
 
-// ── 인수인계 게시판: 런타임 로드 (admin-contents.json + published-posts.json)
+// ── LOG 게시판: 런타임 로드 (handover-posts.json)
 let _handoverLoaded = false;
 function loadHandoverData(){
   if(_handoverLoaded) return Promise.resolve();
-  return Promise.all([
-    fetch('./handover-posts.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
-    fetch('./admin-contents.json').then(r=>r.ok?r.json():{}).catch(()=>{})
-  ]).then(([posts, ac]) => {
-    const ruleItems = (ac&&ac.rule&&ac.rule.items)||[];
-    const logItems = Array.isArray(posts) ? posts : [];
-    const all = [...ruleItems, ...logItems];
-    BOARD_DATA.handover = all.map((it,i) => ({
-      id: 9000+i,
-      author: it.author || 'RULE',
-      title: it.title || it.name || '',
-      ago: it.year || it.date || '2025',
-      body: it.preview || '',
-      imgs: []
-    }));
-    if(all.length > 0) _handoverLoaded = true;
-  });
+  return fetch('./handover-posts.json').then(r=>r.ok?r.json():[]).catch(()=>[])
+    .then(posts => {
+      const all = Array.isArray(posts) ? posts : [];
+      BOARD_DATA.handover = all.map((it,i) => ({
+        id: it.id || 9000+i,
+        author: it.author || 'RULE',
+        title: it.title || it.name || '',
+        ago: it.year || it.date || '2025',
+        body: it.preview || '',
+        imgs: []
+      }));
+      if(all.length > 0) _handoverLoaded = true;
+    });
 }
 
 
