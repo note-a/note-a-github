@@ -1049,11 +1049,12 @@
       #team-menubar span { padding: 0 16px !important; }
       #titlebar, #titlebar *, #col-center, #col-center * { font-size: 13px !important; }
       #statement-section, #statement-section * { font-family: 'Space Mono', monospace !important; }
-      #col-center { min-height: 460px; width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: hidden !important; }
-      #col-center .panel { width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: hidden !important; }
-      #introView { width: 100% !important; min-width: 0 !important; overflow: hidden !important; }
-      #boardView, #detailView, #noticeView, #galleryView, #chatView, #memoView, #writeView { min-height: 0 !important; }
-      #statement-section { max-height: none !important; }
+      #col-center { min-height: 0; width: calc(100vw - 12px) !important; min-width: 0 !important; max-width: calc(100vw - 12px) !important; overflow: visible !important; }
+      #col-center .panel { width: 100% !important; min-width: 0 !important; max-width: 100% !important; overflow: visible !important; height: auto !important; }
+      #introView { width: 100% !important; min-width: 0 !important; overflow: visible !important; height: auto !important; }
+      #boardView, #detailView, #noticeView, #galleryView, #chatView, #memoView, #writeView { height: auto !important; min-height: 60vh; overflow: visible !important; }
+      #board-feed, #gallery-grid-wrap, .detail-body-wrap, #chat-feed, #memo-feed, #notice-feed { max-height: none !important; overflow: visible !important; height: auto !important; }
+      #statement-section { max-height: none !important; overflow: visible !important; }
       .kp-grid { width: 100% !important; min-width: 0 !important; }
       #app { border: none !important; }
       #gallery-grid-wrap { grid-template-columns: repeat(2, 1fr) !important; }
