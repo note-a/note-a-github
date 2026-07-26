@@ -1450,10 +1450,12 @@
 
       <!-- BOARD -->
       <div id="boardView" style="display:none;flex-direction:column;flex:1;min-height:0;">
-        <div id="board-feed"></div>
+        <div id="board-feed" style="flex:1;overflow-y:auto;min-height:0;"></div>
         <div class="board-back-bar">
           <button class="back-btn" onclick="backToIntro()">◀ HOME</button>
-          <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;" id="boardCount"></span>
+          <button class="back-btn" id="page-prev" onclick="changePage(-1)" style="display:none;">◀</button>
+          <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;text-align:center;" id="boardCount"></span>
+          <button class="back-btn" id="page-next" onclick="changePage(1)" style="display:none;">▶</button>
           <button class="back-btn" style="color:#00ff88;border-color:rgba(0,255,136,0.5);" onclick="showWrite()">+ 글쓰기</button>
         </div>
       </div>
@@ -1554,7 +1556,13 @@
         </div>
       </div>
       <div id="galleryView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden;">
-        <div id="gallery-grid-wrap" style="flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:4px;align-content:start;background:#000;"></div>
+        <div id="gallery-grid-wrap" style="flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px;align-content:start;background:#000;"></div>
+        <div class="board-back-bar" style="flex-shrink:0;">
+          <button class="back-btn" onclick="backToIntro()">◀ HOME</button>
+          <button class="back-btn" id="gal-prev" onclick="changeGalleryPage(-1)" style="display:none;">◀</button>
+          <span style="flex:1;font-size:10px;color:rgba(0,255,136,0.5);text-align:center;letter-spacing:1px;" id="galCount"></span>
+          <button class="back-btn" id="gal-next" onclick="changeGalleryPage(1)" style="display:none;">▶</button>
+        </div>
       </div>
 
       <!-- 공지 직접 보기 -->
@@ -1803,23 +1811,25 @@ BOARD_DATA.notice = [
 ];
 
 // ── 인수인계 게시판: 런타임 로드 (admin-contents.json + published-posts.json)
+let _handoverLoaded = false;
 function loadHandoverData(){
-  if(BOARD_DATA.handover.length > 0) return Promise.resolve();
+  if(_handoverLoaded) return Promise.resolve();
   return Promise.all([
     fetch('./published-posts.json').then(r=>r.ok?r.json():[]).catch(()=>[]),
     fetch('./admin-contents.json').then(r=>r.ok?r.json():{}).catch(()=>{})
   ]).then(([posts, ac]) => {
     const ruleItems = (ac&&ac.rule&&ac.rule.items)||[];
-    const logItems = Array.isArray(posts) ? posts.filter(p=>p&&p.publishedSection==='rule') : [];
-    const all = ruleItems.concat(logItems);
+    const logItems = Array.isArray(posts) ? posts.filter(p=>p&&(p.publishedSection==='rule'||p.section==='rule')) : [];
+    const all = [...ruleItems, ...logItems];
     BOARD_DATA.handover = all.map((it,i) => ({
       id: 9000+i,
       author: it.author || 'RULE',
-      title: it.title || '',
-      ago: it.year || '2025',
-      body: it.preview || '',
+      title: it.title || it.name || '',
+      ago: it.year || it.date || '2025',
+      body: it.text || it.preview || '',
       imgs: []
     }));
+    if(all.length > 0) _handoverLoaded = true;
   });
 }
 
@@ -1827,53 +1837,81 @@ function loadHandoverData(){
 // ══════════════════════════════════════════════════
 // BOARD VIEW FUNCTIONS
 // ══════════════════════════════════════════════════
+const GALLERY_PAGE_SIZE = 12;
+let galleryPage = 0;
+let _galleryMonths = null;
+
+function renderGalleryPage(){
+  const wrap = document.getElementById('gallery-grid-wrap');
+  const prevBtn = document.getElementById('gal-prev');
+  const nextBtn = document.getElementById('gal-next');
+  const countEl = document.getElementById('galCount');
+  if(!wrap || !_galleryMonths) return;
+
+  const months = _galleryMonths;
+  const totalPages = Math.max(1, Math.ceil(months.length / GALLERY_PAGE_SIZE));
+  if(galleryPage >= totalPages) galleryPage = totalPages - 1;
+  if(galleryPage < 0) galleryPage = 0;
+
+  const slice = months.slice(galleryPage * GALLERY_PAGE_SIZE, (galleryPage + 1) * GALLERY_PAGE_SIZE);
+  const showPager = months.length > GALLERY_PAGE_SIZE;
+  if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = galleryPage === 0; prevBtn.style.opacity = galleryPage === 0 ? '0.3' : '1'; }
+  if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = galleryPage >= totalPages-1; nextBtn.style.opacity = galleryPage >= totalPages-1 ? '0.3' : '1'; }
+  if(countEl) countEl.textContent = showPager ? `${galleryPage+1} / ${totalPages}` : `${months.length} MONTHS`;
+
+  wrap.innerHTML = '';
+  wrap.scrollTop = 0;
+  slice.forEach(month => {
+    const firstPhoto = (month.children || []).flatMap(c => c.type==='sheet' ? (c.children||[]) : [c])[0];
+    const full = firstPhoto ? (firstPhoto.filename || firstPhoto.url || '') : '';
+    const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
+    const dayCount = (month.children || []).length;
+    const name = (month.title || month.id).toUpperCase().replace(/\./g, '/');
+
+    const card = document.createElement('div');
+    card.style.cssText = 'cursor:pointer;display:flex;flex-direction:column;gap:3px;';
+    card.onclick = () => showMonthDetail(month);
+
+    const thumbDiv = document.createElement('div');
+    thumbDiv.style.cssText = 'aspect-ratio:3/2;background:#000;overflow:hidden;border:1px solid rgba(0,221,85,0.2);';
+    if(thumb || full){
+      const img = document.createElement('img');
+      img.src = thumb || full;
+      img.dataset.full = full;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);';
+      img.onerror = function(){ if(!this._fb){ this._fb=1; this.src=this.dataset.full; } };
+      thumbDiv.appendChild(img);
+    }
+    card.appendChild(thumbDiv);
+
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:8px;color:#00dd55;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:"Space Mono",monospace;';
+    lbl.innerHTML = name + ' <span style="color:rgba(0,221,85,0.42);font-size:7px;">(' + dayCount + ')</span>';
+    card.appendChild(lbl);
+
+    wrap.appendChild(card);
+  });
+}
+
+function changeGalleryPage(dir){
+  galleryPage += dir;
+  renderGalleryPage();
+}
+
 function loadGalleryGrid(){
   const wrap = document.getElementById('gallery-grid-wrap');
-  if(!wrap || wrap._loaded) return;
-  wrap._loaded = true;
+  if(!wrap) return;
+  if(_galleryMonths){ renderGalleryPage(); return; }
   wrap.innerHTML = '<div style="color:rgba(0,221,85,0.42);padding:20px;font-size:9px;letter-spacing:1px;">LOADING...</div>';
   fetch('./admin-contents.json')
     .then(r => r.ok ? r.json() : Promise.reject('fetch failed'))
     .then(data => {
-      const months = (data.project && data.project.photos) || [];
-      wrap.innerHTML = '';
-      months.forEach(month => {
-        // first photo for single thumbnail (gallery1.html 방식)
-        const firstPhoto = (month.children || []).flatMap(c => c.type==='sheet' ? (c.children||[]) : [c])[0];
-        const full = firstPhoto ? (firstPhoto.filename || firstPhoto.url || '') : '';
-        const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
-        const dayCount = (month.children || []).length;
-        const name = (month.title || month.id).toUpperCase().replace(/\./g, '/');
-
-        const card = document.createElement('div');
-        card.style.cssText = 'cursor:pointer;display:flex;flex-direction:column;gap:4px;';
-        card.onclick = () => showMonthDetail(month);
-
-        // thumbnail — 3:2 aspect ratio, green tint filter (gallery1.html 동일)
-        const thumbDiv = document.createElement('div');
-        thumbDiv.style.cssText = 'aspect-ratio:3/2;background:#000;overflow:hidden;border:1px solid rgba(0,221,85,0.2);';
-        if(thumb || full){
-          const img = document.createElement('img');
-          img.src = thumb || full;
-          img.dataset.full = full;
-          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);';
-          img.onerror = function(){ if(!this._fb){ this._fb=1; this.src=this.dataset.full; } };
-          thumbDiv.appendChild(img);
-        }
-        card.appendChild(thumbDiv);
-
-        // label
-        const lbl = document.createElement('div');
-        lbl.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:4px;font-size:9px;color:#00dd55;letter-spacing:0.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:"Space Mono",monospace;';
-        lbl.innerHTML = name + ' <span style="color:rgba(0,221,85,0.42);font-size:8px;">(' + dayCount + ')</span>';
-        card.appendChild(lbl);
-
-        wrap.appendChild(card);
-      });
-      if(!months.length) wrap.innerHTML = '<div style="color:rgba(0,221,85,0.42);padding:20px;font-size:9px;">NO DATA</div>';
+      _galleryMonths = (data.project && data.project.photos) || [];
+      galleryPage = 0;
+      renderGalleryPage();
+      if(!_galleryMonths.length) wrap.innerHTML = '<div style="color:rgba(0,221,85,0.42);padding:20px;font-size:9px;">NO DATA</div>';
     })
     .catch(() => {
-      wrap._loaded = false;
       wrap.innerHTML = '<div style="color:#f44;padding:20px;font-size:12px;">로드 실패 — 다시 시도해주세요</div>';
     });
 }
@@ -1943,8 +1981,10 @@ function showView(name){
 function goBoard(spanEl){
   document.querySelectorAll('#team-menubar span').forEach(s=>s.classList.remove('mactive'));
   if(spanEl) spanEl.classList.add('mactive');
+  const prevCat = currentCat;
   const cat = spanEl ? spanEl.dataset.cat : currentCat;
   currentCat = cat;
+  if(cat !== prevCat) boardPage = 0;
 
   if(cat==='idea'){    showMemoView(); return; }
   if(cat==='chat'){    showChatView(); return; }
@@ -1960,34 +2000,56 @@ function goBoard(spanEl){
   renderBoard(cat);
 }
 
-function renderBoard(cat){
+const PAGE_SIZE = 10;
+let boardPage = 0;
+
+function renderBoard(cat, page){
+  if(page !== undefined) boardPage = page;
   const posts = BOARD_DATA[cat] || [];
+  const totalPages = Math.max(1, Math.ceil(posts.length / PAGE_SIZE));
+  if(boardPage >= totalPages) boardPage = totalPages - 1;
+  if(boardPage < 0) boardPage = 0;
+
   const feed = document.getElementById('board-feed');
   const badge = document.getElementById('board-badge');
   const count = document.getElementById('boardCount');
   const ph = document.getElementById('center-ph');
+  const prevBtn = document.getElementById('page-prev');
+  const nextBtn = document.getElementById('page-next');
 
   if(badge) badge.textContent = CAT_LABELS[cat] || cat;
-  if(count) count.textContent = `${posts.length} THREADS`;
   if(ph){
     const titleEl = ph.querySelector('.panel-title');
     if(titleEl) titleEl.textContent = '◆ ' + (CAT_LABELS[cat]||cat).toUpperCase();
   }
 
+  const slice = posts.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
+  const showPager = posts.length > PAGE_SIZE;
+
+  if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = boardPage === 0; prevBtn.style.opacity = boardPage === 0 ? '0.3' : '1'; }
+  if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = boardPage >= totalPages-1; nextBtn.style.opacity = boardPage >= totalPages-1 ? '0.3' : '1'; }
+  if(count) count.textContent = showPager ? `${boardPage+1} / ${totalPages}` : `${posts.length} THREADS`;
+
   if(feed){
     if(!posts.length){
       feed.innerHTML = '<div class="board-empty">// NO THREADS YET</div>';
     } else {
-      feed.innerHTML = posts.map(p=>`
+      feed.innerHTML = slice.map(p=>`
         <div class="msg-row" onclick="openDetail(${p.id})">
           <span class="mbadge" style="color:${CAT_COLORS[cat]||'#00ff88'};border-color:${CAT_COLORS[cat]||'#00ff88'}40;">${CAT_LABELS[cat]||cat}</span>
           <span class="mname">${p.author}</span>
           <span class="mpreview">${p.title}</span>
           <span class="mago">${p.ago}</span>
         </div>`).join('');
+      feed.scrollTop = 0;
     }
   }
   showView('boardView');
+}
+
+function changePage(dir){
+  boardPage += dir;
+  renderBoard(currentCat);
 }
 
 function showNoticeView(){
