@@ -1107,6 +1107,12 @@
   </div>
   <div style="font-size:8px;color:rgba(0,255,136,0.2);letter-spacing:2px;margin-top:20px;">TEAM KSS · LABORATORY MODE</div>
 </div>
+
+<!-- 라이트박스 -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,0.96);align-items:center;justify-content:center;cursor:zoom-out;">
+  <img id="lightbox-img" src="" style="max-width:100%;max-height:100%;object-fit:contain;">
+  <div style="position:absolute;top:16px;right:20px;font-size:20px;color:rgba(0,255,136,0.4);pointer-events:none;">✕</div>
+</div>
 <script>
 (function(){
   const PW = '951753';
@@ -1426,12 +1432,12 @@
       <div id="chatView" style="display:none;flex-direction:column;flex:1;min-height:0;">
         <div id="chat-messages" style="flex:1;overflow-y:auto;padding:8px 10px;display:flex;flex-direction:column;gap:5px;"></div>
         <div style="padding:6px 10px;border-top:1px solid rgba(0,255,136,0.07);display:flex;gap:5px;align-items:flex-end;flex-shrink:0;">
-          <textarea id="chat-input" placeholder="메시지 입력... (Ctrl+Enter 전송)" rows="2"
+          <textarea id="chat-input" placeholder="메시지 입력... (Enter 전송)" rows="2"
             style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;
                    font-family:'Space Mono',monospace;font-size:12px;padding:4px 6px;outline:none;resize:none;line-height:1.6;"
             onfocus="this.style.borderColor='rgba(0,255,136,0.5)'"
             onblur="this.style.borderColor='rgba(0,255,136,0.2)'"
-            onkeydown="if(event.ctrlKey&&event.key==='Enter')sendChat()"></textarea>
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}"></textarea>
           <div style="display:flex;flex-direction:column;gap:3px;">
             <button id="chat-btn-k" onclick="chatSetAuthor('K')"
               style="font-size:9px;font-weight:700;padding:2px 8px;background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;cursor:pointer;font-family:'Space Mono',monospace;">K</button>
@@ -1899,14 +1905,16 @@ function showMonthDetail(month){
       const sheetName = (sheet.title || sheet.id || '').replace(/\//g,'/');
       html += `<div style="margin-bottom:16px;">
         <div style="font-size:8px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(0,255,136,0.08);">${sheetName} · ${sheetPhotos.length}장</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:3px;">`;
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">`;
       sheetPhotos.forEach(p => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
         if(full){
-          html += `<div style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);">
+          html += `<div onclick="openLightbox('${full}')" style="aspect-ratio:3/2;overflow:hidden;background:#000;border:1px solid rgba(0,221,85,0.15);cursor:pointer;">
             <img src="${thumb||full}" onerror="if(!this._fb){this._fb=1;this.src='${full}'}"
-              style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);">
+              style="width:100%;height:100%;object-fit:cover;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);transition:filter .2s;"
+              onmouseover="this.style.filter='brightness(0.85) saturate(0) sepia(1) hue-rotate(90deg)'"
+              onmouseout="this.style.filter='brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg)'">
           </div>`;
         }
       });
@@ -1916,6 +1924,18 @@ function showMonthDetail(month){
     db.innerHTML = html;
   }
   showView('detailView');
+}
+
+function openLightbox(url){
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  if(!lb||!img) return;
+  img.src = url;
+  lb.style.display = 'flex';
+}
+function closeLightbox(){
+  const lb = document.getElementById('lightbox');
+  if(lb) lb.style.display = 'none';
 }
 
 function showView(name){
