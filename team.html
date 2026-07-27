@@ -3677,7 +3677,7 @@ function renderDayEntries(){
       <span style="flex:1;font-size:9px;color:rgba(0,255,136,.8);line-height:1.7;white-space:pre-wrap;">${e.text}</span>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
         <span style="font-size:7px;color:rgba(0,255,136,.2);">${e.ts||''}</span>
-        <button onclick="deleteDayEntry(${i})" style="font-size:7px;color:rgba(255,80,80,.3);background:none;border:none;cursor:pointer;padding:0;">✕</button>
+        <button onclick="deleteDayEntry(${i})" style="font-size:8px;color:rgba(255,80,80,.7);background:none;border:1px solid rgba(255,80,80,.3);cursor:pointer;padding:1px 5px;letter-spacing:1px;font-family:inherit;" onmouseover="this.style.color='#ff5050';this.style.borderColor='rgba(255,80,80,.7)'" onmouseout="this.style.color='rgba(255,80,80,.7)';this.style.borderColor='rgba(255,80,80,.3)'">DEL</button>
       </div>
     </div>`).join('');
   el.scrollTop=el.scrollHeight;
