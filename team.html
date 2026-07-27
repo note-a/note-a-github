@@ -1137,6 +1137,8 @@
     .md-body td { border:1px solid rgba(0,255,136,0.15); padding:4px 8px; color:rgba(0,255,136,0.7); }
     .md-body a { color:#9bff3a; text-decoration:none; }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 <!-- 비밀번호 오버레이 -->
@@ -1678,13 +1680,8 @@
         <!-- S7: Claude 연결 -->
         <div class="dp-section">
           <!-- GitHub Sync -->
-          <div class="dp-title" style="display:flex;align-items:center;gap:8px;">// GITHUB SYNC <span id="dp-gh-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 미연결</span></div>
-          <div style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-            <input id="dp-gh-token" type="password" placeholder="github_pat_… (GitHub 토큰)"
-              style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:11px;padding:6px 10px;outline:none;letter-spacing:1px;">
-            <button class="dp-btn" onclick="dpSaveGhToken()">저장</button>
-            <button class="dp-btn" onclick="dpClearGhToken()" style="color:rgba(0,255,136,0.4);">✕</button>
-          </div>
+          <div class="dp-title" style="display:flex;align-items:center;gap:8px;">// FIREBASE SYNC <span id="dp-gh-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 초기화 중</span></div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:10px;">모든 기기에서 자동 동기화 — 토큰 불필요</div>
 
           <div class="dp-title" style="display:flex;align-items:center;gap:8px;">// CLAUDE <span id="dp-claude-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 미연결</span><span style="margin-left:auto;display:flex;gap:3px;"><span style="font-size:8px;letter-spacing:1px;border:1px solid rgba(0,255,136,0.25);color:rgba(0,255,136,0.45);padding:0 5px;">K</span><span style="font-size:8px;letter-spacing:1px;border:1px solid rgba(0,255,136,0.25);color:rgba(0,255,136,0.45);padding:0 5px;">S</span></span></div>
           <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">API 키 입력 후 보드 연동 AI 채팅</div>
@@ -4056,77 +4053,80 @@ function loadNotice(){
 // ══════════════════════════════════════════════════
 // GitHub Sync
 // ══════════════════════════════════════════════════
-const _GH = {owner:'note-a', repo:'note-a-github', file:'team-data.json'};
-let _ghSha = null, _ghSyncTimer = null;
+// ── Firebase Realtime Database Sync ──
+const _FB_KEYS = ['team_cal','team_chat','team_memos','team_feed','team_post_edits','team_post_deleted','tl-items','ds-data','team_notice','team_notice_ts'];
+let _fbDb = null, _fbSyncTimer = null;
+
 const _origSetItem = localStorage.setItem.bind(localStorage);
 localStorage.setItem = function(key, value){
   _origSetItem(key, value);
-  if(['team_cal','team_chat','team_memos','team_feed','team_post_edits'].includes(key)) _ghScheduleSync();
+  if(_FB_KEYS.includes(key)) _fbScheduleSync();
 };
 
-function _ghToken(){ return localStorage.getItem('gh_pat')||''; }
-
-function dpSaveGhToken(){
-  const inp=document.getElementById('dp-gh-token');
-  const t=(inp.value||'').trim();
-  if(!t) return;
-  _origSetItem('gh_pat', t);
-  inp.value='';
-  const s=document.getElementById('dp-gh-status');
-  if(s){s.textContent='● 연결됨';s.style.color='#00ff88';}
-  _ghLoad();
-}
-function dpClearGhToken(){
-  _origSetItem('gh_pat','');
-  localStorage.removeItem('gh_pat');
-  const s=document.getElementById('dp-gh-status');
-  if(s){s.textContent='● 미연결';s.style.color='rgba(0,255,136,0.3)';}
+function _fbSetStatus(msg, state){
+  const s = document.getElementById('dp-gh-status');
+  if(!s) return;
+  s.textContent = '● ' + msg;
+  s.style.color = state==='ok' ? '#00ff88' : state==='err' ? 'rgba(255,80,80,.7)' : 'rgba(0,255,136,0.4)';
 }
 
-async function _ghLoad(){
-  const t=_ghToken(); if(!t) return;
+function _fbInit(){
+  if(_fbDb) return;
   try{
-    if(window._sysLog) _sysLog('[SYNC] GitHub 연결 중…','ok');
-    const r=await fetch(`https://api.github.com/repos/${_GH.owner}/${_GH.repo}/contents/${_GH.file}`,
-      {headers:{'Authorization':`Bearer ${t}`,'Accept':'application/vnd.github.v3+json'}});
-    if(!r.ok){ if(window._sysLog)_sysLog('[SYNC] 연결 실패 (토큰 확인)','warn'); return; }
-    const d=await r.json();
-    _ghSha=d.sha;
-    const data=JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-    const keys=['team_cal','team_chat','team_memos','team_feed','team_post_edits'];
-    keys.forEach(k=>{ if(data[k]!=null) _origSetItem(k, JSON.stringify(data[k])); });
-    if(window._sysLog) _sysLog('[SYNC] 데이터 로드 완료','ok');
-    renderFeeds(); renderMemos();
-    try{ renderChat(); }catch(e){}
-    try{ if(document.getElementById('calendarView')?.style.display!=='none') renderCalendar(); }catch(e){}
-  }catch(e){ if(window._sysLog) _sysLog('[SYNC] 로드 오류: '+e.message,'warn'); }
+    const app = firebase.initializeApp({
+      apiKey:'AIzaSyCdCH-lovRsL5xXW_Z_Ofvr4hLHnOkPMxg',
+      authDomain:'set-team-7c63e.firebaseapp.com',
+      databaseURL:'https://set-team-7c63e-default-rtdb.asia-southeast1.firebasedatabase.app',
+      projectId:'set-team-7c63e',
+      storageBucket:'set-team-7c63e.firebasestorage.app',
+      messagingSenderId:'20667137080',
+      appId:'1:20667137080:web:863b83cabc37f8f071facd'
+    });
+    _fbDb = firebase.database(app);
+    _fbSetStatus('연결 중…', 'idle');
+    _fbDb.ref('teamdata').on('value', snap => {
+      const data = snap.val();
+      _fbSetStatus('동기화됨', 'ok');
+      if(window._sysLog) _sysLog('[SYNC] Firebase 연결됨','ok');
+      if(!data) return;
+      _FB_KEYS.forEach(k => {
+        if(data[k] != null) _origSetItem(k, JSON.stringify(data[k]));
+      });
+      try{ renderFeeds(); }catch(e){}
+      try{ renderMemos(); }catch(e){}
+      try{ renderChat(); }catch(e){}
+      try{ if(document.getElementById('calendarView')?.style.display!=='none') renderCalendar(); }catch(e){}
+      try{ tlRender(); }catch(e){}
+    }, err => {
+      _fbSetStatus('오류', 'err');
+      if(window._sysLog) _sysLog('[SYNC] Firebase 오류: '+err.message,'warn');
+    });
+  }catch(e){
+    _fbSetStatus('초기화 실패', 'err');
+    if(window._sysLog) _sysLog('[SYNC] Firebase 초기화 실패: '+e.message,'warn');
+  }
 }
 
-function _ghScheduleSync(){
-  clearTimeout(_ghSyncTimer);
-  _ghSyncTimer=setTimeout(_ghSync, 3000);
+function _fbScheduleSync(){
+  clearTimeout(_fbSyncTimer);
+  _fbSyncTimer = setTimeout(_fbSync, 2000);
 }
 
-async function _ghSync(){
-  const t=_ghToken(); if(!t) return;
-  try{
-    const keys=['team_cal','team_chat','team_memos','team_feed','team_post_edits'];
-    const data={};
-    keys.forEach(k=>{ try{const v=localStorage.getItem(k); data[k]=v?JSON.parse(v):null;}catch(e){} });
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-    const body={message:'sync',content};
-    if(_ghSha) body.sha=_ghSha;
-    const r=await fetch(`https://api.github.com/repos/${_GH.owner}/${_GH.repo}/contents/${_GH.file}`,
-      {method:'PUT',headers:{'Authorization':`Bearer ${t}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(r.ok){const d=await r.json();_ghSha=d.content.sha; if(window._sysLog)_sysLog('[SYNC] 저장됨','ok');}
-    else{ if(window._sysLog)_sysLog('[SYNC] 저장 실패','warn'); }
-  }catch(e){ if(window._sysLog)_sysLog('[SYNC] 오류: '+e.message,'warn'); }
+function _fbSync(){
+  if(!_fbDb) return;
+  const data = {};
+  _FB_KEYS.forEach(k => {
+    try{ const v = localStorage.getItem(k); if(v != null) data[k] = JSON.parse(v); }catch(e){}
+  });
+  _fbDb.ref('teamdata').set(data)
+    .then(()=>{ _fbSetStatus('저장됨', 'ok'); if(window._sysLog)_sysLog('[SYNC] Firebase 저장완료','ok'); })
+    .catch(e=>{ _fbSetStatus('저장 실패', 'err'); if(window._sysLog)_sysLog('[SYNC] Firebase 저장실패: '+e.message,'warn'); });
 }
 
 document.addEventListener('DOMContentLoaded', function(){
   renderFeeds();
   loadNotice();
-  _ghLoad();
+  _fbInit();
 });
 
 function setAuthor(who){
