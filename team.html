@@ -2482,9 +2482,9 @@ function submitPost(){
   if(window._editingPostId){
     const id = window._editingPostId;
     Object.values(BOARD_DATA).forEach(arr=>{
-      arr.forEach(p=>{ if(p.id===id){ p.title=title; p.body=body; } });
+      arr.forEach(p=>{ if(p.id===id){ p.title=title; p.body=body; p.author=author; } });
     });
-    _savePostEdit(id, { title, body });
+    _savePostEdit(id, { title, body, author });
     window._editingPostId = null;
     _writeImgs=[];
     openDetail(id);
