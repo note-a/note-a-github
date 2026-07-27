@@ -3808,8 +3808,18 @@ function editFeedItem(id){
   if(!item) return;
   const el = document.getElementById('fi-'+id);
   if(!el) return;
-  const color = item.author==='K' ? '0,255,136' : '0,204,255';
+  const isK = item.author==='K';
+  const color = isK ? '0,255,136' : '0,204,255';
   el.innerHTML = `
+    <div style="display:flex;gap:3px;margin-bottom:4px;">
+      <button id="fi-au-K-${id}" onclick="fiBtnAuthor(${id},'K')"
+        style="font-size:8px;letter-spacing:1px;padding:1px 7px;cursor:pointer;font-family:'Space Mono',monospace;
+               background:${isK?'rgba(0,255,136,0.15)':'transparent'};border:1px solid ${isK?'rgba(0,255,136,0.6)':'rgba(0,255,136,0.2)'};color:${isK?'#00ff88':'rgba(0,255,136,0.35)'};">K</button>
+      <button id="fi-au-S-${id}" onclick="fiBtnAuthor(${id},'S')"
+        style="font-size:8px;letter-spacing:1px;padding:1px 7px;cursor:pointer;font-family:'Space Mono',monospace;
+               background:${!isK?'rgba(0,204,255,0.12)':'transparent'};border:1px solid ${!isK?'rgba(0,204,255,0.5)':'rgba(0,204,255,0.2)'};color:${!isK?'#44ccff':'rgba(0,204,255,0.3)'};">S</button>
+      <input id="fi-au-${id}" type="hidden" value="${item.author}">
+    </div>
     <textarea id="fi-edit-${id}" rows="3"
       style="width:100%;box-sizing:border-box;background:rgba(${color},0.06);border:1px solid rgba(${color},0.3);color:rgba(${color},1);font-family:'Space Mono',monospace;font-size:9px;padding:4px;outline:none;resize:vertical;line-height:1.7;"
       onkeydown="if(event.key==='Escape')renderFeeds();if(event.ctrlKey&&event.key==='Enter'){event.preventDefault();saveFeedEdit(${id});}"
@@ -3821,8 +3831,17 @@ function editFeedItem(id){
   document.getElementById('fi-edit-'+id)?.focus();
 }
 
+function fiBtnAuthor(id, who){
+  document.getElementById('fi-au-'+id).value = who;
+  const bK = document.getElementById('fi-au-K-'+id);
+  const bS = document.getElementById('fi-au-S-'+id);
+  if(bK){ bK.style.background=who==='K'?'rgba(0,255,136,0.15)':'transparent'; bK.style.borderColor=who==='K'?'rgba(0,255,136,0.6)':'rgba(0,255,136,0.2)'; bK.style.color=who==='K'?'#00ff88':'rgba(0,255,136,0.35)'; }
+  if(bS){ bS.style.background=who==='S'?'rgba(0,204,255,0.12)':'transparent'; bS.style.borderColor=who==='S'?'rgba(0,204,255,0.5)':'rgba(0,204,255,0.2)'; bS.style.color=who==='S'?'#44ccff':'rgba(0,204,255,0.3)'; }
+}
+
 function saveFeedEdit(id){
   const ta = document.getElementById('fi-edit-'+id);
+  const auEl = document.getElementById('fi-au-'+id);
   if(!ta) return;
   const newText = ta.value.trim();
   if(!newText) return;
@@ -3830,6 +3849,7 @@ function saveFeedEdit(id){
   const idx = feed.findIndex(f=>f.id===id);
   if(idx<0) return;
   feed[idx].text = newText;
+  if(auEl) feed[idx].author = auEl.value;
   localStorage.setItem('team_feed', JSON.stringify(feed));
   renderFeeds();
 }
