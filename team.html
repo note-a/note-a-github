@@ -1969,20 +1969,28 @@ const _HANDOVER_INLINE = [{"id":8000,"title":"이미지 분석 규칙 2.3","auth
 let _handoverLoaded = false;
 function loadHandoverData(){
   if(_handoverLoaded) return Promise.resolve();
-  const all = _HANDOVER_INLINE;
   const guide = { id: 8005, pinned: true, author: "GUIDE", ago: "고정",
     title: "LOG 채널 — 사용 안내",
     body: "LOG 채널은 작업 기록과 인수인계를 날짜순으로 남기는 공간입니다.\n\"오늘 뭘 했고, 다음엔 뭘 해야 하는지\"를 기록해두면 서로 맥락을 이어받을 수 있습니다.\n\n── 주로 올라오는 내용 ──\n\n· 오늘 작업 완료 내역 (촬영, 편집, 셀렉션 등)\n· 다음 작업자에게 넘겨야 할 사항\n· 미완료 항목과 그 이유\n· 판단이 필요한 보류 항목\n· 사용한 장비·세팅·조건 메모\n\n── 사용 방법 ──\n\n1. 제목에 날짜 포함 — 예: 2026-07-27 촬영 완료\n2. 본문 구성: [완료] / [미완료] / [다음 작업] 순서로\n3. 새 글 추가: Claude에게 \"LOG에 올려줘\"라고 요청\n4. 한 페이지에 15개씩 표시됨 (아래 페이지 이동 가능)\n\n── 작성 예시 ──\n\n제목: 2026-07-27 DIR 1~15 셀렉션\n[완료] DIR 1~10 Core/Drop 분류\n[미완료] DIR 11~15 — 판단 보류, K에게 확인 필요\n[다음] K가 11~15 검토 후 LOG에 결과 올리기", imgs: [] };
-  BOARD_DATA.handover = [guide, ...all.map((it,i) => ({
-    id: it.id || 9000+i,
-    author: it.author || 'RULE',
-    title: it.title || it.name || '',
-    ago: it.year || it.date || '2025',
-    body: it.preview || '',
-    imgs: []
-  }))];
-  _handoverLoaded = true;
-  return Promise.resolve();
+  function _buildHandover(fullMap){
+    BOARD_DATA.handover = [guide, ..._HANDOVER_INLINE.map((it,i) => ({
+      id: it.id || 9000+i,
+      author: it.author || 'RULE',
+      title: it.title || it.name || '',
+      ago: it.year || it.date || '2025',
+      body: fullMap[it.id] || it.preview || '',
+      imgs: []
+    }))];
+    _handoverLoaded = true;
+  }
+  return fetch('published-posts.json')
+    .then(r => r.ok ? r.json() : [])
+    .catch(() => [])
+    .then(published => {
+      const fullMap = {};
+      published.forEach(p => { if(p.id && p.preview) fullMap[p.id] = p.preview; });
+      _buildHandover(fullMap);
+    });
 }
 
 
