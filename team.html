@@ -991,26 +991,26 @@
     .back-btn:hover { background:rgba(0,255,136,.08);color:#00ff88;border-color:#00ff88; }
 
     /* ── DEV PANEL ── */
-    .dp-section { padding:14px 12px; border-bottom:1px solid rgba(255,153,68,0.15); }
-    .dp-title { font-size:9px;letter-spacing:3px;color:rgba(255,153,68,0.55);margin-bottom:10px;font-weight:700; }
+    .dp-section { padding:14px 12px; border-bottom:1px solid rgba(0,255,136,0.15); }
+    .dp-title { font-size:9px;letter-spacing:3px;color:rgba(0,255,136,0.55);margin-bottom:10px;font-weight:700; }
     .dp-stat-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:6px; }
-    .dp-stat { border:1px solid rgba(255,153,68,0.2);padding:8px 10px;background:rgba(255,153,68,0.03); }
-    .dp-stat-num { font-size:18px;color:#ff9944;font-weight:700;line-height:1; }
-    .dp-stat-label { font-size:9px;color:rgba(255,153,68,0.45);letter-spacing:1px;margin-top:3px; }
-    .dp-ls-item { border:1px solid rgba(255,153,68,0.15);padding:6px 10px;background:rgba(255,153,68,0.02);font-size:10px; }
-    .dp-ls-key { color:rgba(255,153,68,0.5);letter-spacing:1px; }
-    .dp-ls-val { color:#ff9944;font-weight:700; }
-    .dp-accordion-item { border:1px solid rgba(255,153,68,0.2);margin-bottom:5px; }
-    .dp-accordion-head { padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:11px;color:#ff9944;font-weight:700;letter-spacing:.5px; }
-    .dp-accordion-head:hover { background:rgba(255,153,68,0.06); }
-    .dp-accordion-arrow { font-size:9px;color:rgba(255,153,68,0.4);transition:transform .2s;flex-shrink:0; }
+    .dp-stat { border:1px solid rgba(0,255,136,0.2);padding:8px 10px;background:rgba(0,255,136,0.03); }
+    .dp-stat-num { font-size:18px;color:#00ff88;font-weight:700;line-height:1; }
+    .dp-stat-label { font-size:9px;color:rgba(0,255,136,0.45);letter-spacing:1px;margin-top:3px; }
+    .dp-ls-item { border:1px solid rgba(0,255,136,0.15);padding:6px 10px;background:rgba(0,255,136,0.02);font-size:10px; }
+    .dp-ls-key { color:rgba(0,255,136,0.5);letter-spacing:1px; }
+    .dp-ls-val { color:#00ff88;font-weight:700; }
+    .dp-accordion-item { border:1px solid rgba(0,255,136,0.2);margin-bottom:5px; }
+    .dp-accordion-head { padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:11px;color:#00ff88;font-weight:700;letter-spacing:.5px; }
+    .dp-accordion-head:hover { background:rgba(0,255,136,0.06); }
+    .dp-accordion-arrow { font-size:9px;color:rgba(0,255,136,0.4);transition:transform .2s;flex-shrink:0; }
     .dp-accordion-arrow.open { transform:rotate(90deg); }
-    .dp-accordion-body { display:none;padding:10px 12px;font-size:11px;color:rgba(0,255,136,0.65);line-height:1.8;white-space:pre-wrap;border-top:1px solid rgba(255,153,68,0.1);letter-spacing:.3px; }
+    .dp-accordion-body { display:none;padding:10px 12px;font-size:11px;color:rgba(0,255,136,0.65);line-height:1.8;white-space:pre-wrap;border-top:1px solid rgba(0,255,136,0.1);letter-spacing:.3px; }
     .dp-log-line { display:flex;gap:8px;padding:1px 0; }
-    .dp-log-ts { color:rgba(255,153,68,0.35);flex-shrink:0;font-size:10px; }
+    .dp-log-ts { color:rgba(0,255,136,0.35);flex-shrink:0;font-size:10px; }
     .dp-log-msg { font-size:10px; }
-    .dp-btn { background:transparent;border:1px solid rgba(255,153,68,0.3);color:rgba(255,153,68,0.7);font-family:'Space Mono',monospace;font-size:10px;padding:5px 14px;cursor:pointer;letter-spacing:1px; }
-    .dp-btn:hover { background:rgba(255,153,68,0.08);color:#ff9944;border-color:#ff9944; }
+    .dp-btn { background:transparent;border:1px solid rgba(0,255,136,0.3);color:rgba(0,255,136,0.7);font-family:'Space Mono',monospace;font-size:10px;padding:5px 14px;cursor:pointer;letter-spacing:1px; }
+    .dp-btn:hover { background:rgba(0,255,136,0.08);color:#00ff88;border-color:#00ff88; }
     .dp-action-btn { width:100%;padding:10px 8px;font-size:11px;text-align:left; }
 
     .detail-head { display:flex;gap:8px;align-items:center;padding:7px 10px;
@@ -1601,20 +1601,20 @@
 
         <!-- S3: 시스템 로그 -->
         <div class="dp-section">
-          <div class="dp-title">// SYSTEM LOG <span id="dp-log-count" style="color:rgba(255,153,68,0.4);font-size:9px;"></span></div>
+          <div class="dp-title">// SYSTEM LOG <span id="dp-log-count" style="color:rgba(0,255,136,0.4);font-size:9px;"></span></div>
           <div id="dp-log" style="max-height:180px;overflow-y:auto;font-size:10px;line-height:1.8;letter-spacing:.5px;"></div>
         </div>
 
         <!-- S4: 사이트 관리 -->
         <div class="dp-section">
-          <div class="dp-title">// 사이트 이동 <span style="color:rgba(255,153,68,0.35);font-size:9px;">note-a.github.io</span></div>
+          <div class="dp-title">// 사이트 이동 <span style="color:rgba(0,255,136,0.35);font-size:9px;">note-a.github.io</span></div>
           <div id="dp-pages" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;"></div>
         </div>
 
         <!-- S5: 최근 커밋 -->
         <div class="dp-section">
           <div class="dp-title">// 최근 커밋 <button class="dp-btn" style="padding:2px 8px;font-size:8px;margin-left:8px;" onclick="dpLoadCommits()">↺</button></div>
-          <div id="dp-commits"><span style="font-size:10px;color:rgba(255,153,68,0.3);">로딩 중…</span></div>
+          <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
         </div>
 
         <!-- S6: 빠른 실행 -->
@@ -1838,7 +1838,7 @@ const CAT_LABELS = {
 const CAT_COLORS = {
   notice:'#ff6060', status:'#00ff88', handover:'#ffcc44',
   idea:'#00ccff', question:'#ff88ff', criteria:'#88ffcc', history:'rgba(0,255,136,.45)',
-  dev:'#ff9944'
+  dev:'#00ff88'
 };
 
 const BOARD_DATA = {
@@ -2215,10 +2215,10 @@ function renderBoard(cat, page){
       feed.innerHTML = '<div class="board-empty">// NO THREADS YET</div>';
     } else if(cat === 'dev'){
       feed.innerHTML = pinnedHtml + slice.map(p=>`
-        <div onclick="openDetail(${p.id})" style="padding:10px 12px;border-bottom:1px solid rgba(0,255,136,0.1);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(255,153,68,0.06)'" onmouseout="this.style.background=''">
+        <div onclick="openDetail(${p.id})" style="padding:10px 12px;border-bottom:1px solid rgba(0,255,136,0.1);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(0,255,136,0.06)'" onmouseout="this.style.background=''">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
-            <span class="mbadge" style="color:#ff9944;border-color:rgba(255,153,68,0.3);">DEV</span>
-            <span style="font-size:12px;font-weight:700;color:#ff9944;letter-spacing:.5px;flex:1;">${p.title}</span>
+            <span class="mbadge" style="color:#00ff88;border-color:rgba(0,255,136,0.3);">DEV</span>
+            <span style="font-size:12px;font-weight:700;color:#00ff88;letter-spacing:.5px;flex:1;">${p.title}</span>
             <span style="font-size:10px;color:rgba(0,255,136,0.3);">${p.ago}</span>
           </div>
           <div style="font-size:10px;color:rgba(0,255,136,0.45);line-height:1.6;letter-spacing:.3px;padding-left:2px;">${(p.body||'').split('\n')[0].slice(0,80)}${p.body&&p.body.length>80?'…':''}</div>
@@ -2587,7 +2587,7 @@ function dpRenderStatus(){
       <div class="dp-ls-key">${label}</div>
       <div style="display:flex;justify-content:space-between;margin-top:2px;">
         <span class="dp-ls-val">${count}개</span>
-        <span style="font-size:9px;color:rgba(255,153,68,0.3);">${kb}</span>
+        <span style="font-size:9px;color:rgba(0,255,136,0.3);">${kb}</span>
       </div>
     </div>`;
   }).join('');
@@ -2602,10 +2602,10 @@ function dpRenderDocs(){
       <div class="dp-accordion-head" onclick="dpToggle(this,${i})">
         <span class="dp-accordion-arrow">▶</span>
         <span style="flex:1;">${p.title}</span>
-        <span style="font-size:9px;color:rgba(255,153,68,0.3);">${p.ago}</span>
+        <span style="font-size:9px;color:rgba(0,255,136,0.3);">${p.ago}</span>
       </div>
       <div class="dp-accordion-body">${(p.body||'').replace(/</g,'&lt;')}</div>
-    </div>`).join('') : '<div style="font-size:10px;color:rgba(255,153,68,0.3);padding:6px 0;">참고 문서 없음</div>';
+    </div>`).join('') : '<div style="font-size:10px;color:rgba(0,255,136,0.3);padding:6px 0;">참고 문서 없음</div>';
 }
 
 function dpToggle(head, idx){
@@ -2623,7 +2623,7 @@ function dpRenderLog(){
   const logs = window._dpLogs || [];
   if(countEl) countEl.textContent = `(${logs.length}개)`;
   if(!logs.length){
-    el.innerHTML = '<span style="color:rgba(255,153,68,0.3);font-size:10px;">로그 없음</span>';
+    el.innerHTML = '<span style="color:rgba(0,255,136,0.3);font-size:10px;">로그 없음</span>';
     return;
   }
   el.innerHTML = logs.slice(-30).reverse().map(l=>`
@@ -2653,17 +2653,17 @@ function dpRenderPages(){
   if(!el) return;
   el.innerHTML = _DP_PAGES.map(p=>`
     <a href="${p.path}" target="_blank"
-      style="display:block;border:1px solid rgba(255,153,68,0.22);padding:8px 10px;text-decoration:none;background:rgba(255,153,68,0.03);transition:background .15s;"
-      onmouseover="this.style.background='rgba(255,153,68,0.09)'" onmouseout="this.style.background='rgba(255,153,68,0.03)'">
-      <div style="font-size:10px;font-weight:700;color:#ff9944;letter-spacing:1px;">${p.label}</div>
-      <div style="font-size:9px;color:rgba(255,153,68,0.4);margin-top:2px;">${p.desc}</div>
+      style="display:block;border:1px solid rgba(0,255,136,0.22);padding:8px 10px;text-decoration:none;background:rgba(0,255,136,0.03);transition:background .15s;"
+      onmouseover="this.style.background='rgba(0,255,136,0.09)'" onmouseout="this.style.background='rgba(0,255,136,0.03)'">
+      <div style="font-size:10px;font-weight:700;color:#00ff88;letter-spacing:1px;">${p.label}</div>
+      <div style="font-size:9px;color:rgba(0,255,136,0.4);margin-top:2px;">${p.desc}</div>
     </a>`).join('');
 }
 
 function dpLoadCommits(){
   const el = document.getElementById('dp-commits');
   if(!el) return;
-  el.innerHTML = '<span style="font-size:10px;color:rgba(255,153,68,0.3);">로딩 중…</span>';
+  el.innerHTML = '<span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span>';
   fetch('https://api.github.com/repos/note-a/note-a.github.io/commits?per_page=7')
     .then(r=>r.json())
     .then(data=>{
@@ -2672,10 +2672,10 @@ function dpLoadCommits(){
         const msg = (c.commit.message||'').split('\n')[0].slice(0,52);
         const date = (c.commit.author.date||'').slice(0,10);
         const sha = (c.sha||'').slice(0,7);
-        return `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,153,68,0.08);align-items:flex-start;">
-          <span style="font-size:9px;color:rgba(255,153,68,0.35);flex-shrink:0;margin-top:1px;">${date}</span>
+        return `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,255,136,0.08);align-items:flex-start;">
+          <span style="font-size:9px;color:rgba(0,255,136,0.35);flex-shrink:0;margin-top:1px;">${date}</span>
           <span style="font-size:10px;color:rgba(0,255,136,0.7);flex:1;line-height:1.5;">${msg}</span>
-          <span style="font-size:9px;color:rgba(255,153,68,0.25);flex-shrink:0;">${sha}</span>
+          <span style="font-size:9px;color:rgba(0,255,136,0.25);flex-shrink:0;">${sha}</span>
         </div>`;
       }).join('');
     })
