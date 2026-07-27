@@ -4094,12 +4094,16 @@ function loadNotice(){
 // ══════════════════════════════════════════════════
 // ── Firebase Realtime Database Sync ──
 const _FB_KEYS = ['team_cal','team_chat','team_memos','team_feed','team_post_edits','team_post_deleted','tl-items','ds-data','team_notice','team_notice_ts'];
-let _fbDb = null, _fbSyncTimer = null, _fbLoading = false;
+let _fbDb = null, _fbLoading = false;
+const _fbSyncTimers = {};
 
 const _origSetItem = localStorage.setItem.bind(localStorage);
 localStorage.setItem = function(key, value){
   _origSetItem(key, value);
-  if(!_fbLoading && _FB_KEYS.includes(key)) _fbScheduleSync();
+  if(!_fbLoading && _FB_KEYS.includes(key)){
+    clearTimeout(_fbSyncTimers[key]);
+    _fbSyncTimers[key] = setTimeout(() => _fbSyncKey(key), 2000);
+  }
 };
 
 function _fbSetStatus(msg, state){
@@ -4148,20 +4152,15 @@ function _fbInit(){
   }
 }
 
-function _fbScheduleSync(){
-  clearTimeout(_fbSyncTimer);
-  _fbSyncTimer = setTimeout(_fbSync, 2000);
-}
-
-function _fbSync(){
+function _fbSyncKey(key){
   if(!_fbDb) return;
-  const data = {};
-  _FB_KEYS.forEach(k => {
-    try{ const v = localStorage.getItem(k); if(v != null) data[k] = JSON.parse(v); }catch(e){}
-  });
-  _fbDb.ref('teamdata').set(data)
-    .then(()=>{ _fbSetStatus('저장됨', 'ok'); if(window._sysLog)_sysLog('[SYNC] Firebase 저장완료','ok'); })
-    .catch(e=>{ _fbSetStatus('저장 실패', 'err'); if(window._sysLog)_sysLog('[SYNC] Firebase 저장실패: '+e.message,'warn'); });
+  try{
+    const v = localStorage.getItem(key);
+    const val = v != null ? JSON.parse(v) : null;
+    _fbDb.ref('teamdata/' + key).set(val)
+      .then(()=>{ _fbSetStatus('저장됨', 'ok'); if(window._sysLog)_sysLog('[SYNC] '+key+' 저장','ok'); })
+      .catch(e=>{ _fbSetStatus('저장 실패', 'err'); if(window._sysLog)_sysLog('[SYNC] '+key+' 저장실패: '+e.message,'warn'); });
+  }catch(e){}
 }
 
 document.addEventListener('DOMContentLoaded', function(){
