@@ -1598,12 +1598,36 @@
         </div>
 
         <!-- S4: 사이트 관리 -->
-        <div class="dp-section">
+        <div class="dp-section" id="dp-site-admin">
           <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
-            <span>// SITE MANAGER <span style="color:rgba(0,255,136,0.35);font-size:9px;">note-a.github.io</span></span>
-            <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpPingAll()">ping all</button>
+            <span>// SITE ADMIN</span>
+            <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpRenderSiteAdmin()">↺</button>
           </div>
-          <div id="dp-site-manager"></div>
+
+          <!-- GitHub Token -->
+          <div style="display:flex;gap:5px;margin-bottom:10px;align-items:center;">
+            <input id="dp-gh-token" type="password" placeholder="GitHub Personal Access Token"
+              style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;letter-spacing:.5px;">
+            <button class="dp-btn" style="padding:3px 10px;font-size:10px;" onclick="dpSaveGhToken()">저장</button>
+            <button class="dp-btn" id="dp-gh-token-clear" onclick="dpClearGhToken()" style="display:none;color:rgba(0,255,136,0.4);padding:3px 8px;">✕</button>
+          </div>
+
+          <!-- 배포 상태 -->
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">PAGES DEPLOYMENT</div>
+          <div id="dp-deploy-status" style="margin-bottom:12px;"></div>
+
+          <!-- 이슈 목록 -->
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">OPEN ISSUES</div>
+          <div id="dp-issues-list" style="margin-bottom:10px;max-height:160px;overflow-y:auto;"></div>
+
+          <!-- 이슈 생성 -->
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <input id="dp-issue-title" type="text" placeholder="이슈 제목"
+              style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;">
+            <textarea id="dp-issue-body" rows="2" placeholder="내용 (선택)"
+              style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;resize:none;"></textarea>
+            <button id="dp-issue-btn" class="dp-btn dp-action-btn" onclick="dpCreateIssue()">이슈 생성</button>
+          </div>
         </div>
 
         <!-- S5: DEV TOOLS -->
@@ -2544,10 +2568,11 @@ function showDevPanel(){
   dpRenderStatus();
   dpRenderDocs();
   dpRenderLog();
-  dpRenderPages();
   dpLoadCommits();
+  dpRenderSiteAdmin();
   dpRenderDevTools();
   dpInitClaudeKey();
+  dpInitGhToken();
   showView('devPanelView');
 }
 
@@ -2644,105 +2669,106 @@ function dpRenderLog(){
     </div>`).join('');
 }
 
-const _DP_SITE = [
-  { cat:'운영', pages:[
-    { path:'index.html', label:'INDEX' },
-    { path:'team.html', label:'TEAM' },
-    { path:'hub.html', label:'HUB' },
-    { path:'menu.html', label:'MENU' },
-  ]},
-  { cat:'SET-OS', pages:[
-    { path:'set-os.html', label:'SET-OS' },
-    { path:'set-os-wireframe.html', label:'WIREFRAME' },
-    { path:'set-os-annotated.html', label:'ANNOTATED' },
-    { path:'redesign-wireframe-detailed.html', label:'REDESIGN' },
-    { path:'redesign-wireframe-annotated.html', label:'REDESIGN ANNOT' },
-    { path:'SET-OS_요구사항정의서.html', label:'SPEC' },
-  ]},
-  { cat:'PILOT', pages:[
-    { path:'pilot.html', label:'PILOT' },
-    { path:'pilot2.html', label:'PILOT 2' },
-    { path:'pilot-a.html', label:'PILOT A' },
-    { path:'pilot-b.html', label:'PILOT B' },
-    { path:'pilot-c.html', label:'PILOT C' },
-    { path:'pilot-d.html', label:'PILOT D' },
-    { path:'pilot-e.html', label:'PILOT E' },
-    { path:'pilot-f.html', label:'PILOT F' },
-  ]},
-  { cat:'DESIGN', pages:[
-    { path:'design-a.html', label:'DESIGN A' },
-    { path:'design-b.html', label:'DESIGN B' },
-    { path:'design-c.html', label:'DESIGN C' },
-    { path:'design-d.html', label:'DESIGN D' },
-    { path:'design-e.html', label:'DESIGN E' },
-  ]},
-  { cat:'갤러리·포트폴리오', pages:[
-    { path:'gallery1.html', label:'GALLERY 1' },
-    { path:'gallery2.html', label:'GALLERY 2' },
-    { path:'portfolio.html', label:'PORTFOLIO' },
-    { path:'portfolio-3d.html', label:'PORTFOLIO 3D' },
-    { path:'portfolio-3d2.html', label:'PORTFOLIO 3D 2' },
-  ]},
-  { cat:'PAGE', pages:[
-    { path:'page-about.html', label:'PAGE ABOUT' },
-    { path:'page-blueprint.html', label:'PAGE BLUEPRINT' },
-    { path:'page-set.html', label:'PAGE SET' },
-    { path:'page-log.html', label:'PAGE LOG' },
-    { path:'page-measure.html', label:'PAGE MEASURE' },
-  ]},
-  { cat:'기타', pages:[
-    { path:'measure.html', label:'MEASURE' },
-    { path:'reference.html', label:'REFERENCE' },
-    { path:'wireframe.html', label:'WIREFRAME' },
-    { path:'work-status.html', label:'WORK STATUS' },
-  ]},
-];
+const _GH_REPO = 'note-a/note-a-github';
+const _GH_TOKEN_LS = 'team_gh_token';
 
-const _BASE = 'https://note-a.github.io/';
-const _pingStatus = {}; // path → 'ok'|'err'|'pending'
+function dpRenderPages(){} // 빈 stub (호환성)
 
-function dpRenderPages(){ dpRenderSiteManager(); }
-
-function dpRenderSiteManager(){
-  const el = document.getElementById('dp-site-manager');
+async function dpRenderSiteAdmin(){
+  const el = document.getElementById('dp-site-admin');
   if(!el) return;
-  el.innerHTML = _DP_SITE.map(group=>`
-    <div style="margin-bottom:10px;">
-      <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid rgba(0,255,136,0.1);">${group.cat}</div>
-      <div style="display:flex;flex-direction:column;gap:2px;">
-        ${group.pages.map(p=>{
-          const st = _pingStatus[p.path];
-          const dot = st==='ok' ? '<span style="color:#00ff88;">●</span>'
-                    : st==='err' ? '<span style="color:rgba(255,80,80,0.8);">●</span>'
-                    : '<span style="color:rgba(0,255,136,0.2);">●</span>';
-          return `<div id="dp-page-${p.path.replace(/[^a-z0-9]/gi,'_')}" style="display:flex;align-items:center;gap:6px;padding:3px 6px;border:1px solid rgba(0,255,136,0.1);background:rgba(0,255,136,0.02);">
-            <span style="font-size:9px;width:10px;text-align:center;">${dot}</span>
-            <span style="flex:1;font-size:10px;color:rgba(0,255,136,0.8);letter-spacing:.5px;">${p.label}</span>
-            <a href="${_BASE}${p.path}" target="_blank" class="dp-btn" style="padding:1px 8px;font-size:9px;text-decoration:none;">↗</a>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`).join('');
-}
+  const token = localStorage.getItem(_GH_TOKEN_LS) || '';
 
-async function _dpPingOne(path){
-  const id = 'dp-page-'+path.replace(/[^a-z0-9]/gi,'_');
-  const el = document.getElementById(id);
-  if(!el) return;
-  const dotEl = el.querySelector('span');
-  if(dotEl){ dotEl.style.color='rgba(255,200,0,0.6)'; dotEl.textContent='●'; }
-  try{
-    const r = await fetch(_BASE+path, {method:'HEAD', cache:'no-store'});
-    _pingStatus[path] = r.ok ? 'ok' : 'err';
-  }catch(e){ _pingStatus[path]='err'; }
-  if(dotEl){
-    dotEl.style.color = _pingStatus[path]==='ok' ? '#00ff88' : 'rgba(255,80,80,0.8)';
+  // 1. Pages 배포 상태
+  el.querySelector('#dp-deploy-status').innerHTML = '<span style="color:rgba(0,255,136,0.3);font-size:10px;">로딩 중…</span>';
+  el.querySelector('#dp-issues-list').innerHTML = '<span style="color:rgba(0,255,136,0.3);font-size:10px;">로딩 중…</span>';
+
+  const headers = {'Accept':'application/vnd.github+json'};
+  if(token) headers['Authorization'] = 'Bearer '+token;
+
+  // 배포 상태
+  try {
+    const r = await fetch(`https://api.github.com/repos/${_GH_REPO}/pages/builds?per_page=3`, {headers});
+    if(r.ok){
+      const builds = await r.json();
+      el.querySelector('#dp-deploy-status').innerHTML = builds.length ? builds.map(b=>{
+        const ok = b.status==='built';
+        const col = ok ? '#00ff88' : b.status==='building' ? 'rgba(255,200,0,0.8)' : 'rgba(255,80,80,0.8)';
+        const ts = b.updated_at ? b.updated_at.replace('T',' ').slice(0,16) : '';
+        return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid rgba(0,255,136,0.07);">
+          <span style="color:${col};font-size:11px;">●</span>
+          <span style="font-size:10px;color:${col};letter-spacing:1px;">${b.status.toUpperCase()}</span>
+          <span style="font-size:9px;color:rgba(0,255,136,0.35);margin-left:auto;">${ts}</span>
+        </div>`;
+      }).join('') : '<span style="font-size:10px;color:rgba(0,255,136,0.3);">배포 기록 없음</span>';
+    } else {
+      el.querySelector('#dp-deploy-status').innerHTML = `<span style="font-size:10px;color:rgba(255,80,80,0.6);">API 오류 ${r.status} — ${token?'토큰 확인':'GitHub Token 필요'}</span>`;
+    }
+  } catch(e) {
+    el.querySelector('#dp-deploy-status').innerHTML = '<span style="font-size:10px;color:rgba(255,80,80,0.6);">네트워크 오류</span>';
+  }
+
+  // 이슈 목록
+  try {
+    const r = await fetch(`https://api.github.com/repos/${_GH_REPO}/issues?state=open&per_page=10`, {headers});
+    if(r.ok){
+      const issues = await r.json();
+      const listEl = el.querySelector('#dp-issues-list');
+      listEl.innerHTML = issues.length ? issues.map(i=>`
+        <div style="display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid rgba(0,255,136,0.07);">
+          <span style="color:rgba(0,255,136,0.4);font-size:9px;margin-top:1px;flex-shrink:0;">#${i.number}</span>
+          <span style="flex:1;font-size:10px;color:rgba(0,255,136,0.85);line-height:1.4;">${i.title.replace(/</g,'&lt;')}</span>
+          <a href="${i.html_url}" target="_blank" style="font-size:9px;color:rgba(0,255,136,0.4);text-decoration:none;flex-shrink:0;">↗</a>
+        </div>`).join('') : '<span style="font-size:10px;color:rgba(0,255,136,0.3);">열린 이슈 없음</span>';
+    } else {
+      el.querySelector('#dp-issues-list').innerHTML = `<span style="font-size:10px;color:rgba(255,80,80,0.6);">API 오류 ${r.status}</span>`;
+    }
+  } catch(e) {
+    el.querySelector('#dp-issues-list').innerHTML = '<span style="font-size:10px;color:rgba(255,80,80,0.6);">네트워크 오류</span>';
   }
 }
 
-function dpPingAll(){
-  const all = _DP_SITE.flatMap(g=>g.pages.map(p=>p.path));
-  all.forEach(p=>_dpPingOne(p));
+async function dpCreateIssue(){
+  const token = localStorage.getItem(_GH_TOKEN_LS);
+  if(!token){ alert('GitHub Token을 먼저 저장하세요'); return; }
+  const titleEl = document.getElementById('dp-issue-title');
+  const bodyEl = document.getElementById('dp-issue-body');
+  const title = titleEl.value.trim();
+  if(!title){ titleEl.focus(); return; }
+  const btn = document.getElementById('dp-issue-btn');
+  btn.disabled = true; btn.textContent = '생성 중…';
+  try {
+    const r = await fetch(`https://api.github.com/repos/${_GH_REPO}/issues`, {
+      method:'POST',
+      headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({title, body: bodyEl.value.trim()})
+    });
+    if(r.ok){
+      titleEl.value=''; bodyEl.value='';
+      dpRenderSiteAdmin();
+    } else { alert('이슈 생성 실패: '+r.status); }
+  } catch(e){ alert('네트워크 오류'); }
+  btn.disabled=false; btn.textContent='이슈 생성';
+}
+
+function dpSaveGhToken(){
+  const v = document.getElementById('dp-gh-token').value.trim();
+  if(!v) return;
+  localStorage.setItem(_GH_TOKEN_LS, v);
+  document.getElementById('dp-gh-token').value='●'.repeat(20);
+  document.getElementById('dp-gh-token-clear').style.display='';
+  dpRenderSiteAdmin();
+}
+function dpClearGhToken(){
+  localStorage.removeItem(_GH_TOKEN_LS);
+  document.getElementById('dp-gh-token').value='';
+  document.getElementById('dp-gh-token-clear').style.display='none';
+}
+function dpInitGhToken(){
+  if(localStorage.getItem(_GH_TOKEN_LS)){
+    document.getElementById('dp-gh-token').value='●'.repeat(20);
+    document.getElementById('dp-gh-token-clear').style.display='';
+  }
 }
 
 // ── 에러 모니터
