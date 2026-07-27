@@ -1586,22 +1586,21 @@
       <!-- DEV PANEL VIEW -->
       <div id="devPanelView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000;">
 
-        <!-- S3: 시스템 로그 -->
+        <!-- S3: 로그 & 커밋 -->
         <div class="dp-section">
-          <div class="dp-title">// SYSTEM LOG <span id="dp-log-count" style="color:rgba(0,255,136,0.4);font-size:9px;"></span></div>
-          <div id="dp-log" style="max-height:180px;overflow-y:auto;font-size:10px;line-height:1.8;letter-spacing:.5px;"></div>
+          <div class="dp-title" style="display:flex;align-items:center;gap:10px;">
+            <span>// LOG <span id="dp-log-count" style="color:rgba(0,255,136,0.4);font-size:9px;"></span></span>
+            <span style="color:rgba(0,255,136,0.2);">·</span>
+            <span>COMMITS <button class="dp-btn" style="padding:1px 7px;font-size:8px;margin-left:4px;" onclick="dpLoadCommits()">↺</button></span>
+          </div>
+          <div id="dp-log" style="max-height:130px;overflow-y:auto;font-size:10px;line-height:1.8;letter-spacing:.5px;margin-bottom:10px;"></div>
+          <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
         </div>
 
         <!-- S4: 사이트 관리 -->
         <div class="dp-section">
           <div class="dp-title">// 사이트 이동 <span style="color:rgba(0,255,136,0.35);font-size:9px;">note-a.github.io</span></div>
           <div id="dp-pages" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;"></div>
-        </div>
-
-        <!-- S5: 최근 커밋 -->
-        <div class="dp-section">
-          <div class="dp-title">// 최근 커밋 <button class="dp-btn" style="padding:2px 8px;font-size:8px;margin-left:8px;" onclick="dpLoadCommits()">↺</button></div>
-          <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
         </div>
 
         <!-- S7: Claude 연결 -->
