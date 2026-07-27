@@ -3627,7 +3627,7 @@ function renderCalendar(){
     const previews = hasEntry ? entries[key].slice(0,2).map(e=>{
       const color = e.author==='K'?'#00ff88':'#44ccff';
       const txt = (e.text||'').slice(0,10);
-      return `<div style="font-size:9px;color:${color};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;line-height:1.5;">${txt}</div>`;
+      return `<div style="font-size:9px;color:${color};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;line-height:1.5;text-align:center;">${txt}</div>`;
     }).join('') : '';
     html+=`<div onclick="openDay('${key}',${d})"
       style="min-height:52px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
