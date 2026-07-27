@@ -3802,6 +3802,38 @@ function deleteFeedItem(id){
   renderFeeds();
 }
 
+function editFeedItem(id){
+  const feed = JSON.parse(localStorage.getItem('team_feed')||'[]');
+  const item = feed.find(f=>f.id===id);
+  if(!item) return;
+  const el = document.getElementById('fi-'+id);
+  if(!el) return;
+  const color = item.author==='K' ? '0,255,136' : '0,204,255';
+  el.innerHTML = `
+    <textarea id="fi-edit-${id}" rows="3"
+      style="width:100%;box-sizing:border-box;background:rgba(${color},0.06);border:1px solid rgba(${color},0.3);color:rgba(${color},1);font-family:'Space Mono',monospace;font-size:9px;padding:4px;outline:none;resize:vertical;line-height:1.7;"
+      onkeydown="if(event.key==='Escape')renderFeeds();if(event.ctrlKey&&event.key==='Enter'){event.preventDefault();saveFeedEdit(${id});}"
+    >${item.text}</textarea>
+    <div style="display:flex;justify-content:flex-end;gap:4px;margin-top:2px;">
+      <button onclick="renderFeeds()" style="font-size:7px;color:rgba(${color},.35);background:none;border:none;cursor:pointer;padding:0 4px;">취소</button>
+      <button onclick="saveFeedEdit(${id})" style="font-size:7px;color:rgba(${color},.8);background:rgba(${color},0.08);border:1px solid rgba(${color},0.3);cursor:pointer;padding:1px 6px;font-family:'Space Mono',monospace;">저장</button>
+    </div>`;
+  document.getElementById('fi-edit-'+id)?.focus();
+}
+
+function saveFeedEdit(id){
+  const ta = document.getElementById('fi-edit-'+id);
+  if(!ta) return;
+  const newText = ta.value.trim();
+  if(!newText) return;
+  const feed = JSON.parse(localStorage.getItem('team_feed')||'[]');
+  const idx = feed.findIndex(f=>f.id===id);
+  if(idx<0) return;
+  feed[idx].text = newText;
+  localStorage.setItem('team_feed', JSON.stringify(feed));
+  renderFeeds();
+}
+
 function renderFeeds(){
   const feed = JSON.parse(localStorage.getItem('team_feed')||'[]');
   const kEl = document.getElementById('kfeed');
@@ -3817,11 +3849,14 @@ function renderFeeds(){
       return;
     }
     col.innerHTML=items.map(f=>`
-      <div style="padding:4px 0;border-bottom:1px solid rgba(${color},0.06);display:flex;flex-direction:column;gap:1px;">
+      <div id="fi-${f.id}" style="padding:4px 0;border-bottom:1px solid rgba(${color},0.06);display:flex;flex-direction:column;gap:1px;">
         <span style="font-size:9px;color:rgba(${color},0.85);line-height:1.7;white-space:pre-wrap;word-break:break-all;">${f.text}</span>
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:7px;color:rgba(${color},0.25);">${f.ts}</span>
-          <button onclick="deleteFeedItem(${f.id})" style="font-size:7px;color:rgba(255,80,80,.3);background:none;border:none;cursor:pointer;padding:0;">✕</button>
+          <div style="display:flex;gap:5px;">
+            <button onclick="editFeedItem(${f.id})" style="font-size:7px;color:rgba(${color},.3);background:none;border:none;cursor:pointer;padding:0;">✎</button>
+            <button onclick="deleteFeedItem(${f.id})" style="font-size:7px;color:rgba(255,80,80,.3);background:none;border:none;cursor:pointer;padding:0;">✕</button>
+          </div>
         </div>
       </div>`).join('');
   }
