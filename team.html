@@ -1298,22 +1298,22 @@
             </div>
           </div>
 
-          <!-- P 컬럼 -->
+          <!-- S 컬럼 -->
           <div style="display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;">
             <div style="padding:6px 10px;border-bottom:1px solid rgba(0,255,136,0.08);flex-shrink:0;display:flex;align-items:center;gap:7px;">
-              <span style="font-size:11px;font-weight:700;color:#44ccff;letter-spacing:3px;">P</span>
+              <span style="font-size:11px;font-weight:700;color:#44ccff;letter-spacing:3px;">S</span>
               <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:rgba(0,204,255,0.35);"></span>
               <span style="font-size:7px;color:rgba(0,204,255,.4);letter-spacing:1px;">OFFLINE</span>
             </div>
-            <div id="pfeed" style="flex:1;overflow-y:auto;padding:6px 10px;display:flex;flex-direction:column;gap:3px;"></div>
+            <div id="sfeed" style="flex:1;overflow-y:auto;padding:6px 10px;display:flex;flex-direction:column;gap:3px;"></div>
             <div style="padding:5px 8px;border-top:1px solid rgba(0,255,136,0.07);display:flex;gap:4px;flex-shrink:0;">
-              <textarea id="pinput" placeholder="P 기록..." rows="2"
+              <textarea id="sinput" placeholder="S 기록..." rows="2"
                 style="flex:1;background:rgba(0,204,255,0.03);border:1px solid rgba(0,204,255,0.15);color:#44ccff;
                        font-family:'Space Mono',monospace;font-size:12px;padding:3px 5px;outline:none;resize:none;line-height:1.6;"
                 onfocus="this.style.borderColor='rgba(0,204,255,0.4)'"
                 onblur="this.style.borderColor='rgba(0,204,255,0.15)'"
-                onkeydown="if(event.ctrlKey&&event.key==='Enter')saveFeed('P')"></textarea>
-              <button onclick="saveFeed('P')"
+                onkeydown="if(event.ctrlKey&&event.key==='Enter')saveFeed('S')"></textarea>
+              <button onclick="saveFeed('S')"
                 style="font-size:8px;padding:2px 7px;background:rgba(0,204,255,0.06);border:1px solid rgba(0,204,255,0.25);color:#44ccff;cursor:pointer;font-family:'Space Mono',monospace;align-self:flex-end;">↵</button>
             </div>
           </div>
@@ -1413,8 +1413,8 @@
           <div style="display:flex;flex-direction:column;gap:3px;">
             <button id="day-btn-k" onclick="daySetAuthor('K')"
               style="font-size:9px;font-weight:700;padding:2px 8px;background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;cursor:pointer;font-family:'Space Mono',monospace;">K</button>
-            <button id="day-btn-p" onclick="daySetAuthor('P')"
-              style="font-size:9px;font-weight:700;padding:2px 8px;background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;font-family:'Space Mono',monospace;">P</button>
+            <button id="day-btn-s" onclick="daySetAuthor('S')"
+              style="font-size:9px;font-weight:700;padding:2px 8px;background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;font-family:'Space Mono',monospace;">S</button>
             <button onclick="saveDayEntry()"
               style="font-size:8px;padding:2px 8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);color:#00ff88;cursor:pointer;font-family:'Space Mono',monospace;margin-top:1px;">↵</button>
           </div>
@@ -1434,8 +1434,8 @@
           <div style="display:flex;flex-direction:column;gap:3px;">
             <button id="chat-btn-k" onclick="chatSetAuthor('K')"
               style="font-size:9px;font-weight:700;padding:2px 8px;background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;cursor:pointer;font-family:'Space Mono',monospace;">K</button>
-            <button id="chat-btn-p" onclick="chatSetAuthor('P')"
-              style="font-size:9px;font-weight:700;padding:2px 8px;background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;font-family:'Space Mono',monospace;">P</button>
+            <button id="chat-btn-s" onclick="chatSetAuthor('S')"
+              style="font-size:9px;font-weight:700;padding:2px 8px;background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;font-family:'Space Mono',monospace;">S</button>
             <button onclick="sendChat()"
               style="font-size:8px;padding:2px 8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);color:#00ff88;cursor:pointer;font-family:'Space Mono',monospace;">↵</button>
           </div>
@@ -1490,9 +1490,9 @@
             <button id="memo-btn-k" onclick="memoSetAuthor('K')"
               style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;padding:3px 10px;
                      background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;cursor:pointer;">K</button>
-            <button id="memo-btn-p" onclick="memoSetAuthor('P')"
+            <button id="memo-btn-s" onclick="memoSetAuthor('S')"
               style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;padding:3px 10px;
-                     background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;">P</button>
+                     background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);cursor:pointer;">S</button>
             <button onclick="saveMemo()"
               style="font-family:'Space Mono',monospace;font-size:8px;font-weight:700;padding:3px 10px;
                      background:rgba(0,204,255,0.1);border:1px solid rgba(0,204,255,0.4);color:#44ccff;cursor:pointer;margin-top:2px;">↵</button>
@@ -1544,10 +1544,10 @@
               style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
                      padding:5px 18px;background:rgba(0,255,136,0.15);
                      border:1px solid rgba(0,255,136,0.6);color:#00ff88;cursor:pointer;letter-spacing:2px;">K</button>
-            <button id="btn-author-p" onclick="setAuthor('P')"
+            <button id="btn-author-s" onclick="setAuthor('S')"
               style="font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
                      padding:5px 18px;background:transparent;
-                     border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.4);cursor:pointer;letter-spacing:2px;">P</button>
+                     border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.4);cursor:pointer;letter-spacing:2px;">S</button>
           </div>
         </div>
         <div class="board-back-bar">
@@ -2199,11 +2199,13 @@ function goBoard(spanEl){
 }
 
 const PAGE_SIZE = 10;
+const PAGE_SIZE_LOG = 15;
 let boardPage = 0;
 
 function renderBoard(cat, page){
   if(page !== undefined) boardPage = page;
   const posts = BOARD_DATA[cat] || [];
+  const pageSize = (cat === 'handover') ? PAGE_SIZE_LOG : PAGE_SIZE;
 
   const feed = document.getElementById('board-feed');
   const badge = document.getElementById('board-badge');
@@ -2220,11 +2222,11 @@ function renderBoard(cat, page){
 
   const pinned = posts.filter(p => p.pinned);
   const regular = posts.filter(p => !p.pinned);
-  const totalPages = Math.max(1, Math.ceil(regular.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(regular.length / pageSize));
   if(boardPage >= totalPages) boardPage = totalPages - 1;
   if(boardPage < 0) boardPage = 0;
-  const slice = regular.slice(boardPage * PAGE_SIZE, (boardPage + 1) * PAGE_SIZE);
-  const showPager = regular.length > PAGE_SIZE;
+  const slice = regular.slice(boardPage * pageSize, (boardPage + 1) * pageSize);
+  const showPager = regular.length > pageSize;
 
   if(prevBtn){ prevBtn.style.display = showPager ? '' : 'none'; prevBtn.disabled = boardPage === 0; prevBtn.style.opacity = boardPage === 0 ? '0.3' : '1'; }
   if(nextBtn){ nextBtn.style.display = showPager ? '' : 'none'; nextBtn.disabled = boardPage >= totalPages-1; nextBtn.style.opacity = boardPage >= totalPages-1 ? '0.3' : '1'; }
@@ -3265,7 +3267,7 @@ function daySetAuthor(who){
   dayAuthor=who;
   const a='font-size:9px;font-weight:700;padding:2px 8px;cursor:pointer;font-family:Space Mono,monospace;';
   document.getElementById('day-btn-k').style.cssText=a+(who==='K'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
-  document.getElementById('day-btn-p').style.cssText=a+(who==='P'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
+  document.getElementById('day-btn-s').style.cssText=a+(who==='S'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
 }
 
 function saveDayEntry(){
@@ -3298,7 +3300,7 @@ function chatSetAuthor(who){
   chatAuthor=who;
   const a='font-size:9px;font-weight:700;padding:2px 8px;cursor:pointer;font-family:Space Mono,monospace;';
   document.getElementById('chat-btn-k').style.cssText=a+(who==='K'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
-  document.getElementById('chat-btn-p').style.cssText=a+(who==='P'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
+  document.getElementById('chat-btn-s').style.cssText=a+(who==='S'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;':'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
 }
 
 function sendChat(){
@@ -3390,8 +3392,8 @@ function memoSetAuthor(who){
   document.getElementById('memo-btn-k').style.cssText=ak+
     (who==='K'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;'
               :'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
-  document.getElementById('memo-btn-p').style.cssText=ak+
-    (who==='P'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;'
+  document.getElementById('memo-btn-s').style.cssText=ak+
+    (who==='S'?'background:rgba(0,255,136,0.15);border:1px solid rgba(0,255,136,0.5);color:#00ff88;'
               :'background:transparent;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.35);');
 }
 
@@ -3453,7 +3455,7 @@ function showMemoView(){
 // K/P 분리 피드
 // ══════════════════════════════════════════════════
 function saveFeed(author){
-  const inp = document.getElementById(author==='K'?'kinput':'pinput');
+  const inp = document.getElementById(author==='K'?'kinput':'sinput');
   const text = (inp.value||'').trim();
   if(!text) return;
   const feed = JSON.parse(localStorage.getItem('team_feed')||'[]');
@@ -3476,11 +3478,11 @@ function deleteFeedItem(id){
 function renderFeeds(){
   const feed = JSON.parse(localStorage.getItem('team_feed')||'[]');
   const kEl = document.getElementById('kfeed');
-  const pEl = document.getElementById('pfeed');
+  const pEl = document.getElementById('sfeed');
   if(!kEl||!pEl) return;
 
   const kItems = feed.filter(f=>f.author==='K');
-  const pItems = feed.filter(f=>f.author==='P');
+  const pItems = feed.filter(f=>f.author==='S');
 
   function renderItems(items, col, color){
     if(!items.length){
@@ -3534,9 +3536,9 @@ function setAuthor(who){
   document.getElementById('btn-author-k').style.cssText=
     'font-family:Space Mono,monospace;font-size:11px;font-weight:700;padding:5px 18px;cursor:pointer;letter-spacing:2px;'+
     (who==='K'?active:idle);
-  document.getElementById('btn-author-p').style.cssText=
+  document.getElementById('btn-author-s').style.cssText=
     'font-family:Space Mono,monospace;font-size:11px;font-weight:700;padding:5px 18px;cursor:pointer;letter-spacing:2px;'+
-    (who==='P'?active:idle);
+    (who==='S'?active:idle);
 }
 
 /* ── TIMELINE ── */
