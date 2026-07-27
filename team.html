@@ -1597,39 +1597,6 @@
           <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
         </div>
 
-        <!-- S4: 사이트 관리 -->
-        <div class="dp-section" id="dp-site-admin">
-          <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
-            <span>// SITE ADMIN</span>
-            <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpRenderSiteAdmin()">↺</button>
-          </div>
-
-          <!-- GitHub Token -->
-          <div style="display:flex;gap:5px;margin-bottom:10px;align-items:center;">
-            <input id="dp-gh-token" type="password" placeholder="GitHub Personal Access Token"
-              style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;letter-spacing:.5px;">
-            <button class="dp-btn" style="padding:3px 10px;font-size:10px;" onclick="dpSaveGhToken()">저장</button>
-            <button class="dp-btn" id="dp-gh-token-clear" onclick="dpClearGhToken()" style="display:none;color:rgba(0,255,136,0.4);padding:3px 8px;">✕</button>
-          </div>
-
-          <!-- 배포 상태 -->
-          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">PAGES DEPLOYMENT</div>
-          <div id="dp-deploy-status" style="margin-bottom:12px;"></div>
-
-          <!-- 이슈 목록 -->
-          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">OPEN ISSUES</div>
-          <div id="dp-issues-list" style="margin-bottom:10px;max-height:160px;overflow-y:auto;"></div>
-
-          <!-- 이슈 생성 -->
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <input id="dp-issue-title" type="text" placeholder="이슈 제목"
-              style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;">
-            <textarea id="dp-issue-body" rows="2" placeholder="내용 (선택)"
-              style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;resize:none;"></textarea>
-            <button id="dp-issue-btn" class="dp-btn dp-action-btn" onclick="dpCreateIssue()">이슈 생성</button>
-          </div>
-        </div>
-
         <!-- S5: DEV TOOLS -->
         <div class="dp-section">
           <div class="dp-title">// DEV TOOLS</div>
