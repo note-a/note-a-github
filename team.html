@@ -1599,8 +1599,11 @@
 
         <!-- S4: 사이트 관리 -->
         <div class="dp-section">
-          <div class="dp-title">// 사이트 이동 <span style="color:rgba(0,255,136,0.35);font-size:9px;">note-a.github.io</span></div>
-          <div id="dp-pages" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;"></div>
+          <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>// SITE MANAGER <span style="color:rgba(0,255,136,0.35);font-size:9px;">note-a.github.io</span></span>
+            <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpPingAll()">ping all</button>
+          </div>
+          <div id="dp-site-manager"></div>
         </div>
 
         <!-- S5: DEV TOOLS -->
@@ -2641,23 +2644,105 @@ function dpRenderLog(){
     </div>`).join('');
 }
 
-const _DP_PAGES = [
-  { label:'SET-OS', path:'set-os.html', desc:'메인 UI' },
-  { label:'WIREFRAME', path:'set-os-wireframe.html', desc:'와이어프레임' },
-  { label:'ANNOTATED', path:'set-os-annotated.html', desc:'어노테이션' },
-  { label:'REDESIGN', path:'redesign-wireframe-detailed.html', desc:'리디자인' },
+const _DP_SITE = [
+  { cat:'운영', pages:[
+    { path:'index.html', label:'INDEX' },
+    { path:'team.html', label:'TEAM' },
+    { path:'hub.html', label:'HUB' },
+    { path:'menu.html', label:'MENU' },
+  ]},
+  { cat:'SET-OS', pages:[
+    { path:'set-os.html', label:'SET-OS' },
+    { path:'set-os-wireframe.html', label:'WIREFRAME' },
+    { path:'set-os-annotated.html', label:'ANNOTATED' },
+    { path:'redesign-wireframe-detailed.html', label:'REDESIGN' },
+    { path:'redesign-wireframe-annotated.html', label:'REDESIGN ANNOT' },
+    { path:'SET-OS_요구사항정의서.html', label:'SPEC' },
+  ]},
+  { cat:'PILOT', pages:[
+    { path:'pilot.html', label:'PILOT' },
+    { path:'pilot2.html', label:'PILOT 2' },
+    { path:'pilot-a.html', label:'PILOT A' },
+    { path:'pilot-b.html', label:'PILOT B' },
+    { path:'pilot-c.html', label:'PILOT C' },
+    { path:'pilot-d.html', label:'PILOT D' },
+    { path:'pilot-e.html', label:'PILOT E' },
+    { path:'pilot-f.html', label:'PILOT F' },
+  ]},
+  { cat:'DESIGN', pages:[
+    { path:'design-a.html', label:'DESIGN A' },
+    { path:'design-b.html', label:'DESIGN B' },
+    { path:'design-c.html', label:'DESIGN C' },
+    { path:'design-d.html', label:'DESIGN D' },
+    { path:'design-e.html', label:'DESIGN E' },
+  ]},
+  { cat:'갤러리·포트폴리오', pages:[
+    { path:'gallery1.html', label:'GALLERY 1' },
+    { path:'gallery2.html', label:'GALLERY 2' },
+    { path:'portfolio.html', label:'PORTFOLIO' },
+    { path:'portfolio-3d.html', label:'PORTFOLIO 3D' },
+    { path:'portfolio-3d2.html', label:'PORTFOLIO 3D 2' },
+  ]},
+  { cat:'PAGE', pages:[
+    { path:'page-about.html', label:'PAGE ABOUT' },
+    { path:'page-blueprint.html', label:'PAGE BLUEPRINT' },
+    { path:'page-set.html', label:'PAGE SET' },
+    { path:'page-log.html', label:'PAGE LOG' },
+    { path:'page-measure.html', label:'PAGE MEASURE' },
+  ]},
+  { cat:'기타', pages:[
+    { path:'measure.html', label:'MEASURE' },
+    { path:'reference.html', label:'REFERENCE' },
+    { path:'wireframe.html', label:'WIREFRAME' },
+    { path:'work-status.html', label:'WORK STATUS' },
+  ]},
 ];
 
-function dpRenderPages(){
-  const el = document.getElementById('dp-pages');
+const _BASE = 'https://note-a.github.io/';
+const _pingStatus = {}; // path → 'ok'|'err'|'pending'
+
+function dpRenderPages(){ dpRenderSiteManager(); }
+
+function dpRenderSiteManager(){
+  const el = document.getElementById('dp-site-manager');
   if(!el) return;
-  el.innerHTML = _DP_PAGES.map(p=>`
-    <a href="${p.path}" target="_blank"
-      style="display:block;border:1px solid rgba(0,255,136,0.22);padding:8px 10px;text-decoration:none;background:rgba(0,255,136,0.03);transition:background .15s;"
-      onmouseover="this.style.background='rgba(0,255,136,0.09)'" onmouseout="this.style.background='rgba(0,255,136,0.03)'">
-      <div style="font-size:10px;font-weight:700;color:#00ff88;letter-spacing:1px;">${p.label}</div>
-      <div style="font-size:9px;color:rgba(0,255,136,0.4);margin-top:2px;">${p.desc}</div>
-    </a>`).join('');
+  el.innerHTML = _DP_SITE.map(group=>`
+    <div style="margin-bottom:10px;">
+      <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid rgba(0,255,136,0.1);">${group.cat}</div>
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        ${group.pages.map(p=>{
+          const st = _pingStatus[p.path];
+          const dot = st==='ok' ? '<span style="color:#00ff88;">●</span>'
+                    : st==='err' ? '<span style="color:rgba(255,80,80,0.8);">●</span>'
+                    : '<span style="color:rgba(0,255,136,0.2);">●</span>';
+          return `<div id="dp-page-${p.path.replace(/[^a-z0-9]/gi,'_')}" style="display:flex;align-items:center;gap:6px;padding:3px 6px;border:1px solid rgba(0,255,136,0.1);background:rgba(0,255,136,0.02);">
+            <span style="font-size:9px;width:10px;text-align:center;">${dot}</span>
+            <span style="flex:1;font-size:10px;color:rgba(0,255,136,0.8);letter-spacing:.5px;">${p.label}</span>
+            <a href="${_BASE}${p.path}" target="_blank" class="dp-btn" style="padding:1px 8px;font-size:9px;text-decoration:none;">↗</a>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+
+async function _dpPingOne(path){
+  const id = 'dp-page-'+path.replace(/[^a-z0-9]/gi,'_');
+  const el = document.getElementById(id);
+  if(!el) return;
+  const dotEl = el.querySelector('span');
+  if(dotEl){ dotEl.style.color='rgba(255,200,0,0.6)'; dotEl.textContent='●'; }
+  try{
+    const r = await fetch(_BASE+path, {method:'HEAD', cache:'no-store'});
+    _pingStatus[path] = r.ok ? 'ok' : 'err';
+  }catch(e){ _pingStatus[path]='err'; }
+  if(dotEl){
+    dotEl.style.color = _pingStatus[path]==='ok' ? '#00ff88' : 'rgba(255,80,80,0.8)';
+  }
+}
+
+function dpPingAll(){
+  const all = _DP_SITE.flatMap(g=>g.pages.map(p=>p.path));
+  all.forEach(p=>_dpPingOne(p));
 }
 
 // ── 에러 모니터
