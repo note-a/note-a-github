@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>note-a — HUB</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --g: #00ff88;
+  --g2: rgba(0,255,136,0.55);
+  --g3: rgba(0,255,136,0.25);
+  --g4: rgba(0,255,136,0.08);
+  --dim: rgba(0,255,136,0.35);
+  --mono: 'Space Mono', monospace;
+}
+html, body { width:100%; min-height:100vh; background:#000; color:var(--g); font-family:var(--mono); overflow-x:hidden; }
+
+/* header */
+#hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px; border-bottom:1px solid var(--g3);
+  background:rgba(0,255,136,0.03);
+  position:sticky; top:0; z-index:10;
+}
+#hdr .brand { font-size:13px; font-weight:700; letter-spacing:3px; color:var(--g); }
+#hdr .meta { font-size:10px; color:var(--dim); letter-spacing:2px; }
+#hdr .dot { display:inline-block; width:7px; height:7px; background:var(--g); margin-right:8px; animation:blink 1.4s step-end infinite; }
+@keyframes blink{ 50%{ opacity:0; } }
+
+/* layout */
+#main { max-width:1100px; margin:0 auto; padding:28px 20px 60px; }
+
+/* section */
+.section { margin-bottom:36px; }
+.section-title {
+  font-size:10px; letter-spacing:4px; color:var(--dim);
+  padding:0 0 10px; border-bottom:1px solid var(--g3);
+  margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.section-title::before { content:''; display:inline-block; width:6px; height:6px; background:var(--g3); }
+
+/* card grid */
+.cards { display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); }
+
+/* card */
+.card {
+  border:1px solid var(--g3);
+  background:var(--g4);
+  padding:16px 18px;
+  cursor:pointer;
+  transition:border-color .15s, background .15s;
+  text-decoration:none;
+  display:block;
+  position:relative;
+}
+.card:hover { border-color:var(--g2); background:rgba(0,255,136,0.12); }
+.card:hover .card-arrow { opacity:1; }
+.card-label {
+  font-size:9px; letter-spacing:3px; color:var(--dim);
+  margin-bottom:8px;
+}
+.card-title { font-size:13px; font-weight:700; color:var(--g); margin-bottom:6px; letter-spacing:1px; }
+.card-desc { font-size:10px; color:var(--dim); line-height:1.7; letter-spacing:.5px; }
+.card-arrow {
+  position:absolute; top:14px; right:14px;
+  font-size:11px; color:var(--g3); opacity:0; transition:opacity .15s;
+}
+
+/* wireframe badge */
+.wf-badge {
+  display:inline-block; font-size:9px; letter-spacing:2px;
+  border:1px solid var(--g3); color:var(--dim);
+  padding:2px 7px; margin-bottom:10px;
+}
+
+/* status row */
+.status-grid { display:grid; gap:6px; }
+.status-row {
+  display:flex; align-items:center; gap:12px;
+  border:1px solid var(--g3); background:var(--g4);
+  padding:10px 14px;
+  font-size:11px; letter-spacing:1px;
+  cursor:pointer; text-decoration:none; color:var(--g);
+  transition:border-color .15s;
+}
+.status-row:hover { border-color:var(--g2); }
+.status-dot { width:7px; height:7px; flex-shrink:0; }
+.status-name { flex:1; font-weight:700; }
+.status-path { color:var(--dim); font-size:10px; }
+.status-tag { font-size:9px; letter-spacing:2px; color:var(--dim); border:1px solid var(--g3); padding:1px 6px; }
+
+/* doc section — outlined list style */
+.doc-list { display:flex; flex-direction:column; gap:6px; }
+.doc-item {
+  display:flex; align-items:center; gap:14px;
+  border:1px solid var(--g3); padding:11px 14px;
+  font-size:11px; text-decoration:none; color:var(--g);
+  transition:border-color .15s;
+}
+.doc-item:hover { border-color:var(--g2); }
+.doc-icon { font-size:13px; flex-shrink:0; }
+.doc-name { flex:1; font-weight:700; letter-spacing:1px; }
+.doc-type { font-size:9px; color:var(--dim); letter-spacing:2px; }
+
+/* footer */
+#footer {
+  border-top:1px solid var(--g3);
+  padding:16px 24px;
+  font-size:10px; color:var(--dim); letter-spacing:2px;
+  text-align:center;
+}
+
+@media(max-width:600px){
+  .cards { grid-template-columns:1fr; }
+  #hdr { padding:12px 16px; }
+  #main { padding:20px 14px 48px; }
+}
+</style>
+</head>
+<body>
+
+<div id="hdr">
+  <div class="brand"><span class="dot"></span>NOTE-A / HUB</div>
+  <div class="meta">GITHUB PAGES DASHBOARD</div>
+</div>
+
+<div id="main">
+
+  <!-- 운영 도구 -->
+  <div class="section">
+    <div class="section-title">운영 도구</div>
+    <div class="cards">
+      <a class="card" href="team.html">
+        <div class="card-label">TEAM CHANNEL</div>
+        <div class="card-title">TEAM.HTML</div>
+        <div class="card-desc">팀 채널 — 게시판, 캘린더, 갤러리, 채팅, 메모 통합 운영 도구</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="set-os.html">
+        <div class="card-label">OS INTERFACE</div>
+        <div class="card-title">SET-OS</div>
+        <div class="card-desc">SET-OS 화면 — 메인 인터페이스 프로토타입</div>
+        <div class="card-arrow">↗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 화면/UI 설계 -->
+  <div class="section">
+    <div class="section-title">화면 설계 · UI</div>
+    <div class="status-grid">
+      <a class="status-row" href="pilot.html">
+        <div class="status-dot" style="background:#00ff88;"></div>
+        <div class="status-name">PILOT</div>
+        <div class="status-path">pilot.html</div>
+        <div class="status-tag">LIVE</div>
+      </a>
+      <a class="status-row" href="pilot2.html">
+        <div class="status-dot" style="background:#00ff88;"></div>
+        <div class="status-name">PILOT v2</div>
+        <div class="status-path">pilot2.html</div>
+        <div class="status-tag">LIVE</div>
+      </a>
+      <a class="status-row" href="set-os-wireframe.html">
+        <div class="status-dot" style="background:#ffcc44;"></div>
+        <div class="status-name">SET-OS 와이어프레임</div>
+        <div class="status-path">set-os-wireframe.html</div>
+        <div class="status-tag">DRAFT</div>
+      </a>
+      <a class="status-row" href="redesign-wireframe-detailed.html">
+        <div class="status-dot" style="background:#ffcc44;"></div>
+        <div class="status-name">리디자인 와이어프레임</div>
+        <div class="status-path">redesign-wireframe-detailed.html</div>
+        <div class="status-tag">DRAFT</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 디자인 실험 -->
+  <div class="section">
+    <div class="section-title">디자인 실험</div>
+    <div class="cards">
+      <a class="card" href="design-a.html">
+        <div class="card-label">DESIGN · A</div>
+        <div class="card-title">DESIGN-A</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="design-b.html">
+        <div class="card-label">DESIGN · B</div>
+        <div class="card-title">DESIGN-B</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="design-c.html">
+        <div class="card-label">DESIGN · C</div>
+        <div class="card-title">DESIGN-C</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="design-d.html">
+        <div class="card-label">DESIGN · D</div>
+        <div class="card-title">DESIGN-D</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="design-e.html">
+        <div class="card-label">DESIGN · E</div>
+        <div class="card-title">DESIGN-E</div>
+        <div class="card-arrow">↗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 갤러리 -->
+  <div class="section">
+    <div class="section-title">갤러리</div>
+    <div class="cards">
+      <a class="card" href="gallery1.html">
+        <div class="card-label">GALLERY · 01</div>
+        <div class="card-title">GALLERY 1</div>
+        <div class="card-desc">사진 갤러리 1</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="gallery2.html">
+        <div class="card-label">GALLERY · 02</div>
+        <div class="card-title">GALLERY 2</div>
+        <div class="card-desc">사진 갤러리 2</div>
+        <div class="card-arrow">↗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 포트폴리오 -->
+  <div class="section">
+    <div class="section-title">포트폴리오</div>
+    <div class="cards">
+      <a class="card" href="portfolio.html">
+        <div class="card-label">PORTFOLIO</div>
+        <div class="card-title">PORTFOLIO</div>
+        <div class="card-desc">작업 포트폴리오 메인</div>
+        <div class="card-arrow">↗</div>
+      </a>
+      <a class="card" href="measure.html">
+        <div class="card-label">MEASURE</div>
+        <div class="card-title">MEASURE</div>
+        <div class="card-desc">측정/분석 도구</div>
+        <div class="card-arrow">↗</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 문서 -->
+  <div class="section">
+    <div class="section-title">문서 · 스펙</div>
+    <div class="doc-list">
+      <a class="doc-item" href="SET-OS_요구사항정의서.html">
+        <div class="doc-icon">📄</div>
+        <div class="doc-name">SET-OS 요구사항 정의서</div>
+        <div class="doc-type">요구사항 정의서</div>
+      </a>
+      <a class="doc-item" href="set-os-wireframe.html">
+        <div class="doc-icon">📐</div>
+        <div class="doc-name">SET-OS 와이어프레임</div>
+        <div class="doc-type">화면 설계 · IA</div>
+      </a>
+      <a class="doc-item" href="redesign-wireframe-annotated.html">
+        <div class="doc-icon">📐</div>
+        <div class="doc-name">리디자인 와이어프레임 (어노테이션)</div>
+        <div class="doc-type">화면 설계</div>
+      </a>
+      <a class="doc-item" href="set-os-annotated.html">
+        <div class="doc-icon">📋</div>
+        <div class="doc-name">SET-OS 어노테이션</div>
+        <div class="doc-type">시스템 설계</div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div id="footer">
+  NOTE-A GITHUB PAGES · HUB · <span id="ts"></span>
+</div>
+
+<script>
+const d = new Date();
+document.getElementById('ts').textContent = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+</script>
+
+</body>
+</html>
