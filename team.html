@@ -989,6 +989,29 @@
     .back-btn { background:transparent;border:1px solid rgba(0,255,136,0.3);color:rgba(0,255,136,.7);
       padding:3px 10px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s; }
     .back-btn:hover { background:rgba(0,255,136,.08);color:#00ff88;border-color:#00ff88; }
+
+    /* ── DEV PANEL ── */
+    .dp-section { padding:14px 12px; border-bottom:1px solid rgba(255,153,68,0.15); }
+    .dp-title { font-size:9px;letter-spacing:3px;color:rgba(255,153,68,0.55);margin-bottom:10px;font-weight:700; }
+    .dp-stat-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:6px; }
+    .dp-stat { border:1px solid rgba(255,153,68,0.2);padding:8px 10px;background:rgba(255,153,68,0.03); }
+    .dp-stat-num { font-size:18px;color:#ff9944;font-weight:700;line-height:1; }
+    .dp-stat-label { font-size:9px;color:rgba(255,153,68,0.45);letter-spacing:1px;margin-top:3px; }
+    .dp-ls-item { border:1px solid rgba(255,153,68,0.15);padding:6px 10px;background:rgba(255,153,68,0.02);font-size:10px; }
+    .dp-ls-key { color:rgba(255,153,68,0.5);letter-spacing:1px; }
+    .dp-ls-val { color:#ff9944;font-weight:700; }
+    .dp-accordion-item { border:1px solid rgba(255,153,68,0.2);margin-bottom:5px; }
+    .dp-accordion-head { padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:11px;color:#ff9944;font-weight:700;letter-spacing:.5px; }
+    .dp-accordion-head:hover { background:rgba(255,153,68,0.06); }
+    .dp-accordion-arrow { font-size:9px;color:rgba(255,153,68,0.4);transition:transform .2s;flex-shrink:0; }
+    .dp-accordion-arrow.open { transform:rotate(90deg); }
+    .dp-accordion-body { display:none;padding:10px 12px;font-size:11px;color:rgba(0,255,136,0.65);line-height:1.8;white-space:pre-wrap;border-top:1px solid rgba(255,153,68,0.1);letter-spacing:.3px; }
+    .dp-log-line { display:flex;gap:8px;padding:1px 0; }
+    .dp-log-ts { color:rgba(255,153,68,0.35);flex-shrink:0;font-size:10px; }
+    .dp-log-msg { font-size:10px; }
+    .dp-btn { background:transparent;border:1px solid rgba(255,153,68,0.3);color:rgba(255,153,68,0.7);font-family:'Space Mono',monospace;font-size:10px;padding:5px 14px;cursor:pointer;letter-spacing:1px; }
+    .dp-btn:hover { background:rgba(255,153,68,0.08);color:#ff9944;border-color:#ff9944; }
+
     .detail-head { display:flex;gap:8px;align-items:center;padding:7px 10px;
       border-bottom:1px solid rgba(0,255,136,0.12);background:rgba(0,255,136,0.03);flex-shrink:0; }
     .detail-body-wrap { flex:1;overflow-y:auto;padding:12px; }
@@ -1558,6 +1581,45 @@
 
       <!-- 공지 직접 보기 -->
       <div id="noticeView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;"></div>
+
+      <!-- DEV PANEL VIEW -->
+      <div id="devPanelView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000;">
+
+        <!-- S1: 앱 상태 대시보드 -->
+        <div class="dp-section">
+          <div class="dp-title">// APP STATUS</div>
+          <div id="dp-stats" class="dp-stat-grid"></div>
+          <div id="dp-ls-stats" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;"></div>
+        </div>
+
+        <!-- S2: 참고 문서 아코디언 -->
+        <div class="dp-section">
+          <div class="dp-title">// 개발 참고 문서</div>
+          <div id="dp-docs"></div>
+        </div>
+
+        <!-- S3: 시스템 로그 -->
+        <div class="dp-section">
+          <div class="dp-title">// SYSTEM LOG <span id="dp-log-count" style="color:rgba(255,153,68,0.4);font-size:9px;"></span></div>
+          <div id="dp-log" style="max-height:180px;overflow-y:auto;font-size:10px;line-height:1.8;letter-spacing:.5px;"></div>
+        </div>
+
+        <!-- S4: Claude 요청 폼 -->
+        <div class="dp-section">
+          <div class="dp-title">// CLAUDE 에게 요청</div>
+          <div style="font-size:10px;color:rgba(255,153,68,0.45);margin-bottom:8px;line-height:1.6;">아래 내용을 작성한 뒤 복사해서 Claude에게 붙여넣으세요.</div>
+          <textarea id="dp-req-area"
+            placeholder="예: 로그 게시판에 오늘 작업 내용 올려줘&#10;예: 갤러리 열 수를 3열로 바꿔줘"
+            style="width:100%;background:rgba(255,153,68,0.04);border:1px solid rgba(255,153,68,0.25);color:#ff9944;font-family:'Space Mono',monospace;font-size:12px;padding:10px;outline:none;resize:none;line-height:1.7;min-height:90px;letter-spacing:.5px;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="dp-btn" onclick="dpCopyRequest()">📋 복사</button>
+            <button class="dp-btn" onclick="document.getElementById('dp-req-area').value=''">✕ 지우기</button>
+            <button class="dp-btn" style="margin-left:auto;" onclick="dpRefresh()">↺ 새로고침</button>
+          </div>
+          <div id="dp-copy-ok" style="font-size:10px;color:#00ff88;margin-top:6px;opacity:0;transition:opacity .3s;letter-spacing:1px;">복사됐습니다</div>
+        </div>
+
+      </div>
     </div>
   </div>
 
@@ -2069,7 +2131,7 @@ function pvInitSwipe(){
 }
 
 function showView(name){
-  ['introView','calendarView','dayView','boardView','detailView','writeView','memoView','chatView','galleryView','noticeView','photoView'].forEach(id=>{
+  ['introView','calendarView','dayView','boardView','detailView','writeView','memoView','chatView','galleryView','noticeView','photoView','devPanelView'].forEach(id=>{
     const el = document.getElementById(id);
     if(el) el.style.display = (id===name) ? 'flex' : 'none';
   });
@@ -2093,6 +2155,8 @@ function goBoard(spanEl){
     loadHandoverData().then(()=>renderBoard(cat)).catch(()=>renderBoard(cat));
     return;
   }
+
+  if(cat==='dev'){ showDevPanel(); return; }
 
   renderBoard(cat);
 }
@@ -2448,6 +2512,127 @@ const INTRO_LINES = [
 // ══════════════════════════════════════════════════
 // SYSTEM LOG — 실제 활동 피드
 // ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// DEV PANEL
+// ══════════════════════════════════════════════════
+window._dpLogs = [];
+
+function showDevPanel(){
+  const badge = document.getElementById('board-badge');
+  const ph = document.getElementById('center-ph');
+  if(badge) badge.textContent = 'DEV';
+  if(ph){ const t=ph.querySelector('.panel-title'); if(t) t.textContent='◆ DEV PANEL'; }
+  dpRenderStatus();
+  dpRenderDocs();
+  dpRenderLog();
+  showView('devPanelView');
+}
+
+function dpRefresh(){ showDevPanel(); }
+
+function dpRenderStatus(){
+  const statsEl = document.getElementById('dp-stats');
+  const lsEl = document.getElementById('dp-ls-stats');
+  if(!statsEl || !lsEl) return;
+
+  // 게시글 수
+  const postCounts = {
+    'LOG': (BOARD_DATA.handover||[]).filter(p=>!p.pinned).length,
+    'STATUS': (BOARD_DATA.status||[]).filter(p=>!p.pinned).length,
+    'IDEA': (BOARD_DATA.idea||[]).filter(p=>!p.pinned).length,
+    'EXHIBIT': (BOARD_DATA.criteria||[]).filter(p=>!p.pinned).length,
+    'DEV': (BOARD_DATA.dev||[]).filter(p=>!p.pinned).length,
+    'GUIDE': (BOARD_DATA.notice||[]).filter(p=>!p.pinned).length,
+  };
+  statsEl.innerHTML = Object.entries(postCounts).map(([k,v])=>`
+    <div class="dp-stat">
+      <div class="dp-stat-num">${v}</div>
+      <div class="dp-stat-label">${k}</div>
+    </div>`).join('');
+
+  // localStorage
+  function lsSize(key){
+    try{
+      const v = localStorage.getItem(key);
+      if(!v) return {count:'—', kb:'0kb'};
+      const parsed = JSON.parse(v);
+      const count = Array.isArray(parsed) ? parsed.length : (typeof parsed==='object' ? Object.keys(parsed).length : 1);
+      const kb = (v.length/1024).toFixed(1)+'kb';
+      return {count, kb};
+    }catch(e){ return {count:'?', kb:'?'}; }
+  }
+  const lsKeys = [
+    {key:'team_chat', label:'THREAD 메시지'},
+    {key:'team_memos', label:'IDEA 메모'},
+    {key:'team_cal', label:'캘린더 일정'},
+    {key:'ds-data', label:'DATA STATUS'},
+    {key:'tl-items', label:'TIMELINE'},
+    {key:'team_post_edits', label:'수정된 게시글'},
+  ];
+  lsEl.innerHTML = lsKeys.map(({key,label})=>{
+    const {count,kb} = lsSize(key);
+    return `<div class="dp-ls-item">
+      <div class="dp-ls-key">${label}</div>
+      <div style="display:flex;justify-content:space-between;margin-top:2px;">
+        <span class="dp-ls-val">${count}개</span>
+        <span style="font-size:9px;color:rgba(255,153,68,0.3);">${kb}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function dpRenderDocs(){
+  const el = document.getElementById('dp-docs');
+  if(!el) return;
+  const posts = (BOARD_DATA.dev||[]).filter(p=>!p.pinned);
+  el.innerHTML = posts.length ? posts.map((p,i)=>`
+    <div class="dp-accordion-item">
+      <div class="dp-accordion-head" onclick="dpToggle(this,${i})">
+        <span class="dp-accordion-arrow">▶</span>
+        <span style="flex:1;">${p.title}</span>
+        <span style="font-size:9px;color:rgba(255,153,68,0.3);">${p.ago}</span>
+      </div>
+      <div class="dp-accordion-body">${(p.body||'').replace(/</g,'&lt;')}</div>
+    </div>`).join('') : '<div style="font-size:10px;color:rgba(255,153,68,0.3);padding:6px 0;">참고 문서 없음</div>';
+}
+
+function dpToggle(head, idx){
+  const arrow = head.querySelector('.dp-accordion-arrow');
+  const body = head.nextElementSibling;
+  const isOpen = body.style.display === 'block';
+  body.style.display = isOpen ? 'none' : 'block';
+  if(arrow) arrow.classList.toggle('open', !isOpen);
+}
+
+function dpRenderLog(){
+  const el = document.getElementById('dp-log');
+  const countEl = document.getElementById('dp-log-count');
+  if(!el) return;
+  const logs = window._dpLogs || [];
+  if(countEl) countEl.textContent = `(${logs.length}개)`;
+  if(!logs.length){
+    el.innerHTML = '<span style="color:rgba(255,153,68,0.3);font-size:10px;">로그 없음</span>';
+    return;
+  }
+  el.innerHTML = logs.slice(-30).reverse().map(l=>`
+    <div class="dp-log-line">
+      <span class="dp-log-ts">${l.ts}</span>
+      <span class="dp-log-msg" style="color:${l.col}">${l.msg}</span>
+    </div>`).join('');
+}
+
+function dpCopyRequest(){
+  const area = document.getElementById('dp-req-area');
+  const ok = document.getElementById('dp-copy-ok');
+  if(!area) return;
+  navigator.clipboard.writeText(area.value).then(()=>{
+    if(ok){ ok.style.opacity='1'; setTimeout(()=>ok.style.opacity='0', 2000); }
+  }).catch(()=>{
+    area.select(); document.execCommand('copy');
+    if(ok){ ok.style.opacity='1'; setTimeout(()=>ok.style.opacity='0', 2000); }
+  });
+}
+
 (function sysLog(){
   const logEl = document.getElementById('log-body');
   if(!logEl) return;
@@ -2470,6 +2655,7 @@ const INTRO_LINES = [
     if(totEl) totEl.textContent=total;
     if(errEl) errEl.textContent=errs;
     if(wrnEl) wrnEl.textContent=warns;
+    if(window._dpLogs){ window._dpLogs.push({ts,msg,col}); if(window._dpLogs.length>100) window._dpLogs.shift(); }
   }
 
   // 실제 git 커밋 히스토리
