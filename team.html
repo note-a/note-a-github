@@ -1593,12 +1593,6 @@
           <div id="dp-ls-stats" style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:4px;"></div>
         </div>
 
-        <!-- S2: 참고 문서 아코디언 -->
-        <div class="dp-section">
-          <div class="dp-title">// 개발 참고 문서</div>
-          <div id="dp-docs"></div>
-        </div>
-
         <!-- S3: 시스템 로그 -->
         <div class="dp-section">
           <div class="dp-title">// SYSTEM LOG <span id="dp-log-count" style="color:rgba(0,255,136,0.4);font-size:9px;"></span></div>
@@ -1615,18 +1609,6 @@
         <div class="dp-section">
           <div class="dp-title">// 최근 커밋 <button class="dp-btn" style="padding:2px 8px;font-size:8px;margin-left:8px;" onclick="dpLoadCommits()">↺</button></div>
           <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
-        </div>
-
-        <!-- S6: 빠른 실행 -->
-        <div class="dp-section">
-          <div class="dp-title">// 빠른 실행</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-            <button class="dp-btn dp-action-btn" onclick="dpExportData()">💾 데이터 내보내기</button>
-            <button class="dp-btn dp-action-btn" onclick="dpClearSession()">🔓 로그인 세션 초기화</button>
-            <button class="dp-btn dp-action-btn" onclick="dpExportLog()">📄 로그 복사</button>
-            <button class="dp-btn dp-action-btn" onclick="dpRefresh()">↺ 패널 새로고침</button>
-          </div>
-          <div id="dp-action-msg" style="font-size:10px;color:#00ff88;margin-top:8px;opacity:0;transition:opacity .3s;letter-spacing:1px;min-height:14px;"></div>
         </div>
 
         <!-- S7: Claude 연결 -->
@@ -1914,18 +1896,6 @@ BOARD_DATA.dev = [
   { id: 8006, pinned: true, author: "GUIDE", ago: "고정",
     title: "DEV 패널 — 사용 안내",
     body: "DEV는 게시판이 아니라 개발 대시보드입니다.\nAPP STATUS / 참고 문서 / 시스템 로그 / 사이트 이동 / 최근 커밋 / Claude 연결이 한 곳에 있습니다.\n\n── 각 섹션 설명 ──\n\n[APP STATUS] 게시판별 글 수, localStorage 사용량 현황\n[참고 문서] 앱 구조·데이터·수정 방법 — 클릭해서 펼치기\n[SYSTEM LOG] 앱이 실행하는 동작을 실시간으로 기록\n[사이트 이동] SET-OS 관련 페이지 빠른 이동\n[최근 커밋] GitHub 저장소 최근 커밋 내역\n[CLAUDE] API 키 입력 후 이 도구와 직접 대화\n\n── Claude 연결 방법 ──\n\n1. console.anthropic.com 접속\n2. API Keys → Create Key\n3. 아래 CLAUDE 섹션 입력창에 키 붙여넣기 → [저장]\n4. 이후 \"GUIDE에 공지 올려줘\" 등 요청 가능\n\n── Claude에게 요청할 수 있는 것 ──\n\n· 게시판에 글 추가 (\"STATUS에 [완료] ... 올려줘\")\n· 현재 앱 상태 질문 (\"로그에 오류 있어?\")\n· 코드 관련 질문", imgs: [] },
-  {
-    id: 9001, author: "DEV", ago: "2026",
-    title: "앱 구조 & 데이터",
-    body: "── 파일 ──\n\n단일 파일: /Users/hazy/SET-github-pages/team.html\n로컬 → 커밋 → GitHub Pages 자동 배포 (1~2분)\n\n── 데이터 저장 위치 ──\n\n[localStorage — 기기별]\nteam_cal  캘린더 일정\nteam_chat  THREAD 메시지\nteam_memos  IDEA 메모\nset_auth  로그인 세션\n\n[HTML 파일 내 하드코딩]\nBOARD_DATA.notice  GUIDE 게시글\nBOARD_DATA.dev  DEV 참고 문서\n_HANDOVER_INLINE  LOG 게시글\n\n── 뷰 구조 ──\n\nshowView('boardView') → 게시판\nshowView('devPanelView') → 이 패널\ngoBoard('dev') → devPanelView로 이동",
-    imgs: []
-  },
-  {
-    id: 9002, author: "DEV", ago: "2026",
-    title: "수정 & 커밋 방법",
-    body: "── 수정 요청 방법 ──\n\n대화에서 원하는 변경을 말하면 Claude가 team.html을 직접 편집합니다.\n\"커밋해줘\" 라고 하면 git push → GitHub Pages 반영 (1~2분)\n\n── 게시글 추가 ──\n\n\"DEV에 [제목]으로 [내용] 올려줘\"\n→ BOARD_DATA.dev 배열에 추가됨\n\n\"LOG에 [날짜] [내용] 올려줘\"\n→ _HANDOVER_INLINE 배열에 추가됨\n\n── git 상태 확인 ──\n\ngit log --oneline -5\ngit status",
-    imgs: []
-  }
 ];
 
 // ── LOG 게시판: 인라인 데이터
