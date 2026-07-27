@@ -1634,12 +1634,15 @@
           <div class="dp-title">// CLAUDE <span id="dp-claude-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 미연결</span></div>
 
           <!-- API 키 설정 -->
-          <div id="dp-key-row" style="display:flex;gap:6px;margin-bottom:10px;align-items:center;">
-            <input id="dp-api-key" type="password" placeholder="sk-ant-…"
+          <div id="dp-key-row" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
+            <input id="dp-api-key" type="password" placeholder="sk-ant-…  (Anthropic API 키)"
               style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:11px;padding:6px 10px;outline:none;letter-spacing:1px;"
               oninput="dpKeyInput(this)">
             <button class="dp-btn" onclick="dpSaveKey()">저장</button>
             <button class="dp-btn" id="dp-key-clear" onclick="dpClearKey()" style="display:none;color:rgba(0,255,136,0.4);">✕</button>
+          </div>
+          <div id="dp-key-hint" style="font-size:9px;color:rgba(0,255,136,0.35);letter-spacing:1px;margin-bottom:10px;line-height:1.8;">
+            키 발급: <span style="color:rgba(0,255,136,0.6);">console.anthropic.com</span> → API Keys → Create Key → 붙여넣기 후 저장
           </div>
 
           <!-- 채팅 영역 -->
@@ -1884,55 +1887,43 @@ let currentCat = null;
 // ── 각 게시판 고정 가이드 글
 BOARD_DATA.notice = [
   { id: 8001, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "GUIDE 게시판입니다.\n\n운영팀이 올리는 공지·안내 사항을 모아두는 공간입니다.\n\n── 사용 방법 ──\n\n· 전체 팀원에게 알려야 할 사항을 여기에 올립니다.\n· 중요한 공지는 Claude에게 요청해 상단 고정 처리할 수 있습니다.\n· 읽은 후 별도 회신이 필요하면 THREAD 채널을 이용하세요.", imgs: [] }
+    title: "GUIDE 채널 — 사용 안내",
+    body: "GUIDE 채널은 팀 운영 공지·안내를 올리는 공간입니다.\n팀원 전체에게 공유해야 할 내용을 여기에 기록합니다.\n\n── 주로 올라오는 내용 ──\n\n· 촬영 일정 변경, 장소 안내\n· 작업 방향 결정 사항\n· 외부 마감 일정 (공모전, 전시 등)\n· 팀 내 규칙·규정 변경\n\n── 사용 방법 ──\n\n1. 오른쪽 하단 [+ 글쓰기] 버튼으로 새 글 작성\n2. 중요한 공지는 Claude에게 \"GUIDE에 고정으로 올려줘\"라고 요청\n3. 읽고 나서 답변이 필요하면 THREAD 채널 이용\n4. 게시글은 클릭하면 전체 내용을 볼 수 있음\n\n── 작성 권장 형식 ──\n\n제목: [날짜 또는 키워드] + 핵심 내용 한 줄\n본문: 배경 → 결정 사항 → 행동 필요 여부 순서로", imgs: [] }
 ];
 
 BOARD_DATA.status = [
   { id: 8002, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "STATUS 게시판입니다.\n\n현재 진행 중인 작업 현황을 기록하는 공간입니다.\n\n── 사용 방법 ──\n\n· 작업 시작 시 현황을 올리고, 완료 시 업데이트합니다.\n· 형식 예시: [진행중] 촬영 편집 / [완료] 사진 셀렉션\n· 막히거나 도움이 필요한 사항도 여기 올려두면 공유됩니다.", imgs: [] }
+    title: "STATUS 채널 — 사용 안내",
+    body: "STATUS 채널은 각자 지금 뭘 하고 있는지 공유하는 현황판입니다.\n서로의 작업 상태를 실시간으로 파악해 겹치거나 기다리는 상황을 줄입니다.\n\n── 주요 상태 태그 ──\n\n[진행중]  지금 작업 중\n[완료]    오늘 끝낸 항목\n[보류]    이유가 있어 잠시 멈춤\n[검토요청] 상대방 확인이 필요한 상황\n[피드백]  의견이나 방향 결정이 필요할 때\n\n── 사용 방법 ──\n\n1. 작업 시작할 때 [진행중]으로 글 올리기\n2. 완료하면 같은 글 수정하거나 [완료]로 새 글\n3. 막히면 [검토요청]으로 올리면 상대방이 확인\n4. 하루에 한 번 이상 업데이트 권장\n\n── 작성 예시 ──\n\n제목: [진행중] 1차 셀렉션 작업 — DIR 23~30\n본문: 어제 1~22 완료. 오늘 23부터. 저녁 전 끝낼 예정.\n마감 이슈 있으면 말해줘.", imgs: [] }
 ];
 
 BOARD_DATA.criteria = [
   { id: 8003, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "EXHIBIT 게시판입니다.\n\n전시 및 지원 관련 자료·기준·일정을 모아두는 공간입니다.\n\n── 사용 방법 ──\n\n· 공모전, 전시 지원 서류, 심사 기준 등을 올립니다.\n· 마감일이 있는 항목은 제목에 날짜를 포함해주세요.\n  예: [~07/31] OO공모전 지원 자료", imgs: [] }
+    title: "EXHIBIT 채널 — 사용 안내",
+    body: "EXHIBIT 채널은 전시·공모전·지원 관련 정보를 모아두는 공간입니다.\n마감이 있는 외부 일정과 필요 서류를 기록해 놓치지 않게 합니다.\n\n── 주로 올라오는 내용 ──\n\n· 공모전 지원 요강 및 마감일\n· 전시 기획서·포트폴리오 제출 기준\n· 심사 기준 및 선정 결과\n· 지원 완료 후 피드백 기록\n\n── 사용 방법 ──\n\n1. 마감이 있는 항목은 제목 앞에 [~날짜] 표기\n   예: [~07/31] OO공모전 포트폴리오 제출\n2. 지원 완료 후에는 [완료] 태그로 업데이트\n3. 링크나 PDF가 있으면 본문에 첨부\n4. 이미 지난 공모전도 기록으로 남겨두기 (다음 해 참고용)\n\n── 작성 권장 형식 ──\n\n제목: [~마감일] 공모전/전시 이름\n본문: 주제·규격·제출 방식·지원 자격 요약", imgs: [] }
 ];
 
 BOARD_DATA.idea = [
   { id: 8004, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "IDEA 게시판입니다.\n\n아이디어, 메모, 영감을 자유롭게 남기는 공간입니다.\n\n── 사용 방법 ──\n\n· 형식 없이 자유롭게 올려도 됩니다.\n· 작업 중 떠오른 생각, 참고할 레퍼런스, 해보고 싶은 것들을 기록하세요.\n· 사진 첨부도 가능합니다.", imgs: [] }
+    title: "IDEA 채널 — 사용 안내",
+    body: "IDEA 채널은 형식 없이 생각을 던져두는 공간입니다.\n완성되지 않은 아이디어, 떠오른 레퍼런스, 시도해보고 싶은 것들을 기록하세요.\n\n── 올릴 수 있는 것들 ──\n\n· 작업 중 갑자기 떠오른 방향 전환 아이디어\n· 인상적이었던 사진·영상·전시 레퍼런스\n· \"이런 방식으로 찍으면 어떨까\" 하는 실험 아이디어\n· 장비·도구·공간에 대한 메모\n· 다음 시즌 계획이나 주제 구상\n\n── 사용 방법 ──\n\n1. 형식 없이 생각나는 대로 올리기\n2. 사진이나 스크린샷 첨부 가능\n3. 나중에 실행할 항목은 STATUS에 [진행중]으로 올려 이어가기\n4. 오른쪽 하단 [+ 글쓰기]로 빠르게 메모\n\n── 팁 ──\n\n· 완성된 아이디어가 아니어도 됩니다\n· 상대방이 발전시킬 수 있도록 힌트만 남겨도 충분", imgs: [] }
 ];
 
 // ── DEV 게시판 초기 데이터
 BOARD_DATA.dev = [
   { id: 8006, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "DEV 게시판입니다.\n\nClaude가 개발 관련 정보를 올리고 관리하는 공간입니다.\n\n── 사용 방법 ──\n\n· 코드 구조, 데이터 저장 방식, 수정 방법 등 개발 참고 정보가 올라옵니다.\n· 새로운 기능이나 수정 사항을 요청하면 Claude가 여기에 관련 내용을 기록합니다.\n· \"DEV에 올려줘\" 또는 \"개발 노트 추가해줘\" 하면 됩니다.\n\n── 요청 예시 ──\n\n\"갤러리 3열→2열 바꿔줘\" → 수정 후 DEV에 변경 내역 기록\n\"이 기능 어떻게 동작해?\" → DEV에 설명 게시글 추가", imgs: [] },
+    title: "DEV 패널 — 사용 안내",
+    body: "DEV는 게시판이 아니라 개발 대시보드입니다.\nAPP STATUS / 참고 문서 / 시스템 로그 / 사이트 이동 / 최근 커밋 / Claude 연결이 한 곳에 있습니다.\n\n── 각 섹션 설명 ──\n\n[APP STATUS] 게시판별 글 수, localStorage 사용량 현황\n[참고 문서] 앱 구조·데이터·수정 방법 — 클릭해서 펼치기\n[SYSTEM LOG] 앱이 실행하는 동작을 실시간으로 기록\n[사이트 이동] SET-OS 관련 페이지 빠른 이동\n[최근 커밋] GitHub 저장소 최근 커밋 내역\n[CLAUDE] API 키 입력 후 이 도구와 직접 대화\n\n── Claude 연결 방법 ──\n\n1. console.anthropic.com 접속\n2. API Keys → Create Key\n3. 아래 CLAUDE 섹션 입력창에 키 붙여넣기 → [저장]\n4. 이후 \"GUIDE에 공지 올려줘\" 등 요청 가능\n\n── Claude에게 요청할 수 있는 것 ──\n\n· 게시판에 글 추가 (\"STATUS에 [완료] ... 올려줘\")\n· 현재 앱 상태 질문 (\"로그에 오류 있어?\")\n· 코드 관련 질문", imgs: [] },
   {
     id: 9001, author: "DEV", ago: "2026",
-    title: "team.html 파일 구조",
-    body: "모든 UI는 /Users/hazy/SET-github-pages/team.html 단일 파일에 있습니다.\n\n── 구조 ──\n\n<style> 영역\n  전체 CSS, 모바일 미디어쿼리(@media max-width:900px) 포함\n\n<body> HTML 구조\n  #app (grid: titlebar / menubar / col-center)\n  #pw-overlay — 비밀번호 화면\n  #lightbox — 사진 팝업 (현재 미사용)\n  #col-center — 메인 콘텐츠 영역\n    각 view: introView / calendarView / boardView / detailView\n             chatView / memoView / galleryView / noticeView / photoView\n\n<script> 영역\n  BOARD_DATA — 게시판 데이터 객체\n  CAT_LABELS / CAT_COLORS — 카테고리 이름·색상\n  _HANDOVER_INLINE — LOG 인라인 데이터 (37개)\n  BOARD_DATA.dev — DEV 게시판 데이터\n  renderBoard() — 게시판 렌더링 함수\n  showView() — 뷰 전환 함수\n  goBoard() — 메뉴 클릭 핸들러",
+    title: "앱 구조 & 데이터",
+    body: "── 파일 ──\n\n단일 파일: /Users/hazy/SET-github-pages/team.html\n로컬 → 커밋 → GitHub Pages 자동 배포 (1~2분)\n\n── 데이터 저장 위치 ──\n\n[localStorage — 기기별]\nteam_cal  캘린더 일정\nteam_chat  THREAD 메시지\nteam_memos  IDEA 메모\nset_auth  로그인 세션\n\n[HTML 파일 내 하드코딩]\nBOARD_DATA.notice  GUIDE 게시글\nBOARD_DATA.dev  DEV 참고 문서\n_HANDOVER_INLINE  LOG 게시글\n\n── 뷰 구조 ──\n\nshowView('boardView') → 게시판\nshowView('devPanelView') → 이 패널\ngoBoard('dev') → devPanelView로 이동",
     imgs: []
   },
   {
     id: 9002, author: "DEV", ago: "2026",
-    title: "데이터 저장 방식",
-    body: "── localStorage (브라우저에 저장, 기기별) ──\n\nteam_cal — 캘린더 일정 데이터 (JSON)\nds-data — DATA STATUS 항목들 (JSON)\ntl-items — TIMELINE 항목들 (JSON)\nteam_chat — THREAD 메시지들 (JSON)\nteam_memos — IDEA 메모들 (JSON)\nset_auth — 로그인 세션 (sessionStorage)\n\n── 하드코딩 (HTML 파일 내) ──\n\nBOARD_DATA.notice — GUIDE 게시글\nBOARD_DATA.dev — DEV 게시글 (이 게시판)\n_HANDOVER_INLINE — LOG 게시글 37개\n\n── GitHub Pages (photos.json) ──\n\ngallery 사진 데이터 — 외부 JSON 파일에서 fetch\n파일 경로: /photos.json (또는 설정된 경로)",
-    imgs: []
-  },
-  {
-    id: 9003, author: "DEV", ago: "2026",
-    title: "수정 → 커밋 방법",
-    body: "Claude Code(AI)가 team.html을 직접 편집합니다.\n수정 후 git 커밋해달라고 하면 GitHub Pages에 반영됩니다.\n\n── 반영 흐름 ──\n\n1. 대화로 수정 요청\n2. Claude가 team.html 편집\n3. 브라우저 미리보기 확인\n4. \"커밋\" 이라고 말하면 자동 커밋\n5. GitHub Actions가 배포 (보통 1~2분)\n\n── 주요 경로 ──\n\n로컬: /Users/hazy/SET-github-pages/team.html\n원격: github.com → SET-github-pages → main 브랜치\n\n── 현재 브랜치 상태 확인 ──\n\ngit log --oneline -5\ngit status",
-    imgs: []
-  },
-  {
-    id: 9004, author: "DEV", ago: "2026",
-    title: "새 게시글 추가하는 법",
-    body: "DEV 게시판 포함 하드코딩 게시글은 team.html 안의 BOARD_DATA.dev 배열에 직접 추가합니다.\n\n── 형식 ──\n\n{\n  id: 9005,           // 고유 번호\n  author: \"DEV\",      // 작성자 표시\n  ago: \"2026\",        // 날짜\n  title: \"제목\",\n  body: \"본문 내용\",\n  imgs: []\n}\n\n── 요청 방법 ──\n\n\"DEV 게시판에 [제목]으로 [내용] 올려줘\" 라고 말하면\nClaude가 직접 파일에 추가하고 커밋합니다.\n\nLOG 게시판은 _HANDOVER_INLINE 배열에 같은 방식으로 추가합니다.",
+    title: "수정 & 커밋 방법",
+    body: "── 수정 요청 방법 ──\n\n대화에서 원하는 변경을 말하면 Claude가 team.html을 직접 편집합니다.\n\"커밋해줘\" 라고 하면 git push → GitHub Pages 반영 (1~2분)\n\n── 게시글 추가 ──\n\n\"DEV에 [제목]으로 [내용] 올려줘\"\n→ BOARD_DATA.dev 배열에 추가됨\n\n\"LOG에 [날짜] [내용] 올려줘\"\n→ _HANDOVER_INLINE 배열에 추가됨\n\n── git 상태 확인 ──\n\ngit log --oneline -5\ngit status",
     imgs: []
   }
 ];
@@ -1944,8 +1935,8 @@ function loadHandoverData(){
   if(_handoverLoaded) return Promise.resolve();
   const all = _HANDOVER_INLINE;
   const guide = { id: 8005, pinned: true, author: "GUIDE", ago: "고정",
-    title: "이 게시판 사용법",
-    body: "LOG 게시판입니다.\n\n작업 인수인계 및 진행 기록을 날짜순으로 남기는 공간입니다.\n\n── 사용 방법 ──\n\n· 오늘 한 작업, 다음 작업자에게 전달할 사항을 기록합니다.\n· 제목에 날짜를 포함하면 찾기 쉽습니다. 예: 2026-07-27 촬영 완료\n· 새 게시글은 Claude에게 \"LOG에 올려줘\" 하면 추가됩니다.", imgs: [] };
+    title: "LOG 채널 — 사용 안내",
+    body: "LOG 채널은 작업 기록과 인수인계를 날짜순으로 남기는 공간입니다.\n\"오늘 뭘 했고, 다음엔 뭘 해야 하는지\"를 기록해두면 서로 맥락을 이어받을 수 있습니다.\n\n── 주로 올라오는 내용 ──\n\n· 오늘 작업 완료 내역 (촬영, 편집, 셀렉션 등)\n· 다음 작업자에게 넘겨야 할 사항\n· 미완료 항목과 그 이유\n· 판단이 필요한 보류 항목\n· 사용한 장비·세팅·조건 메모\n\n── 사용 방법 ──\n\n1. 제목에 날짜 포함 — 예: 2026-07-27 촬영 완료\n2. 본문 구성: [완료] / [미완료] / [다음 작업] 순서로\n3. 새 글 추가: Claude에게 \"LOG에 올려줘\"라고 요청\n4. 한 페이지에 15개씩 표시됨 (아래 페이지 이동 가능)\n\n── 작성 예시 ──\n\n제목: 2026-07-27 DIR 1~15 셀렉션\n[완료] DIR 1~10 Core/Drop 분류\n[미완료] DIR 11~15 — 판단 보류, K에게 확인 필요\n[다음] K가 11~15 검토 후 LOG에 결과 올리기", imgs: [] };
   BOARD_DATA.handover = [guide, ...all.map((it,i) => ({
     id: it.id || 9000+i,
     author: it.author || 'RULE',
@@ -2664,18 +2655,10 @@ function dpRenderLog(){
 }
 
 const _DP_PAGES = [
-  { label:'TEAM', path:'team.html', desc:'팀 채널' },
   { label:'SET-OS', path:'set-os.html', desc:'메인 UI' },
-  { label:'HUB', path:'hub.html', desc:'전체 허브' },
-  { label:'PILOT', path:'pilot.html', desc:'파일럿 v1' },
-  { label:'PILOT 2', path:'pilot2.html', desc:'파일럿 v2' },
-  { label:'GALLERY 1', path:'gallery1.html', desc:'갤러리' },
-  { label:'GALLERY 2', path:'gallery2.html', desc:'갤러리' },
-  { label:'PORTFOLIO', path:'portfolio.html', desc:'포트폴리오' },
-  { label:'MEASURE', path:'measure.html', desc:'측정 도구' },
-  { label:'DESIGN A', path:'design-a.html', desc:'디자인 실험' },
   { label:'WIREFRAME', path:'set-os-wireframe.html', desc:'와이어프레임' },
-  { label:'SPEC', path:'SET-OS_요구사항정의서.html', desc:'요구사항 정의서' },
+  { label:'ANNOTATED', path:'set-os-annotated.html', desc:'어노테이션' },
+  { label:'REDESIGN', path:'redesign-wireframe-detailed.html', desc:'리디자인' },
 ];
 
 function dpRenderPages(){
@@ -2795,6 +2778,8 @@ function dpUpdateClaudeStatus(connected){
     s.textContent = connected ? '● 연결됨' : '● 미연결';
     s.style.color = connected ? 'rgba(0,255,136,0.8)' : 'rgba(0,255,136,0.3)';
   }
+  const hint = document.getElementById('dp-key-hint');
+  if(hint) hint.style.display = connected ? 'none' : '';
 }
 
 function dpInitClaudeKey(){
