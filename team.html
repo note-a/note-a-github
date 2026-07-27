@@ -1593,6 +1593,7 @@
             <span style="color:rgba(0,255,136,0.2);">·</span>
             <span>COMMITS <button class="dp-btn" style="padding:1px 7px;font-size:8px;margin-left:4px;" onclick="dpLoadCommits()">↺</button></span>
           </div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">앱 동작 실시간 기록 · GitHub 최근 커밋</div>
           <div id="dp-log" style="max-height:130px;overflow-y:auto;font-size:10px;line-height:1.8;letter-spacing:.5px;margin-bottom:10px;"></div>
           <div id="dp-commits"><span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span></div>
         </div>
@@ -1603,6 +1604,7 @@
             <span>// CSS VARIABLES</span>
             <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpRenderCssVars()">↺</button>
           </div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">:root 변수 실시간 편집 — 색상은 컬러피커 지원</div>
           <div id="dp-css-vars" style="display:flex;flex-direction:column;gap:3px;"></div>
         </div>
 
@@ -1612,6 +1614,7 @@
             <span>// LOCALSTORAGE</span>
             <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpRenderLsEditor()">↺</button>
           </div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">저장된 키 조회·편집·삭제 — 클릭해서 JSON 열기</div>
           <div id="dp-ls-editor" style="display:flex;flex-direction:column;gap:4px;"></div>
         </div>
 
@@ -1619,6 +1622,7 @@
         <div class="dp-section">
           <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
             <span>// LIVE CODE PAD</span>
+            <div style="display:flex;gap:4px;font-size:9px;color:rgba(0,255,136,0.28);align-self:center;letter-spacing:.3px;">CSS 즉시반영 · JS Ctrl+Enter</div>
             <div style="display:flex;gap:4px;">
               <button id="dp-tab-css" class="dp-btn" style="padding:2px 10px;font-size:9px;background:rgba(0,255,136,0.12);border-color:rgba(0,255,136,0.5);" onclick="dpCodeTab('css')">CSS</button>
               <button id="dp-tab-js"  class="dp-btn" style="padding:2px 10px;font-size:9px;" onclick="dpCodeTab('js')">JS</button>
@@ -1641,6 +1645,7 @@
         <!-- S5: DEV TOOLS -->
         <div class="dp-section">
           <div class="dp-title">// DEV TOOLS</div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:10px;">JS 에러 자동 캡처 · 한 줄 표현식 실행</div>
 
           <!-- 에러 모니터 -->
           <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">
@@ -1665,6 +1670,7 @@
         <!-- S7: Claude 연결 -->
         <div class="dp-section">
           <div class="dp-title">// CLAUDE <span id="dp-claude-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 미연결</span></div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">API 키 입력 후 보드 연동 AI 채팅</div>
 
           <!-- API 키 설정 -->
           <div id="dp-key-row" style="display:flex;gap:6px;margin-bottom:6px;align-items:center;">
