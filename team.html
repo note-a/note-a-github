@@ -1578,10 +1578,16 @@
 
       <!-- PHOTO VIEW (in-panel) -->
       <div id="photoView" style="display:none;flex-direction:column;flex:1;min-height:0;background:#000;">
-        <div id="pv-wrap" style="display:flex;align-items:center;justify-content:center;padding:6px;min-height:50vh;max-height:calc(100dvh - 200px);overflow:hidden;">
+        <div id="pv-wrap" style="display:flex;align-items:center;justify-content:center;padding:6px;flex:1;min-height:0;overflow:hidden;">
           <img id="photo-view-img" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:block;user-select:none;">
         </div>
-        <div class="board-back-bar" style="flex-shrink:0;position:sticky;bottom:0;background:#000;z-index:2;">
+        <!-- 셀렉 정보 패널 -->
+        <div id="pv-selec" style="flex-shrink:0;padding:6px 12px;border-top:1px solid rgba(0,255,136,0.08);min-height:38px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span id="pv-selec-badge" style="font-size:10px;font-weight:700;letter-spacing:1px;padding:2px 8px;border:1px solid;flex-shrink:0;"></span>
+          <span id="pv-selec-dir" style="font-size:10px;color:rgba(0,180,255,.8);flex-shrink:0;"></span>
+          <span id="pv-selec-reason" style="font-size:9px;color:rgba(0,255,136,.4);flex:1;line-height:1.5;"></span>
+        </div>
+        <div class="board-back-bar" style="flex-shrink:0;background:#000;z-index:2;">
           <button class="back-btn" onclick="backToDetail()">◀ LIST</button>
           <button class="back-btn" id="pv-prev" onclick="photoViewNav(-1)">◀</button>
           <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;text-align:center;" id="pv-meta"></span>
@@ -2213,11 +2219,22 @@ function closeLightbox(){
 }
 
 let _pvIndex = 0;
+let _selecData = null;
+async function _loadSelecData(){
+  if(_selecData) return _selecData;
+  try{
+    const r = await fetch('selec-data.json');
+    _selecData = await r.json();
+  }catch(e){ _selecData = {}; }
+  return _selecData;
+}
+
 function openPhotoView(idx){
   _pvIndex = idx;
   renderPhotoView();
   showView('photoView');
   pvInitSwipe();
+  _loadSelecData().then(()=>_renderSelecPanel());
 }
 function renderPhotoView(){
   const photos = window._pvAllPhotos || [];
@@ -2231,6 +2248,25 @@ function renderPhotoView(){
   if(meta) meta.textContent = `${_pvIndex+1} / ${photos.length}`;
   if(prev){ prev.disabled = _pvIndex===0; prev.style.opacity = _pvIndex===0?'0.3':'1'; }
   if(next){ next.disabled = _pvIndex>=photos.length-1; next.style.opacity = _pvIndex>=photos.length-1?'0.3':'1'; }
+  _renderSelecPanel();
+}
+function _renderSelecPanel(){
+  const photos = window._pvAllPhotos || [];
+  const url = photos[_pvIndex] || '';
+  const numMatch = url.match(/DSCF(\d{4,5})/i);
+  const num = numMatch ? numMatch[1] : null;
+  const badge = document.getElementById('pv-selec-badge');
+  const dirEl = document.getElementById('pv-selec-dir');
+  const reasonEl = document.getElementById('pv-selec-reason');
+  if(!badge) return;
+  if(!num || !_selecData){ badge.textContent=''; dirEl&&(dirEl.textContent=''); reasonEl&&(reasonEl.textContent=''); return; }
+  const d = _selecData[num];
+  if(!d){ badge.textContent='—'; badge.style.color='rgba(0,255,136,.3)'; badge.style.borderColor='rgba(0,255,136,.15)'; dirEl&&(dirEl.textContent=''); reasonEl&&(reasonEl.textContent='기록 없음'); return; }
+  const vMap = {core:['🟢 CORE','#00ff88','rgba(0,255,136,.4)'], support:['🟡 SUPPORT','rgba(255,220,0,.9)','rgba(255,220,0,.35)'], hold:['❓ 보류','rgba(0,180,255,.9)','rgba(0,180,255,.35)'], drop:['🔴 DROP','rgba(255,80,80,.8)','rgba(255,80,80,.3)']};
+  const [label,color,border] = vMap[d.v] || ['—','rgba(0,255,136,.3)','rgba(0,255,136,.15)'];
+  badge.textContent = label; badge.style.color = color; badge.style.borderColor = border;
+  if(dirEl) dirEl.textContent = d.d || '';
+  if(reasonEl) reasonEl.textContent = d.r || '';
 }
 function photoViewNav(dir){
   const photos = window._pvAllPhotos || [];
