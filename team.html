@@ -2664,7 +2664,7 @@ function dpLoadCommits(){
   const el = document.getElementById('dp-commits');
   if(!el) return;
   el.innerHTML = '<span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span>';
-  fetch('https://api.github.com/repos/note-a/note-a.github.io/commits?per_page=7')
+  fetch('https://api.github.com/repos/note-a/note-a-github/commits?per_page=7')
     .then(r=>r.json())
     .then(data=>{
       if(!Array.isArray(data)){ el.innerHTML='<span style="font-size:10px;color:rgba(255,68,68,0.6);">접근 불가 (private 또는 저장소명 불일치)</span>'; return; }
