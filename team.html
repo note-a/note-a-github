@@ -1606,10 +1606,25 @@
         <!-- S5: DEV TOOLS -->
         <div class="dp-section">
           <div class="dp-title">// DEV TOOLS</div>
-          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;">뷰 전환</div>
-          <div id="dp-views" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;"></div>
-          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;">localStorage</div>
-          <div id="dp-ls-viewer" style="display:flex;flex-direction:column;gap:3px;"></div>
+
+          <!-- 에러 모니터 -->
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">
+            ERROR MONITOR <span id="dp-err-count" style="color:rgba(255,80,80,0.6);"></span>
+            <button class="dp-btn" style="padding:1px 7px;font-size:8px;margin-left:8px;" onclick="dpClearErrors()">clear</button>
+          </div>
+          <div id="dp-errors" style="max-height:100px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:3px;">
+            <span style="font-size:10px;color:rgba(0,255,136,0.2);letter-spacing:.5px;">에러 없음</span>
+          </div>
+
+          <!-- JS REPL -->
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">JS REPL</div>
+          <div style="display:flex;gap:5px;margin-bottom:5px;">
+            <input id="dp-repl-input" type="text" placeholder="BOARD_DATA.notice.length, showView('chatView'), …"
+              style="flex:1;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.2);color:#00ff88;font-family:'Space Mono',monospace;font-size:11px;padding:5px 8px;outline:none;letter-spacing:.3px;"
+              onkeydown="if(event.key==='Enter') dpReplRun()">
+            <button class="dp-btn" style="padding:4px 12px;" onclick="dpReplRun()">▶</button>
+          </div>
+          <div id="dp-repl-out" style="max-height:120px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;font-size:10px;font-family:'Space Mono',monospace;letter-spacing:.3px;"></div>
         </div>
 
         <!-- S7: Claude 연결 -->
@@ -2645,48 +2660,55 @@ function dpRenderPages(){
     </a>`).join('');
 }
 
-function dpRenderDevTools(){
-  // 뷰 전환 버튼
-  const viewsEl = document.getElementById('dp-views');
-  if(viewsEl){
-    const views = [
-      {id:'introView', label:'INTRO'},
-      {id:'calendarView', label:'CALENDAR'},
-      {id:'boardView', label:'BOARD'},
-      {id:'chatView', label:'THREAD'},
-      {id:'memoView', label:'MEMO'},
-      {id:'galleryView', label:'GALLERY'},
-      {id:'noticeView', label:'NOTICE'},
-    ];
-    viewsEl.innerHTML = views.map(v=>`
-      <button class="dp-btn" style="padding:3px 9px;font-size:9px;letter-spacing:1px;"
-        onclick="showView('${v.id}')">${v.label}</button>`).join('');
-  }
+// ── 에러 모니터
+const _dpErrors = [];
+function _dpAddError(msg, src, line){
+  const ts = new Date().toTimeString().slice(0,8);
+  _dpErrors.unshift({ts, msg: String(msg), src: src?String(src).split('/').pop():'', line});
+  if(_dpErrors.length > 20) _dpErrors.pop();
+  _dpFlushErrors();
+}
+function _dpFlushErrors(){
+  const el = document.getElementById('dp-errors');
+  const cnt = document.getElementById('dp-err-count');
+  if(!el) return;
+  if(!_dpErrors.length){ el.innerHTML='<span style="font-size:10px;color:rgba(0,255,136,0.2);letter-spacing:.5px;">에러 없음</span>'; if(cnt) cnt.textContent=''; return; }
+  if(cnt) cnt.textContent = `(${_dpErrors.length})`;
+  el.innerHTML = _dpErrors.map(e=>`
+    <div style="padding:3px 7px;background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.2);line-height:1.6;">
+      <span style="color:rgba(0,255,136,0.3);font-size:9px;">${e.ts}</span>
+      ${e.src?`<span style="color:rgba(255,180,0,0.7);font-size:9px;margin-left:6px;">${e.src}:${e.line||''}</span>`:''}
+      <div style="color:rgba(255,100,100,0.85);font-size:10px;margin-top:1px;">${String(e.msg).replace(/</g,'&lt;').slice(0,200)}</div>
+    </div>`).join('');
+}
+function dpClearErrors(){ _dpErrors.length=0; _dpFlushErrors(); }
+window.onerror = function(msg,src,line){ _dpAddError(msg,src,line); };
+window.onunhandledrejection = function(e){ _dpAddError('Unhandled: '+(e.reason?.message||e.reason),'',0); };
 
-  // localStorage 뷰어
-  const lsEl = document.getElementById('dp-ls-viewer');
-  if(lsEl){
-    const keys = [
-      {key:'team_cal', label:'캘린더'},
-      {key:'team_chat', label:'THREAD 메시지'},
-      {key:'team_memos', label:'IDEA 메모'},
-      {key:'team_post_edits', label:'수정된 게시글'},
-      {key:'team_post_deleted', label:'삭제된 게시글'},
-      {key:'set_auth', label:'로그인 세션'},
-    ];
-    lsEl.innerHTML = keys.map(({key,label})=>{
-      const raw = localStorage.getItem(key);
-      let count = '—';
-      if(raw){ try{ const p=JSON.parse(raw); count=Array.isArray(p)?p.length+'개':typeof p==='object'?Object.keys(p).length+'개':'있음'; }catch(e){ count='있음'; } }
-      const dim = !raw;
-      return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid rgba(0,255,136,${dim?'0.08':'0.15'});background:rgba(0,255,136,${dim?'0.01':'0.03'});">
-        <span style="flex:1;font-size:10px;color:rgba(0,255,136,${dim?'0.3':'0.7'});letter-spacing:.5px;">${label}</span>
-        <span style="font-size:10px;color:rgba(0,255,136,0.5);">${count}</span>
-        ${raw?`<button class="dp-btn" style="padding:1px 7px;font-size:9px;color:rgba(255,100,100,0.6);border-color:rgba(255,100,100,0.2);"
-          onclick="if(confirm('${label} 데이터를 초기화할까요?')){localStorage.removeItem('${key}');dpRenderDevTools();}">✕</button>`:''}
-      </div>`;
-    }).join('');
-  }
+// ── JS REPL
+const _replHistory = [];
+function dpReplRun(){
+  const input = document.getElementById('dp-repl-input');
+  const out = document.getElementById('dp-repl-out');
+  if(!input||!out) return;
+  const code = input.value.trim();
+  if(!code) return;
+  _replHistory.unshift(code);
+  input.value = '';
+  let result, isErr = false;
+  try { result = eval(code); } catch(e){ result = e; isErr = true; }
+  let display;
+  try { display = JSON.stringify(result, null, 1) ?? String(result); } catch(e){ display = String(result); }
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;flex-direction:column;gap:1px;border-bottom:1px solid rgba(0,255,136,0.07);padding:3px 0;';
+  row.innerHTML = `
+    <span style="color:rgba(0,255,136,0.4);">› ${code.replace(/</g,'&lt;')}</span>
+    <span style="color:${isErr?'rgba(255,100,100,0.8)':'rgba(0,255,136,0.85)'};white-space:pre-wrap;word-break:break-all;">${String(display).replace(/</g,'&lt;').slice(0,400)}</span>`;
+  out.insertBefore(row, out.firstChild);
+}
+
+function dpRenderDevTools(){
+  _dpFlushErrors();
 }
 
 function dpLoadCommits(){
