@@ -3626,7 +3626,7 @@ function renderCalendar(){
     const entryCount = hasEntry ? entries[key].length : 0;
     const previews = hasEntry ? entries[key].slice(0,2).map(e=>{
       const color = e.author==='K'?'#00ff88':'#44ccff';
-      const txt = (e.text||'').slice(0,10);
+      const txt = (e.text||'').replace(/[\[\]]/g,'').slice(0,10);
       return `<div style="font-size:9px;color:${color};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;line-height:1.5;text-align:center;">${txt}</div>`;
     }).join('') : '';
     html+=`<div onclick="openDay('${key}',${d})"
@@ -3681,7 +3681,7 @@ function renderDayEntries(){
   el.innerHTML=list.map((e,i)=>`
     <div style="display:flex;gap:6px;align-items:flex-start;padding:4px 0;border-bottom:1px solid rgba(0,255,136,0.05);">
       <span style="font-size:8px;font-weight:700;color:${e.author==='K'?'#00ff88':'#44ccff'};min-width:10px;">${e.author}</span>
-      <span style="flex:1;font-size:9px;color:rgba(0,255,136,.8);line-height:1.7;white-space:pre-wrap;">${e.text}</span>
+      <span style="flex:1;font-size:9px;color:rgba(0,255,136,.8);line-height:1.7;white-space:pre-wrap;">${(e.text||'').replace(/[\[\]]/g,'')}</span>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
         <span style="font-size:7px;color:rgba(0,255,136,.2);">${e.ts||''}</span>
         <button onclick="editDayEntry(${i})" style="font-size:10px;color:rgba(0,255,136,.6);background:none;border:1px solid rgba(0,255,136,.25);cursor:pointer;padding:2px 7px;letter-spacing:1px;font-family:inherit;" onmouseover="this.style.color='#00ff88';this.style.borderColor='rgba(0,255,136,.6)'" onmouseout="this.style.color='rgba(0,255,136,.6)';this.style.borderColor='rgba(0,255,136,.25)'">EDIT</button>
