@@ -1443,6 +1443,8 @@
           <button class="back-btn" id="detail-prev" onclick="changeDetailPage(-1)" style="display:none;">◀</button>
           <span style="flex:1;font-size:10px;color:rgba(0,255,136,.35);letter-spacing:1px;text-align:center;" id="detailMeta"></span>
           <button class="back-btn" id="detail-next" onclick="changeDetailPage(1)" style="display:none;">▶</button>
+          <button class="back-btn" id="detail-edit-btn" onclick="openEdit()" style="display:none;color:#ffcc44;border-color:rgba(255,204,68,0.4);">수정</button>
+          <button class="back-btn" id="detail-del-btn" onclick="deletePost()" style="display:none;color:#ff6060;border-color:rgba(255,96,96,0.4);">삭제</button>
         </div>
       </div>
 
@@ -2137,6 +2139,17 @@ function renderBoard(cat, page){
       </div>`).join('');
     if(!regular.length && !pinned.length){
       feed.innerHTML = '<div class="board-empty">// NO THREADS YET</div>';
+    } else if(cat === 'dev'){
+      feed.innerHTML = pinnedHtml + slice.map(p=>`
+        <div onclick="openDetail(${p.id})" style="padding:10px 12px;border-bottom:1px solid rgba(0,255,136,0.1);cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(255,153,68,0.06)'" onmouseout="this.style.background=''">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+            <span class="mbadge" style="color:#ff9944;border-color:rgba(255,153,68,0.3);">DEV</span>
+            <span style="font-size:12px;font-weight:700;color:#ff9944;letter-spacing:.5px;flex:1;">${p.title}</span>
+            <span style="font-size:10px;color:rgba(0,255,136,0.3);">${p.ago}</span>
+          </div>
+          <div style="font-size:10px;color:rgba(0,255,136,0.45);line-height:1.6;letter-spacing:.3px;padding-left:2px;">${(p.body||'').split('\n')[0].slice(0,80)}${p.body&&p.body.length>80?'…':''}</div>
+        </div>`).join('');
+      feed.scrollTop = 0;
     } else {
       feed.innerHTML = pinnedHtml + slice.map(p=>`
         <div class="msg-row" onclick="openDetail(${p.id})">
@@ -2172,16 +2185,29 @@ function showNoticeView(){
   showView('noticeView');
 }
 
+let _currentDetailId = null;
+
+function _getPostEdits(){ try{ return JSON.parse(localStorage.getItem('team_post_edits')||'{}'); }catch(e){ return {}; } }
+function _savePostEdit(id, data){ const e=_getPostEdits(); e[id]=data; localStorage.setItem('team_post_edits',JSON.stringify(e)); }
+function _getDeletedIds(){ try{ return JSON.parse(localStorage.getItem('team_post_deleted')||'[]'); }catch(e){ return []; } }
+
 function openDetail(id){
   let post = null;
   Object.values(BOARD_DATA).forEach(arr=>{ arr.forEach(p=>{ if(p.id===id) post=p; }); });
   if(!post) return;
+  _currentDetailId = id;
+
+  // apply saved edits
+  const edits = _getPostEdits();
+  if(edits[id]) post = Object.assign({}, post, edits[id]);
 
   const dh = document.getElementById('detailHeader');
   const db = document.getElementById('detailBody');
   const dm = document.getElementById('detailMeta');
   const badge = document.getElementById('board-badge');
   const ph = document.getElementById('center-ph');
+  const editBtn = document.getElementById('detail-edit-btn');
+  const delBtn = document.getElementById('detail-del-btn');
 
   if(dh) dh.innerHTML = `
     <span class="mbadge" style="color:${CAT_COLORS[currentCat]||'#00ff88'};border-color:${CAT_COLORS[currentCat]||'#00ff88'}40;">${CAT_LABELS[currentCat]||currentCat}</span>
@@ -2202,11 +2228,52 @@ function openDetail(id){
   const src = (typeof marked !== 'undefined') ? preprocessMd(post.body) : post.body;
   const bodyHtml = (typeof marked !== 'undefined') ? marked.parse(src) : src.replace(/\n/g,'<br>');
   if(db) db.innerHTML = imgHtml + `<div class="md-body">${bodyHtml}</div>`;
-  if(dm) dm.textContent = `by ${post.author} · ${post.ago} ago`;
+  if(dm) dm.textContent = `by ${post.author} · ${post.ago}`;
   if(badge) badge.textContent = 'DETAIL';
   if(ph){ const t=ph.querySelector('.panel-title'); if(t) t.textContent='◆ THREAD'; }
 
+  if(editBtn) editBtn.style.display = '';
+  if(delBtn) delBtn.style.display = '';
+
   showView('detailView');
+}
+
+function openEdit(){
+  const id = _currentDetailId;
+  let post = null;
+  Object.values(BOARD_DATA).forEach(arr=>{ arr.forEach(p=>{ if(p.id===id) post=p; }); });
+  if(!post) return;
+  const edits = _getPostEdits();
+  if(edits[id]) post = Object.assign({}, post, edits[id]);
+
+  window._editingPostId = id;
+  const badge = document.getElementById('board-badge');
+  const ph = document.getElementById('center-ph');
+  const wb = document.getElementById('write-cat-badge');
+  if(badge) badge.textContent = 'EDIT';
+  if(ph){ const t=ph.querySelector('.panel-title'); if(t) t.textContent='◆ EDIT'; }
+  if(wb) wb.textContent = CAT_LABELS[currentCat]||currentCat;
+  document.getElementById('write-title').value = post.title||'';
+  document.getElementById('write-body').value = post.body||'';
+  document.getElementById('write-img-input').value='';
+  document.getElementById('write-img-preview').innerHTML='';
+  document.getElementById('write-img-count').textContent='';
+  window._writeImgs=[];
+  showView('writeView');
+}
+
+function deletePost(){
+  const id = _currentDetailId;
+  if(!id) return;
+  if(!confirm('이 게시글을 삭제하시겠습니까?')) return;
+  // remove from BOARD_DATA
+  Object.keys(BOARD_DATA).forEach(cat=>{
+    BOARD_DATA[cat] = BOARD_DATA[cat].filter(p=>p.id!==id);
+  });
+  // save deleted id
+  const del = _getDeletedIds();
+  if(!del.includes(id)){ del.push(id); localStorage.setItem('team_post_deleted',JSON.stringify(del)); }
+  backToBoard();
 }
 
 function clearAllData(){
@@ -2229,6 +2296,7 @@ function backToIntro(){
 }
 
 function backToBoard(){
+  window._editingPostId = null;
   if(currentCat) goBoard(null);
   else backToIntro();
 }
@@ -2276,6 +2344,21 @@ function submitPost(){
   const body  = document.getElementById('write-body').value.trim();
   const author= document.getElementById('write-author').value.trim()||'anon';
   if(!title){ document.getElementById('write-title').focus(); return; }
+
+  // 수정 모드
+  if(window._editingPostId){
+    const id = window._editingPostId;
+    Object.values(BOARD_DATA).forEach(arr=>{
+      arr.forEach(p=>{ if(p.id===id){ p.title=title; p.body=body; } });
+    });
+    _savePostEdit(id, { title, body });
+    window._editingPostId = null;
+    _writeImgs=[];
+    openDetail(id);
+    return;
+  }
+
+  // 새 글 작성
   const cat = currentCat;
   if(!BOARD_DATA[cat]) BOARD_DATA[cat]=[];
   const id = Date.now();
