@@ -1603,6 +1603,15 @@
           <div id="dp-pages" style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:12px;"></div>
         </div>
 
+        <!-- S5: DEV TOOLS -->
+        <div class="dp-section">
+          <div class="dp-title">// DEV TOOLS</div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;">뷰 전환</div>
+          <div id="dp-views" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;"></div>
+          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:6px;">localStorage</div>
+          <div id="dp-ls-viewer" style="display:flex;flex-direction:column;gap:3px;"></div>
+        </div>
+
         <!-- S7: Claude 연결 -->
         <div class="dp-section">
           <div class="dp-title">// CLAUDE <span id="dp-claude-status" style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.3);">● 미연결</span></div>
@@ -2519,6 +2528,7 @@ function showDevPanel(){
   dpRenderLog();
   dpRenderPages();
   dpLoadCommits();
+  dpRenderDevTools();
   dpInitClaudeKey();
   showView('devPanelView');
 }
@@ -2633,6 +2643,50 @@ function dpRenderPages(){
       <div style="font-size:10px;font-weight:700;color:#00ff88;letter-spacing:1px;">${p.label}</div>
       <div style="font-size:9px;color:rgba(0,255,136,0.4);margin-top:2px;">${p.desc}</div>
     </a>`).join('');
+}
+
+function dpRenderDevTools(){
+  // 뷰 전환 버튼
+  const viewsEl = document.getElementById('dp-views');
+  if(viewsEl){
+    const views = [
+      {id:'introView', label:'INTRO'},
+      {id:'calendarView', label:'CALENDAR'},
+      {id:'boardView', label:'BOARD'},
+      {id:'chatView', label:'THREAD'},
+      {id:'memoView', label:'MEMO'},
+      {id:'galleryView', label:'GALLERY'},
+      {id:'noticeView', label:'NOTICE'},
+    ];
+    viewsEl.innerHTML = views.map(v=>`
+      <button class="dp-btn" style="padding:3px 9px;font-size:9px;letter-spacing:1px;"
+        onclick="showView('${v.id}')">${v.label}</button>`).join('');
+  }
+
+  // localStorage 뷰어
+  const lsEl = document.getElementById('dp-ls-viewer');
+  if(lsEl){
+    const keys = [
+      {key:'team_cal', label:'캘린더'},
+      {key:'team_chat', label:'THREAD 메시지'},
+      {key:'team_memos', label:'IDEA 메모'},
+      {key:'team_post_edits', label:'수정된 게시글'},
+      {key:'team_post_deleted', label:'삭제된 게시글'},
+      {key:'set_auth', label:'로그인 세션'},
+    ];
+    lsEl.innerHTML = keys.map(({key,label})=>{
+      const raw = localStorage.getItem(key);
+      let count = '—';
+      if(raw){ try{ const p=JSON.parse(raw); count=Array.isArray(p)?p.length+'개':typeof p==='object'?Object.keys(p).length+'개':'있음'; }catch(e){ count='있음'; } }
+      const dim = !raw;
+      return `<div style="display:flex;align-items:center;gap:6px;padding:4px 8px;border:1px solid rgba(0,255,136,${dim?'0.08':'0.15'});background:rgba(0,255,136,${dim?'0.01':'0.03'});">
+        <span style="flex:1;font-size:10px;color:rgba(0,255,136,${dim?'0.3':'0.7'});letter-spacing:.5px;">${label}</span>
+        <span style="font-size:10px;color:rgba(0,255,136,0.5);">${count}</span>
+        ${raw?`<button class="dp-btn" style="padding:1px 7px;font-size:9px;color:rgba(255,100,100,0.6);border-color:rgba(255,100,100,0.2);"
+          onclick="if(confirm('${label} 데이터를 초기화할까요?')){localStorage.removeItem('${key}');dpRenderDevTools();}">✕</button>`:''}
+      </div>`;
+    }).join('');
+  }
 }
 
 function dpLoadCommits(){
