@@ -3624,10 +3624,13 @@ function renderCalendar(){
     const isToday = (d===today.getDate()&&calMonth===today.getMonth()&&calYear===today.getFullYear());
     const hasEntry = entries[key]&&entries[key].length>0;
     const entryCount = hasEntry ? entries[key].length : 0;
+    const _tagS={'진행중':{c:'rgba(0,255,136,.8)',b:'rgba(0,255,136,.25)'},'완료':{c:'rgba(0,255,136,.8)',b:'rgba(0,255,136,.25)'},'보류':{c:'rgba(255,180,0,.8)',b:'rgba(255,180,0,.3)'},'검토요청':{c:'rgba(0,180,255,.8)',b:'rgba(0,180,255,.3)'},'예정':{c:'rgba(180,100,255,.8)',b:'rgba(180,100,255,.3)'}};
     const previews = hasEntry ? entries[key].slice(0,2).map(e=>{
-      const color = e.author==='K'?'#00ff88':'#44ccff';
-      const txt = (e.text||'').replace(/[\[\]]/g,'').slice(0,10);
-      return `<div style="font-size:9px;color:${color};opacity:0.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;line-height:1.5;text-align:center;">${txt}</div>`;
+      const raw=(e.text||'').replace(/[\[\]]/g,'');
+      const tag=Object.keys(_tagS).find(t=>raw.includes(t));
+      if(tag){const s=_tagS[tag];return `<div style="font-size:8px;color:${s.c};border:1px solid ${s.b};text-align:center;margin:1px 2px;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${tag}</div>`;}
+      const color=e.author==='K'?'#00ff88':'#44ccff';
+      return `<div style="font-size:8px;color:${color};opacity:0.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;padding:0 2px;text-align:center;">${raw.slice(0,8)}</div>`;
     }).join('') : '';
     html+=`<div onclick="openDay('${key}',${d})"
       style="min-height:52px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
