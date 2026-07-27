@@ -1209,6 +1209,7 @@
     <span data-cat="chat"     onclick="goBoard(this)">THREAD</span>
     <span data-cat="criteria" onclick="goBoard(this)">EXHIBIT</span>
     <span data-cat="idea"     onclick="goBoard(this)">IDEA</span>
+    <span data-cat="dev"      onclick="goBoard(this)">DEV</span>
     <span class="mb-home" onclick="backToIntro()">HOME</span>
     <span onclick="clearAllData()" style="color:rgba(255,60,60,0.6);border-left:1px solid rgba(255,60,60,0.15);letter-spacing:1.5px;" title="모든 게시글·채팅·메모 삭제">RESET</span>
   </div>
@@ -1757,11 +1758,13 @@ tickClock();
 // ══════════════════════════════════════════════════
 const CAT_LABELS = {
   notice:'공지', status:'작업 현황', handover:'로그',
-  idea:'아이디어/메모', question:'질문/논의', criteria:'전시/지원', history:'작업 이력'
+  idea:'아이디어/메모', question:'질문/논의', criteria:'전시/지원', history:'작업 이력',
+  dev:'개발'
 };
 const CAT_COLORS = {
   notice:'#ff6060', status:'#00ff88', handover:'#ffcc44',
-  idea:'#00ccff', question:'#ff88ff', criteria:'#88ffcc', history:'rgba(0,255,136,.45)'
+  idea:'#00ccff', question:'#ff88ff', criteria:'#88ffcc', history:'rgba(0,255,136,.45)',
+  dev:'#ff9944'
 };
 
 const BOARD_DATA = {
@@ -1771,29 +1774,39 @@ const BOARD_DATA = {
   idea: [],
   question: [],
   criteria: [],
-  history: []
+  history: [],
+  dev: []
 };
 
 let currentCat = null;
 
 // ── 공지 게시판 (하드코딩)
-BOARD_DATA.notice = [
+BOARD_DATA.notice = [];
+
+// ── DEV 게시판 초기 데이터
+BOARD_DATA.dev = [
   {
-    id: 8001, author: "SET", ago: "2025",
-    title: "SET는 사진을 찍는 작업이 아니다",
-    body: "SET는 사진을 찍는 작업이 아니다. 사진이 발생하는 조건을 측정하는 작업이다.\n\n집합(Set)에는 출구가 없다. 조건이 충족되면 반드시 귀속된다. 우리가 셔터를 누르는 행위도 마찬가지다. 취향이나 직관이라고 부르는 것들은 이미 제도, 언어, 환경이 선행 설계한 시선 구조 안에서 작동하는 반응에 가깝다. SET는 그 구조가 어디서 시작되어 어떤 경로로 촬영자를 통과하는지를 추적한다.\n\n방법론은 역산이다. 타인의 사진 아카이브를 해부해 반복 출현하는 형태 패턴을 추출하고, 그것을 지시문(DIR)으로 언어화한 뒤, 그 언어를 들고 직접 촬영한다. 지시문은 구조 조건만 기술한다. 미학적 방향은 없다. 촬영자는 가능한 한 장치의 매개자로 기능하도록 요청받는다.\n\n셀렉션에서 핵심은 통과한 사진이 아니라 충돌 지점이다. 언어가 현실을 완전히 포획하지 못하는 순간, 지시문의 조건이 실제 사진 안에서 어긋나거나 과잉되는 자리 — 그것이 이 작업이 실제로 기록하려는 것이다. Drop도 아카이빙된다.\n\n결론은 없다. 작업의 최종 상태는 완결이 아닌 유예다. 집합의 둘레를 계속 재는 것, 그 자체가 이 작업이다.",
+    id: 9001, author: "DEV", ago: "2026",
+    title: "team.html 파일 구조",
+    body: "모든 UI는 /Users/hazy/SET-github-pages/team.html 단일 파일에 있습니다.\n\n── 구조 ──\n\n<style> 영역\n  전체 CSS, 모바일 미디어쿼리(@media max-width:900px) 포함\n\n<body> HTML 구조\n  #app (grid: titlebar / menubar / col-center)\n  #pw-overlay — 비밀번호 화면\n  #lightbox — 사진 팝업 (현재 미사용)\n  #col-center — 메인 콘텐츠 영역\n    각 view: introView / calendarView / boardView / detailView\n             chatView / memoView / galleryView / noticeView / photoView\n\n<script> 영역\n  BOARD_DATA — 게시판 데이터 객체\n  CAT_LABELS / CAT_COLORS — 카테고리 이름·색상\n  _HANDOVER_INLINE — LOG 인라인 데이터 (37개)\n  BOARD_DATA.dev — DEV 게시판 데이터\n  renderBoard() — 게시판 렌더링 함수\n  showView() — 뷰 전환 함수\n  goBoard() — 메뉴 클릭 핸들러",
     imgs: []
   },
   {
-    id: 8002, author: "SET", ago: "2025",
-    title: "작업 프로세스",
-    body: "0단계 — 사진 수집·분류\n인터넷, 아카이브, 전시 등에서 타인의 사진을 수집한다. 수집 시 작가 편중 없도록 다양성 체크. 수집된 사진을 5개 카테고리로 분류한다 — 인물전면 / 인물배경 / 공간구조 / 사물클로즈업 / 판단불가.\n\n1단계 — 1차 문법 생성\n각 카테고리별로 SVA(Sequential Vision Autopsy)를 진행한다. 추측·미학·감정 해석 완전 배제. 형태학적 데이터만 추출. DS(지배구조) · SD(공간분포) · SA(표면이상) · KV(핵심변수) 4개 축으로 분석. 반복 등장하는 시각 패턴에서 1차 문법 추출.\n\n2단계 — 2차 문법 생성\n1차 문법의 금지 구조 또는 구조적 디테일 층위에서 파생. 1차와의 관계를 중복·공존·독립으로 분류. 2차 문법이 1차와 충돌하면 2차 우선.\n\n3단계 — 지시문(DIR) 생성\n문법을 현장에서 쓸 수 있는 촬영 지시문으로 변환. 중복 처리(직접 중복은 2차 우선, 공존은 병기). 지시문은 구조 조건만 기술 — 미학적 방향 배제.\n\n4단계 — 촬영\n지시문 카드를 들고 촬영. 언어 조건과 실제 사진 사이의 오차·한계를 반복하며 좁혀간다.\n\n5단계 — 셀렉션\n층 0(판독 가능) → 층 1(DIR 작동 여부) → 층 2(간섭 진단) 순서로 판정. Core / Support / 보류 / Drop으로 분류. Drop도 기록 — 낙방 이유 자체가 아카이빙 대상.\n\n6단계 — 검증·기록\n통과 사진과 Drop 사유를 함께 기록. 지시문과 결과물 인덱스 매칭. 다음 회차 문법 수정 여부 검토.",
+    id: 9002, author: "DEV", ago: "2026",
+    title: "데이터 저장 방식",
+    body: "── localStorage (브라우저에 저장, 기기별) ──\n\nteam_cal — 캘린더 일정 데이터 (JSON)\nds-data — DATA STATUS 항목들 (JSON)\ntl-items — TIMELINE 항목들 (JSON)\nteam_chat — THREAD 메시지들 (JSON)\nteam_memos — IDEA 메모들 (JSON)\nset_auth — 로그인 세션 (sessionStorage)\n\n── 하드코딩 (HTML 파일 내) ──\n\nBOARD_DATA.notice — GUIDE 게시글\nBOARD_DATA.dev — DEV 게시글 (이 게시판)\n_HANDOVER_INLINE — LOG 게시글 37개\n\n── GitHub Pages (photos.json) ──\n\ngallery 사진 데이터 — 외부 JSON 파일에서 fetch\n파일 경로: /photos.json (또는 설정된 경로)",
     imgs: []
   },
   {
-    id: 8003, author: "SET", ago: "2025",
-    title: "채널 가이드",
-    body: "SCHEDULE — 촬영 일정, 셀렉 마감, 전시·제출 일정을 등록합니다.\n\nGUIDE — 이 페이지. 팀 규칙과 작업 흐름 안내.\n\nSTATUS — 현재 어느 단계가 진행 중인지, 카테고리별 진도를 업데이트합니다.\n\nLOG — 작업 중단 시 현재 상태·보류 목록·다음 할 일을 반드시 남기고 나갑니다.\n\nTHREAD — 판정이 애매한 사진은 여기에 올립니다. 사진 + 현재 생각 + 질문 세트로 올려주세요.\n\nEXHIBIT — Core/Support/Drop 판정 기준과 DIR 코드 전체 목록. 판단 전 반드시 확인.\n\nIDEA — 촬영 중 떠오른 아이디어, 문법 후보, 자유 메모.",
+    id: 9003, author: "DEV", ago: "2026",
+    title: "수정 → 커밋 방법",
+    body: "Claude Code(AI)가 team.html을 직접 편집합니다.\n수정 후 git 커밋해달라고 하면 GitHub Pages에 반영됩니다.\n\n── 반영 흐름 ──\n\n1. 대화로 수정 요청\n2. Claude가 team.html 편집\n3. 브라우저 미리보기 확인\n4. \"커밋\" 이라고 말하면 자동 커밋\n5. GitHub Actions가 배포 (보통 1~2분)\n\n── 주요 경로 ──\n\n로컬: /Users/hazy/SET-github-pages/team.html\n원격: github.com → SET-github-pages → main 브랜치\n\n── 현재 브랜치 상태 확인 ──\n\ngit log --oneline -5\ngit status",
+    imgs: []
+  },
+  {
+    id: 9004, author: "DEV", ago: "2026",
+    title: "새 게시글 추가하는 법",
+    body: "DEV 게시판 포함 하드코딩 게시글은 team.html 안의 BOARD_DATA.dev 배열에 직접 추가합니다.\n\n── 형식 ──\n\n{\n  id: 9005,           // 고유 번호\n  author: \"DEV\",      // 작성자 표시\n  ago: \"2026\",        // 날짜\n  title: \"제목\",\n  body: \"본문 내용\",\n  imgs: []\n}\n\n── 요청 방법 ──\n\n\"DEV 게시판에 [제목]으로 [내용] 올려줘\" 라고 말하면\nClaude가 직접 파일에 추가하고 커밋합니다.\n\nLOG 게시판은 _HANDOVER_INLINE 배열에 같은 방식으로 추가합니다.",
     imgs: []
   }
 ];
