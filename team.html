@@ -2088,7 +2088,9 @@ function renderGalleryPage(){
       const img = document.createElement('img');
       img.src = thumb || full;
       img.dataset.full = full;
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);';
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg);transition:filter .3s;';
+      img.onmouseover = function(){ this.style.filter='none'; };
+      img.onmouseout = function(){ this.style.filter='brightness(0.6) saturate(0) sepia(1) hue-rotate(90deg)'; };
       img.onerror = function(){ if(!this._fb){ this._fb=1; this.src=this.dataset.full; } };
       thumbDiv.appendChild(img);
     }
