@@ -2266,7 +2266,7 @@ function _renderSelecPanel(){
   if(!num) return;
   if(!_selecData){ _sysLog('[SELEC] 데이터 로드 중…','ok'); return; }
   const d = _selecData[num];
-  if(!d){ _sysLog(`[SELEC] DSCF${num} — 기록 없음`,'warn'); return; }
+  if(!d){ return; }
   const vMap = {core:'🟢 CORE', support:'🟡 SUPPORT', hold:'❓ 보류', drop:'🔴 DROP'};
   const label = vMap[d.v] || d.v;
   const logType = d.v==='core'?'ok':d.v==='drop'?'warn':'ok';
