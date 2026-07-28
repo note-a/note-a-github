@@ -3853,10 +3853,14 @@ function editChatMsg(id){
   if(v===null||v.trim()==='') return;
   m.text=v.trim();
   _saveChatMsgs(msgs);
+  clearTimeout(_fbSyncTimers['team_chat']);
+  _fbSyncKey('team_chat');
   renderChat();
 }
 function deleteChatMsg(id){
   _saveChatMsgs(_getChatMsgs().filter(m=>m.id!==id));
+  clearTimeout(_fbSyncTimers['team_chat']);
+  _fbSyncKey('team_chat');
   renderChat();
 }
 
