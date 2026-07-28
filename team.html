@@ -2138,14 +2138,22 @@ let _detailPhotos = [];
 let detailPage = 0;
 const DETAIL_PAGE_SIZE = 12;
 
-function showMonthDetail(month){
+async function showMonthDetail(month){
   _detailMonth = month;
-  _detailPhotos = (month.children || [])
+  const allPhotos = (month.children || [])
     .flatMap(s => s.type==='sheet' ? (s.children||[]) : [s])
     .filter(p => p.filename || p.url);
   detailPage = 0;
-  renderDetailPage();
   showView('detailView');
+  const sel = await _loadSelecData();
+  _detailPhotos = allPhotos.filter(p => {
+    const num = _selecNum(p.filename || p.url || '');
+    if(!num) return true;
+    const d = sel[num];
+    if(!d) return true;
+    return d.v==='core' || d.v==='support';
+  });
+  renderDetailPage();
 }
 
 function renderDetailPage(){
