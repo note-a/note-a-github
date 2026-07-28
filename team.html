@@ -4164,7 +4164,14 @@ function _fbInit(){
       _fbLoading = true;
       const _FB_ARR = new Set(['team_chat','team_memos','team_feed','tl-items']);
       _FB_KEYS.forEach(k => {
-        if(data[k] == null) return;
+        if(data[k] == null) {
+          // Firebase에 없고 로컬에 데이터 있으면 자동 업로드
+          const localRaw = localStorage.getItem(k);
+          if(localRaw && localRaw !== '[]' && localRaw !== '{}' && localRaw !== 'null'){
+            setTimeout(() => _fbSyncKey(k), 800 + Math.random()*400);
+          }
+          return;
+        }
         let val = data[k];
         if(k === 'team_cal' && val && typeof val === 'object'){
           if(Array.isArray(val)){
