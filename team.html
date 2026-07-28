@@ -4171,11 +4171,7 @@ function _fbInit(){
       const _FB_ARR = new Set(['team_chat','team_memos','team_feed','tl-items']);
       _FB_KEYS.forEach(k => {
         if(data[k] == null) {
-          // Firebase에 없고 로컬에 데이터 있으면 자동 업로드
-          const localRaw = localStorage.getItem(k);
-          if(localRaw && localRaw !== '[]' && localRaw !== '{}' && localRaw !== 'null'){
-            setTimeout(() => _fbSyncKey(k), 800 + Math.random()*400);
-          }
+          if(_FB_ARR.has(k)) _origSetItem(k, '[]');
           return;
         }
         let val = data[k];
