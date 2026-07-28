@@ -2136,7 +2136,7 @@ function loadGalleryGrid(autoOpen){
 let _detailMonth = null;
 let _detailPhotos = [];
 let detailPage = 0;
-const DETAIL_PAGE_SIZE = 12;
+const DETAIL_PAGE_SIZE = 24;
 
 function showMonthDetail(month){
   _detailMonth = month;
@@ -2186,7 +2186,7 @@ function renderDetailPage(){
     } else {
       const allUrls = all.map(p => p.filename || p.url || '');
       window._pvAllPhotos = allUrls;
-      let html = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px;">';
+      let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:4px;">';
       slice.forEach((p, li) => {
         const full = p.filename || p.url || '';
         const thumb = full ? full.replace(/\/DSCF([^/]+)\.(jpg|JPG)$/, '/t/DSCF$1.jpg') : '';
