@@ -2251,24 +2251,39 @@ function renderPhotoView(){
   if(next){ next.disabled = _pvIndex>=photos.length-1; next.style.opacity = _pvIndex>=photos.length-1?'0.3':'1'; }
   _renderSelecPanel();
 }
+function _selecNum(url){
+  const m = (url||'').match(/DSCF(\d{4,5})/i);
+  return m ? String(parseInt(m[1],10)) : null;
+}
 function _renderSelecPanel(){
   if(!window._sysLog) return;
   const photos = window._pvAllPhotos || [];
   const url = photos[_pvIndex] || '';
-  const numMatch = url.match(/DSCF(\d{4,5})/i);
-  const num = numMatch ? numMatch[1] : null;
+  const num = _selecNum(url);
   if(!num) return;
   if(!_selecData){ _sysLog('[SELEC] 데이터 로드 중…','ok'); return; }
   const d = _selecData[num];
   if(!d){ _sysLog(`[SELEC] DSCF${num} — 기록 없음`,'warn'); return; }
   const vMap = {core:'🟢 CORE', support:'🟡 SUPPORT', hold:'❓ 보류', drop:'🔴 DROP'};
   const label = vMap[d.v] || d.v;
-  _sysLog(`[SELEC] DSCF${num} ${label}${d.d?' · '+d.d:''}`, d.v==='core'?'ok':d.v==='drop'?'warn':'ok');
-  if(d.r) _sysLog(`  ▸ ${d.r}`, 'ok');
+  const logType = d.v==='core'?'ok':d.v==='drop'?'warn':'ok';
+  _sysLog(`[SELEC] DSCF${num} ${label}${d.d?' · '+d.d:''}`, logType);
+  if(d.r) _sysLog(`  ▸ ${d.r}`, logType);
+}
+function _selecVisible(url){
+  if(!_selecData) return true;
+  const num = _selecNum(url);
+  if(!num) return true;
+  const d = _selecData[num];
+  if(!d) return true;
+  return d.v==='core'||d.v==='support';
 }
 function photoViewNav(dir){
   const photos = window._pvAllPhotos || [];
-  _pvIndex = Math.max(0, Math.min(photos.length-1, _pvIndex+dir));
+  let idx = _pvIndex + dir;
+  while(idx>=0 && idx<photos.length && !_selecVisible(photos[idx])) idx+=dir;
+  if(idx<0||idx>=photos.length) return;
+  _pvIndex = idx;
   renderPhotoView();
 }
 function backToDetail(){
