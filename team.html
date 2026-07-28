@@ -2313,7 +2313,7 @@ function goBoard(spanEl){
   if(cat==='idea'){    showMemoView(); return; }
   if(cat==='chat'){    showChatView(); return; }
   if(cat==='calendar'){ showView('calendarView'); renderCalendar(); return; }
-  if(cat==='status'){   showView('galleryView'); loadGalleryGrid(true); return; }
+  if(cat==='status'){   showView('galleryView'); loadGalleryGrid(); return; }
   if(cat==='notice'){   showNoticeView(); return; }
 
   if(cat==='handover'){
@@ -4141,11 +4141,22 @@ function _fbInit(){
       if(window._sysLog) _sysLog('[SYNC] Firebase 연결됨','ok');
       if(!data) return;
       _fbLoading = true;
-      const _FB_ARR = new Set(['team_chat','team_memos','team_feed','team_cal','tl-items']);
+      const _FB_ARR = new Set(['team_chat','team_memos','team_feed','tl-items']);
       _FB_KEYS.forEach(k => {
         if(data[k] == null) return;
         let val = data[k];
-        if(_FB_ARR.has(k) && val && typeof val === 'object' && !Array.isArray(val)){
+        if(k === 'team_cal' && val && typeof val === 'object'){
+          // 날짜 키는 그대로 유지, 각 날짜별 내부 배열만 복원
+          const restored = {};
+          Object.entries(val).forEach(([date, arr]) => {
+            if(arr && typeof arr === 'object' && !Array.isArray(arr)){
+              restored[date] = Object.keys(arr).map(Number).sort((a,b)=>a-b).map(i=>arr[i]).filter(v=>v!=null);
+            } else {
+              restored[date] = Array.isArray(arr) ? arr : [];
+            }
+          });
+          val = restored;
+        } else if(_FB_ARR.has(k) && val && typeof val === 'object' && !Array.isArray(val)){
           val = Object.keys(val).map(Number).sort((a,b)=>a-b).map(i=>val[i]).filter(v=>v!=null);
         }
         _origSetItem(k, JSON.stringify(val));
