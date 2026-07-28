@@ -3826,6 +3826,8 @@ function sendChat(){
     const ts=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     msgs.push({text,author:chatAuthor,ts,id:Date.now()});
     localStorage.setItem('team_chat',JSON.stringify(msgs.slice(-200)));
+    clearTimeout(_fbSyncTimers['team_chat']);
+    _fbSyncKey('team_chat');
   } catch(e) {
     if(!window._chatFallback) window._chatFallback=[];
     const now=new Date();
