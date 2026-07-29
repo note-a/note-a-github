@@ -1595,12 +1595,21 @@
       <!-- DEV PANEL VIEW -->
       <div id="devPanelView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000;">
 
-        <!-- LIVE MONITOR -->
+        <!-- PROJECT STATUS BOARD -->
         <div class="dp-section">
           <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
-            <span>// LIVE MONITOR</span>
-            <span id="dp-monitor-clock" style="font-size:9px;color:rgba(0,255,136,0.28);font-family:'Space Mono',monospace;letter-spacing:1px;"></span>
+            <span>// PROJECT STATUS</span>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <span id="dp-monitor-clock" style="font-size:9px;color:rgba(0,255,136,0.28);font-family:'Space Mono',monospace;letter-spacing:1px;"></span>
+              <button class="dp-btn" style="padding:1px 7px;font-size:8px;" onclick="dpRenderProjectStatus()">↺</button>
+            </div>
           </div>
+          <div id="dp-project-status" style="margin-top:8px;"></div>
+        </div>
+
+        <!-- LIVE MONITOR -->
+        <div class="dp-section">
+          <div class="dp-title">// LIVE MONITOR</div>
           <div id="dp-live-monitor" style="margin-top:6px;"></div>
         </div>
 
@@ -2784,6 +2793,7 @@ function showDevPanel(){
   dpInitClaudeKey();
   dpInitGhToken();
   showView('devPanelView');
+  dpRenderProjectStatus();
   _dpStartMonitor();
 }
 
@@ -3240,9 +3250,104 @@ function dpLoadCommits(){
           <text x="27" y="${y+8}" font-family="'Space Mono',monospace" font-size="9.5" fill="${msgFill}">${msg}</text>
         `;
       }).join('');
-      el.innerHTML = `<svg width="100%" height="${svgH}" viewBox="0 0 320 ${svgH}" preserveAspectRatio="xMidYMid meet" style="overflow:visible;display:block;">${rows}</svg>`;
+      el.innerHTML = `<div style="position:relative;padding-left:22px;">${rows}</div>`;
     })
     .catch(()=>{ el.innerHTML='<span style="font-size:10px;color:rgba(255,68,68,0.5);">네트워크 오류</span>'; });
+}
+
+const _DP_STATUS_DEFAULTS = [
+  { key:'THREAD',   label:'채팅 / 스레드',   design:2, impl:85 },
+  { key:'STATUS',   label:'사진 현황',        design:2, impl:80 },
+  { key:'SCHEDULE', label:'일정 관리',        design:1, impl:75 },
+  { key:'EXHIBIT',  label:'전시 게시판',      design:1, impl:70 },
+  { key:'GUIDE',    label:'가이드 공지',      design:2, impl:70 },
+  { key:'IDEA',     label:'아이디어 메모',    design:0, impl:50 },
+  { key:'DEV',      label:'개발 대시보드',    design:1, impl:60 },
+  { key:'FIREBASE', label:'DB 동기화',        design:2, impl:90 },
+];
+
+function _dpGetProgress(){
+  try { return JSON.parse(localStorage.getItem('team_dev_progress')||'null') || _DP_STATUS_DEFAULTS.map(d=>({...d})); }
+  catch(e){ return _DP_STATUS_DEFAULTS.map(d=>({...d})); }
+}
+function _dpSaveProgress(rows){ localStorage.setItem('team_dev_progress', JSON.stringify(rows)); }
+
+function dpAdjustImpl(key, delta){
+  const rows = _dpGetProgress();
+  const r = rows.find(x=>x.key===key);
+  if(!r) return;
+  r.impl = Math.max(0, Math.min(100, r.impl + delta));
+  _dpSaveProgress(rows);
+  dpRenderProjectStatus();
+}
+function dpCycleDesign(key){
+  const rows = _dpGetProgress();
+  const r = rows.find(x=>x.key===key);
+  if(!r) return;
+  r.design = (r.design + 1) % 3;
+  _dpSaveProgress(rows);
+  dpRenderProjectStatus();
+}
+
+function dpRenderProjectStatus(){
+  const el = document.getElementById('dp-project-status');
+  if(!el) return;
+  const rows = _dpGetProgress();
+
+  const ls = (k, isObj)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); if(v==null) return 0; return isObj?Object.keys(v).length:(Array.isArray(v)?v.length:1); }catch(e){ return 0; } };
+  const liveData = {
+    THREAD:   ls('team_chat') + ' msg',
+    STATUS:   '438 files',
+    SCHEDULE: ls('team_cal', true) + ' 일',
+    EXHIBIT:  ls('team_user_posts') + ' posts',
+    GUIDE:    localStorage.getItem('team_notice') ? '공지 있음' : '—',
+    IDEA:     ls('team_memos') + ' 개',
+    DEV:      (typeof _dpErrors!=='undefined'?_dpErrors.length:0) + ' err',
+    FIREBASE: (()=>{ const e=document.getElementById('dp-gh-status'); return e&&e.textContent.includes('연결')? 'ONLINE':'OFFLINE'; })(),
+  };
+
+  const designIcon = d => ['○','◐','●'][d] || '○';
+  const designColor = d => ['rgba(0,255,136,0.2)','rgba(0,255,136,0.55)','rgba(0,255,136,0.9)'][d] || 'rgba(0,255,136,0.2)';
+
+  const gauge = (pct, w=14)=>{
+    const f = Math.round(pct/100*w);
+    return `<span style="letter-spacing:-0.5px;color:rgba(0,255,136,0.75);">${'█'.repeat(f)}</span><span style="letter-spacing:-0.5px;color:rgba(0,255,136,0.12);">${'░'.repeat(w-f)}</span>`;
+  };
+
+  el.innerHTML = `
+    <div style="font-family:'Space Mono',monospace;font-size:9px;">
+      <!-- 헤더 -->
+      <div style="display:grid;grid-template-columns:70px 24px 1fr 70px;gap:4px;align-items:center;
+                  color:rgba(0,255,136,0.28);letter-spacing:1px;font-size:7.5px;
+                  border-bottom:1px solid rgba(0,255,136,0.1);padding-bottom:5px;margin-bottom:5px;">
+        <span>기능</span>
+        <span style="text-align:center;">설계</span>
+        <span>완성도</span>
+        <span style="text-align:right;">데이터</span>
+      </div>
+      <!-- 행 -->
+      ${rows.map(r=>{
+        const data = liveData[r.key] || '—';
+        return `
+        <div style="display:grid;grid-template-columns:70px 24px 1fr 70px;gap:4px;align-items:center;
+                    padding:4px 0;border-bottom:1px solid rgba(0,255,136,0.05);">
+          <span style="color:rgba(0,255,136,0.6);font-size:8.5px;letter-spacing:1px;">${r.key}</span>
+          <span style="text-align:center;cursor:pointer;font-size:12px;color:${designColor(r.design)};line-height:1;"
+                onclick="dpCycleDesign('${r.key}')" title="클릭: 설계상태 변경">${designIcon(r.design)}</span>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <span style="font-size:9.5px;">${gauge(r.impl)}</span>
+            <span style="color:rgba(0,255,136,0.5);font-size:8px;width:26px;">${r.impl}%</span>
+            <button onclick="dpAdjustImpl('${r.key}',-10)" style="background:none;border:1px solid rgba(0,255,136,0.15);color:rgba(0,255,136,0.4);font-size:8px;padding:0 4px;cursor:pointer;line-height:1.6;font-family:'Space Mono',monospace;">-</button>
+            <button onclick="dpAdjustImpl('${r.key}',10)"  style="background:none;border:1px solid rgba(0,255,136,0.15);color:rgba(0,255,136,0.4);font-size:8px;padding:0 4px;cursor:pointer;line-height:1.6;font-family:'Space Mono',monospace;">+</button>
+          </div>
+          <span style="color:rgba(0,255,136,0.4);font-size:8px;text-align:right;letter-spacing:.3px;">${data}</span>
+        </div>`;
+      }).join('')}
+      <div style="font-size:7.5px;color:rgba(0,255,136,0.18);margin-top:6px;letter-spacing:.5px;">
+        설계 ○미착수 ◐진행 ●완료 &nbsp;·&nbsp; 완성도 +/- 10% 조정 &nbsp;·&nbsp; localStorage 저장
+      </div>
+    </div>
+  `;
 }
 
 function dpRenderLiveMonitor(){
