@@ -4913,38 +4913,50 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
       const DONE_N = 20, WIP_N = 20;
       const dirCodes = window._DIR_CODES || [];
 
-      // 라이브 캔버스 — 메인 일시정지 후 팝업 전용 렌더
+      // 좌우 분할 레이아웃
+      const wrap = document.createElement('div');
+      wrap.style.cssText = 'display:grid;grid-template-columns:1fr 220px;gap:12px;height:560px;';
+      body.style.padding = '10px 12px';
+      body.appendChild(wrap);
+
+      // 왼쪽: 라이브 캔버스
       const cv = document.createElement('canvas');
-      cv.style.cssText = 'width:100%;height:700px;display:block;margin:0 0 14px;border:1px solid rgba(0,255,136,0.12);background:#000509;cursor:grab;';
-      body.appendChild(cv);
+      cv.style.cssText = 'width:100%;height:100%;display:block;border:1px solid rgba(0,255,136,0.12);background:#000509;cursor:grab;';
+      wrap.appendChild(cv);
       if(window._dirMainPause) window._dirMainPause();
       requestAnimationFrame(() => {
         if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv, {scale: 1.0});
       });
 
+      // 오른쪽: 통계 + 목록
+      const right = document.createElement('div');
+      right.style.cssText = 'display:flex;flex-direction:column;gap:8px;overflow:hidden;';
+      wrap.appendChild(right);
+
       // 요약 통계
       const summary = document.createElement('div');
-      summary.style.cssText = 'display:flex;gap:16px;margin-bottom:12px;font-size:9px;letter-spacing:1px;';
+      summary.style.cssText = 'display:flex;flex-direction:column;gap:4px;font-size:9px;letter-spacing:1px;padding-bottom:8px;border-bottom:1px solid rgba(0,255,136,0.1);flex-shrink:0;';
       summary.innerHTML = `
         <span style="color:#00ff88;">■ 완료 <b>${DONE_N}</b></span>
         <span style="color:#ffcc44;">■ 진행 <b>1</b></span>
         <span style="color:rgba(0,255,136,0.25);">■ 대기 <b>${dirCodes.length-DONE_N-1}</b></span>
-        <span style="color:rgba(0,255,136,0.4);">TOTAL <b>${dirCodes.length}</b></span>`;
-      body.appendChild(summary);
+        <span style="color:rgba(0,255,136,0.4);margin-top:2px;">TOTAL <b>${dirCodes.length}</b></span>`;
+      right.appendChild(summary);
 
-      // DIR 목록 그리드
+      // DIR 목록 (스크롤)
       const listDiv = document.createElement('div');
-      listDiv.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:2px 8px;';
+      listDiv.style.cssText = 'display:flex;flex-direction:column;gap:0;overflow-y:auto;flex:1;';
+      listDiv.style.cssText += 'scrollbar-width:thin;';
       dirCodes.forEach((name, i) => {
         const isDone = i < DONE_N, isWip = i === WIP_N;
         const col = isDone ? '#00ff88' : isWip ? '#ffcc44' : 'rgba(0,255,136,0.22)';
         const num = String(i+1).padStart(3,'0');
         const item = document.createElement('div');
-        item.style.cssText = `font-size:8px;color:${col};letter-spacing:.5px;display:flex;align-items:center;gap:4px;padding:2px 0;border-bottom:1px solid rgba(0,255,136,0.04);`;
-        item.innerHTML = `<span style="width:4px;height:4px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span><span style="opacity:0.5;">${num}</span> ${name}`;
+        item.style.cssText = `font-size:8px;color:${col};letter-spacing:.5px;display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(0,255,136,0.04);`;
+        item.innerHTML = `<span style="width:4px;height:4px;border-radius:50%;background:${col};flex-shrink:0;"></span><span style="opacity:0.4;font-size:7px;">${num}</span> ${name}`;
         listDiv.appendChild(item);
       });
-      body.appendChild(listDiv);
+      right.appendChild(listDiv);
     });
   });
 
