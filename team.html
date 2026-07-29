@@ -3849,10 +3849,16 @@ async function dpSendClaude(){
   window._dirEdges = edges;
 
   // 캔버스 마운트 함수 — 여러 캔버스에 재사용 가능
+  // 공유 회전 상태 — 메인/팝업 캔버스가 같은 각도에서 시작
+  window._dirState = {rotY:0, rotX:0.18, zoom:1};
+
   window._mountDirGraph = function(cv) {
     const ctx = cv.getContext('2d');
     const DPR = window.devicePixelRatio||1;
-    let rotY=0, rotX=0.18, zoom=1;
+    // 현재 공유 상태에서 이어받기
+    let rotY = window._dirState.rotY;
+    let rotX = window._dirState.rotX;
+    let zoom  = window._dirState.zoom;
     let dragging=false, lx=0, ly=0, isRight=false;
     let rafId=null;
 
@@ -3937,6 +3943,10 @@ async function dpSendClaude(){
     });
 
     if(!dragging) rotY+=0.0025;
+    // 공유 상태 동기화 (팝업이 이 각도에서 시작할 수 있게)
+    window._dirState.rotY = rotY;
+    window._dirState.rotX = rotX;
+    window._dirState.zoom  = zoom;
     rafId=requestAnimationFrame(draw);
   }
 
