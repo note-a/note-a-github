@@ -1145,8 +1145,8 @@
     #panel-popup-overlay.open { display: flex; }
     #panel-popup-box {
       position: relative;
-      width: min(680px, 92vw);
-      max-height: 80vh;
+      width: min(860px, 95vw);
+      max-height: 90vh;
       display: flex; flex-direction: column;
       border: 1px solid rgba(0,255,136,0.35);
       background: linear-gradient(180deg, rgba(0,22,16,0.99) 0%, rgba(0,8,18,0.99) 100%);
@@ -4911,7 +4911,7 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
 
       // 라이브 캔버스
       const cv = document.createElement('canvas');
-      cv.style.cssText = 'width:100%;height:260px;display:block;margin:0 0 14px;border:1px solid rgba(0,255,136,0.1);background:#000;cursor:grab;';
+      cv.style.cssText = 'width:100%;height:460px;display:block;margin:0 0 14px;border:1px solid rgba(0,255,136,0.1);background:#000;cursor:grab;';
       body.appendChild(cv);
       // 팝업이 DOM에 붙은 후 마운트
       requestAnimationFrame(() => {
