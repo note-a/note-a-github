@@ -2651,7 +2651,14 @@ function submitPost(){
   const cat = currentCat;
   if(!BOARD_DATA[cat]) BOARD_DATA[cat]=[];
   const id = Date.now();
-  BOARD_DATA[cat].unshift({ id, author, title, body, ago:'방금', imgs: _writeImgs.slice() });
+  const newPost = { id, cat, author, title, body, ago:'방금', ts: id, imgs: _writeImgs.slice() };
+  BOARD_DATA[cat].unshift(newPost);
+  // localStorage + Firebase 저장
+  const userPosts = JSON.parse(localStorage.getItem('team_user_posts')||'[]');
+  userPosts.unshift(newPost);
+  localStorage.setItem('team_user_posts', JSON.stringify(userPosts.slice(0,200)));
+  clearTimeout(_fbSyncTimers['team_user_posts']);
+  _fbSyncKey('team_user_posts');
   _writeImgs=[];
   goBoard(null);
 }
@@ -4165,7 +4172,7 @@ function loadNotice(){
 // GitHub Sync
 // ══════════════════════════════════════════════════
 // ── Firebase Realtime Database Sync ──
-const _FB_KEYS = ['team_cal','team_chat','team_memos','team_feed','team_post_edits','team_post_deleted','tl-items','ds-data','team_notice','team_notice_ts'];
+const _FB_KEYS = ['team_cal','team_chat','team_memos','team_feed','team_post_edits','team_post_deleted','tl-items','ds-data','team_notice','team_notice_ts','team_user_posts'];
 let _fbDb = null, _fbLoading = false;
 const _fbSyncTimers = {};
 
@@ -4237,6 +4244,7 @@ function _fbInit(){
         _origSetItem(k, JSON.stringify(val));
       });
       _fbLoading = false;
+      try{ _loadUserPosts(); }catch(e){}
       try{ renderFeeds(); }catch(e){}
       try{ renderMemos(); }catch(e){}
       try{ renderChat(); }catch(e){}
@@ -4263,7 +4271,20 @@ function _fbSyncKey(key){
   }catch(e){}
 }
 
+function _loadUserPosts(){
+  try{
+    const posts = JSON.parse(localStorage.getItem('team_user_posts')||'[]');
+    const deleted = JSON.parse(localStorage.getItem('team_post_deleted')||'[]');
+    posts.forEach(p=>{
+      if(!p.cat||!p.id||deleted.includes(p.id)) return;
+      if(!BOARD_DATA[p.cat]) BOARD_DATA[p.cat]=[];
+      if(!BOARD_DATA[p.cat].find(x=>x.id===p.id)) BOARD_DATA[p.cat].unshift(p);
+    });
+  }catch(e){}
+}
+
 document.addEventListener('DOMContentLoaded', function(){
+  _loadUserPosts();
   renderFeeds();
   loadNotice();
   _fbInit();
