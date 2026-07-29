@@ -1609,11 +1609,13 @@
 
           <div class="dp-section" style="flex:1;min-width:0;display:flex;flex-direction:column;">
             <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
-              <span>// LOCALSTORAGE</span>
-              <button class="dp-btn" style="padding:1px 8px;font-size:8px;" onclick="dpRenderLsEditor()">↺</button>
+              <span>// ERROR MONITOR <span id="dp-err-count" style="color:rgba(255,80,80,0.6);font-size:9px;"></span></span>
+              <button class="dp-btn" style="padding:1px 7px;font-size:8px;" onclick="dpClearErrors()">clear</button>
             </div>
-            <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">키 조회·편집·삭제</div>
-            <div id="dp-ls-editor" style="display:flex;flex-direction:column;gap:4px;flex:1;"></div>
+            <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:8px;">JS 에러 실시간 캡처</div>
+            <div id="dp-errors" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px;">
+              <span style="font-size:10px;color:rgba(0,255,136,0.2);letter-spacing:.5px;">에러 없음</span>
+            </div>
           </div>
 
         </div>
@@ -1666,15 +1668,6 @@
         <div class="dp-section">
           <div class="dp-title">// DEV TOOLS</div>
           <div style="font-size:9px;color:rgba(0,255,136,0.28);letter-spacing:.5px;margin-bottom:10px;">JS 에러 자동 캡처 · 한 줄 표현식 실행</div>
-
-          <!-- 에러 모니터 -->
-          <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">
-            ERROR MONITOR <span id="dp-err-count" style="color:rgba(255,80,80,0.6);"></span>
-            <button class="dp-btn" style="padding:1px 7px;font-size:8px;margin-left:8px;" onclick="dpClearErrors()">clear</button>
-          </div>
-          <div id="dp-errors" style="max-height:100px;overflow-y:auto;margin-bottom:14px;display:flex;flex-direction:column;gap:3px;">
-            <span style="font-size:10px;color:rgba(0,255,136,0.2);letter-spacing:.5px;">에러 없음</span>
-          </div>
 
           <!-- JS REPL -->
           <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:5px;">JS REPL</div>
