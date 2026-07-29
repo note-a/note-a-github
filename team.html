@@ -3852,7 +3852,8 @@ async function dpSendClaude(){
   // 공유 회전 상태 — 메인/팝업 캔버스가 같은 각도에서 시작
   window._dirState = {rotY:0, rotX:0.18, zoom:1};
 
-  window._mountDirGraph = function(cv) {
+  window._mountDirGraph = function(cv, opts) {
+    const _scale = (opts && opts.scale) || 1;
     const ctx = cv.getContext('2d');
     const DPR = window.devicePixelRatio||1;
     // 현재 공유 상태에서 이어받기
@@ -3882,7 +3883,7 @@ async function dpSendClaude(){
       const z1=-n.x*Math.sin(rotY)+n.z*Math.cos(rotY);
       const y2=n.y*Math.cos(rotX)-z1*Math.sin(rotX);
       const z2=n.y*Math.sin(rotX)+z1*Math.cos(rotX);
-      const sc=Math.min(W,H)*0.48*zoom;
+      const sc=Math.min(W,H)*0.48*zoom*_scale;
       return {px:W/2+x1*sc,py:H/2+y2*sc,z:z2};
     }
 
@@ -4915,7 +4916,7 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
       body.appendChild(cv);
       // 팝업이 DOM에 붙은 후 마운트
       requestAnimationFrame(() => {
-        if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv);
+        if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv, {scale: 1.9});
       });
 
       // 요약 통계
