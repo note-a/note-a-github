@@ -1133,6 +1133,69 @@
       .op-row { flex-direction: column !important; }
       .kp-grid { grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
     }
+
+    /* ── 패널 팝업 모달 ── */
+    #panel-popup-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 8000;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(3px);
+      align-items: center; justify-content: center;
+    }
+    #panel-popup-overlay.open { display: flex; }
+    #panel-popup-box {
+      position: relative;
+      width: min(680px, 92vw);
+      max-height: 80vh;
+      display: flex; flex-direction: column;
+      border: 1px solid rgba(0,255,136,0.35);
+      background: linear-gradient(180deg, rgba(0,22,16,0.99) 0%, rgba(0,8,18,0.99) 100%);
+      box-shadow: 0 0 60px rgba(0,255,136,0.08), 0 30px 80px rgba(0,0,0,0.9);
+      animation: popupIn 0.18s ease forwards;
+    }
+    @keyframes popupIn {
+      from { opacity:0; transform: scale(0.96) translateY(8px); }
+      to   { opacity:1; transform: scale(1)    translateY(0); }
+    }
+    #panel-popup-box::before {
+      content:''; position:absolute; top:-1px; left:-1px;
+      width:14px; height:14px;
+      border-top:2px solid #00ff88; border-left:2px solid #00ff88;
+      z-index:2;
+    }
+    #panel-popup-box::after {
+      content:''; position:absolute; bottom:-1px; right:-1px;
+      width:14px; height:14px;
+      border-bottom:2px solid #00ff88; border-right:2px solid #00ff88;
+      z-index:2;
+    }
+    #panel-popup-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 12px;
+      border-bottom: 1px solid rgba(0,255,136,0.15);
+      background: rgba(0,18,12,0.8);
+      flex-shrink: 0;
+    }
+    #panel-popup-title {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 2px; color: #00ff88;
+      text-shadow: 0 0 8px rgba(0,255,136,0.4);
+    }
+    #panel-popup-close {
+      font-size: 10px; color: rgba(0,255,136,0.45);
+      cursor: pointer; letter-spacing: 1px; padding: 2px 6px;
+      border: 1px solid rgba(0,255,136,0.18);
+      transition: color 0.15s, border-color 0.15s;
+    }
+    #panel-popup-close:hover { color: #00ff88; border-color: rgba(0,255,136,0.5); }
+    #panel-popup-body {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 12px 14px;
+    }
+    #panel-popup-body::-webkit-scrollbar { width: 3px; }
+    #panel-popup-body::-webkit-scrollbar-thumb { background: rgba(0,255,136,0.2); }
+    .popup-clickable { cursor: pointer; }
+    .popup-clickable:hover .panel-header { border-bottom-color: rgba(0,255,136,0.3); }
   </style>
   <style>
     /* 마크다운 렌더 스타일 */
@@ -4770,6 +4833,159 @@ function cfgTlListRender(){
 
 dsRender();
 document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.key==='Enter') tlAdd(); });
+
+/* ── 패널 팝업 ── */
+(function(){
+  // 모달 HTML 삽입
+  const ov = document.createElement('div');
+  ov.id = 'panel-popup-overlay';
+  ov.innerHTML = `
+    <div id="panel-popup-box">
+      <div id="panel-popup-header">
+        <span id="panel-popup-title"></span>
+        <span id="panel-popup-close">[ESC] CLOSE</span>
+      </div>
+      <div id="panel-popup-body"></div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  const overlay = document.getElementById('panel-popup-overlay');
+  const popTitle = document.getElementById('panel-popup-title');
+  const popBody  = document.getElementById('panel-popup-body');
+  const popClose = document.getElementById('panel-popup-close');
+
+  function openPopup(title, buildFn) {
+    popTitle.textContent = title;
+    popBody.innerHTML = '';
+    buildFn(popBody);
+    overlay.classList.add('open');
+  }
+  function closePopup() {
+    overlay.classList.remove('open');
+  }
+
+  overlay.addEventListener('click', e => { if(e.target === overlay) closePopup(); });
+  popClose.addEventListener('click', closePopup);
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closePopup(); });
+
+  /* ── DATA STATUS 팝업 ── */
+  document.getElementById('panel-datastatus')?.addEventListener('click', function(e){
+    if(e.target.closest('button,a,input,textarea')) return;
+    openPopup('◆ DATA STATUS — DETAIL', body => {
+      // ds-body 내용 클론
+      const src = document.getElementById('ds-body');
+      if(src) {
+        const clone = src.cloneNode(true);
+        clone.style.cssText = 'padding:0;display:flex;flex-direction:column;gap:8px;';
+        body.appendChild(clone);
+      }
+      // 카테고리별 글 수 상세
+      const cats = ['notice','status','handover','idea','question','criteria','history','dev'];
+      const labels = {notice:'NOTICE',status:'STATUS',handover:'HANDOVER',idea:'IDEA',question:'QUESTION',criteria:'CRITERIA',history:'HISTORY',dev:'DEV'};
+      const table = document.createElement('div');
+      table.style.cssText = 'margin-top:14px;border-top:1px solid rgba(0,255,136,0.1);padding-top:12px;display:flex;flex-direction:column;gap:4px;';
+      table.innerHTML = '<div style="font-size:9px;letter-spacing:2px;color:rgba(0,255,136,0.4);margin-bottom:6px;">BOARD DATA COUNT</div>';
+      cats.forEach(c => {
+        const cnt = (window.BOARD_DATA && BOARD_DATA[c]) ? BOARD_DATA[c].length : 0;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;justify-content:space-between;font-size:10px;color:rgba(0,255,136,0.65);padding:2px 0;border-bottom:1px solid rgba(0,255,136,0.05);';
+        const bar = Math.round(cnt/5*100);
+        row.innerHTML = `<span style="letter-spacing:1px;">${labels[c]}</span><span style="display:flex;align-items:center;gap:8px;"><span style="width:60px;height:3px;background:rgba(0,255,136,0.1);display:inline-block;vertical-align:middle;"><span style="display:block;width:${Math.min(bar,100)}%;height:100%;background:#00ff88;"></span></span><span style="color:#00ff88;min-width:20px;text-align:right;">${cnt}</span></span>`;
+        table.appendChild(row);
+      });
+      body.appendChild(table);
+
+      // localStorage 사용량
+      let lsSize = 0;
+      try{ for(let k in localStorage) lsSize += (localStorage[k]||'').length + k.length; }catch(e){}
+      const lsKb = (lsSize/1024).toFixed(1);
+      const lsDiv = document.createElement('div');
+      lsDiv.style.cssText = 'margin-top:12px;font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:1px;';
+      lsDiv.textContent = `LOCALSTORAGE: ${lsKb} KB used`;
+      body.appendChild(lsDiv);
+    });
+  });
+
+  /* ── TIMELINE 팝업 ── */
+  document.getElementById('panel-timeline')?.addEventListener('click', function(e){
+    if(e.target.closest('button,a,input,textarea')) return;
+    openPopup('◆ TIMELINE — FULL', body => {
+      const src = document.getElementById('tl-list');
+      if(src) {
+        const clone = src.cloneNode(true);
+        clone.style.cssText = 'display:flex;flex-direction:column;gap:0;max-height:none;overflow:visible;padding:0;';
+        body.appendChild(clone);
+      }
+    });
+  });
+
+  /* ── SYSTEM LOG 팝업 ── */
+  document.getElementById('panel-log')?.addEventListener('click', function(e){
+    if(e.target.closest('button,a,input,textarea')) return;
+    openPopup('◆ SYSTEM LOG — FULL', body => {
+      const src = document.getElementById('log-body');
+      if(src) {
+        const clone = src.cloneNode(true);
+        clone.style.cssText = 'display:flex;flex-direction:column;gap:2px;max-height:none;overflow:visible;';
+        body.appendChild(clone);
+      }
+      // 통계
+      const total = document.getElementById('log-total')?.textContent || '0';
+      const err   = document.getElementById('log-err-count')?.textContent || '0';
+      const warn  = document.getElementById('log-warn-count')?.textContent || '0';
+      const stat = document.createElement('div');
+      stat.style.cssText = 'margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,255,136,0.1);display:flex;gap:20px;font-size:9px;letter-spacing:1px;';
+      stat.innerHTML = `<span style="color:rgba(0,255,136,0.5);">TOTAL: <span style="color:#00ff88;">${total}</span></span><span style="color:rgba(255,68,68,0.6);">ERR: <span style="color:rgba(255,68,68,0.9);">${err}</span></span><span style="color:rgba(255,204,0,0.6);">WARN: <span style="color:rgba(255,204,0,0.9);">${warn}</span></span>`;
+      body.appendChild(stat);
+    });
+  });
+
+  /* ── DIR STATUS 팝업 ── */
+  document.getElementById('panel-sys')?.addEventListener('click', function(e){
+    if(e.target.closest('button,a,input,textarea')) return;
+    openPopup('◆ DIR STATUS — DETAIL', body => {
+      // Legend
+      const legendSrc = document.querySelector('#panel-sys .dir-legend');
+      if(legendSrc) body.appendChild(legendSrc.cloneNode(true));
+
+      // 캔버스를 이미지로 변환
+      const srcCanvas = document.getElementById('dir-graph-cv');
+      if(srcCanvas) {
+        try {
+          const img = document.createElement('img');
+          img.src = srcCanvas.toDataURL();
+          img.style.cssText = 'width:100%;height:auto;display:block;margin:12px 0;border:1px solid rgba(0,255,136,0.1);';
+          body.appendChild(img);
+        } catch(e) {
+          // 새 캔버스에 재렌더
+          const newCv = document.createElement('canvas');
+          newCv.style.cssText = 'width:100%;height:260px;display:block;cursor:default;';
+          body.appendChild(newCv);
+        }
+      }
+
+      // DIR별 상태 리스트
+      if(window.DIRS_DATA) {
+        const listDiv = document.createElement('div');
+        listDiv.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:3px 10px;margin-top:8px;';
+        DIRS_DATA.forEach((d,i) => {
+          const num = String(i+1).padStart(3,'0');
+          const col = d.status==='done'?'#00ff88': d.status==='wip'?'#ffcc44':'rgba(0,255,136,0.2)';
+          const item = document.createElement('div');
+          item.style.cssText = `font-size:8px;color:${col};letter-spacing:.5px;display:flex;align-items:center;gap:4px;padding:2px 0;`;
+          item.innerHTML = `<span style="width:5px;height:5px;border-radius:50%;background:${col};flex-shrink:0;display:inline-block;"></span>${num} ${d.name||''}`;
+          listDiv.appendChild(item);
+        });
+        body.appendChild(listDiv);
+      } else {
+        const note = document.createElement('div');
+        note.style.cssText = 'font-size:9px;color:rgba(0,255,136,0.35);margin-top:8px;letter-spacing:1px;';
+        note.textContent = 'DIR 데이터 로드 중...';
+        body.appendChild(note);
+      }
+    });
+  });
+})();
 </script>
 </body>
 </html>
