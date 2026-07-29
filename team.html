@@ -3888,68 +3888,70 @@ async function dpSendClaude(){
     }
 
     function draw(){
-      const W=cv.offsetWidth,H=cv.offsetHeight;
-      if(W>0&&H>0&&(cv.width!==W*DPR||cv.height!==H*DPR)){cv.width=W*DPR;cv.height=H*DPR;}
-      const CW=cv.width/DPR,CH=cv.height/DPR;
-      if(CW<1||CH<1){rafId=requestAnimationFrame(draw);return;}
-      ctx.setTransform(DPR,0,0,DPR,0,0);
-      ctx.clearRect(0,0,CW,CH);
-      const p=nodes.map(n=>({...n,...proj3d(n,CW,CH)}));
-      [...edges].sort((a,b)=>(p[a.a].z+p[a.b].z)-(p[b.a].z+p[b.b].z)).forEach(e=>{
-        const na=p[e.a],nb=p[e.b];
-        const t=((na.z+nb.z)/2+1)/2;
-        const isHub=e.type==='hub'||e.a===NOW||e.b===NOW;
-        const isDD=e.type==='dd'&&e.a<DONE&&e.b<DONE;
-        let col,al,lw;
-        if(isHub){col='255,204,68';al=0.08+t*0.18;lw=0.45;}
-        else if(isDD){col='0,255,136';al=0.06+t*0.16;lw=0.4;}
-        else if(e.a<DONE||e.b<DONE){col='0,255,136';al=0.04+t*0.09;lw=0.35;}
-        else{col='0,255,136';al=0.02+t*0.05;lw=0.3;}
-        ctx.beginPath();ctx.strokeStyle=`rgba(${col},${al})`;ctx.lineWidth=lw;
-        ctx.moveTo(na.px,na.py);ctx.lineTo(nb.px,nb.py);ctx.stroke();
-      });
-      [...p].sort((a,b)=>a.z-b.z).forEach(n=>{
-        const t=(n.z+1)/2;
-        const isDone=n.i<DONE,isNow=n.i===NOW;
-        const r=isNow?2.2+t*0.6:isDone?1.0+t*0.5:0.7+t*0.4;
-        const al=isDone?0.5+t*0.5:0.15+t*0.35;
-        ctx.beginPath();ctx.arc(n.px,n.py,r,0,Math.PI*2);
-        if(isNow){
-          ctx.fillStyle=`rgba(255,204,68,${al})`;ctx.fill();
-          ctx.beginPath();ctx.arc(n.px,n.py,r+3.5,0,Math.PI*2);
-          ctx.strokeStyle=`rgba(255,204,68,${0.12*t})`;ctx.lineWidth=0.6;ctx.stroke();
-          const lsz=Math.max(4.5,Math.min(10,zoom*3));
-          ctx.font=`${lsz}px Space Mono`;ctx.fillStyle=`rgba(255,204,68,${al*0.9})`;
-          ctx.textAlign='center';ctx.fillText(DIR_CODES[NOW],n.px,n.py-r-lsz*0.7);
-        } else if(isDone){
-          ctx.fillStyle=`rgba(0,255,136,${al})`;ctx.fill();
-          if(zoom>=2){
-            const lsz=Math.max(4,Math.min(9,zoom*2.2));
-            ctx.font=`${lsz}px Space Mono`;
-            ctx.fillStyle=`rgba(0,255,136,${Math.min(1,al*(zoom-1.5))})`;
-            ctx.textAlign='center';
-            ctx.fillText(DIR_CODES[n.i],n.px,n.py-r-lsz*0.6);
+      // 캔버스가 DOM에서 제거됐으면 루프 종료
+      if(!cv.isConnected){ rafId=null; return; }
+      try {
+        const W=cv.offsetWidth,H=cv.offsetHeight;
+        if(W>0&&H>0&&(cv.width!==W*DPR||cv.height!==H*DPR)){cv.width=W*DPR;cv.height=H*DPR;}
+        const CW=cv.width/DPR,CH=cv.height/DPR;
+        if(CW>=1&&CH>=1){
+          ctx.setTransform(DPR,0,0,DPR,0,0);
+          ctx.clearRect(0,0,CW,CH);
+          const p=nodes.map(n=>({...n,...proj3d(n,CW,CH)}));
+          [...edges].sort((a,b)=>(p[a.a].z+p[a.b].z)-(p[b.a].z+p[b.b].z)).forEach(e=>{
+            const na=p[e.a],nb=p[e.b];
+            const t=((na.z+nb.z)/2+1)/2;
+            const isHub=e.type==='hub'||e.a===NOW||e.b===NOW;
+            const isDD=e.type==='dd'&&e.a<DONE&&e.b<DONE;
+            let col,al,lw;
+            if(isHub){col='255,204,68';al=0.08+t*0.18;lw=0.45;}
+            else if(isDD){col='0,255,136';al=0.06+t*0.16;lw=0.4;}
+            else if(e.a<DONE||e.b<DONE){col='0,255,136';al=0.04+t*0.09;lw=0.35;}
+            else{col='0,255,136';al=0.02+t*0.05;lw=0.3;}
+            ctx.beginPath();ctx.strokeStyle=`rgba(${col},${al})`;ctx.lineWidth=lw;
+            ctx.moveTo(na.px,na.py);ctx.lineTo(nb.px,nb.py);ctx.stroke();
+          });
+          [...p].sort((a,b)=>a.z-b.z).forEach(n=>{
+            const t=(n.z+1)/2;
+            const isDone=n.i<DONE,isNow=n.i===NOW;
+            const r=isNow?2.2+t*0.6:isDone?1.0+t*0.5:0.7+t*0.4;
+            const al=isDone?0.5+t*0.5:0.15+t*0.35;
+            ctx.beginPath();ctx.arc(n.px,n.py,r,0,Math.PI*2);
+            if(isNow){
+              ctx.fillStyle=`rgba(255,204,68,${al})`;ctx.fill();
+              ctx.beginPath();ctx.arc(n.px,n.py,r+3.5,0,Math.PI*2);
+              ctx.strokeStyle=`rgba(255,204,68,${0.12*t})`;ctx.lineWidth=0.6;ctx.stroke();
+              const lsz=Math.max(4.5,Math.min(10,zoom*3));
+              ctx.font=`${lsz}px Space Mono`;ctx.fillStyle=`rgba(255,204,68,${al*0.9})`;
+              ctx.textAlign='center';ctx.fillText(DIR_CODES[NOW],n.px,n.py-r-lsz*0.7);
+            } else if(isDone){
+              ctx.fillStyle=`rgba(0,255,136,${al})`;ctx.fill();
+              if(zoom>=2){
+                const lsz=Math.max(4,Math.min(9,zoom*2.2));
+                ctx.font=`${lsz}px Space Mono`;
+                ctx.fillStyle=`rgba(0,255,136,${Math.min(1,al*(zoom-1.5))})`;
+                ctx.textAlign='center';
+                ctx.fillText(DIR_CODES[n.i],n.px,n.py-r-lsz*0.6);
+              }
+            } else {
+              ctx.strokeStyle=`rgba(0,255,136,${al*0.5})`;ctx.lineWidth=0.5;ctx.stroke();
+              if(zoom>=3){
+                const lsz=Math.max(4,Math.min(8,zoom*1.8));
+                ctx.font=`${lsz}px Space Mono`;
+                ctx.fillStyle=`rgba(0,255,136,${Math.min(0.6,al*(zoom-2))})`;
+                ctx.textAlign='center';
+                ctx.fillText(DIR_CODES[n.i],n.px,n.py-r-lsz*0.6);
+              }
+            }
+          });
+          if(!dragging) rotY+=0.0025;
+          window._dirState.rotY=rotY;
+          window._dirState.rotX=rotX;
+          window._dirState.zoom=zoom;
         }
-      } else {
-        ctx.strokeStyle=`rgba(0,255,136,${al*0.5})`; ctx.lineWidth=0.5;
-        ctx.stroke();
-        if(zoom>=3){
-          const lsz=Math.max(4,Math.min(8,zoom*1.8));
-          ctx.font=`${lsz}px Space Mono`;
-          ctx.fillStyle=`rgba(0,255,136,${Math.min(0.6,al*(zoom-2))})`;
-          ctx.textAlign='center';
-          ctx.fillText(DIR_CODES[n.i],n.px,n.py-r-lsz*0.6);
-        }
-      }
-    });
-
-    if(!dragging) rotY+=0.0025;
-    // 공유 상태 동기화 (팝업이 이 각도에서 시작할 수 있게)
-    window._dirState.rotY = rotY;
-    window._dirState.rotX = rotX;
-    window._dirState.zoom  = zoom;
-    rafId=requestAnimationFrame(draw);
-  }
+      } catch(e){ /* 에러 무시 — 루프 유지 */ }
+      rafId=requestAnimationFrame(draw);
+    }
 
     draw();
     // 팝업에서 cleanup용
