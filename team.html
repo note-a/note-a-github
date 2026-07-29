@@ -1145,8 +1145,8 @@
     #panel-popup-overlay.open { display: flex; }
     #panel-popup-box {
       position: relative;
-      width: min(860px, 95vw);
-      max-height: 90vh;
+      width: min(640px, 92vw);
+      max-height: 75vh;
       display: flex; flex-direction: column;
       border: 1px solid rgba(0,255,136,0.35);
       background: linear-gradient(180deg, rgba(0,22,16,0.99) 0%, rgba(0,8,18,0.99) 100%);
@@ -4915,7 +4915,7 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
 
       // 좌우 분할 레이아웃
       const wrap = document.createElement('div');
-      wrap.style.cssText = 'display:grid;grid-template-columns:1fr 220px;gap:12px;height:560px;';
+      wrap.style.cssText = 'display:grid;grid-template-columns:1fr 180px;gap:10px;height:380px;';
       body.style.padding = '10px 12px';
       body.appendChild(wrap);
 
