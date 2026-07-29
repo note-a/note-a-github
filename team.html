@@ -2332,8 +2332,18 @@ function goBoard(spanEl){
 
   if(cat==='idea'){    showMemoView(); return; }
   if(cat==='chat'){    showChatView(); return; }
-  if(cat==='calendar'){ showView('calendarView'); renderCalendar(); return; }
-  if(cat==='status'){   showView('galleryView'); loadGalleryGrid(); return; }
+  if(cat==='calendar'){
+    showView('calendarView'); renderCalendar();
+    const ph=document.getElementById('center-ph');
+    if(ph){const t=ph.querySelector('.panel-title');if(t)t.textContent='◆ SCHEDULE';}
+    return;
+  }
+  if(cat==='status'){
+    showView('galleryView'); loadGalleryGrid();
+    const ph=document.getElementById('center-ph');
+    if(ph){const t=ph.querySelector('.panel-title');if(t)t.textContent='◆ STATUS';}
+    return;
+  }
   if(cat==='notice'){   showNoticeView(); return; }
 
   if(cat==='handover'){
@@ -2966,9 +2976,11 @@ function dpInitGhToken(){
 const _dpErrors = [];
 function _dpAddError(msg, src, line){
   const ts = new Date().toTimeString().slice(0,8);
-  _dpErrors.unshift({ts, msg: String(msg), src: src?String(src).split('/').pop():'', line});
+  const srcShort = src ? String(src).split('/').pop() : '';
+  _dpErrors.unshift({ts, msg: String(msg), src: srcShort, line});
   if(_dpErrors.length > 20) _dpErrors.pop();
   _dpFlushErrors();
+  if(window._sysLog) _sysLog(`[ERR] ${String(msg).slice(0,80)}${srcShort?' · '+srcShort+(line?':'+line:''):''}`, 'warn');
 }
 function _dpFlushErrors(){
   const el = document.getElementById('dp-errors');
@@ -3708,7 +3720,7 @@ function renderCalendar(){
       </div>`;
     }).join('') : '';
     html+=`<div onclick="openDay('${key}',${d})"
-      style="min-height:36px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
+      style="min-height:54px;padding:2px;border:1px solid ${isToday?'rgba(0,255,136,0.4)':'rgba(0,255,136,0.06)'};
              background:${isToday?'rgba(0,255,136,0.06)':hasEntry?'rgba(0,255,136,0.03)':'transparent'};
              cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;
              transition:background 0.15s;overflow:hidden;"
