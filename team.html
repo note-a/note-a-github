@@ -4124,7 +4124,11 @@ function dayTagInsert(tag){
 function saveDayEntry(){
   const inp=document.getElementById('day-input');
   const text=(inp.value||'').trim();
-  if(!text||!currentDayKey) return;
+  if(!text) return;
+  if(!currentDayKey){
+    const td=new Date();
+    currentDayKey=`${td.getFullYear()}-${String(td.getMonth()+1).padStart(2,'0')}-${String(td.getDate()).padStart(2,'0')}`;
+  }
   let all=JSON.parse(localStorage.getItem('team_cal')||'{}');
   if(typeof all!=='object'||Array.isArray(all)) all={};
   if(!all[currentDayKey]) all[currentDayKey]=[];
@@ -4134,6 +4138,8 @@ function saveDayEntry(){
   inp.value='';
   renderDayEntries();
   if(window._sysLog) window._sysLog(`[CAL] ${dayAuthor} · ${currentDayKey} · ${text.slice(0,25)}…`,'ok');
+  clearTimeout(_fbSyncTimers['team_cal']);
+  _fbSyncKey('team_cal');
 }
 
 function editDayEntry(idx){
