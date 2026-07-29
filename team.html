@@ -3741,17 +3741,52 @@ function renderDayEntries(){
     el.innerHTML='<div style="font-size:10px;color:rgba(0,255,136,.2);padding:8px 0;letter-spacing:1px;">// 기록 없음</div>';
     return;
   }
-  el.innerHTML=list.map((e,i)=>`
-    <div style="display:flex;gap:6px;align-items:flex-start;padding:4px 0;border-bottom:1px solid rgba(0,255,136,0.05);">
-      <span style="font-size:9px;font-weight:700;color:${e.author==='K'?'#00ff88':'#44ccff'};border:1px solid ${e.author==='K'?'rgba(0,255,136,.4)':'rgba(68,204,255,.4)'};padding:0 4px;flex-shrink:0;line-height:1.5;">${e.author}</span>
-      <span style="flex:1;font-size:10px;color:rgba(0,255,136,.8);line-height:1.7;white-space:pre-wrap;">${(e.text||'').replace(/[\[\]]/g,'')}</span>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
-        <span style="font-size:8px;color:rgba(0,255,136,.2);">${e.ts||''}</span>
-        <button onclick="editDayEntry(${i})" style="font-size:11px;color:rgba(0,255,136,.6);background:none;border:1px solid rgba(0,255,136,.25);cursor:pointer;padding:2px 7px;letter-spacing:1px;font-family:inherit;" onmouseover="this.style.color='#00ff88';this.style.borderColor='rgba(0,255,136,.6)'" onmouseout="this.style.color='rgba(0,255,136,.6)';this.style.borderColor='rgba(0,255,136,.25)'">EDIT</button>
-        <button onclick="deleteDayEntry(${i})" style="font-size:11px;color:rgba(255,80,80,.7);background:none;border:1px solid rgba(255,80,80,.3);cursor:pointer;padding:2px 7px;letter-spacing:1px;font-family:inherit;" onmouseover="this.style.color='#ff5050';this.style.borderColor='rgba(255,80,80,.7)'" onmouseout="this.style.color='rgba(255,80,80,.7)';this.style.borderColor='rgba(255,80,80,.3)'">DEL</button>
+  const _tagS={'진행중':{c:'rgba(0,255,136,.9)',b:'rgba(0,255,136,.3)'},'완료':{c:'rgba(0,200,255,.9)',b:'rgba(0,200,255,.3)'},'보류':{c:'rgba(255,180,0,.9)',b:'rgba(255,180,0,.35)'},'검토요청':{c:'rgba(0,180,255,.9)',b:'rgba(0,180,255,.35)'},'예정':{c:'rgba(180,100,255,.9)',b:'rgba(180,100,255,.35)'}};
+  const tagKeys=Object.keys(_tagS);
+  el.innerHTML=list.map((e,i)=>{
+    const raw=(e.text||'').replace(/[\[\]]/g,'');
+    const curTag=tagKeys.find(t=>raw.includes(t))||'';
+    const bodyText=raw.replace(/진행중|완료|보류|검토요청|예정/g,'').trim();
+    const tagBtns=tagKeys.map(t=>{
+      const s=_tagS[t];
+      const active=t===curTag;
+      return `<button onclick="changeDayEntryTag(${i},'${t}')" style="font-size:8px;padding:1px 5px;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:all .15s;${active?`background:rgba(0,0,0,.3);border:1px solid ${s.b};color:${s.c};`:'background:none;border:1px solid rgba(0,255,136,.1);color:rgba(0,255,136,.25);'}">${t}</button>`;
+    }).join('');
+    return `
+    <div style="display:flex;flex-direction:column;gap:3px;padding:5px 0;border-bottom:1px solid rgba(0,255,136,0.05);">
+      <div style="display:flex;gap:6px;align-items:flex-start;">
+        <span style="font-size:9px;font-weight:700;color:${e.author==='K'?'#00ff88':'#44ccff'};border:1px solid ${e.author==='K'?'rgba(0,255,136,.4)':'rgba(68,204,255,.4)'};padding:0 4px;flex-shrink:0;line-height:1.5;">${e.author}</span>
+        <span style="flex:1;font-size:10px;color:rgba(0,255,136,.8);line-height:1.7;white-space:pre-wrap;">${bodyText}</span>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+          <span style="font-size:8px;color:rgba(0,255,136,.2);">${e.ts||''}</span>
+          <button onclick="editDayEntry(${i})" style="font-size:11px;color:rgba(0,255,136,.6);background:none;border:1px solid rgba(0,255,136,.25);cursor:pointer;padding:2px 7px;letter-spacing:1px;font-family:inherit;">EDIT</button>
+          <button onclick="deleteDayEntry(${i})" style="font-size:11px;color:rgba(255,80,80,.7);background:none;border:1px solid rgba(255,80,80,.3);cursor:pointer;padding:2px 7px;letter-spacing:1px;font-family:inherit;">DEL</button>
+        </div>
       </div>
-    </div>`).join('');
+      <div style="display:flex;gap:3px;padding-left:22px;">${tagBtns}</div>
+    </div>`;
+  }).join('');
   el.scrollTop=el.scrollHeight;
+}
+
+function changeDayEntryTag(idx, newTag){
+  let all=JSON.parse(localStorage.getItem('team_cal')||'{}');
+  if(typeof all!=='object'||Array.isArray(all)) all={};
+  const list=all[currentDayKey]||[];
+  if(!list[idx]) return;
+  const tags=['진행중','완료','보류','검토요청','예정'];
+  let text=list[idx].text||'';
+  const curTag=tags.find(t=>text.includes(t));
+  if(curTag===newTag){ // 같은 태그 클릭하면 태그 제거
+    tags.forEach(t=>{text=text.replace(new RegExp(t+'\\s*','g'),'').trim();});
+  } else {
+    tags.forEach(t=>{text=text.replace(new RegExp(t+'\\s*','g'),'').trim();});
+    text=newTag+' '+text;
+  }
+  list[idx].text=text.trim();
+  all[currentDayKey]=list;
+  localStorage.setItem('team_cal',JSON.stringify(all));
+  renderDayEntries();
 }
 
 function daySetAuthor(who){
