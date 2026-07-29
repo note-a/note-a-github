@@ -977,7 +977,7 @@
       cursor:pointer;padding:2px 10px;border-bottom:1px solid rgba(0,255,136,0.07);transition:background .12s; }
     .msg-row:hover { background:rgba(0,255,136,0.06); }
     .mbadge { font-size:10px;padding:1px 5px;border:1px solid;flex:0 0 auto;white-space:nowrap;letter-spacing:1px; }
-    .mname { flex:0 0 56px;font-size:11px;color:rgba(0,255,136,.4);overflow:hidden;white-space:nowrap; }
+    .mname { display:none; }
     .mpreview { flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:rgba(0,255,136,.75); }
     .mago { flex:0 0 auto;font-size:10px;color:rgba(0,255,136,.3);white-space:nowrap; }
     .board-empty { padding:16px 10px;font-size:12px;color:rgba(0,255,136,.3); }
@@ -4511,6 +4511,7 @@ function _fbInit(){
       });
       _fbLoading = false;
       try{ _loadUserPosts(); }catch(e){}
+      try{ if(typeof currentCat!=='undefined'&&currentCat) renderBoard(currentCat); }catch(e){}
       try{ renderFeeds(); }catch(e){}
       try{ renderMemos(); }catch(e){}
       try{ renderChat(); }catch(e){}
