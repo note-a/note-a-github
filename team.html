@@ -3960,17 +3960,9 @@ async function dpSendClaude(){
     };
   }; // end _mountDirGraph
 
-  // 메인 패널 캔버스 마운트
+  // 메인 패널 캔버스 마운트 — 팝업과 독립적으로 항상 실행
   const mainCv = document.getElementById('dir-graph-cv');
-  if(mainCv){
-    let mainDestroy = window._mountDirGraph(mainCv);
-    // 팝업 열릴 때 메인 일시정지 / 닫힐 때 재개
-    window._dirMainPause  = () => { if(mainDestroy){ mainDestroy(); mainDestroy=null; } };
-    window._dirMainResume = () => { if(!mainDestroy) mainDestroy=window._mountDirGraph(mainCv); };
-    document.addEventListener('visibilitychange',()=>{
-      if(!document.hidden && !mainDestroy) mainDestroy=window._mountDirGraph(mainCv);
-    });
-  }
+  if(mainCv) window._mountDirGraph(mainCv);
 })();
 
 // ══════════════════════════════════════════════════
@@ -4923,7 +4915,6 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
       const cv = document.createElement('canvas');
       cv.style.cssText = 'width:100%;height:100%;display:block;border:1px solid rgba(0,255,136,0.12);background:#000509;cursor:grab;';
       wrap.appendChild(cv);
-      if(window._dirMainPause) window._dirMainPause();
       requestAnimationFrame(() => {
         if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv, {scale: 1.0});
       });
@@ -4963,7 +4954,6 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
   // 팝업 닫힐 때 캔버스 RAF 정리
   function _cleanupDirPopup(){
     if(_dirPopupDestroy){ _dirPopupDestroy(); _dirPopupDestroy=null; }
-    if(window._dirMainResume) window._dirMainResume();
   }
   document.getElementById('panel-popup-close')?.addEventListener('click', _cleanupDirPopup);
   document.getElementById('panel-popup-overlay')?.addEventListener('click', e => {
