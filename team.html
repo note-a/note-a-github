@@ -3305,8 +3305,38 @@ function dpRenderProjectStatus(){
     return `<span style="letter-spacing:-0.5px;color:rgba(0,255,136,0.75);">${'█'.repeat(f)}</span><span style="letter-spacing:-0.5px;color:rgba(0,255,136,0.12);">${'░'.repeat(w-f)}</span>`;
   };
 
+  const fbEl = document.getElementById('dp-gh-status');
+  const fbTxt = fbEl ? fbEl.textContent : '';
+  const fbOk = fbTxt.includes('연결됨') || fbTxt.includes('동기화') || fbTxt.includes('OK');
+  const errCount = (typeof _dpErrors !== 'undefined') ? _dpErrors.length : 0;
+  let lsBytes = 0;
+  try { for(const k in localStorage){ if(Object.prototype.hasOwnProperty.call(localStorage,k)) lsBytes += (localStorage[k]||'').length*2; } } catch(e){}
+  const lsKb = (lsBytes/1024).toFixed(1);
+  const lsPct = Math.min(100, lsBytes/(5*1024*1024)*100);
+  const sGauge = (pct,w=10)=>`<span style="color:rgba(0,255,136,0.72);">${'█'.repeat(Math.round(pct/100*w))}</span><span style="color:rgba(0,255,136,0.14);">${'░'.repeat(w-Math.round(pct/100*w))}</span>`;
+  const sDot = on=>`<span style="color:${on?'#00ff88':'rgba(255,80,80,0.85)'};">●</span>`;
+
   el.innerHTML = `
     <div style="font-family:'Space Mono',monospace;font-size:9px;">
+      <!-- 시스템 상태 3줄 -->
+      <div style="font-size:10px;line-height:2;margin-bottom:10px;border-bottom:1px solid rgba(0,255,136,0.08);padding-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${sDot(fbOk)}
+          <span style="color:rgba(0,255,136,0.38);width:68px;font-size:8.5px;letter-spacing:1px;">FIREBASE</span>
+          <span style="color:${fbOk?'rgba(0,255,136,0.75)':'rgba(255,80,80,0.75)'};font-size:9px;">${fbOk?'CONNECTED':'OFFLINE'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${sDot(errCount===0)}
+          <span style="color:rgba(0,255,136,0.38);width:68px;font-size:8.5px;letter-spacing:1px;">ERRORS</span>
+          <span style="color:${errCount>0?'rgba(255,80,80,0.8)':'rgba(0,255,136,0.45)'};font-size:9px;">${errCount>0?errCount+' FOUND':'CLEAR'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:rgba(0,255,136,0.18);">●</span>
+          <span style="color:rgba(0,255,136,0.38);width:68px;font-size:8.5px;letter-spacing:1px;">STORAGE</span>
+          <span style="font-size:10px;">${sGauge(lsPct)}</span>
+          <span style="color:rgba(0,255,136,0.5);font-size:9px;margin-left:4px;">${lsKb} KB</span>
+        </div>
+      </div>
       <!-- 헤더 -->
       <div style="display:grid;grid-template-columns:70px 24px 1fr 70px;gap:4px;align-items:center;
                   color:rgba(0,255,136,0.28);letter-spacing:1px;font-size:7.5px;
