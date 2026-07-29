@@ -3339,18 +3339,18 @@ function dpRenderProjectStatus(){
       ${rows.map(r=>{
         const data = liveData[r.key] || '—';
         return `
-        <div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(0,255,136,0.05);">
-          <span style="color:rgba(0,255,136,0.65);font-size:8.5px;letter-spacing:1px;width:60px;flex-shrink:0;">${r.key}</span>
-          <span style="cursor:pointer;font-size:11px;color:${designColor(r.design)};flex-shrink:0;"
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,255,136,0.06);">
+          <span style="color:rgba(0,255,136,0.8);font-size:11px;letter-spacing:1.5px;width:72px;flex-shrink:0;">${r.key}</span>
+          <span style="cursor:pointer;font-size:14px;color:${designColor(r.design)};flex-shrink:0;"
                 onclick="dpCycleDesign('${r.key}')">${designIcon(r.design)}</span>
-          <span style="flex:1;color:rgba(0,255,136,0.28);font-size:8px;letter-spacing:.5px;">${r.label}</span>
-          <div style="width:80px;flex-shrink:0;height:3px;background:rgba(0,255,136,0.1);position:relative;border-radius:1px;">
-            <div style="position:absolute;left:0;top:0;height:100%;width:${r.impl}%;background:rgba(0,255,136,0.65);border-radius:1px;"></div>
+          <span style="flex:1;color:rgba(0,255,136,0.3);font-size:9px;letter-spacing:.5px;">${r.label}</span>
+          <div style="width:120px;flex-shrink:0;height:5px;background:rgba(0,255,136,0.08);position:relative;border-radius:2px;">
+            <div style="position:absolute;left:0;top:0;height:100%;width:${r.impl}%;background:rgba(0,255,136,0.6);border-radius:2px;"></div>
           </div>
-          <span style="color:rgba(0,255,136,0.45);font-size:8px;width:24px;text-align:right;flex-shrink:0;">${r.impl}%</span>
-          <button onclick="dpAdjustImpl('${r.key}',-10)" style="background:none;border:1px solid rgba(0,255,136,0.15);color:rgba(0,255,136,0.4);font-size:8px;padding:0 4px;cursor:pointer;line-height:1.6;font-family:'Space Mono',monospace;flex-shrink:0;">-</button>
-          <button onclick="dpAdjustImpl('${r.key}',10)"  style="background:none;border:1px solid rgba(0,255,136,0.15);color:rgba(0,255,136,0.4);font-size:8px;padding:0 4px;cursor:pointer;line-height:1.6;font-family:'Space Mono',monospace;flex-shrink:0;">+</button>
-          <span style="color:rgba(0,255,136,0.35);font-size:8px;letter-spacing:.3px;width:55px;text-align:right;flex-shrink:0;">${data}</span>
+          <span style="color:rgba(0,255,136,0.5);font-size:10px;width:30px;text-align:right;flex-shrink:0;">${r.impl}%</span>
+          <button onclick="dpAdjustImpl('${r.key}',-10)" style="background:none;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.5);font-size:10px;padding:2px 7px;cursor:pointer;line-height:1.5;font-family:'Space Mono',monospace;flex-shrink:0;">-</button>
+          <button onclick="dpAdjustImpl('${r.key}',10)"  style="background:none;border:1px solid rgba(0,255,136,0.2);color:rgba(0,255,136,0.5);font-size:10px;padding:2px 7px;cursor:pointer;line-height:1.5;font-family:'Space Mono',monospace;flex-shrink:0;">+</button>
+          <span style="color:rgba(0,255,136,0.4);font-size:9px;letter-spacing:.5px;width:65px;text-align:right;flex-shrink:0;">${data}</span>
         </div>`;
       }).join('')}
       <div style="font-size:7.5px;color:rgba(0,255,136,0.18);margin-top:6px;letter-spacing:.5px;">
