@@ -3805,6 +3805,8 @@ function changeDayEntryTag(idx, newTag){
   list[idx].text=text.trim();
   all[currentDayKey]=list;
   localStorage.setItem('team_cal',JSON.stringify(all));
+  clearTimeout(_fbSyncTimers['team_cal']);
+  _fbSyncKey('team_cal');
   renderDayEntries();
 }
 
