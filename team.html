@@ -4915,11 +4915,11 @@ document.getElementById('cfg-tl-text')?.addEventListener('keydown', e=>{ if(e.ke
 
       // 라이브 캔버스 — 메인 일시정지 후 팝업 전용 렌더
       const cv = document.createElement('canvas');
-      cv.style.cssText = 'width:100%;height:480px;display:block;margin:0 0 14px;border:1px solid rgba(0,255,136,0.12);background:#000509;cursor:grab;';
+      cv.style.cssText = 'width:100%;height:700px;display:block;margin:0 0 14px;border:1px solid rgba(0,255,136,0.12);background:#000509;cursor:grab;';
       body.appendChild(cv);
       if(window._dirMainPause) window._dirMainPause();
       requestAnimationFrame(() => {
-        if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv, {scale: 1.3});
+        if(window._mountDirGraph) _dirPopupDestroy = window._mountDirGraph(cv, {scale: 1.0});
       });
 
       // 요약 통계
