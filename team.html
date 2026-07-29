@@ -1595,6 +1595,15 @@
       <!-- DEV PANEL VIEW -->
       <div id="devPanelView" style="display:none;flex-direction:column;flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#000;">
 
+        <!-- LIVE MONITOR -->
+        <div class="dp-section">
+          <div class="dp-title" style="display:flex;align-items:center;justify-content:space-between;">
+            <span>// LIVE MONITOR</span>
+            <span id="dp-monitor-clock" style="font-size:9px;color:rgba(0,255,136,0.28);font-family:'Space Mono',monospace;letter-spacing:1px;"></span>
+          </div>
+          <div id="dp-live-monitor" style="margin-top:6px;"></div>
+        </div>
+
         <!-- S3: 로그 & 커밋 -->
         <div class="dp-section">
           <div class="dp-title" style="display:flex;align-items:center;gap:10px;">
@@ -2775,6 +2784,7 @@ function showDevPanel(){
   dpInitClaudeKey();
   dpInitGhToken();
   showView('devPanelView');
+  _dpStartMonitor();
 }
 
 function dpRefresh(){ showDevPanel(); }
@@ -3198,26 +3208,135 @@ function dpCodeClear(){
   if(_dpCodeMode==='css') _dpInjectCSS('');
 }
 
+function _escSvg(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function dpLoadCommits(){
   const el = document.getElementById('dp-commits');
   if(!el) return;
   el.innerHTML = '<span style="font-size:10px;color:rgba(0,255,136,0.3);">로딩 중…</span>';
-  fetch('https://api.github.com/repos/note-a/note-a-github/commits?per_page=7')
+  fetch('https://api.github.com/repos/note-a/note-a.github.io/commits?per_page=10')
     .then(r=>r.json())
     .then(data=>{
-      if(!Array.isArray(data)){ el.innerHTML='<span style="font-size:10px;color:rgba(255,68,68,0.6);">접근 불가 (private 또는 저장소명 불일치)</span>'; return; }
-      el.innerHTML = data.map(c=>{
-        const msg = (c.commit.message||'').split('\n')[0].slice(0,52);
-        const date = (c.commit.author.date||'').slice(0,10);
-        const sha = (c.sha||'').slice(0,7);
-        return `<div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid rgba(0,255,136,0.08);align-items:flex-start;">
-          <span style="font-size:9px;color:rgba(0,255,136,0.35);flex-shrink:0;margin-top:1px;">${date}</span>
-          <span style="font-size:10px;color:rgba(0,255,136,0.7);flex:1;line-height:1.5;">${msg}</span>
-          <span style="font-size:9px;color:rgba(0,255,136,0.25);flex-shrink:0;">${sha}</span>
-        </div>`;
+      if(!Array.isArray(data)){ el.innerHTML='<span style="font-size:10px;color:rgba(255,68,68,0.6);">접근 불가</span>'; return; }
+      const lineH = 46;
+      const svgH = data.length * lineH + 8;
+      const rows = data.map((c, i)=>{
+        const msg = _escSvg((c.commit.message||'').split('\n')[0].slice(0,44));
+        const date = (c.commit.author.date||'').slice(5,10);
+        const sha = _escSvg((c.sha||'').slice(0,7));
+        const y = i * lineH + 20;
+        const isFirst = i === 0;
+        const dotR = isFirst ? 5 : 3;
+        const dotFill = isFirst ? '#00ff88' : 'rgba(0,255,136,0.45)';
+        const dotStroke = isFirst ? 'rgba(0,255,136,0.4)' : 'none';
+        const msgFill = isFirst ? 'rgba(0,255,136,0.92)' : 'rgba(0,255,136,0.55)';
+        const metaFill = isFirst ? 'rgba(0,255,136,0.4)' : 'rgba(0,255,136,0.28)';
+        const lineY2 = y + lineH - 8;
+        return `
+          ${i < data.length-1 ? `<line x1="13" y1="${y+dotR+2}" x2="13" y2="${lineY2}" stroke="rgba(0,255,136,0.14)" stroke-width="1" stroke-dasharray="${isFirst?'none':'3,2'}"/>` : ''}
+          <circle cx="13" cy="${y}" r="${dotR}" fill="${dotFill}" stroke="${dotStroke}" stroke-width="${isFirst?1.5:0}"/>
+          ${isFirst ? `<circle cx="13" cy="${y}" r="${dotR+4}" fill="none" stroke="rgba(0,255,136,0.18)" stroke-width="1"/>` : ''}
+          <text x="27" y="${y-5}" font-family="'Space Mono',monospace" font-size="8" fill="${metaFill}" letter-spacing="0.3">${date}  ${sha}</text>
+          <text x="27" y="${y+8}" font-family="'Space Mono',monospace" font-size="9.5" fill="${msgFill}">${msg}</text>
+        `;
       }).join('');
+      el.innerHTML = `<svg width="100%" height="${svgH}" viewBox="0 0 320 ${svgH}" preserveAspectRatio="xMidYMid meet" style="overflow:visible;display:block;">${rows}</svg>`;
     })
     .catch(()=>{ el.innerHTML='<span style="font-size:10px;color:rgba(255,68,68,0.5);">네트워크 오류</span>'; });
+}
+
+function dpRenderLiveMonitor(){
+  const el = document.getElementById('dp-live-monitor');
+  if(!el) return;
+
+  // Firebase 연결 상태
+  const fbEl = document.getElementById('dp-gh-status');
+  const fbTxt = fbEl ? fbEl.textContent : '';
+  const fbOk = fbTxt.includes('연결됨') || fbTxt.includes('동기화') || fbTxt.includes('OK');
+
+  // 에러 수
+  const errCount = (typeof _dpErrors !== 'undefined') ? _dpErrors.length : 0;
+
+  // localStorage 사용량
+  let lsBytes = 0;
+  try { for(const k in localStorage){ if(Object.prototype.hasOwnProperty.call(localStorage,k)) lsBytes += (localStorage[k]||'').length * 2; } } catch(e){}
+  const lsKb = (lsBytes / 1024).toFixed(1);
+  const lsPct = Math.min(100, lsBytes / (5*1024*1024) * 100);
+
+  // 모듈별 카운트
+  const ls = (k, isObj)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); if(!v) return 0; return isObj?Object.keys(v).length:v.length; }catch(e){ return 0; } };
+  const modules = [
+    { label:'THREAD', val: ls('team_chat'),       unit:'msg' },
+    { label:'MEMO',   val: ls('team_memos'),       unit:'개'  },
+    { label:'SCHED',  val: ls('team_cal', true),   unit:'일'  },
+    { label:'POSTS',  val: ls('team_user_posts'),  unit:'개'  },
+    { label:'LOG',    val: (typeof _dpLogs!=='undefined'?_dpLogs.length:0), unit:'줄' },
+    { label:'ERR',    val: errCount, unit:'개', alert: errCount > 0 },
+  ];
+
+  // ASCII 게이지 바
+  const gauge = (pct, w=10)=>{
+    const f = Math.round(pct/100*w);
+    return `<span style="color:rgba(0,255,136,0.72);">${'█'.repeat(f)}</span><span style="color:rgba(0,255,136,0.14);">${'░'.repeat(w-f)}</span>`;
+  };
+  const dot = on => `<span style="font-size:11px;color:${on?'#00ff88':'rgba(255,80,80,0.85)'};">●</span>`;
+
+  el.innerHTML = `
+    <div style="font-family:'Space Mono',monospace;">
+      <!-- 상태 줄 -->
+      <div style="font-size:10px;line-height:2.1;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${dot(fbOk)}
+          <span style="color:rgba(0,255,136,0.38);font-size:8.5px;letter-spacing:1.2px;width:64px;">FIREBASE</span>
+          <span style="color:${fbOk?'rgba(0,255,136,0.75)':'rgba(255,80,80,0.75)'};font-size:9px;">${fbOk?'CONNECTED':'OFFLINE'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${dot(errCount===0)}
+          <span style="color:rgba(0,255,136,0.38);font-size:8.5px;letter-spacing:1.2px;width:64px;">ERRORS</span>
+          <span style="color:${errCount>0?'rgba(255,80,80,0.8)':'rgba(0,255,136,0.45)'};font-size:9px;">${errCount>0?errCount+' FOUND':'CLEAR'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="color:rgba(0,255,136,0.18);font-size:11px;">●</span>
+          <span style="color:rgba(0,255,136,0.38);font-size:8.5px;letter-spacing:1.2px;width:64px;">STORAGE</span>
+          <span style="font-size:10px;">${gauge(lsPct)}</span>
+          <span style="color:rgba(0,255,136,0.5);font-size:9px;">${lsKb} KB</span>
+        </div>
+      </div>
+      <!-- 구분선 -->
+      <div style="border-top:1px solid rgba(0,255,136,0.08);margin-bottom:8px;"></div>
+      <!-- 모듈 그리드 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;">
+        ${modules.map(m=>`
+          <div style="border:1px solid rgba(0,255,136,${m.alert?'0.45':'0.1'});padding:6px 8px;background:rgba(0,255,136,${m.alert?'0.06':'0.02'});position:relative;">
+            <div style="font-size:7.5px;color:rgba(0,255,136,0.35);letter-spacing:1.5px;margin-bottom:3px;">${m.label}</div>
+            <div style="font-size:18px;font-weight:normal;color:rgba(0,255,136,${m.alert?1:0.78});line-height:1;">${m.val}</div>
+            <div style="font-size:7px;color:rgba(0,255,136,0.25);margin-top:2px;">${m.unit}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div style="font-size:8px;color:rgba(0,255,136,0.16);text-align:right;margin-top:6px;letter-spacing:.5px;">5s auto-refresh</div>
+    </div>
+  `;
+}
+
+let _dpMonitorTimer = null;
+function _dpStartMonitor(){
+  dpRenderLiveMonitor();
+  _dpMonitorTick();
+  if(_dpMonitorTimer) clearInterval(_dpMonitorTimer);
+  _dpMonitorTimer = setInterval(()=>{
+    const v = document.getElementById('devPanelView');
+    if(v && v.style.display !== 'none') dpRenderLiveMonitor();
+    else { clearInterval(_dpMonitorTimer); _dpMonitorTimer = null; }
+  }, 5000);
+}
+function _dpMonitorTick(){
+  const el = document.getElementById('dp-monitor-clock');
+  const v = document.getElementById('devPanelView');
+  if(!el || !v || v.style.display === 'none') return;
+  const n = new Date();
+  el.textContent = n.toTimeString().slice(0,8);
+  setTimeout(_dpMonitorTick, 1000);
 }
 
 function dpActionMsg(msg, ok=true){
