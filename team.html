@@ -10,7 +10,7 @@
 
     html, body {
       width:100%; min-height:100vh;
-      background: #000000;
+      background: #020b14;
       font-family: 'Space Mono', monospace;
       color: rgba(0,255,136,0.9);
       display: flex;
@@ -21,15 +21,22 @@
 
     /* 별빛 파티클 캔버스 */
     #star-canvas {
-      display: none;
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
     }
 
-    /* 배경 vignette */
+    /* 배경 외곽 네온 glow */
     body::before {
       content: '';
       position: fixed; inset: 0;
       pointer-events: none; z-index: 1;
-      background: radial-gradient(ellipse 90% 90% at 50% 50%, transparent 50%, rgba(0,0,0,0.7) 100%);
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 40%, rgba(0,40,80,0.8) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 60%, rgba(0,20,60,0.65) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 50% 10%, rgba(0,80,60,0.32) 0%, transparent 50%),
+        radial-gradient(ellipse 30% 30% at 85% 15%, rgba(0,40,80,0.2) 0%, transparent 45%),
+        radial-gradient(ellipse 25% 25% at 10% 85%, rgba(0,60,40,0.18) 0%, transparent 40%);
+      box-shadow: inset 0 0 120px rgba(0,255,136,0.05), inset 0 0 240px rgba(0,80,40,0.08);
     }
 
     /* 전체 수평 스캔라인 오버레이 */
@@ -39,10 +46,10 @@
       pointer-events: none; z-index: 1001;
       background: repeating-linear-gradient(
         0deg,
-        rgba(0,0,0,0.4) 0px,
-        rgba(0,0,0,0.4) 1px,
-        transparent 1px,
-        transparent 3px
+        transparent 0,
+        transparent 3px,
+        rgba(0,255,136,0.012) 3px,
+        rgba(0,255,136,0.012) 4px
       );
     }
 
@@ -53,14 +60,12 @@
       background: linear-gradient(
         180deg,
         transparent 0%,
-        transparent 46%,
-        rgba(0,255,136,0.06) 49%,
-        rgba(0,255,136,0.09) 50%,
-        rgba(0,255,136,0.06) 51%,
-        transparent 54%,
+        transparent 45%,
+        rgba(0,255,136,0.025) 50%,
+        transparent 55%,
         transparent 100%
       );
-      animation: sweepDown 6s linear infinite;
+      animation: sweepDown 8s linear infinite;
     }
     @keyframes sweepDown {
       0%   { transform: translateY(-100%); }
@@ -83,8 +88,12 @@
       padding: 10px;
       position: relative;
       z-index: 2;
-      border: 1px solid rgba(0,255,136,0.35);
-      box-shadow: none;
+      border: 1px solid rgba(0,255,136,0.18);
+      box-shadow:
+        0 0 0 1px rgba(0,255,136,0.05),
+        0 0 40px rgba(0,255,136,0.06),
+        0 0 80px rgba(0,40,80,0.4),
+        inset 0 0 60px rgba(0,15,25,0.8);
       animation: appFadeIn 0.8s ease forwards;
       opacity: 0;
     }
@@ -132,7 +141,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 10px;
-      background: #000;
+      background: rgba(0,12,22,0.92);
       position: relative;
       overflow: hidden;
     }
@@ -205,16 +214,16 @@
 
     /* ── 패널 공통 ── */
     .panel {
-      border: 1px solid rgba(0,255,136,0.22);
-      background: #030303;
-      box-shadow: none;
+      border: 1px solid rgba(0,255,136,0.3);
+      background: rgba(0,12,22,0.94);
+      box-shadow: 0 0 20px rgba(0,255,136,0.07), inset 0 0 20px rgba(0,255,136,0.025);
       position: relative;
-      transition: border-color 0.2s;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
     }
     .panel:hover {
-      border-color: rgba(0,255,136,0.5);
-      box-shadow: none;
-      transform: none;
+      border-color: rgba(0,255,136,0.55);
+      box-shadow: 0 0 28px rgba(0,255,136,0.14), inset 0 0 20px rgba(0,255,136,0.05);
+      transform: scale(1.002);
     }
     .panel::before {
       content: '';
@@ -235,10 +244,10 @@
     }
 
     .panel-header {
-      padding: 4px 10px;
-      border-bottom: 1px solid rgba(0,255,136,0.2);
+      padding: 5px 10px 5px;
+      border-bottom: 1px solid rgba(0,255,136,0.18);
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(0,255,136,0.07);
+      background: rgba(0,255,136,0.035);
     }
     .panel-title {
       font-size: 10px; font-weight: 700;
