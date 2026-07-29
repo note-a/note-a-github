@@ -3001,14 +3001,24 @@ function _dpFlushErrors(){
   const el = document.getElementById('dp-errors');
   const cnt = document.getElementById('dp-err-count');
   if(!el) return;
-  if(!_dpErrors.length){ el.innerHTML='<span style="font-size:10px;color:rgba(0,255,136,0.2);letter-spacing:.5px;">에러 없음</span>'; if(cnt) cnt.textContent=''; return; }
-  if(cnt) cnt.textContent = `(${_dpErrors.length})`;
-  el.innerHTML = _dpErrors.map(e=>`
+  const errHtml = _dpErrors.length ? _dpErrors.map(e=>`
     <div style="padding:3px 7px;background:rgba(255,60,60,0.06);border:1px solid rgba(255,60,60,0.2);line-height:1.6;">
       <span style="color:rgba(0,255,136,0.3);font-size:9px;">${e.ts}</span>
       ${e.src?`<span style="color:rgba(255,180,0,0.7);font-size:9px;margin-left:6px;">${e.src}:${e.line||''}</span>`:''}
       <div style="color:rgba(255,100,100,0.85);font-size:10px;margin-top:1px;">${String(e.msg).replace(/</g,'&lt;').slice(0,200)}</div>
-    </div>`).join('');
+    </div>`).join('') : '';
+  if(cnt) cnt.textContent = _dpErrors.length ? `(${_dpErrors.length})` : '';
+  // 에러 없으면 최근 로그 표시
+  if(!_dpErrors.length){
+    const logs = (typeof _dpLogs !== 'undefined' ? _dpLogs : []).slice(0,12);
+    el.innerHTML = logs.length ? logs.map(l=>`
+      <div class="dp-log-line">
+        <span class="dp-log-ts">${l.ts}</span>
+        <span class="dp-log-msg" style="color:${l.col}">${l.msg}</span>
+      </div>`).join('') : '<span style="font-size:10px;color:rgba(0,255,136,0.2);">로그 없음</span>';
+  } else {
+    el.innerHTML = errHtml;
+  }
 }
 function dpClearErrors(){ _dpErrors.length=0; _dpFlushErrors(); }
 window.onerror = function(msg,src,line){ _dpAddError(msg,src,line); };
