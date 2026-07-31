@@ -4656,6 +4656,8 @@ function tlAdd(){
   document.getElementById('cfg-tl-text').value='';
   tlRender();
   cfgTlListRender();
+  clearTimeout(_fbSyncTimers['tl-items']);
+  _fbSyncKey('tl-items');
 }
 function tlDel(i){
   const list = JSON.parse(localStorage.getItem('tl-items')||'[]');
@@ -4663,6 +4665,8 @@ function tlDel(i){
   localStorage.setItem('tl-items', JSON.stringify(list));
   tlRender();
   cfgTlListRender();
+  clearTimeout(_fbSyncTimers['tl-items']);
+  _fbSyncKey('tl-items');
 }
 tlRender();
 </script>
