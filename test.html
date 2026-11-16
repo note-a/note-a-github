@@ -26,6 +26,11 @@
   .p:nth-child(n+12){color:#999}
   .m{background:#000;color:#fff;padding:10px 12px 12px;margin:0 -8px 14px;font-size:12px;line-height:1.5;animation:in .2s steps(2)}
   .m .h{font-size:10px;color:#bbb;margin-bottom:4px}
+  .m .r{border-top:1px solid #333;padding-top:5px;margin-top:5px}
+  .m .d{color:#aaa;font-size:10.5px}
+  .m .bet{font-size:11px;margin:2px 0 4px;color:#bbb}
+  .m .bet.hit{color:#fff;background:#eb5050;padding:2px 5px;display:inline-block}
+  .m .bet.miss{color:#eb5050}
   .m .k{display:inline-block;width:10ch;color:#aaa}
   #map{position:relative;margin-top:10px;border-bottom:1px solid #000;padding-bottom:8px}
   #map svg{display:block;width:100%;height:auto;max-height:34vh}
@@ -37,6 +42,18 @@
   #hours div::after{content:attr(data-o);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font-size:8.5px;color:#888;padding-bottom:2px;white-space:nowrap}
   #hours div.sel::after{color:#eb5050;font-weight:500}
   #hours{margin-top:22px!important}
+  #hours div:hover{background:#999}
+  #slip{border:1px solid #000;margin-top:10px;padding:8px 10px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;font-size:12px}
+  #slip .s1{font-weight:500;letter-spacing:.06em;background:#000;color:#fff;padding:3px 7px;font-size:11px}
+  #slip .s3{font-size:10.5px;color:#666;text-align:right;white-space:nowrap}
+  #slip.armed{border-color:#eb5050}
+  #slip.armed .s1{background:#eb5050}
+  #slip.hit{background:#eb5050;color:#fff;border-color:#eb5050}
+  #slip.hit .s1{background:#fff;color:#eb5050}
+  #slip.hit .s3{color:#fff}
+  #slip.miss{background:#000;color:#fff}
+  #slip.miss .s1{background:#fff;color:#000}
+  #slip.miss .s3{color:#aaa}
   #hours div.now{background:#000}
   #hours div.sel{background:#eb5050}
   #hlab{display:flex;justify-content:space-between;font-size:9.5px;color:#888;margin-top:3px}
@@ -60,6 +77,11 @@
   #intro button:hover{background:#000;color:#fff}
   #intro .src{margin-top:22px;font-size:10px;color:#666;line-height:1.5}
   #intro [hidden]{display:none}
+  @media (min-width:900px) and (orientation:landscape){
+    #intro .ko,#intro .en,#intro li>.b{font-size:14px}
+    #intro button{font-size:14px}
+    #intro .src{font-size:12px}
+  }
   #intro.out{animation:out .35s steps(3) forwards}
   @keyframes out{to{opacity:0;visibility:hidden}}
   @keyframes in{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
@@ -71,6 +93,8 @@
     #right{padding:10px 12px 0}
     #hours{height:30px}
     #hours div::after{display:none}
+    #slip{grid-template-columns:auto 1fr;font-size:10.5px;padding:6px 8px;gap:8px}
+    #slip .s3{grid-column:1/3;text-align:left}
     #hours{margin-top:8px!important}
     .city text{display:none}
     .city.on text{display:block;font-size:34px}
@@ -111,6 +135,7 @@
       <div id="hours"></div>
       <div id="hlab"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
       <div id="mode"><span id="mtext">—</span><button id="live" class="on">LIVE</button></div>
+      <div id="slip"><div class="s1" id="s1">BET SLIP</div><div class="s2" id="s2">① tap a city on the map &nbsp; ② tap an hour bar to bet on it</div><div class="s3" id="s3"></div></div>
     </div>
     <div id="feed"></div>
     <div id="foot">notes: real user prompts from the Stable Diffusion Discord, Aug 2022 (krea-ai/open-prompts) — their image links on cdn.discordapp.com lack the signed expiry parameters Discord has required since Dec 2023 and no longer resolve · images: Stable Diffusion outputs (stable-diffusion-image-prompt-gallery) · photographs: 김혜지, FUJIFILM X100V, Chuncheon, 2026.11.10 (EXIF read from the original RAF files)</div>
@@ -172,12 +197,12 @@ CITIES.forEach((c,ci)=>{
   gC.appendChild(g);
 });
 for(let h=0;h<24;h++){const d=document.createElement("div");d.title=pad(h)+":00";d.addEventListener("click",()=>{hour=(hour===h)?null:h;applyFilter();drawHours();});hoursEl.appendChild(d)}
-liveB.addEventListener("click",()=>{hour=null;applyFilter();drawHours();});
+liveB.addEventListener("click",()=>{hour=null;applyFilter();drawHours();drawSlip();});
 function applyFilter(){
   view = hour===null ? P.map((_,i)=>i) : P.map((_,i)=>i).filter(i=>HOURS[city][i]===hour);
   vi=0; feed.innerHTML="";
   liveB.className = hour===null ? "on" : "";
-  mtext.textContent = hour===null ? `ALL NOTES · ${CITIES[city][0]} TIME · PICK AN HOUR` : `${CITIES[city][0]} ${pad(hour)}:00–${pad(hour)}:59 · ${view.length} notes · ODDS x${(P.length/view.length).toFixed(1)}`;
+  mtext.textContent = hour===null ? `ALL NOTES · ${CITIES[city][0]} TIME` : `${CITIES[city][0]} ${pad(hour)}:00–${pad(hour)}:59 · ${view.length} notes`;
   for(let i=0;i<Math.min(5,view.length);i++) pushPrompt();
 }
 function drawHours(){
@@ -211,12 +236,44 @@ function pushPrompt(){
   curTs=ts; clkEl.textContent=fmt(ts); const n=((vi-1)%view.length)+1; cntEl.textContent=`ISSUED ${n} · PAID 0 · DISHONORED ${n}`;
   drawMap(); drawHours();
 }
-function pushMeta(m){
-  const rows=[...m.meta,["NAMED",String(m.boxes.length)],["DIVIDEND",m.boxes.length?m.boxes.length+" fragments paid out":"0"],["UNPAID",m.unpaid+"% of the frame"]];
+let bets=0, hits=0, won=0, result=null, resultUntil=0;
+const slip=document.getElementById("slip"), s1=document.getElementById("s1"), s2=document.getElementById("s2"), s3=document.getElementById("s3");
+function drawSlip(){
+  const tot=`BETS ${bets} · HITS ${hits} · WON ${won.toFixed(1)}`;
+  if(result && t<resultUntil){
+    slip.className=result.hit?"hit":"miss";
+    s1.textContent=result.hit?"HIT":"MISS";
+    s2.textContent=result.text; s3.textContent=tot; return;
+  }
+  if(hour===null){
+    slip.className=""; s1.textContent="BET SLIP";
+    s2.innerHTML="① tap a city on the map &nbsp; ② tap an hour bar to bet on it"; s3.textContent=bets?tot:""; return;
+  }
+  const odds=P.length/view.length, left=Math.max(0,(ev?0:nextEv-t));
+  slip.className="armed"; s1.textContent="BET PLACED";
+  s2.textContent=`${CITIES[city][0]} ${pad(hour)}:00–${pad(hour)}:59 · ODDS x${odds.toFixed(1)} · ${ev?"SHUTTER…":"next shutter in "+left.toFixed(1)+"s"}`;
+  s3.textContent=tot;
+}
+function pushMeta(ms){
   const el=document.createElement("div"); el.className="m";
-  el.innerHTML=`<div class="h">RECEIPT · SHUTTER ${fmt(m.ts)}</div>`+rows.map(([k,v])=>`<div><span class="k">${k}</span>${esc(v)}</div>`).join("");
+  let html=`<div class="h">RECEIPTS ×${ms.length} · SHUTTER ${fmt(ms[0].ts)}</div>`;
+  let bet="";
+  if(hour!==null){
+    const odds=P.length/view.length; bets++;
+    const hitM=ms.filter(m=>localH(city,m.ts)===hour), frag=hitM.reduce((s,m)=>s+m.boxes.length,0);
+    if(hitM.length){hits++; won+=frag*odds;}
+    result={hit:!!hitM.length,text:hitM.length?`${CITIES[city][0]} ${pad(hour)}:00 · ${hitM.length}/${ms.length} shutters in your hour · PAID ${frag} × ${odds.toFixed(1)} = ${(frag*odds).toFixed(1)}`:`${CITIES[city][0]} ${pad(hour)}:00 · 0/${ms.length} shutters in your hour · PAID 0`};
+    resultUntil=t+3.5;
+    bet=`<div class="bet ${hitM.length?"hit":"miss"}">BET ${CITIES[city][0]} ${pad(hour)}:00 · ODDS x${odds.toFixed(1)} · ${hitM.length?`HIT ${hitM.length}/${ms.length} · PAID ${frag} × ${odds.toFixed(1)} = ${(frag*odds).toFixed(1)}`:"MISS · PAID 0"}</div>`;
+  }else bet=`<div class="bet">NO BET · pick a city and an hour to bet on the next shutter</div>`;
+  html+=bet;
+  for(const m of ms){
+    const g=k=>(m.meta.find(r=>r[0]===k)||[,"—"])[1];
+    html+=`<div class="r"><div>${esc(g("FILE"))} &nbsp; ${esc(g("DATE"))}</div><div class="d">${esc(g("CAMERA"))} · ${esc(g("SHUTTER"))} · ${esc(g("APERTURE"))} · ISO ${esc(g("ISO"))} · ${esc(g("FOCAL"))} · ${esc(g("SIZE"))}</div><div class="d">NAMED ${m.boxes.length} · DIVIDEND ${m.boxes.length} · UNPAID ${m.unpaid}%${hour!==null?` · ${CITIES[city][0]} ${localHM(city,m.ts)}`:""}</div></div>`;
+  }
+  el.innerHTML=html;
   feed.prepend(el); trim();
-  curTs=m.ts; clkEl.textContent=fmt(m.ts); drawMap(); drawHours();
+  curTs=ms[0].ts; clkEl.textContent=fmt(ms[0].ts); drawMap(); drawHours();
 }
 // ---------- fragments ----------
 let active=[];
@@ -263,27 +320,38 @@ function drawFrag(fr){
 }
 
 // ---------- my photos ----------
-const HOLD=.6, BOXT=.4, FADET=.3, SHOW=HOLD+BOXT+FADET;
+const HOLD=.9, BOXT=.5, FADET=.3, SHOW=HOLD+BOXT+FADET;
 let order=DATA.mine.map((_,i)=>i), mk=0, ev=null, nextEv=4;
-function fit(m){const s=Math.min(.86*W/m.w,.72*H/m.h);const w=m.w*s,h=m.h*s;return {s,x:(W-w)/2,y:(H-h)/2,w,h}}
+const N_AT_ONCE=4;
+function cells(n){ // 2x2 grid
+  const cols=W>=H?2:2, rows=Math.ceil(n/cols), pad=W*.04, cw=(W-pad*(cols+1))/cols, ch=(H-pad*(rows+1))/rows;
+  return [...Array(n)].map((_,i)=>({x:pad+(i%cols)*(cw+pad),y:pad+Math.floor(i/cols)*(ch+pad),w:cw,h:ch}));
+}
+function fitIn(m,c){const s=Math.min(c.w/m.w,c.h/m.h),w=m.w*s,h=m.h*s;return {s,x:c.x+(c.w-w)/2,y:c.y+(c.h-h)/2,w,h}}
 function drawPhoto(et){
-  const m=DATA.mine[ev.k], img=mineImgs[ev.k], g=fit(m), c2=ctx2;
+  const c2=ctx2, cs=cells(ev.ks.length);
   c2.fillStyle="#fff"; c2.fillRect(0,0,W,H);
-  c2.drawImage(img,g.x,g.y,g.w,g.h);
-  if(et>HOLD+BOXT){
-    const a=Math.min(1,(et-HOLD-BOXT)/FADET);
-    c2.globalAlpha=a; c2.fillStyle="#fff"; c2.fillRect(g.x,g.y,g.w,g.h); c2.globalAlpha=1;
-    for(const [x1,y1,x2,y2] of m.boxes) c2.drawImage(img,x1,y1,x2-x1,y2-y1,g.x+x1*g.s,g.y+y1*g.s,(x2-x1)*g.s,(y2-y1)*g.s);
-  }
-  if(et>HOLD){
-    const n=Math.floor(m.boxes.length*Math.min(1,(et-HOLD)/BOXT))+1;
-    for(const [x1,y1,x2,y2,name,c] of m.boxes.slice(0,n)) label(g.x+x1*g.s,g.y+y1*g.s,(x2-x1)*g.s,(y2-y1)*g.s,name,c,2,c2);
-  }
+  ev.ks.forEach((k,i)=>{
+    const m=DATA.mine[k], img=mineImgs[k], g=fitIn(m,cs[i]);
+    c2.drawImage(img,g.x,g.y,g.w,g.h);
+    if(et>HOLD+BOXT){
+      const a=Math.min(1,(et-HOLD-BOXT)/FADET);
+      c2.globalAlpha=a; c2.fillStyle="#fff"; c2.fillRect(g.x,g.y,g.w,g.h); c2.globalAlpha=1;
+      for(const [x1,y1,x2,y2] of m.boxes) c2.drawImage(img,x1,y1,x2-x1,y2-y1,g.x+x1*g.s,g.y+y1*g.s,(x2-x1)*g.s,(y2-y1)*g.s);
+    }
+    if(et>HOLD){
+      const n=Math.floor(m.boxes.length*Math.min(1,(et-HOLD)/BOXT))+1;
+      for(const [x1,y1,x2,y2,name,c] of m.boxes.slice(0,n)) label(g.x+x1*g.s,g.y+y1*g.s,(x2-x1)*g.s,(y2-y1)*g.s,name,c,2,c2);
+    }
+  });
 }
 function scatter(){
-  const m=DATA.mine[ev.k], img=mineImgs[ev.k], g=fit(m);
-  for(const [x1,y1,x2,y2,name,c] of m.boxes)
-    active.push({mine:true,img,src:[x1,y1,x2-x1,y2-y1],f:{n:name,c},s:g.s,x:g.x+x1*g.s,y:g.y+y1*g.s,life:ri(30,60),age:0,vx:rnd(-30,30),vy:rnd(-12,12)});
+  const cs=cells(ev.ks.length);
+  ev.ks.forEach((k,i)=>{
+    const m=DATA.mine[k], img=mineImgs[k], g=fitIn(m,cs[i]);
+    for(const [x1,y1,x2,y2,name,c] of m.boxes)
+      active.push({mine:true,img,src:[x1,y1,x2-x1,y2-y1],f:{n:name,c},s:g.s,x:g.x+x1*g.s,y:g.y+y1*g.s,life:ri(30,60),age:0,vx:rnd(-30,30),vy:rnd(-12,12)});
+  });
 }
 
 // ---------- intro typing ----------
@@ -314,6 +382,7 @@ typeIn(document.getElementById("p2"),14);
 let t=0, last=performance.now(), acc=0;
 const STEP=1/24;
 function frame(){
+  if(Math.round(t*24)%3===0) drawSlip();
   cv.style.filter="none";
   if(ev){
     const et=t-ev.t0;
@@ -321,10 +390,11 @@ function frame(){
     scatter(); ev=null; ctx.fillStyle="#fff"; ctx.fillRect(0,0,W,H);
   }
   if(t>=nextEv){
-    if(mk%order.length===0) order.sort(()=>Math.random()-.5);
-    ev={k:order[mk%order.length],t0:t}; mk++;
-    nextEv=t+SHOW+rnd(3,6)+1;
-    pushMeta(DATA.mine[ev.k]); drawPhoto(0); return;
+    const ks=[]; for(let i=0;i<N_AT_ONCE;i++){ if(mk%order.length===0) order.sort(()=>Math.random()-.5); ks.push(order[mk%order.length]); mk++; }
+    ks.sort((a,b)=>DATA.mine[a].ts-DATA.mine[b].ts);
+    ev={ks,t0:t};
+    nextEv=t+SHOW+rnd(2,4)+1;
+    pushMeta(ks.map(k=>DATA.mine[k])); drawPhoto(0); return;
   }
   for(let i=poisson(1.7);i>0;i--) spawn();
   if(Math.random()<.06) pushPrompt();
